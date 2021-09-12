@@ -201,16 +201,16 @@ You can also view the demo code [on CodeSandbox](https://codesandbox.io/s/rogue-
 
 Here's a whirlwind overview of React (and Preact).
 
-- React devs use a grammatical extension of JS called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)), permitting XML syntax.
+- React devs use a grammatical extension of JS with XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)).
 - React applications are often built by composing React function components, using the XML syntax for their return value.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function \`React.createElement\`.
-  See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js").
-- Actually, this website uses Preact, an alternative to React with the same API.
+  See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") below.
+- Actually, this website uses Preact, a React alternative with the same API.
   Then \`React.createElement\` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
-  and constructs Preact virtual DOM nodes.
+  and makes Preact virtual DOM nodes.
 - The root component is usually called _App_.
   Running a React application means [invoking \`ReactDOM.render\`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-  with 2 arguments: \`<App/>\` and an extant DOM node _el_.
+  with 2 arguments: \`<App/>\` and a DOM node _el_.
 - [\`ReactDOM.render\`](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts \`<App/>\` into a DOM node mounted at _el_.
   A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
   It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
@@ -229,10 +229,10 @@ Here's a whirlwind overview of React (and Preact).
 
       <Markdown children={`
 So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
-We're actually using Preact (its codebase is smaller, and it has reputation for being faster,
+We're using Preact (its codebase is smaller, and it has reputation for being faster,
 although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
 Rendering a component involves (re)constructing virtual DOM nodes and diffing them.
-Finally, the initial render of a website is often precomputed, so it loads faster.
+Finally, the first render is often precomputed, to load faster.
 
 ### React Renders and Web Components
 
@@ -248,7 +248,7 @@ Developers can also avoid recreating an entire rooted subtree using [\`React.mem
 But for most websites, the DOM mutations are neither large nor frequent, and React developers may simply ignore the virtual DOM overhead.
 
 However, we are making a realtime video game.
-To move characters at 60 fps we'll be updating the DOM at the same rate.
+To move characters at 60 fps using a physics engine, we'll be updating the DOM at the same rate.
 We want to control the rendering, to ensure good performance and aid debugging e.g. when pushing the limits of visible objects.
 If we allowed React (actually, Preact) to render in response to user interaction, we'd lose this control.
 Take another look at _panzoom/PanZoom.jsx_.
