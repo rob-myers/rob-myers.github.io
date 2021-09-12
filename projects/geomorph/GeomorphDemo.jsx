@@ -71,7 +71,7 @@ const layout301 = {
   key: 'g-301--bridge',
   id: 301,
   items: [
-    { symbol: '301--hull', hull: true }, // Hull must be first
+    { symbol: '301--hull' }, // Hull must be first
     { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 0, 480] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 120, 480] },
@@ -99,7 +99,7 @@ function createAuxCanvases(layout, lookup) {
   /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
   const [oCtxt, uCtxt] = ([oc.getContext('2d'), uc.getContext('2d')]);
   
-  const hullOutline = hull.hull[0].outline;
+  const hullOutline = hull.walls[0].outline;
   uCtxt.translate(-hullRect.x, -hullRect.y);
   uCtxt.fillStyle = 'rgba(100, 0, 0, 0.1)';
   fillRing(uCtxt, hullOutline);
@@ -110,12 +110,6 @@ function createAuxCanvases(layout, lookup) {
   // decomps.forEach(decomp => drawTriangulation(uCtxt, decomp));
   uCtxt.resetTransform();
   
-  oCtxt.translate(-hullRect.x, -hullRect.y);
-  oCtxt.fillStyle = 'rgba(200, 50, 50, .5)';
-  fillPolygon(oCtxt, hull.hull);
-  oCtxt.fillStyle = 'rgba(0, 200, 0, .5)';
-  fillPolygon(oCtxt, hull.doors); // TODO can be filtered
-  
   const {
     doors,
     labels,
@@ -123,6 +117,7 @@ function createAuxCanvases(layout, lookup) {
     walls,
   } = layout.actual;
 
+  oCtxt.translate(-hullRect.x, -hullRect.y);
   oCtxt.fillStyle = 'rgba(0, 200, 0, 1)';
   fillPolygon(oCtxt, doors);
   oCtxt.fillStyle = 'rgba(200, 50, 50, .05)';

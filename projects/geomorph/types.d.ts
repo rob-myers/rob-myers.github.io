@@ -9,10 +9,9 @@ declare namespace Geomorph {
   export type SymbolLookup = Record<string, ParsedSymbol<Poly>>;
 
   interface SvgGroups<T> {
-    /** Only non-empty for hull symbols; assume connected. */
-    hull: T[];
     doors: T[];
     labels: T[];
+    // TODO lifts
     obstacles: T[];
     walls: T[];
   }
@@ -24,7 +23,7 @@ declare namespace Geomorph {
   export interface ParsedSymbol<T> extends SvgGroups<T> {
     key: string;
     meta: {
-      /** Door tags */
+      /** Door tags e.g. `["iris", "door-e"]` */
       doors: string[][];
       /** Only exists for hull symbols */
       hullRect?: Geom.RectJson;
@@ -70,7 +69,6 @@ declare namespace Geomorph {
 
   export interface LayoutDefItem {
     symbol: string;
-    hull?: boolean;
     transform?: [number, number, number, number, number, number];
     tags?: string[];
   }

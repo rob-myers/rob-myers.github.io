@@ -17,10 +17,11 @@ export function createLayout(def, lookup) {
   };
   const m = new Mat;
 
-  def.items.forEach((item) => {
-    if (item.hull) return;
+  def.items.forEach((item, i) => {
     item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
-    m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
+    if (i) {// We don't scale 1st item i.e. hull
+      m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
+    }
     const { doors, labels, obstacles, walls, meta } = lookup[item.symbol];
     const taggedDoors = restrictByTags(doors, meta.doors, item.tags);
     actual.doors.push(...taggedDoors.map(x => x.clone().applyMatrix(m)));
@@ -30,12 +31,14 @@ export function createLayout(def, lookup) {
   });
 
   actual.walls = Poly.cutOut(actual.doors, actual.walls);
+
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSymbol = symbols[0];
-  const hullOutline = hullSymbol.hull[0].clone().removeHoles();
+  const hullOutline = hullSymbol.walls[0].clone().removeHoles();
 
   const navPoly = Poly.cutOut(
-    actual.walls.concat(hullSymbol.hull).flatMap(x => x.createOutset(12.5))
+    // TODO include hull walls earlier
+    actual.walls.concat(hullSymbol.walls).flatMap(x => x.createOutset(12.5))
       .concat(actual.obstacles.flatMap(x => x.createOutset(5))),
     [hullOutline],
   );
@@ -62,30 +65,28 @@ export function createLayout(def, lookup) {
 /**
  * @param {string} symbolName
  * @param {string} svgContents
- * @param {boolean} [debug]
  * @returns {Geomorph.ParsedSymbol<Poly>}
  */
-export function parseStarshipSymbol(symbolName, svgContents, debug) {
+export function parseStarshipSymbol(symbolName, svgContents) {
   const $ = cheerio.load(svgContents);
 
   const topNodes = Array.from($('svg > *'));
   const pngRect = extractPngOffset($, topNodes);
-  const hulls = Poly.union(extractGeoms($, topNodes, 'hull'));
   const doors = extractGeoms($, topNodes, 'doors');
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
   const walls = Poly.union(extractGeoms($, topNodes, 'walls'));
+  const hull = symbolName.endsWith('hull'); // Filename constraint
   
   return {
     key: symbolName,
-    hull: hulls,
     doors,
     labels,
     obstacles,
     walls,
     meta: {
       doors: doors.map((/** @type {*} */ x) => x._ownTags),
-      hullRect: hulls[0]?.rect,
+      hullRect: hull ? walls[0]?.rect : undefined,
       pngRect,
     },
   };
@@ -98,7 +99,6 @@ export function parseStarshipSymbol(symbolName, svgContents, debug) {
 export function serializeSymbol(parsed) {
   return {
     key: parsed.key,
-    hull: toJsons(parsed.hull),
     doors: toJsons(parsed.doors),
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
@@ -114,7 +114,6 @@ export function serializeSymbol(parsed) {
 export function deserializeSymbol(json) {
   return {
     key: json.key,
-    hull: json.hull.map(Poly.from),
     doors: json.doors.map(Poly.from),
     labels: json.labels.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),
