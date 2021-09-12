@@ -37,6 +37,15 @@
     <rect x="852" y="1059.53" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -451.530029, 1628.561523)"/>
     <rect x="852" y="1059.53" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, 448.469971, 1628.561523)"/>
     <rect x="852" y="1088.519" width="48" height="287.66" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -477.622101, 2380.673096)"/>
+    <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;">
+      <title>iris</title>
+    </rect>
+    <rect y="911.9" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;" x="-24">
+      <title>iris</title>
+    </rect>
+    <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;" transform="matrix(0, -1, 1, 0, 295, 3303.094238)">
+      <title>iris</title>
+    </rect>
   </g>
   <g style="pointer-events: none;">
     <title>obstacles</title>
@@ -56,41 +65,35 @@
     <path d="M 870.606 2254.948 L 928.501 2036.91 L 940.765 1861.359 L 919.955 1637.863 L 849.314 1426.663 L 755.061 1261.359 L 881.748 1261.359 L 1000.284 1861.359 L 877.679 2461.359 L 755.061 2461.359 L 870.606 2254.948 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 3061.358978, 1344.938995)"/>
   </g>
   <g style="pointer-events: none;">
-    <title>iris-valves</title>
-    <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;"/>
-    <rect y="911.944" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;" x="-24"/>
-    <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;" transform="matrix(0, -1, 1, 0, 295, 3303.094238)"/>
-  </g>
-  <g style="pointer-events: none;">
     <title>labels</title>
-    <rect width="600" height="200.727" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="900" y="507.873">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1150" y="550">
       <title>bridge</title>
     </rect>
-    <rect width="227.47" height="87.519" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="634.539" y="788.982">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="700" y="750">
       <title>locker</title>
     </rect>
-    <rect width="227.47" height="87.519" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1538.578" y="788.982">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1600" y="750">
       <title>locker</title>
     </rect>
-    <rect width="455.804" height="175.37" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="79.53" y="1261.993">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="250" y="1300">
       <title>locker</title>
     </rect>
-    <rect width="471.037" height="93.941" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1857.016" y="1236.464">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="2050" y="1250">
       <title>toilet</title>
     </rect>
-    <rect width="455.804" height="175.37" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="972.278" y="1776">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1150" y="1800">
       <title>briefing</title>
     </rect>
-    <rect width="471.037" height="143.02" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="356.14" y="2495.227">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="400" y="2500" bx:origin="0.5 0.5">
       <title>fuel</title>
     </rect>
-    <rect width="471.037" height="143.02" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1572.797" y="2495.227">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1600" y="2500">
       <title>fuel</title>
     </rect>
-    <rect width="471.037" height="143.02" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1857.016" y="1808.35">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1900" y="1900">
       <title>bedroom</title>
     </rect>
-    <rect width="471.037" height="143.02" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="79.53" y="1951.37">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="400" y="1900">
       <title>office</title>
     </rect>
   </g>
