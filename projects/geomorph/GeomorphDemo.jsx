@@ -71,7 +71,7 @@ const layout301 = {
   key: 'g-301--bridge',
   id: 301,
   items: [
-    { symbol: '301--hull' }, // Hull must be first
+    { symbol: '301--hull', tags: ['doors']  }, // Hull must be first
     { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 0, 480] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 120, 480] },
@@ -102,10 +102,10 @@ function createAuxCanvases(layout, lookup) {
   const hullOutline = hull.walls[0].outline;
   uCtxt.translate(-hullRect.x, -hullRect.y);
   uCtxt.fillStyle = 'rgba(100, 0, 0, 0.1)';
+  uCtxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
   fillRing(uCtxt, hullOutline);
   uCtxt.fillStyle = 'rgba(0, 0, 200, 0.03)';
   fillPolygon(uCtxt, layout.navPoly);
-  // uCtxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
   // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
   // decomps.forEach(decomp => drawTriangulation(uCtxt, decomp));
   uCtxt.resetTransform();
@@ -120,7 +120,7 @@ function createAuxCanvases(layout, lookup) {
   oCtxt.translate(-hullRect.x, -hullRect.y);
   oCtxt.fillStyle = 'rgba(0, 200, 0, 1)';
   fillPolygon(oCtxt, doors);
-  oCtxt.fillStyle = 'rgba(200, 50, 50, .05)';
+  oCtxt.fillStyle = 'rgba(200, 50, 50, .2)';
   fillPolygon(oCtxt, walls);
   oCtxt.fillStyle = 'rgba(100, 0, 0, 0.05)';
   fillPolygon(oCtxt, obstacles);

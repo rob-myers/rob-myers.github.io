@@ -1,6 +1,5 @@
 ## Plan
 
-- hull doors are tagged e.g. door-e
 - hull has lifts (tagged iris)
 - finish sub-symbols for geomorph 301
 - use in `PanZoomDemo`
@@ -16,6 +15,7 @@
 - investigate poly refinement
   - Ruppert's Delaunay Refinement Algorithm
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
+- ✅ hull doors are tagged e.g. door-e
 - ✅ hull group -> walls
 - ✅ asset titles space-separated and define ownTags
 - ✅ irisValves -> doors with tag iris

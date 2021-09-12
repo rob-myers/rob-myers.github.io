@@ -29,7 +29,6 @@ export function createLayout(def, lookup) {
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
   });
-
   actual.walls = Poly.cutOut(actual.doors, actual.walls);
 
   const symbols = def.items.map(x => lookup[x.symbol]);
@@ -37,8 +36,7 @@ export function createLayout(def, lookup) {
   const hullOutline = hullSymbol.walls[0].clone().removeHoles();
 
   const navPoly = Poly.cutOut(
-    // TODO include hull walls earlier
-    actual.walls.concat(hullSymbol.walls).flatMap(x => x.createOutset(12.5))
+    actual.walls.flatMap(x => x.createOutset(12.5))
       .concat(actual.obstacles.flatMap(x => x.createOutset(5))),
     [hullOutline],
   );
