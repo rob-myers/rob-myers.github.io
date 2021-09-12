@@ -9,11 +9,14 @@ import GeomorphDemo from 'projects/geomorph/GeomorphDemo';
 import PhysicsDemo from 'projects/physics/PhysicsDemo';
 import jsxToJs from '!!raw-loader!projects/example/jsx-to-js.jsx';
 
+import GeomRect from '!!raw-loader!projects/geom/rect';
+
 export const code = {
   'panzoom/PanZoom.jsx': panZoomJsx,
   'panzoom/PanZoomDemo.jsx': panZoomDemoJsx,
   'pathfinding/NavDemo.jsx': navDemoJsx,
   'example/jsx-to-js.jsx': jsxToJs,
+  'geom/rect.js': GeomRect,
 } as const;
 
 export const component = {

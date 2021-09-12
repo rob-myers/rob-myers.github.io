@@ -259,10 +259,17 @@ Take another look at _panzoom/PanZoom.jsx_.
         height={360}
         tabs={[
           { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
+          { key: 'code', filepath: 'geom/rect.js' },
         ]}
       />
 
       <Markdown children={`
+
+_PanZoom_ returns an \`<svg/>\` with a viewBox determined by _state.viewBox_.
+Initially, the latter is a clone of the rectangle _props.initViewBox_.
+When a user zooms via mousewheel, _state.onWheel_ handles the event, and updates _state.viewBox_ accordingly.
+But importantly we do not trigger a React render...
+
 
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
