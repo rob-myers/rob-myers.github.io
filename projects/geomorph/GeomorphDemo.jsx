@@ -139,8 +139,10 @@ function createAuxCanvases(layout, lookup) {
   oCtxt.translate(-hullRect.x, -hullRect.y);
   oCtxt.fillStyle = 'rgba(0, 200, 0, 1)';
   fillPolygon(oCtxt, doors);
-  oCtxt.fillStyle = 'rgba(0, 0, 0, 1)'; // TODO separate hull from other walls
-  fillPolygon(oCtxt, walls);
+  oCtxt.fillStyle = 'rgba(0, 0, 0, 1)';
+  fillPolygon(oCtxt, [walls[0]]); // Actual hull
+  oCtxt.fillStyle = 'rgba(100, 0, 0, 0.1)';
+  fillPolygon(oCtxt, walls.slice(1) );
   oCtxt.fillStyle = 'rgba(100, 0, 0, 0.05)';
   fillPolygon(oCtxt, obstacles);
   oCtxt.fillStyle = 'rgba(0, 0, 0, 0.04)';

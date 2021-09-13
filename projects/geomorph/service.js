@@ -29,7 +29,11 @@ export function createLayout(def, lookup) {
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
   });
-  actual.walls = Poly.cutOut(actual.doors, actual.walls);
+  // Cut doors from walls, keeping hull separate from other walls
+  actual.walls = [
+    ...Poly.cutOut(actual.doors, [actual.walls[0]]),
+    ...Poly.cutOut(actual.doors, actual.walls.slice(1)),
+  ];
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSymbol = symbols[0];
@@ -73,7 +77,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
   const walls = Poly.union(extractGeoms($, topNodes, 'walls'));
-  const hull = symbolName.endsWith('hull'); // Filename constraint
+  const isHull = symbolName.endsWith('hull'); // Filename constraint
   
   return {
     key: symbolName,
@@ -83,7 +87,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     walls,
     meta: {
       doors: doors.map((/** @type {*} */ x) => x._ownTags),
-      hullRect: hull ? walls[0]?.rect : undefined,
+      hullRect: isHull ? walls[0]?.rect : undefined,
       pngRect,
     },
   };
