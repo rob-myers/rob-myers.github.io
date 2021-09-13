@@ -9,25 +9,30 @@ import { drawTriangulation, fillPolygon, fillRing } from '../service';
 // TODO load pre-parsed data from svg.json
 // TODO create single image with all symbols?
 
-export default function GeomorphTest2() {
+export default function GeomorphDemo() {
   const gm = useSymbolLayout(layout301);
-  console.log({ gm });
-
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
-        {gm && <g>
-          <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
-          <image className="underlay" href={gm.underlay} x={gm.hullRect.x} y={gm.hullRect.y} />
-          {gm.symbols.map((s, i) =>
-            <g key={i} transform={s.transform}>
-              <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
-            </g>
-          )}
-          <image className="overlay" href={gm.overlay} x={gm.hullRect.x} y={gm.hullRect.y} />
-        </g>}
+        {gm && <Geomorph gm={gm} />}
       </PanZoom>
     </div>
+  );
+}
+
+/** @param {{ gm: Geomorph.LayoutWithLayers; transform?: string }} _ */
+function Geomorph({ gm, transform }) {
+  return (
+    <g transform={transform}>
+      <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
+      <image className="underlay" href={gm.underlay} x={gm.hullRect.x} y={gm.hullRect.y} />
+      {gm.symbols.map((s, i) =>
+        <g key={i} transform={s.transform}>
+          <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
+        </g>
+      )}
+      <image className="overlay" href={gm.overlay} x={gm.hullRect.x} y={gm.hullRect.y} />
+    </g>
   );
 }
 
@@ -43,7 +48,11 @@ const rootCss = css`
   }
 `;
 
-/** @param {Geomorph.LayoutDef} def */
+/**
+ * 
+ * @param {Geomorph.LayoutDef} def
+ * @returns {Geomorph.LayoutWithLayers=}
+ */
 function useSymbolLayout(def) {
   const symbolLookup = useSymbolLookup();
 

@@ -37,7 +37,7 @@ declare namespace Geomorph {
   export interface Layout {
     def: LayoutDef;
     /** Transformed and filtered */
-    actual: Omit<SvgGroups<Poly>, 'hull'>;
+    actual: SvgGroups<Poly>;
     navPoly: Poly[];
 
     /** Bounds of hull polygon */
@@ -55,6 +55,11 @@ declare namespace Geomorph {
       transformArray?: LayoutDefItem['transform'];
       transform?: string;
     }[];
+  }
+
+  export interface LayoutWithLayers extends Layout {
+    overlay: string;
+    underlay: string;
   }
 
   export interface LayoutDef {
