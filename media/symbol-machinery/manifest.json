@@ -1,0 +1,3372 @@
+{
+  "parentFolder": "Machinery",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Machinery 001 [2x5].png",
+      "dstName": "machinery--001--0.4x1.png",
+      "id": 1,
+      "gridDim": [0.4, 1],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Machinery 002 [2x10].png",
+      "dstName": "machinery--002--0.4x2.png",
+      "id": 2,
+      "gridDim": [0.4, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Machinery 003 [2x10].png",
+      "dstName": "machinery--003--0.4x2.png",
+      "id": 3,
+      "gridDim": [0.4, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Machinery 004 [2x15].png",
+      "dstName": "machinery--004--0.4x3.png",
+      "id": 4,
+      "gridDim": [0.4, 3],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Machinery 005 [3x13].png",
+      "dstName": "machinery--005--0.6x2.6.png",
+      "id": 5,
+      "gridDim": [0.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Machinery 006 [3x18].png",
+      "dstName": "machinery--006--0.6x3.6.png",
+      "id": 6,
+      "gridDim": [0.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Machinery 007 [4x10].png",
+      "dstName": "machinery--007--0.8x2.png",
+      "id": 7,
+      "gridDim": [0.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Machinery 008 [4x10].png",
+      "dstName": "machinery--008--0.8x2.png",
+      "id": 8,
+      "gridDim": [0.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Machinery 009 [5x14].png",
+      "dstName": "machinery--009--1x2.8.png",
+      "id": 9,
+      "gridDim": [1, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Machinery 010 [5x20].png",
+      "dstName": "machinery--010--1x4.png",
+      "id": 10,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Machinery 011 [5x24].png",
+      "dstName": "machinery--011--1x4.8.png",
+      "id": 11,
+      "gridDim": [1, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Machinery 012 [5x6].png",
+      "dstName": "machinery--012--1x1.2.png",
+      "id": 12,
+      "gridDim": [1, 1.2],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Machinery 013 [4x7].png",
+      "dstName": "machinery--013--0.8x1.4.png",
+      "id": 13,
+      "gridDim": [0.8, 1.4],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Machinery 014 [4x8].png",
+      "dstName": "machinery--014--0.8x1.6.png",
+      "id": 14,
+      "gridDim": [0.8, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Machinery 015 [5x7].png",
+      "dstName": "machinery--015--1x1.4.png",
+      "id": 15,
+      "gridDim": [1, 1.4],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Machinery 016 [4x4].png",
+      "dstName": "machinery--016--0.8x0.8.png",
+      "id": 16,
+      "gridDim": [0.8, 0.8],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Machinery 017 [3x4].png",
+      "dstName": "machinery--017--0.6x0.8.png",
+      "id": 17,
+      "gridDim": [0.6, 0.8],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Machinery 018 [4x5].png",
+      "dstName": "machinery--018--0.8x1.png",
+      "id": 18,
+      "gridDim": [0.8, 1],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Machinery 019 [4x8].png",
+      "dstName": "machinery--019--0.8x1.6.png",
+      "id": 19,
+      "gridDim": [0.8, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Machinery 020 [5x8].png",
+      "dstName": "machinery--020--1x1.6.png",
+      "id": 20,
+      "gridDim": [1, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Machinery 021 [5x5].png",
+      "dstName": "machinery--021--1x1.png",
+      "id": 21,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Machinery 022 [4x9].png",
+      "dstName": "machinery--022--0.8x1.8.png",
+      "id": 22,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Machinery 023 [4x9].png",
+      "dstName": "machinery--023--0.8x1.8.png",
+      "id": 23,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Machinery 024 [4x9].png",
+      "dstName": "machinery--024--0.8x1.8.png",
+      "id": 24,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Machinery 025 [4x9].png",
+      "dstName": "machinery--025--0.8x1.8.png",
+      "id": 25,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Machinery 026 [5x9].png",
+      "dstName": "machinery--026--1x1.8.png",
+      "id": 26,
+      "gridDim": [1, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Machinery 027 [4x9].png",
+      "dstName": "machinery--027--0.8x1.8.png",
+      "id": 27,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Machinery 028 [5x10].png",
+      "dstName": "machinery--028--1x2.png",
+      "id": 28,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Machinery 029 [4x8].png",
+      "dstName": "machinery--029--0.8x1.6.png",
+      "id": 29,
+      "gridDim": [0.8, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Machinery 030 [4x9].png",
+      "dstName": "machinery--030--0.8x1.8.png",
+      "id": 30,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Machinery 031 [4x9].png",
+      "dstName": "machinery--031--0.8x1.8.png",
+      "id": 31,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Machinery 032 [6x8].png",
+      "dstName": "machinery--032--1.2x1.6.png",
+      "id": 32,
+      "gridDim": [1.2, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Machinery 033 [5x12].png",
+      "dstName": "machinery--033--1x2.4.png",
+      "id": 33,
+      "gridDim": [1, 2.4],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Machinery 034 [6x10].png",
+      "dstName": "machinery--034--1.2x2.png",
+      "id": 34,
+      "gridDim": [1.2, 2],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Machinery 035 [6x8].png",
+      "dstName": "machinery--035--1.2x1.6.png",
+      "id": 35,
+      "gridDim": [1.2, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Machinery 036 [5x10].png",
+      "dstName": "machinery--036--1x2.png",
+      "id": 36,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Machinery 037 [3x8].png",
+      "dstName": "machinery--037--0.6x1.6.png",
+      "id": 37,
+      "gridDim": [0.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Machinery 038 [3x13].png",
+      "dstName": "machinery--038--0.6x2.6.png",
+      "id": 38,
+      "gridDim": [0.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Machinery 039 [3x18].png",
+      "dstName": "machinery--039--0.6x3.6.png",
+      "id": 39,
+      "gridDim": [0.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Machinery 040 [6x9].png",
+      "dstName": "machinery--040--1.2x1.8.png",
+      "id": 40,
+      "gridDim": [1.2, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Machinery 041 [7x9].png",
+      "dstName": "machinery--041--1.4x1.8.png",
+      "id": 41,
+      "gridDim": [1.4, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Machinery 042 [4x18].png",
+      "dstName": "machinery--042--0.8x3.6.png",
+      "id": 42,
+      "gridDim": [0.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Machinery 043 [5x20].png",
+      "dstName": "machinery--043--1x4.png",
+      "id": 43,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Machinery 044 [4x14].png",
+      "dstName": "machinery--044--0.8x2.8.png",
+      "id": 44,
+      "gridDim": [0.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Machinery 045 [6x18].png",
+      "dstName": "machinery--045--1.2x3.6.png",
+      "id": 45,
+      "gridDim": [1.2, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Machinery 046 [4x6].png",
+      "dstName": "machinery--046--0.8x1.2.png",
+      "id": 46,
+      "gridDim": [0.8, 1.2],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Machinery 047 [5x9].png",
+      "dstName": "machinery--047--1x1.8.png",
+      "id": 47,
+      "gridDim": [1, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Machinery 048 [5x14].png",
+      "dstName": "machinery--048--1x2.8.png",
+      "id": 48,
+      "gridDim": [1, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Machinery 049 [5x19].png",
+      "dstName": "machinery--049--1x3.8.png",
+      "id": 49,
+      "gridDim": [1, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [49]
+    },
+    {
+      "srcName": "Machinery 050 [5x9].png",
+      "dstName": "machinery--050--1x1.8.png",
+      "id": 50,
+      "gridDim": [1, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Machinery 051 [5x14].png",
+      "dstName": "machinery--051--1x2.8.png",
+      "id": 51,
+      "gridDim": [1, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Machinery 052 [4x6].png",
+      "dstName": "machinery--052--0.8x1.2.png",
+      "id": 52,
+      "gridDim": [0.8, 1.2],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Machinery 053 [4x14].png",
+      "dstName": "machinery--053--0.8x2.8.png",
+      "id": 53,
+      "gridDim": [0.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    },
+    {
+      "srcName": "Machinery 054 [5x15].png",
+      "dstName": "machinery--054--1x3.png",
+      "id": 54,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [54]
+    },
+    {
+      "srcName": "Machinery 055 [7x18].png",
+      "dstName": "machinery--055--1.4x3.6.png",
+      "id": 55,
+      "gridDim": [1.4, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [55]
+    },
+    {
+      "srcName": "Machinery 056 [5x30].png",
+      "dstName": "machinery--056--1x6.png",
+      "id": 56,
+      "gridDim": [1, 6],
+      "is": [],
+      "has": [],
+      "ids": [56]
+    },
+    {
+      "srcName": "Machinery 057 [13x17].png",
+      "dstName": "machinery--057--2.6x3.4.png",
+      "id": 57,
+      "gridDim": [2.6, 3.4],
+      "is": [],
+      "has": [],
+      "ids": [57]
+    },
+    {
+      "srcName": "Machinery 058 [5x13].png",
+      "dstName": "machinery--058--1x2.6.png",
+      "id": 58,
+      "gridDim": [1, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [58]
+    },
+    {
+      "srcName": "Machinery 059 [4x6].png",
+      "dstName": "machinery--059--0.8x1.2.png",
+      "id": 59,
+      "gridDim": [0.8, 1.2],
+      "is": [],
+      "has": [],
+      "ids": [59]
+    },
+    {
+      "srcName": "Machinery 060 [6x10].png",
+      "dstName": "machinery--060--1.2x2.png",
+      "id": 60,
+      "gridDim": [1.2, 2],
+      "is": [],
+      "has": [],
+      "ids": [60]
+    },
+    {
+      "srcName": "Machinery 061 [3x8].png",
+      "dstName": "machinery--061--0.6x1.6.png",
+      "id": 61,
+      "gridDim": [0.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [61]
+    },
+    {
+      "srcName": "Machinery 062 [4x10].png",
+      "dstName": "machinery--062--0.8x2.png",
+      "id": 62,
+      "gridDim": [0.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [62]
+    },
+    {
+      "srcName": "Machinery 063 [4x10].png",
+      "dstName": "machinery--063--0.8x2.png",
+      "id": 63,
+      "gridDim": [0.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [63]
+    },
+    {
+      "srcName": "Machinery 064 [10x10].png",
+      "dstName": "machinery--064--2x2.png",
+      "id": 64,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [64]
+    },
+    {
+      "srcName": "Machinery 065 [9x9].png",
+      "dstName": "machinery--065--1.8x1.8.png",
+      "id": 65,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [65]
+    },
+    {
+      "srcName": "Machinery 066 [9x9].png",
+      "dstName": "machinery--066--1.8x1.8.png",
+      "id": 66,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [66]
+    },
+    {
+      "srcName": "Machinery 067 [9x9].png",
+      "dstName": "machinery--067--1.8x1.8.png",
+      "id": 67,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [67]
+    },
+    {
+      "srcName": "Machinery 068 [9x10].png",
+      "dstName": "machinery--068--1.8x2.png",
+      "id": 68,
+      "gridDim": [1.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [68]
+    },
+    {
+      "srcName": "Machinery 069 [10x10].png",
+      "dstName": "machinery--069--2x2.png",
+      "id": 69,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [69]
+    },
+    {
+      "srcName": "Machinery 070 [8x11].png",
+      "dstName": "machinery--070--1.6x2.2.png",
+      "id": 70,
+      "gridDim": [1.6, 2.2],
+      "is": [],
+      "has": [],
+      "ids": [70]
+    },
+    {
+      "srcName": "Machinery 071 [10x10].png",
+      "dstName": "machinery--071--2x2.png",
+      "id": 71,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [71]
+    },
+    {
+      "srcName": "Machinery 072 [8x8].png",
+      "dstName": "machinery--072--1.6x1.6.png",
+      "id": 72,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [72]
+    },
+    {
+      "srcName": "Machinery 073 [8x8].png",
+      "dstName": "machinery--073--1.6x1.6.png",
+      "id": 73,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [73]
+    },
+    {
+      "srcName": "Machinery 074 [9x9].png",
+      "dstName": "machinery--074--1.8x1.8.png",
+      "id": 74,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [74]
+    },
+    {
+      "srcName": "Machinery 075 [8x8].png",
+      "dstName": "machinery--075--1.6x1.6.png",
+      "id": 75,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [75]
+    },
+    {
+      "srcName": "Machinery 076 [8x9].png",
+      "dstName": "machinery--076--1.6x1.8.png",
+      "id": 76,
+      "gridDim": [1.6, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [76]
+    },
+    {
+      "srcName": "Machinery 077 [8x9].png",
+      "dstName": "machinery--077--1.6x1.8.png",
+      "id": 77,
+      "gridDim": [1.6, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [77]
+    },
+    {
+      "srcName": "Machinery 078 [8x11].png",
+      "dstName": "machinery--078--1.6x2.2.png",
+      "id": 78,
+      "gridDim": [1.6, 2.2],
+      "is": [],
+      "has": [],
+      "ids": [78]
+    },
+    {
+      "srcName": "Machinery 079 [7x11].png",
+      "dstName": "machinery--079--1.4x2.2.png",
+      "id": 79,
+      "gridDim": [1.4, 2.2],
+      "is": [],
+      "has": [],
+      "ids": [79]
+    },
+    {
+      "srcName": "Machinery 080 [9x9].png",
+      "dstName": "machinery--080--1.8x1.8.png",
+      "id": 80,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [80]
+    },
+    {
+      "srcName": "Machinery 081 [9x9].png",
+      "dstName": "machinery--081--1.8x1.8.png",
+      "id": 81,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [81]
+    },
+    {
+      "srcName": "Machinery 082 [10x10].png",
+      "dstName": "machinery--082--2x2.png",
+      "id": 82,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [82]
+    },
+    {
+      "srcName": "Machinery 083 [9x9].png",
+      "dstName": "machinery--083--1.8x1.8.png",
+      "id": 83,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [83]
+    },
+    {
+      "srcName": "Machinery 084 [9x10].png",
+      "dstName": "machinery--084--1.8x2.png",
+      "id": 84,
+      "gridDim": [1.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [84]
+    },
+    {
+      "srcName": "Machinery 085 [8x8].png",
+      "dstName": "machinery--085--1.6x1.6.png",
+      "id": 85,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [85]
+    },
+    {
+      "srcName": "Machinery 086 [8x8].png",
+      "dstName": "machinery--086--1.6x1.6.png",
+      "id": 86,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [86]
+    },
+    {
+      "srcName": "Machinery 087 [10x13].png",
+      "dstName": "machinery--087--2x2.6.png",
+      "id": 87,
+      "gridDim": [2, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [87]
+    },
+    {
+      "srcName": "Machinery 088 [10x10].png",
+      "dstName": "machinery--088--2x2.png",
+      "id": 88,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [88]
+    },
+    {
+      "srcName": "Machinery 089 [10x15].png",
+      "dstName": "machinery--089--2x3.png",
+      "id": 89,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [89]
+    },
+    {
+      "srcName": "Machinery 090 [10x10].png",
+      "dstName": "machinery--090--2x2.png",
+      "id": 90,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [90]
+    },
+    {
+      "srcName": "Machinery 091 [8x9].png",
+      "dstName": "machinery--091--1.6x1.8.png",
+      "id": 91,
+      "gridDim": [1.6, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [91]
+    },
+    {
+      "srcName": "Machinery 092 [10x10].png",
+      "dstName": "machinery--092--2x2.png",
+      "id": 92,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [92]
+    },
+    {
+      "srcName": "Machinery 093 [10x10].png",
+      "dstName": "machinery--093--2x2.png",
+      "id": 93,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [93]
+    },
+    {
+      "srcName": "Machinery 094 [13x13].png",
+      "dstName": "machinery--094--2.6x2.6.png",
+      "id": 94,
+      "gridDim": [2.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [94]
+    },
+    {
+      "srcName": "Machinery 095 [9x9].png",
+      "dstName": "machinery--095--1.8x1.8.png",
+      "id": 95,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [95]
+    },
+    {
+      "srcName": "Machinery 096 [8x8].png",
+      "dstName": "machinery--096--1.6x1.6.png",
+      "id": 96,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [96]
+    },
+    {
+      "srcName": "Machinery 097 [8x8].png",
+      "dstName": "machinery--097--1.6x1.6.png",
+      "id": 97,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [97]
+    },
+    {
+      "srcName": "Machinery 098 [8x8].png",
+      "dstName": "machinery--098--1.6x1.6.png",
+      "id": 98,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [98]
+    },
+    {
+      "srcName": "Machinery 099 [9x10].png",
+      "dstName": "machinery--099--1.8x2.png",
+      "id": 99,
+      "gridDim": [1.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [99]
+    },
+    {
+      "srcName": "Machinery 100 [8x9].png",
+      "dstName": "machinery--100--1.6x1.8.png",
+      "id": 100,
+      "gridDim": [1.6, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [100]
+    },
+    {
+      "srcName": "Machinery 101 [9x9].png",
+      "dstName": "machinery--101--1.8x1.8.png",
+      "id": 101,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [101]
+    },
+    {
+      "srcName": "Machinery 102 [9x9].png",
+      "dstName": "machinery--102--1.8x1.8.png",
+      "id": 102,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [102]
+    },
+    {
+      "srcName": "Machinery 103 [10x10].png",
+      "dstName": "machinery--103--2x2.png",
+      "id": 103,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [103]
+    },
+    {
+      "srcName": "Machinery 104 [10x10].png",
+      "dstName": "machinery--104--2x2.png",
+      "id": 104,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [104]
+    },
+    {
+      "srcName": "Machinery 105 [10x10].png",
+      "dstName": "machinery--105--2x2.png",
+      "id": 105,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [105]
+    },
+    {
+      "srcName": "Machinery 106 [9x9].png",
+      "dstName": "machinery--106--1.8x1.8.png",
+      "id": 106,
+      "gridDim": [1.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [106]
+    },
+    {
+      "srcName": "Machinery 107 [9x12].png",
+      "dstName": "machinery--107--1.8x2.4.png",
+      "id": 107,
+      "gridDim": [1.8, 2.4],
+      "is": [],
+      "has": [],
+      "ids": [107]
+    },
+    {
+      "srcName": "Machinery 108 [10x13].png",
+      "dstName": "machinery--108--2x2.6.png",
+      "id": 108,
+      "gridDim": [2, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [108]
+    },
+    {
+      "srcName": "Machinery 109 [9x16].png",
+      "dstName": "machinery--109--1.8x3.2.png",
+      "id": 109,
+      "gridDim": [1.8, 3.2],
+      "is": [],
+      "has": [],
+      "ids": [109]
+    },
+    {
+      "srcName": "Machinery 110 [9x14].png",
+      "dstName": "machinery--110--1.8x2.8.png",
+      "id": 110,
+      "gridDim": [1.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [110]
+    },
+    {
+      "srcName": "Machinery 111 [9x10].png",
+      "dstName": "machinery--111--1.8x2.png",
+      "id": 111,
+      "gridDim": [1.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [111]
+    },
+    {
+      "srcName": "Machinery 112 [8x12].png",
+      "dstName": "machinery--112--1.6x2.4.png",
+      "id": 112,
+      "gridDim": [1.6, 2.4],
+      "is": [],
+      "has": [],
+      "ids": [112]
+    },
+    {
+      "srcName": "Machinery 113 [8x13].png",
+      "dstName": "machinery--113--1.6x2.6.png",
+      "id": 113,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [113]
+    },
+    {
+      "srcName": "Machinery 114 [8x13].png",
+      "dstName": "machinery--114--1.6x2.6.png",
+      "id": 114,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [114]
+    },
+    {
+      "srcName": "Machinery 115 [8x14].png",
+      "dstName": "machinery--115--1.6x2.8.png",
+      "id": 115,
+      "gridDim": [1.6, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [115]
+    },
+    {
+      "srcName": "Machinery 116 [9x13].png",
+      "dstName": "machinery--116--1.8x2.6.png",
+      "id": 116,
+      "gridDim": [1.8, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [116]
+    },
+    {
+      "srcName": "Machinery 117 [8x13].png",
+      "dstName": "machinery--117--1.6x2.6.png",
+      "id": 117,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [117]
+    },
+    {
+      "srcName": "Machinery 118 [8x13].png",
+      "dstName": "machinery--118--1.6x2.6.png",
+      "id": 118,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [118]
+    },
+    {
+      "srcName": "Machinery 119 [8x13].png",
+      "dstName": "machinery--119--1.6x2.6.png",
+      "id": 119,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [119]
+    },
+    {
+      "srcName": "Machinery 120 [9x13].png",
+      "dstName": "machinery--120--1.8x2.6.png",
+      "id": 120,
+      "gridDim": [1.8, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [120]
+    },
+    {
+      "srcName": "Machinery 121 [8x13].png",
+      "dstName": "machinery--121--1.6x2.6.png",
+      "id": 121,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [121]
+    },
+    {
+      "srcName": "Machinery 122 [8x14].png",
+      "dstName": "machinery--122--1.6x2.8.png",
+      "id": 122,
+      "gridDim": [1.6, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [122]
+    },
+    {
+      "srcName": "Machinery 123 [8x13].png",
+      "dstName": "machinery--123--1.6x2.6.png",
+      "id": 123,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [123]
+    },
+    {
+      "srcName": "Machinery 124 [7x14].png",
+      "dstName": "machinery--124--1.4x2.8.png",
+      "id": 124,
+      "gridDim": [1.4, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [124]
+    },
+    {
+      "srcName": "Machinery 125 [9x14].png",
+      "dstName": "machinery--125--1.8x2.8.png",
+      "id": 125,
+      "gridDim": [1.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [125]
+    },
+    {
+      "srcName": "Machinery 126 [8x13].png",
+      "dstName": "machinery--126--1.6x2.6.png",
+      "id": 126,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [126]
+    },
+    {
+      "srcName": "Machinery 127 [10x14].png",
+      "dstName": "machinery--127--2x2.8.png",
+      "id": 127,
+      "gridDim": [2, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [127]
+    },
+    {
+      "srcName": "Machinery 128 [8x14].png",
+      "dstName": "machinery--128--1.6x2.8.png",
+      "id": 128,
+      "gridDim": [1.6, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [128]
+    },
+    {
+      "srcName": "Machinery 129 [11x13].png",
+      "dstName": "machinery--129--2.2x2.6.png",
+      "id": 129,
+      "gridDim": [2.2, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [129]
+    },
+    {
+      "srcName": "Machinery 130 [8x13].png",
+      "dstName": "machinery--130--1.6x2.6.png",
+      "id": 130,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [130]
+    },
+    {
+      "srcName": "Machinery 131 [9x14].png",
+      "dstName": "machinery--131--1.8x2.8.png",
+      "id": 131,
+      "gridDim": [1.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [131]
+    },
+    {
+      "srcName": "Machinery 132 [8x13].png",
+      "dstName": "machinery--132--1.6x2.6.png",
+      "id": 132,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [132]
+    },
+    {
+      "srcName": "Machinery 133 [9x14].png",
+      "dstName": "machinery--133--1.8x2.8.png",
+      "id": 133,
+      "gridDim": [1.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [133]
+    },
+    {
+      "srcName": "Machinery 134 [10x15].png",
+      "dstName": "machinery--134--2x3.png",
+      "id": 134,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [134]
+    },
+    {
+      "srcName": "Machinery 135 [9x18].png",
+      "dstName": "machinery--135--1.8x3.6.png",
+      "id": 135,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [135]
+    },
+    {
+      "srcName": "Machinery 136 [8x19].png",
+      "dstName": "machinery--136--1.6x3.8.png",
+      "id": 136,
+      "gridDim": [1.6, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [136]
+    },
+    {
+      "srcName": "Machinery 137 [10x19].png",
+      "dstName": "machinery--137--2x3.8.png",
+      "id": 137,
+      "gridDim": [2, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [137]
+    },
+    {
+      "srcName": "Machinery 138 [9x18].png",
+      "dstName": "machinery--138--1.8x3.6.png",
+      "id": 138,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [138]
+    },
+    {
+      "srcName": "Machinery 139 [10x20].png",
+      "dstName": "machinery--139--2x4.png",
+      "id": 139,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [139]
+    },
+    {
+      "srcName": "Machinery 140 [9x14].png",
+      "dstName": "machinery--140--1.8x2.8.png",
+      "id": 140,
+      "gridDim": [1.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [140]
+    },
+    {
+      "srcName": "Machinery 141 [9x14].png",
+      "dstName": "machinery--141--1.8x2.8.png",
+      "id": 141,
+      "gridDim": [1.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [141]
+    },
+    {
+      "srcName": "Machinery 142 [9x14].png",
+      "dstName": "machinery--142--1.8x2.8.png",
+      "id": 142,
+      "gridDim": [1.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [142]
+    },
+    {
+      "srcName": "Machinery 143 [10x15].png",
+      "dstName": "machinery--143--2x3.png",
+      "id": 143,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [143]
+    },
+    {
+      "srcName": "Machinery 144 [9x15].png",
+      "dstName": "machinery--144--1.8x3.png",
+      "id": 144,
+      "gridDim": [1.8, 3],
+      "is": [],
+      "has": [],
+      "ids": [144]
+    },
+    {
+      "srcName": "Machinery 145 [10x14].png",
+      "dstName": "machinery--145--2x2.8.png",
+      "id": 145,
+      "gridDim": [2, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [145]
+    },
+    {
+      "srcName": "Machinery 146 [10x15].png",
+      "dstName": "machinery--146--2x3.png",
+      "id": 146,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [146]
+    },
+    {
+      "srcName": "Machinery 147 [10x19].png",
+      "dstName": "machinery--147--2x3.8.png",
+      "id": 147,
+      "gridDim": [2, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [147]
+    },
+    {
+      "srcName": "Machinery 148 [9x19].png",
+      "dstName": "machinery--148--1.8x3.8.png",
+      "id": 148,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [148]
+    },
+    {
+      "srcName": "Machinery 149 [9x19].png",
+      "dstName": "machinery--149--1.8x3.8.png",
+      "id": 149,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [149]
+    },
+    {
+      "srcName": "Machinery 150 [10x20].png",
+      "dstName": "machinery--150--2x4.png",
+      "id": 150,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [150]
+    },
+    {
+      "srcName": "Machinery 151 [9x19].png",
+      "dstName": "machinery--151--1.8x3.8.png",
+      "id": 151,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [151]
+    },
+    {
+      "srcName": "Machinery 152 [9x19].png",
+      "dstName": "machinery--152--1.8x3.8.png",
+      "id": 152,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [152]
+    },
+    {
+      "srcName": "Machinery 153 [8x19].png",
+      "dstName": "machinery--153--1.6x3.8.png",
+      "id": 153,
+      "gridDim": [1.6, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [153]
+    },
+    {
+      "srcName": "Machinery 154 [8x18].png",
+      "dstName": "machinery--154--1.6x3.6.png",
+      "id": 154,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [154]
+    },
+    {
+      "srcName": "Machinery 155 [9x18].png",
+      "dstName": "machinery--155--1.8x3.6.png",
+      "id": 155,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [155]
+    },
+    {
+      "srcName": "Machinery 156 [9x18].png",
+      "dstName": "machinery--156--1.8x3.6.png",
+      "id": 156,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [156]
+    },
+    {
+      "srcName": "Machinery 157 [8x19].png",
+      "dstName": "machinery--157--1.6x3.8.png",
+      "id": 157,
+      "gridDim": [1.6, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [157]
+    },
+    {
+      "srcName": "Machinery 158 [9x18].png",
+      "dstName": "machinery--158--1.8x3.6.png",
+      "id": 158,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [158]
+    },
+    {
+      "srcName": "Machinery 159 [8x18].png",
+      "dstName": "machinery--159--1.6x3.6.png",
+      "id": 159,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [159]
+    },
+    {
+      "srcName": "Machinery 160 [8x18].png",
+      "dstName": "machinery--160--1.6x3.6.png",
+      "id": 160,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [160]
+    },
+    {
+      "srcName": "Machinery 161 [9x19].png",
+      "dstName": "machinery--161--1.8x3.8.png",
+      "id": 161,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [161]
+    },
+    {
+      "srcName": "Machinery 162 [9x20].png",
+      "dstName": "machinery--162--1.8x4.png",
+      "id": 162,
+      "gridDim": [1.8, 4],
+      "is": [],
+      "has": [],
+      "ids": [162]
+    },
+    {
+      "srcName": "Machinery 163 [10x20].png",
+      "dstName": "machinery--163--2x4.png",
+      "id": 163,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [163]
+    },
+    {
+      "srcName": "Machinery 164 [10x21].png",
+      "dstName": "machinery--164--2x4.2.png",
+      "id": 164,
+      "gridDim": [2, 4.2],
+      "is": [],
+      "has": [],
+      "ids": [164]
+    },
+    {
+      "srcName": "Machinery 165 [10x21].png",
+      "dstName": "machinery--165--2x4.2.png",
+      "id": 165,
+      "gridDim": [2, 4.2],
+      "is": [],
+      "has": [],
+      "ids": [165]
+    },
+    {
+      "srcName": "Machinery 166 [10x19].png",
+      "dstName": "machinery--166--2x3.8.png",
+      "id": 166,
+      "gridDim": [2, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [166]
+    },
+    {
+      "srcName": "Machinery 167 [8x19].png",
+      "dstName": "machinery--167--1.6x3.8.png",
+      "id": 167,
+      "gridDim": [1.6, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [167]
+    },
+    {
+      "srcName": "Machinery 168 [9x100].png",
+      "dstName": "machinery--168--1.8x20.png",
+      "id": 168,
+      "gridDim": [1.8, 20],
+      "is": [],
+      "has": [],
+      "ids": [168]
+    },
+    {
+      "srcName": "Machinery 168 [9x18].png",
+      "dstName": "machinery--168--1.8x3.6.png",
+      "id": 168,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [168]
+    },
+    {
+      "srcName": "Machinery 169 [9x19].png",
+      "dstName": "machinery--169--1.8x3.8.png",
+      "id": 169,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [169]
+    },
+    {
+      "srcName": "Machinery 170 [8x18].png",
+      "dstName": "machinery--170--1.6x3.6.png",
+      "id": 170,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [170]
+    },
+    {
+      "srcName": "Machinery 171 [10x20].png",
+      "dstName": "machinery--171--2x4.png",
+      "id": 171,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [171]
+    },
+    {
+      "srcName": "Machinery 172 [10x20].png",
+      "dstName": "machinery--172--2x4.png",
+      "id": 172,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [172]
+    },
+    {
+      "srcName": "Machinery 173 [9x18].png",
+      "dstName": "machinery--173--1.8x3.6.png",
+      "id": 173,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [173]
+    },
+    {
+      "srcName": "Machinery 174 [8x19].png",
+      "dstName": "machinery--174--1.6x3.8.png",
+      "id": 174,
+      "gridDim": [1.6, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [174]
+    },
+    {
+      "srcName": "Machinery 175 [8x18].png",
+      "dstName": "machinery--175--1.6x3.6.png",
+      "id": 175,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [175]
+    },
+    {
+      "srcName": "Machinery 176 [8x18].png",
+      "dstName": "machinery--176--1.6x3.6.png",
+      "id": 176,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [176]
+    },
+    {
+      "srcName": "Machinery 177 [9x18].png",
+      "dstName": "machinery--177--1.8x3.6.png",
+      "id": 177,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [177]
+    },
+    {
+      "srcName": "Machinery 178 [8x17].png",
+      "dstName": "machinery--178--1.6x3.4.png",
+      "id": 178,
+      "gridDim": [1.6, 3.4],
+      "is": [],
+      "has": [],
+      "ids": [178]
+    },
+    {
+      "srcName": "Machinery 179 [9x18].png",
+      "dstName": "machinery--179--1.8x3.6.png",
+      "id": 179,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [179]
+    },
+    {
+      "srcName": "Machinery 180 [8x18].png",
+      "dstName": "machinery--180--1.6x3.6.png",
+      "id": 180,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [180]
+    },
+    {
+      "srcName": "Machinery 181 [9x19].png",
+      "dstName": "machinery--181--1.8x3.8.png",
+      "id": 181,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [181]
+    },
+    {
+      "srcName": "Machinery 182 [10x20].png",
+      "dstName": "machinery--182--2x4.png",
+      "id": 182,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [182]
+    },
+    {
+      "srcName": "Machinery 183 [10x18].png",
+      "dstName": "machinery--183--2x3.6.png",
+      "id": 183,
+      "gridDim": [2, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [183]
+    },
+    {
+      "srcName": "Machinery 184 [11x18].png",
+      "dstName": "machinery--184--2.2x3.6.png",
+      "id": 184,
+      "gridDim": [2.2, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [184]
+    },
+    {
+      "srcName": "Machinery 185 [11x18].png",
+      "dstName": "machinery--185--2.2x3.6.png",
+      "id": 185,
+      "gridDim": [2.2, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [185]
+    },
+    {
+      "srcName": "Machinery 186 [10x18].png",
+      "dstName": "machinery--186--2x3.6.png",
+      "id": 186,
+      "gridDim": [2, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [186]
+    },
+    {
+      "srcName": "Machinery 187 [9x19].png",
+      "dstName": "machinery--187--1.8x3.8.png",
+      "id": 187,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [187]
+    },
+    {
+      "srcName": "Machinery 188 [8x19].png",
+      "dstName": "machinery--188--1.6x3.8.png",
+      "id": 188,
+      "gridDim": [1.6, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [188]
+    },
+    {
+      "srcName": "Machinery 189 [9x18].png",
+      "dstName": "machinery--189--1.8x3.6.png",
+      "id": 189,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [189]
+    },
+    {
+      "srcName": "Machinery 190 [9x21].png",
+      "dstName": "machinery--190--1.8x4.2.png",
+      "id": 190,
+      "gridDim": [1.8, 4.2],
+      "is": [],
+      "has": [],
+      "ids": [190]
+    },
+    {
+      "srcName": "Machinery 191 [9x18].png",
+      "dstName": "machinery--191--1.8x3.6.png",
+      "id": 191,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [191]
+    },
+    {
+      "srcName": "Machinery 192 [8x18].png",
+      "dstName": "machinery--192--1.6x3.6.png",
+      "id": 192,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [192]
+    },
+    {
+      "srcName": "Machinery 193 [9x18].png",
+      "dstName": "machinery--193--1.8x3.6.png",
+      "id": 193,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [193]
+    },
+    {
+      "srcName": "Machinery 194 [9x19].png",
+      "dstName": "machinery--194--1.8x3.8.png",
+      "id": 194,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [194]
+    },
+    {
+      "srcName": "Machinery 195 [9x19].png",
+      "dstName": "machinery--195--1.8x3.8.png",
+      "id": 195,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [195]
+    },
+    {
+      "srcName": "Machinery 196 [8x22].png",
+      "dstName": "machinery--196--1.6x4.4.png",
+      "id": 196,
+      "gridDim": [1.6, 4.4],
+      "is": [],
+      "has": [],
+      "ids": [196]
+    },
+    {
+      "srcName": "Machinery 197 [10x25].png",
+      "dstName": "machinery--197--2x5.png",
+      "id": 197,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [197]
+    },
+    {
+      "srcName": "Machinery 198 [9x24].png",
+      "dstName": "machinery--198--1.8x4.8.png",
+      "id": 198,
+      "gridDim": [1.8, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [198]
+    },
+    {
+      "srcName": "Machinery 199 [9x24].png",
+      "dstName": "machinery--199--1.8x4.8.png",
+      "id": 199,
+      "gridDim": [1.8, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [199]
+    },
+    {
+      "srcName": "Machinery 200 [9x24].png",
+      "dstName": "machinery--200--1.8x4.8.png",
+      "id": 200,
+      "gridDim": [1.8, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [200]
+    },
+    {
+      "srcName": "Machinery 201 [9x24].png",
+      "dstName": "machinery--201--1.8x4.8.png",
+      "id": 201,
+      "gridDim": [1.8, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [201]
+    },
+    {
+      "srcName": "Machinery 202 [10x25].png",
+      "dstName": "machinery--202--2x5.png",
+      "id": 202,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [202]
+    },
+    {
+      "srcName": "Machinery 203 [8x23].png",
+      "dstName": "machinery--203--1.6x4.6.png",
+      "id": 203,
+      "gridDim": [1.6, 4.6],
+      "is": [],
+      "has": [],
+      "ids": [203]
+    },
+    {
+      "srcName": "Machinery 204 [12x25].png",
+      "dstName": "machinery--204--2.4x5.png",
+      "id": 204,
+      "gridDim": [2.4, 5],
+      "is": [],
+      "has": [],
+      "ids": [204]
+    },
+    {
+      "srcName": "Machinery 205 [9x23].png",
+      "dstName": "machinery--205--1.8x4.6.png",
+      "id": 205,
+      "gridDim": [1.8, 4.6],
+      "is": [],
+      "has": [],
+      "ids": [205]
+    },
+    {
+      "srcName": "Machinery 206 [10x24].png",
+      "dstName": "machinery--206--2x4.8.png",
+      "id": 206,
+      "gridDim": [2, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [206]
+    },
+    {
+      "srcName": "Machinery 207 [9x23].png",
+      "dstName": "machinery--207--1.8x4.6.png",
+      "id": 207,
+      "gridDim": [1.8, 4.6],
+      "is": [],
+      "has": [],
+      "ids": [207]
+    },
+    {
+      "srcName": "Machinery 208 [8x22].png",
+      "dstName": "machinery--208--1.6x4.4.png",
+      "id": 208,
+      "gridDim": [1.6, 4.4],
+      "is": [],
+      "has": [],
+      "ids": [208]
+    },
+    {
+      "srcName": "Machinery 209 [9x24].png",
+      "dstName": "machinery--209--1.8x4.8.png",
+      "id": 209,
+      "gridDim": [1.8, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [209]
+    },
+    {
+      "srcName": "Machinery 210 [9x28].png",
+      "dstName": "machinery--210--1.8x5.6.png",
+      "id": 210,
+      "gridDim": [1.8, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [210]
+    },
+    {
+      "srcName": "Machinery 211 [12x30].png",
+      "dstName": "machinery--211--2.4x6.png",
+      "id": 211,
+      "gridDim": [2.4, 6],
+      "is": [],
+      "has": [],
+      "ids": [211]
+    },
+    {
+      "srcName": "Machinery 212 [8x30].png",
+      "dstName": "machinery--212--1.6x6.png",
+      "id": 212,
+      "gridDim": [1.6, 6],
+      "is": [],
+      "has": [],
+      "ids": [212]
+    },
+    {
+      "srcName": "Machinery 213 [12x30].png",
+      "dstName": "machinery--213--2.4x6.png",
+      "id": 213,
+      "gridDim": [2.4, 6],
+      "is": [],
+      "has": [],
+      "ids": [213]
+    },
+    {
+      "srcName": "Machinery 214 [10x29].png",
+      "dstName": "machinery--214--2x5.8.png",
+      "id": 214,
+      "gridDim": [2, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [214]
+    },
+    {
+      "srcName": "Machinery 215 [8x28].png",
+      "dstName": "machinery--215--1.6x5.6.png",
+      "id": 215,
+      "gridDim": [1.6, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [215]
+    },
+    {
+      "srcName": "Machinery 216 [9x30].png",
+      "dstName": "machinery--216--1.8x6.png",
+      "id": 216,
+      "gridDim": [1.8, 6],
+      "is": [],
+      "has": [],
+      "ids": [216]
+    },
+    {
+      "srcName": "Machinery 217 [13x13].png",
+      "dstName": "machinery--217--2.6x2.6.png",
+      "id": 217,
+      "gridDim": [2.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [217]
+    },
+    {
+      "srcName": "Machinery 218 [15x15].png",
+      "dstName": "machinery--218--3x3.png",
+      "id": 218,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [218]
+    },
+    {
+      "srcName": "Machinery 219 [17x17].png",
+      "dstName": "machinery--219--3.4x3.4.png",
+      "id": 219,
+      "gridDim": [3.4, 3.4],
+      "is": [],
+      "has": [],
+      "ids": [219]
+    },
+    {
+      "srcName": "Machinery 220 [14x14].png",
+      "dstName": "machinery--220--2.8x2.8.png",
+      "id": 220,
+      "gridDim": [2.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [220]
+    },
+    {
+      "srcName": "Machinery 221 [15x15].png",
+      "dstName": "machinery--221--3x3.png",
+      "id": 221,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [221]
+    },
+    {
+      "srcName": "Machinery 222 [15x15].png",
+      "dstName": "machinery--222--3x3.png",
+      "id": 222,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [222]
+    },
+    {
+      "srcName": "Machinery 223 [13x13].png",
+      "dstName": "machinery--223--2.6x2.6.png",
+      "id": 223,
+      "gridDim": [2.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [223]
+    },
+    {
+      "srcName": "Machinery 224 [14x14].png",
+      "dstName": "machinery--224--2.8x2.8.png",
+      "id": 224,
+      "gridDim": [2.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [224]
+    },
+    {
+      "srcName": "Machinery 225 [14x15].png",
+      "dstName": "machinery--225--2.8x3.png",
+      "id": 225,
+      "gridDim": [2.8, 3],
+      "is": [],
+      "has": [],
+      "ids": [225]
+    },
+    {
+      "srcName": "Machinery 226 [13x14].png",
+      "dstName": "machinery--226--2.6x2.8.png",
+      "id": 226,
+      "gridDim": [2.6, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [226]
+    },
+    {
+      "srcName": "Machinery 227 [14x14].png",
+      "dstName": "machinery--227--2.8x2.8.png",
+      "id": 227,
+      "gridDim": [2.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [227]
+    },
+    {
+      "srcName": "Machinery 228 [14x15].png",
+      "dstName": "machinery--228--2.8x3.png",
+      "id": 228,
+      "gridDim": [2.8, 3],
+      "is": [],
+      "has": [],
+      "ids": [228]
+    },
+    {
+      "srcName": "Machinery 229 [14x14].png",
+      "dstName": "machinery--229--2.8x2.8.png",
+      "id": 229,
+      "gridDim": [2.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [229]
+    },
+    {
+      "srcName": "Machinery 230 [13x14].png",
+      "dstName": "machinery--230--2.6x2.8.png",
+      "id": 230,
+      "gridDim": [2.6, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [230]
+    },
+    {
+      "srcName": "Machinery 231 [17x17].png",
+      "dstName": "machinery--231--3.4x3.4.png",
+      "id": 231,
+      "gridDim": [3.4, 3.4],
+      "is": [],
+      "has": [],
+      "ids": [231]
+    },
+    {
+      "srcName": "Machinery 232 [12x14].png",
+      "dstName": "machinery--232--2.4x2.8.png",
+      "id": 232,
+      "gridDim": [2.4, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [232]
+    },
+    {
+      "srcName": "Machinery 233 [12x14].png",
+      "dstName": "machinery--233--2.4x2.8.png",
+      "id": 233,
+      "gridDim": [2.4, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [233]
+    },
+    {
+      "srcName": "Machinery 234 [15x16].png",
+      "dstName": "machinery--234--3x3.2.png",
+      "id": 234,
+      "gridDim": [3, 3.2],
+      "is": [],
+      "has": [],
+      "ids": [234]
+    },
+    {
+      "srcName": "Machinery 235 [15x15].png",
+      "dstName": "machinery--235--3x3.png",
+      "id": 235,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [235]
+    },
+    {
+      "srcName": "Machinery 236 [13x18].png",
+      "dstName": "machinery--236--2.6x3.6.png",
+      "id": 236,
+      "gridDim": [2.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [236]
+    },
+    {
+      "srcName": "Machinery 237 [14x14].png",
+      "dstName": "machinery--237--2.8x2.8.png",
+      "id": 237,
+      "gridDim": [2.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [237]
+    },
+    {
+      "srcName": "Machinery 238 [13x17].png",
+      "dstName": "machinery--238--2.6x3.4.png",
+      "id": 238,
+      "gridDim": [2.6, 3.4],
+      "is": [],
+      "has": [],
+      "ids": [238]
+    },
+    {
+      "srcName": "Machinery 239 [15x19].png",
+      "dstName": "machinery--239--3x3.8.png",
+      "id": 239,
+      "gridDim": [3, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [239]
+    },
+    {
+      "srcName": "Machinery 240 [14x19].png",
+      "dstName": "machinery--240--2.8x3.8.png",
+      "id": 240,
+      "gridDim": [2.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [240]
+    },
+    {
+      "srcName": "Machinery 241 [9x17].png",
+      "dstName": "machinery--241--1.8x3.4.png",
+      "id": 241,
+      "gridDim": [1.8, 3.4],
+      "is": [],
+      "has": [],
+      "ids": [241]
+    },
+    {
+      "srcName": "Machinery 242 [13x18].png",
+      "dstName": "machinery--242--2.6x3.6.png",
+      "id": 242,
+      "gridDim": [2.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [242]
+    },
+    {
+      "srcName": "Machinery 243 [13x18].png",
+      "dstName": "machinery--243--2.6x3.6.png",
+      "id": 243,
+      "gridDim": [2.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [243]
+    },
+    {
+      "srcName": "Machinery 244 [13x20].png",
+      "dstName": "machinery--244--2.6x4.png",
+      "id": 244,
+      "gridDim": [2.6, 4],
+      "is": [],
+      "has": [],
+      "ids": [244]
+    },
+    {
+      "srcName": "Machinery 245 [14x19].png",
+      "dstName": "machinery--245--2.8x3.8.png",
+      "id": 245,
+      "gridDim": [2.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [245]
+    },
+    {
+      "srcName": "Machinery 246 [13x18].png",
+      "dstName": "machinery--246--2.6x3.6.png",
+      "id": 246,
+      "gridDim": [2.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [246]
+    },
+    {
+      "srcName": "Machinery 247 [14x19].png",
+      "dstName": "machinery--247--2.8x3.8.png",
+      "id": 247,
+      "gridDim": [2.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [247]
+    },
+    {
+      "srcName": "Machinery 248 [15x23].png",
+      "dstName": "machinery--248--3x4.6.png",
+      "id": 248,
+      "gridDim": [3, 4.6],
+      "is": [],
+      "has": [],
+      "ids": [248]
+    },
+    {
+      "srcName": "Machinery 249 [13x18].png",
+      "dstName": "machinery--249--2.6x3.6.png",
+      "id": 249,
+      "gridDim": [2.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [249]
+    },
+    {
+      "srcName": "Machinery 250 [15x20].png",
+      "dstName": "machinery--250--3x4.png",
+      "id": 250,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [250]
+    },
+    {
+      "srcName": "Machinery 251 [9x29].png",
+      "dstName": "machinery--251--1.8x5.8.png",
+      "id": 251,
+      "gridDim": [1.8, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [251]
+    },
+    {
+      "srcName": "Machinery 252 [8x29].png",
+      "dstName": "machinery--252--1.6x5.8.png",
+      "id": 252,
+      "gridDim": [1.6, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [252]
+    },
+    {
+      "srcName": "Machinery 253 [11x34].png",
+      "dstName": "machinery--253--2.2x6.8.png",
+      "id": 253,
+      "gridDim": [2.2, 6.8],
+      "is": [],
+      "has": [],
+      "ids": [253]
+    },
+    {
+      "srcName": "Machinery 254 [10x33].png",
+      "dstName": "machinery--254--2x6.6.png",
+      "id": 254,
+      "gridDim": [2, 6.6],
+      "is": [],
+      "has": [],
+      "ids": [254]
+    },
+    {
+      "srcName": "Machinery 255 [10x34].png",
+      "dstName": "machinery--255--2x6.8.png",
+      "id": 255,
+      "gridDim": [2, 6.8],
+      "is": [],
+      "has": [],
+      "ids": [255]
+    },
+    {
+      "srcName": "Machinery 256 [10x40].png",
+      "dstName": "machinery--256--2x8.png",
+      "id": 256,
+      "gridDim": [2, 8],
+      "is": [],
+      "has": [],
+      "ids": [256]
+    },
+    {
+      "srcName": "Machinery 257 [10x40].png",
+      "dstName": "machinery--257--2x8.png",
+      "id": 257,
+      "gridDim": [2, 8],
+      "is": [],
+      "has": [],
+      "ids": [257]
+    },
+    {
+      "srcName": "Machinery 258 [9x29].png",
+      "dstName": "machinery--258--1.8x5.8.png",
+      "id": 258,
+      "gridDim": [1.8, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [258]
+    },
+    {
+      "srcName": "Machinery 259 [9x25].png",
+      "dstName": "machinery--259--1.8x5.png",
+      "id": 259,
+      "gridDim": [1.8, 5],
+      "is": [],
+      "has": [],
+      "ids": [259]
+    },
+    {
+      "srcName": "Machinery 260 [15x22].png",
+      "dstName": "machinery--260--3x4.4.png",
+      "id": 260,
+      "gridDim": [3, 4.4],
+      "is": [],
+      "has": [],
+      "ids": [260]
+    },
+    {
+      "srcName": "Machinery 261 [15x19].png",
+      "dstName": "machinery--261--3x3.8.png",
+      "id": 261,
+      "gridDim": [3, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [261]
+    },
+    {
+      "srcName": "Machinery 262 [18x24].png",
+      "dstName": "machinery--262--3.6x4.8.png",
+      "id": 262,
+      "gridDim": [3.6, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [262]
+    },
+    {
+      "srcName": "Machinery 263 [13x19].png",
+      "dstName": "machinery--263--2.6x3.8.png",
+      "id": 263,
+      "gridDim": [2.6, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [263]
+    },
+    {
+      "srcName": "Machinery 264 [13x21].png",
+      "dstName": "machinery--264--2.6x4.2.png",
+      "id": 264,
+      "gridDim": [2.6, 4.2],
+      "is": [],
+      "has": [],
+      "ids": [264]
+    },
+    {
+      "srcName": "Machinery 265 [15x25].png",
+      "dstName": "machinery--265--3x5.png",
+      "id": 265,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [265]
+    },
+    {
+      "srcName": "Machinery 266 [15x25].png",
+      "dstName": "machinery--266--3x5.png",
+      "id": 266,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [266]
+    },
+    {
+      "srcName": "Machinery 267 [17x21].png",
+      "dstName": "machinery--267--3.4x4.2.png",
+      "id": 267,
+      "gridDim": [3.4, 4.2],
+      "is": [],
+      "has": [],
+      "ids": [267]
+    },
+    {
+      "srcName": "Machinery 268 [14x19].png",
+      "dstName": "machinery--268--2.8x3.8.png",
+      "id": 268,
+      "gridDim": [2.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [268]
+    },
+    {
+      "srcName": "Machinery 269 [13x18].png",
+      "dstName": "machinery--269--2.6x3.6.png",
+      "id": 269,
+      "gridDim": [2.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [269]
+    },
+    {
+      "srcName": "Machinery 270 [14x18].png",
+      "dstName": "machinery--270--2.8x3.6.png",
+      "id": 270,
+      "gridDim": [2.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [270]
+    },
+    {
+      "srcName": "Machinery 271 [14x20].png",
+      "dstName": "machinery--271--2.8x4.png",
+      "id": 271,
+      "gridDim": [2.8, 4],
+      "is": [],
+      "has": [],
+      "ids": [271]
+    },
+    {
+      "srcName": "Machinery 272 [18x18].png",
+      "dstName": "machinery--272--3.6x3.6.png",
+      "id": 272,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [272]
+    },
+    {
+      "srcName": "Machinery 273 [20x20].png",
+      "dstName": "machinery--273--4x4.png",
+      "id": 273,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [273]
+    },
+    {
+      "srcName": "Machinery 274 [10x20].png",
+      "dstName": "machinery--274--2x4.png",
+      "id": 274,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [274]
+    },
+    {
+      "srcName": "Machinery 275 [18x29].png",
+      "dstName": "machinery--275--3.6x5.8.png",
+      "id": 275,
+      "gridDim": [3.6, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [275]
+    },
+    {
+      "srcName": "Machinery 276 [19x19].png",
+      "dstName": "machinery--276--3.8x3.8.png",
+      "id": 276,
+      "gridDim": [3.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [276]
+    },
+    {
+      "srcName": "Machinery 277 [18x18].png",
+      "dstName": "machinery--277--3.6x3.6.png",
+      "id": 277,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [277]
+    },
+    {
+      "srcName": "Machinery 278 [19x19].png",
+      "dstName": "machinery--278--3.8x3.8.png",
+      "id": 278,
+      "gridDim": [3.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [278]
+    },
+    {
+      "srcName": "Machinery 279 [18x18].png",
+      "dstName": "machinery--279--3.6x3.6.png",
+      "id": 279,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [279]
+    },
+    {
+      "srcName": "Machinery 280 [20x20].png",
+      "dstName": "machinery--280--4x4.png",
+      "id": 280,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [280]
+    },
+    {
+      "srcName": "Machinery 281 [18x18].png",
+      "dstName": "machinery--281--3.6x3.6.png",
+      "id": 281,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [281]
+    },
+    {
+      "srcName": "Machinery 282 [18x18].png",
+      "dstName": "machinery--282--3.6x3.6.png",
+      "id": 282,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [282]
+    },
+    {
+      "srcName": "Machinery 283 [18x18].png",
+      "dstName": "machinery--283--3.6x3.6.png",
+      "id": 283,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [283]
+    },
+    {
+      "srcName": "Machinery 284 [18x18].png",
+      "dstName": "machinery--284--3.6x3.6.png",
+      "id": 284,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [284]
+    },
+    {
+      "srcName": "Machinery 285 [19x19].png",
+      "dstName": "machinery--285--3.8x3.8.png",
+      "id": 285,
+      "gridDim": [3.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [285]
+    },
+    {
+      "srcName": "Machinery 286 [18x18].png",
+      "dstName": "machinery--286--3.6x3.6.png",
+      "id": 286,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [286]
+    },
+    {
+      "srcName": "Machinery 287 [21x22].png",
+      "dstName": "machinery--287--4.2x4.4.png",
+      "id": 287,
+      "gridDim": [4.2, 4.4],
+      "is": [],
+      "has": [],
+      "ids": [287]
+    },
+    {
+      "srcName": "Machinery 288 [19x20].png",
+      "dstName": "machinery--288--3.8x4.png",
+      "id": 288,
+      "gridDim": [3.8, 4],
+      "is": [],
+      "has": [],
+      "ids": [288]
+    },
+    {
+      "srcName": "Machinery 289 [18x19].png",
+      "dstName": "machinery--289--3.6x3.8.png",
+      "id": 289,
+      "gridDim": [3.6, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [289]
+    },
+    {
+      "srcName": "Machinery 290 [19x20].png",
+      "dstName": "machinery--290--3.8x4.png",
+      "id": 290,
+      "gridDim": [3.8, 4],
+      "is": [],
+      "has": [],
+      "ids": [290]
+    },
+    {
+      "srcName": "Machinery 291 [20x20].png",
+      "dstName": "machinery--291--4x4.png",
+      "id": 291,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [291]
+    },
+    {
+      "srcName": "Machinery 292 [19x20].png",
+      "dstName": "machinery--292--3.8x4.png",
+      "id": 292,
+      "gridDim": [3.8, 4],
+      "is": [],
+      "has": [],
+      "ids": [292]
+    },
+    {
+      "srcName": "Machinery 293 [20x20].png",
+      "dstName": "machinery--293--4x4.png",
+      "id": 293,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [293]
+    },
+    {
+      "srcName": "Machinery 294 [18x18].png",
+      "dstName": "machinery--294--3.6x3.6.png",
+      "id": 294,
+      "gridDim": [3.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [294]
+    },
+    {
+      "srcName": "Machinery 295 [20x20].png",
+      "dstName": "machinery--295--4x4.png",
+      "id": 295,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [295]
+    },
+    {
+      "srcName": "Machinery 296 [12x28].png",
+      "dstName": "machinery--296--2.4x5.6.png",
+      "id": 296,
+      "gridDim": [2.4, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [296]
+    },
+    {
+      "srcName": "Machinery 297 [14x29].png",
+      "dstName": "machinery--297--2.8x5.8.png",
+      "id": 297,
+      "gridDim": [2.8, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [297]
+    },
+    {
+      "srcName": "Machinery 298 [16x30].png",
+      "dstName": "machinery--298--3.2x6.png",
+      "id": 298,
+      "gridDim": [3.2, 6],
+      "is": [],
+      "has": [],
+      "ids": [298]
+    },
+    {
+      "srcName": "Machinery 299 [20x34].png",
+      "dstName": "machinery--299--4x6.8.png",
+      "id": 299,
+      "gridDim": [4, 6.8],
+      "is": [],
+      "has": [],
+      "ids": [299]
+    },
+    {
+      "srcName": "Machinery 300 [20x25].png",
+      "dstName": "machinery--300--4x5.png",
+      "id": 300,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [300]
+    },
+    {
+      "srcName": "Machinery 301 [13x28].png",
+      "dstName": "machinery--301--2.6x5.6.png",
+      "id": 301,
+      "gridDim": [2.6, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [301]
+    },
+    {
+      "srcName": "Machinery 302 [24x24].png",
+      "dstName": "machinery--302--4.8x4.8.png",
+      "id": 302,
+      "gridDim": [4.8, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [302]
+    },
+    {
+      "srcName": "Machinery 303 [15x25].png",
+      "dstName": "machinery--303--3x5.png",
+      "id": 303,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [303]
+    },
+    {
+      "srcName": "Machinery 304 [23x27].png",
+      "dstName": "machinery--304--4.6x5.4.png",
+      "id": 304,
+      "gridDim": [4.6, 5.4],
+      "is": [],
+      "has": [],
+      "ids": [304]
+    },
+    {
+      "srcName": "Machinery 305 [17x29].png",
+      "dstName": "machinery--305--3.4x5.8.png",
+      "id": 305,
+      "gridDim": [3.4, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [305]
+    },
+    {
+      "srcName": "Machinery 306 [30x30].png",
+      "dstName": "machinery--306--6x6.png",
+      "id": 306,
+      "gridDim": [6, 6],
+      "is": [],
+      "has": [],
+      "ids": [306]
+    },
+    {
+      "srcName": "Machinery 307 [30x30].png",
+      "dstName": "machinery--307--6x6.png",
+      "id": 307,
+      "gridDim": [6, 6],
+      "is": [],
+      "has": [],
+      "ids": [307]
+    },
+    {
+      "srcName": "Machinery 308 [13x28].png",
+      "dstName": "machinery--308--2.6x5.6.png",
+      "id": 308,
+      "gridDim": [2.6, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [308]
+    },
+    {
+      "srcName": "Machinery 309 [9x29].png",
+      "dstName": "machinery--309--1.8x5.8.png",
+      "id": 309,
+      "gridDim": [1.8, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [309]
+    },
+    {
+      "srcName": "Machinery 310 [18x23].png",
+      "dstName": "machinery--310--3.6x4.6.png",
+      "id": 310,
+      "gridDim": [3.6, 4.6],
+      "is": [],
+      "has": [],
+      "ids": [310]
+    },
+    {
+      "srcName": "Machinery 311 [20x33].png",
+      "dstName": "machinery--311--4x6.6.png",
+      "id": 311,
+      "gridDim": [4, 6.6],
+      "is": [],
+      "has": [],
+      "ids": [311]
+    },
+    {
+      "srcName": "Machinery 312 [18x28].png",
+      "dstName": "machinery--312--3.6x5.6.png",
+      "id": 312,
+      "gridDim": [3.6, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [312]
+    },
+    {
+      "srcName": "Machinery 313 [19x25].png",
+      "dstName": "machinery--313--3.8x5.png",
+      "id": 313,
+      "gridDim": [3.8, 5],
+      "is": [],
+      "has": [],
+      "ids": [313]
+    },
+    {
+      "srcName": "Machinery 314 [19x23].png",
+      "dstName": "machinery--314--3.8x4.6.png",
+      "id": 314,
+      "gridDim": [3.8, 4.6],
+      "is": [],
+      "has": [],
+      "ids": [314]
+    },
+    {
+      "srcName": "Machinery 315 [10x25].png",
+      "dstName": "machinery--315--2x5.png",
+      "id": 315,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [315]
+    },
+    {
+      "srcName": "Machinery 316 [13x27].png",
+      "dstName": "machinery--316--2.6x5.4.png",
+      "id": 316,
+      "gridDim": [2.6, 5.4],
+      "is": [],
+      "has": [],
+      "ids": [316]
+    },
+    {
+      "srcName": "Machinery 317 [14x29].png",
+      "dstName": "machinery--317--2.8x5.8.png",
+      "id": 317,
+      "gridDim": [2.8, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [317]
+    },
+    {
+      "srcName": "Machinery 318 [18x27].png",
+      "dstName": "machinery--318--3.6x5.4.png",
+      "id": 318,
+      "gridDim": [3.6, 5.4],
+      "is": [],
+      "has": [],
+      "ids": [318]
+    },
+    {
+      "srcName": "Machinery 319 [20x30].png",
+      "dstName": "machinery--319--4x6.png",
+      "id": 319,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [319]
+    },
+    {
+      "srcName": "Machinery 320 [23x28].png",
+      "dstName": "machinery--320--4.6x5.6.png",
+      "id": 320,
+      "gridDim": [4.6, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [320]
+    },
+    {
+      "srcName": "Machinery 321 [20x29].png",
+      "dstName": "machinery--321--4x5.8.png",
+      "id": 321,
+      "gridDim": [4, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [321]
+    },
+    {
+      "srcName": "Machinery 322 [23x70].png",
+      "dstName": "machinery--322--4.6x14.png",
+      "id": 322,
+      "gridDim": [4.6, 14],
+      "is": [],
+      "has": [],
+      "ids": [322]
+    },
+    {
+      "srcName": "Machinery 323 [20x23].png",
+      "dstName": "machinery--323--4x4.6.png",
+      "id": 323,
+      "gridDim": [4, 4.6],
+      "is": [],
+      "has": [],
+      "ids": [323]
+    },
+    {
+      "srcName": "Machinery 324 [18x38].png",
+      "dstName": "machinery--324--3.6x7.6.png",
+      "id": 324,
+      "gridDim": [3.6, 7.6],
+      "is": [],
+      "has": [],
+      "ids": [324]
+    },
+    {
+      "srcName": "Machinery 325 [13x16].png",
+      "dstName": "machinery--325--2.6x3.2.png",
+      "id": 325,
+      "gridDim": [2.6, 3.2],
+      "is": [],
+      "has": [],
+      "ids": [325]
+    },
+    {
+      "srcName": "Machinery 326 [20x40].png",
+      "dstName": "machinery--326--4x8.png",
+      "id": 326,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [326]
+    },
+    {
+      "srcName": "Machinery 327 [17x30].png",
+      "dstName": "machinery--327--3.4x6.png",
+      "id": 327,
+      "gridDim": [3.4, 6],
+      "is": [],
+      "has": [],
+      "ids": [327]
+    },
+    {
+      "srcName": "Machinery 328 [14x18].png",
+      "dstName": "machinery--328--2.8x3.6.png",
+      "id": 328,
+      "gridDim": [2.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [328]
+    },
+    {
+      "srcName": "Machinery 329 [7x10].png",
+      "dstName": "machinery--329--1.4x2.png",
+      "id": 329,
+      "gridDim": [1.4, 2],
+      "is": [],
+      "has": [],
+      "ids": [329]
+    },
+    {
+      "srcName": "Machinery 330 [5x13].png",
+      "dstName": "machinery--330--1x2.6.png",
+      "id": 330,
+      "gridDim": [1, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [330]
+    },
+    {
+      "srcName": "Machinery 331 [20x33].png",
+      "dstName": "machinery--331--4x6.6.png",
+      "id": 331,
+      "gridDim": [4, 6.6],
+      "is": [],
+      "has": [],
+      "ids": [331]
+    },
+    {
+      "srcName": "Machinery 332 [18x33].png",
+      "dstName": "machinery--332--3.6x6.6.png",
+      "id": 332,
+      "gridDim": [3.6, 6.6],
+      "is": [],
+      "has": [],
+      "ids": [332]
+    },
+    {
+      "srcName": "Machinery 333 [15x42].png",
+      "dstName": "machinery--333--3x8.4.png",
+      "id": 333,
+      "gridDim": [3, 8.4],
+      "is": [],
+      "has": [],
+      "ids": [333]
+    },
+    {
+      "srcName": "Machinery 334 [14x47].png",
+      "dstName": "machinery--334--2.8x9.4.png",
+      "id": 334,
+      "gridDim": [2.8, 9.4],
+      "is": [],
+      "has": [],
+      "ids": [334]
+    },
+    {
+      "srcName": "Machinery 335 [13x47].png",
+      "dstName": "machinery--335--2.6x9.4.png",
+      "id": 335,
+      "gridDim": [2.6, 9.4],
+      "is": [],
+      "has": [],
+      "ids": [335]
+    },
+    {
+      "srcName": "Machinery 336 [17x32].png",
+      "dstName": "machinery--336--3.4x6.4.png",
+      "id": 336,
+      "gridDim": [3.4, 6.4],
+      "is": [],
+      "has": [],
+      "ids": [336]
+    },
+    {
+      "srcName": "Machinery 337 [24x34].png",
+      "dstName": "machinery--337--4.8x6.8.png",
+      "id": 337,
+      "gridDim": [4.8, 6.8],
+      "is": [],
+      "has": [],
+      "ids": [337]
+    },
+    {
+      "srcName": "Machinery 338 [15x40].png",
+      "dstName": "machinery--338--3x8.png",
+      "id": 338,
+      "gridDim": [3, 8],
+      "is": [],
+      "has": [],
+      "ids": [338]
+    },
+    {
+      "srcName": "Machinery 339 [19x49].png",
+      "dstName": "machinery--339--3.8x9.8.png",
+      "id": 339,
+      "gridDim": [3.8, 9.8],
+      "is": [],
+      "has": [],
+      "ids": [339]
+    },
+    {
+      "srcName": "Machinery 340 [24x39].png",
+      "dstName": "machinery--340--4.8x7.8.png",
+      "id": 340,
+      "gridDim": [4.8, 7.8],
+      "is": [],
+      "has": [],
+      "ids": [340]
+    },
+    {
+      "srcName": "Machinery 341 [20x39].png",
+      "dstName": "machinery--341--4x7.8.png",
+      "id": 341,
+      "gridDim": [4, 7.8],
+      "is": [],
+      "has": [],
+      "ids": [341]
+    },
+    {
+      "srcName": "Machinery 342 [23x28].png",
+      "dstName": "machinery--342--4.6x5.6.png",
+      "id": 342,
+      "gridDim": [4.6, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [342]
+    },
+    {
+      "srcName": "Machinery 343 [30x35].png",
+      "dstName": "machinery--343--6x7.png",
+      "id": 343,
+      "gridDim": [6, 7],
+      "is": [],
+      "has": [],
+      "ids": [343]
+    },
+    {
+      "srcName": "Machinery 344 [10x34].png",
+      "dstName": "machinery--344--2x6.8.png",
+      "id": 344,
+      "gridDim": [2, 6.8],
+      "is": [],
+      "has": [],
+      "ids": [344]
+    },
+    {
+      "srcName": "Machinery 345 [9x10].png",
+      "dstName": "machinery--345--1.8x2.png",
+      "id": 345,
+      "gridDim": [1.8, 2],
+      "is": [],
+      "has": [],
+      "ids": [345]
+    },
+    {
+      "srcName": "Machinery 346 [9x19].png",
+      "dstName": "machinery--346--1.8x3.8.png",
+      "id": 346,
+      "gridDim": [1.8, 3.8],
+      "is": [],
+      "has": [],
+      "ids": [346]
+    },
+    {
+      "srcName": "Machinery 347 [19x28].png",
+      "dstName": "machinery--347--3.8x5.6.png",
+      "id": 347,
+      "gridDim": [3.8, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [347]
+    },
+    {
+      "srcName": "Machinery 348 [25x37].png",
+      "dstName": "machinery--348--5x7.4.png",
+      "id": 348,
+      "gridDim": [5, 7.4],
+      "is": [],
+      "has": [],
+      "ids": [348]
+    },
+    {
+      "srcName": "Machinery 349 [23x39].png",
+      "dstName": "machinery--349--4.6x7.8.png",
+      "id": 349,
+      "gridDim": [4.6, 7.8],
+      "is": [],
+      "has": [],
+      "ids": [349]
+    },
+    {
+      "srcName": "Machinery 350 [19x26].png",
+      "dstName": "machinery--350--3.8x5.2.png",
+      "id": 350,
+      "gridDim": [3.8, 5.2],
+      "is": [],
+      "has": [],
+      "ids": [350]
+    },
+    {
+      "srcName": "Machinery 351 [6x10].png",
+      "dstName": "machinery--351--1.2x2.png",
+      "id": 351,
+      "gridDim": [1.2, 2],
+      "is": [],
+      "has": [],
+      "ids": [351]
+    },
+    {
+      "srcName": "Machinery 352 [5x6].png",
+      "dstName": "machinery--352--1x1.2.png",
+      "id": 352,
+      "gridDim": [1, 1.2],
+      "is": [],
+      "has": [],
+      "ids": [352]
+    },
+    {
+      "srcName": "Machinery 353 [5x11].png",
+      "dstName": "machinery--353--1x2.2.png",
+      "id": 353,
+      "gridDim": [1, 2.2],
+      "is": [],
+      "has": [],
+      "ids": [353]
+    },
+    {
+      "srcName": "Machinery 354 [10x11].png",
+      "dstName": "machinery--354--2x2.2.png",
+      "id": 354,
+      "gridDim": [2, 2.2],
+      "is": [],
+      "has": [],
+      "ids": [354]
+    },
+    {
+      "srcName": "Machinery 355 [8x8].png",
+      "dstName": "machinery--355--1.6x1.6.png",
+      "id": 355,
+      "gridDim": [1.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [355]
+    },
+    {
+      "srcName": "Machinery 356 [11x15].png",
+      "dstName": "machinery--356--2.2x3.png",
+      "id": 356,
+      "gridDim": [2.2, 3],
+      "is": [],
+      "has": [],
+      "ids": [356]
+    },
+    {
+      "srcName": "Machinery 357 [11x20].png",
+      "dstName": "machinery--357--2.2x4.png",
+      "id": 357,
+      "gridDim": [2.2, 4],
+      "is": [],
+      "has": [],
+      "ids": [357]
+    },
+    {
+      "srcName": "Machinery 358 [33x39].png",
+      "dstName": "machinery--358--6.6x7.8.png",
+      "id": 358,
+      "gridDim": [6.6, 7.8],
+      "is": [],
+      "has": [],
+      "ids": [358]
+    },
+    {
+      "srcName": "Machinery 359 [19x39].png",
+      "dstName": "machinery--359--3.8x7.8.png",
+      "id": 359,
+      "gridDim": [3.8, 7.8],
+      "is": [],
+      "has": [],
+      "ids": [359]
+    },
+    {
+      "srcName": "Machinery 360 [19x39].png",
+      "dstName": "machinery--360--3.8x7.8.png",
+      "id": 360,
+      "gridDim": [3.8, 7.8],
+      "is": [],
+      "has": [],
+      "ids": [360]
+    },
+    {
+      "srcName": "Machinery 361 [19x36].png",
+      "dstName": "machinery--361--3.8x7.2.png",
+      "id": 361,
+      "gridDim": [3.8, 7.2],
+      "is": [],
+      "has": [],
+      "ids": [361]
+    },
+    {
+      "srcName": "Machinery 362 [14x15].png",
+      "dstName": "machinery--362--2.8x3.png",
+      "id": 362,
+      "gridDim": [2.8, 3],
+      "is": [],
+      "has": [],
+      "ids": [362]
+    },
+    {
+      "srcName": "Machinery 363 [30x42].png",
+      "dstName": "machinery--363--6x8.4.png",
+      "id": 363,
+      "gridDim": [6, 8.4],
+      "is": [],
+      "has": [],
+      "ids": [363]
+    },
+    {
+      "srcName": "Machinery 364 [28x28].png",
+      "dstName": "machinery--364--5.6x5.6.png",
+      "id": 364,
+      "gridDim": [5.6, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [364]
+    },
+    {
+      "srcName": "Machinery 365 [21x28].png",
+      "dstName": "machinery--365--4.2x5.6.png",
+      "id": 365,
+      "gridDim": [4.2, 5.6],
+      "is": [],
+      "has": [],
+      "ids": [365]
+    },
+    {
+      "srcName": "Machinery 366 [14x24].png",
+      "dstName": "machinery--366--2.8x4.8.png",
+      "id": 366,
+      "gridDim": [2.8, 4.8],
+      "is": [],
+      "has": [],
+      "ids": [366]
+    },
+    {
+      "srcName": "Machinery 367 [20x40].png",
+      "dstName": "machinery--367--4x8.png",
+      "id": 367,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [367]
+    },
+    {
+      "srcName": "Machinery 368 [10x32].png",
+      "dstName": "machinery--368--2x6.4.png",
+      "id": 368,
+      "gridDim": [2, 6.4],
+      "is": [],
+      "has": [],
+      "ids": [368]
+    },
+    {
+      "srcName": "Machinery 369 [9x14].png",
+      "dstName": "machinery--369--1.8x2.8.png",
+      "id": 369,
+      "gridDim": [1.8, 2.8],
+      "is": [],
+      "has": [],
+      "ids": [369]
+    },
+    {
+      "srcName": "Machinery 370 [13x18].png",
+      "dstName": "machinery--370--2.6x3.6.png",
+      "id": 370,
+      "gridDim": [2.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [370]
+    },
+    {
+      "srcName": "Machinery 371 [19x29].png",
+      "dstName": "machinery--371--3.8x5.8.png",
+      "id": 371,
+      "gridDim": [3.8, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [371]
+    },
+    {
+      "srcName": "Machinery 372 [9x18].png",
+      "dstName": "machinery--372--1.8x3.6.png",
+      "id": 372,
+      "gridDim": [1.8, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [372]
+    },
+    {
+      "srcName": "Machinery 373 [19x29].png",
+      "dstName": "machinery--373--3.8x5.8.png",
+      "id": 373,
+      "gridDim": [3.8, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [373]
+    }
+  ]
+}

@@ -15,6 +15,7 @@
  * - yarn rename-pngs symbol media/Symbols/Misc media/symbol-misc
  * - yarn rename-pngs symbol 'media/Symbols/Furniture, Consoles, & Equipment' media/symbol-furniture-consoles-equipment
  * - yarn rename-pngs symbol media/Symbols/Weaponry media/symbol-weaponry
+ * - yarn rename-pngs symbol media/Symbols/Machinery media/symbol-machinery
  * 
  * - yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * - yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
