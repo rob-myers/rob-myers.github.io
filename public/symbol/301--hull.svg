@@ -43,4 +43,15 @@
   <rect width="1200" height="600" style="fill: url(#grid-0); fill-rule: nonzero; pointer-events: none;">
     <title>grid</title>
   </rect>
+  <g>
+    <title>extras</title>
+    <path d="M 300 121 L 360 121 L 360 61 L 420 125.6 L 384.4 180 L 360 240 L 300 240.6 L 300 121 Z" style="stroke: rgb(0, 0, 0); pointer-events: auto; stroke-width: 3px; fill: rgb(255, 255, 255); stroke-linecap: round; stroke-linejoin: round;"/>
+    <path d="M 310.4 133 L 335.4 133 L 335.4 145 L 347.4 145 L 347.4 131 L 370.4 131 L 370.4 90 L 406.7 127.2 L 388.3 152.8 L 363.8 195 L 348.4 229.1 L 310 229 L 310.4 205 L 321.4 205 L 321.4 193 L 310.4 193 L 310.4 168.8 L 323.4 168.5 L 323.4 156 L 310.4 156 L 310.4 133 Z" style="stroke: rgb(0, 0, 0); pointer-events: auto; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; fill: rgb(204, 204, 204);">
+      <title>machine</title>
+    </path>
+    <path d="M 780 180.6 L 840 180.6 L 840 240.6 L 900 176 L 864.4 121.6 L 840 61.6 L 780 61 L 780 180.6 Z" style="stroke: rgb(0, 0, 0); pointer-events: auto; stroke-width: 3px; fill: rgb(255, 255, 255); stroke-linecap: round; stroke-linejoin: round;" transform="matrix(-1, 0, 0, -1, 1680, 301.600006)"/>
+    <path d="M 793.7 186.1 L 818.7 186.1 L 818.7 174.1 L 830.7 174.1 L 830.7 188.1 L 853.7 188.1 L 853.7 229.1 L 890 191.9 L 871.6 166.3 L 847.1 124.1 L 831.7 90 L 793.3 90.1 L 793.7 114.1 L 804.7 114.1 L 804.7 126.1 L 793.7 126.1 L 793.7 150.3 L 806.7 150.6 L 806.7 163.1 L 793.7 163.1 L 793.7 186.1 Z" style="stroke: rgb(0, 0, 0); pointer-events: auto; stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; fill: rgb(204, 204, 204);" transform="matrix(-1, 0, 0, -1, 1683.299988, 319.100006)">
+      <title>machine</title>
+    </path>
+  </g>
 </svg>

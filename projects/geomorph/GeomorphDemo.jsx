@@ -98,8 +98,6 @@ const layout301 = {
     { symbol: 'console--031--1x1.2', transform: [1, 0, 0, 1, 840, 60] },
     { symbol: 'weaponry--013--1x2', transform: [-1, 0, 0, 1, 360, -60] },
     { symbol: 'weaponry--013--1x2', transform: [1, 0, 0, 1, 840, -60] },
-    { symbol: 'extra--301--computer', transform: [1, 0, 0, 1, 300, 60] },
-    { symbol: 'extra--301--computer', transform: [-1, 0, 0, 1, 900, 60] },
   ],
 };
 
@@ -117,33 +115,38 @@ function createAuxCanvases(layout, lookup) {
   uc.width = hull.meta.pngRect.width, uc.height = hull.meta.pngRect.height;
   /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
   const [oCtxt, uCtxt] = ([oc.getContext('2d'), uc.getContext('2d')]);
-  
-  const hullOutline = hull.walls[0].outline;
+
   uCtxt.translate(-hullRect.x, -hullRect.y);
+  // Outline
   uCtxt.fillStyle = 'rgba(100, 0, 0, 0.1)';
-  uCtxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+  const hullOutline = hull.walls[0].outline;
   fillRing(uCtxt, hullOutline);
+  // Navpoly
   uCtxt.fillStyle = 'rgba(0, 0, 200, 0.03)';
   fillPolygon(uCtxt, layout.navPoly);
+  // uCtxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
   // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
   // decomps.forEach(decomp => drawTriangulation(uCtxt, decomp));
+  // Extras
+  uCtxt.lineWidth = 4, uCtxt.lineJoin = 'round';
+  hull.extras.forEach(({ poly, tags }) => {
+    uCtxt.fillStyle = tags.includes('machine') ? '#ccc' : 'white';
+    fillPolygon(uCtxt, [poly]);
+    uCtxt.stroke();
+  });
   uCtxt.resetTransform();
   
-  const {
-    doors,
-    labels,
-    obstacles,
-    walls,
-  } = layout.actual;
-
+  const { doors, labels, obstacles, walls } = layout.actual;
   oCtxt.translate(-hullRect.x, -hullRect.y);
-  oCtxt.fillStyle = 'rgba(0, 200, 0, 1)';
+  oCtxt.lineWidth = 2;
+  oCtxt.fillStyle = 'rgba(255, 255, 25, 1)';
   fillPolygon(oCtxt, doors);
+  oCtxt.stroke();
   oCtxt.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(oCtxt, layout.hullTop);
-  oCtxt.fillStyle = 'rgba(100, 0, 0, 0.1)';
+  oCtxt.fillStyle = 'rgba(100, 0, 0, 0)';
   fillPolygon(oCtxt, walls );
-  oCtxt.fillStyle = 'rgba(100, 0, 0, 0.05)';
+  oCtxt.fillStyle = 'rgba(100, 0, 0, 0)';
   fillPolygon(oCtxt, obstacles);
   oCtxt.fillStyle = 'rgba(0, 0, 0, 0.04)';
   fillPolygon(oCtxt, labels);
