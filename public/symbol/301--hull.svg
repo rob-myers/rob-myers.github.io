@@ -40,6 +40,11 @@
       <title>wall</title>
     </path>
   </g>
+  <g style="pointer-events: none;">
+    <title>extra</title>
+    <polygon style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); fill-opacity: 0.5; pointer-events: auto; stroke-width: 3px;" points="300 120 360 120 360 60 430 130 404.1 160.7 380 202 367 240 300 240"/>
+    <polygon style="stroke: rgb(0, 0, 0); pointer-events: auto; fill-opacity: 0.4; fill: rgb(153, 153, 153); stroke-width: 3px;" points="312 132 337 132 337.5 144 349 144 348.79998779296875 131.89999389648438 372.6000061035156 131.1999969482422 372 89.0999984741211 413.70001220703125 130.5 387.5 163.39999389648438 367 202.6999969482422 359.1000061035156 226.89999389648438 311.5 226.8000030517578 311.5 204 323.79998779296875 203.8000030517578 324.3999938964844 192.10000610351562 312.79998779296875 191.3000030517578 312.6000061035156 167 325 167.5 325 155 312 155"/>
+  </g>
   <rect width="1200" height="600" style="fill: url(#grid-0); fill-rule: nonzero; pointer-events: none; visibility: hidden;">
     <title>grid</title>
   </rect>
