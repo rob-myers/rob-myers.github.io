@@ -13,6 +13,8 @@ declare namespace Geomorph {
     labels: T[];
     obstacles: T[];
     walls: T[];
+    /** Only hull has windows */
+    windows: T[];
   }
 
   /**
@@ -39,6 +41,7 @@ declare namespace Geomorph {
     actual: SvgGroups<Poly>;
     navPoly: Poly[];
 
+    hullTop: Poly[];
     /** Bounds of hull polygon */
     hullRect: Geom.RectJson; // TODO degenerate
     /** Original geomorph (debug only) */

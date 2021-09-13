@@ -14,6 +14,7 @@ export function createLayout(def, lookup) {
     labels: [],
     obstacles: [],
     walls: [],
+    windows: [],
   };
   const m = new Mat;
 
@@ -29,11 +30,8 @@ export function createLayout(def, lookup) {
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
   });
-  // Cut doors from walls, keeping hull separate from other walls
-  actual.walls = [
-    ...Poly.cutOut(actual.doors, [actual.walls[0]]),
-    ...Poly.cutOut(actual.doors, actual.walls.slice(1)),
-  ];
+  // Cut doors from walls
+  actual.walls = Poly.cutOut(actual.doors, actual.walls);
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSymbol = symbols[0];
@@ -50,6 +48,7 @@ export function createLayout(def, lookup) {
     actual,
     navPoly,
     
+    hullTop: Poly.cutOut(hullSymbol.windows, hullSymbol.walls),
     hullRect: /** @type {Geom.RectJson} */ (hullSymbol.meta.hullRect),
     pngHref: `/debug/${def.key}.png`,
     pngRect: hullSymbol.meta.pngRect,
@@ -76,7 +75,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
   const doors = extractGeoms($, topNodes, 'doors');
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
-  const walls = Poly.union(extractGeoms($, topNodes, 'walls'));
+  const walls = extractGeoms($, topNodes, 'walls');
   const isHull = symbolName.endsWith('hull'); // Filename constraint
   
   return {
@@ -84,10 +83,11 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     doors,
     labels,
     obstacles,
-    walls,
+    walls: Poly.union(walls),
+    windows: walls.filter((/** @type {*} */ x) => x._ownTags.includes('window')),
     meta: {
       doors: doors.map((/** @type {*} */ x) => x._ownTags),
-      hullRect: isHull ? walls[0]?.rect : undefined,
+      hullRect: isHull ? Rect.from(...walls.map(x => x.rect)) : undefined,
       pngRect,
     },
   };
@@ -104,6 +104,7 @@ export function serializeSymbol(parsed) {
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
     walls: toJsons(parsed.walls),
+    windows: toJsons(parsed.windows),
     meta: parsed.meta,
   };
 }
@@ -119,6 +120,7 @@ export function deserializeSymbol(json) {
     labels: json.labels.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),
     walls: json.walls.map(Poly.from),
+    windows: json.windows.map(Poly.from),
     meta: json.meta,
   };
 }
