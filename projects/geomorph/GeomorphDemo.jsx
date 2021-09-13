@@ -98,6 +98,8 @@ const layout301 = {
     { symbol: 'console--031--1x1.2', transform: [1, 0, 0, 1, 840, 60] },
     { symbol: 'weaponry--013--1x2', transform: [-1, 0, 0, 1, 360, -60] },
     { symbol: 'weaponry--013--1x2', transform: [1, 0, 0, 1, 840, -60] },
+    { symbol: 'extra--301--computer', transform: [1, 0, 0, 1, 300, 60] },
+    { symbol: 'extra--301--computer', transform: [-1, 0, 0, 1, 900, 60] },
   ],
 };
 
@@ -137,7 +139,7 @@ function createAuxCanvases(layout, lookup) {
   oCtxt.translate(-hullRect.x, -hullRect.y);
   oCtxt.fillStyle = 'rgba(0, 200, 0, 1)';
   fillPolygon(oCtxt, doors);
-  oCtxt.fillStyle = 'rgba(200, 50, 50, .2)';
+  oCtxt.fillStyle = 'rgba(0, 0, 0, 1)'; // TODO separate hull from other walls
   fillPolygon(oCtxt, walls);
   oCtxt.fillStyle = 'rgba(100, 0, 0, 0.05)';
   fillPolygon(oCtxt, obstacles);

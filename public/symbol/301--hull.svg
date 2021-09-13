@@ -41,11 +41,15 @@
     </path>
   </g>
   <g style="pointer-events: none;">
-    <title>extra</title>
-    <polygon style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); fill-opacity: 0.5; pointer-events: auto; stroke-width: 3px;" points="300 120 360 120 360 60 430 130 404.1 160.7 380 202 367 240 300 240"/>
-    <polygon style="stroke: rgb(0, 0, 0); pointer-events: auto; fill-opacity: 0.4; fill: rgb(153, 153, 153); stroke-width: 3px;" points="312 132 337 132 337.5 144 349 144 348.79998779296875 131.89999389648438 372.6000061035156 131.1999969482422 372 89.0999984741211 413.70001220703125 130.5 387.5 163.39999389648438 367 202.6999969482422 359.1000061035156 226.89999389648438 311.5 226.8000030517578 311.5 204 323.79998779296875 203.8000030517578 324.3999938964844 192.10000610351562 312.79998779296875 191.3000030517578 312.6000061035156 167 325 167.5 325 155 312 155"/>
+    <title>fillers</title>
+    <path d="M 300 120 L 360 120 L 360 60 L 425 130 C 425 130 400.4 160.8 391.6 175.5 C 378.6 197.2 362 239.7 362 239.7 L 300 240 L 300 120 Z" style="stroke: rgb(0, 0, 0); fill-opacity: 0.5; pointer-events: auto; stroke-width: 3px; fill: rgb(255, 255, 255);">
+      <title>light-grey</title>
+    </path>
+    <path d="M 312 132 L 337 132 L 337 144 L 349 144 L 349 130 L 372 130 L 372 89 L 415.6 130.5 C 415.6 130.5 395.2 158.4 387.8 170.1 C 374.8 190.5 360 228 360 228 L 311.6 228 L 312 204 L 323 204 L 323 192 L 312 192 L 312 167.8 L 325 167.5 L 325 155 L 312 155 L 312 132 Z" style="stroke: rgb(0, 0, 0); pointer-events: auto; fill-opacity: 0.4; fill: rgb(153, 153, 153); stroke-width: 3px;">
+      <title>grey</title>
+    </path>
   </g>
-  <rect width="1200" height="600" style="fill: url(#grid-0); fill-rule: nonzero; pointer-events: none; visibility: hidden;">
+  <rect width="1200" height="600" style="fill: url(#grid-0); fill-rule: nonzero; pointer-events: none;">
     <title>grid</title>
   </rect>
 </svg>

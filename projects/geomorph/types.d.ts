@@ -11,7 +11,6 @@ declare namespace Geomorph {
   interface SvgGroups<T> {
     doors: T[];
     labels: T[];
-    // TODO lifts
     obstacles: T[];
     walls: T[];
   }

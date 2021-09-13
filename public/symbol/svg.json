@@ -565,6 +565,17 @@
       "pngRect": {"x": -4, "y": -4, "width": 377, "height": 307}
     }
   },
+  "extra--301--computer": {
+    "key": "extra--301--computer",
+    "doors": [],
+    "labels": [],
+    "obstacles": [],
+    "walls": [],
+    "meta": {
+      "doors": [],
+      "pngRect": {"x": -8, "y": -9, "width": 641, "height": 916}
+    }
+  },
   "iris-valves--005--1x1": {
     "key": "iris-valves--005--1x1",
     "doors": [],

@@ -67,7 +67,6 @@ export function createLayout(def, lookup) {
  */
 export function parseStarshipSymbol(symbolName, svgContents) {
   const $ = cheerio.load(svgContents);
-
   const topNodes = Array.from($('svg > *'));
   const pngRect = extractPngOffset($, topNodes);
   const doors = extractGeoms($, topNodes, 'doors');

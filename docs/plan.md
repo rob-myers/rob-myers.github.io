@@ -14,6 +14,7 @@
 - investigate poly refinement
   - Ruppert's Delaunay Refinement Algorithm
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
+- ✅ create filler symbol extra--301--computer
 - ✅ add iris hatch symbol
 - ✅ hull doors are tagged e.g. door-e
 - ✅ hull group -> walls
