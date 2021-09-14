@@ -20,23 +20,23 @@
     <path d="M 2380.839 1203.712 L 2417.722 1203.71 L 2416.599 2720.344 L 1199.493 2721.665 L 1199.493 2721.666 L 1198.861 2721.665 L 1198.229 2721.666 L 1198.229 2721.665 L -18.877 2720.344 L -20 1203.71 L 16.883 1203.712 L 40.955 1433.006 L 92.764 1611.324 L 177.049 1795.659 L 334.84 2015.329 L 588.065 2218.37 L 904.581 2351.771 L 1198.861 2387.613 L 1493.141 2351.771 L 1809.657 2218.37 L 2062.882 2015.329 L 2220.673 1795.659 L 2304.958 1611.324 L 2356.767 1433.006 L 2380.839 1203.712 Z" style="fill-opacity: 0.5; fill: rgb(255, 0, 0);"/>
     <rect x="1999.394" y="1344" width="19.506" height="158.657" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="2179.667" y="1344" width="19.506" height="158.657" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
-    <rect x="588.501" y="1200" width="20.504" height="1030" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
+    <rect x="586" y="1200" width="21" height="1030" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1788.462" y="1200" width="20.504" height="1030" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1788.462" y="1193.248" width="619.868" height="21.212" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1788.462" y="1493.238" width="595.294" height="21.212" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
-    <rect x="55.6" y="1493.2" width="565.2" height="21.2" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
-    <rect x="18.107" y="1193.375" width="590.898" height="21.212" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
+    <rect x="55" y="1493" width="565" height="21" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
+    <rect x="18" y="1193" width="589" height="21" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="900.28" y="1502.657" width="888.182" height="62.168" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
   </g>
   <g style="pointer-events: none;">
     <title>doors</title>
-    <rect x="575.557" y="1814" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
+    <rect x="573" y="1814" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px; paint-order: fill;"/>
     <rect x="1776" y="1815" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
     <rect x="1776" y="1214" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
     <rect x="575" y="1213.7" width="48" height="267" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
     <rect x="852" y="1059.53" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -451.530029, 1628.561523)"/>
     <rect x="852" y="1059.53" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, 448.469971, 1628.561523)"/>
-    <rect x="852" y="1042.7" width="48" height="275.6" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -419.720428, 2380.673096)"/>
+    <rect x="852" y="1043" width="48" height="276" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -422.699951, 2380.673096)"/>
     <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;">
       <title>iris</title>
     </rect>
@@ -47,7 +47,7 @@
       <title>iris</title>
     </rect>
   </g>
-  <g style="">
+  <g style="pointer-events: none;">
     <title>obstacles</title>
     <path d="M 55 865.4 L 567.8 871.1 L 571.2 642.2 L 315.2 391 L 55 865.4 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);"/>
     <path d="M 2352 871.3 L 2086 390 L 1827 645.7 L 1828.9 872 L 2352 871.3 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);"/>
@@ -97,6 +97,15 @@
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="400" y="1900">
       <title>office</title>
+    </rect>
+  </g>
+  <g style="pointer-events: none;">
+    <title>extras</title>
+    <rect x="55" y="1493" width="565" height="21" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
+      <title>wall</title>
+    </rect>
+    <rect x="586" y="1200" width="21" height="1030" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
+      <title>wall</title>
     </rect>
   </g>
 </svg>
