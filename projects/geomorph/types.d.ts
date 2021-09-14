@@ -10,6 +10,7 @@ declare namespace Geomorph {
 
   interface SvgGroups<T> {
     doors: T[];
+    extras: { tags: string[]; poly: T }[];
     /** Distinguish from plain walls */
     hull: T[];
     labels: T[];
@@ -25,7 +26,6 @@ declare namespace Geomorph {
    */
   export interface ParsedSymbol<T> extends SvgGroups<T> {
     key: string;
-    extras: { tags: string[]; poly: T }[];
     meta: {
       /** Door tags e.g. `["iris", "door-e"]` */
       doors: string[][];

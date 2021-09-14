@@ -123,8 +123,8 @@ function createAuxCanvases(layout, lookup) {
 
   //#region underlay
   uctx.fillStyle = 'rgba(100, 100, 100, 0.4)';
-  if (hullSym.walls.length === 1) {
-    const hullOutline = hullSym.walls[0].outline;
+  if (hullSym.hull.length === 1) {
+    const hullOutline = hullSym.hull[0].outline;
     fillRing(uctx, hullOutline);
   } else {
     console.error('hull walls must exist and be connected');
@@ -138,28 +138,39 @@ function createAuxCanvases(layout, lookup) {
 
   uctx.lineWidth = 4, uctx.lineJoin = 'round';
   hullSym.extras.forEach(({ poly, tags }) => {
-    uctx.fillStyle = tags.includes('machine') ? '#ccc' : 'white';
-    fillPolygon(uctx, [poly]);
-    uctx.stroke();
+    if (tags.includes('white')) {
+      uctx.fillStyle = 'white';
+      fillPolygon(uctx, [poly]), uctx.stroke();
+    }
+    if (tags.includes('machine')) {
+      uctx.fillStyle = '#ccc';
+      fillPolygon(uctx, [poly]), uctx.stroke();
+    }
   });
   uctx.resetTransform();
   //#endregion
 
   //#region overlay
-  const { doors, labels, obstacles, walls } = layout.actual;
+  const { doors, extras, labels, obstacles, walls } = layout.actual;
+  octx.fillStyle = 'rgba(0, 100, 0, 0.3)';
+  fillPolygon(octx, obstacles);
+  octx.fillStyle = 'rgba(100, 0, 0, 0.3)';
+  fillPolygon(octx, walls);
+  octx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+  fillPolygon(octx, labels);
+  octx.fillStyle = 'rgba(0, 0, 0, 1)';
+  fillPolygon(octx, layout.hullTop);
+  extras.forEach(({ poly, tags }) => {
+    if (tags.includes('wall')) {
+      octx.fillStyle = 'rgba(0, 0, 0, 1)';
+      fillPolygon(octx, [poly]);
+    }
+  });
   // NOTE door stroke breaks canvas width
   octx.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(octx, doors);
   octx.fillStyle = 'rgba(255, 255, 255, 1)';
   fillPolygon(octx, doors.flatMap(x => x.createInset(2)));
-  octx.fillStyle = 'rgba(0, 0, 0, 1)';
-  fillPolygon(octx, layout.hullTop);
-  octx.fillStyle = 'rgba(100, 0, 0, 0.3)';
-  fillPolygon(octx, walls);
-  octx.fillStyle = 'rgba(0, 100, 0, 0.3)';
-  fillPolygon(octx, obstacles);
-  octx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-  fillPolygon(octx, labels);
   octx.resetTransform();
   //#endregion
   

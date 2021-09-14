@@ -11,6 +11,7 @@ export function createLayout(def, lookup) {
   /** @type {Geomorph.Layout['actual']} */
   const actual = {
     doors: [],
+    extras: [],
     hull: [],
     labels: [],
     obstacles: [],
@@ -24,9 +25,10 @@ export function createLayout(def, lookup) {
     if (i) {// We don't scale 1st item i.e. hull
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
-    const { doors, labels, obstacles, walls, meta } = lookup[item.symbol];
+    const { doors, extras, labels, obstacles, walls, meta } = lookup[item.symbol];
     const taggedDoors = restrictByTags(doors, meta.doors, item.tags);
     actual.doors.push(...taggedDoors.map(x => x.clone().applyMatrix(m)));
+    actual.extras.push(...extras.map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) })));
     actual.labels.push(...labels.map(x => x.clone().applyMatrix(m)));
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
@@ -76,13 +78,13 @@ export function createLayout(def, lookup) {
 export function parseStarshipSymbol(symbolName, svgContents) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
-  const pngRect = extractPngOffset($, topNodes);
   const doors = extractGeoms($, topNodes, 'doors')
   const extras = extractGeoms($, topNodes, 'extras');
   const hull = extractGeoms($, topNodes, 'hull');
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
   const walls = extractGeoms($, topNodes, 'walls');
+  const pngRect = extractPngOffset($, topNodes);
 
   return {
     key: symbolName,

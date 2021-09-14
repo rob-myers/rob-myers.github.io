@@ -1,8 +1,5 @@
 ## Plan
 
-- walls tagged `drawn` are drawn
-  - e.g. provide wall when door not shown
-  - e.g. provide sides of door
 - finish sub-symbols for geomorph 301
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
@@ -20,6 +17,9 @@
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
 - destructuble walls?
 - can clamber over machinery?
+- ✅ extras tagged `wall` are drawn
+  - provide wall when door not shown
+  - fill-in sides of door
 - ✅ remove doors from symbol PNGs for 301
 - ✅ create filler symbol extra--301--computer
 - ✅ add iris hatch symbol
