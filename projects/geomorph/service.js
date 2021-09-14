@@ -32,14 +32,17 @@ export function createLayout(def, lookup) {
   });
   // Cut doors from walls
   actual.walls = Poly.cutOut(actual.doors, actual.walls);
+  // Well-signed polygons for polygon inset
+  actual.doors.forEach(d => d.sign() < 0 && d.reverse());
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSymbol = symbols[0];
   const hullOutline = hullSymbol.walls[0].clone().removeHoles();
+  const hullTop = Poly.cutOut(hullSymbol.windows.concat(actual.doors), hullSymbol.walls);
 
   const navPoly = Poly.cutOut(
-    actual.walls.flatMap(x => x.createOutset(12.5))
-      .concat(actual.obstacles.flatMap(x => x.createOutset(5))),
+    actual.walls.flatMap(x => x.createOutset(12))
+      .concat(actual.obstacles.flatMap(x => x.createOutset(8))),
     [hullOutline],
   );
 
@@ -48,7 +51,7 @@ export function createLayout(def, lookup) {
     actual,
     navPoly,
     
-    hullTop: Poly.cutOut(hullSymbol.windows, hullSymbol.walls),
+    hullTop,
     hullRect: /** @type {Geom.RectJson} */ (hullSymbol.meta.hullRect),
     pngHref: `/debug/${def.key}.png`,
     pngRect: hullSymbol.meta.pngRect,
@@ -72,13 +75,13 @@ export function parseStarshipSymbol(symbolName, svgContents) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
   const pngRect = extractPngOffset($, topNodes);
-  const doors = extractGeoms($, topNodes, 'doors');
+  const doors = extractGeoms($, topNodes, 'doors')
   const extras = extractGeoms($, topNodes, 'extras');
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
   const walls = extractGeoms($, topNodes, 'walls');
   const isHull = symbolName.endsWith('hull'); // Filename constraint
-  
+
   return {
     key: symbolName,
     doors,
@@ -89,7 +92,9 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     extras: extras.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
     meta: {
       doors: doors.map((/** @type {*} */ x) => x._ownTags),
-      hullRect: isHull ? Rect.from(...walls.map(x => x.rect)) : undefined,
+      hullRect: isHull
+        ? Rect.from(...walls.concat(doors).map(x => x.rect)).json
+        : undefined,
       pngRect,
     },
   };

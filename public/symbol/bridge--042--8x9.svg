@@ -24,7 +24,7 @@
     <rect x="1788.462" y="1200" width="20.504" height="1030" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1788.462" y="1193.248" width="619.868" height="21.212" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1788.462" y="1493.238" width="595.294" height="21.212" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
-    <rect x="55.557" y="1493.238" width="553.448" height="21.212" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
+    <rect x="55.6" y="1493.2" width="565.2" height="21.2" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="18.107" y="1193.375" width="590.898" height="21.212" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="900.28" y="1502.657" width="888.182" height="62.168" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
   </g>
@@ -33,10 +33,10 @@
     <rect x="575.557" y="1814" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
     <rect x="1776" y="1815" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
     <rect x="1776" y="1214" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
-    <rect x="574.973" y="1213.673" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
+    <rect x="575" y="1213.7" width="48" height="267" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;"/>
     <rect x="852" y="1059.53" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -451.530029, 1628.561523)"/>
     <rect x="852" y="1059.53" width="48" height="280" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, 448.469971, 1628.561523)"/>
-    <rect x="852" y="1088.519" width="48" height="287.66" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -477.622101, 2380.673096)"/>
+    <rect x="852" y="1042.7" width="48" height="275.6" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, -1, 1, 0, -419.720428, 2380.673096)"/>
     <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;">
       <title>iris</title>
     </rect>

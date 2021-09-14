@@ -42,9 +42,10 @@ declare namespace Geomorph {
     actual: SvgGroups<Poly>;
     navPoly: Poly[];
 
+    /** Top of hull (sans windows/doors) */
     hullTop: Poly[];
     /** Bounds of hull polygon */
-    hullRect: Geom.RectJson; // TODO degenerate
+    hullRect: Geom.RectJson;
     /** Original geomorph (debug only) */
     pngHref: string;
     /** Original geomorph rect (debug only) */

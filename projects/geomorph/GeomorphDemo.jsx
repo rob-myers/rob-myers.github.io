@@ -13,7 +13,7 @@ export default function GeomorphDemo() {
   const gm = useSymbolLayout(layout301);
   return (
     <div className={rootCss}>
-      <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
+      <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
         {gm && <Geomorph gm={gm} />}
       </PanZoom>
     </div>
@@ -31,7 +31,7 @@ function Geomorph({ gm, transform }) {
           <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
         </g>
       )}
-      <image className="overlay" href={gm.overlay} x={gm.hullRect.x} y={gm.hullRect.y} />
+      <image className="overlay" href={gm.overlay} x={gm.hullRect.x * 2} y={gm.hullRect.y * 2} />
     </g>
   );
 }
@@ -46,6 +46,9 @@ const rootCss = css`
   image.symbol {
     transform: scale(0.2);
   }
+  image.underlay, image.overlay {
+    transform: scale(0.5);
+  }
 `;
 
 /**
@@ -55,7 +58,6 @@ const rootCss = css`
  */
 function useSymbolLayout(def) {
   const symbolLookup = useSymbolLookup();
-
   if (symbolLookup) {
     const layout = createLayout(def, symbolLookup);
     const { overlay, underlay } = createAuxCanvases(layout, symbolLookup);
@@ -68,10 +70,9 @@ function useSymbolLayout(def) {
 }
 
 function useSymbolLookup() {
-  return useQuery('svg-json',
-    () => fetch('/symbol/svg.json')
-      .then(x => x.json())
-      .then(x => deserializeSvgJson(x)),
+  return useQuery('svg-json', () => fetch('/symbol/svg.json')
+    .then(x => x.json())
+    .then(x => deserializeSvgJson(x)),
   ).data;
 }
 
@@ -111,46 +112,48 @@ function createAuxCanvases(layout, lookup) {
 
   const oc = document.createElement('canvas');
   const uc = document.createElement('canvas');
-  oc.width = hull.meta.pngRect.width, oc.height = hull.meta.pngRect.height;
-  uc.width = hull.meta.pngRect.width, uc.height = hull.meta.pngRect.height;
+  uc.width = hullRect.width * 2, uc.height = hullRect.height * 2;
+  oc.width = hullRect.width * 2, oc.height = hullRect.height * 2;
   /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
-  const [oCtxt, uCtxt] = ([oc.getContext('2d'), uc.getContext('2d')]);
+  const [octx, uctx] = ([oc.getContext('2d'), uc.getContext('2d')]);
 
-  uCtxt.translate(-hullRect.x, -hullRect.y);
-  // Outline
-  uCtxt.fillStyle = 'rgba(100, 0, 0, 0.1)';
+  uctx.translate(-hullRect.x, -hullRect.y);
+  uctx.scale(2, 2);
+  uctx.fillStyle = 'rgba(100, 100, 100, 0.4)';
   const hullOutline = hull.walls[0].outline;
-  fillRing(uCtxt, hullOutline);
-  // Navpoly
-  uCtxt.fillStyle = 'rgba(0, 0, 200, 0.03)';
-  fillPolygon(uCtxt, layout.navPoly);
+  fillRing(uctx, hullOutline);
+
+  uctx.fillStyle = 'rgba(0, 0, 100, 0.05)';
+  fillPolygon(uctx, layout.navPoly);
   // uCtxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
   // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
   // decomps.forEach(decomp => drawTriangulation(uCtxt, decomp));
-  // Extras
-  uCtxt.lineWidth = 4, uCtxt.lineJoin = 'round';
+
+  uctx.lineWidth = 4, uctx.lineJoin = 'round';
   hull.extras.forEach(({ poly, tags }) => {
-    uCtxt.fillStyle = tags.includes('machine') ? '#ccc' : 'white';
-    fillPolygon(uCtxt, [poly]);
-    uCtxt.stroke();
+    uctx.fillStyle = tags.includes('machine') ? '#ccc' : 'white';
+    fillPolygon(uctx, [poly]);
+    uctx.stroke();
   });
-  uCtxt.resetTransform();
-  
+  uctx.resetTransform();
+
+  octx.scale(2, 2);
+  octx.translate(-hullRect.x, -hullRect.y);
   const { doors, labels, obstacles, walls } = layout.actual;
-  oCtxt.translate(-hullRect.x, -hullRect.y);
-  oCtxt.lineWidth = 2;
-  oCtxt.fillStyle = 'rgba(255, 255, 25, 1)';
-  fillPolygon(oCtxt, doors);
-  oCtxt.stroke();
-  oCtxt.fillStyle = 'rgba(0, 0, 0, 1)';
-  fillPolygon(oCtxt, layout.hullTop);
-  oCtxt.fillStyle = 'rgba(100, 0, 0, 0)';
-  fillPolygon(oCtxt, walls );
-  oCtxt.fillStyle = 'rgba(100, 0, 0, 0)';
-  fillPolygon(oCtxt, obstacles);
-  oCtxt.fillStyle = 'rgba(0, 0, 0, 0.04)';
-  fillPolygon(oCtxt, labels);
-  oCtxt.resetTransform();
+  // NOTE door stroke breaks canvas width
+  octx.fillStyle = 'rgba(0, 0, 0, 1)';
+  fillPolygon(octx, doors);
+  octx.fillStyle = 'rgba(255, 255, 255, 1)';
+  fillPolygon(octx, doors.flatMap(x => x.createInset(2)));
+  octx.fillStyle = 'rgba(0, 0, 0, 1)';
+  fillPolygon(octx, layout.hullTop);
+  octx.fillStyle = 'rgba(100, 0, 0, 0.1)';
+  fillPolygon(octx, walls);
+  octx.fillStyle = 'rgba(0, 100, 0, 0.1)';
+  fillPolygon(octx, obstacles);
+  octx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+  fillPolygon(octx, labels);
+  octx.resetTransform();
   
   return { overlay: oc, underlay: uc };
 }
