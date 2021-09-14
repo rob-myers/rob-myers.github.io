@@ -3,7 +3,7 @@ import { css } from "goober";
 import { useQuery } from "react-query";
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
-import { createLayout, deserializeSvgJson } from "./service";
+import { createLayout, deserializeSvgJson } from "./geomorph.model";
 import { drawTriangulation, fillPolygon, fillRing } from '../service';
 
 // TODO load pre-parsed data from svg.json
