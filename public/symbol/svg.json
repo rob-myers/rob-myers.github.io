@@ -61,7 +61,6 @@
         ]
       }
     ],
-    "labels": [],
     "obstacles": [],
     "walls": [
       {
@@ -231,6 +230,34 @@
             ]
           ]
         }
+      },
+      {
+        "tags": ["door", "door-w"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[-6, 251], [-6, 349], [6, 349], [6, 251]]]
+        }
+      },
+      {
+        "tags": ["door", "door-e"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[1194, 251], [1194, 349], [1206, 349], [1206, 251]]]
+        }
+      },
+      {
+        "tags": ["door", "door-s-e"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[250, 594], [250, 606], [348, 606], [348, 594]]]
+        }
+      },
+      {
+        "tags": ["door", "door-s-w"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[850, 594], [850, 606], [948, 606], [948, 594]]]
+        }
       }
     ],
     "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628}
@@ -292,7 +319,6 @@
         ]
       }
     ],
-    "labels": [],
     "obstacles": [],
     "walls": [],
     "singles": [
@@ -332,7 +358,6 @@
   "bridge--042--8x9": {
     "key": "bridge--042--8x9",
     "hull": [],
-    "labels": [],
     "obstacles": [
       {
         "type": "Polygon",
@@ -861,7 +886,6 @@
   "console--031--1x1.2": {
     "key": "console--031--1x1.2",
     "hull": [],
-    "labels": [],
     "obstacles": [
       {
         "type": "Polygon",
@@ -886,7 +910,6 @@
   "iris-valves--005--1x1": {
     "key": "iris-valves--005--1x1",
     "hull": [],
-    "labels": [],
     "obstacles": [],
     "walls": [],
     "singles": [],
@@ -895,12 +918,6 @@
   "misc-stellar-cartography--023--4x4": {
     "key": "misc-stellar-cartography--023--4x4",
     "hull": [],
-    "labels": [
-      {
-        "type": "Polygon",
-        "coordinates": [[[550, 550], [550, 650], [650, 650], [650, 550]]]
-      }
-    ],
     "obstacles": [
       {
         "type": "Polygon",
@@ -983,7 +1000,6 @@
   "office--001--2x2": {
     "key": "office--001--2x2",
     "hull": [],
-    "labels": [],
     "obstacles": [
       {
         "type": "Polygon",
@@ -1051,7 +1067,6 @@
   "stateroom--014--2x2": {
     "key": "stateroom--014--2x2",
     "hull": [],
-    "labels": [],
     "obstacles": [
       {
         "type": "Polygon",
@@ -1105,7 +1120,6 @@
   "stateroom--036--2x4": {
     "key": "stateroom--036--2x4",
     "hull": [],
-    "labels": [],
     "obstacles": [
       {
         "type": "Polygon",
@@ -1186,7 +1200,6 @@
   "weaponry--013--1x2": {
     "key": "weaponry--013--1x2",
     "hull": [],
-    "labels": [],
     "obstacles": [],
     "walls": [],
     "singles": [],

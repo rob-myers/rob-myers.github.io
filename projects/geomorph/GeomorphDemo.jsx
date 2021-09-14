@@ -22,9 +22,10 @@ export default function GeomorphDemo() {
 
 /** @param {{ gm: Geomorph.LayoutWithLayers; transform?: string }} _ */
 function Geomorph({ gm, transform }) {
+  const {pngRect} = gm.symbols[0];
   return (
     <g transform={transform}>
-      <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
+      <image className="debug" href={gm.pngHref} x={pngRect.x} y={pngRect.y}/>
       <image className="underlay" href={gm.underlay} x={gm.hullRect.x * 2} y={gm.hullRect.y * 2} />
       {gm.symbols.map((s, i) =>
         <g key={i} transform={s.transform}>
@@ -81,7 +82,7 @@ const layout301 = {
   key: 'g-301--bridge',
   id: 301,
   items: [
-    { symbol: '301--hull', tags: ['doors']  }, // Hull must be first
+    { symbol: '301--hull', tags: ['door']  }, // Hull must be first
     { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 0, 480] },
     { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 120, 480] },

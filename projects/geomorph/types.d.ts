@@ -30,18 +30,12 @@ declare namespace Geomorph {
    */
   export interface Layout {
     def: LayoutDef;
-    /** Transformed and filtered */
-    actual: SvgGroups<Poly>;
-    navPoly: Poly[];
-
-    /** Top of hull (sans windows/doors) */
-    hullTop: Poly[];
-    /** Bounds of hull polygon */
-    hullRect: Geom.RectJson;
     /** Original geomorph (debug only) */
     pngHref: string;
-    /** Original geomorph rect (debug only) */
-    pngRect: Geom.RectJson;
+    /** Bounds of hull polygon */
+    hullRect: Geom.RectJson;
+    /** Top of hull (sans windows/doors) */
+    hullTop: Poly[];
 
     /** First item is hull symbol */
     symbols: {
@@ -51,6 +45,10 @@ declare namespace Geomorph {
       transformArray?: LayoutDefItem['transform'];
       transform?: string;
     }[];
+
+    /** Transformed and filtered */
+    actual: SvgGroups<Poly>;
+    navPoly: Poly[];
   }
 
   export interface LayoutWithLayers extends Layout {

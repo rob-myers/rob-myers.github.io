@@ -57,7 +57,6 @@ export function createLayout(def, lookup) {
     hullTop,
     hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
     pngHref: `/debug/${def.key}.png`,
-    pngRect: hullSym.pngRect,
 
     symbols: symbols.map((sym, i) => ({
       key: sym.key,
@@ -124,6 +123,7 @@ export function serializeSymbol(parsed) {
 export function deserializeSymbol(json) {
   return {
     key: json.key,
+    // doors: json.doors.map(Poly.from),
     hull: json.hull.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),
     walls: json.walls.map(Poly.from),
