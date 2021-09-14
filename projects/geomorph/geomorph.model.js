@@ -59,12 +59,12 @@ export function createLayout(def, lookup) {
     hullTop,
     hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
     pngHref: `/debug/${def.key}.png`,
-    pngRect: hullSym.meta.pngRect,
+    pngRect: hullSym.pngRect,
 
     symbols: symbols.map((sym, i) => ({
       key: sym.key,
       pngHref: `/symbol/${sym.key}.png`,
-      pngRect: sym.meta.pngRect,
+      pngRect: sym.pngRect,
       transformArray: def.items[i].transform,
       transform: def.items[i].transform ? `matrix(${def.items[i].transform})` : undefined,
     })),
@@ -94,9 +94,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     walls: Poly.union(walls),
     windows: hull.filter((/** @type {*} */ x) => x._ownTags.includes('window')),
     singles: singles.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
-    meta: {
-      pngRect,
-    },
+    pngRect,
   };
 }
 
@@ -121,7 +119,7 @@ export function serializeSymbol(parsed) {
     walls: toJsons(parsed.walls),
     windows: toJsons(parsed.windows),
     singles: parsed.singles.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
-    meta: parsed.meta,
+    pngRect: parsed.pngRect,
   };
 }
 
@@ -139,7 +137,7 @@ export function deserializeSymbol(json) {
     walls: json.walls.map(Poly.from),
     windows: json.windows.map(Poly.from),
     singles: json.singles.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),
-    meta: json.meta,
+    pngRect: json.pngRect,
   };
 }
 

@@ -233,7 +233,7 @@
         }
       }
     ],
-    "meta": {"pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628}}
+    "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628}
   },
   "302--hull": {
     "key": "302--hull",
@@ -328,7 +328,7 @@
         }
       }
     ],
-    "meta": {"pngRect": {"x": -6, "y": -61, "width": 1212, "height": 667}}
+    "pngRect": {"x": -6, "y": -61, "width": 1212, "height": 667}
   },
   "bridge--042--8x9": {
     "key": "bridge--042--8x9",
@@ -829,7 +829,7 @@
         }
       }
     ],
-    "meta": {"pngRect": {"x": -23, "y": -67, "width": 2439, "height": 2790}}
+    "pngRect": {"x": -23, "y": -67, "width": 2439, "height": 2790}
   },
   "console--031--1x1.2": {
     "key": "console--031--1x1.2",
@@ -855,7 +855,7 @@
     "walls": [],
     "windows": [],
     "singles": [],
-    "meta": {"pngRect": {"x": -4, "y": -4, "width": 377, "height": 307}}
+    "pngRect": {"x": -4, "y": -4, "width": 377, "height": 307}
   },
   "iris-valves--005--1x1": {
     "key": "iris-valves--005--1x1",
@@ -865,7 +865,7 @@
     "walls": [],
     "windows": [],
     "singles": [],
-    "meta": {"pngRect": {"x": 0, "y": 40, "width": 221, "height": 220}}
+    "pngRect": {"x": 0, "y": 40, "width": 221, "height": 220}
   },
   "misc-stellar-cartography--023--4x4": {
     "key": "misc-stellar-cartography--023--4x4",
@@ -954,7 +954,7 @@
         }
       }
     ],
-    "meta": {"pngRect": {"x": -10, "y": -10, "width": 1220, "height": 1220}}
+    "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 1220}
   },
   "office--001--2x2": {
     "key": "office--001--2x2",
@@ -1023,7 +1023,7 @@
         }
       }
     ],
-    "meta": {"pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}}
+    "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}
   },
   "stateroom--014--2x2": {
     "key": "stateroom--014--2x2",
@@ -1078,7 +1078,7 @@
         }
       }
     ],
-    "meta": {"pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}}
+    "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}
   },
   "stateroom--036--2x4": {
     "key": "stateroom--036--2x4",
@@ -1160,7 +1160,7 @@
         }
       }
     ],
-    "meta": {"pngRect": {"x": -10, "y": -10, "width": 620, "height": 1220}}
+    "pngRect": {"x": -10, "y": -10, "width": 620, "height": 1220}
   },
   "weaponry--013--1x2": {
     "key": "weaponry--013--1x2",
@@ -1170,6 +1170,6 @@
     "walls": [],
     "windows": [],
     "singles": [],
-    "meta": {"pngRect": {"x": 25, "y": 195, "width": 852, "height": 417}}
+    "pngRect": {"x": 25, "y": 195, "width": 852, "height": 417}
   }
 }

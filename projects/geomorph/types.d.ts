@@ -25,10 +25,7 @@ declare namespace Geomorph {
    */
   export interface ParsedSymbol<T> extends SvgGroups<T> {
     key: string;
-    meta: {
-      /** Door tags e.g. `["iris", "door-e"]` */
-      pngRect: Geom.RectJson;
-    };
+    pngRect: Geom.RectJson;
   }
 
   /**
