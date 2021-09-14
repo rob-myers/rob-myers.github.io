@@ -324,6 +324,11 @@ export class Poly {
     return this;
   }
 
+  reverse() {
+    this.outline.reverse();
+    this.holes.forEach(hole => hole.reverse());
+  }
+
   /** Mutate vectors by rounding. */
   round() {
     this.outline.forEach(p => p.round());
@@ -336,6 +341,10 @@ export class Poly {
     this.outline.forEach(p => p.scale(scalar));
     this.holes.forEach(h => h.forEach(p => p.scale(scalar)));
     return this;
+  }
+
+  sign() {
+    return Poly.sign(this.outline[0], this.outline[1], this.outline[2]);
   }
 
   /**
