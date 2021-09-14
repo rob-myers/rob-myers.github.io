@@ -15,7 +15,6 @@ export function createLayout(def, lookup) {
     labels: [],
     obstacles: [],
     walls: [],
-    windows: [],
   };
   const m = new Mat;
 
@@ -43,7 +42,8 @@ export function createLayout(def, lookup) {
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSym = symbols[0];
   const hullOutline = hullSym.hull.map(x => x.clone().removeHoles());
-  const hullTop = Poly.cutOut(hullSym.windows.concat(doors), hullSym.hull);
+  const windows = filterSingles(actual, 'window');
+  const hullTop = Poly.cutOut(windows.concat(doors), hullSym.hull);
 
   const navPoly = Poly.cutOut(
     actual.walls.flatMap(x => x.createOutset(12))
@@ -92,7 +92,6 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     labels,
     obstacles,
     walls: Poly.union(walls),
-    windows: hull.filter((/** @type {*} */ x) => x._ownTags.includes('window')),
     singles: singles.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
     pngRect,
   };
@@ -117,7 +116,6 @@ export function serializeSymbol(parsed) {
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
     walls: toJsons(parsed.walls),
-    windows: toJsons(parsed.windows),
     singles: parsed.singles.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
     pngRect: parsed.pngRect,
   };
@@ -135,7 +133,6 @@ export function deserializeSymbol(json) {
     labels: json.labels.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),
     walls: json.walls.map(Poly.from),
-    windows: json.windows.map(Poly.from),
     singles: json.singles.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),
     pngRect: json.pngRect,
   };

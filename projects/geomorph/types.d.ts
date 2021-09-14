@@ -15,8 +15,6 @@ declare namespace Geomorph {
     labels: T[];
     obstacles: T[];
     walls: T[];
-    /** Distinguish windows from hull */
-    windows: T[];
   }
 
   /**
