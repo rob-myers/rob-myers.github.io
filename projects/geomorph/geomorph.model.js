@@ -10,7 +10,6 @@ import { svgPathToPolygons } from '../service';
 export function createLayout(def, lookup) {
   /** @type {Geomorph.Layout['actual']} */
   const actual = {
-    doors: [],
     singles: [],
     hull: [],
     labels: [],
@@ -25,24 +24,26 @@ export function createLayout(def, lookup) {
     if (i) {// We don't scale 1st item i.e. hull
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
-    const { doors, singles, labels, obstacles, walls, meta } = lookup[item.symbol];
-    const taggedDoors = restrictByTags(doors, meta.doors, item.tags);
-    actual.doors.push(...taggedDoors.map(x => x.clone().applyMatrix(m)));
-    actual.singles.push(...singles.map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) })));
+    const { singles, labels, obstacles, walls } = lookup[item.symbol];
+    // Transform singles and restrict doors by tags
+    actual.singles.push(...singles
+      .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) }))
+      .filter(({ tags }) => !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))))
     actual.labels.push(...labels.map(x => x.clone().applyMatrix(m)));
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
   });
-  // Cut doors from walls
-  actual.walls = Poly.cutOut(actual.doors, actual.walls);
-  // Well-signed polygons
-  actual.doors.forEach(d => d.sign() < 0 && d.reverse());
+  // Ensure well-signed polygons
   actual.obstacles.forEach(d => d.sign() < 0 && d.reverse());
+  actual.singles.forEach(({ poly }) => poly.sign() < 0 && poly.reverse());
+  // Cut doors from walls
+  const doors = filterSingles(actual, 'door');
+  actual.walls = Poly.cutOut(doors, actual.walls);
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSym = symbols[0];
   const hullOutline = hullSym.hull.map(x => x.clone().removeHoles());
-  const hullTop = Poly.cutOut(hullSym.windows.concat(actual.doors), hullSym.hull);
+  const hullTop = Poly.cutOut(hullSym.windows.concat(doors), hullSym.hull);
 
   const navPoly = Poly.cutOut(
     actual.walls.flatMap(x => x.createOutset(12))
@@ -56,7 +57,7 @@ export function createLayout(def, lookup) {
     navPoly,
     
     hullTop,
-    hullRect: Rect.from(...hullSym.hull.concat(hullSym.doors).map(x => x.rect)),
+    hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
     pngHref: `/debug/${def.key}.png`,
     pngRect: hullSym.meta.pngRect,
 
@@ -78,7 +79,6 @@ export function createLayout(def, lookup) {
 export function parseStarshipSymbol(symbolName, svgContents) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
-  const doors = extractGeoms($, topNodes, 'doors')
   const singles = extractGeoms($, topNodes, 'singles');
   const hull = extractGeoms($, topNodes, 'hull');
   const labels = extractGeoms($, topNodes, 'labels');
@@ -88,7 +88,6 @@ export function parseStarshipSymbol(symbolName, svgContents) {
 
   return {
     key: symbolName,
-    doors,
     hull: Poly.union(hull),
     labels,
     obstacles,
@@ -96,10 +95,17 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     windows: hull.filter((/** @type {*} */ x) => x._ownTags.includes('window')),
     singles: singles.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
     meta: {
-      doors: doors.map((/** @type {*} */ x) => x._ownTags),
       pngRect,
     },
   };
+}
+
+/**
+ * @param {Geomorph.Layout['actual']} actual 
+ * @param {string} tag 
+ */
+export function filterSingles(actual, tag) {
+  return actual.singles.filter(x => x.tags.includes(tag)).map(x => x.poly);
 }
 
 /**
@@ -109,7 +115,6 @@ export function parseStarshipSymbol(symbolName, svgContents) {
 export function serializeSymbol(parsed) {
   return {
     key: parsed.key,
-    doors: toJsons(parsed.doors),
     hull: toJsons(parsed.hull),
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
@@ -127,7 +132,7 @@ export function serializeSymbol(parsed) {
 export function deserializeSymbol(json) {
   return {
     key: json.key,
-    doors: json.doors.map(Poly.from),
+    // doors: json.doors.map(Poly.from),
     hull: json.hull.map(Poly.from),
     labels: json.labels.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),

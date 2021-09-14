@@ -3,7 +3,7 @@ import { css } from "goober";
 import { useQuery } from "react-query";
 import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
-import { createLayout, deserializeSvgJson } from "./geomorph.model";
+import { createLayout, deserializeSvgJson, filterSingles } from "./geomorph.model";
 import { drawTriangulation, fillPolygon, fillRing } from '../service';
 
 // TODO load pre-parsed data from svg.json
@@ -151,7 +151,8 @@ function createAuxCanvases(layout, lookup) {
   //#endregion
 
   //#region overlay
-  const { doors, singles, labels, obstacles, walls } = layout.actual;
+  const { singles, labels, obstacles, walls } = layout.actual;
+  const doors = filterSingles(layout.actual, 'door');
   octx.fillStyle = 'rgba(0, 100, 0, 0.3)';
   fillPolygon(octx, obstacles);
   octx.fillStyle = 'rgba(100, 0, 0, 0.3)';

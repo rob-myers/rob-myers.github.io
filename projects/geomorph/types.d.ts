@@ -9,7 +9,6 @@ declare namespace Geomorph {
   export type SymbolLookup = Record<string, ParsedSymbol<Poly>>;
 
   interface SvgGroups<T> {
-    doors: T[];
     singles: { tags: string[]; poly: T }[];
     /** Distinguish from plain walls */
     hull: T[];
@@ -28,7 +27,6 @@ declare namespace Geomorph {
     key: string;
     meta: {
       /** Door tags e.g. `["iris", "door-e"]` */
-      doors: string[][];
       pngRect: Geom.RectJson;
     };
   }

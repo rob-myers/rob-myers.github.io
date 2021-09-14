@@ -1,6 +1,5 @@
 ## Plan
 
-- extra -> singles; doors part of singles 
 - labels part of singles
 - windows part of singles
 - use in `PanZoomDemo`
@@ -20,6 +19,7 @@
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
 - destructuble walls?
 - can clamber over machinery?
+- ✅ extra -> singles; doors part of singles 
 - ✅ finish symbols for geomorph 301
 - ✅ extras tagged `wall` are drawn
   - provide wall when door not shown
