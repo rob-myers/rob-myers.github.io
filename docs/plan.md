@@ -1,10 +1,10 @@
 ## Plan
 
-- finish sub-symbols for geomorph 301
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
 - perhaps precompute layouts too
 - emphasise render-once approach to React in intro
+- can show labels
 - static lighting (shadow maps)
 
 - demos should always involve starship geomorphs
@@ -17,6 +17,7 @@
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
 - destructuble walls?
 - can clamber over machinery?
+- ✅ finish symbols for geomorph 301
 - ✅ extras tagged `wall` are drawn
   - provide wall when door not shown
   - fill-in sides of door
