@@ -149,9 +149,9 @@
         ]
       }
     ],
-    "extras": [
+    "singles": [
       {
-        "tags": ["white"],
+        "tags": ["machine-base"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -202,7 +202,7 @@
         }
       },
       {
-        "tags": ["white"],
+        "tags": ["machine-base"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -265,26 +265,7 @@
   },
   "302--hull": {
     "key": "302--hull",
-    "doors": [
-      {
-        "type": "Polygon",
-        "coordinates": [[[-6, 251], [-6, 349], [6, 349], [6, 251]]]
-      },
-      {
-        "type": "Polygon",
-        "coordinates": [[[1194, 251], [1194, 349], [1206, 349], [1206, 251]]]
-      },
-      {
-        "type": "Polygon",
-        "coordinates": [
-          [[249.996, 594], [249.996, 606], [347.996, 606], [347.996, 594]]
-        ]
-      },
-      {
-        "type": "Polygon",
-        "coordinates": [[[850, 594], [850, 606], [948, 606], [948, 594]]]
-      }
-    ],
+    "doors": [],
     "hull": [
       {
         "type": "Polygon",
@@ -317,19 +298,25 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [116.86657299999999, 243.96693900000002],
-            [123.498877, 239.49339499999996],
-            [244.28456500000001, 418.565603],
-            [242.15798326509633, 420],
+            [116.076866, 242.79612],
+            [122.70917, 238.322576],
+            [243.494858, 417.3947840000001],
+            [236.862554, 421.8683280000001]
+          ]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [240, 420],
             [420, 420],
             [420, 416],
             [480, 416],
             [480, 424],
             [421, 424],
             [421, 432],
-            [240, 432],
-            [240, 421.4555775922925],
-            [237.652261, 423.039147]
+            [240, 432]
           ]
         ]
       }
@@ -338,14 +325,40 @@
     "obstacles": [],
     "walls": [],
     "windows": [],
-    "extras": [],
+    "singles": [
+      {
+        "tags": ["door", "door-w"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[-6, 251], [-6, 349], [6, 349], [6, 251]]]
+        }
+      },
+      {
+        "tags": ["door", "door-e"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[1194, 251], [1194, 349], [1206, 349], [1206, 251]]]
+        }
+      },
+      {
+        "tags": ["door", "door-s-e"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[249.996, 594], [249.996, 606], [347.996, 606], [347.996, 594]]
+          ]
+        }
+      },
+      {
+        "tags": ["door", "door-s-w"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[850, 594], [850, 606], [948, 606], [948, 594]]]
+        }
+      }
+    ],
     "meta": {
-      "doors": [
-        ["door-w", "doors"],
-        ["door-e", "doors"],
-        ["door-s-e", "doors"],
-        ["door-s-w", "doors"]
-      ],
+      "doors": [],
       "pngRect": {"x": -6, "y": -61, "width": 1212, "height": 667}
     }
   },
@@ -806,7 +819,7 @@
       }
     ],
     "windows": [],
-    "extras": [
+    "singles": [
       {
         "tags": ["wall"],
         "poly": {
@@ -851,7 +864,7 @@
     ],
     "walls": [],
     "windows": [],
-    "extras": [],
+    "singles": [],
     "meta": {
       "doors": [],
       "pngRect": {"x": -4, "y": -4, "width": 377, "height": 307}
@@ -865,7 +878,7 @@
     "obstacles": [],
     "walls": [],
     "windows": [],
-    "extras": [],
+    "singles": [],
     "meta": {
       "doors": [],
       "pngRect": {"x": 0, "y": 40, "width": 221, "height": 220}
@@ -955,7 +968,7 @@
       }
     ],
     "windows": [],
-    "extras": [],
+    "singles": [],
     "meta": {
       "doors": [[]],
       "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 1220}
@@ -1008,7 +1021,7 @@
       }
     ],
     "windows": [],
-    "extras": [
+    "singles": [
       {
         "tags": ["wall"],
         "poly": {
@@ -1076,7 +1089,7 @@
       }
     ],
     "windows": [],
-    "extras": [],
+    "singles": [],
     "meta": {
       "doors": [[], []],
       "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}
@@ -1156,7 +1169,7 @@
       }
     ],
     "windows": [],
-    "extras": [],
+    "singles": [],
     "meta": {
       "doors": [[], []],
       "pngRect": {"x": -10, "y": -10, "width": 620, "height": 1220}
@@ -1170,7 +1183,7 @@
     "obstacles": [],
     "walls": [],
     "windows": [],
-    "extras": [],
+    "singles": [],
     "meta": {
       "doors": [],
       "pngRect": {"x": 25, "y": 195, "width": 852, "height": 417}

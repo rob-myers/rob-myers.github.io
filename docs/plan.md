@@ -1,5 +1,8 @@
 ## Plan
 
+- extra -> singles; doors part of singles 
+- labels part of singles
+- windows part of singles
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
 - perhaps precompute layouts too

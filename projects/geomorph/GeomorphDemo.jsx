@@ -137,8 +137,8 @@ function createAuxCanvases(layout, lookup) {
   // decomps.forEach(decomp => drawTriangulation(uCtxt, decomp));
 
   uctx.lineWidth = 4, uctx.lineJoin = 'round';
-  hullSym.extras.forEach(({ poly, tags }) => {
-    if (tags.includes('white')) {
+  hullSym.singles.forEach(({ poly, tags }) => {
+    if (tags.includes('machine-base')) {
       uctx.fillStyle = 'white';
       fillPolygon(uctx, [poly]), uctx.stroke();
     }
@@ -151,7 +151,7 @@ function createAuxCanvases(layout, lookup) {
   //#endregion
 
   //#region overlay
-  const { doors, extras, labels, obstacles, walls } = layout.actual;
+  const { doors, singles, labels, obstacles, walls } = layout.actual;
   octx.fillStyle = 'rgba(0, 100, 0, 0.3)';
   fillPolygon(octx, obstacles);
   octx.fillStyle = 'rgba(100, 0, 0, 0.3)';
@@ -160,7 +160,7 @@ function createAuxCanvases(layout, lookup) {
   fillPolygon(octx, labels);
   octx.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(octx, layout.hullTop);
-  extras.forEach(({ poly, tags }) => {
+  singles.forEach(({ poly, tags }) => {
     if (tags.includes('wall')) {
       octx.fillStyle = 'rgba(0, 0, 0, 1)';
       fillPolygon(octx, [poly]);

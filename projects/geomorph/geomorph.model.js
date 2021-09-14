@@ -11,7 +11,7 @@ export function createLayout(def, lookup) {
   /** @type {Geomorph.Layout['actual']} */
   const actual = {
     doors: [],
-    extras: [],
+    singles: [],
     hull: [],
     labels: [],
     obstacles: [],
@@ -25,10 +25,10 @@ export function createLayout(def, lookup) {
     if (i) {// We don't scale 1st item i.e. hull
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
-    const { doors, extras, labels, obstacles, walls, meta } = lookup[item.symbol];
+    const { doors, singles, labels, obstacles, walls, meta } = lookup[item.symbol];
     const taggedDoors = restrictByTags(doors, meta.doors, item.tags);
     actual.doors.push(...taggedDoors.map(x => x.clone().applyMatrix(m)));
-    actual.extras.push(...extras.map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) })));
+    actual.singles.push(...singles.map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) })));
     actual.labels.push(...labels.map(x => x.clone().applyMatrix(m)));
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
@@ -79,7 +79,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
   const doors = extractGeoms($, topNodes, 'doors')
-  const extras = extractGeoms($, topNodes, 'extras');
+  const singles = extractGeoms($, topNodes, 'singles');
   const hull = extractGeoms($, topNodes, 'hull');
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
@@ -94,7 +94,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     obstacles,
     walls: Poly.union(walls),
     windows: hull.filter((/** @type {*} */ x) => x._ownTags.includes('window')),
-    extras: extras.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
+    singles: singles.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
     meta: {
       doors: doors.map((/** @type {*} */ x) => x._ownTags),
       pngRect,
@@ -115,7 +115,7 @@ export function serializeSymbol(parsed) {
     obstacles: toJsons(parsed.obstacles),
     walls: toJsons(parsed.walls),
     windows: toJsons(parsed.windows),
-    extras: parsed.extras.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
+    singles: parsed.singles.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
     meta: parsed.meta,
   };
 }
@@ -133,7 +133,7 @@ export function deserializeSymbol(json) {
     obstacles: json.obstacles.map(Poly.from),
     walls: json.walls.map(Poly.from),
     windows: json.windows.map(Poly.from),
-    extras: json.extras.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),
+    singles: json.singles.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),
     meta: json.meta,
   };
 }
