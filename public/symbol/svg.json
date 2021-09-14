@@ -973,7 +973,16 @@
   },
   "stateroom--036--2x4": {
     "key": "stateroom--036--2x4",
-    "doors": [],
+    "doors": [
+      {
+        "type": "Polygon",
+        "coordinates": [[[300, 276], [300, 324], [590, 324], [590, 276]]]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [[[300, 1176], [300, 1224], [590, 1224], [590, 1176]]]
+      }
+    ],
     "hull": [],
     "labels": [],
     "obstacles": [
@@ -1038,7 +1047,7 @@
     "windows": [],
     "extras": [],
     "meta": {
-      "doors": [],
+      "doors": [[], []],
       "pngRect": {"x": -10, "y": -10, "width": 620, "height": 1220}
     }
   },
