@@ -11,6 +11,7 @@ export function createLayout(def, lookup) {
   /** @type {Geomorph.Layout['actual']} */
   const actual = {
     doors: [],
+    hull: [],
     labels: [],
     obstacles: [],
     walls: [],
@@ -36,14 +37,14 @@ export function createLayout(def, lookup) {
   actual.doors.forEach(d => d.sign() < 0 && d.reverse());
 
   const symbols = def.items.map(x => lookup[x.symbol]);
-  const hullSymbol = symbols[0];
-  const hullOutline = hullSymbol.walls[0].clone().removeHoles();
-  const hullTop = Poly.cutOut(hullSymbol.windows.concat(actual.doors), hullSymbol.walls);
+  const hullSym = symbols[0];
+  const hullOutline = hullSym.hull.map(x => x.clone().removeHoles());
+  const hullTop = Poly.cutOut(hullSym.windows.concat(actual.doors), hullSym.hull);
 
   const navPoly = Poly.cutOut(
     actual.walls.flatMap(x => x.createOutset(12))
       .concat(actual.obstacles.flatMap(x => x.createOutset(8))),
-    [hullOutline],
+    hullOutline,
   );
 
   return {
@@ -52,9 +53,9 @@ export function createLayout(def, lookup) {
     navPoly,
     
     hullTop,
-    hullRect: /** @type {Geom.RectJson} */ (hullSymbol.meta.hullRect),
+    hullRect: Rect.from(...hullSym.hull.concat(hullSym.doors).map(x => x.rect)),
     pngHref: `/debug/${def.key}.png`,
-    pngRect: hullSymbol.meta.pngRect,
+    pngRect: hullSym.meta.pngRect,
 
     symbols: symbols.map((sym, i) => ({
       key: sym.key,
@@ -77,24 +78,22 @@ export function parseStarshipSymbol(symbolName, svgContents) {
   const pngRect = extractPngOffset($, topNodes);
   const doors = extractGeoms($, topNodes, 'doors')
   const extras = extractGeoms($, topNodes, 'extras');
+  const hull = extractGeoms($, topNodes, 'hull');
   const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
   const walls = extractGeoms($, topNodes, 'walls');
-  const isHull = symbolName.endsWith('hull'); // Filename constraint
 
   return {
     key: symbolName,
     doors,
+    hull: Poly.union(hull),
     labels,
     obstacles,
     walls: Poly.union(walls),
-    windows: walls.filter((/** @type {*} */ x) => x._ownTags.includes('window')),
+    windows: hull.filter((/** @type {*} */ x) => x._ownTags.includes('window')),
     extras: extras.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
     meta: {
       doors: doors.map((/** @type {*} */ x) => x._ownTags),
-      hullRect: isHull
-        ? Rect.from(...walls.concat(doors).map(x => x.rect)).json
-        : undefined,
       pngRect,
     },
   };
@@ -108,6 +107,7 @@ export function serializeSymbol(parsed) {
   return {
     key: parsed.key,
     doors: toJsons(parsed.doors),
+    hull: toJsons(parsed.hull),
     labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
     walls: toJsons(parsed.walls),
@@ -125,6 +125,7 @@ export function deserializeSymbol(json) {
   return {
     key: json.key,
     doors: json.doors.map(Poly.from),
+    hull: json.hull.map(Poly.from),
     labels: json.labels.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),
     walls: json.walls.map(Poly.from),

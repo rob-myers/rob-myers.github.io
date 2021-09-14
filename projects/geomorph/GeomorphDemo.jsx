@@ -130,7 +130,7 @@ function createAuxCanvases(layout, lookup) {
     console.error('hull walls must exist and be connected');
   }
 
-  uctx.fillStyle = 'rgba(0, 0, 100, 0.05)';
+  uctx.fillStyle = 'rgba(0, 0, 100, 0.2)';
   fillPolygon(uctx, layout.navPoly);
   // uCtxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
   // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());

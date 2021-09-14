@@ -10,10 +10,12 @@ declare namespace Geomorph {
 
   interface SvgGroups<T> {
     doors: T[];
+    /** Distinguish from plain walls */
+    hull: T[];
     labels: T[];
     obstacles: T[];
     walls: T[];
-    /** Only hull has windows */
+    /** Distinguish windows from hull */
     windows: T[];
   }
 
@@ -27,8 +29,6 @@ declare namespace Geomorph {
     meta: {
       /** Door tags e.g. `["iris", "door-e"]` */
       doors: string[][];
-      /** Only exists for hull symbols */
-      hullRect?: Geom.RectJson;
       pngRect: Geom.RectJson;
     };
   }
@@ -51,7 +51,7 @@ declare namespace Geomorph {
     /** Original geomorph rect (debug only) */
     pngRect: Geom.RectJson;
 
-    /** Includes hull symbol */
+    /** First item is hull symbol */
     symbols: {
       key: string;
       pngHref: string;
