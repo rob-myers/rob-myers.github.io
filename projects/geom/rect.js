@@ -202,6 +202,7 @@ export class Rect {
       this.y = cy;
       this.height = 0;
     }
+    return this;
   }
 
   /**
