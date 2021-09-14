@@ -33,8 +33,9 @@ export function createLayout(def, lookup) {
   });
   // Cut doors from walls
   actual.walls = Poly.cutOut(actual.doors, actual.walls);
-  // Well-signed polygons for polygon inset
+  // Well-signed polygons
   actual.doors.forEach(d => d.sign() < 0 && d.reverse());
+  actual.obstacles.forEach(d => d.sign() < 0 && d.reverse());
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSym = symbols[0];
