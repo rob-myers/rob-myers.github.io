@@ -25,7 +25,7 @@ function Geomorph({ gm, transform }) {
   return (
     <g transform={transform}>
       <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
-      <image className="underlay" href={gm.underlay} x={gm.hullRect.x} y={gm.hullRect.y} />
+      <image className="underlay" href={gm.underlay} x={gm.hullRect.x * 2} y={gm.hullRect.y * 2} />
       {gm.symbols.map((s, i) =>
         <g key={i} transform={s.transform}>
           <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
@@ -107,8 +107,8 @@ const layout301 = {
  * @param {Geomorph.SymbolLookup} lookup 
  */
 function createAuxCanvases(layout, lookup) {
-  const hull = lookup[layout.symbols[0].key];
-  const hullRect = /** @type {Geom.RectJson} */ (hull.meta.hullRect);
+  const hullSym = lookup[layout.symbols[0].key];
+  const hullRect = layout.hullRect;
 
   const oc = document.createElement('canvas');
   const uc = document.createElement('canvas');
@@ -116,12 +116,19 @@ function createAuxCanvases(layout, lookup) {
   oc.width = hullRect.width * 2, oc.height = hullRect.height * 2;
   /** @type {[CanvasRenderingContext2D, CanvasRenderingContext2D]} */
   const [octx, uctx] = ([oc.getContext('2d'), uc.getContext('2d')]);
-
-  uctx.translate(-hullRect.x, -hullRect.y);
   uctx.scale(2, 2);
+  uctx.translate(-hullRect.x, -hullRect.y);
+  octx.scale(2, 2);
+  octx.translate(-hullRect.x, -hullRect.y);
+
+  //#region underlay
   uctx.fillStyle = 'rgba(100, 100, 100, 0.4)';
-  const hullOutline = hull.walls[0].outline;
-  fillRing(uctx, hullOutline);
+  if (hullSym.walls.length === 1) {
+    const hullOutline = hullSym.walls[0].outline;
+    fillRing(uctx, hullOutline);
+  } else {
+    console.error('hull walls must exist and be connected');
+  }
 
   uctx.fillStyle = 'rgba(0, 0, 100, 0.05)';
   fillPolygon(uctx, layout.navPoly);
@@ -130,15 +137,15 @@ function createAuxCanvases(layout, lookup) {
   // decomps.forEach(decomp => drawTriangulation(uCtxt, decomp));
 
   uctx.lineWidth = 4, uctx.lineJoin = 'round';
-  hull.extras.forEach(({ poly, tags }) => {
+  hullSym.extras.forEach(({ poly, tags }) => {
     uctx.fillStyle = tags.includes('machine') ? '#ccc' : 'white';
     fillPolygon(uctx, [poly]);
     uctx.stroke();
   });
   uctx.resetTransform();
+  //#endregion
 
-  octx.scale(2, 2);
-  octx.translate(-hullRect.x, -hullRect.y);
+  //#region overlay
   const { doors, labels, obstacles, walls } = layout.actual;
   // NOTE door stroke breaks canvas width
   octx.fillStyle = 'rgba(0, 0, 0, 1)';
@@ -154,6 +161,7 @@ function createAuxCanvases(layout, lookup) {
   octx.fillStyle = 'rgba(0, 0, 0, 0.04)';
   fillPolygon(octx, labels);
   octx.resetTransform();
+  //#endregion
   
   return { overlay: oc, underlay: uc };
 }

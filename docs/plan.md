@@ -1,5 +1,6 @@
 ## Plan
 
+- remove doors from symbol PNGs
 - finish sub-symbols for geomorph 301
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
