@@ -154,11 +154,11 @@ function createAuxCanvases(layout, lookup) {
   fillPolygon(octx, doors.flatMap(x => x.createInset(2)));
   octx.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(octx, layout.hullTop);
-  octx.fillStyle = 'rgba(100, 0, 0, 0.1)';
+  octx.fillStyle = 'rgba(100, 0, 0, 0.3)';
   fillPolygon(octx, walls);
-  octx.fillStyle = 'rgba(0, 100, 0, 0.1)';
+  octx.fillStyle = 'rgba(0, 100, 0, 0.3)';
   fillPolygon(octx, obstacles);
-  octx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+  octx.fillStyle = 'rgba(0, 0, 0, 0.1)';
   fillPolygon(octx, labels);
   octx.resetTransform();
   //#endregion

@@ -95,8 +95,8 @@ export function fillRing(ctxt, ring, fill = true) {
  * @param {Poly[]} polys 
  */
 export function fillPolygon(ctxt, polys) {
-  ctxt.beginPath();
-  for (const poly of polys) {
+	for (const poly of polys) {
+		ctxt.beginPath();
     fillRing(ctxt, poly.outline, false);
     for (const hole of poly.holes) {
       fillRing(ctxt, hole, false);
