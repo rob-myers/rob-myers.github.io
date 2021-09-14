@@ -12,7 +12,6 @@ export function createLayout(def, lookup) {
   const actual = {
     singles: [],
     hull: [],
-    labels: [],
     obstacles: [],
     walls: [],
   };
@@ -23,12 +22,11 @@ export function createLayout(def, lookup) {
     if (i) {// We don't scale 1st item i.e. hull
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
-    const { singles, labels, obstacles, walls } = lookup[item.symbol];
+    const { singles, obstacles, walls } = lookup[item.symbol];
     // Transform singles and restrict doors by tags
     actual.singles.push(...singles
       .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) }))
       .filter(({ tags }) => !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))))
-    actual.labels.push(...labels.map(x => x.clone().applyMatrix(m)));
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
   });
@@ -89,7 +87,6 @@ export function parseStarshipSymbol(symbolName, svgContents) {
   return {
     key: symbolName,
     hull: Poly.union(hull),
-    labels,
     obstacles,
     walls: Poly.union(walls),
     singles: singles.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
@@ -113,7 +110,6 @@ export function serializeSymbol(parsed) {
   return {
     key: parsed.key,
     hull: toJsons(parsed.hull),
-    labels: toJsons(parsed.labels),
     obstacles: toJsons(parsed.obstacles),
     walls: toJsons(parsed.walls),
     singles: parsed.singles.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
@@ -128,9 +124,7 @@ export function serializeSymbol(parsed) {
 export function deserializeSymbol(json) {
   return {
     key: json.key,
-    // doors: json.doors.map(Poly.from),
     hull: json.hull.map(Poly.from),
-    labels: json.labels.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),
     walls: json.walls.map(Poly.from),
     singles: json.singles.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),

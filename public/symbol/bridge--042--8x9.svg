@@ -48,39 +48,6 @@
     <path d="M 870.606 2254.948 L 928.501 2036.91 L 940.765 1861.359 L 919.955 1637.863 L 849.314 1426.663 L 755.061 1261.359 L 881.748 1261.359 L 1000.284 1861.359 L 877.679 2461.359 L 755.061 2461.359 L 870.606 2254.948 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 3061.358978, 1344.938995)"/>
   </g>
   <g style="pointer-events: none;">
-    <title>labels</title>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1150" y="550">
-      <title>bridge</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="700" y="750">
-      <title>locker</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1600" y="750">
-      <title>locker</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="250" y="1300">
-      <title>locker</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="2050" y="1250">
-      <title>toilet</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1150" y="1800">
-      <title>briefing</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="400" y="2500" bx:origin="0.5 0.5">
-      <title>fuel</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1600" y="2500">
-      <title>fuel</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1900" y="1900">
-      <title>bedroom</title>
-    </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="400" y="1900">
-      <title>office</title>
-    </rect>
-  </g>
-  <g style="pointer-events: none;">
     <title>singles</title>
     <rect x="55" y="1493" width="565" height="21" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
       <title>wall</title>
@@ -117,6 +84,36 @@
     </rect>
     <rect x="2375" y="914" width="48" height="280" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill-opacity: 0.5;" transform="matrix(0, -1, 1, 0, 295, 3303.094238)">
       <title>door iris</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1150" y="550">
+      <title>label bridge</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="700" y="750">
+      <title>label locker</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1600" y="750">
+      <title>label locker</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="250" y="1300">
+      <title>label locker</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="2050" y="1250">
+      <title>label toilet</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1150" y="1800">
+      <title>label briefing</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="399" y="2500" bx:origin="0.5 0.5">
+      <title>label fuel</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1600" y="2500">
+      <title>label fuel</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1899" y="1900">
+      <title>label bedroom</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="400" y="1900">
+      <title>label office</title>
     </rect>
   </g>
 </svg>

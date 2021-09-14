@@ -1,6 +1,5 @@
 ## Plan
 
-- labels part of singles
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
 - perhaps precompute layouts too
@@ -18,6 +17,7 @@
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
 - destructuble walls?
 - can clamber over machinery?
+- ✅ labels now part of singles
 - ✅ windows now part of singles
 - ✅ extra -> singles; doors part of singles 
 - ✅ finish symbols for geomorph 301

@@ -151,8 +151,9 @@ function createAuxCanvases(layout, lookup) {
   //#endregion
 
   //#region overlay
-  const { singles, labels, obstacles, walls } = layout.actual;
+  const { singles, obstacles, walls } = layout.actual;
   const doors = filterSingles(layout.actual, 'door');
+  const labels = filterSingles(layout.actual, 'label');
   octx.fillStyle = 'rgba(0, 100, 0, 0.3)';
   fillPolygon(octx, obstacles);
   octx.fillStyle = 'rgba(100, 0, 0, 0.3)';

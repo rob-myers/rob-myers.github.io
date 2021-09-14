@@ -10,9 +10,8 @@ declare namespace Geomorph {
 
   interface SvgGroups<T> {
     singles: { tags: string[]; poly: T }[];
-    /** Distinguish from plain walls */
+    /** Hull walls (avoid union with adjacent walls) */
     hull: T[];
-    labels: T[];
     obstacles: T[];
     walls: T[];
   }
