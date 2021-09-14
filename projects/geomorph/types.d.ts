@@ -32,7 +32,7 @@ declare namespace Geomorph {
     def: LayoutDef;
     /** Original geomorph (debug only) */
     pngHref: string;
-    /** Bounds of hull polygon */
+    /** Bounds of hull */
     hullRect: Geom.RectJson;
     /** Top of hull (sans windows/doors) */
     hullTop: Poly[];
