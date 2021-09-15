@@ -123,9 +123,7 @@ const titleCss = css`
     padding: 32px 0;
     
     @media(max-width: 600px) {
-      font-size: .9rem;
-      letter-spacing: 0;
-      padding: 24px 0 8px;
+      padding: 20px 0;
     }
   }
 `;

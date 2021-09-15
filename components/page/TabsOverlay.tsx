@@ -7,17 +7,19 @@ export function ControlsOverlay({ enabled, toggleEnabled }: {
 }) {
   return (
     <div className={controlsCss}>
-      <div className="top-right" onClick={toggleEnabled}>
-        {enabled ? 'enabled' : 'disabled'}
-      </div>
-      {!enabled && (
-        <div
-          className={classNames("central", enabled && 'enabled')}
-          onClick={toggleEnabled}
-        >
-          enable
-        </div>
-      )}
+      {enabled
+        ? (
+          <div className="top-right" onClick={toggleEnabled}>
+            disable
+          </div>
+        ) : (
+          <div
+            className={classNames("central", enabled && 'enabled')}
+            onClick={toggleEnabled}
+          >
+            enable
+          </div>
+        )}
     </div>
   );
 }
@@ -28,13 +30,13 @@ const controlsCss = css`
   > .top-right {
     position: absolute;
     right: 0;
-    top: -22px;
+    top: 0px;
     z-index: 10;
     padding: 2px 8px;
     
     cursor: pointer;
     background: #333;
-    color: #bbb;
+    color: #ddd;
     border-radius: 4px 4px 0 0;
   }
 

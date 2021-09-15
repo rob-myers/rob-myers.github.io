@@ -1,10 +1,9 @@
 ## Plan
 
-
-- convert 302 too
 - generate pngs for demo (so don't need code)
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
+- convert 302 too
 - emphasise render-once approach to React in intro
 - can show labels
 - static lighting (shadow maps)
