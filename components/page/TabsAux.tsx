@@ -1,7 +1,5 @@
 import React from 'react';
-import { css } from 'goober';
 import {TabNode, IJsonModel} from 'flexlayout-react';
-import classNames from 'classnames';
 
 import * as Lookup from 'model/tabs-lookup';
 import {CodeEditor} from 'components/dynamic';
@@ -95,40 +93,3 @@ export function ErrorMessage({ children }: React.PropsWithChildren<{}>) {
   );
 }
 
-export function LoadingOverlay(props: { fade: boolean }) {
-  return (
-    <div className={classNames(overlayCss, { 'fade-out': props.fade })}>
-      <div><div className="message">Loading...</div></div>
-    </div>
-  );
-}
-
-const overlayCss = css`
-  pointer-events: none;
-  position: absolute;
-  z-index: 5;
-  width: inherit;
-  height: inherit;
-  background: #000;
-  display: flex;
-  justify-content: center;
-
-  > div {
-    display: flex;
-    align-items: center;
-  }
-  .message {
-    font-family: sans-serif;
-    color: #ccc;
-    background: #444;
-    border-radius: 4px;
-    padding: 8px 12px;
-    font-size: 14px;
-  }
-
-  opacity: 1;
-  transition: opacity 1s ease-in;
-  &.fade-out {
-    opacity: 0;    
-  }
-`;

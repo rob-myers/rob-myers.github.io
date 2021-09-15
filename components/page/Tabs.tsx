@@ -4,15 +4,14 @@ import { Layout, Model, Actions } from 'flexlayout-react';
 import classNames from 'classnames';
 
 import useSiteStore from 'store/site.store';
-import { computeJsonModel,  factory,  LoadingOverlay, TabMeta } from './TabsAux';
+import { computeJsonModel, factory, TabMeta } from './TabsAux';
+import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
 
 export default function Tabs({ tabs, height, storeKey }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
   const rootRef = React.useRef<HTMLDivElement>(null);
-  const [fade, setFade] = React.useState(false);
 
   React.useEffect(() => {
-    setFade(true);
     if (storeKey) {
       useSiteStore.getState().tabs[storeKey] = {
         key: storeKey,
@@ -23,15 +22,22 @@ export default function Tabs({ tabs, height, storeKey }: Props) {
     }
   }, [model]);
 
+  const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
+  const [enabled, setEnabled] = React.useState(true);
+  React.useEffect(() => void setColour('clear'), []);
 
   return (
     <div
-      className={classNames("tabs", "scrollable", rootCss(height))}
       ref={rootRef}
+      className={classNames("tabs", "scrollable", rootCss(height))}
     >
-      <div className={overlayContainerCss(height)}>
-        <LoadingOverlay fade={fade} />
-        {fade && <Layout model={model} factory={factory} />}
+      <div className={overlayCss(height)}>
+        {colour !== 'black' && <Layout model={model} factory={factory} />}
+        <ControlsOverlay enabled={enabled} toggleEnabled={() => {
+          setEnabled(!enabled);
+          setColour(colour === 'clear' ? 'faded' : 'clear');
+        }} />
+        <LoadingOverlay colour={colour} />
       </div>
     </div>
   );
@@ -83,7 +89,7 @@ const rootCss = (height: number) => css`
   }
 `;
 
-const overlayContainerCss = (height: number) => css`
+const overlayCss = (height: number) => css`
   width: 100%;
   height: ${height}px;
   position: relative;
