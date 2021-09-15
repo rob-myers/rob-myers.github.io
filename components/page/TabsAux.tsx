@@ -17,13 +17,15 @@ export function factory(node: TabNode) {
       const filepath = node.getComponent() || '';
       if (filepath in Lookup.code) {
         return (
-          <CodeEditor
-            height="100%"
-            lineNumbers
-            readOnly
-            code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
-            folds={folds}
-          />
+          <div style={{ height: '100%', background: '#444' }}>
+            <CodeEditor
+              height="100%"
+              lineNumbers
+              readOnly
+              code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
+              folds={folds}
+            />
+          </div>
         );
       }
       return (

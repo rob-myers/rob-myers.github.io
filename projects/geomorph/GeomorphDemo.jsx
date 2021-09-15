@@ -20,7 +20,7 @@ export default function GeomorphDemo() {
 
 /** @param {{ def: Geomorph.LayoutDef; transform?: string }} _ */
 function Geomorph({ def, transform }) {
-  const gm = computeLayout(def);
+  const gm = computeLayout(def); // TODO use useQuery?
   const [{pngRect}, ...symbols] = gm.symbols;
 
   return (

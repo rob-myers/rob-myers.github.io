@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'goober';
-import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
+import { Layout, Model } from 'flexlayout-react';
 import classNames from 'classnames';
 
 import useSiteStore from 'store/site.store';
@@ -55,7 +55,6 @@ const rootCss = (height: number) => css`
     height: ${height}px;
   }
   .flexlayout__tab {
-    /* border: 1px solid rgba(0, 0, 0, 0.3); */
     border-top: 6px solid #444;
     position: relative;
     /** Handle svg overflow */
