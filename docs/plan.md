@@ -3,6 +3,7 @@
 - generate pngs for demo (so don't need code)
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
+- auto-disable Tabs on scroll out of view
 - convert 302 too
 - emphasise render-once approach to React in intro
 - can show labels

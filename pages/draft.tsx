@@ -127,7 +127,7 @@ Here's hoping my chain of unfinished projects is coming to a close!
 
 So, we're building a roguelike, directly on this website.
 It will get fun once things are moving about.
-But first we'll describe the underlying browser-related technologies.
+But first we'll describe the underlying browser focused technologies.
 
 | Concept | Technology |
 | - | - |
@@ -145,13 +145,13 @@ But first we'll describe the underlying browser-related technologies.
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
 
-The early nineties brought the three pillars: HTML, CSS and JavaScript.
+The early nineties brought three pillars: HTML, CSS and JavaScript.
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
 Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hovers).
 More precisely, all subsequent DOM mutations are performed by JavaScript.
 It is now common to generate the initial HTML using JS too,
 either during a build-step or on a Node.js server.
-In particular, JavaScript has become the central web technology.
+JavaScript has become the central web technology.
 
 > ℹ️ _We'll spend the next two sections describing how we use JS._
 > _The discussion is full of jargon, but the details can be picked up later on._

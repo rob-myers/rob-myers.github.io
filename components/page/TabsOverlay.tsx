@@ -48,8 +48,8 @@ const controlsCss = css`
     
     cursor: pointer;
     color: #ccc;
-    background: rgba(50, 50, 50, 0.7);
-    padding: 16px 32px;
+    background: rgba(70, 80, 80, 1);
+    padding: 8px 32px;
     border-radius: 4px;
     font-size: larger;
     font-weight: 300;
