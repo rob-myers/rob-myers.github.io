@@ -23,8 +23,8 @@ export default function Tabs({ tabs, height, storeKey }: Props) {
   }, [model]);
 
   const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
-  const [enabled, setEnabled] = React.useState(true);
-  React.useEffect(() => void setColour('clear'), []);
+  const [enabled, setEnabled] = React.useState(false);
+  React.useEffect(() => void setColour('faded'), []);
 
   return (
     <div

@@ -8,28 +8,56 @@ export function ControlsOverlay({ enabled, toggleEnabled }: {
   return (
     <div className={controlsCss}>
       <div
-        className={classNames("toggle-enabled", enabled && "enabled")}
+        className="top-right"
         onClick={toggleEnabled}
       >
-        {enabled ? 'enabled' : 'disabled'}
+          {enabled ? 'enabled' : 'disabled'}
+      </div>
+      <div
+        className={classNames("central", enabled && 'enabled')}
+        onClick={toggleEnabled}
+      >
+        enable
       </div>
     </div>
   );
 }
 
 const controlsCss = css`
-  position: absolute;
-  right: 0;
-  top: -22px;
-  z-index: 10;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
-  .toggle-enabled {
+  > .top-right {
+    position: absolute;
+    right: 0;
+    top: -22px;
+    z-index: 10;
+    padding: 2px 8px;
+    
     cursor: pointer;
     background: #333;
     color: #bbb;
-    padding: 2px 8px;
     border-radius: 4px 4px 0 0;
+  }
+
+  > .central {
+    position: absolute;
+    z-index: 10;
+    left: calc(50% - 48px);
+    top: calc(50% - 24px);
+    
+    cursor: pointer;
+    color: #ccc;
+    background: #333;
+    padding: 16px 32px;
+    border-radius: 4px;
+    font-size: larger;
+    font-weight: 300;
+
+    opacity: 1;
+    transition: 300ms opacity ease;
+    &.enabled {
+      opacity: 0;
+    }
   }
 `;
 
@@ -43,11 +71,7 @@ export function LoadingOverlay({ colour }: {
         'faded': colour === 'faded',
       })}
     >
-      {colour !== 'faded' && (
-        <div><div className="message">
-          Loading...
-        </div></div>
-      )}
+      <div className="loading-message">Loading...</div>
     </div>
   );
 }
@@ -62,19 +86,17 @@ const loadingCss = css`
   width: inherit;
   height: inherit;
   background: #000;
-  display: flex;
-  justify-content: center;
+  font-family: sans-serif;
 
-  > div {
-    display: flex;
-    align-items: center;
-  }
-  .message {
-    font-family: sans-serif;
+  .loading-message {
+    position: absolute;
+    left: calc(50% - 60px);
+    top: calc(50% - 24px);
     color: #fff;
     border-radius: 4px;
     padding: 8px 12px;
     font-size: 14px;
+    transition: opacity 1s ease-in;
   }
 
   opacity: 1;
@@ -82,9 +104,11 @@ const loadingCss = css`
   &.clear {
     opacity: 0;
     transition: opacity 0.5s ease-in;
+    .loading-message { opacity: 0; }
   }
   &.faded {
     opacity: 0.5;
     transition: opacity 0.5s ease-in;
+    .loading-message { opacity: 0; }
   }
 `;
