@@ -37,8 +37,14 @@ module.exports = {
         },
         {
             "files": ["projects/**/*.js", "projects/**/*.jsx"],
-            "rules": {
+            "env": {
                 "no-unused-vars": "off"
+            }
+        },
+        {
+            "files": ["media/scripts/*.js"],
+            "env": {
+                "node": true
             }
         }
     ]

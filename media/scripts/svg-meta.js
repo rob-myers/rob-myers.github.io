@@ -14,7 +14,8 @@ import { parseStarshipSymbol, serializeSymbol } from '../../projects/geomorph/ge
 const publicDir = path.resolve(__dirname, '../../public');
 const symbolsDir = path.resolve(publicDir, 'symbol');
 const svgFilenames = fs.readdirSync(symbolsDir).filter(x => x.endsWith('.svg'));
-const svgJsonLookup = {} as Record<string, Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>>;
+/** @type {Record<string, Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>>} */
+const svgJsonLookup = {};
 
 for (const filename of svgFilenames) {
   const symbolName = filename.slice(0, -'.svg'.length);
