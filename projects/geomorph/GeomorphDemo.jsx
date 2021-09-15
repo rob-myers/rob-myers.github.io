@@ -5,29 +5,29 @@ import { Rect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 import { createLayout, deserializeSvgJson, filterSingles } from "./geomorph.model";
 import { drawTriangulation, fillPolygon, fillRing } from '../service';
-
-// TODO load pre-parsed data from svg.json
-// TODO create single image with all symbols?
+import svgJson from '../../public/symbol/svg.json';
 
 export default function GeomorphDemo() {
-  const gm = useSymbolLayout(layout301);
+  useQuery('focus-trigger', () => {}); // TODO only trigger in dev
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
-        {gm && <Geomorph gm={gm} />}
+        <Geomorph def={layout301} />
       </PanZoom>
     </div>
   );
 }
 
-/** @param {{ gm: Geomorph.LayoutWithLayers; transform?: string }} _ */
-function Geomorph({ gm, transform }) {
-  const {pngRect} = gm.symbols[0];
+/** @param {{ def: Geomorph.LayoutDef; transform?: string }} _ */
+function Geomorph({ def, transform }) {
+  const gm = computeLayout(def);
+  const [{pngRect}, ...symbols] = gm.symbols;
+
   return (
     <g transform={transform}>
       <image className="debug" href={gm.pngHref} x={pngRect.x} y={pngRect.y}/>
       <image className="underlay" href={gm.underlay} x={gm.hullRect.x * 2} y={gm.hullRect.y * 2} />
-      {gm.symbols.map((s, i) =>
+      {symbols.map((s, i) =>
         <g key={i} transform={s.transform}>
           <image className="symbol" href={s.pngHref} x={s.pngRect.x}  y={s.pngRect.y}/>
         </g>
@@ -55,26 +55,17 @@ const rootCss = css`
 /**
  * 
  * @param {Geomorph.LayoutDef} def
- * @returns {Geomorph.LayoutWithLayers=}
+ * @returns {Geomorph.LayoutWithLayers}
  */
-function useSymbolLayout(def) {
-  const symbolLookup = useSymbolLookup();
-  if (symbolLookup) {
-    const layout = createLayout(def, symbolLookup);
-    const { overlay, underlay } = createAuxCanvases(layout, symbolLookup);
-    return {
-      overlay: overlay.toDataURL(),
-      underlay: underlay.toDataURL(),
-      ...layout,
-    };
-  }
-}
-
-function useSymbolLookup() {
-  return useQuery('svg-json', () => fetch('/symbol/svg.json')
-    .then(x => x.json())
-    .then(x => deserializeSvgJson(x)),
-  ).data;
+function computeLayout(def) {
+  const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
+  const layout = createLayout(def, symbolLookup);
+  const { overlay, underlay } = createAuxCanvases(layout, symbolLookup);
+  return {
+    overlay: overlay.toDataURL(),
+    underlay: underlay.toDataURL(),
+    ...layout,
+  };
 }
 
 /** @type {Geomorph.LayoutDef} */
