@@ -12,7 +12,7 @@ export function ControlsOverlay({ enabled, toggleEnabled }: {
       </div>
       {!enabled && (
         <div
-          className={classNames("central", enabled ? 'enabled' : 'disabled')}
+          className={classNames("central", enabled && 'enabled')}
           onClick={toggleEnabled}
         >
           enable
@@ -46,7 +46,7 @@ const controlsCss = css`
     
     cursor: pointer;
     color: #ccc;
-    background: rgba(50, 50, 50, 0.6);
+    background: rgba(50, 50, 50, 0.7);
     padding: 16px 32px;
     border-radius: 4px;
     font-size: larger;
@@ -56,9 +56,6 @@ const controlsCss = css`
     transition: 300ms opacity ease;
     &.enabled {
       opacity: 0;
-    }
-    &.disabled {
-      opacity: 1;
     }
   }
 `;
