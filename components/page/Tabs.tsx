@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from 'goober';
-import { Layout, Model } from 'flexlayout-react';
+import { Layout, Model, Actions } from 'flexlayout-react';
 import classNames from 'classnames';
 
 import useSiteStore from 'store/site.store';
@@ -16,7 +16,7 @@ export default function Tabs({ tabs, height, storeKey }: Props) {
     if (storeKey) {
       useSiteStore.getState().tabs[storeKey] = {
         key: storeKey,
-        model,
+        selectTab: (tabKey: string) => model.doAction(Actions.selectTab(tabKey)),
         scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
       };
       return () => void delete useSiteStore.getState().tabs[storeKey];

@@ -62,7 +62,7 @@ const blogComponents = {
                 const [tabsKey, tabKey] = args;
                 const tabs = useSiteStore.getState().tabs[tabsKey];
                 if (tabs) {// in case tabs not enabled yet 
-                  tabs.model.doAction(Actions.selectTab(tabKey));
+                  tabs.selectTab(tabKey),
                   tabs.scrollIntoView();
                 }
                 break;

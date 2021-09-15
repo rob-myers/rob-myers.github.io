@@ -14,7 +14,7 @@ const useStore = create<State>((set, get) => ({
 
 interface TabsState {
   key: string;
-  model: Model;
+  selectTab: (tabId: string) => void;
   scrollIntoView: () => void;
 }
 
