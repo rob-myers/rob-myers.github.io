@@ -20,16 +20,16 @@ export function ControlsOverlay({ enabled, toggleEnabled }: {
 const controlsCss = css`
   position: absolute;
   right: 0;
-  top: -24px;
+  top: -22px;
   z-index: 10;
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
   .toggle-enabled {
     cursor: pointer;
-    background: #222;
+    background: #333;
     color: #bbb;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 2px 8px;
+    border-radius: 4px 4px 0 0;
   }
 `;
 
