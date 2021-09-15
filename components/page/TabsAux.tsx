@@ -118,6 +118,7 @@ const overlayCss = css`
     align-items: center;
   }
   .message {
+    font-family: sans-serif;
     color: #ccc;
     background: #444;
     border-radius: 4px;
@@ -126,7 +127,7 @@ const overlayCss = css`
   }
 
   opacity: 1;
-  transition: opacity 0.5s linear;
+  transition: opacity 1s ease-in;
   &.fade-out {
     opacity: 0;    
   }
