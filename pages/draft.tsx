@@ -378,6 +378,7 @@ public/svg
       `}/>
 
       <Tabs
+        enabled
         height={400}
         tabs={[
           { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },

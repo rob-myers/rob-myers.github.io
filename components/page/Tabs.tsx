@@ -7,31 +7,31 @@ import useSiteStore from 'store/site.store';
 import { computeJsonModel, factory, TabMeta } from './TabsAux';
 import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
 
-export default function Tabs({ tabs, height, storeKey }: Props) {
-  const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
+export default function Tabs(props: Props) {
+  const model = React.useMemo(() => Model.fromJson(computeJsonModel(props.tabs)), [props.tabs]);
   const rootRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (storeKey) {
-      useSiteStore.getState().tabs[storeKey] = {
-        key: storeKey,
+    if (props.storeKey) {
+      useSiteStore.getState().tabs[props.storeKey] = {
+        key: props.storeKey,
         selectTab: (tabKey: string) => model.doAction(Actions.selectTab(tabKey)),
         scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
       };
-      return () => void delete useSiteStore.getState().tabs[storeKey];
+      return () => void delete useSiteStore.getState().tabs[props.storeKey || ''];
     }
   }, [model]);
 
   const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
-  const [enabled, setEnabled] = React.useState(false);
-  React.useEffect(() => void setColour('faded'), []);
+  const [enabled, setEnabled] = React.useState(!!props.enabled);
+  React.useEffect(() => void setColour(props.enabled ? 'clear' : 'faded'), []);
 
   return (
     <div
       ref={rootRef}
-      className={classNames("tabs", "scrollable", rootCss(height))}
+      className={classNames("tabs", "scrollable", rootCss(props.height))}
     >
-      <div className={overlayCss(height)}>
+      <div className={overlayCss(props.height)}>
         {colour !== 'black' && <Layout model={model} factory={factory} />}
         <ControlsOverlay enabled={enabled} toggleEnabled={() => {
           setEnabled(!enabled);
@@ -44,8 +44,10 @@ export default function Tabs({ tabs, height, storeKey }: Props) {
 }
 
 interface Props {
-  storeKey?: string;
+  /** Initially enabled? */
+  enabled?: boolean;
   height: number;
+  storeKey?: string;
   tabs: TabMeta[];
 }
 
