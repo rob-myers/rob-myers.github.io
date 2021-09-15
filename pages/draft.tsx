@@ -153,8 +153,8 @@ It is now common to generate the initial HTML using JS too,
 either during a build-step or on a Node.js server.
 In particular, JavaScript has become the central web technology.
 
-ℹ️ _We'll spend two sections describing how we use JS.
-The discussion is technical and full of jargon, but the details can be picked up later on._
+> ℹ️ _We'll spend two sections describing how we use JS._
+> _The discussion is full of jargon, but the details can be picked up later on._
 
 ### React and Preact
 
