@@ -7,18 +7,17 @@ export function ControlsOverlay({ enabled, toggleEnabled }: {
 }) {
   return (
     <div className={controlsCss}>
-      <div
-        className="top-right"
-        onClick={toggleEnabled}
-      >
-          {enabled ? 'enabled' : 'disabled'}
+      <div className="top-right" onClick={toggleEnabled}>
+        {enabled ? 'enabled' : 'disabled'}
       </div>
-      <div
-        className={classNames("central", enabled && 'enabled')}
-        onClick={toggleEnabled}
-      >
-        enable
-      </div>
+      {!enabled && (
+        <div
+          className={classNames("central", enabled ? 'enabled' : 'disabled')}
+          onClick={toggleEnabled}
+        >
+          enable
+        </div>
+      )}
     </div>
   );
 }
@@ -42,12 +41,12 @@ const controlsCss = css`
   > .central {
     position: absolute;
     z-index: 10;
-    left: calc(50% - 48px);
+    left: calc(50% - 54px);
     top: calc(50% - 24px);
     
     cursor: pointer;
     color: #ccc;
-    background: #333;
+    background: rgba(50, 50, 50, 0.6);
     padding: 16px 32px;
     border-radius: 4px;
     font-size: larger;
@@ -57,6 +56,9 @@ const controlsCss = css`
     transition: 300ms opacity ease;
     &.enabled {
       opacity: 0;
+    }
+    &.disabled {
+      opacity: 1;
     }
   }
 `;
@@ -70,9 +72,7 @@ export function LoadingOverlay({ colour }: {
         'clear': colour === 'clear',
         'faded': colour === 'faded',
       })}
-    >
-      <div className="loading-message">Loading...</div>
-    </div>
+    />
   );
 }
 
@@ -88,27 +88,14 @@ const loadingCss = css`
   background: #000;
   font-family: sans-serif;
 
-  .loading-message {
-    position: absolute;
-    left: calc(50% - 60px);
-    top: calc(50% - 24px);
-    color: #fff;
-    border-radius: 4px;
-    padding: 8px 12px;
-    font-size: 14px;
-    transition: opacity 1s ease-in;
-  }
-
   opacity: 1;
   transition: opacity 1s ease-in;
   &.clear {
     opacity: 0;
     transition: opacity 0.5s ease-in;
-    .loading-message { opacity: 0; }
   }
   &.faded {
     opacity: 0.5;
     transition: opacity 0.5s ease-in;
-    .loading-message { opacity: 0; }
   }
 `;

@@ -4,7 +4,6 @@ import { css } from 'goober';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 import gfm from 'remark-gfm';
-import { Actions } from 'flexlayout-react';
 import classNames from 'classnames';
 import useSiteStore from 'store/site.store';
 
@@ -99,9 +98,9 @@ const titleCss = css`
     padding-left: 8px;
     margin-top: 12px;
   }
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
   h1 {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 6rem;
     font-weight: 300;
     cursor: pointer;
@@ -118,11 +117,10 @@ const titleCss = css`
   
   p {/** Site subtitle */
     color: #444;
-    letter-spacing: 1px;
-    font-size: 1rem;
-    font-family: monospace;
+    letter-spacing: 2px;
+    font-size: 1.1rem;
     margin: 0;
-    padding: 24px 0 48px;
+    padding: 32px 0;
     
     @media(max-width: 600px) {
       font-size: .9rem;
