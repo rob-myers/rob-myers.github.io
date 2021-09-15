@@ -1,10 +1,10 @@
 /**
- * Usage: yarn svg-meta
- * > Parse svg symbols in /public/symbol, writing
- * > a single json file /public/symbol/svg.json
+ * Parse svg symbols in /public/symbol, writing
+ * a single json file /public/symbol/svg.json
+ *
+ * Usage: `yarn svg-meta`
  */
-/// <reference path="../../projects/geom/types.d.ts"/>
-/// <reference path="../../projects/geomorph/types.d.ts"/>
+/// <reference path="./deps.d.ts"/>
 
 import fs from 'fs';
 import path from 'path';
