@@ -1,19 +1,18 @@
 import React from 'react';
 import { css } from 'goober';
 import {Layout, Model, TabNode, IJsonModel} from 'flexlayout-react';
-import CodeMirror from 'codemirror';
 import classNames from 'classnames';
 
-import * as Lookup from 'model/tabs-lookup';
-import {CodeEditor} from 'components/dynamic';
-import Tab, { ErrorMessage, TabMeta } from './Tab';
 import useSiteStore from 'store/site.store';
+import { computeJsonModel,  factory,  LoadingOverlay, TabMeta } from './TabsAux';
 
 export default function Tabs({ tabs, height, storeKey }: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(tabs)), [tabs]);
-  const rootRef = React.useRef<HTMLElement>(null);
+  const rootRef = React.useRef<HTMLDivElement>(null);
+  const [fade, setFade] = React.useState(false);
 
   React.useEffect(() => {
+    setFade(true);
     if (storeKey) {
       useSiteStore.getState().tabs[storeKey] = {
         key: storeKey,
@@ -24,16 +23,17 @@ export default function Tabs({ tabs, height, storeKey }: Props) {
     }
   }, [model]);
 
+
   return (
-    <section
+    <div
       className={classNames("tabs", "scrollable", rootCss(height))}
       ref={rootRef}
     >
-      <Layout
-        model={model}
-        factory={factory}
-      />
-    </section>
+      <div className={overlayContainerCss(height)}>
+        <LoadingOverlay fade={fade} />
+        {fade && <Layout model={model} factory={factory} />}
+      </div>
+    </div>
   );
 }
 
@@ -41,84 +41,6 @@ interface Props {
   storeKey?: string;
   height: number;
   tabs: TabMeta[];
-}
-
-function factory(node: TabNode) {
-  const { key: nodeKey, folds } = node.getConfig() as {
-    key: TabMeta['key'];
-    folds?: CodeMirror.Position[];
-  };
-
-  switch (nodeKey) {
-    case 'code': {
-      const filepath = node.getComponent() || '';
-      if (filepath in Lookup.code) {
-        return (
-          <Tab>
-            <CodeEditor
-              height="100%"
-              lineNumbers
-              readOnly
-              code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
-              folds={folds}
-            />
-          </Tab>
-        );
-      }
-      return (
-        <ErrorMessage>
-          Unknown code with filepath {filepath}
-        </ErrorMessage>
-      );
-    }
-    case 'component': {
-      const componentKey = node.getComponent() || '';
-      if (componentKey in Lookup.component) {
-        return (
-          <Tab>
-            {React.createElement(Lookup.component[componentKey as Lookup.ComponentFilepathKey])}
-          </Tab>
-        );
-      }
-    }
-    default:
-      return (
-        <ErrorMessage>
-          Unknown TabNode with name {nodeKey}
-        </ErrorMessage>
-      );
-  }
-}
-
-function computeJsonModel(tabs: TabMeta[]): IJsonModel {
-  return {
-    global: {
-      tabEnableRename: false,
-    },
-    layout: {
-      type: 'row',
-      weight: 100,
-      children: [{
-        type: 'tabset',
-        weight: 50,
-        selected: 0,
-        children: tabs.map((meta) => ({
-          type: 'tab',
-          id: `${meta.key}@${meta.filepath}`,
-          name: meta.key === 'code'
-            ? meta.filepath
-            // : meta.filepath.slice(0, -4), // sans .jsx
-            : meta.filepath.split('/').pop()!.slice(0, -4),
-          config: {
-            key: meta.key,
-            folds: 'folds' in meta ? meta.folds : undefined,
-          },
-          component: meta.filepath,
-          enableClose: false,
-        })),
-      }],
-    }
-  };
 }
 
 const rootCss = (height: number) => css`
@@ -160,4 +82,10 @@ const rootCss = (height: number) => css`
   .flexlayout__splitter_vert, .flexlayout__splitter_horz {
     background: #827575;
   }
+`;
+
+const overlayContainerCss = (height: number) => css`
+  width: 100%;
+  height: ${height}px;
+  position: relative;
 `;

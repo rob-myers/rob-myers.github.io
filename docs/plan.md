@@ -1,5 +1,6 @@
 ## Plan
 
+- can enable/disable Tabs (avoid capture scroll)
 - convert 302 too
 - generate pngs for demo (so don't need code)
 - use in `PanZoomDemo`
@@ -18,6 +19,7 @@
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
 - destructuble walls?
 - can clamber over machinery?
+- ✅ Tabs only show "loading" first time
 - ✅ labels now part of singles
 - ✅ windows now part of singles
 - ✅ extra -> singles; doors part of singles 
