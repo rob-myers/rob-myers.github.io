@@ -11,7 +11,6 @@ export function createLayout(def, lookup) {
   /** @type {Geomorph.Layout['actual']} */
   const actual = {
     singles: [],
-    hull: [],
     obstacles: [],
     walls: [],
   };
@@ -44,7 +43,7 @@ export function createLayout(def, lookup) {
   const hullTop = Poly.cutOut(windows.concat(doors), hullSym.hull);
 
   const navPoly = Poly.cutOut(
-    actual.walls.flatMap(x => x.createOutset(12))
+    hullSym.hull.concat(actual.walls).flatMap(x => x.createOutset(12))
       .concat(actual.obstacles.flatMap(x => x.createOutset(8))),
     hullOutline,
   );

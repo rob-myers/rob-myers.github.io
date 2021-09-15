@@ -14,13 +14,13 @@ declare namespace Geomorph {
    */
    export interface ParsedSymbol<T> extends SvgGroups<T> {
     key: string;
+    /** Hull walls, only in hull */
+    hull: T[];
     pngRect: Geom.RectJson;
   }
 
   interface SvgGroups<T> {
     singles: { tags: string[]; poly: T }[];
-    /** Hull walls */
-    hull: T[];
     obstacles: T[];
     walls: T[];
   }
