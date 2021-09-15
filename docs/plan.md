@@ -1,10 +1,11 @@
 ## Plan
 
 - generate pngs for demo (so don't need code)
+  - try server side render using npm module `canvas`
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
 - Tabs don't load until scroll into view
-- Tabs auto-disable on scroll out of view
+- Tabs disable on scroll out of view
 - convert 302 too
 - emphasise render-once approach to React in intro
 - can show labels
