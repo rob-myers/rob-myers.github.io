@@ -41,7 +41,7 @@ declare namespace Geomorph {
     symbols: {
       key: string;
       pngHref: string;
-      pngRect: Geom.RectJon;
+      pngRect: Geom.RectJson;
       transformArray?: LayoutDefItem['transform'];
       transform?: string;
     }[];
