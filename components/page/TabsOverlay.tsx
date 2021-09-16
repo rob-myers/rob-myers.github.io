@@ -36,23 +36,22 @@ const controlsCss = css`
     
     cursor: pointer;
     background: #333;
-    color: #ddd;
+    color: #fff;
     border-radius: 4px 4px 0 0;
   }
 
   > .central {
     position: absolute;
     z-index: 10;
-    left: calc(50% - 54px);
+    left: calc(50% - 52px);
     top: calc(50% - 24px);
     
     cursor: pointer;
-    color: #ccc;
-    background: rgba(70, 80, 80, 1);
+    color: #333;
+    background: #fff;
     padding: 8px 32px;
     border-radius: 4px;
     font-size: larger;
-    font-weight: 300;
 
     opacity: 1;
     transition: 300ms opacity ease;
