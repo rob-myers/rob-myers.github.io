@@ -18,16 +18,17 @@ export function createLayout(def, lookup) {
 
   def.items.forEach((item, i) => {
     item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
+    const { singles, obstacles, walls, hull } = lookup[item.symbol];
     if (i) {// We don't scale 1st item i.e. hull
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
-    const { singles, obstacles, walls } = lookup[item.symbol];
     // Transform singles and restrict doors by tags
     actual.singles.push(...singles
       .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) }))
       .filter(({ tags }) => !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))))
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
-    actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
+    // Only hull symbol has `hull` and they're walls
+    actual.walls.push(...hull.concat(walls).map(x => x.clone().applyMatrix(m)));
   });
   // Ensure well-signed polygons
   actual.obstacles.forEach(d => d.sign() < 0 && d.reverse());
@@ -43,8 +44,10 @@ export function createLayout(def, lookup) {
   const hullTop = Poly.cutOut(doors.concat(windows), hullSym.hull);
 
   const navPoly = Poly.cutOut(
-    hullSym.hull.concat(actual.walls).flatMap(x => x.createOutset(12))
-      .concat(actual.obstacles.flatMap(x => x.createOutset(8))),
+    /** @type {Poly[]} */([]).concat(
+      actual.walls.flatMap(x => x.createOutset(12)),
+      actual.obstacles.flatMap(x => x.createOutset(8)),
+    ),
     hullOutline,
   );
 
