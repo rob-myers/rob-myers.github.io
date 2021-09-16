@@ -30,7 +30,7 @@ const controlsCss = css`
   > .top-right {
     position: absolute;
     right: 0;
-    top: 0px;
+    top: 2px;
     z-index: 10;
     padding: 2px 8px;
     
@@ -44,7 +44,7 @@ const controlsCss = css`
     position: absolute;
     z-index: 10;
     left: calc(50% - 52px);
-    top: calc(50% - 24px);
+    top: calc(50% - 20px);
     
     cursor: pointer;
     color: #333;
