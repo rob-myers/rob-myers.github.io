@@ -40,7 +40,7 @@ export function createLayout(def, lookup) {
   const hullSym = symbols[0];
   const hullOutline = hullSym.hull.map(x => x.clone().removeHoles());
   const windows = filterSingles(actual, 'window');
-  const hullTop = Poly.cutOut(windows.concat(doors), hullSym.hull);
+  const hullTop = Poly.cutOut(doors.concat(windows), hullSym.hull);
 
   const navPoly = Poly.cutOut(
     hullSym.hull.concat(actual.walls).flatMap(x => x.createOutset(12))
@@ -75,12 +75,12 @@ export function createLayout(def, lookup) {
 export function parseStarshipSymbol(symbolName, svgContents) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
+  const pngRect = extractPngOffset($, topNodes);
+
   const singles = extractGeoms($, topNodes, 'singles');
   const hull = extractGeoms($, topNodes, 'hull');
-  const labels = extractGeoms($, topNodes, 'labels');
   const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
   const walls = extractGeoms($, topNodes, 'walls');
-  const pngRect = extractPngOffset($, topNodes);
 
   return {
     key: symbolName,

@@ -6,14 +6,15 @@ import PanZoom from '../panzoom/PanZoom';
 import { createLayout, deserializeSvgJson, filterSingles } from "./geomorph.model";
 import { drawTriangulation, fillPolygon, fillRing } from '../service';
 import svgJson from '../../public/symbol/svg.json';
-import { layout301 } from "./layout-defs";
+import layoutDefs from "./layout-defs";
 
 export default function GeomorphDemo() {
   useQuery('focus-trigger', () => {}); // TODO only trigger in dev
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
-        <Geomorph def={layout301} />
+        {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}
+        <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
       </PanZoom>
     </div>
   );
@@ -90,11 +91,11 @@ function createAuxCanvases(layout, lookup) {
 
   //#region underlay
   uctx.fillStyle = 'rgba(100, 100, 100, 0.4)';
-  if (hullSym.hull.length === 1) {
+  if (hullSym.hull.length === 1 && hullSym.hull[0].holes.length) {
     const hullOutline = hullSym.hull[0].outline;
     fillRing(uctx, hullOutline);
   } else {
-    console.error('hull walls must exist and be connected');
+    console.error('hull walls: must exist, be connected, have a hole');
   }
 
   uctx.fillStyle = 'rgba(0, 0, 100, 0.2)';
@@ -135,7 +136,6 @@ function createAuxCanvases(layout, lookup) {
       fillPolygon(octx, [poly]);
     }
   });
-  // NOTE door stroke breaks canvas width
   octx.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(octx, doors);
   octx.fillStyle = 'rgba(255, 255, 255, 1)';

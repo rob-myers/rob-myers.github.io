@@ -10,7 +10,7 @@ import { createCanvas, loadImage } from 'canvas';
 import stream from 'stream';
 const pipeline = util.promisify(stream.pipeline);
 
-import { layout301 } from '../../projects/geomorph/layout-defs';
+import layoutDefs from '../../projects/geomorph/layout-defs';
 import {
   createLayout,
   deserializeSvgJson,
@@ -25,7 +25,7 @@ import { fillRing, fillPolygon } from '../../projects/service';
 run();
 
 async function run() {
-  const def = layout301; // hard-coded
+  const def = layoutDefs['g-301--bridge']; // hard-coded
   const unsortedDir = path.resolve(__dirname, '../unsorted');
   const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
   const layout = createLayout(def, symbolLookup);
