@@ -9,13 +9,12 @@ import svgJson from '../../public/symbol/svg.json';
 import layoutDefs from "./layout-defs";
 
 export default function GeomorphDemo() {
-  useQuery('focus-trigger', () => {}); // TODO only trigger in dev
+  useQuery('focus-trigger', () => {}); // TODO dev only
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
-        {/* transform="matrix(1,0,0,1,-1200,0)" */}
-        <Geomorph def={layoutDefs["g-301--bridge"]} />
-        {/* <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} /> */}
+        {/* <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" /> */}
+        <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
       </PanZoom>
     </div>
   );
@@ -56,7 +55,6 @@ const rootCss = css`
 `;
 
 /**
- * 
  * @param {Geomorph.LayoutDef} def
  * @returns {Geomorph.LayoutWithLayers}
  */

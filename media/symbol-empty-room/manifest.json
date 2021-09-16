@@ -1,0 +1,726 @@
+{
+  "parentFolder": "Empty Room",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Empty Room 001 [5x5].png",
+      "dstName": "empty-room--001--1x1.png",
+      "id": 1,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Empty Room 002 [5x10].png",
+      "dstName": "empty-room--002--1x2.png",
+      "id": 2,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Empty Room 003 [5x10].png",
+      "dstName": "empty-room--003--1x2.png",
+      "id": 3,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Empty Room 004 [5x15].png",
+      "dstName": "empty-room--004--1x3.png",
+      "id": 4,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Empty Room 005 [5x15].png",
+      "dstName": "empty-room--005--1x3.png",
+      "id": 5,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Empty Room 006 [10x10].png",
+      "dstName": "empty-room--006--2x2.png",
+      "id": 6,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Empty Room 007 [10x10].png",
+      "dstName": "empty-room--007--2x2.png",
+      "id": 7,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Empty Room 008 [10x10].png",
+      "dstName": "empty-room--008--2x2.png",
+      "id": 8,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Empty Room 009 [10x10].png",
+      "dstName": "empty-room--009--2x2.png",
+      "id": 9,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Empty Room 010 [10x10].png",
+      "dstName": "empty-room--010--2x2.png",
+      "id": 10,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Empty Room 011 [20x20].png",
+      "dstName": "empty-room--011--4x4.png",
+      "id": 11,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Empty Room 012 [10x15].png",
+      "dstName": "empty-room--012--2x3.png",
+      "id": 12,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Empty Room 013 [10x15].png",
+      "dstName": "empty-room--013--2x3.png",
+      "id": 13,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Empty Room 014 [10x15].png",
+      "dstName": "empty-room--014--2x3.png",
+      "id": 14,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Empty Room 015 [10x15].png",
+      "dstName": "empty-room--015--2x3.png",
+      "id": 15,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Empty Room 016 [10x15].png",
+      "dstName": "empty-room--016--2x3.png",
+      "id": 16,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Empty Room 017 [10x15].png",
+      "dstName": "empty-room--017--2x3.png",
+      "id": 17,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Empty Room 018 [10x15].png",
+      "dstName": "empty-room--018--2x3.png",
+      "id": 18,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Empty Room 019 [10x20].png",
+      "dstName": "empty-room--019--2x4.png",
+      "id": 19,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Empty Room 020 [10x20].png",
+      "dstName": "empty-room--020--2x4.png",
+      "id": 20,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Empty Room 021 [10x20].png",
+      "dstName": "empty-room--021--2x4.png",
+      "id": 21,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Empty Room 022 [10x20].png",
+      "dstName": "empty-room--022--2x4.png",
+      "id": 22,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Empty Room 023 [10x20].png",
+      "dstName": "empty-room--023--2x4.png",
+      "id": 23,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Empty Room 024 [10x20].png",
+      "dstName": "empty-room--024--2x4.png",
+      "id": 24,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Empty Room 025 [10x20].png",
+      "dstName": "empty-room--025--2x4.png",
+      "id": 25,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Empty Room 026 [10x20].png",
+      "dstName": "empty-room--026--2x4.png",
+      "id": 26,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Empty Room 027 [10x20].png",
+      "dstName": "empty-room--027--2x4.png",
+      "id": 27,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Empty Room 028 [10x20].png",
+      "dstName": "empty-room--028--2x4.png",
+      "id": 28,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Empty Room 029 [15x15].png",
+      "dstName": "empty-room--029--3x3.png",
+      "id": 29,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Empty Room 030 [15x15].png",
+      "dstName": "empty-room--030--3x3.png",
+      "id": 30,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Empty Room 031 [15x15].png",
+      "dstName": "empty-room--031--3x3.png",
+      "id": 31,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Empty Room 032 [15x15].png",
+      "dstName": "empty-room--032--3x3.png",
+      "id": 32,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Empty Room 033 [15x15].png",
+      "dstName": "empty-room--033--3x3.png",
+      "id": 33,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Empty Room 034 [15x20].png",
+      "dstName": "empty-room--034--3x4.png",
+      "id": 34,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Empty Room 035 [15x20].png",
+      "dstName": "empty-room--035--3x4.png",
+      "id": 35,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Empty Room 036 [15x20].png",
+      "dstName": "empty-room--036--3x4.png",
+      "id": 36,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Empty Room 037 [15x20].png",
+      "dstName": "empty-room--037--3x4.png",
+      "id": 37,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Empty Room 038 [15x20].png",
+      "dstName": "empty-room--038--3x4.png",
+      "id": 38,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Empty Room 039 [15x20].png",
+      "dstName": "empty-room--039--3x4.png",
+      "id": 39,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Empty Room 040 [15x20].png",
+      "dstName": "empty-room--040--3x4.png",
+      "id": 40,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Empty Room 041 [15x20].png",
+      "dstName": "empty-room--041--3x4.png",
+      "id": 41,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Empty Room 042 [20x20].png",
+      "dstName": "empty-room--042--4x4.png",
+      "id": 42,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Empty Room 043 [20x20].png",
+      "dstName": "empty-room--043--4x4.png",
+      "id": 43,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Empty Room 044 [20x20].png",
+      "dstName": "empty-room--044--4x4.png",
+      "id": 44,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Empty Room 045 [20x20].png",
+      "dstName": "empty-room--045--4x4.png",
+      "id": 45,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Empty Room 046 [20x20].png",
+      "dstName": "empty-room--046--4x4.png",
+      "id": 46,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Empty Room 047 [20x20].png",
+      "dstName": "empty-room--047--4x4.png",
+      "id": 47,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Empty Room 048 [20x20].png",
+      "dstName": "empty-room--048--4x4.png",
+      "id": 48,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Empty Room 049 [20x20].png",
+      "dstName": "empty-room--049--4x4.png",
+      "id": 49,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [49]
+    },
+    {
+      "srcName": "Empty Room 050 [20x20].png",
+      "dstName": "empty-room--050--4x4.png",
+      "id": 50,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Empty Room 051 [20x20].png",
+      "dstName": "empty-room--051--4x4.png",
+      "id": 51,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Empty Room 052 [20x20].png",
+      "dstName": "empty-room--052--4x4.png",
+      "id": 52,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Empty Room 053 [20x20].png",
+      "dstName": "empty-room--053--4x4.png",
+      "id": 53,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    },
+    {
+      "srcName": "Empty Room 054 [20x20].png",
+      "dstName": "empty-room--054--4x4.png",
+      "id": 54,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [54]
+    },
+    {
+      "srcName": "Empty Room 055 [20x20].png",
+      "dstName": "empty-room--055--4x4.png",
+      "id": 55,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [55]
+    },
+    {
+      "srcName": "Empty Room 056 [20x20].png",
+      "dstName": "empty-room--056--4x4.png",
+      "id": 56,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [56]
+    },
+    {
+      "srcName": "Empty Room 057 [20x20].png",
+      "dstName": "empty-room--057--4x4.png",
+      "id": 57,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [57]
+    },
+    {
+      "srcName": "Empty Room 058 [20x20].png",
+      "dstName": "empty-room--058--4x4.png",
+      "id": 58,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [58]
+    },
+    {
+      "srcName": "Empty Room 059 [20x20].png",
+      "dstName": "empty-room--059--4x4.png",
+      "id": 59,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [59]
+    },
+    {
+      "srcName": "Empty Room 060 [20x20].png",
+      "dstName": "empty-room--060--4x4.png",
+      "id": 60,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [60]
+    },
+    {
+      "srcName": "Empty Room 061 [20x20].png",
+      "dstName": "empty-room--061--4x4.png",
+      "id": 61,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [61]
+    },
+    {
+      "srcName": "Empty Room 062 [10x10].png",
+      "dstName": "empty-room--062--2x2.png",
+      "id": 62,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [62]
+    },
+    {
+      "srcName": "Empty Room 063 [10x15].png",
+      "dstName": "empty-room--063--2x3.png",
+      "id": 63,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [63]
+    },
+    {
+      "srcName": "Empty Room 064 [10x20].png",
+      "dstName": "empty-room--064--2x4.png",
+      "id": 64,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [64]
+    },
+    {
+      "srcName": "Empty Room 065 [10x30].png",
+      "dstName": "empty-room--065--2x6.png",
+      "id": 65,
+      "gridDim": [2, 6],
+      "is": [],
+      "has": [],
+      "ids": [65]
+    },
+    {
+      "srcName": "Empty Room 066 [20x20].png",
+      "dstName": "empty-room--066--4x4.png",
+      "id": 66,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [66]
+    },
+    {
+      "srcName": "Empty Room 067 [20x20].png",
+      "dstName": "empty-room--067--4x4.png",
+      "id": 67,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [67]
+    },
+    {
+      "srcName": "Empty Room 068 [20x20].png",
+      "dstName": "empty-room--068--4x4.png",
+      "id": 68,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [68]
+    },
+    {
+      "srcName": "Empty Room 069 [20x20].png",
+      "dstName": "empty-room--069--4x4.png",
+      "id": 69,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [69]
+    },
+    {
+      "srcName": "Empty Room 070 [20x30].png",
+      "dstName": "empty-room--070--4x6.png",
+      "id": 70,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [70]
+    },
+    {
+      "srcName": "Empty Room 071 [20x30].png",
+      "dstName": "empty-room--071--4x6.png",
+      "id": 71,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [71]
+    },
+    {
+      "srcName": "Empty Room 072 [20x30].png",
+      "dstName": "empty-room--072--4x6.png",
+      "id": 72,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [72]
+    },
+    {
+      "srcName": "Empty Room 073 [20x40].png",
+      "dstName": "empty-room--073--4x8.png",
+      "id": 73,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [73]
+    },
+    {
+      "srcName": "Empty Room 074 [20x40].png",
+      "dstName": "empty-room--074--4x8.png",
+      "id": 74,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [74]
+    },
+    {
+      "srcName": "Empty Room 075 [20x25].png",
+      "dstName": "empty-room--075--4x5.png",
+      "id": 75,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [75]
+    },
+    {
+      "srcName": "Empty Room 076 [15x25].png",
+      "dstName": "empty-room--076--3x5.png",
+      "id": 76,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [76]
+    },
+    {
+      "srcName": "Empty Room 077 [15x40].png",
+      "dstName": "empty-room--077--3x8.png",
+      "id": 77,
+      "gridDim": [3, 8],
+      "is": [],
+      "has": [],
+      "ids": [77]
+    },
+    {
+      "srcName": "Empty Room 078 [20x20].png",
+      "dstName": "empty-room--078--4x4.png",
+      "id": 78,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [78]
+    },
+    {
+      "srcName": "Empty Room 079 [30x30].png",
+      "dstName": "empty-room--079--6x6.png",
+      "id": 79,
+      "gridDim": [6, 6],
+      "is": [],
+      "has": [],
+      "ids": [79]
+    },
+    {
+      "srcName": "Empty Room 080 [20x50].png",
+      "dstName": "empty-room--080--4x10.png",
+      "id": 80,
+      "gridDim": [4, 10],
+      "is": [],
+      "has": [],
+      "ids": [80]
+    }
+  ]
+}

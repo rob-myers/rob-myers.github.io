@@ -17,6 +17,7 @@
  * - yarn rename-pngs symbol media/Symbols/Weaponry media/symbol-weaponry
  * - yarn rename-pngs symbol media/Symbols/Machinery media/symbol-machinery
  * - yarn rename-pngs symbol media/Symbols/Fuel media/symbol-fuel
+ * - yarn rename-pngs symbol 'media/Symbols/Empty Room' media/symbol-empty-room
  * 
  * - yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * - yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
