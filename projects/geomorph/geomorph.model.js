@@ -48,7 +48,7 @@ export function createLayout(def, lookup) {
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
     actual.walls.flatMap(x => x.createOutset(12)),
     actual.obstacles.flatMap(x => x.createOutset(8)),
-  ), hullOutline);
+  ), hullOutline).map(x => x.cleanFinalReps());
 
   return {
     def,
