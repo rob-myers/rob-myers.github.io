@@ -174,12 +174,7 @@ const blogCss = css`
   }
 
   table {
-    transition: 0.5s background-color ease;
-    background: var(--body-bg);
-    &:hover, &:active {
-      background: var(--focus-bg);
-    }
-
+    background: var(--focus-bg);
     padding: 8px;
     border: 1px solid #bbb;
     width: 100%;
