@@ -19,9 +19,15 @@
     <rect width="8" height="300" style="" x="1076"/>
     <rect width="8" height="494" style="" x="937" y="296" transform="matrix(0.242004, 0.970275, -0.970275, 0.242004, 1138.428223, -684.291992)"/>
     <rect x="540" y="416" width="60" height="8" style=""/>
-    <rect x="420" y="416" width="60" height="8" style=""/>
-    <rect x="240" y="420" width="181" height="12" style="fill-opacity: 0.64;"/>
-    <rect x="174" y="240" width="216" height="8" style="" transform="matrix(0.559193, 0.829038, -0.829038, 0.559193, 224.378708, -40.136356)"/>
+    <rect x="418" y="416" width="64" height="8" style=""/>
+    <rect x="243" y="419" width="178" height="14" style="fill-opacity: 0.4;">
+      <title>window</title>
+    </rect>
+    <path d="M 174 240 L 390 240 L 393.7 242.5 L 390 248 L 174 248 L 167.7 243.7 L 169.7 240.4 L 174 240 Z" style="" transform="matrix(0.559193, 0.829038, -0.829038, 0.559193, 224.378708, -40.136356)"/>
+    <rect x="107.1" y="120.8" width="12.9" height="115.6" style="fill-opacity: 0.4;">
+      <title>window</title>
+    </rect>
+    <path d="M 80.2 44.1 L 80.8 56 L 124.4 56 L 124.4 122 L 115.2 122 L 115.2 63 L 74.2 63 L 74.2 47.1 L 41.9 15.6 L 27.8 15.2 L 27.6 3 L 3 3 L 3 -4 L 34.5 -4 L 34.7 8.2 L 44.3 8.3 L 80.2 44.1 Z" style=""/>
   </g>
   <g style="pointer-events: none;">
     <title>singles</title>
