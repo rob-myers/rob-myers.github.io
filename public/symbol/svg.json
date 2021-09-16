@@ -1470,6 +1470,53 @@
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}
   },
+  "ships-locker--011--1x2": {
+    "key": "ships-locker--011--1x2",
+    "hull": [],
+    "obstacles": [],
+    "walls": [
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-10, -10],
+            [610, -10],
+            [610, 300],
+            [590, 300],
+            [590, 10],
+            [10, 10],
+            [10, 300],
+            [-10, 300],
+            [-10, -10]
+          ]
+        ]
+      }
+    ],
+    "singles": [
+      {
+        "tags": ["wall"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[-10, -10], [-10, 10], [610, 10], [610, -10]]]
+        }
+      },
+      {
+        "tags": ["door"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[25, -24], [25, 24], [275, 24], [275, -24]]]
+        }
+      },
+      {
+        "tags": ["door"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[315, -24], [315, 24], [565, 24], [565, -24]]]
+        }
+      }
+    ],
+    "pngRect": {"x": -10, "y": -20, "width": 620, "height": 334}
+  },
   "stateroom--014--2x2": {
     "key": "stateroom--014--2x2",
     "hull": [],

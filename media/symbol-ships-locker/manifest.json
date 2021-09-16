@@ -1,0 +1,249 @@
+{
+  "parentFolder": "Ship's Locker",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Ship's Locker 001 [5x10].png",
+      "dstName": "ships-locker--001--1x2.png",
+      "id": 1,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Ship's Locker 002 [5x5].png",
+      "dstName": "ships-locker--002--1x1.png",
+      "id": 2,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Ship's Locker 003 [5x5].png",
+      "dstName": "ships-locker--003--1x1.png",
+      "id": 3,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Ship's Locker 004 [5x5].png",
+      "dstName": "ships-locker--004--1x1.png",
+      "id": 4,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Ship's Locker 005 [5x10].png",
+      "dstName": "ships-locker--005--1x2.png",
+      "id": 5,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Ship's Locker 006 [5x10].png",
+      "dstName": "ships-locker--006--1x2.png",
+      "id": 6,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Ship's Locker 007 [5x10].png",
+      "dstName": "ships-locker--007--1x2.png",
+      "id": 7,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Ship's Locker 008 [5x10].png",
+      "dstName": "ships-locker--008--1x2.png",
+      "id": 8,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Ship's Locker 009 [5x10].png",
+      "dstName": "ships-locker--009--1x2.png",
+      "id": 9,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Ship's Locker 010 [5x10].png",
+      "dstName": "ships-locker--010--1x2.png",
+      "id": 10,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Ship's Locker 011 [5x10].png",
+      "dstName": "ships-locker--011--1x2.png",
+      "id": 11,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Ship's Locker 012 [5x15].png",
+      "dstName": "ships-locker--012--1x3.png",
+      "id": 12,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Ship's Locker 013 [5x15].png",
+      "dstName": "ships-locker--013--1x3.png",
+      "id": 13,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Ship's Locker 014 [5x15].png",
+      "dstName": "ships-locker--014--1x3.png",
+      "id": 14,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Ship's Locker 015 [5x15].png",
+      "dstName": "ships-locker--015--1x3.png",
+      "id": 15,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Ship's Locker 016 [5x20].png",
+      "dstName": "ships-locker--016--1x4.png",
+      "id": 16,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Ship's Locker 017 [5x20].png",
+      "dstName": "ships-locker--017--1x4.png",
+      "id": 17,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Ship's Locker 018 [5x20].png",
+      "dstName": "ships-locker--018--1x4.png",
+      "id": 18,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Ship's Locker 019 [10x10].png",
+      "dstName": "ships-locker--019--2x2.png",
+      "id": 19,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Ship's Locker 020 [10x10].png",
+      "dstName": "ships-locker--020--2x2.png",
+      "id": 20,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Ship's Locker 021 [10x10].png",
+      "dstName": "ships-locker--021--2x2.png",
+      "id": 21,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Ship's Locker 022 [10x10].png",
+      "dstName": "ships-locker--022--2x2.png",
+      "id": 22,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Ship's Locker 023 [10x10].png",
+      "dstName": "ships-locker--023--2x2.png",
+      "id": 23,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Ship's Locker 024 [10x20].png",
+      "dstName": "ships-locker--024--2x4.png",
+      "id": 24,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Ship's Locker 025 [10x15].png",
+      "dstName": "ships-locker--025--2x3.png",
+      "id": 25,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Ship's Locker 026 [10x15].png",
+      "dstName": "ships-locker--026--2x3.png",
+      "id": 26,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Ship's Locker 027 [10x20].png",
+      "dstName": "ships-locker--027--2x4.png",
+      "id": 27,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    }
+  ]
+}

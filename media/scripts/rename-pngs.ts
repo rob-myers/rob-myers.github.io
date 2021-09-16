@@ -7,20 +7,23 @@
  * - {src_dir} exists
  *
  * Examples:
- * - yarn rename-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
- * - yarn rename-pngs root media/Symbols media/symbol-root
- * - yarn rename-pngs symbol media/Symbols/Bridge media/symbol-bridge
- * - yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
- * - yarn rename-pngs symbol media/Symbols/Offices media/symbol-offices
- * - yarn rename-pngs symbol media/Symbols/Misc media/symbol-misc
- * - yarn rename-pngs symbol 'media/Symbols/Furniture, Consoles, & Equipment' media/symbol-furniture-consoles-equipment
- * - yarn rename-pngs symbol media/Symbols/Weaponry media/symbol-weaponry
- * - yarn rename-pngs symbol media/Symbols/Machinery media/symbol-machinery
- * - yarn rename-pngs symbol media/Symbols/Fuel media/symbol-fuel
- * - yarn rename-pngs symbol 'media/Symbols/Empty Room' media/symbol-empty-room
+ * ```sh
+ * yarn rename-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
+ * yarn rename-pngs root media/Symbols media/symbol-root
+ * yarn rename-pngs symbol media/Symbols/Bridge media/symbol-bridge
+ * yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
+ * yarn rename-pngs symbol media/Symbols/Offices media/symbol-offices
+ * yarn rename-pngs symbol media/Symbols/Misc media/symbol-misc
+ * yarn rename-pngs symbol 'media/Symbols/Furniture, Consoles, & Equipment' media/symbol-furniture-consoles-equipment
+ * yarn rename-pngs symbol media/Symbols/Weaponry media/symbol-weaponry
+ * yarn rename-pngs symbol media/Symbols/Machinery media/symbol-machinery
+ * yarn rename-pngs symbol media/Symbols/Fuel media/symbol-fuel
+ * yarn rename-pngs symbol 'media/Symbols/Empty Room' media/symbol-empty-room
+ * yarn rename-pngs symbol "media/Symbols/Ship's Locker" media/symbol-ships-locker
  * 
- * - yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
- * - yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
+ * yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
+ * yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
+ * ```
  */
 import fs from 'fs';
 import path from 'path';
