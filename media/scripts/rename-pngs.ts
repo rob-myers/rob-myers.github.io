@@ -8,8 +8,9 @@
  *
  * Examples:
  * ```sh
- * yarn rename-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
  * yarn rename-pngs root media/Symbols media/symbol-root
+ * yarn rename-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
+ * yarn rename-pngs geomorph 'media/Geomorphs/100x100 Core' media/geomorph-core
  * yarn rename-pngs symbol media/Symbols/Bridge media/symbol-bridge
  * yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
  * yarn rename-pngs symbol media/Symbols/Offices media/symbol-offices

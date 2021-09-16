@@ -4,6 +4,7 @@ export interface FileMeta {
   id: number;
   /** Sometimes a range is given */
   ids: number[];
+  extendedId?: string;
   /** Dimension in grid squares of Starship Geomorphs 2.0 */
   gridDim: [number, number];
   dstName: string;
@@ -23,17 +24,18 @@ export function metaFromRootFilename(matched: RegExpMatchArray): FileMeta {
   return { srcName, dstName, id, gridDim, is: ['root'], has: [], ids };
 }
 
-export const geomorphsFilenameRegex = /(^[\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
+export const geomorphsFilenameRegex = /^([A-Z]+)?([\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
 
 export function metaFromGeomorphFilename(matched: RegExpMatchArray): FileMeta {
   const srcName = matched[0];
-  const ids = matched[1].split(',').map(Number);
+  const ids = matched[1] ? [-1] : matched[2].split(',').map(Number);
   const id = ids[0];
-  const gridDim = matched[2].split('x').map(x => Number(x) / 5) as [number, number];
-  const description = matched[3].concat(matched[4]);
+  const extendedId = matched[1] ? `${matched[1]}${matched[2]}` : undefined;
+  const gridDim = matched[3].split('x').map(x => Number(x) / 5) as [number, number];
+  const description = matched[4].concat(matched[5]);
   const { label, is, has } = extractGeomorphInfo(description);
-  const dstName =`g-${matched[1].split(',')[0]}--${label}.png`;
-  return { srcName, dstName, id, gridDim, is, has, ids };
+  const dstName =`g-${extendedId || matched[2].split(',')[0]}--${label}.png`;
+  return { srcName, dstName, id, gridDim, is, has, ids, extendedId };
 }
 
 /**
