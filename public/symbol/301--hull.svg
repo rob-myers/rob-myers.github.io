@@ -42,10 +42,10 @@
   </g>
   <g style="pointer-events: none;">
     <title>walls</title>
-    <path d="M 300 121 L 360 121 L 360 61 L 420 125.6 L 384.4 180 L 360 240 L 300 240.6 L 300 121 Z" style="stroke: rgb(0, 0, 0); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; fill-opacity: 0.5; fill: rgb(255, 0, 0);"/>
+    <path d="M 300 121 L 360 121 L 360 61 L 420 125.6 L 384.4 180 L 360 240 L 300 240.6 L 300 121 Z" style="stroke: rgb(0, 0, 0); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; fill-opacity: 0.5; fill: rgb(255, 0, 0); pointer-events: auto;"/>
     <path d="M 780 180.6 L 840 180.6 L 840 240.6 L 900 176 L 864.4 121.6 L 840 61.6 L 780 61 L 780 180.6 Z" style="stroke: rgb(0, 0, 0); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; fill-opacity: 0.5; fill: rgb(255, 0, 0);" transform="matrix(-1, 0, 0, -1, 1680, 301.600006)"/>
   </g>
-  <g style="pointer-events: none;">
+  <g style="">
     <title>hull</title>
     <path d="M 424 119 L 455 93 L 493 71 L 534 56 L 578 49 L 621 48 L 664 56 L 706 71 L 744 93 L 775 119 L 779 124 L 772 131 L 767 127 L 737 102 L 701 82 L 661 67 L 620 59 L 578 59 L 537 67 L 498 82 L 462 103 L 433 127 L 428 132 L 419 124 L 424 119 Z" style="stroke: rgb(0, 0, 0); fill-opacity: 0.31;">
       <title>window</title>
@@ -54,6 +54,6 @@
       <title>sans-n--20x10</title>
     </path>
     <path d="M 358.4 63.3 L 180 63.3 L 177.1 62.1 L 119.1 4 L -1 4 L -1 -4 L 122.4 -4 L 181.7 55.3 L 360.5 55.3 L 363.1 56.7 L 424.7 119 L 419 124.7 L 358.4 63.3 Z" style=""/>
-    <path d="M 1133 58 L 954 58 L 951 59 L 893 117 L 773 117 L 773 125 L 897 125 L 956 66 L 1135 66 L 1137 65 L 1201 2 L 1195 -4 L 1133 58 Z" style="" transform="matrix(-1, 0, 0, -1, 1974, 121)"/>
+    <path d="M 841 63 L 1020 63 L 1023 62 L 1081 4 L 1201 4 L 1201 -4 L 1077 -4 L 1018 55 L 839 55 L 837 56 L 773 119 L 779 125 L 841 63 Z" style=""/>
   </g>
 </svg>

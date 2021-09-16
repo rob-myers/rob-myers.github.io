@@ -9,11 +9,7 @@ import { svgPathToPolygons } from '../service';
  */
 export function createLayout(def, lookup) {
   /** @type {Geomorph.Layout['actual']} */
-  const actual = {
-    singles: [],
-    obstacles: [],
-    walls: [],
-  };
+  const actual = { singles: [], obstacles: [], walls: [] };
   const m = new Mat;
 
   def.items.forEach((item, i) => {
@@ -27,12 +23,15 @@ export function createLayout(def, lookup) {
       .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) }))
       .filter(({ tags }) => !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))))
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
-    // Only hull symbol has `hull` and they're walls
-    actual.walls.push(...hull.concat(walls).map(x => x.clone().applyMatrix(m)));
+    actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
+    // Only hull symbol has "hull" walls
+    actual.walls.push(...hull.flatMap(x => x.createOutset(2)).map(x => x.applyMatrix(m)));
   });
+
   // Ensure well-signed polygons
-  actual.obstacles.forEach(d => d.sign() < 0 && d.reverse());
-  actual.singles.forEach(({ poly }) => poly.sign() < 0 && poly.reverse());
+  actual.obstacles.forEach(poly => poly.fixOrientation());
+  actual.singles.forEach(({ poly }) => poly.fixOrientation());
+  
   // Cut doors from walls
   const doors = filterSingles(actual, 'door');
   actual.walls = Poly.cutOut(doors, actual.walls);
@@ -43,13 +42,10 @@ export function createLayout(def, lookup) {
   const windows = filterSingles(actual, 'window');
   const hullTop = Poly.cutOut(doors.concat(windows), hullSym.hull);
 
-  const navPoly = Poly.cutOut(
-    /** @type {Poly[]} */([]).concat(
-      actual.walls.flatMap(x => x.createOutset(12)),
-      actual.obstacles.flatMap(x => x.createOutset(8)),
-    ),
-    hullOutline,
-  );
+  const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
+    actual.walls.flatMap(x => x.createOutset(12)),
+    actual.obstacles.flatMap(x => x.createOutset(8)),
+  ), hullOutline);
 
   return {
     def,
@@ -82,16 +78,16 @@ export function parseStarshipSymbol(symbolName, svgContents) {
 
   const singles = extractGeoms($, topNodes, 'singles');
   const hull = extractGeoms($, topNodes, 'hull');
-  const obstacles = Poly.union(extractGeoms($, topNodes, 'obstacles'));
+  const obstacles = extractGeoms($, topNodes, 'obstacles');
   const walls = extractGeoms($, topNodes, 'walls');
 
   return {
     key: symbolName,
+    pngRect,
     hull: Poly.union(hull),
-    obstacles,
+    obstacles: Poly.union(obstacles),
     walls: Poly.union(walls),
     singles: singles.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
-    pngRect,
   };
 }
 

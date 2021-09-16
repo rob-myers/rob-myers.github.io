@@ -47,15 +47,15 @@ export class Poly {
     const [outer, ...inner] = rings.map(ring =>
       // Append first to get final tangent
       ring.concat(ring[0]).reduce(
-        (agg, p, i, ps) =>
-          i > 0
-            ? agg.concat(
-              p
-                .clone()
-                .sub(ps[i - 1])
-                .normalize()
-            )
-            : [],
+        (agg, p, i, ps) => {
+
+          if (i) {
+            const pointLength = p.clone().sub(ps[i - 1]).length;
+            pointLength < 0.01 && console.log('saw point length', pointLength);
+          }
+
+          return i > 0 ? agg.concat(p.clone().sub(ps[i - 1]).normalize()) : []
+        },
         /** @type {Vect[]} */ ([])
       )
     );
@@ -71,6 +71,25 @@ export class Poly {
   addMeta(meta) {
     this.meta = Object.assign(this.meta || {}, meta);
     return this;
+  }
+
+  /**
+   * https://stackoverflow.com/a/1165943/2917822
+   * - We do not expect final point to be same as the first.
+   *   We temporarily ensure it below to ease computation.
+   * - Anticlockwise w.r.t. HTMLCanvas coords (x right, y down).
+   * - We cannot rely on only 3 points to test orientation,
+   *   because they may form an interior or exterior triangle.
+   */
+  anticlockwise() {
+    this.outline.push(this.outline[0]);
+    const sum = this.outline.reduce((sum, p, i, ps) => sum + (
+      i < ps.length - 1
+        ? (ps[i + 1].x - p.x) * (ps[i + 1].y + p.y)
+        : 0
+    ), 0);
+    this.outline.pop();
+    return sum > 0;
   }
 
   /** @param {import('./mat').Mat} m */
@@ -111,9 +130,8 @@ export class Poly {
    * @param {number} amount
    */
   createInset(amount) {
-    if (amount === 0) {
-      return [this.clone()];
-    }
+    if (amount === 0) return [this.clone()];
+    this.cleanFinalReps(); // TEST
 
     // Compute 4-gons inset or outset along edge normals by `amount`
     const [outerQuads, ...holesQuads] = [
@@ -126,20 +144,18 @@ export class Poly {
         inset: Poly.insetRing(ring, amount),
       }))
     ].map(({ ring, inset }) =>
-      ring.map(
-        (_, i) =>
-          new Poly([
-            ring[i].clone(),
-            inset[i],
-            inset[(i + 1) % ring.length],
-            ring[(i + 1) % ring.length].clone()
-          ])
-      )
+      ring.map((_, i) =>
+        new Poly([
+          ring[i].clone(),
+          inset[i],
+          inset[(i + 1) % ring.length],
+          ring[(i + 1) % ring.length].clone()
+        ]))
     );
 
     if (amount > 0) {// Inset
       return Poly.cutOut(outerQuads.concat(...holesQuads), [this.clone()]);
-    } // Otherwise we outset
+    }
     return Poly.union([this.clone()].concat(outerQuads, ...holesQuads));
   }
 
@@ -159,7 +175,8 @@ export class Poly {
         polys.map(({ geoJson: { coordinates } }) => coordinates),
         ...cuttingPolys.map(({ geoJson: { coordinates } }) => coordinates),
       )
-      .map(coords => Poly.from(coords).cleanFinalReps());
+      // .map(coords => Poly.from(coords).cleanFinalReps());
+      .map(coords => Poly.from(coords));
   }
 
   /**
@@ -179,6 +196,13 @@ export class Poly {
       /** @type {[number, number, number][]} */ ([]),
     );
     return { vs: this.allPoints, tris: indexTriples };
+  }
+
+  fixOrientation() {
+    if (this.anticlockwise()) {
+      this.reverse();
+    }
+    return this;
   }
 
   /** @param {Geom.GeoJsonPolygon | Geom.GeoJsonPolygon['coordinates']} input  */
@@ -343,16 +367,12 @@ export class Poly {
     return this;
   }
 
-  sign() {
-    return Poly.sign(this.outline[0], this.outline[1], this.outline[2]);
-  }
-
   /**
    * @param {Vect} p1 
    * @param {Vect} p2 
    * @param {Vect} p3 
    */
-  static sign (p1, p2, p3) {
+  static sign(p1, p2, p3) {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
   }
 
@@ -373,7 +393,8 @@ export class Poly {
   static union(polys) {
     return polygonClipping
       .union([], ...polys.map(({ geoJson: { coordinates } }) => coordinates))
-      .map(coords => Poly.from(coords).cleanFinalReps());
+      // .map(coords => Poly.from(coords).cleanFinalReps());
+      .map(coords => Poly.from(coords));
   }
   
 }

@@ -13,8 +13,9 @@ export default function GeomorphDemo() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
-        {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}
-        <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
+        {/* transform="matrix(1,0,0,1,-1200,0)" */}
+        <Geomorph def={layoutDefs["g-301--bridge"]} />
+        {/* <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} /> */}
       </PanZoom>
     </div>
   );
@@ -27,7 +28,7 @@ function Geomorph({ def, transform }) {
 
   return (
     <g transform={transform}>
-      {/* <image className="debug" href={gm.pngHref} x={pngRect.x} y={pngRect.y}/> */}
+      <image className="debug" href={gm.pngHref} x={pngRect.x} y={pngRect.y}/>
       <image className="underlay" href={gm.underlay} x={gm.hullRect.x * 2} y={gm.hullRect.y * 2} />
       {symbols.map((s, i) =>
         <g key={i} transform={s.transform}>
