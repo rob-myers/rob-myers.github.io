@@ -30,7 +30,7 @@ const layoutDefs = {
       { symbol: '302--hull' },
       { symbol: 'office--006--2x2', transform: [0, 1, -1, 0, 120, 120], tags: ['door-e'] },
       { symbol: 'lounge--015--2x4', transform: [-1, 0, 0, -1, 480, 540] },
-      { symbol: 'window--007--0x2.4', transform: [1, 0, 0, 1, 240, 420 - 10] },
+      { symbol: 'window--007--0x2.4', transform: [1, 0, 0, 1, 240, 420 - 8] },
     ],
   }),
 };

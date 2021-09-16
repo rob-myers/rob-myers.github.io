@@ -1,10 +1,10 @@
 import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
-import { Rect } from "../geom";
+import { Rect, Vect } from "../geom";
 import PanZoom from '../panzoom/PanZoom';
 import { createLayout, deserializeSvgJson, filterSingles } from "./geomorph.model";
-import { drawTriangulation, fillPolygon, fillRing } from '../service';
+import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle } from '../service';
 import svgJson from '../../public/symbol/svg.json';
 import layoutDefs from "./layout-defs";
 
@@ -27,7 +27,7 @@ function Geomorph({ def, transform }) {
 
   return (
     <g transform={transform}>
-      <image className="debug" href={gm.pngHref} x={pngRect.x} y={pngRect.y}/>
+      {/* <image className="debug" href={gm.pngHref} x={pngRect.x} y={pngRect.y}/> */}
       <image className="underlay" href={gm.underlay} x={gm.hullRect.x * 2} y={gm.hullRect.y * 2} />
       {symbols.map((s, i) =>
         <g key={i} transform={s.transform}>
@@ -104,15 +104,22 @@ function createAuxCanvases(layout, lookup) {
   // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
   // decomps.forEach(decomp => drawTriangulation(uCtxt, decomp));
 
-  uctx.lineWidth = 4, uctx.lineJoin = 'round';
+  uctx.lineJoin = 'round';
   hullSym.singles.forEach(({ poly, tags }) => {
     if (tags.includes('machine-base')) {
-      uctx.fillStyle = 'white';
+      setStyle(uctx, '#fff', '#000', 4);
       fillPolygon(uctx, [poly]), uctx.stroke();
     }
     if (tags.includes('machine')) {
-      uctx.fillStyle = '#ccc';
+      setStyle(uctx, '#ccc', '#000', 4);
       fillPolygon(uctx, [poly]), uctx.stroke();
+    }
+    if (tags.includes('fuel')) {
+      setStyle(uctx, '#aaa', '#000', 2);
+      fillPolygon(uctx, [poly]), uctx.stroke();
+      setStyle(uctx, '#aaa', 'rgba(0, 0, 0, 0.5)', 1);
+      const center = Vect.average(poly.outline);
+      poly.outline.forEach(p => drawLine(uctx, center, p));
     }
   });
   uctx.resetTransform();

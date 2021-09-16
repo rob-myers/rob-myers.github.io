@@ -91,8 +91,8 @@ export function fillRing(ctxt, ring, fill = true) {
 }
 
 /**
- * @param {CanvasRenderingContext2D} ctxt 
- * @param {Poly[]} polys 
+ * @param {CanvasRenderingContext2D} ctxt
+ * @param {Poly[]} polys
  */
 export function fillPolygon(ctxt, polys) {
 	for (const poly of polys) {
@@ -103,6 +103,30 @@ export function fillPolygon(ctxt, polys) {
     }
     ctxt.fill();
   }
+}
+
+/**
+ * @param {CanvasRenderingContext2D} ctxt
+ * @param {Vect} from
+ * @param {Vect} to
+ */
+export function drawLine(ctxt, from, to) {
+	ctxt.beginPath();
+	ctxt.moveTo(from.x, from.y);
+	ctxt.lineTo(to.x, to.y);
+	ctxt.stroke();
+}
+
+/**
+ * @param {CanvasRenderingContext2D} ctxt
+ * @param {string} fillStyle
+ * @param {string} [strokeStyle]
+ * @param {number} [lineWidth]
+ */
+export function setStyle(ctxt, fillStyle, strokeStyle, lineWidth) {
+	ctxt.fillStyle = fillStyle;
+	strokeStyle && (ctxt.strokeStyle = strokeStyle);
+	lineWidth !== undefined && (ctxt.lineWidth = lineWidth);
 }
 
 /**

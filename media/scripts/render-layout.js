@@ -25,7 +25,9 @@ import { fillRing, fillPolygon } from '../../projects/service';
 run();
 
 async function run() {
-  const def = layoutDefs['g-301--bridge']; // hard-coded
+  // const def = layoutDefs['g-301--bridge']; // hard-coded
+  const def = layoutDefs['g-302--xboat-repair-bay']; // hard-coded
+
   const unsortedDir = path.resolve(__dirname, '../unsorted');
   const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
   const layout = createLayout(def, symbolLookup);

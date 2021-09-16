@@ -1,0 +1,609 @@
+{
+  "parentFolder": "Fuel",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Fuel 001 [15x20].png",
+      "dstName": "fuel--001--3x4.png",
+      "id": 1,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Fuel 002 [15x15].png",
+      "dstName": "fuel--002--3x3.png",
+      "id": 2,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Fuel 003 [15x20].png",
+      "dstName": "fuel--003--3x4.png",
+      "id": 3,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Fuel 004 [15x30].png",
+      "dstName": "fuel--004--3x6.png",
+      "id": 4,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Fuel 005 [15x30].png",
+      "dstName": "fuel--005--3x6.png",
+      "id": 5,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Fuel 006 [15x20].png",
+      "dstName": "fuel--006--3x4.png",
+      "id": 6,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Fuel 007 [20x20].png",
+      "dstName": "fuel--007--4x4.png",
+      "id": 7,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Fuel 008 [20x20].png",
+      "dstName": "fuel--008--4x4.png",
+      "id": 8,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Fuel 009 [10x25].png",
+      "dstName": "fuel--009--2x5.png",
+      "id": 9,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Fuel 010 [10x20].png",
+      "dstName": "fuel--010--2x4.png",
+      "id": 10,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Fuel 011 [20x20].png",
+      "dstName": "fuel--011--4x4.png",
+      "id": 11,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Fuel 012 [20x20].png",
+      "dstName": "fuel--012--4x4.png",
+      "id": 12,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Fuel 013 [10x30].png",
+      "dstName": "fuel--013--2x6.png",
+      "id": 13,
+      "gridDim": [2, 6],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Fuel 014 [10x15].png",
+      "dstName": "fuel--014--2x3.png",
+      "id": 14,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Fuel 015 [10x35].png",
+      "dstName": "fuel--015--2x7.png",
+      "id": 15,
+      "gridDim": [2, 7],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Fuel 016 [10x10].png",
+      "dstName": "fuel--016--2x2.png",
+      "id": 16,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Fuel 017 [20x20].png",
+      "dstName": "fuel--017--4x4.png",
+      "id": 17,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Fuel 018 [20x20].png",
+      "dstName": "fuel--018--4x4.png",
+      "id": 18,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Fuel 019 [10x40].png",
+      "dstName": "fuel--019--2x8.png",
+      "id": 19,
+      "gridDim": [2, 8],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Fuel 020 [5x5].png",
+      "dstName": "fuel--020--1x1.png",
+      "id": 20,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Fuel 021 [5x10].png",
+      "dstName": "fuel--021--1x2.png",
+      "id": 21,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Fuel 022 [5x20].png",
+      "dstName": "fuel--022--1x4.png",
+      "id": 22,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Fuel 023 [15x25].png",
+      "dstName": "fuel--023--3x5.png",
+      "id": 23,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Fuel 024 [20x25].png",
+      "dstName": "fuel--024--4x5.png",
+      "id": 24,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Fuel 025 [25x25].png",
+      "dstName": "fuel--025--5x5.png",
+      "id": 25,
+      "gridDim": [5, 5],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Fuel 026 [20x25].png",
+      "dstName": "fuel--026--4x5.png",
+      "id": 26,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Fuel 027 [20x30].png",
+      "dstName": "fuel--027--4x6.png",
+      "id": 27,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Fuel 028 [20x40].png",
+      "dstName": "fuel--028--4x8.png",
+      "id": 28,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Fuel 029 [20x20].png",
+      "dstName": "fuel--029--4x4.png",
+      "id": 29,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Fuel 030 [20x35].png",
+      "dstName": "fuel--030--4x7.png",
+      "id": 30,
+      "gridDim": [4, 7],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Fuel 031 [20x30].png",
+      "dstName": "fuel--031--4x6.png",
+      "id": 31,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Fuel 032 [20x20].png",
+      "dstName": "fuel--032--4x4.png",
+      "id": 32,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Fuel 033 [20x40].png",
+      "dstName": "fuel--033--4x8.png",
+      "id": 33,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Fuel 034 [20x20].png",
+      "dstName": "fuel--034--4x4.png",
+      "id": 34,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Fuel 035 [10x20].png",
+      "dstName": "fuel--035--2x4.png",
+      "id": 35,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Fuel 036 [10x20].png",
+      "dstName": "fuel--036--2x4.png",
+      "id": 36,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Fuel 037 [15x30].png",
+      "dstName": "fuel--037--3x6.png",
+      "id": 37,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Fuel 038 [15x30].png",
+      "dstName": "fuel--038--3x6.png",
+      "id": 38,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Fuel 039 [15x30].png",
+      "dstName": "fuel--039--3x6.png",
+      "id": 39,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Fuel 040 [15x30].png",
+      "dstName": "fuel--040--3x6.png",
+      "id": 40,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Fuel 041 [40x40].png",
+      "dstName": "fuel--041--8x8.png",
+      "id": 41,
+      "gridDim": [8, 8],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Fuel 042 [35x35].png",
+      "dstName": "fuel--042--7x7.png",
+      "id": 42,
+      "gridDim": [7, 7],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Fuel 043 [20x40].png",
+      "dstName": "fuel--043--4x8.png",
+      "id": 43,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Fuel 044 [20x40].png",
+      "dstName": "fuel--044--4x8.png",
+      "id": 44,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Fuel 045 [20x35].png",
+      "dstName": "fuel--045--4x7.png",
+      "id": 45,
+      "gridDim": [4, 7],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Fuel 046 [20x40].png",
+      "dstName": "fuel--046--4x8.png",
+      "id": 46,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Fuel 047 [30x30].png",
+      "dstName": "fuel--047--6x6.png",
+      "id": 47,
+      "gridDim": [6, 6],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Fuel 048 [15x40].png",
+      "dstName": "fuel--048--3x8.png",
+      "id": 48,
+      "gridDim": [3, 8],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Fuel 050 [20x25].png",
+      "dstName": "fuel--050--4x5.png",
+      "id": 50,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Fuel 051 [20x35].png",
+      "dstName": "fuel--051--4x7.png",
+      "id": 51,
+      "gridDim": [4, 7],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Fuel 052 [25x25].png",
+      "dstName": "fuel--052--5x5.png",
+      "id": 52,
+      "gridDim": [5, 5],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Fuel 053 [15x60].png",
+      "dstName": "fuel--053--3x12.png",
+      "id": 53,
+      "gridDim": [3, 12],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    },
+    {
+      "srcName": "Fuel 054 [15x45].png",
+      "dstName": "fuel--054--3x9.png",
+      "id": 54,
+      "gridDim": [3, 9],
+      "is": [],
+      "has": [],
+      "ids": [54]
+    },
+    {
+      "srcName": "Fuel 055 [15x45].png",
+      "dstName": "fuel--055--3x9.png",
+      "id": 55,
+      "gridDim": [3, 9],
+      "is": [],
+      "has": [],
+      "ids": [55]
+    },
+    {
+      "srcName": "Fuel 056 [25x80].png",
+      "dstName": "fuel--056--5x16.png",
+      "id": 56,
+      "gridDim": [5, 16],
+      "is": [],
+      "has": [],
+      "ids": [56]
+    },
+    {
+      "srcName": "Fuel 057 [25x80].png",
+      "dstName": "fuel--057--5x16.png",
+      "id": 57,
+      "gridDim": [5, 16],
+      "is": [],
+      "has": [],
+      "ids": [57]
+    },
+    {
+      "srcName": "Fuel 058 [5x20].png",
+      "dstName": "fuel--058--1x4.png",
+      "id": 58,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [58]
+    },
+    {
+      "srcName": "Fuel 059 [5x15].png",
+      "dstName": "fuel--059--1x3.png",
+      "id": 59,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [59]
+    },
+    {
+      "srcName": "Fuel 060 [5x10].png",
+      "dstName": "fuel--060--1x2.png",
+      "id": 60,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [60]
+    },
+    {
+      "srcName": "Fuel 061 [15x20].png",
+      "dstName": "fuel--061--3x4.png",
+      "id": 61,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [61]
+    },
+    {
+      "srcName": "Fuel 062 [10x20].png",
+      "dstName": "fuel--062--2x4.png",
+      "id": 62,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [62]
+    },
+    {
+      "srcName": "Fuel 063 [15x15].png",
+      "dstName": "fuel--063--3x3.png",
+      "id": 63,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [63]
+    },
+    {
+      "srcName": "Fuel 064 [15x15].png",
+      "dstName": "fuel--064--3x3.png",
+      "id": 64,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [64]
+    },
+    {
+      "srcName": "Fuel 065 [15x15].png",
+      "dstName": "fuel--065--3x3.png",
+      "id": 65,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [65]
+    },
+    {
+      "srcName": "Fuel 066 [15x15].png",
+      "dstName": "fuel--066--3x3.png",
+      "id": 66,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [66]
+    },
+    {
+      "srcName": "Fuel 067 [15x15].png",
+      "dstName": "fuel--067--3x3.png",
+      "id": 67,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [67]
+    },
+    {
+      "srcName": "Fuel 068 [20x45].png",
+      "dstName": "fuel--068--4x9.png",
+      "id": 68,
+      "gridDim": [4, 9],
+      "is": [],
+      "has": [],
+      "ids": [68]
+    }
+  ]
+}
