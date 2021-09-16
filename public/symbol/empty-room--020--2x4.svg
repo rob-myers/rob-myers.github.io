@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 600 1200" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="620" height="1220" x="-10" y="-10" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAmwAAATEAgMAAACrZLEPAAAABGdBTUEAALGPC/xhBQAAAAd0SU1FB+UJEBM7APWG524AAAAJUExURQAAAAAAAP///4Pdz9IAAAABdFJOUwBA5thmAAAAAWJLR0QCZgt8ZAAAA3JJREFUeNrt1sENAyEMBEDuQQnXDyXwgP5biUKUDqxodRkXsBpkC7u1vgtrtKLqJ6qStleV7URdpbZdRLtOVK+1jaqWvqPuWtussd0nqpZWNXCfKLYI266zbbYM22Jj+6FtBttGsK3l2lawbdTbWlqxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGx/ZmtqlawbY9g2wy2rWDbTrYNtsfZJtvjbIXzttgeaLtjd9ZsPXbXj3bF3kjfryTwtny3oAe2tJ1nvgAF8ajEpYuP+QAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wOS0xNlQxOTo1ODo1MSswMDowMIdNP7AAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDktMTZUMTk6NTg6NTErMDA6MDD2EIcMAAAAAElFTkSuQmCC"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>walls</title>
+    <rect x="-10" y="-10" width="20" height="1220" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect x="590" y="-10" width="20" height="1220" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect y="-10" width="620" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" x="-10"/>
+    <rect y="1190" width="620" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" x="-10"/>
+  </g>
+  <g style="">
+    <title>singles</title>
+    <rect x="300" y="-20" width="290" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;">
+      <title>door door-n</title>
+    </rect>
+    <rect x="300" width="290" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" y="1180">
+      <title>door door-s</title>
+    </rect>
+    <rect y="-10" width="620" height="20" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="-10">
+      <title>wall</title>
+    </rect>
+    <rect width="620" height="20" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="-10" y="1190">
+      <title>wall</title>
+    </rect>
+  </g>
+</svg>

@@ -13,15 +13,15 @@
     <rect x="590" y="-10" width="20" height="310" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
     <rect y="-10" width="590" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
   </g>
-  <g style="pointer-events: none;">
+  <g style="">
     <title>singles</title>
     <rect y="-10" width="620" height="20" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="-10">
       <title>wall</title>
     </rect>
-    <rect x="25" width="250" height="48" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" y="-24">
+    <rect x="25" width="250" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" y="-21">
       <title>door</title>
     </rect>
-    <rect x="315" width="250" height="48" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" y="-24">
+    <rect x="315" width="250" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" y="-21">
       <title>door</title>
     </rect>
   </g>

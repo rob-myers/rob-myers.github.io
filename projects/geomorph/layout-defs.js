@@ -33,6 +33,8 @@ const layoutDefs = {
       { symbol: 'window--007--0x2.4', transform: [1, 0, 0, 1, 240, 420 - 8] },
       { symbol: 'empty-room--006--2x2', transform: [0, 1, -1, 0, 600, 420], tags: ['door-e'] },
       { symbol: 'ships-locker--011--1x2', transform: [0, 1, 1, 0, 540, 420] },
+      { symbol: 'iris-valves--005--1x1', transform: [0, 1, -1, 0, 1200, 240] },
+      { symbol: 'empty-room--020--2x4', transform: [-1, 0, 0, 1, 1200, 0], tags: ['door-s'] },
     ],
   }),
 };
