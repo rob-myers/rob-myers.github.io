@@ -23,9 +23,12 @@ export function createLayout(def, lookup) {
       .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) }))
       .filter(({ tags }) => !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))))
     actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
-    actual.walls.push(...walls.map(x => x.clone().applyMatrix(m)));
-    // Only hull symbol has "hull" walls
-    actual.walls.push(...hull.flatMap(x => x.createOutset(2)).map(x => x.applyMatrix(m)));
+    actual.walls.push(
+      ...walls.map(x => x.clone().applyMatrix(m)),
+      ...filterSingles(singles, 'wall').map(x => x.clone().applyMatrix(m)),
+      // Hull symbol (1st symbol) has "hull" walls
+      ...hull.flatMap(x => x.createOutset(2)).map(x => x.applyMatrix(m)),
+    );
   });
 
   // Ensure well-signed polygons
@@ -33,13 +36,13 @@ export function createLayout(def, lookup) {
   actual.singles.forEach(({ poly }) => poly.fixOrientation());
   
   // Cut doors from walls
-  const doors = filterSingles(actual, 'door');
+  const doors = filterSingles(actual.singles, 'door');
   actual.walls = Poly.cutOut(doors, actual.walls);
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSym = symbols[0];
   const hullOutline = hullSym.hull.map(x => x.clone().removeHoles());
-  const windows = filterSingles(actual, 'window');
+  const windows = filterSingles(actual.singles, 'window');
   const hullTop = Poly.cutOut(doors.concat(windows), hullSym.hull);
 
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
@@ -92,11 +95,11 @@ export function parseStarshipSymbol(symbolName, svgContents) {
 }
 
 /**
- * @param {Geomorph.Layout['actual']} actual 
+ * @param {{ tags: string[]; poly: Poly }[]} singles 
  * @param {string} tag 
  */
-export function filterSingles(actual, tag) {
-  return actual.singles.filter(x => x.tags.includes(tag)).map(x => x.poly);
+export function filterSingles(singles, tag) {
+  return singles.filter(x => x.tags.includes(tag)).map(x => x.poly);
 }
 
 /**
@@ -121,7 +124,6 @@ export function serializeSymbol(parsed) {
 export function deserializeSymbol(json) {
   return {
     key: json.key,
-    // doors: json.doors.map(Poly.from),
     hull: json.hull.map(Poly.from),
     obstacles: json.obstacles.map(Poly.from),
     walls: json.walls.map(Poly.from),
@@ -136,23 +138,6 @@ export function deserializeSvgJson(svgJson) {
     (agg, item) => (agg[item.key] = deserializeSymbol(item)) && agg,
     /** @type {Geomorph.SymbolLookup} */ ({}),
   );
-}
-
-/**
- * @param {Poly[]} polys
- * @param {string[][]} polysTags
- * @param {string[]} [tags]
- */
-export function restrictByTags(polys, polysTags, tags) {
-  if (tags) {
-    return polysTags.flatMap((ownTags, i) =>
-      ownTags.length
-        ? ownTags.some(tag => tags.includes(tag)) ? polys[i] : []
-        : polys[i]
-    );
-  } else {
-    return polys;
-  }
 }
 
 /**

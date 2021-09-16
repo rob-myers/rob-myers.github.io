@@ -1,0 +1,429 @@
+{
+  "parentFolder": "Shop & Repair Area",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Repair Area 001 [7x15].png",
+      "dstName": "repair-area--001--1.4x3.png",
+      "id": 1,
+      "gridDim": [1.4, 3],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Repair Area 002 [8x13].png",
+      "dstName": "repair-area--002--1.6x2.6.png",
+      "id": 2,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Repair Area 003 [8x13].png",
+      "dstName": "repair-area--003--1.6x2.6.png",
+      "id": 3,
+      "gridDim": [1.6, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Repair Area 004 [20x20].png",
+      "dstName": "repair-area--004--4x4.png",
+      "id": 4,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Repair Area 005 [20x20].png",
+      "dstName": "repair-area--005--4x4.png",
+      "id": 5,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Repair Area 006 [15x15].png",
+      "dstName": "repair-area--006--3x3.png",
+      "id": 6,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Repair Area 007 [9x13].png",
+      "dstName": "repair-area--007--1.8x2.6.png",
+      "id": 7,
+      "gridDim": [1.8, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Repair Area 008 [10x20].png",
+      "dstName": "repair-area--008--2x4.png",
+      "id": 8,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Repair Area 009 [15x20].png",
+      "dstName": "repair-area--009--3x4.png",
+      "id": 9,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Repair Area 010 [15x15].png",
+      "dstName": "repair-area--010--3x3.png",
+      "id": 10,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Shop 001 [10x10].png",
+      "dstName": "shop--001--2x2.png",
+      "id": 1,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Shop 002 [10x15].png",
+      "dstName": "shop--002--2x3.png",
+      "id": 2,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Shop 003 [10x15].png",
+      "dstName": "shop--003--2x3.png",
+      "id": 3,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Shop 004 [10x20].png",
+      "dstName": "shop--004--2x4.png",
+      "id": 4,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Shop 005 [10x20].png",
+      "dstName": "shop--005--2x4.png",
+      "id": 5,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Shop 006 [10x20].png",
+      "dstName": "shop--006--2x4.png",
+      "id": 6,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Shop 007 [10x20].png",
+      "dstName": "shop--007--2x4.png",
+      "id": 7,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Shop 008 [10x20].png",
+      "dstName": "shop--008--2x4.png",
+      "id": 8,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Shop 009 [10x25].png",
+      "dstName": "shop--009--2x5.png",
+      "id": 9,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Shop 010 [5x20].png",
+      "dstName": "shop--010--1x4.png",
+      "id": 10,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Shop 011 [5x20].png",
+      "dstName": "shop--011--1x4.png",
+      "id": 11,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Shop 012 [15x15].png",
+      "dstName": "shop--012--3x3.png",
+      "id": 12,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Shop 013 [15x20].png",
+      "dstName": "shop--013--3x4.png",
+      "id": 13,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Shop 014 [15x20].png",
+      "dstName": "shop--014--3x4.png",
+      "id": 14,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Shop 015 [15x20].png",
+      "dstName": "shop--015--3x4.png",
+      "id": 15,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Shop 016 [20x20].png",
+      "dstName": "shop--016--4x4.png",
+      "id": 16,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Shop 017 [20x20].png",
+      "dstName": "shop--017--4x4.png",
+      "id": 17,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Shop 018 [20x20].png",
+      "dstName": "shop--018--4x4.png",
+      "id": 18,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Shop 019 [20x25].png",
+      "dstName": "shop--019--4x5.png",
+      "id": 19,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Shop 020 [20x20].png",
+      "dstName": "shop--020--4x4.png",
+      "id": 20,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Shop 021 [20x20].png",
+      "dstName": "shop--021--4x4.png",
+      "id": 21,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Shop 022 [20x20].png",
+      "dstName": "shop--022--4x4.png",
+      "id": 22,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Shop 023 [20x20].png",
+      "dstName": "shop--023--4x4.png",
+      "id": 23,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Shop 024 [20x40].png",
+      "dstName": "shop--024--4x8.png",
+      "id": 24,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Shop 025 [20x50].png",
+      "dstName": "shop--025--4x10.png",
+      "id": 25,
+      "gridDim": [4, 10],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Shop 026 [10x20].png",
+      "dstName": "shop--026--2x4.png",
+      "id": 26,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Shop 027 [2x8].png",
+      "dstName": "shop--027--0.4x1.6.png",
+      "id": 27,
+      "gridDim": [0.4, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Shop 028 [4x8].png",
+      "dstName": "shop--028--0.8x1.6.png",
+      "id": 28,
+      "gridDim": [0.8, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Shop 029 [3x8].png",
+      "dstName": "shop--029--0.6x1.6.png",
+      "id": 29,
+      "gridDim": [0.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Shop 030 [2x3].png",
+      "dstName": "shop--030--0.4x0.6.png",
+      "id": 30,
+      "gridDim": [0.4, 0.6],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Shop 031 [2x4].png",
+      "dstName": "shop--031--0.4x0.8.png",
+      "id": 31,
+      "gridDim": [0.4, 0.8],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Shop 032 [5x10].png",
+      "dstName": "shop--032--1x2.png",
+      "id": 32,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Shop 033 [3x8].png",
+      "dstName": "shop--033--0.6x1.6.png",
+      "id": 33,
+      "gridDim": [0.6, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Shop 034 [2x3].png",
+      "dstName": "shop--034--0.4x0.6.png",
+      "id": 34,
+      "gridDim": [0.4, 0.6],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Shop 035 [2x4].png",
+      "dstName": "shop--035--0.4x0.8.png",
+      "id": 35,
+      "gridDim": [0.4, 0.8],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Shop 036 [2x5].png",
+      "dstName": "shop--036--0.4x1.png",
+      "id": 36,
+      "gridDim": [0.4, 1],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Shop 037 [2x4].png",
+      "dstName": "shop--037--0.4x0.8.png",
+      "id": 37,
+      "gridDim": [0.4, 0.8],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    }
+  ]
+}

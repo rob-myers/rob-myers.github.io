@@ -35,6 +35,7 @@ const layoutDefs = {
       { symbol: 'ships-locker--011--1x2', transform: [0, 1, 1, 0, 540, 420] },
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, -1, 0, 1200, 240] },
       { symbol: 'empty-room--020--2x4', transform: [-1, 0, 0, 1, 1200, 0], tags: ['door-s'] },
+      { symbol: 'shop--028--0.8x1.6', transform: [0, 1, -1, 0, 660, 420] },
     ],
   }),
 };

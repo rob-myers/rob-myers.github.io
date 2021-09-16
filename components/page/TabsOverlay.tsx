@@ -48,7 +48,7 @@ const controlsCss = css`
     
     cursor: pointer;
     color: #333;
-    background: #fff;
+    background: #abc;
     padding: 8px 32px;
     border-radius: 4px;
     font-size: larger;
