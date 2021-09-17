@@ -6,13 +6,20 @@ export const preloadedFunctions = {
 //   }
 // }'`,
 
+  /** Evaluate and return a javascript expression */
   expr: `run '({ args }) {
   const input = args.join(" ")
   try {
-    yield Function(\`return \${input}\`)();
+    yield Function(\`return \${input}\`)()
   } catch (e) {
-    yield input;
+    yield input
   }
+}' "$@"`,
+
+  /** Execute a javascript function */
+  call: `run '({ args, api }) {
+  const func = Function(\`return \${args[0]}\`)
+  yield await func()(api.provideCtxt(args.slice(1)))
 }' "$@"`,
 
   range: `{

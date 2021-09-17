@@ -11,8 +11,6 @@ import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
 
 const commandKeys = {
-  /** Execute a javascript function */
-  call: true,
   /** Change current key prefix */
   cd: true,
   /** List function definitions */
@@ -78,11 +76,6 @@ class CmdService {
   async *runCmd(node: Sh.CallExpr | Sh.DeclClause, command: CommandName, args: string[]) {
     const { meta } = node;
     switch (command) {
-      case 'call': {
-        const func = Function(`return ${args[0]}`);
-        yield await func()(this.provideProcessCtxt(meta, args.slice(1)));
-        break;
-      }
       case 'cd': {
         if (args.length > 1) {
           throw new ShError('usage: `cd /`, `cd`, `cd foo/bar`, `cd /foo/bar`, `cd ..` and `cd -`', 1);
@@ -417,6 +410,8 @@ class CmdService {
         setTimeout(resolve, seconds * 1000);
         useSession.api.addCleanup(meta, () => reject(killError(meta)));
       }),
+      /** Provide same context with different args */
+      provideCtxt: (args: string[]) => this.provideProcessCtxt(meta, args),
     };
   }
 
