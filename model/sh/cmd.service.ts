@@ -142,14 +142,14 @@ class CmdService {
         yield `The following commands are supported:`;
         const commands = cliColumns(Object.keys(commandKeys), { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
         for (const line of commands) yield `${ansiBlue}${line}`;
-        yield `Traverse context via \`ls\` or \`ls -l var.foo.bar\` (Object.keys).` 
+        // yield `Traverse context via \`ls\` or \`ls -l var.foo.bar\` (Object.keys).` 
         yield `View shell functions via \`declare\`.`
-        yield `Use Ctrl-c to interrupt and Ctrl-l to clear screen.`
-        yield `View history via up/down or \`history\`.`
-        yield `Traverse input using Option-left/right and Ctrl-{a,e}.`
-        yield `Delete input using Ctrl-{w,u,k}.`
-        yield `You can copy and paste.`
-        yield `Pipes, command substitution and background processes are supported.`
+        // yield `Use Ctrl-c to interrupt and Ctrl-l to clear screen.`
+        // yield `View history via up/down or \`history\`.`
+        // yield `Traverse input using Option-left/right and Ctrl-{a,e}.`
+        // yield `Delete input using Ctrl-{w,u,k}.`
+        // yield `You can copy and paste.`
+        // yield `Pipes, command substitution and background processes are supported.`
         break;
       }
       case 'history': {
