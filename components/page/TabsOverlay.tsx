@@ -47,11 +47,12 @@ const controlsCss = css`
     top: calc(50% - 20px);
     
     cursor: pointer;
-    color: #333;
-    background: #abc;
-    padding: 8px 32px;
+    color: #ddd;
+    background: #000;
+    padding: 12px 32px;
     border-radius: 4px;
-    font-size: larger;
+    border: 1px solid #ddd;
+    font-size: 1.2rem;
 
     opacity: 1;
     transition: 300ms opacity ease;
