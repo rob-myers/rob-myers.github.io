@@ -456,6 +456,9 @@ class CmdService {
     const process = useSession.api.getProcess(meta);
     const device = useSession.api.resolve(0, meta);
 
+    if (device === undefined) {
+      return; // Do nothing
+    }
     if (device instanceof TtyShell && process.pgid !== 0) {
       throw new ShError('background process tried to read tty', 1);
     }
