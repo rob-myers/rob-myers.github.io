@@ -1,12 +1,12 @@
 import create from 'zustand';
-import { devtools, persist } from 'zustand/middleware';
+import { devtools } from 'zustand/middleware';
 
 import type { BaseMeta, FileWithMeta } from 'model/sh/parse/parse.model';
 import type { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
 import type { NamedFunction } from 'model/sh/var.model';
 import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
 import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
-import { addToLookup, removeFromLookup, updateLookup } from './store.util';
+import { addToLookup, removeFromLookup } from './store.util';
 import { TtyShell } from 'model/sh/tty.shell';
 import { FifoDevice } from 'model/sh/io/fifo.device';
 import { VarDevice, VarDeviceMode } from 'model/sh/io/var.device';
@@ -17,7 +17,6 @@ import { computeNormalizedParts, resolveNormalized, ShError } from 'model/sh/sh.
 export type State = {
   session: KeyedLookup<Session>;
   device: KeyedLookup<Device>;
-  persist: KeyedLookup<PersistedSession>;
   rehydrated: boolean;
   
   readonly api: {
@@ -34,7 +33,6 @@ export type State = {
     createFifo: (fifoKey: string, size?: number) => FifoDevice;
     createVarDevice: (sessionKey: string, varPath: string, mode: VarDeviceMode) => VarDevice;
     ensureSession: (sessionKey: string, env: Record<string, any>) => Session;
-    ensurePersisted: (sessionKey: string) => PersistedSession;
     getFunc: (sessionKey: string, funcName: string) => NamedFunction | undefined;
     getFuncs: (sessionKey: string) => NamedFunction[];
     getNextPid: (sessionKey: string) => number;
@@ -45,6 +43,7 @@ export type State = {
     getVarDeep: (sessionKey: string, varPath: string) => any | undefined;
     getSession: (sessionKey: string) => Session;
     persist: (sessionKey: string) => void;
+    rehydrate: (sessionKey: string) => Rehydrated;
     removeDevice: (deviceKey: string) => void;
     removeProcess: (pid: number, sessionKey: string) => void;
     removeSession: (sessionKey: string) => void;
@@ -65,10 +64,9 @@ export interface Session {
   process: KeyedLookup<ProcessMeta>;
 }
 
-interface PersistedSession {
-  key: string;
-  history: string[];
-  var: Record<string, any>;
+interface Rehydrated {
+  history: string[] | null;
+  var: Record<string, any> | null;
 }
 
 export enum ProcessStatus {
@@ -94,7 +92,7 @@ export interface ProcessMeta {
   positionals: string[];
 }
 
-const useStore = create<State>(devtools(persist((set, get) => ({
+const useStore = create<State>(devtools((set, get) => ({
   device: {},
   session: {},
   persist: {},
@@ -137,9 +135,9 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
 
     createSession: (sessionKey, env) => {
-      const persisted = api.ensurePersisted(sessionKey);
+      const persisted = api.rehydrate(sessionKey);
       const ttyIo = makeShellIo<MessageFromXterm, MessageFromShell>();
-      const ttyShell = new TtyShell(sessionKey, ttyIo, persisted.history);
+      const ttyShell = new TtyShell(sessionKey, ttyIo, persisted.history || []);
       get().device[ttyShell.key] = ttyShell;
       get().device['/dev/null'] = new NullDevice('/dev/null');
 
@@ -171,12 +169,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
       const { session } = get();
       return session[sessionKey] = session[sessionKey]
         || get().api.createSession(sessionKey, env);
-    },
-
-    ensurePersisted: (sessionKey) => {
-      const persisted = get().persist?.[sessionKey]??{ key: sessionKey, history: [], var: {} };
-      set(({ persist: lookup }) => ({ persist: addToLookup(persisted, lookup) }));
-      return persisted;
     },
 
     getFunc: (sessionKey, funcName) => {
@@ -219,29 +211,24 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     persist: (sessionKey) => {
       const { ttyShell, var: varLookup } = api.getSession(sessionKey);
       
-      // TODO manual persist/rehydrate
+      localStorage.setItem(
+        `history@session-${sessionKey}`,
+        JSON.stringify(ttyShell.getHistory()),
+      );
 
-      // localStorage.setItem(`history@session-${sessionKey}`, JSON.stringify({
-      //   history: ttyShell.getHistory(),
-      // }));
-      // localStorage.setItem(`var@session-${sessionKey}`, JSON.stringify({
-      //   var: mapValues(varLookup, x => {
-      //     try {// Unserializable vars are ignored
-      //       return JSON.parse(JSON.stringify(x));
-      //     } catch {};
-      //   }),
-      // }));
+      localStorage.setItem(`var@session-${sessionKey}`, JSON.stringify(
+        mapValues(varLookup, x => {
+          try {// Unserializable vars are ignored
+            return JSON.parse(JSON.stringify(x));
+          } catch {};
+        }),
+      ));
+    },
 
-      set(({ persist }) => ({
-        persist: updateLookup(sessionKey, persist, () => ({
-          history: ttyShell.getHistory(),
-          var: mapValues(varLookup, x => {
-            try {// Unserializable is ignored
-              return JSON.parse(JSON.stringify(x));
-            } catch {}
-          }),
-        })),
-      }));
+    rehydrate: (sessionKey) => {
+      const storedHistory = JSON.parse(localStorage.getItem(`history@session-${sessionKey}`) || 'null');
+      const storedVar = JSON.parse(localStorage.getItem(`var@session-${sessionKey}`) || 'null');
+      return { history: storedHistory, var: storedVar };
     },
 
     removeDevice(deviceKey) {
@@ -295,15 +282,6 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     },
   },
 
-}), {
-  name: 'session',
-  version: 0,
-  blacklist: ['api', 'device', 'session'],
-  onRehydrateStorage: (_) =>  {
-    return () => {
-      useSessionStore.setState({ rehydrated: true });
-    };
-  },
 }), 'session'));
 
 const api = useStore.getState().api;
