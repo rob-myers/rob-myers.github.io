@@ -17,7 +17,7 @@ export function ControlsOverlay({ enabled, toggleEnabled }: {
             className={classNames("central", enabled && 'enabled')}
             onClick={toggleEnabled}
           >
-            enable
+            interact
           </div>
         )}
     </div>
@@ -43,7 +43,7 @@ const controlsCss = css`
   > .central {
     position: absolute;
     z-index: 10;
-    left: calc(50% - 52px);
+    left: calc(50% - 56px);
     top: calc(50% - 20px);
     
     cursor: pointer;

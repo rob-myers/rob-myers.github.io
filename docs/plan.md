@@ -22,6 +22,7 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
 - can show labels
 - static lighting (shadow maps)
 
+
 - demos should always involve starship geomorphs
 - write Navigation subsection
 - write Physics engine subsection
@@ -105,6 +106,10 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
   - simplify `help`
 - fix `set home/dist {}`
 - can trigger shell command from markdown link
+- focus terminal
+  - onclick interact
+  - onchange tab
+
 - ✅ better persistence
   > as in [three-cli branch](https://github.com/rob-myers/rob-myers.github.io/blob/9b2c7e3dc7f17b51a6d18663cf7c5039c78dcdf0/store/code.store.ts#L40).
 - Use unix-like paths e.g. `/home/src` instead of `/home.src`?
