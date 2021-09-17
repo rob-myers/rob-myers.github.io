@@ -35,8 +35,6 @@ const commandKeys = {
   ps: true,
   /** Print current key prefix */
   pwd: true,
-  /** Apply function to each item from stdin */
-  map: true,
   /** Reduce all items from stdin */
   reduce: true,
   /** Exit from a function */
@@ -226,11 +224,6 @@ class CmdService {
           }
           for (const item of items) yield item;
         }
-        break;
-      }
-      case 'map': {
-        const func = Function(`return ${args[0]}`);
-        yield* this.read(meta, (data) => func()(data, this.provideProcessCtxt(meta)));
         break;
       }
       case 'poll': {

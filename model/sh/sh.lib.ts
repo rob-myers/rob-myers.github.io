@@ -1,11 +1,5 @@
 export const preloadedFunctions = {
 
-//   __example__: `run '({ api: {read}, data }) {
-//   while (data = await read()) {
-//     yield "saw: " + data
-//   }
-// }'`,
-
   /** Evaluate and return a javascript expression */
   expr: `run '({ args }) {
   const input = args.join(" ")
@@ -18,15 +12,23 @@ export const preloadedFunctions = {
 
   /** Execute a javascript function */
   call: `run '({ args, api }) {
-  const func = Function(\`return \${args[0]}\`)
-  yield await func()(api.provideCtxt(args.slice(1)))
+  const func = Function(\`return \${args[0]}\`)()
+  yield await func(api.provideCtxt(args.slice(1)))
 }' "$@"`,
 
   /** Filter inputs */
   filter: `run '({ api, args, datum }) {
-  const func = Function(\`return \${args[0]}\`)
-  while (datum = await api.read()) {
-    if (func()(datum)) yield datum
+  const func = Function(\`return \${args[0]}\`)()
+  while ((datum = await api.read()) !== null) {
+    if (func(datum)) yield datum
+  }
+}' "$@"`,
+
+  /** Apply function to each item from stdin */
+  map: `run '({ api, args, datum }) {
+  const func = Function(\`return \${args[0]}\`)();
+  while ((datum = await api.read()) !== null) {
+    yield func(datum);
   }
 }' "$@"`,
 
