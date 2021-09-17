@@ -22,6 +22,14 @@ export const preloadedFunctions = {
   yield await func()(api.provideCtxt(args.slice(1)))
 }' "$@"`,
 
+  /** Filter inputs */
+  filter: `run '({ api, args, datum }) {
+  const func = Function(\`return \${args[0]}\`)
+  while (datum = await api.read()) {
+    if (func()(datum)) yield datum
+  }
+}' "$@"`,
+
   range: `{
 call '({args}) =>
   [...Array(Number(args[0]))].map((_, i) => i)
@@ -47,33 +55,19 @@ call '({args}) =>
 }`,
 };
 
-export const preloadedVariables = {
-};
+export const preloadedVariables = {};
 
 export const shellScripts = {
 
-  optsKeyHandler: `
-
-# options key handler
-key | run '({ api: {read}, var: {msg}, stage: {opt} }) {
-  while (msg = await read()) {
-    if (msg.type !== "keydown" || !opt.enabled) continue;
-    switch (msg.key) {
-      // NOOP
-    }
-  }
-}' &
-
+  unusedBackgroundHandler: `
+foo | bar | baz &
 `,
 };
 
 export const profiles = {
-  first: `
+  unused: `
 
-${
-  // shellScripts.optsKeyHandler.trim()
-  ''
-}
+${shellScripts.unusedBackgroundHandler.trim()}
 
 `.trim(),
 };

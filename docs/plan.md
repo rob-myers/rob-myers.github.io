@@ -101,7 +101,7 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
 ### shell
 - simplification
   - replace commands by `run` and a function
-    - call, expr, false, filter, help, map, poll, reduce, split, sponge, true
+    - help, map, poll, reduce, split, sponge, true
   - simplify `help`
 - `'d :- f('` swallowed with no error
 - fix `set home/dist {}`

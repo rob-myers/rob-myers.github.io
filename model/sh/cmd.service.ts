@@ -19,8 +19,6 @@ const commandKeys = {
   echo: true,
   /** Exit with code 1 */
   false: true,
-  /** Filter inputs */
-  filter: true,
   /** Get each arg from __TODO__ */
   get: true,
   /** List commands */
@@ -133,11 +131,6 @@ class CmdService {
       }
       case 'false': {
         node.exitCode = 1;
-        break;
-      }
-      case 'filter': {
-        const func = Function(`fn = ${args[0]}; return (...args) => fn(...args) ? args[0] : undefined`);
-        yield* this.read(meta, (data) => func()(data, this.provideProcessCtxt(meta)));
         break;
       }
       case 'get': {
