@@ -1,6 +1,6 @@
 import { css } from "goober";
 
-export default function Gap() {
+export default function Sep() {
   return <hr className={rootCss} />;
 }
 

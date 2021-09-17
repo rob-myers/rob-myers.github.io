@@ -1,11 +1,11 @@
 import Title from 'components/page/Title';
-import Gap from 'components/page/Gap';
+import Sep from 'components/page/Sep';
 import Main from 'components/page/Main';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
 import Terminal from 'components/sh/Terminal';
 
-export default function IndexPage() {
+export default function DraftPage() {
   return (
     <Main>
       <Title />
@@ -36,7 +36,7 @@ forcing us to take more care than usual.
 -->
         `}/>
 
-      <Gap/>
+      <Sep/>
 
       <Markdown children={`
 ---
@@ -119,7 +119,7 @@ I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
       `}/>
 
-      <Gap/>
+      <Sep/>
 
       <Markdown children={`
 ---
@@ -285,7 +285,7 @@ This means the CSS is written inside JS or JSX files, often together with the Re
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
       `}/>
 
-      <Gap/>
+      <Sep/>
 
       <Markdown children={`
 ---
@@ -321,7 +321,7 @@ We need a Physics engine:
         ]}
       />
 
-      <Gap/>
+      <Sep/>
 
       <Markdown children={`
 ## Technology (Part 3)
@@ -338,7 +338,7 @@ We need a Physics engine:
 - Can use anonymous credits to get recent
       `}/>
 
-      <Gap/>
+      <Sep/>
 
       <Markdown children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
@@ -393,13 +393,13 @@ public/svg
 - Map view
       `}/>
 
-      <Gap/>
+      <Sep/>
 
       <div style={{ height: 200 }}>
         <Terminal sessionKey="test" env={env.test} />
       </div>
 
-      <Gap/>
+      <Sep/>
 
       <Markdown children={`
 This is an example of a [command link](#command "@test echo foo").
