@@ -75,14 +75,14 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
         children: tabs.map((meta) => ({
           type: 'tab',
           id: meta.key === 'terminal'
-            ? `${meta.key}:${meta.session}`
-            : `${meta.key}@${meta.filepath}`,
+            ? `${meta.key}--${meta.session}--${globalTabCount++}`
+            : `${meta.key}--${meta.filepath}--${globalTabCount++}`,
           name: meta.key === 'terminal'
             ? `@${meta.session}`
             : meta.key === 'code'
-            ? meta.filepath
-            // Filepath sans extension (.js or .jsx)
-            : meta.filepath.split('.')[0],
+              ? meta.filepath
+              // Filepath sans extension (.js or .jsx)
+              : meta.filepath.split('.')[0],
           config: {
             key: meta.key,
             folds: 'folds' in meta ? meta.folds : undefined,
@@ -95,6 +95,8 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
     }
   };
 }
+
+let globalTabCount = 0;
 
 export type TabMeta = (
   | { key: 'code'; filepath: Lookup.CodeFilepathKey; folds?: CodeMirror.Position[] }
