@@ -1,14 +1,12 @@
 import PanZoomDemo from 'projects/panzoom/PanZoomDemo';
-import panZoomJsx from '!!raw-loader!projects/panzoom/PanZoom.jsx';
-import panZoomDemoJsx from '!!raw-loader!projects/panzoom/PanZoomDemo.jsx';
-
 import NavDemo from 'projects/pathfinding/NavDemo';
-import navDemoJsx from '!!raw-loader!projects/pathfinding/NavDemo.jsx';
-
 import GeomorphDemo from 'projects/geomorph/GeomorphDemo';
 import PhysicsDemo from 'projects/physics/PhysicsDemo';
-import jsxToJs from '!!raw-loader!projects/example/jsx-to-js.jsx';
 
+import panZoomJsx from '!!raw-loader!projects/panzoom/PanZoom.jsx';
+import panZoomDemoJsx from '!!raw-loader!projects/panzoom/PanZoomDemo.jsx';
+import navDemoJsx from '!!raw-loader!projects/pathfinding/NavDemo.jsx';
+import jsxToJs from '!!raw-loader!projects/example/jsx-to-js.jsx';
 import GeomRect from '!!raw-loader!projects/geom/rect';
 
 export const code = {

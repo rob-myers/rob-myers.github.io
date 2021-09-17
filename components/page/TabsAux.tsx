@@ -1,8 +1,10 @@
 import React from 'react';
 import {TabNode, IJsonModel} from 'flexlayout-react';
+import { css } from 'goober';
 
 import * as Lookup from 'model/tabs-lookup';
 import {CodeEditor} from 'components/dynamic';
+import Terminal from 'components/sh/Terminal';
 
 export function factory(node: TabNode) {
   const { key: nodeKey, folds } = node.getConfig() as {
@@ -12,15 +14,15 @@ export function factory(node: TabNode) {
 
   switch (nodeKey) {
     case 'code': {
-      const filepath = node.getComponent() || '';
-      if (filepath in Lookup.code) {
+      const componentKey = node.getComponent() as string;
+      if (componentKey in Lookup.code) {
         return (
           <div style={{ height: '100%', background: '#444' }}>
             <CodeEditor
               height="100%"
               lineNumbers
               readOnly
-              code={Lookup.code[filepath as Lookup.CodeFilepathKey]}
+              code={Lookup.code[componentKey as Lookup.CodeFilepathKey]}
               folds={folds}
             />
           </div>
@@ -28,22 +30,30 @@ export function factory(node: TabNode) {
       }
       return (
         <ErrorMessage>
-          Unknown code with filepath {filepath}
+          Unknown code with filepath {componentKey}
         </ErrorMessage>
       );
     }
     case 'component': {
-      const componentKey = node.getComponent() || '';
+      const componentKey = node.getComponent() as string;
       if (componentKey in Lookup.component) {
-        return (
-          React.createElement(Lookup.component[componentKey as Lookup.ComponentFilepathKey])
+        return React.createElement(
+          Lookup.component[componentKey as Lookup.ComponentFilepathKey]
         );
       }
+    }
+    case 'terminal': {
+      const componentKey = node.getComponent() as string;
+      const sessionKey = node.getConfig().session as string;
+      const env = {
+        test: {},
+      };
+      return <Terminal sessionKey={sessionKey} env={env} />;
     }
     default:
       return (
         <ErrorMessage>
-          Unknown TabNode with name {nodeKey}
+          ⚠️ Unknown <em>TabNode</em> with name "{nodeKey}".
         </ErrorMessage>
       );
   }
@@ -57,22 +67,29 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
     layout: {
       type: 'row',
       weight: 100,
+
       children: [{
         type: 'tabset',
         weight: 50,
         selected: 0,
+
         children: tabs.map((meta) => ({
           type: 'tab',
-          id: `${meta.key}@${meta.filepath}`,
-          name: meta.key === 'code'
+          id: meta.key === 'terminal'
+            ? `${meta.key}:${meta.session}`
+            : `${meta.key}@${meta.filepath}`,
+          name: meta.key === 'terminal'
+            ? `@${meta.session}`
+            : meta.key === 'code'
             ? meta.filepath
-            // : meta.filepath.slice(0, -4), // sans .jsx
-            : meta.filepath.split('/').pop()!.slice(0, -4),
+            // Filepath sans extension (.js or .jsx)
+            : meta.filepath.split('.')[0],
           config: {
             key: meta.key,
             folds: 'folds' in meta ? meta.folds : undefined,
+            session: 'session' in meta? meta.session : undefined,
           },
-          component: meta.filepath,
+          component: meta.key === 'terminal' ? 'terminal' : meta.filepath,
           enableClose: false,
         })),
       }],
@@ -83,13 +100,21 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
 export type TabMeta = (
   | { key: 'code'; filepath: Lookup.CodeFilepathKey; folds?: CodeMirror.Position[] }
   | { key: 'component'; filepath: Lookup.ComponentFilepathKey }
+  | { key: 'terminal'; session: string }
 );
 
 export function ErrorMessage({ children }: React.PropsWithChildren<{}>) {
   return (
-    <section>
+    <div className={errorCss}>
       <strong>{children}</strong>
-    </section>
+    </div>
   );
 }
+
+const errorCss = css`
+  margin: 24px;
+  color: red;
+  font-size: 1.2rem;
+  font-family: monospace;
+`;
 

@@ -1,6 +1,6 @@
+import Main from 'components/page/Main';
 import Title from 'components/page/Title';
 import Sep from 'components/page/Sep';
-import Main from 'components/page/Main';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
 import Terminal from 'components/sh/Terminal';
