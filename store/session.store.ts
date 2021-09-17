@@ -219,6 +219,19 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     persist: (sessionKey) => {
       const { ttyShell, var: varLookup } = api.getSession(sessionKey);
       
+      // TODO manual persist/rehydrate
+
+      // localStorage.setItem(`history@session-${sessionKey}`, JSON.stringify({
+      //   history: ttyShell.getHistory(),
+      // }));
+      // localStorage.setItem(`var@session-${sessionKey}`, JSON.stringify({
+      //   var: mapValues(varLookup, x => {
+      //     try {// Unserializable vars are ignored
+      //       return JSON.parse(JSON.stringify(x));
+      //     } catch {};
+      //   }),
+      // }));
+
       set(({ persist }) => ({
         persist: updateLookup(sessionKey, persist, () => ({
           history: ttyShell.getHistory(),
@@ -261,7 +274,7 @@ const useStore = create<State>(devtools(persist((set, get) => ({
     setVarDeep: (sessionKey, varPath, varValue) => {
       /** Like root of process context, but only has `home` */
       const root = { home : api.getSession(sessionKey).var };
-      const pwd: string = api.getVar(sessionKey, 'PWD');
+      const pwd = api.getVar(sessionKey, 'PWD') as string;
       const parts = computeNormalizedParts(varPath, root, pwd);
 
       if (parts[0] === 'home' && parts.length > 1) {
@@ -297,3 +310,8 @@ const api = useStore.getState().api;
 const useSessionStore = Object.assign(useStore, { api });
 
 export default useSessionStore;
+
+if (module.hot) {
+  // Avoid breaking preact-prefresh
+  module.hot.accept();
+}

@@ -43,7 +43,6 @@ export function factory(node: TabNode) {
       }
     }
     case 'terminal': {
-      const componentKey = node.getComponent() as string;
       const sessionKey = node.getConfig().session as string;
       const env = {
         test: {},
