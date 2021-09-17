@@ -45,11 +45,6 @@ const commandKeys = {
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,
-  /**
-   * Split arrays from stdin into items.
-   * Alternatively, split strings by provided separator.
-   */
-  split: true,
   /** Collect stdin into a single array */
   sponge: true,
   /** Exit with code 0 */
@@ -310,11 +305,6 @@ class CmdService {
         } while (Date.now() < started + ms - 1)
         break;
       }
-      case 'split': {
-        const arg = this.parseJsonArg(args[0]);
-        yield* arg === undefined ? this.split(meta) : this.splitBy(meta, arg);
-        break;
-      }
       case 'sponge': {
         const outputs = [] as any[];
         yield* this.read(meta, (data: any[]) => { outputs.push(data); });
@@ -394,13 +384,7 @@ class CmdService {
       },
 
       /** js parse with string fallback */
-      parseJsArg: (input: string) => {
-        try {
-          return Function(`return ${input}`)();
-        } catch (e) {
-          return input;
-        }
-      },
+      parseJsArg: this.parseJsArg,
     };
   }
 

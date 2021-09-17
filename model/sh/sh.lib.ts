@@ -44,6 +44,22 @@ export const preloadedFunctions = {
       : inputs.reduce(reducer);
   }' "$@"`,
 
+  /**
+   * Split arrays from stdin into items.
+   * Alternatively, split strings by provided separator.
+   */
+  split: `run '({ api, args }) {
+    if (args[0] === undefined) {
+      while ((datum = await api.read()) !== null) {
+        yield* datum
+      }
+    } else {
+      while ((datum = await api.read()) !== null) {
+        yield* datum.split(args[0])
+      }
+    }
+  }' "$@"`,
+
   range: `{
 call '({args}) =>
   [...Array(Number(args[0]))].map((_, i) => i)
