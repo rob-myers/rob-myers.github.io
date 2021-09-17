@@ -1,5 +1,20 @@
 export const preloadedFunctions = {
 
+//   __example__: `run '({ api: {read}, data }) {
+//   while (data = await read()) {
+//     yield "saw: " + data
+//   }
+// }'`,
+
+  expr: `run '({ args }) {
+  const input = args.join(" ")
+  try {
+    yield Function(\`return \${input}\`)();
+  } catch (e) {
+    yield input;
+  }
+}' "$@"`,
+
   range: `{
 call '({args}) =>
   [...Array(Number(args[0]))].map((_, i) => i)
@@ -30,9 +45,6 @@ export const preloadedVariables = {
 
 export const shellScripts = {
 
-  /**
-   * TODO `key` and `stage` no longer exist
-   */
   optsKeyHandler: `
 
 # options key handler
@@ -44,13 +56,17 @@ key | run '({ api: {read}, var: {msg}, stage: {opt} }) {
     }
   }
 }' &
+
 `,
 };
 
 export const profiles = {
   first: `
 
-${shellScripts.optsKeyHandler.trim()}
+${
+  // shellScripts.optsKeyHandler.trim()
+  ''
+}
 
 `.trim(),
 };

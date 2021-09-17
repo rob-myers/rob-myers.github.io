@@ -19,8 +19,6 @@ const commandKeys = {
   declare: true,
   /** Output arguments as space-separated string */
   echo: true,
-  /** Evaluate and return a javascript expression */
-  expr: true,
   /** Exit with code 1 */
   false: true,
   /** Filter inputs */
@@ -140,10 +138,6 @@ class CmdService {
         }
         break;
       }
-      case 'expr': {
-        yield this.parseJsArg(args.join(' '));
-        break;
-      }
       case 'false': {
         node.exitCode = 1;
         break;
@@ -159,17 +153,17 @@ class CmdService {
       }
       case 'help': {
         const { ttyShell } = useSession.api.getSession(meta.sessionKey);
-        yield `1) The following commands are supported:`;
+        yield `The following commands are supported:`;
         const commands = cliColumns(Object.keys(commandKeys), { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
         for (const line of commands) yield `${ansiBlue}${line}`;
-        yield `2) Traverse context via \`ls\` or \`ls -l var.foo.bar\` (Object.keys).` 
-        yield `3) View shell functions via \`declare\`.`
-        yield `4) Use Ctrl-c to interrupt and Ctrl-l to clear screen.`
-        yield `5) View history via up/down or \`history\`.`
-        yield `6) Traverse input using Option-left/right and Ctrl-{a,e}.`
-        yield `7) Delete input using Ctrl-{w,u,k}.`
-        yield `8) You can copy and paste.`
-        yield `9) Pipes, command substitution and background processes are supported.`
+        yield `Traverse context via \`ls\` or \`ls -l var.foo.bar\` (Object.keys).` 
+        yield `View shell functions via \`declare\`.`
+        yield `Use Ctrl-c to interrupt and Ctrl-l to clear screen.`
+        yield `View history via up/down or \`history\`.`
+        yield `Traverse input using Option-left/right and Ctrl-{a,e}.`
+        yield `Delete input using Ctrl-{w,u,k}.`
+        yield `You can copy and paste.`
+        yield `Pipes, command substitution and background processes are supported.`
         break;
       }
       case 'history': {

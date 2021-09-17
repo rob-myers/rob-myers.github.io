@@ -22,7 +22,6 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
 - can show labels
 - static lighting (shadow maps)
 
-
 - demos should always involve starship geomorphs
 - write Navigation subsection
 - write Physics engine subsection
@@ -125,7 +124,7 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
 - ✅ codemirror toggling: initial + gutter
 - support code-folding
   - ✅ can code-fold by indent using Ctrl-Q
-  - can code-fold via gutter
+  - ✅ can code-fold via gutter
 - ✅ comment toggle no longer needed (we will not edit code onsite)
 - ✅ use customized theme based on vscode-dark
 - ✅ highlight styled.div`...` and styled(Component)`...`
