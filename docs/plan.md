@@ -100,7 +100,7 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
 
 ### shell
 - replace various shell commands by shell functions and `run`
-  - poll, reduce, split, sponge
+  - split, sponge
 - fix: `set home/dist {}`
 - fix:  `'d :- f('` swallowed with no error
 - can trigger shell command from markdown link

@@ -1,13 +1,9 @@
 export const preloadedFunctions = {
 
   /** Evaluate and return a javascript expression */
-  expr: `run '({ args }) {
+  expr: `run '({ api, args }) {
   const input = args.join(" ")
-  try {
-    yield Function(\`return \${input}\`)()
-  } catch (e) {
-    yield input
-  }
+  yield api.parseJsArg(input)
 }' "$@"`,
 
   /** Execute a javascript function */
@@ -35,6 +31,18 @@ export const preloadedFunctions = {
   poll: `run '({ api, args }) {
   yield* api.poll(args)
 }' "$@"`,
+
+  /** Reduce all items from stdin */
+  reduce: `run '({ api, args }) {
+    const inputs = []
+    const reducer = Function(\`return \${args[0]}\`)()
+    while ((datum = await api.read()) !== null) {
+      inputs.push(datum);
+    }
+    yield args[1]
+      ? inputs.reduce(reducer, api.parseJsArg(args[1]))
+      : inputs.reduce(reducer);
+  }' "$@"`,
 
   range: `{
 call '({args}) =>

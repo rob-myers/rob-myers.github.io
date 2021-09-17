@@ -33,8 +33,6 @@ const commandKeys = {
   ps: true,
   /** Print current key prefix */
   pwd: true,
-  /** Reduce all items from stdin */
-  reduce: true,
   /** Exit from a function */
   return: true,
   /** Remove variable(s) */
@@ -255,15 +253,6 @@ class CmdService {
         yield '/' + (useSession.api.getVar(meta.sessionKey, 'PWD'));
         break;
       }
-      case 'reduce': {
-        const inputs = [] as any[];
-        const reducer = Function(`return ${args[0]}`)();
-        yield* this.read(meta, (data: any[]) => { inputs.push(data); });
-        yield args[1]
-          ? inputs.reduce(reducer, this.parseJsArg(args[1]))
-          : inputs.reduce(reducer);
-        break;
-      }
       case 'return': {
         const process = useSession.api.getProcess(meta);
         process.status = ProcessStatus.Killed;
@@ -375,23 +364,23 @@ class CmdService {
   private provideProcessApi(meta: Sh.BaseMeta) {
     return {
       /**
-       * Read from stdin.
-       * We convert `{ eof: true }` to `null` for easier assignment,
-       * but beware of other falsies.
+       * Read from stdin. We convert `{ eof: true }` to `null` for
+       * easier assignment, but beware of other falsies.
        */
       read: async () => {
         const result = await this.readOnce(meta);
         return result?.eof ? null : result;
       },
-      /**
-       * TODO support pause/resume like command `sleep`
-       */
+
+      /** TODO support pause/resume like command `sleep` */
       sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
         useSession.api.addCleanup(meta, () => reject(killError(meta)));
       }),
+
       /** Provide same context with different args */
       provideCtxt: (args: string[]) => this.provideProcessCtxt(meta, args),
+
       /** Output 1, 2, ... at fixed intervals */
       poll: async function* (args: string[]) {
         const seconds = args.length ? parseFloat(cmdService.parseJsonArg(args[0])) || 1 : 1;
@@ -401,6 +390,15 @@ class CmdService {
         while (true) {
           yield count++;
           await Promise.race([pause(delayMs), deferred.promise]);
+        }
+      },
+
+      /** js parse with string fallback */
+      parseJsArg: (input: string) => {
+        try {
+          return Function(`return ${input}`)();
+        } catch (e) {
+          return input;
         }
       },
     };
