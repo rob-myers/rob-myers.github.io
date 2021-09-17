@@ -99,11 +99,10 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
 - ✅ PanZoom using `geom`, `hooks`, `service/dom`
 
 ### shell
-- replace commands by `run` and a function
-  - map, poll, reduce, split, sponge, true
-
-- fix `set home/dist {}`
-- `'d :- f('` swallowed with no error
+- replace various shell commands by shell functions and `run`
+  - poll, reduce, split, sponge
+- fix: `set home/dist {}`
+- fix:  `'d :- f('` swallowed with no error
 - can trigger shell command from markdown link
 - focus terminal onclick interact
 - focus terminal onchange tab

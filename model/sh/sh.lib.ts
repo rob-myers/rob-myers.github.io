@@ -26,10 +26,14 @@ export const preloadedFunctions = {
 
   /** Apply function to each item from stdin */
   map: `run '({ api, args, datum }) {
-  const func = Function(\`return \${args[0]}\`)();
+  const func = Function(\`return \${args[0]}\`)()
   while ((datum = await api.read()) !== null) {
-    yield func(datum);
+    yield func(datum)
   }
+}' "$@"`,
+
+  poll: `run '({ api, args }) {
+  yield* api.poll(args)
 }' "$@"`,
 
   range: `{

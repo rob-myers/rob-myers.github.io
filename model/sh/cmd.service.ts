@@ -29,8 +29,6 @@ const commandKeys = {
   kill: true,
   /** List variables */
   ls: true,
-  /** Output 1, 2, ... at fixed intervals */
-  poll: true,
   /** List running processes */
   ps: true,
   /** Print current key prefix */
@@ -226,16 +224,6 @@ class CmdService {
         }
         break;
       }
-      case 'poll': {
-        const seconds = args.length ? parseFloat(this.parseJsonArg(args[0])) || 0 : 1;
-        const [delayMs, deferred] = [Math.max(seconds, 0.5) * 1000, new Deferred<void>()];
-        useSession.api.addCleanup(meta, () => deferred.resolve());
-        let count = 1;
-        while (true) {
-          yield count++;
-          await Promise.race([pause(delayMs), deferred.promise]);
-        }
-      }
       case 'ps': {
         const { opts } = getOpts(args, { boolean: [
           'a', /** Show all processes */
@@ -386,18 +374,35 @@ class CmdService {
 
   private provideProcessApi(meta: Sh.BaseMeta) {
     return {
-      // We convert { eof: true } to null, for truthy test
+      /**
+       * Read from stdin.
+       * We convert `{ eof: true }` to `null` for easier assignment,
+       * but beware of other falsies.
+       */
       read: async () => {
         const result = await this.readOnce(meta);
         return result?.eof ? null : result;
       },
-      // TODO support pause/resume like command `sleep`
+      /**
+       * TODO support pause/resume like command `sleep`
+       */
       sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
         useSession.api.addCleanup(meta, () => reject(killError(meta)));
       }),
       /** Provide same context with different args */
       provideCtxt: (args: string[]) => this.provideProcessCtxt(meta, args),
+      /** Output 1, 2, ... at fixed intervals */
+      poll: async function* (args: string[]) {
+        const seconds = args.length ? parseFloat(cmdService.parseJsonArg(args[0])) || 1 : 1;
+        const [delayMs, deferred] = [Math.max(seconds, 0.5) * 1000, new Deferred<void>()];
+        useSession.api.addCleanup(meta, () => deferred.resolve());
+        let count = 1;
+        while (true) {
+          yield count++;
+          await Promise.race([pause(delayMs), deferred.promise]);
+        }
+      },
     };
   }
 
