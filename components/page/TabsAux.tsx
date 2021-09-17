@@ -86,7 +86,7 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
           config: {
             key: meta.key,
             folds: 'folds' in meta ? meta.folds : undefined,
-            session: 'session' in meta? meta.session : undefined,
+            session: 'session' in meta ? meta.session : undefined,
           },
           component: meta.key === 'terminal' ? 'terminal' : meta.filepath,
           enableClose: false,

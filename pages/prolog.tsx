@@ -19,7 +19,7 @@ export default function PrologPage() {
         height={400}
         tabs={[
           { key: 'terminal', session: 'test' },
-          { key: 'terminal', session: 'test' },
+          { key: 'terminal', session: 'other' },
         ]}
       />
 
