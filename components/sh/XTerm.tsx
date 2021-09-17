@@ -22,7 +22,7 @@ export default function XTermComponent({
     window.addEventListener('resize', onResize);
     
     xterm.open(containerRef.current!);
-    xterm.focus();
+    // xterm.focus();
     onResize();
 
     onMount(xterm);
