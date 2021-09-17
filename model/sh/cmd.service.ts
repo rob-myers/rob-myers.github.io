@@ -45,8 +45,6 @@ const commandKeys = {
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,
-  /** Collect stdin into a single array */
-  sponge: true,
   /** Exit with code 0 */
   true: true,
   /** Unset top-level variables and shell functions */
@@ -305,12 +303,6 @@ class CmdService {
         } while (Date.now() < started + ms - 1)
         break;
       }
-      case 'sponge': {
-        const outputs = [] as any[];
-        yield* this.read(meta, (data: any[]) => { outputs.push(data); });
-        yield outputs;
-        break;
-      }
       case 'true': {
         node.exitCode = 0;
         break;
@@ -405,6 +397,7 @@ class CmdService {
     });
   }
 
+  // TODO remove
   private shellUtil = {
     pretty: (x: any) => pretty(JSON.parse(safeStringify(x))),
   };
@@ -419,9 +412,8 @@ class CmdService {
     const device = useSession.api.resolve(0, meta);
 
     if (device === undefined) {
-      return; // Do nothing
-    }
-    if (device instanceof TtyShell && process.pgid !== 0) {
+      return;
+    } else if (device instanceof TtyShell && process.pgid !== 0) {
       throw new ShError('background process tried to read tty', 1);
     }
 
@@ -435,54 +427,14 @@ class CmdService {
     }
   }
 
-  private async *read(meta: Sh.BaseMeta, act: (x: any) => any) {
-    yield* this.readLoop(meta, (result) => {
-      if (isDataChunk(result.data)) {
-        let transformed: any, items = [] as any[];
-        for (const item of result.data.items) {
-          transformed = act(item);
-          (transformed !== undefined) && items.push(transformed); 
-        }
-        result.data.items = items;
-        return result.data; // Forward chunk
-      } else {
-        return act(result.data);
-      }
-    });
-  }
-
+  /**
+   * Reading once often means two outputs i.e. `{ data }` then `{ eof: true }`
+   */
   private async readOnce(meta: Sh.BaseMeta): Promise<ReadResult> {
     for await (const data of this.readLoop(meta, ({ data }) => data, true)) {
       return data;
     }
     return { eof: true };
-  }
-
-  private async *split(meta: Sh.BaseMeta) {
-    yield* this.readLoop(meta, (result) => {
-      if (isDataChunk(result.data)) {
-        result.data.items = result.data.items.flatMap(x => x);
-        return result.data;
-      } else if (Array.isArray(result.data)) {
-        return dataChunk(result.data);
-      } else {
-        return result.data;
-      }
-    });
-  }
-
-  private async *splitBy(meta: Sh.BaseMeta, separator: string) {
-    yield* this.readLoop(meta, (result) => {
-      if (isDataChunk(result.data)) {
-        result.data.items = result.data.items
-          .flatMap((x: string) => x.split(separator));
-        return result.data;
-      } else if (typeof result.data === 'string') {
-        return dataChunk(result.data.split(separator));
-      } else {
-        throw new ShError(`expected string`, 1);
-      }
-    });
   }
 
   /** JSON.parse with string fallback */
@@ -502,7 +454,6 @@ class CmdService {
       return input;
     }
   }
-
 }
 
 export const cmdService = new CmdService;

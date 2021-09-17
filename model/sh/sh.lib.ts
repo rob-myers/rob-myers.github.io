@@ -46,19 +46,28 @@ export const preloadedFunctions = {
 
   /**
    * Split arrays from stdin into items.
-   * Alternatively, split strings by provided separator.
+   * Split strings by optional separator (default `' '`).
+   * Otherwise ignore.
    */
   split: `run '({ api, args }) {
-    if (args[0] === undefined) {
-      while ((datum = await api.read()) !== null) {
+    const arg = args[0] || " "
+    while ((datum = await api.read()) !== null) {
+      if (datum instanceof Array) {
         yield* datum
-      }
-    } else {
-      while ((datum = await api.read()) !== null) {
-        yield* datum.split(args[0])
+      } else if (typeof datum === "string") {
+        yield* datum.split(arg)
       }
     }
   }' "$@"`,
+
+  /** Collect stdin into a single array */
+  sponge: `run '({ api }) {
+    const outputs = []
+    while ((datum = await api.read()) !== null) {
+      outputs.push(datum)
+    }
+    yield outputs
+  }'`,
 
   range: `{
 call '({args}) =>

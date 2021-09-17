@@ -99,14 +99,13 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
 - ✅ PanZoom using `geom`, `hooks`, `service/dom`
 
 ### shell
-- replace various shell commands by shell functions and `run`
-  - split, sponge
 - fix: `set home/dist {}`
 - fix:  `'d :- f('` swallowed with no error
 - can trigger shell command from markdown link
 - focus terminal onclick interact
 - focus terminal onchange tab
 
+- ✅ replace various shell commands by shell functions and `run`
 - ✅ simplify `help`
 - ✅ better persistence
   > as in [three-cli branch](https://github.com/rob-myers/rob-myers.github.io/blob/9b2c7e3dc7f17b51a6d18663cf7c5039c78dcdf0/store/code.store.ts#L40).
