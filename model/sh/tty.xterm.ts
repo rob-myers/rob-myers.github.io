@@ -51,8 +51,8 @@ export class TtyXterm {
 
   constructor(
     public xterm: Terminal,
-    public sessionKey: string,
-    public io: ShellIo<MessageFromXterm, MessageFromShell>,
+    private sessionKey: string,
+    private io: ShellIo<MessageFromXterm, MessageFromShell>,
   ) {
     this.input = '';
     this.cursor = 0;

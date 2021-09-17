@@ -104,11 +104,11 @@ Breath depth into it via Tau Prolog, hooked up to our terminal
   - replace commands by `run` and a function
     - call, expr, false, filter, help, map, poll, reduce, split, sponge, true
   - simplify `help`
+- `'d :- f('` swallowed with no error
 - fix `set home/dist {}`
 - can trigger shell command from markdown link
-- focus terminal
-  - onclick interact
-  - onchange tab
+- focus terminal onclick interact
+- focus terminal onchange tab
 
 - ✅ better persistence
   > as in [three-cli branch](https://github.com/rob-myers/rob-myers.github.io/blob/9b2c7e3dc7f17b51a6d18663cf7c5039c78dcdf0/store/code.store.ts#L40).

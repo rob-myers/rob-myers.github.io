@@ -57,6 +57,11 @@ export type State = {
 export interface Session {
   key: string;
   func: KeyedLookup<NamedFunction>;
+  /**
+   * Currently only support one tty per session,
+   * i.e. cannot have two terminals in same session.
+   * This could be changed e.g. `ttys: { io, shell }[]`.
+   */
   ttyIo: ShellIo<MessageFromXterm, MessageFromShell>;
   ttyShell: TtyShell,
   var: Record<string, any>;
