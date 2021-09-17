@@ -8,20 +8,15 @@ import useSession from 'store/session.store';
 import { XTerm } from 'components/dynamic';
 
 export default function Terminal({ sessionKey, env }: Props) {
-  const session = useSession(({ session }) =>
-    sessionKey in session ? session[sessionKey] : null
-  );
+  const session = useSession(({ session }) => sessionKey in session ? session[sessionKey] : null);
+  useBeforeunload(() => useSession.api.persist(sessionKey));
 
-  useEffect(() => {// Had hot-reload issues with api.ensureSession
-    useSession.api.createSession(sessionKey, env);
-    return () => useSession.api.removeSession(sessionKey);
+  useEffect(() => {
+    useSession.api.ensureSession(sessionKey, env);
+    // useSession.api.createSession(sessionKey, env);
+    // return () => useSession.api.removeSession(sessionKey);
   }, [sessionKey]);
 
-  // TODO move elsewhere
-  const persistOnUnload = useCallback(() =>
-    useSession.api.persist(sessionKey), [],
-  );
-  useBeforeunload(persistOnUnload);
 
   return (
     <Root>

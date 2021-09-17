@@ -205,8 +205,7 @@ const useStore = create<State>(devtools((set, get) => ({
       return Function('__', `return __.${varPath}`)(root);
     },
 
-    getSession: (sessionKey) =>
-      get().session[sessionKey],
+    getSession: (sessionKey) => get().session[sessionKey],
 
     persist: (sessionKey) => {
       const { ttyShell, var: varLookup } = api.getSession(sessionKey);

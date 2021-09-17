@@ -10,7 +10,7 @@ export const ansiWhite = '\x1b[0;37m';
 export const ansiWarn = '\x1b[41;37m';
 
 /**
- * Wraps XTerm.Terminal.
+ * Wraps xtermjs `Terminal`.
  */
 export class TtyXterm {
   /**

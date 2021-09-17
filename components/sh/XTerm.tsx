@@ -1,31 +1,26 @@
 import React, { useRef, useEffect } from 'react';
-// https://github.com/farfromrefug/react-xterm/blob/master/src/react-xterm.tsx
+import { css } from 'goober';
+import classNames from 'classnames';
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { styled } from 'goober';
 
-export default function XTermComponent({
-  options,
-  onMount,
-}: Props) {
+export default function XTermComponent(props: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const xtermRef = useRef<Terminal>();
 
   useEffect(() => {
-    const xterm = new Terminal(options);
-    xtermRef.current = xterm;
+    const xterm = xtermRef.current = new Terminal(props.options);
    
+    // Saw Uncaught Error: This API only accepts integers
     const fitAddon = new FitAddon;
     xterm.loadAddon(fitAddon);
-    // Saw Uncaught Error: This API only accepts integers
-    const onResize = () => { try { fitAddon.fit(); } catch {} };
+    function onResize() { try { fitAddon.fit(); } catch {} };
     window.addEventListener('resize', onResize);
     
     xterm.open(containerRef.current!);
     // xterm.focus();
     onResize();
-
-    onMount(xterm);
+    props.onMount(xterm);
 
     return () => {
       window.removeEventListener('resize', onResize);
@@ -34,9 +29,9 @@ export default function XTermComponent({
   }, []);
 
   return (
-    <XTermContainer
+    <div
       ref={containerRef}
-      className="scrollable"
+      className={classNames("scrollable", rootCss)}
       onKeyDown={stopKeysPropagating}
     />
   );
@@ -47,9 +42,8 @@ interface Props {
   options?: ITerminalOptions;
 }
 
-const XTermContainer = styled('section', React.forwardRef)<{}>`
+const rootCss = css`
   height: inherit;
-
   > div {
     width: 100%;
     padding: 4px;
