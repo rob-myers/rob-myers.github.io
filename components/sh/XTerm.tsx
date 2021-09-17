@@ -3,10 +3,13 @@ import { css } from 'goober';
 import classNames from 'classnames';
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
+import useMeasure from 'react-use-measure';
 
 export default function XTermComponent(props: Props) {
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>();
   const xtermRef = useRef<Terminal>();
+  const resizeRef = useRef<() => void>();
+  const [measureRef, size] = useMeasure({ debounce: { scroll: 50, resize: 0 } });
 
   useEffect(() => {
     const xterm = xtermRef.current = new Terminal(props.options);
@@ -14,23 +17,28 @@ export default function XTermComponent(props: Props) {
     // Saw Uncaught Error: This API only accepts integers
     const fitAddon = new FitAddon;
     xterm.loadAddon(fitAddon);
-    function onResize() { try { fitAddon.fit(); } catch {} };
-    window.addEventListener('resize', onResize);
+    resizeRef.current = () => { try { fitAddon.fit(); } catch {} };
+    window.addEventListener('resize', resizeRef.current);
     
     xterm.open(containerRef.current!);
-    // xterm.focus();
-    onResize();
+    resizeRef.current();
     props.onMount(xterm);
+    // xterm.focus();
 
     return () => {
-      window.removeEventListener('resize', onResize);
+      window.removeEventListener('resize', resizeRef.current!);
       xterm.dispose();
     };
   }, []);
 
+  useEffect(() => void resizeRef.current?.(), [size]);
+
   return (
     <div
-      ref={containerRef}
+      ref={(el) => {
+        measureRef(el);
+        containerRef.current = el || undefined;
+      }}
       className={classNames("scrollable", rootCss)}
       onKeyDown={stopKeysPropagating}
     />

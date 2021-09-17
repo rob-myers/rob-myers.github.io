@@ -32,7 +32,9 @@ export default function Tabs(props: Props) {
       className={classNames("tabs", "scrollable", rootCss(props.height))}
     >
       <div className={overlayCss(props.height)}>
-        {colour !== 'black' && <Layout model={model} factory={factory} />}
+        {colour !== 'black' && (
+          <Layout model={model} factory={factory} />
+        )}
         <ControlsOverlay enabled={enabled} toggleEnabled={() => {
           setEnabled(!enabled);
           setColour(colour === 'clear' ? 'faded' : 'clear');
