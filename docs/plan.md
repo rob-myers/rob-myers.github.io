@@ -1,12 +1,23 @@
+## Motivation
+
+Breath life into it via Traveller wiki
+> https://wiki.travellerrpg.com/Main_Page
+
+Breath depth into it via Tau Prolog, hooked up to our terminal
+> http://tau-prolog.org/
+
 ## Plan
 
 - generate pngs for demo (so don't need code)
-  - try server side render using npm module `canvas`
+  - ✅ try server-side-render using npm module `canvas`
+  - ✅ browser and server use same canvas overlay code
+  - generate some PNGs for `PanZoomDemo`
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
 - convert 302 too
+  - satelitte and labels remain
 - emphasise render-once approach to React in intro
 - can show labels
 - static lighting (shadow maps)
