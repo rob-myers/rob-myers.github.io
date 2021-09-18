@@ -138,17 +138,17 @@ But first we'll describe the underlying browser focused technologies.
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober) & programmatically. |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | A port of [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
-| Physics engine | [WebAssembly port](https://www.npmjs.com/package/box2d-wasm) of [Box2D](https://github.com/erincatto/box2d). |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | Our own in-browser terminal. |
 | Code viewing | [CodeMirror](https://codemirror.net/) to view JS. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
+<!-- | Physics engine | [WebAssembly port](https://www.npmjs.com/package/box2d-wasm) of [Box2D](https://github.com/erincatto/box2d). | -->
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
 
-The early nineties brought three pillars: HTML, CSS and JavaScript.
+The early 90s brought three pillars: HTML, CSS and JavaScript.
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
 Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hovers).
 More precisely, all subsequent DOM mutations are performed by JavaScript.
@@ -190,7 +190,7 @@ Let's consider an example, a pannable and zoomable grid.
       />
 
       <Markdown children={`
-The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code@panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
+The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code--panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.

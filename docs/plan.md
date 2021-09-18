@@ -3,6 +3,7 @@
 Breath life into it via 
 - [Traveller wiki](https://wiki.travellerrpg.com/Main_Page)
 - [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol)
+  - Ship AIs assist Low Berth travellers on death
 - [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land)
 
 Breath depth into it via navigation (sans physics)

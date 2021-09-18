@@ -15,7 +15,12 @@ export default function Tabs(props: Props) {
     if (props.storeKey) {
       useSiteStore.getState().tabs[props.storeKey] = {
         key: props.storeKey,
-        selectTab: (tabKey: string) => model.doAction(Actions.selectTab(tabKey)),
+        /** Select last tab whose id is a suffix of `tabId` */
+        selectTab: (tabId: string) => {
+          model.visitNodes(x => x.getId().startsWith(tabId)
+            && model.doAction(Actions.selectTab(x.getId()))
+          );
+        },
         scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
       };
       return () => void delete useSiteStore.getState().tabs[props.storeKey || ''];
