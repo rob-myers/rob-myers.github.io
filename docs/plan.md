@@ -1,10 +1,9 @@
 ## Motivation
 
-Breath life into it via Traveller wiki
-> https://wiki.travellerrpg.com/Main_Page
-
-Breath depth into it via Tau Prolog, hooked up to our terminal
-> http://tau-prolog.org/
+Breath life into it via 
+- [Traveller wiki](https://wiki.travellerrpg.com/Main_Page)
+- [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol)
+- [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land)
 
 ## Plan
 
