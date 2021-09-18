@@ -15,17 +15,15 @@ export const preloadedFunctions = {
   /** Filter inputs */
   filter: `run '({ api, args, datum }) {
   const func = Function(\`return \${args[0]}\`)()
-  while ((datum = await api.read()) !== null) {
+  while ((datum = await api.read()) !== null)
     if (func(datum)) yield datum
-  }
 }' "$@"`,
 
   /** Apply function to each item from stdin */
   map: `run '({ api, args, datum }) {
   const func = Function(\`return \${args[0]}\`)()
-  while ((datum = await api.read()) !== null) {
+  while ((datum = await api.read()) !== null)
     yield func(datum)
-  }
 }' "$@"`,
 
   poll: `run '({ api, args }) {
@@ -36,12 +34,11 @@ export const preloadedFunctions = {
   reduce: `run '({ api, args }) {
     const inputs = []
     const reducer = Function(\`return \${args[0]}\`)()
-    while ((datum = await api.read()) !== null) {
-      inputs.push(datum);
-    }
+    while ((datum = await api.read()) !== null)
+      inputs.push(datum)
     yield args[1]
       ? inputs.reduce(reducer, api.parseJsArg(args[1]))
-      : inputs.reduce(reducer);
+      : inputs.reduce(reducer)
   }' "$@"`,
 
   /**
@@ -63,9 +60,8 @@ export const preloadedFunctions = {
   /** Collect stdin into a single array */
   sponge: `run '({ api }) {
     const outputs = []
-    while ((datum = await api.read()) !== null) {
+    while ((datum = await api.read()) !== null)
       outputs.push(datum)
-    }
     yield outputs
   }'`,
 
