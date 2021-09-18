@@ -3,7 +3,7 @@ import Title from 'components/page/Title';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
 
-export default function PrologPage() {
+export default function TtyPage() {
   return (
     <Main>
       <Title />
