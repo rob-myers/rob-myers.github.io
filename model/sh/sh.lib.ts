@@ -13,17 +13,19 @@ export const preloadedFunctions = {
 }' "$@"`,
 
   /** Filter inputs */
-  filter: `run '({ api, args, datum }) {
+  filter: `run '(ctxt) {
+  let { api, args, datum } = ctxt
   const func = Function(\`return \${args[0]}\`)()
   while ((datum = await api.read()) !== null)
-    if (func(datum)) yield datum
+    if (func(datum, ctxt)) yield datum
 }' "$@"`,
 
   /** Apply function to each item from stdin */
-  map: `run '({ api, args, datum }) {
+  map: `run '(ctxt) {
+  let { api, args, datum } = ctxt
   const func = Function(\`return \${args[0]}\`)()
   while ((datum = await api.read()) !== null)
-    yield func(datum)
+    yield func(datum, ctxt)
 }' "$@"`,
 
   poll: `run '({ api, args }) {
@@ -43,11 +45,11 @@ export const preloadedFunctions = {
 
   /**
    * Split arrays from stdin into items.
-   * Split strings by optional separator (default `' '`).
+   * Split strings by optional separator (default `''`).
    * Otherwise ignore.
    */
   split: `run '({ api, args }) {
-    const arg = args[0] || " "
+    const arg = args[0] || ""
     while ((datum = await api.read()) !== null) {
       if (datum instanceof Array) {
         yield* datum
@@ -76,7 +78,7 @@ call '({args}) =>
 }`,
 
   pretty: `{
-  map '(x, {util}) => util.pretty(x)'
+  map '(x, { api }) => api.pretty(x)'
 }`,
 
   keys: `{
