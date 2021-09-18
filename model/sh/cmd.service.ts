@@ -351,7 +351,7 @@ class CmdService {
        */
       read: async () => {
         const result = await this.readOnce(meta);
-        return result?.eof ? null : result;
+        return result?.eof ? null : result.data;
       },
 
       /** TODO support pause/resume like command `sleep` */
@@ -362,6 +362,9 @@ class CmdService {
 
       /** Provide same context with different args */
       provideCtxt: (args: string[]) => this.provideProcessCtxt(meta, args),
+
+      /** js parse with string fallback */
+      parseJsArg: this.parseJsArg,
 
       /** Output 1, 2, ... at fixed intervals */
       poll: async function* (args: string[]) {
@@ -375,8 +378,7 @@ class CmdService {
         }
       },
 
-      /** js parse with string fallback */
-      parseJsArg: this.parseJsArg,
+      pretty: (x: any) => pretty(JSON.parse(safeStringify(x))),
     };
   }
 
@@ -384,7 +386,6 @@ class CmdService {
     const session = useSession.api.getSession(meta.sessionKey);
     return new Proxy({
       home: session.var,
-      util: this.shellUtil,
     }, {
       get: (_, key) => {
         if (key === 'api') return this.provideProcessApi(meta);
@@ -397,14 +398,8 @@ class CmdService {
     });
   }
 
-  // TODO remove
-  private shellUtil = {
-    pretty: (x: any) => pretty(JSON.parse(safeStringify(x))),
-  };
-
   private async *readLoop(
     meta: Sh.BaseMeta,
-    body: (res: ReadResult) => any,
     /** Read exactly one item of data? */
     once = false,
   ) {
@@ -420,7 +415,7 @@ class CmdService {
     let result = {} as ReadResult;
     while (!(result = await device.readData(once)).eof) {
       if (result.data !== undefined) {
-        yield body(result);
+        yield result;
         if (once) break;
       }
       await preProcessRead(process, device);
@@ -431,7 +426,7 @@ class CmdService {
    * Reading once often means two outputs i.e. `{ data }` then `{ eof: true }`
    */
   private async readOnce(meta: Sh.BaseMeta): Promise<ReadResult> {
-    for await (const data of this.readLoop(meta, ({ data }) => data, true)) {
+    for await (const data of this.readLoop(meta, true)) {
       return data;
     }
     return { eof: true };
