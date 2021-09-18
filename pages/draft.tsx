@@ -17,7 +17,7 @@ export default function DraftPage() {
 
 We are going to construct a _Game AI focused_ realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike),
 set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
-We'll mix in other themes i.e. [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
+We'll mix in other themes e.g. [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
 _Why focus on Game AI?_
 
@@ -49,8 +49,8 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 ### Technology
 
+<!-- - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics. -->
 - Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.
-- Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
 - Use [Preact](https://www.npmjs.com/package/preact) (not React), and [Goober](https://www.npmjs.com/package/goober) (not [Emotion](https://www.npmjs.com/package/@emotion/styled)).
 - Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
@@ -70,7 +70,9 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 ### Setting
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
-- Space vehicles/stations (Starship Geomorphs 2.0).
+- Space vehicles/stations/docks
+- Religious Ship AIs
+- Forgotten Earth
 
 <div style="height:8px"></div>
 
@@ -88,12 +90,12 @@ We'll now address them.
 ### 1. Fun to develop
 
 _Games I want to make_. My underlying motivation is the lack of Game AI resources available on the web.
-It is hard to discuss the subject without actually building a game, so I chose a setting and low-level game mechanics which felt fun for me.
+It is hard to discuss the subject without actually building a game, so I chose a setting and game mechanics which felt fun for me.
 <!-- In particular, we'll control and monitor NPC behaviour using an in-browser terminal. -->
 
 ### 2. The Result
 
-_Games I want to have made_. As an end result I want a highly replayable space action-game/sandbox.
+_Games I want to have made_. As an end result I want a highly replayable space action-game sandbox.
 Generated missions will involve going from A to B and doing C (ever was it so).
 Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
@@ -101,7 +103,7 @@ Graphically, see Starship Geomorphs 2.0.
 
 It should be easy for others to extend Rogue Markup.
 We'll achieve this by providing compositional code, escape hatches to CodeSandbox, and clear explanations.
-Comments will be shown so that [GitHub](https://github.com/) users can share ideas and links.
+Comments will be shown so [GitHub](https://github.com/) users can share ideas and links.
 
 <!--
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.

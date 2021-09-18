@@ -15,6 +15,8 @@ Breath depth into it via navigation (sans physics)
 
 ## Plan
 
+- try replacing SVG viewBox by CSS
+
 - generate pngs for demo (so don't need code)
   - ✅ try server-side-render using npm module `canvas`
   - ✅ browser and server use same canvas overlay code
