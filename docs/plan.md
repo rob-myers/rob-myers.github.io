@@ -5,6 +5,14 @@ Breath life into it via
 - [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol)
 - [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land)
 
+Breath depth into it via navigation (sans physics)
+- waypoints/waypaths induced via symbols
+- scheduler moves all agents, subject to constraints
+- player can navigate freely via navmesh
+- player may be stopped, but
+  - can drag invalid waypoints
+  - wait for them to become valid
+
 ## Plan
 
 - generate pngs for demo (so don't need code)
