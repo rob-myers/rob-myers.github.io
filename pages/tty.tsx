@@ -11,7 +11,7 @@ export default function PrologPage() {
       <Markdown children={`
 ---
 
-## Prolog <float rem="1.2">19th July 2021</float>
+## Terminal testing <float rem="1.2">19th July 2021</float>
 
         `}/>
 
