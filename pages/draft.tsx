@@ -15,9 +15,9 @@ export default function DraftPage() {
 
 ## Objective <float rem="1.2">19th July 2021</float>
 
-We are going to construct a _Game AI focused_ realtime [roguelike](https://en.wikipedia.org/wiki/Roguelike),
-set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
-We'll mix in other themes e.g. [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
+We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
+set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3),
+and influenced by the [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
 _Why focus on Game AI?_
 
@@ -27,8 +27,10 @@ fixed narratives/missions are not.
 
 We'll approach things algorithmically,
 yet driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-We'll focus on combining and managing behaviours.
+We'll focus on combining and managing navigation-based behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
+
+
 
 <!--
 Web development permits an open/extendable approach to building a game.
