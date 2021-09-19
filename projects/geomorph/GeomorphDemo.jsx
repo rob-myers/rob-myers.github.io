@@ -27,7 +27,7 @@ function Geomorph({ def, transform }) {
 
   return (
     <g transform={transform}>
-      <image className="debug" href={gm.pngHref} x={pngRect.x} y={pngRect.y}/>
+      {/* <image className="debug" href={gm.pngHref} x={pngRect.x} y={pngRect.y}/> */}
       <image className="underlay" href={gm.underlay} x={gm.hullRect.x * 2} y={gm.hullRect.y * 2} />
       {symbols.map((s, i) =>
         <g key={i} transform={s.transform}>
