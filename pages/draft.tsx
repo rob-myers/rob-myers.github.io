@@ -16,8 +16,8 @@ export default function DraftPage() {
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
-set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3),
-influenced by the [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
+set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
+We'll add a horror theme, based on [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
 _Why focus on Game AI?_
 
@@ -25,7 +25,7 @@ Because NPC behaviour is more interesting than any particular game.
 An environment is needed to make it meaningful,
 fixed narratives/missions are not.
 
-We'll approach things algorithmically,
+Our approach will be algorithmic,
 yet driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 We'll focus on combining and managing navigation-based behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
@@ -73,7 +73,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
 - Space vehicles/station/docks.
-- Ancient evil with Buddhist backdrop.
+- Ancient evil with a Buddhist backdrop.
 
 <div style="height:8px"></div>
 
@@ -92,7 +92,7 @@ We'll now address them.
 
 _Games I want to make_. My underlying motivation is the lack of Game AI resources available on the web.
 It is hard to discuss the subject without actually building a game, so I chose a setting and game mechanics which felt fun for me.
-I am particularly interested in navigation e.g. flexibly combining the movement of many characters.
+I am particularly interested in navigation e.g. combining the movement of many characters in a flexible manner.
 <!-- In particular, we'll control and monitor NPC behaviour using an in-browser terminal. -->
 
 ### 2. The Result
@@ -152,7 +152,7 @@ But first we'll describe the underlying browser focused technologies.
 
 The early 90s brought three pillars: HTML, CSS and JavaScript.
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
-Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links and hovers).
+Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links, hovers and CSS animations).
 More precisely, all subsequent DOM mutations are performed by JavaScript.
 It is now common to generate the initial HTML using JS too,
 either during a build-step or on a Node.js server.
@@ -261,7 +261,7 @@ Developers can also avoid recreating an entire rooted subtree using [\`React.mem
 But for many websites, the virtual DOM manipulations are neither too large nor too frequent, and React developers may simply ignore their overhead.
 
 However, we are making a realtime video game.
-We want to control the rendering as much as possible, to ensure good performance and aid debugging e.g. when pushing the limit of onscreen objects.
+We want to control the rendering as much as possible, to ensure good performance and aid debugging e.g. when many objects are onscreen.
 If we allowed React (actually, Preact) to render in response to user interaction, we'd lose this control.
 Take another look at _panzoom/PanZoom.jsx_.
 
@@ -277,11 +277,20 @@ Take another look at _panzoom/PanZoom.jsx_.
 
       <Markdown children={`
 
-_PanZoom_ returns an \`<svg/>\` with a viewBox determined by _state.viewBox_.
-Initially, the latter is a clone of the rectangle _props.initViewBox_.
-When a user zooms via mousewheel, _state.onWheel_ handles the event, updating _state.viewBox_ accordingly.
-Importantly, we do not trigger a React render, but instead directly mutate the DOM by invoking _setAttribute_.
+_PanZoom_ returns an \`<svg/>\` with a viewBox attribute determined by _state.viewBox_ (initially a clone of _props.initViewBox_).
+When a user zooms via mousewheel, _state.viewBox_ is updated by the event handler _state.onWheel_.
+Changing _state.viewBox_ and re-rendering _PanZoom_ will update \`<svg/>\` i.e. perform the actual zoom.
+But will PanZoom be re-rendered?
 
+A component is rendered whenever an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
+
+> \`const [data, setData] = React.useState(() => initialState)\`.
+
+These declarations cannot be nested and must occur at the "top-level" of the React function component, always executing in the same order.
+This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their parent component.
+To change state we execute _setData(nextData)_ e.g. in response to a click. If _nextData_ differs from _data_, the component is re-rendered relative to the new data.
+
+But in _panzoom/PanZoom.jsx_ we only destructure _state_, not the callback for changing the state...
 
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
