@@ -37,8 +37,18 @@ const layoutDefs = {
       { symbol: 'empty-room--020--2x4', transform: [-1, 0, 0, 1, 1200, 0], tags: ['door-s'] },
       { symbol: 'shop--028--0.8x1.6', transform: [0, 1, -1, 0, 660, 420] },
       { symbol: 'shop--027--0.4x1.6', transform: [-1, 0, 0, 1, 900, 480] },
+      { symbol: 'sensors--003--1x1.4', transform: [...getAngle(51), 60 + 12, -60 + 4] },
     ],
   }),
 };
 
 export default layoutDefs;
+
+/**
+ * @param {number} degrees 
+ * @returns {[number, number, number, number]}
+ */
+function getAngle(degrees) {
+  const rads = (degrees / 360) * (2 * Math.PI);
+  return [Math.cos(rads), Math.sin(rads), -Math.sin(rads), Math.cos(rads)];
+}

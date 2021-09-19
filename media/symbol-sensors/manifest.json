@@ -1,0 +1,150 @@
+{
+  "parentFolder": "Sensors",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Sensors 001 [46x61].png",
+      "dstName": "sensors--001--9.2x12.2.png",
+      "id": 1,
+      "gridDim": [9.2, 12.2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Sensors 002 [5x8].png",
+      "dstName": "sensors--002--1x1.6.png",
+      "id": 2,
+      "gridDim": [1, 1.6],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Sensors 003 [5x7].png",
+      "dstName": "sensors--003--1x1.4.png",
+      "id": 3,
+      "gridDim": [1, 1.4],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Sensors 004 [8x9].png",
+      "dstName": "sensors--004--1.6x1.8.png",
+      "id": 4,
+      "gridDim": [1.6, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Sensors 005 [8x18].png",
+      "dstName": "sensors--005--1.6x3.6.png",
+      "id": 5,
+      "gridDim": [1.6, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Sensors 006 [6x18].png",
+      "dstName": "sensors--006--1.2x3.6.png",
+      "id": 6,
+      "gridDim": [1.2, 3.6],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Sensors 007 [9x13].png",
+      "dstName": "sensors--007--1.8x2.6.png",
+      "id": 7,
+      "gridDim": [1.8, 2.6],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Sensors 008 [8x29].png",
+      "dstName": "sensors--008--1.6x5.8.png",
+      "id": 8,
+      "gridDim": [1.6, 5.8],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Sensors 009 [4x6].png",
+      "dstName": "sensors--009--0.8x1.2.png",
+      "id": 9,
+      "gridDim": [0.8, 1.2],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Sensors 010 [4x9].png",
+      "dstName": "sensors--010--0.8x1.8.png",
+      "id": 10,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Sensors 011 [3x10].png",
+      "dstName": "sensors--011--0.6x2.png",
+      "id": 11,
+      "gridDim": [0.6, 2],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Sensors 012 [4x9].png",
+      "dstName": "sensors--012--0.8x1.8.png",
+      "id": 12,
+      "gridDim": [0.8, 1.8],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Sensors 013 [6x16].png",
+      "dstName": "sensors--013--1.2x3.2.png",
+      "id": 13,
+      "gridDim": [1.2, 3.2],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Sensors 014 [7x16].png",
+      "dstName": "sensors--014--1.4x3.2.png",
+      "id": 14,
+      "gridDim": [1.4, 3.2],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Sensors 015 [18x20].png",
+      "dstName": "sensors--015--3.6x4.png",
+      "id": 15,
+      "gridDim": [3.6, 4],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Sensors 016 [34x46].png",
+      "dstName": "sensors--016--6.8x9.2.png",
+      "id": 16,
+      "gridDim": [6.8, 9.2],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    }
+  ]
+}
