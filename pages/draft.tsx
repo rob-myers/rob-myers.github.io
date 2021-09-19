@@ -17,7 +17,7 @@ export default function DraftPage() {
 
 We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
 set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3),
-and influenced by the [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
+influenced by the [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
 _Why focus on Game AI?_
 
@@ -72,9 +72,8 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 ### Setting
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
-- Space vehicles/stations/docks
-- Religious Ship AIs
-- Forgotten Earth
+- Space vehicles/station/docks.
+- Ancient evil with Buddhist backdrop.
 
 <div style="height:8px"></div>
 
@@ -93,11 +92,12 @@ We'll now address them.
 
 _Games I want to make_. My underlying motivation is the lack of Game AI resources available on the web.
 It is hard to discuss the subject without actually building a game, so I chose a setting and game mechanics which felt fun for me.
+I am particularly interested in navigation e.g. flexibly combining the movement of many characters.
 <!-- In particular, we'll control and monitor NPC behaviour using an in-browser terminal. -->
 
 ### 2. The Result
 
-_Games I want to have made_. As an end result I want a highly replayable space action-game sandbox.
+_Games I want to have made_. As an end result I want a highly replayable action-game sandbox.
 Generated missions will involve going from A to B and doing C (ever was it so).
 Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
@@ -216,12 +216,15 @@ Here's a whirlwind overview of React (and Preact).
 - The root component is usually called _App_.
   Running a React application means [invoking \`ReactDOM.render\`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
   with 2 arguments: \`<App/>\` and a DOM node _el_.
+
 - [\`ReactDOM.render\`](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts \`<App/>\` into a DOM node mounted at _el_.
   A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
   It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
+
+<!--
 - If \`<App/>\` is a website, it is often [rendered as HTML server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js), so the client can render it immediately.
   The client then invokes [\`ReactDOM.hydrate\`](https://github.com/preactjs/preact/blob/master/src/render.js) instead of \`ReactDOM.render\`, but with the same arguments.
-
+-->
       `}/>
 
       <Tabs
@@ -233,28 +236,32 @@ Here's a whirlwind overview of React (and Preact).
       />
 
       <Markdown children={`
+
+<!--
 So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
 We're using Preact (its codebase is smaller, and it has reputation for being faster,
 although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
 Rendering a component involves (re)constructing virtual DOM nodes and diffing them.
 Finally, the first render is often precomputed, to load faster.
+-->
 
 ### React Renders and Web Components
 
+<!--
 Websites respond to interaction, sometimes without changing the DOM.
 When they do mutate the DOM, they usually don't continually do so.
 For example, zooming a map can be done with a CSS transform and a pre-existing CSS transition.
 As another example, showing additional search results amounts to a single mutation.
+-->
 
 When React renders a component, it computes a rooted subtree of the virtual DOM,
 compares the previous one, and patches the DOM.
 If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
 Developers can also avoid recreating an entire rooted subtree using [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
-But for most websites, the DOM mutations are neither large nor frequent, and React developers may simply ignore the virtual DOM overhead.
+But for many websites, the virtual DOM manipulations are neither too large nor too frequent, and React developers may simply ignore their overhead.
 
 However, we are making a realtime video game.
-To move characters at 60 fps using a physics engine, we'll be updating the DOM at the same rate.
-We want to control the rendering, to ensure good performance and aid debugging e.g. when pushing the limits of visible objects.
+We want to control the rendering as much as possible, to ensure good performance and aid debugging e.g. when pushing the limit of onscreen objects.
 If we allowed React (actually, Preact) to render in response to user interaction, we'd lose this control.
 Take another look at _panzoom/PanZoom.jsx_.
 
