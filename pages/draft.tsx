@@ -17,7 +17,6 @@ export default function DraftPage() {
 
 We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
 set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
-We'll add a horror theme, based on [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
 _Why focus on Game AI?_
 
@@ -26,7 +25,8 @@ An environment is needed to make it meaningful,
 fixed narratives/missions are not.
 
 Our approach will be algorithmic,
-yet driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+yet driven by the environment i.e. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html),
+with a backdrop based on [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 We'll focus on combining and managing navigation-based behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
 
@@ -290,7 +290,7 @@ These declarations cannot be nested and must occur at the "top-level" of the Rea
 This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their parent component.
 To change state we execute _setData(nextData)_ e.g. in response to a click. If _nextData_ differs from _data_, the component is re-rendered relative to the new data.
 
-But in _panzoom/PanZoom.jsx_ we only destructure _state_, not the callback for changing the state...
+But in _panzoom/PanZoom.jsx_ we only destructure _state_, not the callback for changing it.
 
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
