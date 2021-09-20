@@ -73,7 +73,8 @@ We've chosen the underlying technology, low-level game mechanics, and where even
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
 - Space vehicles/station/docks.
-- Ancient evil with a Buddhist backdrop.
+- Buddhist backdrop.
+- The Night Land backdrop.
 
 <div style="height:8px"></div>
 
