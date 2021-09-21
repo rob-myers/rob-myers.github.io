@@ -92,13 +92,13 @@ We'll now address them.
 
 _Games I want to make_. My underlying motivation is the lack of Game AI resources available on the web.
 It is hard to discuss the subject without actually building a game, so I chose a setting and game mechanics which felt fun for me.
-I am particularly interested in navigation e.g. combining the movement of many characters in a flexible manner.
+I am particularly interested in navigation i.e. combining the movement of many characters in a flexible manner.
 <!-- In particular, we'll control and monitor NPC behaviour using an in-browser terminal. -->
 
 ### 2. The Result
 
-_Games I want to have made_. As an end result I want a highly replayable action-game sandbox.
-Generated missions will involve going from A to B and doing C (ever was it so).
+_Games I want to have made_. As an end result I want a highly replayable tactical action-game sandbox.
+Procedurally generated missions will involve going from A to B and doing C (ever was it so).
 Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
 Graphically, see Starship Geomorphs 2.0.

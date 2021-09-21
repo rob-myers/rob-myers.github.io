@@ -5082,11 +5082,6 @@ readdirp@~3.5.0:
   dependencies:
     picomatch "^2.2.1"
 
-recast-detour@^1.3.0:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/recast-detour/-/recast-detour-1.3.0.tgz#d21532b219d10c6b6b578ac5220b8e50f4db3790"
-  integrity sha512-d69n2yZl79MFynmAs/Vkkt2J6RYkBkdO5JOw3T7NfkGD9sltRAnstFVTH9mYJwBgOgdlXuzbUBV6EgpscTMzvA==
-
 regenerator-runtime@^0.13.4:
   version "0.13.7"
   resolved "https://registry.npmjs.org/regenerator-runtime/-/regenerator-runtime-0.13.7.tgz"

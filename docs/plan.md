@@ -40,7 +40,7 @@ Currently, each __TODO__ should either:
 ---
 
 General requirements for initial release
-- remove recast-detour
+- ✅ remove recast-detour
 - ✅ remove box2d-wasm
 
 ---

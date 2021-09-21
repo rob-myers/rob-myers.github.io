@@ -1,37 +1,36 @@
 import { Poly, Vect } from '../geom';
-import { recast, INavMeshParameters } from './recast';
 
 class GeomService {
-  /**
-   * @param {string} navKey
-   * @param {Poly[]} navPolys
-   * @param {Partial<INavMeshParameters>} [opts]
-   */
-  async createNavMesh(navKey, navPolys, opts) {
-    await recast.ready();
-    if (navPolys.length) {
-      const triangulation = this.polysToTriangulation(navPolys);
-      recast.createNavMesh(navKey, triangulation, opts);
-    } else {
-      recast.clearNavMesh(navKey);
-    }
-  }
+  // /**
+  //  * @param {string} navKey
+  //  * @param {Poly[]} navPolys
+  //  * @param {Partial<INavMeshParameters>} [opts]
+  //  */
+  // async createNavMesh(navKey, navPolys, opts) {
+  //   await recast.ready();
+  //   if (navPolys.length) {
+  //     const triangulation = this.polysToTriangulation(navPolys);
+  //     recast.createNavMesh(navKey, triangulation, opts);
+  //   } else {
+  //     recast.clearNavMesh(navKey);
+  //   }
+  // }
 
-  /**
-   * @param {string} navKey 
-   * @param {Geom.VectJson} src
-   * @param {Geom.VectJson} dst 
-   * @returns {Vect[]}
-   */
-  requestNavPath(navKey, src, dst) {
-    try {
-      const navPath = recast.computePath(navKey, src, dst);
-      return this.removePathReps(navPath.map(x => x.precision(1)));
-    } catch (e) {
-      console.error('nav error', e);
-      return [];
-    }
-  }
+  // /**
+  //  * @param {string} navKey 
+  //  * @param {Geom.VectJson} src
+  //  * @param {Geom.VectJson} dst 
+  //  * @returns {Vect[]}
+  //  */
+  // requestNavPath(navKey, src, dst) {
+  //   try {
+  //     const navPath = recast.computePath(navKey, src, dst);
+  //     return this.removePathReps(navPath.map(x => x.precision(1)));
+  //   } catch (e) {
+  //     console.error('nav error', e);
+  //     return [];
+  //   }
+  // }
 
   /**
    * Join disjoint triangulations
