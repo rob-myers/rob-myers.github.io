@@ -23,7 +23,6 @@
     "deploy": "yarn local-deploy && yarn deploy-from-local"
   },
   "dependencies": {
-    "box2d-wasm": "^6.0.4",
     "braces": "^3.0.2",
     "classnames": "^2.3.1",
     "cli-columns": "^3.1.2",

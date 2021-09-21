@@ -39,9 +39,9 @@ Currently, each __TODO__ should either:
 
 ---
 
-Requirements for initial release
-- remove box2d-wasm
+General requirements for initial release
 - remove recast-detour
+- ✅ remove box2d-wasm
 
 ---
 

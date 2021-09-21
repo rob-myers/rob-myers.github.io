@@ -25,7 +25,7 @@ An environment is needed to make it meaningful,
 fixed narratives/missions are not.
 
 Our approach will be algorithmic,
-yet driven by the environment i.e. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+yet driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 We'll focus on combining and managing navigation-based behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
 
@@ -146,7 +146,6 @@ But first we'll describe the underlying technologies.
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
 
-<!-- | Physics engine | [WebAssembly port](https://www.npmjs.com/package/box2d-wasm) of [Box2D](https://github.com/erincatto/box2d). | -->
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
 
@@ -323,22 +322,6 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
         height={300}
         tabs={[
           { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
-        ]}
-      />
-
-      <Markdown children={`
-### Physics engine
-
-We need a Physics engine:
-- Raycasting
-- Triggers
-- Collision detection
-      `}/>
-
-      <Tabs
-        height={300}
-        tabs={[
-          { key: 'component', filepath: 'physics/PhysicsDemo.jsx' },
         ]}
       />
 
