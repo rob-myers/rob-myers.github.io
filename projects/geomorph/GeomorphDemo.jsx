@@ -2,11 +2,12 @@ import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 import { Rect } from "../geom";
-import PanZoom from '../panzoom/PanZoom';
-import { createLayout, deserializeSvgJson } from "./geomorph.model";
+import { loadImage } from "../service";
 import svgJson from 'public/symbol/svg.json';
+import { createLayout, deserializeSvgJson, filterSingles } from "./geomorph.model";
+import PanZoom from '../panzoom/PanZoom';
 import layoutDefs from "./layout-defs";
-import { renderAuxCanvases, renderGeomorph } from "./geomorph.render";
+import { renderGeomorph } from "./geomorph.render";
 
 export default function GeomorphDemo() {
   return (
@@ -14,7 +15,7 @@ export default function GeomorphDemo() {
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
         {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}
         <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
-        {/* <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" /> */}
+        <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" />
       </PanZoom>
     </div>
   );
@@ -27,6 +28,7 @@ function Geomorph({ def, transform }) {
     <g transform={transform}>
       {/* <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/> */}
       <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * 2} y={gm.pngRect.y * 2} />
+      {gm.doors.map((door, i) => <polygon className="door" points={`${door.outline}`} />)}
     </g>
   ) : null;
 }
@@ -41,6 +43,9 @@ const rootCss = css`
   image.geomorph {
     transform: scale(0.5);
   }
+  polygon.door {
+    fill: red;
+  }
 `;
 
 /**
@@ -50,12 +55,18 @@ async function computeLayout(def) {
   const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
   const layout = createLayout(def, symbolLookup);
   const canvas = document.createElement('canvas');
-  await renderGeomorph(layout, symbolLookup, canvas);
+  await renderGeomorph(
+    layout,
+    symbolLookup,
+    canvas,
+    (pngHref) => loadImage(pngHref),
+  );
   return {
     ...layout,
     dataUrl: canvas.toDataURL(),
     pngRect: layout.items[0].pngRect,
     /** Debug only */
     pngHref: layout.items[0].pngHref,
+    doors: filterSingles(layout.groups.singles, 'door'),
   };
 }
