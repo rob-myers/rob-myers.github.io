@@ -3,7 +3,6 @@ import Title from 'components/page/Title';
 import Sep from 'components/page/Sep';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
-import Terminal from 'components/sh/Terminal';
 
 export default function DraftPage() {
   return (
@@ -16,7 +15,7 @@ export default function DraftPage() {
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
-set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
+set in the [Traveller universe](https://wiki.travellerrpg.com/Universe).
 
 _Why focus on Game AI?_
 
@@ -315,7 +314,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
       `}/>
 
       <Tabs
-        enabled
+        // enabled
         height={300}
         tabs={[
           { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
@@ -387,7 +386,7 @@ public/svg
       `}/>
 
       <Tabs
-        // enabled
+        enabled
         height={400}
         tabs={[
           { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },
