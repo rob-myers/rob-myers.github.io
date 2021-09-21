@@ -1,22 +1,43 @@
-## Motivation
+# Plan
 
-Breath life into it via 
-- [Traveller wiki](https://wiki.travellerrpg.com/Main_Page)
-- [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol)
-  - Ship AIs assist Low Berth travellers on death
-- [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land)
+__Aim towards website release__.
+Currently, TODOs should either:
+(a) contribute to one of the initial articles
+(b) have a clear general nature which cannot be avoided
 
-Breath depth into it via navigation (sans physics)
-- waypoints/waypaths induced via symbols
-- scheduler moves all agents, subject to constraints
-- player can navigate freely via navmesh
-- player may be stopped, but
-  - can drag invalid waypoints
-  - wait for them to become valid
+### _Objective_ i.e. intro
 
-## Plan
+- Include some images of Geomorphs, possibly with/without meta polygons
 
-- try animating character sprites from Teleglitch
+### _Constraints_
+
+...
+
+### _Technology_ i.e. tech intro + js
+
+...
+
+### _Technology (Part 2)_ i.e. navigation and raycasting
+
+...
+
+### _Technology (Part 3)_ i.e. static and runtime analysis
+
+...
+
+### _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
+
+...
+
+
+---
+
+- remove recast-detour
+- get projects/nav working
+- Use Web Animation API
+  - path following
+  - can predict positions via JS
+  - smooth dynamic changes
 - generate pngs for demo (so don't need code)
   - ✅ try server-side-render using npm module `canvas`
   - ✅ browser and server use same canvas overlay code
@@ -26,9 +47,10 @@ Breath depth into it via navigation (sans physics)
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
 - convert 302 too
-  - satelitte and labels remain
+  - satellite and labels remain
 - emphasise render-once approach to React in intro
 - can show labels
+- CSS character spritesheet based on Teleglitch
 - static lighting (shadow maps)
 
 - demos should always involve starship geomorphs
@@ -97,7 +119,7 @@ Breath depth into it via navigation (sans physics)
 - ✅ make `Tabs` modular
 - ✅ Fix `PanZoom` mouse input 
 
-### level design
+## level design
 - strategy
   - generate prod geomorph (1 runtime PNG, various shapes)
   - ✅ create dev _hull_ and _starship-symbols_ in Boxy
@@ -143,7 +165,22 @@ Breath depth into it via navigation (sans physics)
   - https://github.com/Microsoft/typescript-styled-plugin#configuration (might work?)
   - https://luminaxster.github.io/syntax-highlighter/
 
-## Technical constraints
+# Motivation
+
+Breath life into it via 
+- [Traveller wiki](https://wiki.travellerrpg.com/Main_Page)
+- [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol)
+  - Ship AIs assist Low Berth travellers on death
+- [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land)
+
+Breath depth into it via navigation (sans physics)
+- waypoints/waypaths induced via symbols
+- scheduler moves all agents, subject to constraints
+- player can navigate freely via navmesh
+- player may be stopped, but
+  - can drag invalid waypoints
+  - wait for them to become valid
+# Technical constraints
 
 Cannot use e.g. Svelte because HMR/Fast-Refresh does not work on  CodeSandbox (or elsewhere), and we'll need that for AI editing later.
 
@@ -153,7 +190,7 @@ As close to JavaScript as possible.
 - Dom mutations should be done manually e.g. via Web Components
 - Projects should avoid SSR
 
-### Links
+## Links
 
 - https://nodejs.org/api/modules.html#modules_all_together
 - https://github.com/nodejs/modules/issues/307#issuecomment-762465349
