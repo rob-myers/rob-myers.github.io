@@ -25,12 +25,9 @@ An environment is needed to make it meaningful,
 fixed narratives/missions are not.
 
 Our approach will be algorithmic,
-yet driven by the environment i.e. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html),
-with a backdrop based on [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) and [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
+yet driven by the environment i.e. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 We'll focus on combining and managing navigation-based behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
-
-
 
 <!--
 Web development permits an open/extendable approach to building a game.
@@ -63,18 +60,20 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 ### Game mechanics (low-level)
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
-- Use a realtime birdseye camera. 
-- Use [Recast](https://github.com/recastnavigation/recastnavigation) to generate navmeshes.
-- Use [a recent port](https://www.npmjs.com/package/box2d-wasm) of the physics engine [Box2D](https://github.com/erincatto/box2d).
-- Use procedural generation for spaceship building.
+- Use a realtime birdseye camera.
+- Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
+- Use navigation and raycasting algorithms.
+- Do not use a physics engine.
 - Use an in-browser terminal.
+<!-- - Use procedural generation for spaceship building. -->
+
 
 ### Setting
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
 - Space vehicles/station/docks.
-- Buddhist backdrop.
-- The Night Land backdrop.
+- Buddhist backdrop based on [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
+- Horror backdrop based on [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
 <div style="height:8px"></div>
 
@@ -407,25 +406,6 @@ public/svg
         ]}
       />
 
-      <Markdown children={`
-## Movement <float rem="1.2">19th July 2021</float>
-
-- Navigation
-- Follow camera
-- Map view
-      `}/>
-
-      <Sep/>
-
-      <div style={{ height: 200 }}>
-        <Terminal sessionKey="test" env={env.test} />
-      </div>
-
-      <Sep/>
-
-      <Markdown children={`
-This is an example of a [command link](#command "@test echo foo").
-      `}/>
     </Main>
   );
 }
