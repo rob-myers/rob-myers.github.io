@@ -1,7 +1,7 @@
 # Plan
 
 __Aim towards website release__.
-Currently, each __TODO__ should either:
+Each __TODO__ should either:
 (a) contribute to one of the initial articles
 (b) have a clear general nature which cannot be avoided
 
@@ -40,6 +40,10 @@ Currently, each __TODO__ should either:
 ---
 
 General requirements for initial release
+- Provide geomorphs as PNGs and JSON with navmesh
+- NavDemo working as before, now via port
+- Tabs don't load until scroll into view
+- Tabs disable on scroll out of view
 - ✅ remove recast-detour
 - ✅ remove box2d-wasm
 
@@ -58,8 +62,7 @@ General requirements for initial release
   - generate some PNGs for `PanZoomDemo`
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
-- Tabs don't load until scroll into view
-- Tabs disable on scroll out of view
+
 - convert 302 too
   - satellite and labels remain
 - emphasise render-once approach to React in intro
