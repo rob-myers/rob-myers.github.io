@@ -286,7 +286,7 @@ These declarations cannot be nested and must occur at the "top-level" of the Rea
 This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their enclosing component.
 To change state we execute _setData(nextData)_ e.g. in response to a click. If _nextData_ differs from _data_, the component is re-rendered relative to the new data.
 
-But in _panzoom/PanZoom.jsx_ we only destructure _state_, not the callback for changing it.
+In _panzoom/PanZoom.jsx_ the variable _state_ corresponds to _data_, but there is no correspondent of _setData_.
 
 __TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
 
@@ -315,6 +315,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
       `}/>
 
       <Tabs
+        enabled
         height={300}
         tabs={[
           { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
@@ -386,7 +387,7 @@ public/svg
       `}/>
 
       <Tabs
-        enabled
+        // enabled
         height={400}
         tabs={[
           { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },
