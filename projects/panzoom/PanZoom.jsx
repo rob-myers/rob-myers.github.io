@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from 'goober';
 import { Vect, Rect } from '../geom';
-import { getSvgPos, getSvgMid, generateId, canTouchDevice } from '../service';
+import { getSvgPos, getSvgMid, canTouchDevice } from '../service';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoom(props) {
@@ -73,13 +73,13 @@ export default function PanZoom(props) {
       rootRef: el => {
         if (el) {
           state.root = el;
-          el.addEventListener('wheel', state.onWheel);
+          el.addEventListener('wheel', state.onWheel, { passive: false });
           el.addEventListener('pointerdown', state.onPointerDown, { passive: true });
           el.addEventListener('pointermove', state.onPointerMove, { passive: true });
           el.addEventListener('pointerup', state.onPointerUp, { passive: true });
           el.addEventListener('pointercancel', state.onPointerUp, { passive: true });
           el.addEventListener('pointerleave', state.onPointerUp, { passive: true });
-          el.addEventListener('touchstart', e => e.preventDefault());
+          el.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
         }
       },
       /** @type {SVGSVGElement} */
@@ -121,7 +121,8 @@ export default function PanZoom(props) {
 
 /** @param {{ bounds: Rect }} props */
 function Grid(props) {
-  const gridId = React.useMemo(() => generateId('grid-'), []);
+  const gridId = 'pattern-grid-10-10';
+  const bigGridId = 'pattern-grid-60-60';
 
   return <>
     <defs>
@@ -138,6 +139,19 @@ function Grid(props) {
           strokeWidth="0.3"
         />
       </pattern>
+      <pattern
+        id={bigGridId}
+        width="60" 
+        height="60"
+        patternUnits="userSpaceOnUse"
+      >
+        <path
+          d="M 60 0 L 0 0 0 60"
+          fill="none"
+          stroke="rgba(0,0,0,0.5)"
+          strokeWidth="0.3"
+        />
+      </pattern>
     </defs>
     <rect
       x={props.bounds.x}
@@ -145,6 +159,13 @@ function Grid(props) {
       width={props.bounds.width}
       height={props.bounds.height}
       fill={`url(#${gridId})`}
+    />
+    <rect
+      x={props.bounds.x}
+      y={props.bounds.y}
+      width={props.bounds.width}
+      height={props.bounds.height}
+      fill={`url(#${bigGridId})`}
     />
   </>;
 }
