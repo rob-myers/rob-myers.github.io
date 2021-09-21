@@ -8,7 +8,7 @@ import { svgPathToPolygons } from '../service';
  * @returns {Geomorph.Layout}
  */
 export function createLayout(def, lookup) {
-  /** @type {Geomorph.Layout['actual']} */
+  /** @type {Geomorph.Layout['groups']} */
   const actual = { singles: [], obstacles: [], walls: [] };
   const m = new Mat;
 
@@ -38,6 +38,12 @@ export function createLayout(def, lookup) {
   // Cut doors from walls
   const doors = filterSingles(actual.singles, 'door');
   actual.walls = Poly.cutOut(doors, actual.walls);
+  actual.singles = actual.singles.reduce((agg, single) =>
+    agg.concat(single.tags.includes('wall')
+      ? Poly.cutOut(doors, [single.poly]).map(poly => ({ ...single, poly }))
+      : single
+    )
+  , /** @type {typeof actual['singles']} */ ([]));
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSym = symbols[0];
@@ -52,16 +58,15 @@ export function createLayout(def, lookup) {
 
   return {
     def,
-    actual,
+    groups: actual,
     navPoly,
     
     hullTop,
     hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
-    pngHref: `/debug/${def.key}.png`,
 
-    symbols: symbols.map((sym, i) => ({
+    items: symbols.map((sym, i) => ({
       key: sym.key,
-      pngHref: `/symbol/${sym.key}.png`,
+      pngHref: i ? `/symbol/${sym.key}.png` : `/debug/${def.key}.png`,
       pngRect: sym.pngRect,
       transformArray: def.items[i].transform,
       transform: def.items[i].transform ? `matrix(${def.items[i].transform})` : undefined,

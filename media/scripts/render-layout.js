@@ -64,7 +64,7 @@ function computeLayout(def) {
 
 /** @param {Geomorph.Layout} layout */
 async function createMainCanvas(layout) {
-  const [{pngRect}, ...symbols] = layout.symbols;
+  const [{pngRect}, ...symbols] = layout.items;
   const c = createCanvas(pngRect.width, pngRect.height);
   const ct = c.getContext('2d');
   for (const s of symbols) {

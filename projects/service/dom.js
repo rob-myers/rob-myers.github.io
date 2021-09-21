@@ -140,3 +140,15 @@ export function drawTriangulation(ctxt, decomp) {
 		ctxt.stroke();
 	}
 }
+
+/**
+ * @param {string} src
+ * @returns {Promise<HTMLImageElement>}
+ */
+export function loadImage(src) {
+	return new Promise((resolve, _reject)=> {
+		const img = new Image;
+		img.onload = () => resolve(img);
+		img.src = src;
+	});
+}

@@ -30,15 +30,18 @@ declare namespace Geomorph {
    */
   export interface Layout {
     def: LayoutDef;
-    /** Original geomorph (debug only) */
-    pngHref: string;
     /** Bounds of hull */
     hullRect: Geom.RectJson;
     /** Top of hull (sans windows/doors) */
     hullTop: Poly[];
 
-    /** First item is hull symbol */
-    symbols: {
+    /**
+     * Symbol instances i.e. PNGs with transforms.
+     * The first is always the hull symbol,
+     * whose PNG is the original geomorph,
+     * typically only used for debugging.
+     */
+    items: {
       key: string;
       pngHref: string;
       pngRect: Geom.RectJson;
@@ -46,8 +49,8 @@ declare namespace Geomorph {
       transform?: string;
     }[];
 
-    /** Transformed and filtered */
-    actual: SvgGroups<Poly>;
+    /** Transformed and filtered groups */
+    groups: SvgGroups<Poly>;
     navPoly: Poly[];
   }
 
