@@ -149,7 +149,7 @@ function Grid(props) {
           d="M 60 0 L 0 0 0 60"
           fill="none"
           stroke="rgba(0,0,0,0.5)"
-          strokeWidth="0.3"
+          strokeWidth="0.4"
         />
       </pattern>
     </defs>
