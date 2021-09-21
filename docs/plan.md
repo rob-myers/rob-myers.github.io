@@ -1,7 +1,7 @@
 # Plan
 
 __Aim towards website release__.
-Currently, TODOs should either:
+Currently, each __TODO__ should either:
 (a) contribute to one of the initial articles
 (b) have a clear general nature which cannot be avoided
 
@@ -11,11 +11,18 @@ Currently, TODOs should either:
 
 ### _Constraints_
 
-...
+- Link to a CodeSandbox
+- Image of a navpath and a raycast
+- Image related to Bardo Thodol
+- Different Geomorphs being connected
 
 ### _Technology_ i.e. tech intro + js
 
-...
+- `PanZoomDemo` uses some geomorph PNGs
+- Redo CodeSandbox
+- CodeSandbox link more prominent
+- Finish "React Renders and Web Components"
+- Finish "CSS inside JS"
 
 ### _Technology (Part 2)_ i.e. navigation and raycasting
 
@@ -32,7 +39,14 @@ Currently, TODOs should either:
 
 ---
 
+Requirements for initial release
+- remove box2d-wasm
 - remove recast-detour
+
+---
+
+## TODO (unsorted)
+
 - get projects/nav working
 - Use Web Animation API
   - path following
