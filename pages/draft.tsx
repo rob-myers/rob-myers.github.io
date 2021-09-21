@@ -10,9 +10,9 @@ export default function DraftPage() {
     <Main>
       <Title />
 
-      <Markdown children={`
----
+      <Sep/>
 
+      <Markdown children={`
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
@@ -39,8 +39,6 @@ forcing us to take more care than usual.
       <Sep/>
 
       <Markdown children={`
----
-
 ## Constraints <float rem="1.2">19th July 2021</float>
 
 This project needs a backbone.
@@ -127,7 +125,6 @@ Here's hoping my chain of unfinished projects is coming to a close!
       <Sep/>
 
       <Markdown children={`
----
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 So, we're building a roguelike, directly on this website.
@@ -144,7 +141,7 @@ But first we'll describe the underlying technologies.
 | Live analysis | Our own in-browser terminal. |
 | Code viewing | [CodeMirror](https://codemirror.net/) to view JS. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
-| Code sharing | [GitHub](https://github.com/) comments shown on site; GitHub [repo](https://github.com/rob-myers/rob-myers.github.io) for this site. |
+| Code sharing | Show [GitHub](https://github.com/) comments, provide GitHub [repo](https://github.com/rob-myers/rob-myers.github.io). |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
 
@@ -308,7 +305,6 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
       <Sep/>
 
       <Markdown children={`
----
 ## Technology (Part 2)
 
 ### Navigation
@@ -325,15 +321,23 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
         ]}
       />
 
+      <Markdown children={`
+### Raycasting
+
+...
+      `}/>
+
       <Sep/>
 
       <Markdown children={`
 ## Technology (Part 3)
 
-### Static and Runtime Analysis
+### Static Analysis
 
 - Typescript via JSDoc, refering to CodeSandbox.
-- Terminal + Preact hooks
+
+### Runtime Analysis
+
 - Terminal + Game AI
 
 ### Comments

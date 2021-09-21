@@ -120,7 +120,7 @@ const titleCss = css`
     letter-spacing: 2px;
     font-size: 1.1rem;
     margin: 0;
-    padding: 32px 0;
+    padding: 32px 0 0;
     
     @media(max-width: 600px) {
       padding: 20px 0;
@@ -178,6 +178,9 @@ const blogCss = css`
     padding: 8px;
     border: 1px solid #bbb;
     width: 100%;
+    @media(min-width: 600px) {
+      margin: 32px 0;
+    }
 
     th, td {
       text-align: left;
