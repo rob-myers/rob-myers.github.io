@@ -15,17 +15,26 @@ import { createLayout, deserializeSvgJson } from '../../projects/geomorph/geomor
 import svgJson from '../../public/symbol/svg.json';
 import { renderAuxCanvases } from '../../projects/geomorph/geomorph.render';
 
-// TODO larger images including guns
+// TODO larger images including guns and sides
+/**
+ * 1. In GeomorphDemo create single image without doors.
+ * 2. Draw doors as <rect>'s on top.
+ * 3. Migrate here.
+ */
+
+
 // TODO scale up main for better resolution
+// TODO output a single image (can change later)
+// TODO output JSON info about navmesh
+
+const outputDir = path.resolve(__dirname, '../unsorted/test');
+fs.mkdirSync(outputDir, { recursive: true });
+const def = layoutDefs['g-302--xboat-repair-bay']; // hard-coded
+// const def = layoutDefs['g-301--bridge']; // hard-coded
 
 run();
 
 async function run() {
-  // const def = layoutDefs['g-301--bridge']; // hard-coded
-  const def = layoutDefs['g-302--xboat-repair-bay']; // hard-coded
-  const outputDir = path.resolve(__dirname, '../unsorted/test');
-  fs.mkdirSync(outputDir, { recursive: true });
-
   const { layout, overlay, underlay } = computeLayout(def);
   const main = await createMainCanvas(layout);
 

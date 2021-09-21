@@ -39,7 +39,8 @@ Each __TODO__ should either:
 
 ---
 
-General requirements for initial release
+### General requirements for initial release
+
 - Provide geomorphs as PNGs and JSON with navmesh
 - NavDemo working as before, now via port
 - Tabs don't load until scroll into view
