@@ -12,19 +12,52 @@
   </g>
   <g style="">
     <title>hull</title>
-    <path d="M -4 -4 L 4 -4 L 4 596 L 1196 596 L 1196 -4 L 1204 -4 L 1204 604 L -4 604 Z" style="">
+    <path d="M -4 -4 L 4 -4 L 4 596 L 1196 596 L 1196 -4 L 1204 -4 L 1204 604 L -4 604 L -4 -4 Z" style="">
       <title>sans-n--20x10</title>
     </path>
     <rect y="-4" width="128" height="8" style="" x="1076"/>
-    <rect width="8" height="300" style="" x="1076"/>
-    <rect width="8" height="494" style="" x="937" y="296" transform="matrix(0.242004, 0.970275, -0.970275, 0.242004, 1138.428223, -684.291992)"/>
-    <rect x="540" y="416" width="60" height="8" style=""/>
-    <rect x="420" y="416" width="60" height="8" style=""/>
-    <rect x="240" y="420" width="181" height="12" style="fill-opacity: 0.64;"/>
-    <rect x="174" y="240" width="216" height="8" style="" transform="matrix(0.559193, 0.829038, -0.829038, 0.559193, 224.378708, -40.136356)"/>
+    <rect x="240" y="409.9" width="180" height="14.1" style="fill-opacity: 0.4;">
+      <title>window</title>
+    </rect>
+    <path d="M 1079.9 304.3 L 600.6 423.8 L 548.4 423.8 L 548.4 424 L 418 424 L 420 409.9 L 427 415.9 L 479.4 416 L 598.7 416 L 1076 297 L 1076 0 L 1084 0 L 1084 300 L 1079.9 304.3 Z" style=""/>
+    <path d="M 174 240 L 381.6 240 L 387.7 237.9 L 394 242.1 L 390 248 L 174 248 L 167.7 243.7 L 169.7 240.4 L 174 240 Z" style="" transform="matrix(0.559193, 0.829038, -0.829038, 0.559193, 224.378708, -40.136356)"/>
+    <rect x="107.1" y="120.8" width="12.9" height="115.6" style="fill-opacity: 0.4;">
+      <title>window</title>
+    </rect>
+    <path d="M 64 -4 L 124 56 L 124 122 L 116 122 L 116 60 L 60 4 L 3 4 L 3 -4 L 64 -4 Z" style=""/>
   </g>
   <g style="pointer-events: none;">
     <title>singles</title>
+    <path d="M 60.6 240 L 60 480 L 120 540 L 240 540 L 240 420 L 120 240 L 60 240 L 60.6 240 Z" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-width: 4px;">
+      <title>machine</title>
+    </path>
+    <path d="M 126 525 L 75 474 L 75.6 255 L 112.5 255 L 225 424.5 L 225 525 Z" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(170, 170, 170);">
+      <title>fuel</title>
+    </path>
+    <rect x="240" y="409.9" width="180" height="14.1" style="fill-opacity: 0.4;">
+      <title>window</title>
+    </rect>
+    <rect x="897.5" y="346.3" width="5" height="195.7" style="">
+      <title>wall</title>
+    </rect>
+    <rect x="897.5" y="852.6" width="5" height="481.9" style="" transform="matrix(0, 1, -1, 0, 1934.524048, -360.5)">
+      <title>wall</title>
+    </rect>
+    <rect x="1077.5" y="300" width="5" height="242" style="">
+      <title>wall</title>
+    </rect>
+    <rect x="1168.5" y="178" width="28.4" height="4" style="pointer-events: auto;">
+      <title>wall</title>
+    </rect>
+    <rect x="1168.5" y="118" width="28.4" height="4" style="pointer-events: auto;">
+      <title>wall</title>
+    </rect>
+    <rect x="1168.5" y="58" width="28.4" height="4" style="pointer-events: auto;">
+      <title>wall</title>
+    </rect>
+    <rect x="1167.5" width="5.5" height="236.4" style="">
+      <title>wall</title>
+    </rect>
     <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door door-w</title>
     </rect>
@@ -37,5 +70,38 @@
     <rect x="850" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door door-s-w</title>
     </rect>
+    <rect x="480" y="414" width="60" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+      <title>door door-n iris</title>
+    </rect>
+    <rect x="1936.1" y="804" width="97.1" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1890, -1924.099365)">
+      <title>door</title>
+    </rect>
+    <rect x="728" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+      <title>door</title>
+    </rect>
+    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1440, -450)">
+      <title>door</title>
+    </rect>
+    <rect x="2093.7" y="536" width="105" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1620, -1726.699951)">
+      <title>door</title>
+    </rect>
+    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); pointer-events: auto;" transform="matrix(0, 1, -1, 0, 1710, -691)">
+      <title>door</title>
+    </rect>
+    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); pointer-events: auto;" transform="matrix(0, 1, -1, 0, 1710, -751)">
+      <title>door</title>
+    </rect>
+    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); pointer-events: auto;" transform="matrix(0, 1, -1, 0, 1710, -811)">
+      <title>door</title>
+    </rect>
+    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); pointer-events: auto;" transform="matrix(0, 1, -1, 0, 1710, -870)">
+      <title>door</title>
+    </rect>
+  </g>
+  <g style="pointer-events: none;">
+    <title>walls</title>
+    <path d="M 60.6 240 L 60 480 L 120 540 L 240 540 L 240 420 L 120 240 L 60 240 L 60.6 240 Z" style="stroke: rgb(0, 0, 0); stroke-width: 4px; fill: rgb(255, 0, 0); fill-opacity: 0.5;">
+      <title>machine</title>
+    </path>
   </g>
 </svg>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="620" height="620" x="-10" y="-10" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAmwAAAJsAgMAAAA9+xe2AAAABGdBTUEAALGPC/xhBQAAAAd0SU1FB+UJEBIFKfczDkgAAAAQY2FOdgAAAnkAAAJsAAAAAAAAAAAxmzfgAAAACVBMVEUAAAAAAAD///+D3c/SAAAAAXRSTlMAQObYZgAAAAFiS0dEAmYLfGQAAAGUSURBVHja7daxDQIxEETRveBKuH5cwgWe/lshQJCQowG9X8GT1l575kxna2ZKadkzR6stUzvSZM1Va7trj1uy2di+ukTY2NjY2Ng+bNMWGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsb2zdsu9K22f7QdiW562xP1Zlk1dmeqqNxhbxUjcftpToLR9qqkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJkiRJ+vnS2ZqZs9S2Z+YqtaV3pMmao9Z21x63ZLP9nS29K4TNXWB725rfrOa3vvqP1Py37P2TPwCB1Nu0nkGW2QAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wOS0xNlQxODowNTozMyswMDowMI+C2WkAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDktMTZUMTg6MDU6MzMrMDA6MDD+32HVAAAAAElFTkSuQmCC"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>walls</title>
+    <rect x="-10" y="-10" width="20" height="620" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect x="590" y="-10" width="20" height="620" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect y="-10" width="590" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect y="590" width="590" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+  </g>
+  <g style="">
+    <title>singles</title>
+    <rect x="300" y="375.7" width="290" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 995.666626, 0)">
+      <title>door door-e</title>
+    </rect>
+    <rect x="300" y="375.7" width="290" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 396.666656, 0)">
+      <title>door door-w</title>
+    </rect>
+    <rect x="-10" y="-10" width="20" height="620" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);">
+      <title>wall</title>
+    </rect>
+    <rect x="590" y="-10" width="20" height="620" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);">
+      <title>wall</title>
+    </rect>
+  </g>
+</svg>
