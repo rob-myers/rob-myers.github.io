@@ -1790,7 +1790,8 @@
   "shop--028--0.8x1.6": {
     "key": "shop--028--0.8x1.6",
     "hull": [],
-    "obstacles": [
+    "obstacles": [],
+    "walls": [
       {
         "type": "Polygon",
         "coordinates": [
@@ -1798,7 +1799,6 @@
         ]
       }
     ],
-    "walls": [],
     "singles": [],
     "pngRect": {"x": 57.5, "y": 33, "width": 485, "height": 234}
   },
