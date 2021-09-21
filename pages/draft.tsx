@@ -88,7 +88,7 @@ I am particularly interested in navigation i.e. combining the movement of many c
 
 ### 2. The Result
 
-_Games I want to have made_. As an end result I want a highly replayable tactical action-game sandbox.
+_Games I want to have made_. As an end result I want a highly replayable tactical/action game sandbox.
 Procedurally generated missions will involve going from A to B and doing C (ever was it so).
 Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
