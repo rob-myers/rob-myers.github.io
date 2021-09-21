@@ -1,5 +1,4 @@
 import Main from 'components/page/Main';
-import Title from 'components/page/Title';
 import Sep from 'components/page/Sep';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
@@ -7,9 +6,6 @@ import Tabs from 'components/page/Tabs';
 export default function DraftPage() {
   return (
     <Main>
-      <Title />
-
-      <Sep/>
 
       <Markdown children={`
 ## Objective <float rem="1.2">19th July 2021</float>

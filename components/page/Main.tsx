@@ -1,9 +1,13 @@
 import { css } from "goober";
+import Title from "./Title";
+import Sep from "./Sep";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
   return (
     <main className={rootCss}>
       <section>
+        <Title />
+        <Sep />
         {children}
       </section>
     </main>
