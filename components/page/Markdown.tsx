@@ -159,6 +159,9 @@ const blogCss = css`
     @media(max-width: 600px) {
       padding-left: 32px;
     }
+    + p {
+      padding-top: 6px;
+    }
   }
 
   ul li, ol li {

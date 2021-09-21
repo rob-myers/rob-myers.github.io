@@ -68,8 +68,6 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Buddhist backdrop based on [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
 - Horror backdrop based on [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
-<div style="height:8px"></div>
-
 Over time we'll clarify the above, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
