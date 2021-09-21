@@ -63,8 +63,8 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Use a realtime birdseye camera.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
 - Use navigation and raycasting algorithms.
-- Do not use a physics engine.
 - Use an in-browser terminal.
+- Do not use a Physics engine.
 <!-- - Use procedural generation for spaceship building. -->
 
 
@@ -131,8 +131,8 @@ Here's hoping my chain of unfinished projects is coming to a close!
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 So, we're building a roguelike, directly on this website.
-It will get fun once things are moving about.
-But first we'll describe the underlying browser focused technologies.
+It will start to get fun once things are moving about.
+But first we'll describe the underlying technologies.
 
 | Concept | Technology |
 | - | - |
@@ -156,7 +156,7 @@ Our web browser renders the HTML and CSS immediately, and runs the JS to provide
 More precisely, all subsequent DOM mutations are performed by JavaScript.
 It is now common to generate the initial HTML using JS too,
 either during a build-step or on a Node.js server.
-JavaScript has become the central web technology.
+In particular, JavaScript has become the central web technology.
 
 > ℹ️ _We'll spend the next two sections describing how we use JS._
 > _The discussion is full of jargon, but the details can be picked up later on._
@@ -236,7 +236,6 @@ Here's a whirlwind overview of React (and Preact).
       />
 
       <Markdown children={`
-
 <!--
 So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
 We're using Preact (its codebase is smaller, and it has reputation for being faster,
@@ -277,17 +276,18 @@ Take another look at _panzoom/PanZoom.jsx_.
 
       <Markdown children={`
 
-_PanZoom_ returns an \`<svg/>\` with a viewBox attribute determined by _state.viewBox_ (initially a clone of _props.initViewBox_).
-When a user zooms via mousewheel, _state.viewBox_ is updated by the event handler _state.onWheel_.
-Changing _state.viewBox_ and re-rendering _PanZoom_ will update \`<svg/>\` i.e. perform the actual zoom.
-But will PanZoom be re-rendered?
+_PanZoom_ returns an \`<svg/>\` with a viewBox attribute determined by _state.viewBox_.
+When a user zooms via mousewheel, the event handler _state.onWheel_ updates _state.viewBox_.
+But updating this variable does not automatically update the virtual DOM.
+The canonical React approach would be to re-render, so that _PanZoom_ returns \`<svg/>\` with the updated viewBox, and the DOM-diffing algorithm does the update.
+But how do we trigger a re-render?
 
-A component is rendered whenever an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
+A React function component is rendered whenever an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
 
 > \`const [data, setData] = React.useState(() => initialState)\`.
 
 These declarations cannot be nested and must occur at the "top-level" of the React function component, always executing in the same order.
-This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their parent component.
+This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their enclosing component.
 To change state we execute _setData(nextData)_ e.g. in response to a click. If _nextData_ differs from _data_, the component is re-rendered relative to the new data.
 
 But in _panzoom/PanZoom.jsx_ we only destructure _state_, not the callback for changing it.
