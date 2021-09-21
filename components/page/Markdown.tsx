@@ -133,7 +133,7 @@ const blogCss = css`
   font-size: 1.2rem;
 
   @media(max-width: 600px) {
-    padding: 8px;
+    padding: 8px 12px;
     font-size: 1.1rem;
   }
 
@@ -149,6 +149,18 @@ const blogCss = css`
     }
   }
 
+  blockquote {
+    @media(max-width: 600px) {
+      margin-left: 16px;
+    }
+  }
+  
+  ul, ol {
+    @media(max-width: 600px) {
+      padding-left: 32px;
+    }
+  }
+
   ul li, ol li {
     margin: 4px 0;
   }
@@ -158,6 +170,7 @@ const blogCss = css`
     letter-spacing: 1px;
     color: #444;
   }
+
   a code {
     color: unset;
   }

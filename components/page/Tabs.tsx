@@ -61,7 +61,7 @@ interface Props {
 const rootCss = (height: number) => css`
   margin: 40px 0;
   @media(max-width: 600px) {
-    margin: 0;
+    margin: 0 12px;
   }
 
   > .flexlayout__layout {
