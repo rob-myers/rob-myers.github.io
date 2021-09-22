@@ -102,10 +102,10 @@ export default function PanZoom(props) {
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >
-      <Grid bounds={props.gridBounds} />
       <g className="content">
         {props.children}
       </g>
+      <Grid bounds={props.gridBounds} />
     </svg>
   );
 }
