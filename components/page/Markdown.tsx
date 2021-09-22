@@ -94,11 +94,12 @@ const blogComponents = {
 };
 
 const titleCss = css`
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
   @media(max-width: 600px) {
     padding-left: 8px;
     margin-top: 12px;
   }
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
   h1 {
     font-size: 6rem;
@@ -120,10 +121,10 @@ const titleCss = css`
     letter-spacing: 2px;
     font-size: 1.1rem;
     margin: 0;
-    padding: 32px 0 0;
+    padding: 40px 0 40px;
     
     @media(max-width: 600px) {
-      padding: 20px 0;
+      padding: 20px 0 30px;
     }
   }
 `;
@@ -131,7 +132,9 @@ const titleCss = css`
 const blogCss = css`
   line-height: 1.5;
   font-size: 1.2rem;
-
+  background: #eee;
+  padding: 16px 32px 32px;
+  
   @media(max-width: 600px) {
     padding: 8px 12px;
     font-size: 1.1rem;
@@ -145,6 +148,7 @@ const blogCss = css`
     font-size: 2rem;
     @media(max-width: 600px) {
       margin: 0;
+      margin-top: 8px;
       font-size: 1.8rem;
     }
   }

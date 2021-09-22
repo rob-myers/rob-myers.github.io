@@ -5,9 +5,6 @@ export default function Sep() {
 }
 
 const rootCss = css`
-  margin: 48px 0 24px;
-
-  @media(max-width: 600px) {
-    margin: 12px 0;
-  }
+  margin: 0;
+  border-color: rgba(0, 0, 0, 0.2);
 `;

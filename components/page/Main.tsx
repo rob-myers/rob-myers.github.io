@@ -18,30 +18,23 @@ export const rootCss = css`
   display: flex;
   flex-direction: column;
   padding-bottom: 2rem;
-  
-  max-width: 880px;
-  
+  max-width: 880px;  
   margin: 0 auto;
-  > section {
-    padding: 48px 64px;
-  }
-
+  
   @media(max-width: 700px) {
     margin: 0;
   }
-  @media(max-width: 1024px) {
-    > section {
+
+  > section {
+    padding: 48px 64px;
+    @media(max-width: 1024px) {
       padding: 32px 64px;
       margin: 0;
     }
-  }
-  @media(max-width: 800px) {
-    > section {
+    @media(max-width: 800px) {
       padding: 32px 64px;
     }
-  }
-  @media(max-width: 600px) {
-    > section {
+    @media(max-width: 600px) {
       padding: 0;
     }
   }
