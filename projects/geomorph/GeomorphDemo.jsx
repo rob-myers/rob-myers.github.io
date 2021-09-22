@@ -30,16 +30,13 @@ function Geomorph({ def, transform }) {
       <g className="doors">
         {gm.doors.map((door) => <polygon points={`${door.outline}`} />)}
       </g>
-      <g className="labels">
-        {gm.labels.map(({ center, text }) =>
-          <g transform={`translate(${center})`}>
-            <circle r={2} />
-            <foreignObject width="80" height="160" xmlns="http://www.w3.org/1999/xhtml">
-              <div style={{ background: 'white' }}>{text}</div>
-            </foreignObject>
-          </g>
-        )}
-      </g>
+      <foreignObject className="labels" {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
+        {gm.labels.map(({ center, text }) => (
+          <div className="label" style={{ left: center.x - gm.pngRect.x, top: center.y - gm.pngRect.y }} >
+            {text}
+          </div>
+        ))}
+      </foreignObject>
       {/* <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/> */}
     </g>
   ) : null;
@@ -53,14 +50,12 @@ async function computeLayout(def) {
   const layout = createLayout(def, symbolLookup);
   const canvas = document.createElement('canvas');
   await renderGeomorph(
-    layout,
-    symbolLookup,
-    canvas,
-    (pngHref) => loadImage(pngHref),
+    layout, symbolLookup, canvas, (pngHref) => loadImage(pngHref),
     { scale, navTris: false },
   );
   return {
     dataUrl: canvas.toDataURL(),
+    /** Unscaled */
     pngRect: layout.items[0].pngRect,
     doors: singlesToPolys(layout.groups.singles, 'door'),
     labels: filterSingles(layout.groups.singles, 'label')
@@ -93,7 +88,21 @@ const rootCss = css`
     fill: white;
     stroke: black;
   }
-  .labels circle {
-    fill: red;
+
+  .labels {
+    font-size: 12px;
+    font-family: sans-serif;
+
+    div.label {
+      background: white;
+      position: absolute;
+      padding: 1px 4px;
+      border-radius: 2px;
+      user-select: none;
+    }
+
+    circle {
+      fill: red;
+    }
   }
 `;
