@@ -6,6 +6,7 @@ import { Poly } from '../geom/poly';
 let svgPoint;
 
 /**
+ * Event target must be `SVGSVGElement` or owned by one.
  * @param {MouseEvent | import('react').MouseEvent} e 
  */
 export function getSvgPos(e) {
@@ -16,7 +17,9 @@ export function getSvgPos(e) {
 }
 
 /**
- * @param {MouseEvent[] | import('react').MouseEvent[]} es The event `es[0]` must exist
+ * The event `es[0]` must exist.
+ * It must also be an `SVGSVGElement` or owned by one
+ * @param {MouseEvent[] | import('react').MouseEvent[]} es
  */
 export function getSvgMid(es) {
   svgPoint = svgPoint || getSvgOwner(es[0])?.createSVGPoint();
@@ -26,9 +29,13 @@ export function getSvgMid(es) {
   return svgPoint.matrixTransform(getSvgOwner(es[0])?.getScreenCTM()?.inverse());
 }
 
-/** @param {MouseEvent | import('react').MouseEvent} e */
+/**
+ * Event target must be `SVGSVGElement` or owned by one.
+ * @param {MouseEvent | import('react').MouseEvent} e
+ */
 function getSvgOwner(e) {
-	return (/** @type {null | SVGElement} */ (e.target))?.ownerSVGElement;
+	return /** @type {null | SVGElement} */ (e.target)?.ownerSVGElement
+		|| /** @type {SVGSVGElement} */ (e.target);
 }
 
 /**
@@ -141,6 +148,7 @@ export function drawTriangulation(ctxt, decomp) {
 	}
 }
 
+/** @param {string} src */
 /**
  * @param {string} src
  * @returns {Promise<HTMLImageElement>}
