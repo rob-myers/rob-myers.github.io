@@ -40,10 +40,11 @@ Each __TODO__ should either:
 
 ### General requirements for initial release
 
-- Can show labels
+- Add missing labels
 - NavDemo working as before, now via port
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
+- ✅ Can show labels
 - ✅ Provide geomorphs as PNGs and JSON with navmesh
 - ✅ remove recast-detour
 - ✅ remove box2d-wasm

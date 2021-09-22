@@ -62,6 +62,7 @@ declare namespace Geomorph {
     labels: {
       center: Vect;
       text: string;
+      halfDim: Vect;
     }[];
     pngHref: string;
   }
