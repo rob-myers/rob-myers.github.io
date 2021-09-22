@@ -12,6 +12,15 @@ declare namespace Geomorph {
     labels?: boolean;
   }
 
+  /** Generated via `yarn render-layout` */
+  export interface GeomorphJson {
+    key: string;
+    id: number;
+    pngRect: Geom.RectJson;
+    doors: SvgGroups<Geom.GeoJsonPolygon>['singles'];
+    navPoly: Geom.GeoJsonPolygon[];
+  }
+
   /** Generated via `yarn svg-meta`. */
   export type SvgJson = Record<string, ParsedSymbol<Geom.GeoJsonPolygon>>;
 

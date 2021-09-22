@@ -55,18 +55,24 @@ async function computeLayout(def) {
   const pipeline = util.promisify(stream.pipeline);
   const { layout, canvas } = await computeLayout(layoutDef);
 
+  /** @type {Geomorph.GeomorphJson} */
+  const json = {
+    key: layout.def.key,
+    id: layout.def.id,
+    pngRect: layout.items[0].pngRect,
+    doors: layout.groups.singles
+      .filter(x => x.tags.includes('door'))
+      .map(({ poly, tags }) => ({ poly: poly.geoJson, tags })),
+    navPoly: layout.navPoly.map(x => x.geoJson),
+  };
+
   fs.writeFileSync(
     path.resolve(outputDir, `${layoutDef.key}.json`),
-    stringify({
-      key: layout.def.key,
-      id: layout.def.id,
-      pngRect: layout.items[0].pngRect,
-      doors: layout.groups.singles
-        .filter(x => x.tags.includes('door'))
-        .map(({ poly, tags }) => ({ poly: poly.geoJson, tags })),
-      navPoly: layout.navPoly.map(x => x.geoJson),
-    })
+    stringify(json)
   );
 
-  pipeline(canvas.createPNGStream(), fs.createWriteStream(outputPath));
+  pipeline(
+    canvas.createPNGStream(),
+    fs.createWriteStream(outputPath),
+  );
 })();

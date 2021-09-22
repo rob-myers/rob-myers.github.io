@@ -309,8 +309,8 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
       `}/>
 
       <Tabs
-        // enabled
-        height={300}
+        enabled
+        height={400}
         tabs={[
           { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
         ]}
@@ -381,7 +381,7 @@ public/svg
       `}/>
 
       <Tabs
-        enabled
+        // enabled
         height={400}
         tabs={[
           { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },

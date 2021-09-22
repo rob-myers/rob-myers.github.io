@@ -3,7 +3,7 @@ import { css } from "goober";
 import { useQuery } from "react-query";
 import { Rect, Vect } from "../geom";
 import { loadImage } from "../service";
-import svgJson from 'public/symbol/svg.json';
+import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
 import { createLayout, deserializeSvgJson, filterSingles, singlesToPolys } from "./geomorph.model";
 import PanZoom from '../panzoom/PanZoom';
 import layoutDefs from "./layout-defs";
@@ -13,9 +13,9 @@ export default function GeomorphDemo() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
-        {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}
-        <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
-        <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" />
+        <Geomorph def={layoutDefs["g-301--bridge"]} />
+        {/* <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
+        <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" /> */}
       </PanZoom>
     </div>
   );

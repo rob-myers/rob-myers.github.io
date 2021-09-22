@@ -40,9 +40,10 @@ Each __TODO__ should either:
 
 ### General requirements for initial release
 
+- NavDemo working as before, now via port
+- Create geomorph 101
 - Script can generate .debug.png with doors/labels/etc.
 - Add missing labels
-- NavDemo working as before, now via port
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
 - ✅ Can show labels
@@ -67,7 +68,7 @@ Each __TODO__ should either:
 - tidy `PanZoom` and update CodeSandbox
 
 - convert 302 too
-  - satellite and labels remain
+  - labels remain
 - emphasise render-once approach to React in intro
 - CSS character spritesheet based on Teleglitch
 - static lighting (shadow maps)

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { css } from "goober";
-// import { useQuery } from "react-query";
-import { Rect, Vect } from "../geom";
+import { useQuery } from "react-query";
+import { Poly, Rect, Vect } from "../geom";
 // import { getSvgPos, geom } from "../service";
 import PanZoom from "../panzoom/PanZoom";
 
@@ -9,11 +9,21 @@ import PanZoom from "../panzoom/PanZoom";
 // TODO use Web Components API
 // TODO support mobile/desktop
 
+
 export default function NavDemo() {
 
   // const [dots, setDots] = useState(/** @type {Vect[]} */ ([]));
   // const [selected, setSelected] = useState(/** @type {number[]} */ ([]));
   // const [path, setPath] = useState(/** @type {Vect[]} */ ([]));
+
+  const { data } = useQuery('navpoly-demo', async () => {
+    /** @type {Geomorph.GeomorphJson} */
+    const json = await fetch('/geomorph/g-301--bridge.json').then(x => x.json());
+    return {
+      pngRect: json.pngRect,
+      navPoly: json.navPoly.map(Poly.from),
+    };
+  });
 
   // // TODO draw into image via canvas instead
   // const { data: tris } = useQuery('create-nav', async () => {
@@ -37,46 +47,58 @@ export default function NavDemo() {
   // }
 
   return (
-    <section className={rootCss}>
-      <PanZoom gridBounds={gridBounds} initViewBox={initViewBox}>
+    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox}>
+      <g className={rootCss}>
+        {data && <>
+          <image {...data.pngRect} className="geomorph" href="/geomorph/g-301--bridge.debug.png" />
+          {data.navPoly.map(x => (
+            <path className="navpoly" d={x.svgPath} />
+          ))}
+        </>}
+      </g>
 
-        {/* <path className="walls" d={`${thickWalls.svgPath}`} />
-        <path className="floor" d={`${polygon.svgPath}`}
-          onClick={(e) => {
-            const point = getSvgPos(e);
-            if (!dots.some(d => d.distanceTo(point) < 5)) {
-              setDots(dots.concat(Vect.from(point)));
-              toggleDot(dots.length);
-            }
-          }}
-        />
-        {<MemoedTriangles tris={tris} />}
-        <polyline className="navpath" points={`${path}`} />
-        <g className="dots">
-          {dots.map((p, i) =>
-            <circle
-              key={i}
-              cx={p.x}
-              cy={p.y}
-              r={2.5}
-              className={selected.includes(i) ? 'selected' : undefined }
-              onClick={() => toggleDot(i)}
-            />
-          )}
-        </g> */}
+      {/* <path className="walls" d={`${thickWalls.svgPath}`} />
+      <path className="floor" d={`${polygon.svgPath}`}
+        onClick={(e) => {
+          const point = getSvgPos(e);
+          if (!dots.some(d => d.distanceTo(point) < 5)) {
+            setDots(dots.concat(Vect.from(point)));
+            toggleDot(dots.length);
+          }
+        }}
+      />
+      {<MemoedTriangles tris={tris} />}
+      <polyline className="navpath" points={`${path}`} />
+      <g className="dots">
+        {dots.map((p, i) =>
+          <circle
+            key={i}
+            cx={p.x}
+            cy={p.y}
+            r={2.5}
+            className={selected.includes(i) ? 'selected' : undefined }
+            onClick={() => toggleDot(i)}
+          />
+        )}
+      </g> */}
 
-      </PanZoom>
-    </section>
+    </PanZoom>
   );
 }
 
 
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const initViewBox = new Rect(0, 0, 200, 200);
+const initViewBox = new Rect(0, 0, 1200, 600);
 
 const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
+
+  > path.navpoly {
+    stroke: red;
+    fill: none;
+    stroke-width: 2;
+  }
 
   /* path.walls {
     fill: #000;
