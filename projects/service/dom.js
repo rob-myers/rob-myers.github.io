@@ -6,7 +6,7 @@ import { Poly } from '../geom/poly';
 let svgPoint;
 
 /**
- * Event target must be `SVGSVGElement` or owned by one.
+ * Event's current target must be `SVGSVGElement` or owned by one.
  * @param {MouseEvent | import('react').MouseEvent} e 
  */
 export function getSvgPos(e) {
@@ -17,8 +17,8 @@ export function getSvgPos(e) {
 }
 
 /**
- * The event `es[0]` must exist.
- * It must also be an `SVGSVGElement` or owned by one
+ * The event `es[0]` must exist, and its current target
+ * must be an `SVGSVGElement` or owned by one
  * @param {MouseEvent[] | import('react').MouseEvent[]} es
  */
 export function getSvgMid(es) {
@@ -30,12 +30,12 @@ export function getSvgMid(es) {
 }
 
 /**
- * Event target must be `SVGSVGElement` or owned by one.
+ * Event current target must be `SVGSVGElement` or owned by one.
  * @param {MouseEvent | import('react').MouseEvent} e
  */
 function getSvgOwner(e) {
-	return /** @type {null | SVGElement} */ (e.target)?.ownerSVGElement
-		|| /** @type {SVGSVGElement} */ (e.target);
+	return /** @type {null | SVGElement} */ (e.currentTarget)?.ownerSVGElement
+		|| /** @type {SVGSVGElement} */ (e.currentTarget);
 }
 
 /**
