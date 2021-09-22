@@ -9,56 +9,60 @@ import { svgPathToPolygons } from '../service';
  */
 export function createLayout(def, lookup) {
   /** @type {Geomorph.Layout['groups']} */
-  const actual = { singles: [], obstacles: [], walls: [] };
+  const groups = { singles: [], obstacles: [], walls: [] };
   const m = new Mat;
 
   def.items.forEach((item, i) => {
     item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
     const { singles, obstacles, walls, hull } = lookup[item.symbol];
-    if (i) {// We don't scale 1st item i.e. hull
+    if (i) {
+      /**
+       * Starship symbol PNGs are 5 times larger than Geomorph PNGs.
+       * Also, the geomorph PNGs correspond to the hull (1st item).
+       */
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
     // Transform singles and restrict doors by tags
-    actual.singles.push(...singles
+    groups.singles.push(...singles
       .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) }))
       .filter(({ tags }) => !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))))
-    actual.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
-    actual.walls.push(
+    groups.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
+    groups.walls.push(
       ...walls.map(x => x.clone().applyMatrix(m)),
-      ...filterSingles(singles, 'wall').map(x => x.clone().applyMatrix(m)),
+      ...singlesToPolys(singles, 'wall').map(x => x.clone().applyMatrix(m)),
       // Hull symbol (1st symbol) has "hull" walls
       ...hull.flatMap(x => x.createOutset(2)).map(x => x.applyMatrix(m)),
     );
   });
 
   // Ensure well-signed polygons
-  actual.obstacles.forEach(poly => poly.fixOrientation());
-  actual.singles.forEach(({ poly }) => poly.fixOrientation());
+  groups.obstacles.forEach(poly => poly.fixOrientation());
+  groups.singles.forEach(({ poly }) => poly.fixOrientation());
   
   // Cut doors from walls
-  const doors = filterSingles(actual.singles, 'door');
-  actual.walls = Poly.cutOut(doors, actual.walls);
-  actual.singles = actual.singles.reduce((agg, single) =>
+  const doors = singlesToPolys(groups.singles, 'door');
+  groups.walls = Poly.cutOut(doors, groups.walls);
+  groups.singles = groups.singles.reduce((agg, single) =>
     agg.concat(single.tags.includes('wall')
       ? Poly.cutOut(doors, [single.poly]).map(poly => ({ ...single, poly }))
       : single
     )
-  , /** @type {typeof actual['singles']} */ ([]));
+  , /** @type {typeof groups['singles']} */ ([]));
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSym = symbols[0];
   const hullOutline = hullSym.hull.map(x => x.clone().removeHoles());
-  const windows = filterSingles(actual.singles, 'window');
+  const windows = singlesToPolys(groups.singles, 'window');
   const hullTop = Poly.cutOut(doors.concat(windows), hullSym.hull);
 
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
-    actual.walls.flatMap(x => x.createOutset(12)),
-    actual.obstacles.flatMap(x => x.createOutset(8)),
+    groups.walls.flatMap(x => x.createOutset(12)),
+    groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps());
 
   return {
     def,
-    groups: actual,
+    groups,
     navPoly,
     
     hullTop,
@@ -101,9 +105,9 @@ export function parseStarshipSymbol(symbolName, svgContents) {
 
 /**
  * @param {{ tags: string[]; poly: Poly }[]} singles 
- * @param {string} tag 
+ * @param {string} tag Restrict to singles with this tags
  */
-export function filterSingles(singles, tag) {
+export function singlesToPolys(singles, tag) {
   return singles.filter(x => x.tags.includes(tag)).map(x => x.poly);
 }
 

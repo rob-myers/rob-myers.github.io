@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { Rect } from "../geom";
 import { loadImage } from "../service";
 import svgJson from 'public/symbol/svg.json';
-import { createLayout, deserializeSvgJson, filterSingles } from "./geomorph.model";
+import { createLayout, deserializeSvgJson, singlesToPolys } from "./geomorph.model";
 import PanZoom from '../panzoom/PanZoom';
 import layoutDefs from "./layout-defs";
 import { renderGeomorph } from "./geomorph.render";
@@ -53,7 +53,7 @@ async function computeLayout(def) {
     pngRect: layout.items[0].pngRect,
     /** Debug only */
     pngHref: layout.items[0].pngHref,
-    doors: filterSingles(layout.groups.singles, 'door'),
+    doors: singlesToPolys(layout.groups.singles, 'door'),
   };
 }
 

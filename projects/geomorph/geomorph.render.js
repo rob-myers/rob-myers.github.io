@@ -1,5 +1,5 @@
 import { Vect } from "../geom";
-import { filterSingles } from './geomorph.model';
+import { singlesToPolys } from './geomorph.model';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle } from '../service';
 
 /**
@@ -31,7 +31,7 @@ export async function renderGeomorph(
     const hullOutline = hullSym.hull[0].outline;
     fillRing(ctxt, hullOutline);
   } else {
-    console.error('hull walls: must exist, be connected, have a hole');
+    console.error('hull walls: must exist, be connected and have a hole');
   }
 
   ctxt.fillStyle = 'rgba(0, 0, 100, 0.2)';

@@ -12,7 +12,7 @@ import stringify from 'json-stringify-pretty-compact';
 
 import svgJson from '../../public/symbol/svg.json';
 import layoutDefs from '../../projects/geomorph/layout-defs';
-import { createLayout, deserializeSvgJson, filterSingles } from '../../projects/geomorph/geomorph.model';
+import { createLayout, deserializeSvgJson } from '../../projects/geomorph/geomorph.model';
 import { renderGeomorph } from '../../projects/geomorph/geomorph.render';
 
 const geomorphId = Number(process.argv[2]);
