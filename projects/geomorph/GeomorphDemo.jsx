@@ -92,7 +92,7 @@ async function computeLayout(def) {
       .map(({ poly, tags }) => {
         const text = tags.filter(x => x !== 'label').join(' ');
         return { center: poly.rect.center, text,
-          halfDim: new Vect(4 + measurer.measureText(text).width + 4, 1 + labelSizePx + 1).scale(0.5),
+          halfDim: new Vect(4 + measurer.measureText(text).width + 4, 3 + 1 + labelSizePx + 1).scale(0.5),
         };
       }),
   };
