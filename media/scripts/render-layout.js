@@ -33,7 +33,7 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.p
 
 /** @type {Geomorph.RenderOpts} */
 const renderOpts = debug
-  ? { scale: 2, obsBounds: true, wallBounds: true, doors: true, labels: true }
+  ? { scale: 2, obsBounds: true, wallBounds: true, doors: true, labels: true, navTris: true }
   : { scale: 2, obsBounds: false, wallBounds: false };
 
 /** @param {Geomorph.LayoutDef} def */
