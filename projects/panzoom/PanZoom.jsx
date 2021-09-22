@@ -34,14 +34,18 @@ export default function PanZoom(props) {
       /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        const point = getSvgPos(e);
-        state.zoomTo(point, -0.003 * e.deltaY);
-        state.root.setAttribute('viewBox', `${state.viewBox}`);
+        if (e.target && 'ownerSVGElement' in e.target) {
+          const point = getSvgPos(e);
+          state.zoomTo(point, -0.003 * e.deltaY);
+          state.root.setAttribute('viewBox', `${state.viewBox}`);
+        }
       },
       /** @param {PointerEvent} e */
       onPointerDown: e => {
-        state.panFrom = (new Vect).copy(getSvgPos(e));
-        state.ptrEvent.push(e);
+        if (e.target && 'ownerSVGElement' in e.target) {
+          state.panFrom = (new Vect).copy(getSvgPos(e));
+          state.ptrEvent.push(e);
+        }
       },
       /** @param {PointerEvent} e */
       onPointerMove: e => {
@@ -90,6 +94,9 @@ export default function PanZoom(props) {
         touch-action: pan-x pan-y pinch-zoom;
         > g.content {
           shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
+        }
+        > .grid {
+          pointer-events: none;
         }
       `,
     };
@@ -154,6 +161,7 @@ function Grid(props) {
       </pattern>
     </defs>
     <rect
+      className="grid"
       x={props.bounds.x}
       y={props.bounds.y}
       width={props.bounds.width}
@@ -161,6 +169,7 @@ function Grid(props) {
       fill={`url(#${gridId})`}
     />
     <rect
+      className="grid"
       x={props.bounds.x}
       y={props.bounds.y}
       width={props.bounds.width}
