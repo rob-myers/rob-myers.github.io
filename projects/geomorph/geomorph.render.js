@@ -8,6 +8,7 @@ import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle } from '..
  * @param {Geomorph.SymbolLookup} lookup
  * @param {Canvas} canvas
  * @param {(pngHref: string) => Promise<Image>} getPng
+ * `pngHref` has local url format `/symbol/foo`
  * @param {Opts} opts
  */
 export async function renderGeomorph(
