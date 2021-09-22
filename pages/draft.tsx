@@ -11,9 +11,9 @@ export default function DraftPage() {
 ## Objective <float rem="1.2">19th July 2021</float>
 
 We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
-set in the [Traveller universe](https://wiki.travellerrpg.com/Universe).
+set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
 
-_Why focus on Game AI?_
+_Why?_
 
 Because NPC behaviour is more interesting than any particular game.
 An environment is needed to make it meaningful,
@@ -52,10 +52,10 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 ### Game mechanics (low-level)
 
-- Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
+- Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) graphics.
 - Use a realtime birdseye camera.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
-- Use navigation and raycasting algorithms.
+- Use navigation & raycasting algorithms.
 - Use an in-browser terminal.
 - Do not use a Physics engine.
 <!-- - Use procedural generation for spaceship building. -->
@@ -65,8 +65,8 @@ We've chosen the underlying technology, low-level game mechanics, and where even
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
 - Space vehicles/station/docks.
-- Buddhist backdrop based on [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
-- Horror backdrop based on [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
+- Buddhist backdrop via [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
+- Horror backdrop via [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
 Over time we'll clarify the above, but first we emphasise:
 > _creating a video game is really fucking hard_.

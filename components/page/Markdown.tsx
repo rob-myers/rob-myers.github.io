@@ -111,7 +111,7 @@ const titleCss = css`
       font-size: 5rem;
     }
     @media(max-width: 600px) {
-      font-size: 3.6rem;
+      font-size: 3.4rem;
     }
   }
   
@@ -139,7 +139,7 @@ const blogCss = css`
 
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-weight: 500;
+    font-weight: 400;
   }
   h2 {
     font-size: 2rem;
