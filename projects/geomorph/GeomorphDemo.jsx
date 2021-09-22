@@ -13,9 +13,9 @@ export default function GeomorphDemo() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
-        {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}
-        <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
-        <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" />
+        <Geomorph def={layoutDefs["g-301--bridge"]} />
+        {/* <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
+        <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" /> */}
       </PanZoom>
     </div>
   );
@@ -26,9 +26,9 @@ function Geomorph({ def, transform }) {
   const { data: gm } = useQuery(`layout-${def.key}`, () => computeLayout(def));
   return gm ? (
     <g transform={transform}>
-      {/* <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/> */}
       <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
       {gm.doors.map((door, i) => <polygon className="door" points={`${door.outline}`} />)}
+      <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
     </g>
   ) : null;
 }
@@ -64,7 +64,7 @@ const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 const rootCss = css`
   height: 100%;
   image.debug {
-    opacity: 0.5;
+    opacity: 0.2;
   }
   image.geomorph {
     transform: scale(${1 / scale});
