@@ -3,6 +3,14 @@ declare namespace Geomorph {
   type Poly = import('../geom').Poly;
   type Vect = import('../geom').Vect;
 
+  export interface RenderOpts {
+    scale: number;
+    obsBounds?: boolean;
+    wallBounds?: boolean;
+    navTris?: boolean;
+    doors?: boolean;
+  }
+
   /** Generated via `yarn svg-meta`. */
   export type SvgJson = Record<string, ParsedSymbol<Geom.GeoJsonPolygon>>;
 

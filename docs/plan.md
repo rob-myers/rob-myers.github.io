@@ -40,6 +40,7 @@ Each __TODO__ should either:
 
 ### General requirements for initial release
 
+- Script can generate .debug.png with doors/labels/etc.
 - Add missing labels
 - NavDemo working as before, now via port
 - Tabs don't load until scroll into view

@@ -9,11 +9,11 @@ import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle } from '..
  * @param {Canvas} canvas
  * @param {(pngHref: string) => Promise<Image>} getPng
  * `pngHref` has local url format `/symbol/foo`
- * @param {Opts} opts
+ * @param {Geomorph.RenderOpts} opts
  */
 export async function renderGeomorph(
   layout, lookup, canvas, getPng,
-  { scale, obsBounds = true, wallBounds = true, navTris = false },
+  { scale, obsBounds = true, wallBounds = true, navTris = false, doors = false },
 ) {
   const hullSym = lookup[layout.items[0].key];
   const pngRect = hullSym.pngRect;
@@ -91,20 +91,15 @@ export async function renderGeomorph(
       fillPolygon(ctxt, [poly]);
     }
   });
-  // const doors = filterSingles(singles, 'door');
-  // ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
-  // fillPolygon(ctxt, doors);
-  // ctxt.fillStyle = 'rgba(255, 255, 255, 1)';
-  // fillPolygon(ctxt, doors.flatMap(x => x.createInset(2)));
+  if (doors) {
+    const doors = singlesToPolys(singles, 'door');
+    ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
+    fillPolygon(ctxt, doors);
+    ctxt.fillStyle = 'rgba(255, 255, 255, 1)';
+    fillPolygon(ctxt, doors.flatMap(x => x.createInset(2)));
+  }
   //#endregion
 }
 
 /** @typedef {HTMLCanvasElement | import('canvas').Canvas} Canvas */
 /** @typedef {HTMLImageElement | import('canvas').Image} Image */
-/**
- * @typedef Opts @type {object}
- * @property {number} scale
- * @property {boolean} [obsBounds]
- * @property {boolean} [wallBounds]
- * @property {boolean} [navTris]
- */
