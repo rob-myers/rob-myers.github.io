@@ -34,7 +34,7 @@ async function computeLayout(def) {
     symbolLookup,
     canvas,
     (pngHref) => loadImage(fs.readFileSync(path.resolve(pngInputDir, pngHref.slice(1)))),
-    scale,
+    { scale, obsBounds: false, wallBounds: false },
   );
   return { layout, canvas };
 }

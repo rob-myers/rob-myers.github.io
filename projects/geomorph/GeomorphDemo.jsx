@@ -45,7 +45,7 @@ async function computeLayout(def) {
     symbolLookup,
     canvas,
     (pngHref) => loadImage(pngHref),
-    scale,
+    { scale, navTris: false },
   );
   return {
     ...layout,
