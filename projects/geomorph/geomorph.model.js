@@ -3,6 +3,7 @@ import { Poly, Rect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
 
 /**
+ * Create a layout, given a definition and all symbols.
  * @param {Geomorph.LayoutDef} def
  * @param {Geomorph.SymbolLookup} lookup
  * @returns {Geomorph.Layout}
@@ -24,8 +25,10 @@ export function createLayout(def, lookup) {
     }
     // Transform singles and restrict doors by tags
     groups.singles.push(...singles
-      .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m) }))
-      .filter(({ tags }) => !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))))
+      .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m).precision(1) }))
+      .filter(({ tags }) =>
+        !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))
+      ))
     groups.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     groups.walls.push(
       ...walls.map(x => x.clone().applyMatrix(m)),
@@ -58,7 +61,7 @@ export function createLayout(def, lookup) {
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
     groups.walls.flatMap(x => x.createOutset(12)),
     groups.obstacles.flatMap(x => x.createOutset(8)),
-  ), hullOutline).map(x => x.cleanFinalReps());
+  ), hullOutline).map(x => x.cleanFinalReps().precision(1));
 
   return {
     def,
