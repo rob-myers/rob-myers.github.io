@@ -27,23 +27,46 @@ function Geomorph({ def, transform }) {
   return gm ? (
     <g transform={transform}>
       <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
+
       <g className="doors">
         {gm.doors.map((door) => <polygon points={`${door.outline}`} />)}
       </g>
-      <foreignObject className="labels" {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
-        {gm.labels.map(({ center, text }) => (
-          <div className="label" style={{ left: center.x - gm.pngRect.x, top: center.y - gm.pngRect.y }} >
-            {text}
-          </div>
-        ))}
-      </foreignObject>
+
+      <Labels gm={gm} />
+
       {/* <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/> */}
     </g>
   ) : null;
 }
 
+/** @param {{ gm: Geomorph.BrowserLayout }} props */
+function Labels({ gm }) {
+
+  /** @param {React.MouseEvent<HTMLElement>} e */
+  const onClick = (e) => {
+    const div = /** @type {HTMLDivElement} */ (e.target);
+    console.log('you clicked', div);
+  };
+
+  return (
+    <foreignObject className="labels" {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
+      <div onClick={onClick}>
+        {gm.labels.map(({ center, text }) => (
+          <div
+            className="label"
+            style={{ left: center.x - gm.pngRect.x, top: center.y - gm.pngRect.y }}
+          >
+            {text}
+          </div>
+        ))}
+      </div>
+  </foreignObject>
+  );
+}
+
 /**
  * @param {Geomorph.LayoutDef} def
+ * @returns {Promise<Geomorph.BrowserLayout>}
  */
 async function computeLayout(def) {
   const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
@@ -60,8 +83,8 @@ async function computeLayout(def) {
     doors: singlesToPolys(layout.groups.singles, 'door'),
     labels: filterSingles(layout.groups.singles, 'label')
       .map(({ poly, tags }) => {
-        const text = tags.slice(1).join(' ');
         // TODO measure text in temp canvas
+        const text = tags.slice(1).join(' ');
         return {
           center: poly.rect.center,
           text,
@@ -83,6 +106,7 @@ const rootCss = css`
   }
   image.geomorph {
     transform: scale(${1 / scale});
+    pointer-events: none;
   }
   .doors polygon {
     fill: white;
@@ -92,13 +116,15 @@ const rootCss = css`
   .labels {
     font-size: 12px;
     font-family: sans-serif;
+    pointer-events: none;
 
     div.label {
       background: white;
       position: absolute;
       padding: 1px 4px;
       border-radius: 2px;
-      user-select: none;
+      cursor: pointer;
+      pointer-events: auto;
     }
 
     circle {

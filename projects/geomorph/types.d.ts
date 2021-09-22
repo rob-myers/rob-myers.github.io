@@ -1,6 +1,7 @@
 declare namespace Geomorph {
   
   type Poly = import('../geom').Poly;
+  type Vect = import('../geom').Vect;
 
   /** Generated via `yarn svg-meta`. */
   export type SvgJson = Record<string, ParsedSymbol<Geom.GeoJsonPolygon>>;
@@ -54,9 +55,15 @@ declare namespace Geomorph {
     navPoly: Poly[];
   }
 
-  export interface LayoutWithLayers extends Layout {
-    overlay: string;
-    underlay: string;
+  export interface BrowserLayout {
+    dataUrl: string;
+    pngRect: Geom.RectJson;
+    doors: Poly[];
+    labels: {
+      center: Vect;
+      text: string;
+    }[];
+    pngHref: string;
   }
 
   export interface LayoutDef {
