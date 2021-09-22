@@ -351,6 +351,7 @@ export class Poly {
   reverse() {
     this.outline.reverse();
     this.holes.forEach(hole => hole.reverse());
+    return this;
   }
 
   /** Mutate vectors by rounding. */

@@ -40,12 +40,12 @@ Each __TODO__ should either:
 
 ### General requirements for initial release
 
-- NavDemo working as before, now via port
 - Create geomorph 101
 - Script can generate .debug.png with doors/labels/etc.
 - Add missing labels
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
+- ✅ NavDemo working as before, now via port of three-pathfinding
 - ✅ Can show labels
 - ✅ Provide geomorphs as PNGs and JSON with navmesh
 - ✅ remove recast-detour

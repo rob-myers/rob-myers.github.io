@@ -76,6 +76,9 @@ export class Utils {
   }
 
   /**
+   * We had to negate the [original function](https://github.com/donmccurdy/three-pathfinding/blob/cd985050fd8286c3df006543c9272e02fffaacd1/src/Utils.js#L55)
+   * presumably because our polygon-orientation-convention differs.
+   * We assume outer polygons (e.g. triangles) are clockwise w.r.t. (x right, y down).
    * @param {Geom.VectJson} a 
    * @param {Geom.VectJson} b 
    * @param {Geom.VectJson} c 
@@ -85,7 +88,8 @@ export class Utils {
     var az = b.y - a.y;
     var bx = c.x - a.x;
     var bz = c.y - a.y;
-    return bx * az - ax * bz;
+    // return bx * az - ax * bz;
+    return -(bx * az - ax * bz);
   }
 
   /**

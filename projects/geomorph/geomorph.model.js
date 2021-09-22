@@ -61,7 +61,7 @@ export function createLayout(def, lookup) {
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
     groups.walls.flatMap(x => x.createOutset(12)),
     groups.obstacles.flatMap(x => x.createOutset(8)),
-  ), hullOutline).map(x => x.cleanFinalReps().precision(1));
+  ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
   return {
     def,

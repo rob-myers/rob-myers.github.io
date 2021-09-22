@@ -1,5 +1,5 @@
 declare namespace Nav {
-  import { Vect } from '../geom';
+  type Vect = import('../geom').Vect;
   
   export type Graph = GraphNode[];
 

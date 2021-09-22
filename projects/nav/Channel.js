@@ -26,10 +26,10 @@ export class Channel {
     /** @type {Vect[]} */
     const pts = [];
     // Init scan state
-    let portalApex, portalLeft, portalRight;
-    let apexIndex = 0,
-      leftIndex = 0,
-      rightIndex = 0;
+    /** @type {Vect} */ let portalApex;
+    /** @type {Vect} */ let portalLeft;
+    /** @type {Vect} */ let portalRight;
+    let apexIndex = 0, leftIndex = 0, rightIndex = 0;
 
     portalApex = portals[0].left;
     portalLeft = portals[0].left;
