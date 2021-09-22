@@ -9,6 +9,7 @@ declare namespace Geomorph {
     wallBounds?: boolean;
     navTris?: boolean;
     doors?: boolean;
+    labels?: boolean;
   }
 
   /** Generated via `yarn svg-meta`. */

@@ -13,7 +13,7 @@ import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle } from '..
  */
 export async function renderGeomorph(
   layout, lookup, canvas, getPng,
-  { scale, obsBounds = true, wallBounds = true, navTris = false, doors = false },
+  { scale, obsBounds = true, wallBounds = true, navTris = false, doors = false, labels = false },
 ) {
   const hullSym = lookup[layout.items[0].key];
   const pngRect = hullSym.pngRect;
@@ -31,7 +31,7 @@ export async function renderGeomorph(
     const hullOutline = hullSym.hull[0].outline;
     fillRing(ctxt, hullOutline);
   } else {
-    console.error('hull walls: must exist, be connected and have a hole');
+    console.error('hull walls must: exist, be connected, have a hole');
   }
 
   ctxt.fillStyle = 'rgba(0, 0, 100, 0.2)';
@@ -76,9 +76,7 @@ export async function renderGeomorph(
 
   //#region overlay
   const { singles, obstacles, walls } = layout.groups;
-  // const labels = filterSingles(singles, 'label');
-  // ctxt.fillStyle = 'rgba(0, 0, 0, 0.1)';
-  // fillPolygon(ctxt, labels);
+
   ctxt.fillStyle = 'rgba(0, 100, 0, 0.3)';
   obsBounds && fillPolygon(ctxt, obstacles);
   ctxt.fillStyle = 'rgba(100, 0, 0, 0.3)';
@@ -91,6 +89,7 @@ export async function renderGeomorph(
       fillPolygon(ctxt, [poly]);
     }
   });
+
   if (doors) {
     const doors = singlesToPolys(singles, 'door');
     ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
@@ -98,6 +97,14 @@ export async function renderGeomorph(
     ctxt.fillStyle = 'rgba(255, 255, 255, 1)';
     fillPolygon(ctxt, doors.flatMap(x => x.createInset(2)));
   }
+
+  if (labels) {
+    // TODO draw labels
+    // const labels = filterSingles(singles, 'label');
+    // ctxt.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    // fillPolygon(ctxt, labels);
+  }
+
   //#endregion
 }
 
