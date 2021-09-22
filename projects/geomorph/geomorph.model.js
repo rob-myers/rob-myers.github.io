@@ -111,7 +111,15 @@ export function parseStarshipSymbol(symbolName, svgContents) {
  * @param {string} tag Restrict to singles with this tags
  */
 export function singlesToPolys(singles, tag) {
-  return singles.filter(x => x.tags.includes(tag)).map(x => x.poly);
+  return  filterSingles(singles, tag).map(x => x.poly);
+}
+
+/**
+ * @param {{ tags: string[]; poly: Poly }[]} singles 
+ * @param {string} tag Restrict to singles with this tags
+ */
+export function filterSingles(singles, tag) {
+  return singles.filter(x => x.tags.includes(tag));
 }
 
 /**
