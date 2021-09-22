@@ -42,6 +42,7 @@ Each __TODO__ should either:
 ### General requirements for initial release
 
 - Provide geomorphs as PNGs and JSON with navmesh
+- can show labels
 - NavDemo working as before, now via port
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
@@ -67,7 +68,6 @@ Each __TODO__ should either:
 - convert 302 too
   - satellite and labels remain
 - emphasise render-once approach to React in intro
-- can show labels
 - CSS character spritesheet based on Teleglitch
 - static lighting (shadow maps)
 

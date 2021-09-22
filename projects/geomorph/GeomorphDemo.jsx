@@ -27,26 +27,11 @@ function Geomorph({ def, transform }) {
   return gm ? (
     <g transform={transform}>
       {/* <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/> */}
-      <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * 2} y={gm.pngRect.y * 2} />
+      <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
       {gm.doors.map((door, i) => <polygon className="door" points={`${door.outline}`} />)}
     </g>
   ) : null;
 }
-
-const initViewBox = new Rect(0, 0, 1200, 600);
-const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const rootCss = css`
-  height: 100%;
-  image.debug {
-    opacity: 0.5;
-  }
-  image.geomorph {
-    transform: scale(0.5);
-  }
-  polygon.door {
-    fill: red;
-  }
-`;
 
 /**
  * @param {Geomorph.LayoutDef} def
@@ -60,6 +45,7 @@ async function computeLayout(def) {
     symbolLookup,
     canvas,
     (pngHref) => loadImage(pngHref),
+    scale,
   );
   return {
     ...layout,
@@ -70,3 +56,20 @@ async function computeLayout(def) {
     doors: filterSingles(layout.groups.singles, 'door'),
   };
 }
+
+const scale = 4;
+const initViewBox = new Rect(0, 0, 1200, 600);
+const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
+
+const rootCss = css`
+  height: 100%;
+  image.debug {
+    opacity: 0.5;
+  }
+  image.geomorph {
+    transform: scale(${1 / scale});
+  }
+  polygon.door {
+    fill: red;
+  }
+`;

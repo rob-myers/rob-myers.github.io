@@ -5,9 +5,8 @@
 import fs from 'fs';
 import path from 'path';
 import util from 'util';
-import { createCanvas, loadImage } from 'canvas';
 import stream from 'stream';
-const pipeline = util.promisify(stream.pipeline);
+import { createCanvas, loadImage } from 'canvas';
 
 import layoutDefs from '../../projects/geomorph/layout-defs';
 import { createLayout, deserializeSvgJson } from '../../projects/geomorph/geomorph.model';
@@ -17,11 +16,13 @@ import { renderGeomorph } from '../../projects/geomorph/geomorph.render';
 // TODO output a single image (can change later)
 // TODO output JSON info about doors/navmesh
 
-// const def = layoutDefs['g-302--xboat-repair-bay'];
-const def = layoutDefs['g-301--bridge'];
 const pngInputDir = path.resolve(__dirname, '../../public');
 const outputDir = path.resolve(__dirname, '../unsorted/test');
 fs.mkdirSync(outputDir, { recursive: true });
+
+// const def = layoutDefs['g-302--xboat-repair-bay'];
+const def = layoutDefs['g-301--bridge'];
+const scale = 2;
 
 /** @param {Geomorph.LayoutDef} def */
 async function computeLayout(def) {
@@ -32,18 +33,19 @@ async function computeLayout(def) {
     layout,
     symbolLookup,
     canvas,
-    (pngHref) => loadImage(fs.readFileSync(
-      path.resolve(pngInputDir, pngHref.slice(1))
-    )),
+    (pngHref) => loadImage(fs.readFileSync(path.resolve(pngInputDir, pngHref.slice(1)))),
+    scale,
   );
   return { layout, canvas };
 }
 
 (async function run() {
   const { layout, canvas } = await computeLayout(def);
+  const pipeline = util.promisify(stream.pipeline);
 
   Promise.all([
-    pipeline(canvas.createPNGStream(),
+    pipeline(
+      canvas.createPNGStream(),
       fs.createWriteStream(path.resolve(outputDir, 'canvas.png')),
     ),
   ]);

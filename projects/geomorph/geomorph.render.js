@@ -11,20 +11,22 @@ import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle } from '..
  * @param {Geomorph.SymbolLookup} lookup
  * @param {Canvas} canvas
  * @param {(pngHref: string) => Promise<Image>} getPng
+ * @param {number} scale
  */
 export async function renderGeomorph(
   layout,
   lookup,
   canvas,
   getPng,
+  scale,
 ) {
   const hullSym = lookup[layout.items[0].key];
-
   const pngRect = hullSym.pngRect;
-  canvas.width = pngRect.width * 2, canvas.height = pngRect.height * 2;
+  canvas.width = pngRect.width * scale, canvas.height = pngRect.height * scale;
+
   /** @type {CanvasRenderingContext2D} */
   const ctxt = (canvas.getContext('2d'));
-  ctxt.scale(2, 2);
+  ctxt.scale(scale, scale);
   ctxt.translate(-pngRect.x, -pngRect.y);
 
   //#region underlay
@@ -63,10 +65,9 @@ export async function renderGeomorph(
 
   //#region symbol PNGs
   const innerItems = layout.items.slice(1);
-  
   for (const { pngHref, pngRect, transformArray } of innerItems) {
-    const image = await getPng(pngHref);
     ctxt.save();
+    const image = await getPng(pngHref);
     transformArray && ctxt.transform(...transformArray);
     ctxt.scale(0.2, 0.2);
     ctxt.drawImage(/** @type {*} */ (image), pngRect.x, pngRect.y);
@@ -77,12 +78,13 @@ export async function renderGeomorph(
   //#region overlay
   const { singles, obstacles, walls } = layout.groups;
   const labels = filterSingles(singles, 'label');
+
   ctxt.fillStyle = 'rgba(0, 100, 0, 0.3)';
   fillPolygon(ctxt, obstacles);
   ctxt.fillStyle = 'rgba(100, 0, 0, 0.3)';
   fillPolygon(ctxt, walls);
-  ctxt.fillStyle = 'rgba(0, 0, 0, 0.1)';
-  fillPolygon(ctxt, labels);
+  // ctxt.fillStyle = 'rgba(0, 0, 0, 0.1)';
+  // fillPolygon(ctxt, labels);
   ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(ctxt, layout.hullTop);
   singles.forEach(({ poly, tags }) => {
