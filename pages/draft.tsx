@@ -186,7 +186,8 @@ Behaviourally:
 
 - _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
-- _Grid_ renders part of an SVG i.e. a grid obtained by repeating a 10x10 unit pattern.
+- _Grid_ renders part of an SVG i.e. two grid patterns.
+  They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
 
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
 Notice _PanZoom_ renders _Grid_ by using the XML tag \`<Grid/>\`.
