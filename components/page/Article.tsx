@@ -20,6 +20,15 @@ export default function Article(props: React.PropsWithChildren<{
 }
 
 const blogCss = css`
+  position: relative;
+  > time {
+    position: absolute; right: -10px; top: -50px;
+    background: #ccc; color: #555;
+    border-radius: 6px 6px 0 0;
+    padding: 12px;
+    font-size: 1rem;
+  }
+
 
   line-height: 1.6;
   font-size: 1.2rem;
