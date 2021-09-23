@@ -29,7 +29,7 @@ export default function Tabs(props: Props) {
 
   const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
   const [enabled, setEnabled] = React.useState(!!props.enabled);
-  React.useEffect(() => void setColour(props.enabled ? 'clear' : 'faded'), []);
+  React.useEffect(() => void setColour(enabled ? 'clear' : 'faded'), []);
 
   return (
     <div
@@ -61,7 +61,7 @@ interface Props {
 const rootCss = (height: number) => css`
   background: var(--focus-bg);
 
-  padding: 16px 0;
+  padding: 24px 0 20px;
   @media(max-width: 800px) {
     padding: 12px 0;
   }
