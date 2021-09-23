@@ -30,6 +30,7 @@ const blogCss = css`
     border-radius: 6px 6px 0 0;
     padding: 12px;
     font-size: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
     @media(max-width: 800px) {
       top: 16px;

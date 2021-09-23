@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
 import Markdown from './Markdown';
@@ -5,7 +6,7 @@ import Markdown from './Markdown';
 export default function Title() {
   return (
     <header className={classNames('title', titleCss)}>
-      <Markdown title children={`
+      <Markdown components={titleComponents} children={`
 # Rogue Markup
 
 $( game ai | roguelike | web dev )
@@ -13,6 +14,20 @@ $( game ai | roguelike | web dev )
     </header>
   );
 }
+
+const titleComponents = {
+  h1({ children, ...props }: any) {
+    const router = useRouter();
+    return (
+      <h1
+        onClick={() => router.push('/')}
+        {...props}
+      >
+        {children}
+      </h1>
+    );
+  },
+};
 
 const titleCss = css`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -40,7 +55,7 @@ const titleCss = css`
   
   /** Site subtitle */
   p {
-    color: #444;
+    color: #666;
     letter-spacing: 2px;
     font-size: 1.4rem;
     margin: 0;
