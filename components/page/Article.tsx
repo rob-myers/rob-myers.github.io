@@ -20,26 +20,6 @@ export default function Article(props: React.PropsWithChildren<{
 }
 
 const blogCss = css`
-  position: relative;
-  > time {
-    position: absolute;
-    right: -10px;
-    top: -50px;
-    background: var(--border-bg);
-    color: #555;
-    border-radius: 6px 6px 0 0;
-    padding: 12px;
-    font-size: 1rem;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-
-    @media(max-width: 800px) {
-      top: 16px;
-      right: 0;
-      border-radius: 0 0 0 4px;
-      background: none;
-      font-size: 1.1rem;
-    }
-  }
 
   line-height: 1.6;
   font-size: 1.2rem;
@@ -62,6 +42,27 @@ const blogCss = css`
     padding: 8px 12px;
     font-size: 1.1rem;
     border: none;
+  }
+
+  position: relative;
+  > time {
+    position: absolute;
+    right: -10px;
+    top: -50px;
+    background: var(--border-bg);
+    color: #555;
+    border-radius: 6px 6px 0 0;
+    padding: 12px;
+    font-size: 1rem;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+
+    @media(max-width: 800px) {
+      top: 16px;
+      right: 0;
+      border-radius: 0 0 0 4px;
+      background: none;
+      font-size: 1.1rem;
+    }
   }
 
   h1, h2, h3, h4 {
