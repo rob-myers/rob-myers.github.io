@@ -24,11 +24,17 @@ yet driven by the environment e.g. thousands of [Traveller-themed assets](http:/
 We'll focus on combining and managing navigation-based behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
 
-<!--
-Web development permits an open/extendable approach to building a game.
-On the other hand, realtime games push the boundaries of traditional web development,
-forcing us to take more care than usual.
--->
+_What about the graphics?_
+
+The image below  recreates Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html), using eight symbols from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+
+<!-- TODO resize img e.g. TinyPNG -->
+<image src="/geomorph/g-301--bridge.debug.png" style="width:100%" />
+
+The latter two PDFs were created by Robert Pearce, and will provide most of our graphical source material.
+He was inspired by [Traveller](https://www.farfuture.net/) and licensed his assets [accordingly](https://creativecommons.org/licenses/by-nc/4.0/).
+Subsequently, Eric B. Smith [transformed](http://gurpsland.no-ip.org/geomorphs/) these assets into transparent PNGs, and provided them under the same license.
+It is the latter 1000+ symbols which form the underlying basis of Rogue Markup.
         `}/>
 
       <Sep/>

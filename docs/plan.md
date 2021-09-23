@@ -7,7 +7,8 @@ Each __TODO__ should either:
 
 ### _Objective_ i.e. intro
 
-- Include images of Geomorphs with description 🚧
+- Include image of Geomorph with description ✅
+- Finalise image
 
 ### _Constraints_
 
@@ -18,7 +19,7 @@ Each __TODO__ should either:
 
 ### _Technology_ i.e. tech intro + js
 
-- `PanZoomDemo` uses some geomorph PNGs
+- `PanZoomDemo` uses some geomorph PNGs 🚧
 - Redo CodeSandbox
 - CodeSandbox link more prominent
 - Finish "React Renders and Web Components"
@@ -28,18 +29,19 @@ Each __TODO__ should either:
 
 - NavDemo: can drag navpath src/dst
 - NavDemo: can disable nav nodes
+- Write text
 
 ### _Technology (Part 3)_ i.e. static and runtime analysis
 
-...
+- Write text
 
 ### _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
 
-...
+- Write text
 
 ---
 
-### General requirements for initial release
+## TODO (unsorted)
 
 - Create geomorph 101
 - Script can generate .debug.png with doors/labels/etc.
@@ -51,11 +53,6 @@ Each __TODO__ should either:
 - ✅ Provide geomorphs as PNGs and JSON with navmesh
 - ✅ remove recast-detour
 - ✅ remove box2d-wasm
-
----
-
-## TODO (unsorted)
-
 - get projects/nav working
 - Use Web Animation API
   - path following
