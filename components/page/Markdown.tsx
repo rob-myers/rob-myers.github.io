@@ -101,6 +101,7 @@ const titleCss = css`
   @media(max-width: 600px) {
     padding-left: 8px;
     margin-top: 12px;
+    border-bottom: 1px solid #999;
   }
 
   h1 {
@@ -118,15 +119,17 @@ const titleCss = css`
     }
   }
   
-  p {/** Site subtitle */
+  /** Site subtitle */
+  p {
     color: #444;
     letter-spacing: 2px;
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     margin: 0;
-    padding: 40px 0 56px;
+    padding: 48px 0 64px;
     
     @media(max-width: 600px) {
-      padding: 20px 0 30px;
+      font-size: 1.1rem;
+      padding: 20px 0 24px;
     }
   }
 `;
@@ -135,13 +138,15 @@ const blogCss = css`
   line-height: 1.5;
   font-size: 1.2rem;
   background: #eee;
-  padding: 56px 80px 80px;
+  padding: 72px 96px 96px 96px;
 
-  &.bot-sm {
-    padding-bottom: 24px;
-  }
-  &.top-sm {
-    padding-top: 24px;
+  @media(min-width: 600px) {
+    &.bot-sm {
+      padding-bottom: 24px;
+    }
+    &.top-sm {
+      padding-top: 24px;
+    }
   }
   
   @media(max-width: 600px) {
@@ -203,7 +208,6 @@ const blogCss = css`
   }
 
   table {
-    background: var(--focus-bg);
     padding: 8px;
     border: 1px solid #bbb;
     width: 100%;
