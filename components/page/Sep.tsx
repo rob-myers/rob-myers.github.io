@@ -6,7 +6,8 @@ export default function Sep() {
 
 const rootCss = css`
   margin: 0;
-  border-color: rgba(0, 0, 0, 0.2);
+  border-color: var(--focus-bg);
+
   @media(min-width: 800px) {
     padding-bottom: 64px;
     border: 0;

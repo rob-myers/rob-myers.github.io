@@ -22,19 +22,29 @@ export default function Article(props: React.PropsWithChildren<{
 const blogCss = css`
   position: relative;
   > time {
-    position: absolute; right: -10px; top: -50px;
-    background: #ccc; color: #555;
+    position: absolute;
+    right: -10px;
+    top: -50px;
+    background: var(--border-bg);
+    color: #555;
     border-radius: 6px 6px 0 0;
     padding: 12px;
     font-size: 1rem;
-  }
 
+    @media(max-width: 800px) {
+      top: 16px;
+      right: 0;
+      border-radius: 0 0 0 4px;
+      background: none;
+      font-size: 1.1rem;
+    }
+  }
 
   line-height: 1.6;
   font-size: 1.2rem;
   background: var(--focus-bg);
-  padding: 64px 96px 96px 96px;
-  border: var(--blog-border-width) solid #ccc;
+  padding: 48px 96px 96px 96px;
+  border: var(--blog-border-width) solid var(--border-bg);
 
   @media(min-width: 800px) {
     &.bot-sm {
