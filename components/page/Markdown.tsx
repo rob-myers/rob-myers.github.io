@@ -98,7 +98,7 @@ const blogComponents = {
 const titleCss = css`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
-  @media(max-width: 600px) {
+  @media(max-width: 800px) {
     padding-left: 8px;
     margin-top: 12px;
     border-bottom: 1px solid #999;
@@ -114,7 +114,7 @@ const titleCss = css`
     @media(max-width: 800px) {
       font-size: 5rem;
     }
-    @media(max-width: 600px) {
+    @media(max-width: 800px) {
       font-size: 3.4rem;
     }
   }
@@ -127,7 +127,7 @@ const titleCss = css`
     margin: 0;
     padding: 48px 0 64px;
     
-    @media(max-width: 600px) {
+    @media(max-width: 800px) {
       font-size: 1.1rem;
       padding: 20px 0 24px;
     }
@@ -135,23 +135,27 @@ const titleCss = css`
 `;
 
 const blogCss = css`
-  line-height: 1.5;
+  line-height: 1.6;
   font-size: 1.2rem;
   background: #eee;
-  padding: 72px 96px 96px 96px;
+  padding: 64px 96px 96px 96px;
+  border: 10px solid #ccc;
 
-  @media(min-width: 600px) {
+  @media(min-width: 800px) {
     &.bot-sm {
       padding-bottom: 24px;
+      border-bottom: none;
     }
     &.top-sm {
       padding-top: 24px;
+      border-top: none;
     }
   }
   
-  @media(max-width: 600px) {
+  @media(max-width: 800px) {
     padding: 8px 12px;
     font-size: 1.1rem;
+    border: none;
   }
 
   h1, h2, h3, h4 {
@@ -160,26 +164,26 @@ const blogCss = css`
   }
   h2 {
     font-size: 2.4rem;
-    @media(max-width: 600px) {
+    @media(max-width: 800px) {
       margin: 16px 0 0 0;
       font-size: 1.8rem;
     }
   }
   h3 {
     font-size: 1.6rem;
-    @media(max-width: 600px) {
+    @media(max-width: 800px) {
       font-size: 1.3em;
     }
   }
 
   blockquote {
-    @media(max-width: 600px) {
+    @media(max-width: 800px) {
       margin-left: 16px;
     }
   }
   
   ul, ol {
-    @media(max-width: 600px) {
+    @media(max-width: 800px) {
       padding-left: 32px;
     }
     + p {
@@ -216,7 +220,7 @@ const blogCss = css`
     padding: 8px;
     border: 1px solid #bbb;
     width: 100%;
-    @media(min-width: 600px) {
+    @media(min-width: 800px) {
       margin: 32px 0;
     }
 

@@ -18,10 +18,6 @@ export const rootCss = css`
   padding-bottom: 2rem;
   max-width: 1024px;  
   margin: 0 auto;
-  
-  @media(max-width: 700px) {
-    margin: 0;
-  }
 
   > section {
     padding: 48px 64px;
@@ -30,9 +26,6 @@ export const rootCss = css`
       margin: 0;
     }
     @media(max-width: 800px) {
-      padding: 32px 64px;
-    }
-    @media(max-width: 600px) {
       padding: 0;
     }
   }
