@@ -1,6 +1,5 @@
 import { css } from "goober";
 import Title from "./Title";
-import Sep from "./Sep";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
   return (
@@ -17,7 +16,7 @@ export const rootCss = css`
   display: flex;
   flex-direction: column;
   padding-bottom: 2rem;
-  max-width: 880px;  
+  max-width: 1024px;  
   margin: 0 auto;
   
   @media(max-width: 700px) {

@@ -59,7 +59,7 @@ interface Props {
 }
 
 const rootCss = (height: number) => css`
-  padding: 0 64px;
+  padding: 0 80px;
   background: #eee;
   @media(max-width: 600px) {
     padding: 0 12px;

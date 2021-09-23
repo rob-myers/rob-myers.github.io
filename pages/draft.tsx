@@ -117,7 +117,7 @@ Here's hoping my chain of unfinished projects is coming to a close!
 
       <Sep/>
 
-      <Markdown children={`
+      <Markdown className="bot-sm" children={`
 ## Technology  <float rem="1.2">19th July 2021</float>
 
 So, we're building a roguelike, directly on this website.
@@ -180,7 +180,7 @@ Let's consider an example, a pannable and zoomable grid.
         ]}
       />
 
-      <Markdown children={`
+      <Markdown className="top-sm bot-sm" children={`
 The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code--panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
@@ -225,7 +225,7 @@ Here's a whirlwind overview of React (and Preact).
         ]}
       />
 
-      <Markdown children={`
+      <Markdown className="top-sm bot-sm" children={`
 <!--
 So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
 We're using Preact (its codebase is smaller, and it has reputation for being faster,
@@ -264,7 +264,7 @@ Take another look at _panzoom/PanZoom.jsx_.
         ]}
       />
 
-      <Markdown children={`
+      <Markdown className="top-sm" children={`
 
 _PanZoom_ returns an \`<svg/>\` with a viewBox attribute determined by _state.viewBox_.
 When a user zooms via mousewheel, the event handler _state.onWheel_ updates _state.viewBox_.
@@ -298,7 +298,7 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
 
       <Sep/>
 
-      <Markdown children={`
+      <Markdown className="bot-sm" children={`
 ## Technology (Part 2)
 
 ### Navigation
@@ -316,7 +316,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
         ]}
       />
 
-      <Markdown children={`
+      <Markdown className="top-sm" children={`
 ### Raycasting
 
 ...
@@ -343,7 +343,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 
       <Sep/>
 
-      <Markdown children={`
+      <Markdown className="bot-sm" children={`
 ## Starship Geomorphs <float rem="1.2">19th July 2021</float>
 
 ### Filesystem structure
@@ -388,7 +388,7 @@ public/svg
         ]}
       />
 
-      <Markdown children={`
+      <Markdown className="top-sm" children={`
 ...
       `}/>
 

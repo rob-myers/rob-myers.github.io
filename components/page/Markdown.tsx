@@ -15,6 +15,8 @@ export default function Markdown(
   return (
     <div
       className={classNames(
+        props.className,
+        props.title ? 'title' : 'blog',
         props.title ? titleCss : blogCss,
       )}
     >
@@ -133,7 +135,14 @@ const blogCss = css`
   line-height: 1.5;
   font-size: 1.2rem;
   background: #eee;
-  padding: 40px 64px 64px;
+  padding: 56px 80px 80px;
+
+  &.bot-sm {
+    padding-bottom: 24px;
+  }
+  &.top-sm {
+    padding-top: 24px;
+  }
   
   @media(max-width: 600px) {
     padding: 8px 12px;
