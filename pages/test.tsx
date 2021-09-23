@@ -6,7 +6,7 @@ export default function TestPage() {
   return (
     <Main>
 
-      <Markdown children={`
+      <Markdown className="bot-sm" children={`
 ## Test page <float rem="1.2">19th July 2021</float>
 
         `}/>
@@ -18,6 +18,11 @@ export default function TestPage() {
           { key: 'terminal', session: 'other' },
         ]}
       />
+
+      <Markdown className="top-sm" children={`
+...
+
+        `}/>
 
     </Main>
   );
