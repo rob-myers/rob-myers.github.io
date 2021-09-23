@@ -44,7 +44,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 <!-- - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics. -->
 - Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
-- Use [Preact](https://www.npmjs.com/package/preact) (not React), and [Goober](https://www.npmjs.com/package/goober) (not [Emotion](https://www.npmjs.com/package/@emotion/styled)).
+- Use [Preact](https://www.npmjs.com/package/preact) (like React), and [Goober](https://www.npmjs.com/package/goober) (like [Emotion](https://www.npmjs.com/package/@emotion/styled)).
 - Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
 - Use [NextJS](https://nextjs.org/) as our dev env.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
@@ -299,7 +299,7 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
       <Sep/>
 
       <Markdown className="bot-sm" children={`
-## Technology (Part 2)
+## Technology (Part 2) <float rem="1.2">19th July 2021</float>
 
 ### Navigation
 
@@ -309,7 +309,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
       `}/>
 
       <Tabs
-        enabled
+        // enabled
         height={400}
         tabs={[
           { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
@@ -325,7 +325,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
       <Sep/>
 
       <Markdown children={`
-## Technology (Part 3)
+## Technology (Part 3) <float rem="1.2">19th July 2021</float>
 
 ### Static Analysis
 

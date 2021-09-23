@@ -7,11 +7,11 @@ Each __TODO__ should either:
 
 ### _Objective_ i.e. intro
 
-- Include some images of Geomorphs, possibly with/without meta polygons
+- Include images of Geomorphs with description 🚧
 
 ### _Constraints_
 
-- Link to a CodeSandbox
+- Link to a CodeSandbox 🚧
 - Image of a navpath and a raycast
 - Image related to Bardo Thodol
 - Different Geomorphs being connected
@@ -24,9 +24,10 @@ Each __TODO__ should either:
 - Finish "React Renders and Web Components"
 - Finish "CSS inside JS"
 
-### _Technology (Part 2)_ i.e. navigation and raycasting
+### _Technology (Part 2)_ i.e. nav and raycast
 
-...
+- NavDemo: can drag navpath src/dst
+- NavDemo: can disable nav nodes
 
 ### _Technology (Part 3)_ i.e. static and runtime analysis
 
@@ -42,7 +43,7 @@ Each __TODO__ should either:
 
 - Create geomorph 101
 - Script can generate .debug.png with doors/labels/etc.
-- Add missing labels
+- Add missing labels to 301  and 302
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
 - ✅ NavDemo working as before, now via port of three-pathfinding
@@ -67,8 +68,6 @@ Each __TODO__ should either:
 - use in `PanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
 
-- convert 302 too
-  - labels remain
 - emphasise render-once approach to React in intro
 - CSS character spritesheet based on Teleglitch
 - static lighting (shadow maps)
@@ -76,13 +75,12 @@ Each __TODO__ should either:
 - demos should always involve starship geomorphs
 - write Navigation subsection
 - write Physics engine subsection
-- use geomorph in `NavDemo`
 - save tabs state to browser state (?)
 - investigate poly refinement
   - Ruppert's Delaunay Refinement Algorithm
   - https://www.cs.cmu.edu/~quake/tripaper/triangle3.html
-- destructuble walls?
-- can clamber over machinery?
+- motion scheduler knows 2-way passages & wait points
+- ✅ use geomorph in `NavDemo`
 - ✅ can enable/disable Tabs
 - ✅ Tabs only show "loading" first time
 - ✅ labels now part of singles
