@@ -137,9 +137,9 @@ const titleCss = css`
 const blogCss = css`
   line-height: 1.6;
   font-size: 1.2rem;
-  background: #eee;
+  background: var(--focus-bg);
   padding: 64px 96px 96px 96px;
-  border: 10px solid #ccc;
+  border: var(--blog-border-width) solid #ccc;
 
   @media(min-width: 800px) {
     &.bot-sm {

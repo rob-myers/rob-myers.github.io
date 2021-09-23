@@ -60,9 +60,9 @@ interface Props {
 
 const rootCss = (height: number) => css`
   padding: 0 96px;
-  background: #eee;
-  border: 10px solid #ccc;
-  border-width: 0 10px;
+  background: var(--focus-bg);
+  border: 0 solid #ccc;
+  border-width: 0 var(--blog-border-width);
 
   @media(max-width: 800px) {
     padding: 0 12px;

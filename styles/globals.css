@@ -1,6 +1,7 @@
 :root {
   --body-bg: #ddd;
   --focus-bg: #eee;
+  --blog-border-width: 2px;
 }
 
 * {

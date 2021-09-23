@@ -29,6 +29,6 @@ const rootCss = css`
     margin: 0;
     font-family: monospace;
     font-size: 16px;
-    background: #eee;
+    background: var(--focus-bg);
   }
 `;
