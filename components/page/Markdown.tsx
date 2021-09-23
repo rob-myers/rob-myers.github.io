@@ -159,11 +159,16 @@ const blogCss = css`
     font-weight: 400;
   }
   h2 {
-    font-size: 2rem;
+    font-size: 2.4rem;
     @media(max-width: 600px) {
-      margin: 0;
-      margin-top: 16px;
+      margin: 16px 0 0 0;
       font-size: 1.8rem;
+    }
+  }
+  h3 {
+    font-size: 1.6rem;
+    @media(max-width: 600px) {
+      font-size: 1.3em;
     }
   }
 

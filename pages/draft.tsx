@@ -129,7 +129,7 @@ But first we'll describe the underlying technologies.
 | Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and [Web Components](https://reactjs.org/docs/web-components.html). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober) & programmatically. |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Pathfinding | A port of [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
+| Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | Our own in-browser terminal. |
 | Code viewing | [CodeMirror](https://codemirror.net/) to view JS. |
