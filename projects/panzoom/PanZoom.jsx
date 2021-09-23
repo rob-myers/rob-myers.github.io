@@ -112,6 +112,7 @@ export default function PanZoom(props) {
       <g className="content">
         {props.children}
       </g>
+      {/** @ts-ignore */}
       <Grid bounds={props.gridBounds} />
     </svg>
   );
@@ -128,53 +129,31 @@ export default function PanZoom(props) {
 
 /** @param {{ bounds: Rect }} props */
 function Grid(props) {
-  const gridId = 'pattern-grid-10-10';
-  const bigGridId = 'pattern-grid-60-60';
-
-  return <>
-    <defs>
-      <pattern
-        id={gridId}
-        width="10" 
-        height="10"
-        patternUnits="userSpaceOnUse"
-      >
-        <path
-          d="M 10 0 L 0 0 0 10"
-          fill="none"
-          stroke="rgba(0,0,0,0.5)"
-          strokeWidth="0.3"
-        />
-      </pattern>
-      <pattern
-        id={bigGridId}
-        width="60" 
-        height="60"
-        patternUnits="userSpaceOnUse"
-      >
-        <path
-          d="M 60 0 L 0 0 0 60"
-          fill="none"
-          stroke="rgba(0,0,0,0.5)"
-          strokeWidth="0.4"
-        />
-      </pattern>
-    </defs>
-    <rect
-      className="grid"
-      x={props.bounds.x}
-      y={props.bounds.y}
-      width={props.bounds.width}
-      height={props.bounds.height}
-      fill={`url(#${gridId})`}
-    />
-    <rect
-      className="grid"
-      x={props.bounds.x}
-      y={props.bounds.y}
-      width={props.bounds.width}
-      height={props.bounds.height}
-      fill={`url(#${bigGridId})`}
-    />
-  </>;
+  return [10, 60].map(dim =>
+    <>
+      <defs>
+        <pattern
+          id={`pattern-grid-${dim}-${dim}`}
+          width={dim}
+          height={dim}
+          patternUnits="userSpaceOnUse"
+        >
+          <path
+            d={`M ${dim} 0 L 0 0 0 ${dim}`}
+            fill="none"
+            stroke="rgba(0,0,0,0.5)"
+            strokeWidth="0.3"
+          />
+        </pattern>
+      </defs>
+      <rect
+        className="grid"
+        x={props.bounds.x}
+        y={props.bounds.y}
+        width={props.bounds.width}
+        height={props.bounds.height}
+        fill={`url(#pattern-grid-${dim}-${dim})`}
+      />
+    </>
+  );
 }
