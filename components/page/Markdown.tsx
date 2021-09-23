@@ -176,23 +176,14 @@ const blogCss = css`
     }
   }
 
+  a code {
+    color: unset;
+  }
+
   blockquote {
     @media(max-width: 800px) {
       margin-left: 16px;
     }
-  }
-  
-  ul, ol {
-    @media(max-width: 800px) {
-      padding-left: 32px;
-    }
-    + p {
-      padding-top: 6px;
-    }
-  }
-
-  ul li, ol li {
-    margin: 4px 0;
   }
 
   code {
@@ -201,8 +192,11 @@ const blogCss = css`
     color: #444;
   }
 
-  a code {
-    color: unset;
+  > img {
+    margin: 12px 0 8px;
+    @media(max-width: 800px) {
+      margin: 8px 0;
+    }
   }
 
   span.float {
@@ -232,5 +226,18 @@ const blogCss = css`
         padding: 4px 2px;
       }
     }
+  }
+
+  ul, ol {
+    @media(max-width: 800px) {
+      padding-left: 32px;
+    }
+    + p {
+      padding-top: 6px;
+    }
+  }
+
+  ul li, ol li {
+    margin: 4px 0;
   }
 `;
