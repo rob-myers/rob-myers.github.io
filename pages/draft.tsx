@@ -2,13 +2,15 @@ import Main from 'components/page/Main';
 import Sep from 'components/page/Sep';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
+import Article from 'components/page/Article';
 
 export default function DraftPage() {
   return (
     <Main>
 
-      <Markdown children={`
-## Objective <float rem="1.2">19th July 2021</float>
+      <Article dateTime="2021-07-19" dateText="19th July 2021">
+        <Markdown children={`
+## Objective
 
 We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
 set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
@@ -26,21 +28,22 @@ Game AI should be compositional, not forced into a straight-jacket.
 
 _What about the graphics?_
 
-The image below  recreates Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html), using eight symbols from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+As a sneak peek, consider the image below.
+It recreates Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html), using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 
 <!-- TODO resize img e.g. TinyPNG -->
 <image src="/geomorph/g-301--bridge.debug.png" style="width:100%" />
 
-The latter two PDFs were created by Robert Pearce, and will provide most of our graphical source material.
+The original graphics were created by Robert Pearce, and provided in PDF format on his website.
 He was inspired by [Traveller](https://www.farfuture.net/) and licensed his assets [accordingly](https://creativecommons.org/licenses/by-nc/4.0/).
-Subsequently, Eric B. Smith [transformed](http://gurpsland.no-ip.org/geomorphs/) these assets into transparent PNGs, and provided them under the same license.
-It is the latter 1000+ symbols which form the underlying basis of Rogue Markup.
+Subsequently, Eric B. Smith [transformed](http://gurpsland.no-ip.org/geomorphs/) them into transparent PNGs, distributed under the same license.
+It is these 1000+ symbols which form the underlying basis of Rogue Markup.
         `}/>
+      </Article>
 
-      <Sep/>
-
-      <Markdown children={`
-## Constraints <float rem="1.2">19th July 2021</float>
+      <Article dateTime="2021-07-19" dateText="19th July 2021">
+        <Markdown children={`
+## Constraints
 
 This project needs a backbone.
 We've chosen the underlying technology, low-level game mechanics, and where events take place.
@@ -119,12 +122,12 @@ I have a [strong background](https://dblp.org/pid/81/8748.html) in Theoretical C
 so won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
 I have also created similar game mechanics _many_ times over the years.
 Here's hoping my chain of unfinished projects is coming to a close!
-      `}/>
+        `}/>
+      </Article>
 
-      <Sep/>
-
-      <Markdown className="bot-sm" children={`
-## Technology  <float rem="1.2">19th July 2021</float>
+      <Article dateTime="2021-07-19" dateText="19th July 2021">
+        <Markdown className="bot-sm" children={`
+## Technology
 
 So, we're building a roguelike, directly on this website.
 It will start to get fun once things are moving about.
@@ -159,7 +162,7 @@ In particular, JavaScript has become the central web technology.
 ### React and Preact
 
 Competing JavaScript frameworks exist, usually with their own notion of _component_.
-One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return values.
+One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return value.
 
 - They have a single parameter, conventionally called _props_.
 
@@ -174,19 +177,19 @@ One popular approach uses _React function components_, which are just JavaScript
 React developers use a grammatical extension of JavaScript called JSX.
 It permits composing components using an XML-like syntax, to obtain the desired dynamic DOM tree.
 Let's consider an example, a pannable and zoomable grid.
-      `}/>
+        `}/>
 
-      <Tabs
-        storeKey="panzoom"
-        height={400}
-        tabs={[
-          { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
-          { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
-          { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
-        ]}
-      />
+        <Tabs
+          storeKey="panzoom"
+          height={400}
+          tabs={[
+            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+            { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
+            { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
+          ]}
+        />
 
-      <Markdown className="top-sm bot-sm" children={`
+        <Markdown className="top-sm bot-sm" children={`
 The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code--panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
@@ -221,17 +224,17 @@ Here's a whirlwind overview of React (and Preact).
 - If \`<App/>\` is a website, it is often [rendered as HTML server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js), so the client can render it immediately.
   The client then invokes [\`ReactDOM.hydrate\`](https://github.com/preactjs/preact/blob/master/src/render.js) instead of \`ReactDOM.render\`, but with the same arguments.
 -->
-      `}/>
+        `}/>
 
-      <Tabs
-        storeKey="jsx-to-js"
-        height={340}
-        tabs={[
-          { key: 'code', filepath: 'example/jsx-to-js.jsx' },
-        ]}
-      />
+        <Tabs
+          storeKey="jsx-to-js"
+          height={340}
+          tabs={[
+            { key: 'code', filepath: 'example/jsx-to-js.jsx' },
+          ]}
+        />
 
-      <Markdown className="top-sm bot-sm" children={`
+        <Markdown className="top-sm bot-sm" children={`
 <!--
 So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
 We're using Preact (its codebase is smaller, and it has reputation for being faster,
@@ -260,17 +263,17 @@ We want to control the rendering as much as possible, to ensure good performance
 If we allowed React (actually, Preact) to render in response to user interaction, we'd lose this control.
 Take another look at _panzoom/PanZoom.jsx_.
 
-      `}/>
+        `}/>
 
-      <Tabs
-        height={360}
-        tabs={[
-          { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
-          { key: 'code', filepath: 'geom/rect.js' },
-        ]}
-      />
+        <Tabs
+          height={360}
+          tabs={[
+            { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
+            { key: 'code', filepath: 'geom/rect.js' },
+          ]}
+        />
 
-      <Markdown className="top-sm" children={`
+        <Markdown className="top-sm" children={`
 
 _PanZoom_ returns an \`<svg/>\` with a viewBox attribute determined by _state.viewBox_.
 When a user zooms via mousewheel, the event handler _state.onWheel_ updates _state.viewBox_.
@@ -300,38 +303,38 @@ linked in the \`<head/>\` and referenced by DOM elements via their space-separat
 Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
-      `}/>
+        `}/>
+      </Article>
 
-      <Sep/>
-
-      <Markdown className="bot-sm" children={`
-## Technology (Part 2) <float rem="1.2">19th July 2021</float>
+      <Article dateTime="2021-07-19" dateText="19th July 2021">
+        <Markdown className="bot-sm" children={`
+## Technology (Part 2)
 
 ### Navigation
 
 Pathfinding is central to Game AI.
 Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors.
 
-      `}/>
+        `}/>
 
-      <Tabs
-        // enabled
-        height={400}
-        tabs={[
-          { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
-        ]}
-      />
+        <Tabs
+          // enabled
+          height={400}
+          tabs={[
+            { key: 'component', filepath: 'pathfinding/NavDemo.jsx' },
+          ]}
+        />
 
-      <Markdown className="top-sm" children={`
+        <Markdown className="top-sm" children={`
 ### Raycasting
 
 ...
-      `}/>
+        `}/>
+      </Article>
 
-      <Sep/>
-
-      <Markdown children={`
-## Technology (Part 3) <float rem="1.2">19th July 2021</float>
+      <Article dateTime="2021-07-19" dateText="19th July 2021">
+        <Markdown children={`
+## Technology (Part 3)
 
 ### Static Analysis
 
@@ -345,12 +348,12 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 
 - Display GitHub comments from Issue (build-time)
 - Can use anonymous credits to get recent
-      `}/>
+        `}/>
+      </Article>
 
-      <Sep/>
-
-      <Markdown className="bot-sm" children={`
-## Starship Geomorphs <float rem="1.2">19th July 2021</float>
+      <Article dateTime="2021-07-19" dateText="19th July 2021">
+        <Markdown className="bot-sm" children={`
+## Starship Geomorphs
 
 ### Filesystem structure
 
@@ -384,24 +387,21 @@ public/png
 public/svg
 - Enriched symbols
 - Geomorph hulls
-      `}/>
+        `}/>
 
-      <Tabs
-        // enabled
-        height={400}
-        tabs={[
-          { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },
-        ]}
-      />
+        <Tabs
+          // enabled
+          height={400}
+          tabs={[
+            { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },
+          ]}
+        />
 
-      <Markdown className="top-sm" children={`
-...
-      `}/>
+        <Markdown className="top-sm" children={`
+  ...
+        `}/>
+      </Article>
 
     </Main>
   );
 }
-
-const env = {
-  test: {},
-};

@@ -19,7 +19,7 @@ Each __TODO__ should either:
 
 ### _Technology_ i.e. tech intro + js
 
-- `PanZoomDemo` uses some geomorph PNGs 🚧
+- `PanZoomDemo` uses a Geomorph PNG 🚧
 - Redo CodeSandbox
 - CodeSandbox link more prominent
 - Finish "React Renders and Web Components"

@@ -59,14 +59,11 @@ interface Props {
 }
 
 const rootCss = (height: number) => css`
-  padding: 0 96px;
   background: var(--focus-bg);
-  border: 0 solid #ccc;
-  border-width: 0 var(--blog-border-width);
+  padding: 12px 0;
 
   @media(max-width: 800px) {
-    padding: 0 12px;
-    border: none;
+    padding: 8px 0;
   }
 
   > .flexlayout__layout {
