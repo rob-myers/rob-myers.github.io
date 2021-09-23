@@ -1,5 +1,4 @@
 import Main from 'components/page/Main';
-import Sep from 'components/page/Sep';
 import Markdown from 'components/page/Markdown';
 import Tabs from 'components/page/Tabs';
 import Article from 'components/page/Article';
