@@ -38,6 +38,7 @@ const controlsCss = css`
     background: #333;
     color: #fff;
     border-radius: 4px 4px 0 0;
+    font-size: 1rem;
   }
 
   > .central {
