@@ -121,7 +121,7 @@ const titleCss = css`
     letter-spacing: 2px;
     font-size: 1.1rem;
     margin: 0;
-    padding: 40px 0 40px;
+    padding: 40px 0 56px;
     
     @media(max-width: 600px) {
       padding: 20px 0 30px;
@@ -133,7 +133,7 @@ const blogCss = css`
   line-height: 1.5;
   font-size: 1.2rem;
   background: #eee;
-  padding: 16px 32px 32px;
+  padding: 40px 64px 64px;
   
   @media(max-width: 600px) {
     padding: 8px 12px;
@@ -148,7 +148,7 @@ const blogCss = css`
     font-size: 2rem;
     @media(max-width: 600px) {
       margin: 0;
-      margin-top: 8px;
+      margin-top: 16px;
       font-size: 1.8rem;
     }
   }

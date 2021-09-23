@@ -7,7 +7,6 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
     <main className={rootCss}>
       <section>
         <Title />
-        <Sep />
         {children}
       </section>
     </main>
