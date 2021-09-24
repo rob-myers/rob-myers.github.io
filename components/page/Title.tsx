@@ -34,8 +34,8 @@ const titleCss = css`
 
   @media(max-width: 800px) {
     padding-left: 8px;
-    margin-top: 12px;
-    border-bottom: 1px solid #999;
+    margin-top: 16px;
+    border-bottom: 2px solid #999;
   }
 
   h1 {
@@ -49,7 +49,7 @@ const titleCss = css`
       font-size: 5rem;
     }
     @media(max-width: 600px) {
-      font-size: 3.6rem;
+      font-size: 3rem;
     }
   }
   
@@ -62,8 +62,8 @@ const titleCss = css`
     padding: 48px 0 64px;
     
     @media(max-width: 800px) {
-      font-size: 1.1rem;
-      padding: 20px 0 24px;
+      font-size: 1rem;
+      padding: 20px 0 20px;
     }
   }
 `;
