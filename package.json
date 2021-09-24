@@ -8,7 +8,7 @@
     "export": "next export",
     "start": "yarn next-cfg && next start",
     "next-cfg": "tsc -p scripts",
-    "types": "tsc --noEmit",
+    "types": "tsc --noEmit --incremental true",
     "postinstall": "patch-package",
     "ts-script": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }'",
     "rename-pngs": "yarn ts-script media/scripts/rename-pngs",
