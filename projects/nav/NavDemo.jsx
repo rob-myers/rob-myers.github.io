@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 
 import { Poly, Rect, Vect } from "../geom";
 import { getSvgPos, geom, projectSvgEvt } from "../service";
-import { Pathfinding } from '../nav/Pathfinding';
+import { Pathfinding } from '../pathfinding/Pathfinding';
 import PanZoom from "../panzoom/PanZoom";
 
 /**
