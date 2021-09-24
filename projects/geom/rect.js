@@ -10,7 +10,7 @@ export class Rect {
    * @param {number} width 
    * @param {number} height 
    */
-  constructor(x, y, width, height) {
+  constructor(x = 0, y = 0, width = 0, height = 0) {
     /** @type {number} */ this.x = x;
     /** @type {number} */ this.y = y;
     /** @type {number} */ this.width = width;
@@ -223,12 +223,15 @@ export class Rect {
     return this;
   }
 
-  /** @param {number} nonNegAmount */
-  outset(nonNegAmount) {
-    this.x -= nonNegAmount;
-    this.y -= nonNegAmount;
-    this.width += 2 * nonNegAmount;
-    this.height += 2 * nonNegAmount;
+  /**
+   * @param {number} nonNegDx 
+   * @param {number} [nonNegDy]
+   */
+  outset(nonNegDx, nonNegDy = nonNegDx) {
+    this.x -= nonNegDx;
+    this.y -= nonNegDy;
+    this.width += 2 * nonNegDx;
+    this.height += 2 * nonNegDy;
     return this;
   }
 

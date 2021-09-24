@@ -1,10 +1,10 @@
 import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
-import { Rect, Vect } from "../geom";
+import { Rect } from "../geom";
 import { loadImage } from "../service";
+import { createLayout, deserializeSvgJson, labelMeta, singlesToPolys } from "./geomorph.model";
 import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
-import { createLayout, deserializeSvgJson, filterSingles, singlesToPolys } from "./geomorph.model";
 import PanZoom from '../panzoom/PanZoom';
 import layoutDefs from "./layout-defs";
 import { renderGeomorph } from "./geomorph.render";
@@ -51,10 +51,10 @@ function Labels({ gm }) {
   return (
     <foreignObject className="labels" {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
       <div onClick={onClick}>
-        {gm.labels.map(({ center, text, halfDim }) => (
+        {gm.labels.map(({ text, padded }) => (
           <div
             className="label"
-            style={{ left: center.x - gm.pngRect.x - halfDim.x, top: center.y - gm.pngRect.y - halfDim.y }}
+            style={{ left: padded.x - gm.pngRect.x, top: padded.y - gm.pngRect.y }}
           >
             {text}
           </div>
@@ -77,9 +77,6 @@ async function computeLayout(def) {
     { scale, navTris: false },
   );
 
-  const measurer = /** @type {CanvasRenderingContext2D} */ (document.createElement('canvas').getContext('2d'));
-  measurer.font = `${labelSizePx}px sans-serif`;
-
   return {
     dataUrl: canvas.toDataURL(),
     /** Unscaled */
@@ -87,19 +84,11 @@ async function computeLayout(def) {
     doors: singlesToPolys(layout.groups.singles, 'door'),
     /** Debug only */
     pngHref: layout.items[0].pngHref,
-
-    labels: filterSingles(layout.groups.singles, 'label')
-      .map(({ poly, tags }) => {
-        const text = tags.filter(x => x !== 'label').join(' ');
-        return { center: poly.rect.center, text,
-          halfDim: new Vect(4 + measurer.measureText(text).width + 4, 3 + 1 + labelSizePx + 1).scale(0.5),
-        };
-      }),
+    labels: layout.labels,
   };
 }
 
 const scale = 2;
-const labelSizePx = 12;
 const initViewBox = new Rect(0, 0, 1200, 600);
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 
@@ -116,16 +105,13 @@ const rootCss = css`
     fill: white;
     stroke: black;
   }
-
   g > .labels {
-    font-size: ${labelSizePx}px;
-    font-family: sans-serif;
+    font: ${labelMeta.font};
     pointer-events: none;
     div.label {
       background: white;
       position: absolute;
-      padding: 1px 4px;
-      border-radius: 2px;
+      padding: ${labelMeta.padY}px ${labelMeta.padX}px;
       cursor: pointer;
       pointer-events: auto;
       user-select: none; /** TODO better way? */

@@ -49,6 +49,10 @@ declare namespace Geomorph {
    */
   export interface Layout {
     def: LayoutDef;
+    /** Transformed and filtered groups */
+    groups: SvgGroups<Poly>;
+    navPoly: Poly[];
+    labels: LayoutLabel[];
     /** Bounds of hull */
     hullRect: Geom.RectJson;
     /** Top of hull (sans windows/doors) */
@@ -67,22 +71,25 @@ declare namespace Geomorph {
       transformArray?: LayoutDefItem['transform'];
       transform?: string;
     }[];
-
-    /** Transformed and filtered groups */
-    groups: SvgGroups<Poly>;
-    navPoly: Poly[];
   }
 
   export interface BrowserLayout {
     dataUrl: string;
     pngRect: Geom.RectJson;
     doors: Poly[];
-    labels: {
-      center: Vect;
-      text: string;
-      halfDim: Vect;
-    }[];
+    labels: LayoutLabel[];
     pngHref: string;
+  }
+
+  export interface LayoutLabel {
+    /** Originally specified in symbol svg */
+    center: Geom.VectJson;
+    /** The label */
+    text: string;
+    /** World rect containing text */
+    rect: Geom.RectJson;
+    /** Padded world rect containing text */
+    padded: Geom.RectJson;
   }
 
   export interface LayoutDef {

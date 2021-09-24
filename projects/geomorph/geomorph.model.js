@@ -1,17 +1,20 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
+import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat } from '../geom';
 import { svgPathToPolygons } from '../service';
 
 /**
  * Create a layout, given a definition and all symbols.
+ * Can run in browser or server.
  * @param {Geomorph.LayoutDef} def
  * @param {Geomorph.SymbolLookup} lookup
  * @returns {Geomorph.Layout}
  */
 export function createLayout(def, lookup) {
+
+  const m = new Mat;
   /** @type {Geomorph.Layout['groups']} */
   const groups = { singles: [], obstacles: [], walls: [] };
-  const m = new Mat;
 
   def.items.forEach((item, i) => {
     item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
@@ -56,19 +59,34 @@ export function createLayout(def, lookup) {
   const hullSym = symbols[0];
   const hullOutline = hullSym.hull.map(x => x.clone().removeHoles());
   const windows = singlesToPolys(groups.singles, 'window');
-  const hullTop = Poly.cutOut(doors.concat(windows), hullSym.hull);
 
+  // Navigation polygon
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
     groups.walls.flatMap(x => x.createOutset(12)),
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
+  // Labels
+  const measurer = createCanvas(0, 0).getContext('2d');
+  measurer.font = labelMeta.font;
+  /** @type {Geomorph.LayoutLabel[]} */
+  const labels = filterSingles(groups.singles, 'label')
+    .map(({ poly, tags }) => {
+      const center = poly.rect.center.json;
+      const text = tags.filter(x => x !== 'label').join(' ');
+      const dim = { x: measurer.measureText(text).width, y: labelMeta.sizePx };
+      const rect = { x: center.x - 0.5 * dim.x, y: center.y - 0.5 * dim.y, width: dim.x, height: dim.y };
+      const padded = (new Rect).copy(rect).outset(labelMeta.padX, labelMeta.padY).json;
+      return { text, center, rect, padded };
+    });
+
   return {
     def,
     groups,
     navPoly,
+    labels,
     
-    hullTop,
+    hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
     hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
 
     items: symbols.map((sym, i) => ({
@@ -80,6 +98,8 @@ export function createLayout(def, lookup) {
     })),
   };
 }
+
+export const labelMeta = { sizePx: 11, font: `${11}px sans-serif`, padX: 4, padY: 1 };
 
 /**
  * @param {string} symbolName

@@ -1,5 +1,5 @@
 import { Vect } from "../geom";
-import { singlesToPolys } from './geomorph.model';
+import { labelMeta, singlesToPolys } from './geomorph.model';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle } from '../service';
 
 /**
@@ -99,12 +99,15 @@ export async function renderGeomorph(
   }
 
   if (labels) {
-    // TODO draw labels
-    // const labels = filterSingles(singles, 'label');
-    // ctxt.fillStyle = 'rgba(0, 0, 0, 0.1)';
-    // fillPolygon(ctxt, labels);
+    ctxt.font = labelMeta.font;
+    ctxt.textBaseline = 'bottom';
+    for (const { text, rect, padded } of layout.labels) {
+      ctxt.fillStyle = 'white';
+      ctxt.fillRect(padded.x, padded.y, padded.width, padded.height);
+      ctxt.fillStyle = 'black';
+      ctxt.fillText(text, rect.x, rect.y + rect.height)
+    }
   }
-
   //#endregion
 }
 

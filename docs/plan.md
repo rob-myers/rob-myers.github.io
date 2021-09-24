@@ -44,10 +44,10 @@ Each __TODO__ should either:
 ## TODO (unsorted)
 
 - Create geomorph 101
-- Script can generate .debug.png with doors/labels/etc.
 - Add missing labels to 301  and 302
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
+- ✅ Script can generate .debug.png with doors/labels/etc.
 - ✅ NavDemo working as before, now via port of three-pathfinding
 - ✅ Can show labels
 - ✅ Provide geomorphs as PNGs and JSON with navmesh
