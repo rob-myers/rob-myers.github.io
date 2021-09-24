@@ -21,7 +21,7 @@ export default function Article(props: React.PropsWithChildren<{
 
 const blogCss = css`
 
-  line-height: 1.6;
+  line-height: 1.55;
   font-size: 1.2rem;
   background: var(--focus-bg);
   padding: 48px 96px 96px 96px;
