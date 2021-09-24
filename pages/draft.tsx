@@ -73,16 +73,12 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Buddhist backdrop via [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
 - Horror backdrop via [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
+
 Over time we'll clarify the above, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
-<!--
-Although we'll avoid _fixed_ narratives/missions/levels,
-compositional Game AI naturally leads to procedurally generated missions (common amongst Roguelikes).
-In this sense we are attemping to create a video game.
--->
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
-We'll now address them.
+We'll address them.
 
 ### 1. Fun to develop
 
@@ -99,9 +95,8 @@ Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
 Graphically, see Starship Geomorphs 2.0.
 
-Rogue Markup should be easy to extend.
-We'll achieve this via compositional code, escape hatches to CodeSandbox, and clear explanations.
-We'll show [GitHub](https://github.com/) comments too.
+Rogue Markup will be easy to extend.
+We'll achieve this via compositional code, escape hatches to CodeSandbox, clear explanations, and [GitHub](https://github.com/) comments.
 
 <!--
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
@@ -127,7 +122,7 @@ Here's hoping my chain of unfinished projects is coming to a close!
 
 So, we're building a roguelike, directly on this website.
 It will start to get fun once things are moving about.
-But first we'll describe the underlying technologies.
+Let us describe the underlying technologies.
 
 | Concept | Technology |
 | - | - |
@@ -157,7 +152,7 @@ In particular, JavaScript has become the central web technology.
 
 ### React and Preact
 
-Competing JavaScript frameworks exist, usually with their own notion of _component_.
+Competing JavaScript frameworks exist, often with their own notion of component.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return value.
 
 - They have a single parameter, conventionally called _props_.
