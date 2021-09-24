@@ -11,32 +11,29 @@ export default function DraftPage() {
         <Markdown children={`
 ## Objective
 
-We are going to make a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike),
-set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
+We are going to create:
+> a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
 
 _Why?_
 
 Because NPC behaviour is more interesting than any particular game.
-An environment is needed to make it meaningful,
-fixed narratives/missions are not.
+An environment is needed to make it meaningful, fixed narratives/missions are not.
 
 Our approach will be algorithmic,
 yet driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 We'll focus on combining and managing navigation-based behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
 
-_What about graphics?_
-
-As a sneak peek, consider the image below.
-We've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html), using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-
 <!-- TODO resize img e.g. TinyPNG -->
 <image src="/geomorph/g-301--bridge.debug.png" style="width:100%" />
 
-These graphics were created by Robert Pearce, and provided in PDF format on his website.
-He was inspired by [Traveller](https://www.farfuture.net/) and licensed his assets [accordingly](https://creativecommons.org/licenses/by-nc/4.0/).
-Subsequently, Eric B. Smith [transformed](http://gurpsland.no-ip.org/geomorphs/) them into transparent PNGs, distributed under the same license.
-It is these 1000+ symbols which form the underlying basis of Rogue Markup.
+As for the graphical style, see above.
+We've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html), using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+
+These architectural graphics were created by Robert Pearce, and provided in PDF format on his website.
+He was inspired by [Traveller](https://www.farfuture.net/) and licensed his work [accordingly](https://creativecommons.org/licenses/by-nc/4.0/).
+Subsequently, Eric B. Smith [transformed them](http://gurpsland.no-ip.org/geomorphs/) into transparent PNGs, distributed under the same license.
+It is these 2000+ symbols which will form the underlying basis of Rogue Markup.
         `}/>
       </Article>
 
@@ -102,9 +99,9 @@ Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
 Graphically, see Starship Geomorphs 2.0.
 
-It should be easy for others to extend Rogue Markup.
-We'll achieve this by providing compositional code, escape hatches to CodeSandbox, and clear explanations.
-Comments will be shown so [GitHub](https://github.com/) users can share ideas and links.
+Rogue Markup should be easy to extend.
+We'll achieve this via compositional code, escape hatches to CodeSandbox, and clear explanations.
+We'll show [GitHub](https://github.com/) comments too.
 
 <!--
 [NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
