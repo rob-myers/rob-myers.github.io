@@ -18,15 +18,12 @@ _Why?_
 Because NPC behaviour is more interesting than any particular game.
 An environment is needed to make it meaningful, fixed narratives/missions are not.
 
-Our approach will be algorithmic,
-yet driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-We'll focus on combining navigation-based behaviours.
-Game AI should be compositional, not forced into a straight-jacket.
+We'll focus on combining navigation-based behaviours in a flexible manner.
+Game AI should be compositional, not forced into a narrative straight-jacket.
+The environment will be based on thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 
 <!-- TODO resize img e.g. TinyPNG -->
 <image src="/geomorph/g-301--bridge.debug.png" style="width:100%" />
-
-Ok, but what is this _environment_?
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
@@ -57,9 +54,9 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 <div class="example">
 
-\`Example\`. Here's a [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
-Delving into the details will reveal e.g. our rectangle class _Rect_, and a Geomorph PNG.
-Our CodeSandboxes use React, whereas this website uses Preact.
+__\`Example\`__. Here's a [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+Delving into the details will reveal our rectangle class _Rect_, and a Geomorph PNG.
+Our CodeSandboxes use React, whereas this website uses _Preact_.
 More on that later.
 </div>
 
@@ -73,31 +70,24 @@ More on that later.
 - Do not use a Physics engine.
 <!-- - Use procedural generation for spaceship building. -->
 
----
 
-_Example_
+<div class="example">
 
-- __TODO__ NavTriDemo
-- __TODO__ Discuss in-browser terminal
-
----
+_\`Example\`_. Demo in-browser terminal.
+</div>
 
 ### Setting
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
+  > _The Traveller game in all forms is owned by Far Future Enterprises. Copyright © 1977 – 2020 Far Future Enterprises._
 - Space vehicles/station/docks.
 - Buddhist backdrop via [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
 - Horror backdrop via [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
----
+<div class="example">
 
-_Example_
-
-- __TODO__ Bardo Thodol image
-- __TODO__ demo connection app
-
----
-
+_\`Example\`_. Bardo Thodol image
+</div>
 
 Over time we'll clarify the above constraints, but first we emphasise:
 > _creating a video game is really fucking hard_.

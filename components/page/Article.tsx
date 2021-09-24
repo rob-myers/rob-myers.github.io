@@ -45,11 +45,14 @@ const blogCss = css`
   }
 
   > div.example {
-    font-size: 1.1rem;
     margin: 32px 0;
     padding: 24px 32px;
     background: #ddd;
+    color: #333;
+    background-size: 24.04px 24.04px;
     border-radius: 8px;
+    line-height: 1.5;
+    border: 5px solid #ccc;
   }
 
   position: relative;
