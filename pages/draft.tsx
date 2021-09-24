@@ -57,7 +57,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 ---
 
-_Example._ Here's a [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+\`Example\`. Here's a [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
 Delving into the details you'll find our rectangle class _Rect_, and a Geomorph PNG.
 Our CodeSandboxes use React, whereas this website uses Preact.
 More on that later.
@@ -66,7 +66,7 @@ More on that later.
 
 ### Game mechanics
 
-- Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) graphics.
+- Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
 - Use a realtime birdseye camera.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
 - Use navigation & raycasting algorithms.
