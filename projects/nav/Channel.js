@@ -1,7 +1,7 @@
 import { Utils } from './Utils';
 import { Vect } from '../geom';
 
-/** @typedef {{ left: Vect; right: Vect }} Portal */
+/** @typedef {{ left: Geom.VectJson; right: Geom.VectJson }} Portal */
 
 export class Channel {
   constructor () {
@@ -10,8 +10,8 @@ export class Channel {
   }
 
   /**
-   * @param {Vect} p1 
-   * @param {Vect} [p2]
+   * @param {Geom.VectJson} p1 
+   * @param {Geom.VectJson} [p2]
    */
   push (p1, p2) {
     if (p2 === undefined) p2 = p1;
@@ -23,12 +23,12 @@ export class Channel {
 
   stringPull () {
     const portals = this.portals;
-    /** @type {Vect[]} */
+    /** @type {Geom.VectJson[]} */
     const pts = [];
     // Init scan state
-    /** @type {Vect} */ let portalApex;
-    /** @type {Vect} */ let portalLeft;
-    /** @type {Vect} */ let portalRight;
+    /** @type {Geom.VectJson} */ let portalApex;
+    /** @type {Geom.VectJson} */ let portalLeft;
+    /** @type {Geom.VectJson} */ let portalRight;
     let apexIndex = 0, leftIndex = 0, rightIndex = 0;
 
     portalApex = portals[0].left;

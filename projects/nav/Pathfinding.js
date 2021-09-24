@@ -76,7 +76,7 @@ export class Pathfinding {
 
   /**
    * Returns the closest node to the target position.
-   * @param  {Vect} position
+   * @param  {Geom.VectJson} position
    * @param  {string}  zoneID
    * @param  {number}  groupID
    * @param  {boolean} checkPolygon
@@ -103,8 +103,8 @@ export class Pathfinding {
    * Returns a path between given start and end points. If a complete path
    * cannot be found, will return the nearest endpoint available.
    *
-   * @param  {Vect} startPosition Start position.
-   * @param  {Vect} targetPosition Destination.
+   * @param  {Geom.VectJson} startPosition Start position.
+   * @param  {Geom.VectJson} targetPosition Destination.
    * @param  {string} zoneID ID of current zone.
    * @param  {number} groupID Current group ID.
    */
@@ -167,7 +167,7 @@ export class Pathfinding {
   /**
    * Returns closest node group ID for given position.
    * @param  {string} zoneID
-   * @param  {Vect} position
+   * @param  {Geom.VectJson} position
    */
   getGroup(zoneID, position, checkPolygon = false) {
     if (!this.zones[zoneID]) return null;
