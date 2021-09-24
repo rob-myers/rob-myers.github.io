@@ -12,7 +12,7 @@ export default function DraftPage() {
 ## Objective
 
 We are going to create:
-> a _Game AI focused_ [roguelike](https://en.wikipedia.org/wiki/Roguelike), set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
+> a _Game AI focused_ roguelike, set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3) <sup>[ⓒ](https://www.farfuture.net/)</sup>.
 
 _Why?_
 
@@ -27,12 +27,14 @@ Game AI should be compositional, not forced into a straight-jacket.
 <!-- TODO resize img e.g. TinyPNG -->
 <image src="/geomorph/g-301--bridge.debug.png" style="width:100%" />
 
-As for the graphical style, see above.
-We've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html), using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+The graphical style is shown above.
+We've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
+using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 
-These architectural graphics were created by Robert Pearce, and provided in PDF format on his website.
+These wonderful architectural graphics were originally created by Robert Pearce.
+The links above provide PDFs from his website.
 He was inspired by [Traveller](https://www.farfuture.net/) and licensed his work [accordingly](https://creativecommons.org/licenses/by-nc/4.0/).
-Subsequently, Eric B. Smith [transformed them](http://gurpsland.no-ip.org/geomorphs/) into transparent PNGs, distributed under the same license.
+Subsequently, Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/), distributed under the same license.
 It is these 2000+ symbols which will form the underlying basis of Rogue Markup.
         `}/>
       </Article>
@@ -184,7 +186,7 @@ Let's consider an example, a pannable and zoomable grid.
 The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code--panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
-- _PanZoom_ renders an SVG consisting of its children (the red square in the demo) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
+- _PanZoom_ renders an SVG consisting of its children (the Geomorph image provided in _PanZoomDemo_) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 - _Grid_ renders part of an SVG i.e. two grid patterns.
   They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
