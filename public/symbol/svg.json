@@ -1533,6 +1533,13 @@
             ]
           ]
         }
+      },
+      {
+        "tags": ["label", "stellar", "cartography"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[384, 240], [384, 340], [484, 340], [484, 240]]]
+        }
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 1220}
