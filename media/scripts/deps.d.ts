@@ -1,2 +1,2 @@
-/// <reference path="../../projects/geom/types.d.ts"/>
-/// <reference path="../../projects/geomorph/types.d.ts"/>
+/// <reference path="../../projects/geom/geom.d.ts"/>
+/// <reference path="../../projects/geomorph/geomorph.d.ts"/>

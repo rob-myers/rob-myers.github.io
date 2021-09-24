@@ -26,7 +26,12 @@ function Geomorph({ def, transform }) {
   const { data: gm } = useQuery(`layout-${def.key}`, () => computeLayout(def));
   return gm ? (
     <g transform={transform}>
-      <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
+      <image
+        className="geomorph"
+        href={gm.dataUrl}
+        x={gm.pngRect.x * scale}
+        y={gm.pngRect.y * scale}
+      />
 
       <g className="doors">
         {gm.doors.map((door) => <polygon points={`${door.outline}`} />)}

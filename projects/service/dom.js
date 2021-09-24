@@ -14,7 +14,7 @@ let svgPoint;
  */
 
 /**
- * Assume `e.currentTarget` is an SVG element, including SVGSVGElement.
+ * Assumes `e.currentTarget` is an SVGElement or SVGSVGElement.
  * @param {MouseEvent | import('react').MouseEvent} e
  * @returns {SvgPtr}
  */

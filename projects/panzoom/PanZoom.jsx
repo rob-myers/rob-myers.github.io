@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { css } from 'goober';
-import { Vect, Rect } from '../geom';
+import { Vect } from '../geom';
 import { getSvgPos, getSvgMid, canTouchDevice, projectSvgEvt } from '../service';
 
 /** @param {React.PropsWithChildren<Props>} props */
@@ -112,7 +112,6 @@ export default function PanZoom(props) {
       <g className="content">
         {props.children}
       </g>
-      {/** @ts-ignore */}
       <Grid bounds={props.gridBounds} />
     </svg>
   );
@@ -120,40 +119,42 @@ export default function PanZoom(props) {
 
 /**
  * @typedef Props @type {object}
- * @property {Rect} gridBounds World bounds
- * @property {Rect} initViewBox Initial viewbox in world coords
+ * @property {Geom.Rect} gridBounds World bounds
+ * @property {Geom.Rect} initViewBox Initial viewbox in world coords
  * @property {number} [minZoom] Minimum zoom factor (default 0.5)
  * @property {number} [maxZoom] Maximum zoom factor (default 2)
  * @property {number} [initZoom] Initial zoom factor (default 1)
  */
 
-/** @param {{ bounds: Rect }} props */
+/** @param {{ bounds: Geom.Rect }} props */
 function Grid(props) {
-  return [10, 60].map(dim =>
-    <>
-      <defs>
-        <pattern
-          id={`pattern-grid-${dim}-${dim}`}
-          width={dim}
-          height={dim}
-          patternUnits="userSpaceOnUse"
-        >
-          <path
-            d={`M ${dim} 0 L 0 0 0 ${dim}`}
-            fill="none"
-            stroke="rgba(0,0,0,0.5)"
-            strokeWidth="0.3"
-          />
-        </pattern>
-      </defs>
-      <rect
-        className="grid"
-        x={props.bounds.x}
-        y={props.bounds.y}
-        width={props.bounds.width}
-        height={props.bounds.height}
-        fill={`url(#pattern-grid-${dim}-${dim})`}
-      />
-    </>
-  );
+  return <>
+    {[10, 60].map(dim =>
+      <>
+        <defs>
+          <pattern
+            id={`pattern-grid-${dim}-${dim}`}
+            width={dim}
+            height={dim}
+            patternUnits="userSpaceOnUse"
+          >
+            <path
+              d={`M ${dim} 0 L 0 0 0 ${dim}`}
+              fill="none"
+              stroke="rgba(0,0,0,0.5)"
+              strokeWidth="0.3"
+            />
+          </pattern>
+        </defs>
+        <rect
+          className="grid"
+          x={props.bounds.x}
+          y={props.bounds.y}
+          width={props.bounds.width}
+          height={props.bounds.height}
+          fill={`url(#pattern-grid-${dim}-${dim})`}
+        />
+      </>
+    )}
+  </>;
 }
