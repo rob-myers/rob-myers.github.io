@@ -109,7 +109,8 @@ const rootCss = css`
     font: ${labelMeta.font};
     pointer-events: none;
     div.label {
-      background: white;
+      background: black;
+      color: white;
       position: absolute;
       padding: ${labelMeta.padY}px ${labelMeta.padX}px;
       cursor: pointer;

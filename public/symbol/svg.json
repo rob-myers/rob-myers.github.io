@@ -1048,14 +1048,14 @@
         "tags": ["label", "locker"],
         "poly": {
           "type": "Polygon",
-          "coordinates": [[[703, 785], [703, 885], [803, 885], [803, 785]]]
+          "coordinates": [[[703, 775], [703, 875], [803, 875], [803, 775]]]
         }
       },
       {
         "tags": ["label", "locker"],
         "poly": {
           "type": "Polygon",
-          "coordinates": [[[1603, 785], [1603, 885], [1703, 885], [1703, 785]]]
+          "coordinates": [[[1603, 775], [1603, 875], [1703, 875], [1703, 775]]]
         }
       },
       {
@@ -1113,6 +1113,20 @@
         "poly": {
           "type": "Polygon",
           "coordinates": [[[403, 1899], [403, 1999], [503, 1999], [503, 1899]]]
+        }
+      },
+      {
+        "tags": ["label", "cpu"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[300, 650], [300, 750], [400, 750], [400, 650]]]
+        }
+      },
+      {
+        "tags": ["label", "cpu"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[2000, 650], [2000, 750], [2100, 750], [2100, 650]]]
         }
       }
     ],
@@ -1593,6 +1607,13 @@
           "type": "Polygon",
           "coordinates": [[[590, -10], [590, 610], [610, 610], [610, -10]]]
         }
+      },
+      {
+        "tags": ["label", "office"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[70, 40], [70, 140], [170, 140], [170, 40]]]
+        }
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}
@@ -1853,6 +1874,13 @@
           "type": "Polygon",
           "coordinates": [[[310, 275], [310, 323], [590, 323], [590, 275]]]
         }
+      },
+      {
+        "tags": ["label", "bedroom"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[400, 400], [400, 500], [500, 500], [500, 400]]]
+        }
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620}
@@ -1941,6 +1969,20 @@
         "poly": {
           "type": "Polygon",
           "coordinates": [[[300, 1176], [300, 1224], [590, 1224], [590, 1176]]]
+        }
+      },
+      {
+        "tags": ["label", "bedroom"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[340, 900], [340, 1000], [440, 1000], [440, 900]]]
+        }
+      },
+      {
+        "tags": ["label", "bathroom"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[330, 176], [330, 276], [430, 276], [430, 176]]]
         }
       }
     ],
