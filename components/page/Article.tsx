@@ -44,6 +44,14 @@ const blogCss = css`
     border: none;
   }
 
+  > div.example {
+    font-size: 1.1rem;
+    margin: 32px 0;
+    padding: 24px 32px;
+    background: #ddd;
+    border-radius: 8px;
+  }
+
   position: relative;
   > time {
     position: absolute;
