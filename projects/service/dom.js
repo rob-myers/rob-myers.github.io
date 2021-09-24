@@ -6,40 +6,49 @@ import { Poly } from '../geom/poly';
 let svgPoint;
 
 /**
- * Event's current target must be `SVGSVGElement` or owned by one.
- * @param {MouseEvent | import('react').MouseEvent} e 
+ * @typedef SvgPtr @type {object}
+ * @property {null | number} pointerId
+ * @property {number} clientX
+ * @property {number} clientY
+ * @property {SVGSVGElement} ownerSvg
  */
-export function getSvgPos(e) {
-  svgPoint = svgPoint || getSvgOwner(e)?.createSVGPoint();
-  svgPoint.x = e.clientX;
-  svgPoint.y = e.clientY;
-  return svgPoint.matrixTransform(getSvgOwner(e)?.getScreenCTM()?.inverse());
-}
 
 /**
- * The event `es[0]` must exist, and its current target
- * must be an `SVGSVGElement` or owned by one
- * @param {MouseEvent[] | import('react').MouseEvent[]} es
- */
-export function getSvgMid(es) {
-  svgPoint = svgPoint || getSvgOwner(es[0])?.createSVGPoint();
-	svgPoint.x = svgPoint.y = 0;
-	es.forEach(e => { svgPoint.x += e.clientX; svgPoint.y += e.clientY; });
-	svgPoint.x /= es.length || 1; svgPoint.y /= es.length || 1;
-  return svgPoint.matrixTransform(getSvgOwner(es[0])?.getScreenCTM()?.inverse());
-}
-
-/**
- * Event current target must be `SVGSVGElement` or owned by one.
+ * Assume `e.currentTarget` is an SVG element, including SVGSVGElement.
  * @param {MouseEvent | import('react').MouseEvent} e
+ * @returns {SvgPtr}
  */
-function getSvgOwner(e) {
-	return /** @type {null | SVGElement} */ (e.currentTarget)?.ownerSVGElement
-		|| /** @type {SVGSVGElement} */ (e.currentTarget);
+export function projectSvgEvt(e) {
+	return {
+		pointerId: e instanceof PointerEvent ? e.pointerId : null,
+		clientX: e.clientX,
+		clientY: e.clientY,
+		ownerSvg: /** @type {*} */ (e.currentTarget)?.ownerSVGElement || e.currentTarget,
+	};
+}
+
+/** @param {SvgPtr} ptr */
+export function getSvgPos(ptr) {
+  svgPoint = svgPoint || ptr.ownerSvg.createSVGPoint();
+  svgPoint.x = ptr.clientX;
+  svgPoint.y = ptr.clientY;
+  return svgPoint.matrixTransform(ptr.ownerSvg.getScreenCTM()?.inverse());
 }
 
 /**
- * Based on https://github.com/Phrogz/svg-path-to-polygons/blob/master/svg-path-to-polygons.js
+ * The pointer `ptrs[0]` must exist.
+ * @param {SvgPtr[]} ptrs
+ */
+export function getSvgMid(ptrs) {
+  svgPoint = svgPoint || ptrs[0].ownerSvg.createSVGPoint();
+	svgPoint.x = svgPoint.y = 0;
+	ptrs.forEach(e => { svgPoint.x += e.clientX; svgPoint.y += e.clientY; });
+	svgPoint.x /= ptrs.length || 1; svgPoint.y /= ptrs.length || 1;
+  return svgPoint.matrixTransform(ptrs[0].ownerSvg.getScreenCTM()?.inverse());
+}
+
+/**
+ * Based on https://github.com/Phrogz/svg-path-to-polygons/blob/master/svg-path-to-polygons.js.
  * Only supports straight lines i.e. M, L, H, V, Z.
  * Creates a list of polygons without holes.
  * @param {string} svgPathString 

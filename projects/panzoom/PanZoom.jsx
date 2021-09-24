@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { css } from 'goober';
 import { Vect, Rect } from '../geom';
-import { getSvgPos, getSvgMid, canTouchDevice } from '../service';
+import { getSvgPos, getSvgMid, canTouchDevice, projectSvgEvt } from '../service';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoom(props) {
@@ -15,8 +15,8 @@ export default function PanZoom(props) {
       /** @type {null | Vect} */
       panFrom: null,
       zoom: props.initZoom || 1,
-      /** @type {PointerEvent[]} */
-      ptrEvent: [],
+      /** @type {import('../service').SvgPtr[]} */
+      ptrs: [],
       /** @type {null | number} */
       ptrDiff: null,
       /**
@@ -34,33 +34,33 @@ export default function PanZoom(props) {
       /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        if (e.target && 'ownerSVGElement' in e.target) {
-          const point = getSvgPos(e);
+        if ('ownerSVGElement' in (e.target || {})) {
+          const point = getSvgPos(projectSvgEvt(e));
           state.zoomTo(point, -0.003 * e.deltaY);
           state.root.setAttribute('viewBox', `${state.viewBox}`);
         }
       },
       /** @param {PointerEvent} e */
       onPointerDown: e => {
-        if (e.target && 'ownerSVGElement' in e.target) {
-          state.panFrom = (new Vect).copy(getSvgPos(e));
-          state.ptrEvent.push(e);
+        if ('ownerSVGElement' in (e.target ||{})) {
+          state.panFrom = (new Vect).copy(getSvgPos(projectSvgEvt(e)));
+          state.ptrs.push(projectSvgEvt(e));
         }
       },
       /** @param {PointerEvent} e */
       onPointerMove: e => {
-        state.ptrEvent = state.ptrEvent.map(x => x.pointerId === e.pointerId ? e : x);
+        state.ptrs = state.ptrs.map(x => x.pointerId === e.pointerId ? projectSvgEvt(e) : x);
 
-        if (state.ptrEvent.length === 2) {
-          const ptrDiff = Math.abs(state.ptrEvent[1].clientX - state.ptrEvent[0].clientX);
+        if (state.ptrs.length === 2) {
+          const ptrDiff = Math.abs(state.ptrs[1].clientX - state.ptrs[0].clientX);
           if (state.ptrDiff !== null) {
-            const point = getSvgMid(state.ptrEvent);
+            const point = getSvgMid(state.ptrs);
             state.zoomTo(point, 0.02 * (ptrDiff - state.ptrDiff));
             state.root.setAttribute('viewBox', `${state.viewBox}`);
           }          
           state.ptrDiff = ptrDiff;
         } else if (state.panFrom) {
-          const mouse = getSvgPos(e);
+          const mouse = getSvgPos(projectSvgEvt(e));
           viewBox.delta(state.panFrom.x - mouse.x, state.panFrom.y - mouse.y);
           state.root.setAttribute('viewBox', `${state.viewBox}`);
         }
@@ -68,8 +68,8 @@ export default function PanZoom(props) {
       /** @param {PointerEvent} e */
       onPointerUp: (e) => {
         state.panFrom = null;
-        state.ptrEvent = state.ptrEvent.filter(alt => e.pointerId !== alt.pointerId);
-        if (state.ptrEvent.length < 2) {
+        state.ptrs = state.ptrs.filter(alt => e.pointerId !== alt.pointerId);
+        if (state.ptrs.length < 2) {
           state.ptrDiff = null;
         }
       },

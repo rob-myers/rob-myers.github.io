@@ -3,7 +3,7 @@ import { css } from "goober";
 import { useQuery } from "react-query";
 
 import { Poly, Rect, Vect } from "../geom";
-import { getSvgPos, geom } from "../service";
+import { getSvgPos, geom, projectSvgEvt } from "../service";
 import { Pathfinding } from '../nav/Pathfinding';
 import PanZoom from "../panzoom/PanZoom";
 
@@ -14,8 +14,8 @@ import PanZoom from "../panzoom/PanZoom";
 
 export default function NavDemo() {
 
-  const [dots, setDots] = useState(/** @type {Vect[]} */ ([]));
-  const [path, setPath] = useState(/** @type {Vect[]} */ ([]));
+  const [dots, setDots] = useState(/** @type {Geom.VectJson[]} */ ([]));
+  const [path, setPath] = useState(/** @type {Geom.VectJson[]} */ ([]));
   const pathfinding = useMemo(() => new Pathfinding, []);
   const zoneKey = 'myZone';
   const lastDownAt = useRef(0);
@@ -48,7 +48,7 @@ export default function NavDemo() {
         onPointerDown={_ => lastDownAt.current = Date.now()}
         onPointerUp={e => {
           if (Date.now() - lastDownAt.current < 200) {
-            const point = Vect.from(getSvgPos(e));
+            const point = getSvgPos(projectSvgEvt(e));
             setDots(dots.slice(0, 1).concat(point));
           }
         }}
