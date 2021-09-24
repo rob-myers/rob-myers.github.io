@@ -11,8 +11,7 @@ export default function DraftPage() {
         <Markdown children={`
 ## Objective
 
-We are going to create:
-> a _Game AI focused_ roguelike, set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3) <sup>[ⓒ](https://www.farfuture.net/)</sup>.
+Create a _Game AI focused_ roguelike, set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
 
 _Why?_
 
@@ -21,7 +20,7 @@ An environment is needed to make it meaningful, fixed narratives/missions are no
 
 Our approach will be algorithmic,
 yet driven by the environment e.g. thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-We'll focus on combining and managing navigation-based behaviours.
+We'll focus on combining navigation-based behaviours.
 Game AI should be compositional, not forced into a straight-jacket.
 
 <!-- TODO resize img e.g. TinyPNG -->
@@ -31,7 +30,7 @@ The graphical style is shown above.
 We've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 
-These wonderful architectural graphics were originally created by Robert Pearce.
+These extensive architectural graphics were originally created by Robert Pearce.
 The links above provide PDFs from his website.
 He was inspired by [Traveller](https://www.farfuture.net/) and licensed his work [accordingly](https://creativecommons.org/licenses/by-nc/4.0/).
 Subsequently, Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/), distributed under the same license.
@@ -48,7 +47,6 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 ### Technology
 
-<!-- - Use [WebAssembly](https://developer.mozilla.org/en-US/docs/WebAssembly) for physics. -->
 - Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.
 - Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
 - Use [Preact](https://www.npmjs.com/package/preact) (like React), and [Goober](https://www.npmjs.com/package/goober) (like [Emotion](https://www.npmjs.com/package/@emotion/styled)).
@@ -57,7 +55,16 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Support mobile/desktop devices.
 
-### Game mechanics (low-level)
+---
+
+_Example._ Here's a [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+Delving into the details you'll find our rectangle class _Rect_, and a Geomorph PNG.
+Our CodeSandboxes use React, whereas this website uses Preact.
+More on that later.
+
+---
+
+### Game mechanics
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) graphics.
 - Use a realtime birdseye camera.
@@ -67,6 +74,14 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Do not use a Physics engine.
 <!-- - Use procedural generation for spaceship building. -->
 
+---
+
+_Example_
+
+- __TODO__ NavTriDemo
+- __TODO__ Discuss in-browser terminal
+
+---
 
 ### Setting
   
@@ -75,8 +90,17 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Buddhist backdrop via [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
 - Horror backdrop via [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
+---
 
-Over time we'll clarify the above, but first we emphasise:
+_Example_
+
+- __TODO__ Bardo Thodol image
+- __TODO__ demo connection app
+
+---
+
+
+Over time we'll clarify the above constraints, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
