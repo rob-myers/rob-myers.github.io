@@ -8,22 +8,21 @@ Each __TODO__ should either:
 ### _Objective_ i.e. intro
 
 - Include image of Geomorph with description ✅
-- Finalise image
 
 ### _Constraints_
 
 - Link to a CodeSandbox ✅
 - Demo terminal
-- Background about setting
+- Background about setting 🚧
 - Image related to Bardo Thodol
 
 ### _Technology_ i.e. tech intro + js
 
 - `PanZoomDemo` uses a Geomorph PNG ✅
 - Redo CodeSandbox ✅
-- CodeSandbox link more prominent
-- Finish "React Renders and Web Components"
-- Finish "CSS inside JS"
+- CodeSandbox link more prominent 🚧
+- Finish "React Renders and Web Components" 🚧
+- Finish "CSS inside JS" 🚧
 
 ### _Technology (Part 2)_ i.e. nav and raycast
 
