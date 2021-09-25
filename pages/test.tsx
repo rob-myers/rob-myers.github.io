@@ -8,7 +8,7 @@ export default function TestPage() {
     <Main>
 
       <Article dateTime="2021-07-19" dateText="19th July 2021">
-        <Markdown className="bot-sm" children={`
+        <Markdown children={`
 ## Test page
         `}/>
 
@@ -20,7 +20,7 @@ export default function TestPage() {
           ]}
         />
 
-        <Markdown className="top-sm" children={`
+        <Markdown children={`
 ...
 
         `}/>

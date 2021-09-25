@@ -125,7 +125,7 @@ Here's hoping my chain of unfinished projects is coming to a close!
       </Article>
 
       <Article dateTime="2021-07-19" dateText="19th July 2021">
-        <Markdown className="bot-sm" children={`
+        <Markdown  children={`
 ## Technology
 
 So, we're building a roguelike, directly on this website.
@@ -189,7 +189,7 @@ Let's consider an example, a pannable and zoomable grid.
           ]}
         />
 
-        <Markdown className="top-sm bot-sm" children={`
+        <Markdown children={`
 The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code--panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
@@ -234,7 +234,7 @@ Here's a whirlwind overview of React (and Preact).
           ]}
         />
 
-        <Markdown className="top-sm bot-sm" children={`
+        <Markdown children={`
 <!--
 So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
 We're using Preact (its codebase is smaller, and it has reputation for being faster,
@@ -273,7 +273,7 @@ Take another look at _panzoom/PanZoom.jsx_.
           ]}
         />
 
-        <Markdown className="top-sm" children={`
+        <Markdown children={`
 
 _PanZoom_ returns an \`<svg/>\` with a viewBox attribute determined by _state.viewBox_.
 When a user zooms via mousewheel, the event handler _state.onWheel_ updates _state.viewBox_.
@@ -307,7 +307,7 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
       </Article>
 
       <Article dateTime="2021-07-19" dateText="19th July 2021">
-        <Markdown className="bot-sm" children={`
+        <Markdown children={`
 ## Technology (Part 2)
 
 ### Navigation
@@ -325,7 +325,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
           ]}
         />
 
-        <Markdown className="top-sm" children={`
+        <Markdown children={`
 ### Raycasting
 
 ...
@@ -352,7 +352,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
       </Article>
 
       <Article dateTime="2021-07-19" dateText="19th July 2021">
-        <Markdown className="bot-sm" children={`
+        <Markdown children={`
 ## Starship Geomorphs
 
 ### Filesystem structure
@@ -397,7 +397,7 @@ public/svg
           ]}
         />
 
-        <Markdown className="top-sm" children={`
+        <Markdown children={`
   ...
         `}/>
       </Article>

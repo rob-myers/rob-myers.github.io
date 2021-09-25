@@ -6,7 +6,6 @@ export default function Article(props: React.PropsWithChildren<{
   className?: string;
   dateTime: string;
   dateText: string;
-  title?: boolean;
 }>) {
   return <>
     <article className={classNames('blog', props.className, blogCss)}>
@@ -26,17 +25,6 @@ const blogCss = css`
   background: var(--focus-bg);
   padding: 48px 96px 96px 96px;
   border: var(--blog-border-width) solid var(--border-bg);
-
-  @media(min-width: 800px) {
-    &.bot-sm {
-      padding-bottom: 24px;
-      border-bottom: none;
-    }
-    &.top-sm {
-      padding-top: 24px;
-      border-top: none;
-    }
-  }
   
   @media(max-width: 800px) {
     padding: 8px 12px;
@@ -54,6 +42,10 @@ const blogCss = css`
       margin: 8px 0;
       padding: 0px 16px;
     }
+  }
+
+  > figure {
+    margin: 0;
   }
 
   position: relative;
