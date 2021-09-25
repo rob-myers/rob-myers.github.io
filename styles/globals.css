@@ -19,6 +19,14 @@ body {
   /* -webkit-font-smoothing: antialiased; */
 }
 
+#__next {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 2rem;
+  max-width: 1024px;  
+  margin: 0 auto;
+}
+
 a {
   color: #00f;
   text-decoration: none;
