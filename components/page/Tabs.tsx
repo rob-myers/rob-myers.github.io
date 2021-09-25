@@ -59,11 +59,6 @@ interface Props {
 const rootCss = (height: number) => css`
   background: var(--focus-bg);
 
-  padding: 24px 0 20px;
-  @media(max-width: 800px) {
-    padding: 12px 0;
-  }
-
   > .flexlayout__layout {
     background: #444;
     position: relative;

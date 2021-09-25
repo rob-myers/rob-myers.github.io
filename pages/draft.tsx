@@ -54,7 +54,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 <aside>
 
-Here's our 1st [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+Here's our first [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
 Perusing the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
 Our CodeSandboxes use React, whereas this site uses _Preact_.
 More on that later.
@@ -69,29 +69,43 @@ More on that later.
 - Use an in-browser terminal.
 - Do not use a Physics engine.
 <!-- - Use procedural generation for spaceship building. -->
+        `}/>
 
-<aside>
+        <aside>
+          <p>
+            Demo in-browser terminal...
+          </p>
 
-__TODO__ Demo in-browser terminal.
-</aside>
+          <Tabs
+            height={400}
+            tabs={[
+              { key: 'terminal', session: 'test' },
+            ]}
+          />
+        </aside>
+
+        <Markdown children={`
 
 ### Setting
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
-  
-  <font size="3"> _The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._</font>
 - Space vehicles, stations, and docks.
 - Buddhist backdrop via [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
 - Horror backdrop via [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
 <aside>
 
-__TODO__ Background info about Traveller.
+Traveller is a Futuristic (pen-and-paper) Roleplaying Game, created in the late 70s.
+It permits faster than light travel, restricted to a few parsecs per week.
+You can learn more on the [offical site](https://www.farfuture.net/) or the [Traveller Wiki](https://wiki.travellerrpg.com/Main_Page).
+You can also explore [Charted Space](https://wiki.travellerrpg.com/Charted_Space) on [Traveller Map](https://travellermap.com/).
+It provides motivation and considerable depth to Starship Geomorphs.
 
-__TODO__ Our setting: Religious Ship AIs and Karmic Loop.
+<font size="3">_The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._</font>
 </aside>
 
-Over time we'll clarify the above constraints, but first we emphasise:
+Over time we'll clarify the above constraints i.e. Technology, Game mechanics and Setting.
+But first we emphasise:
 > _creating a video game is really fucking hard_.
 
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
@@ -147,7 +161,6 @@ Let us describe the underlying technologies.
 | Code sharing | Show [GitHub](https://github.com/) comments, provide GitHub [repo](https://github.com/rob-myers/rob-myers.github.io). |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
-
 
 The early 90s brought three pillars: HTML, CSS and JavaScript.
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
