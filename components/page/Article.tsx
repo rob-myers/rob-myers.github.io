@@ -50,6 +50,10 @@ const blogCss = css`
     color: #333;
     border-radius: 8px;
     border: 2px solid #ccc;
+    @media(max-width: 800px) {
+      margin: 8px 0;
+      padding: 0px 16px;
+    }
   }
 
   position: relative;
