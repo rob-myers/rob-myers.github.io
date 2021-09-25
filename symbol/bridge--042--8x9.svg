@@ -41,7 +41,7 @@
     <rect x="1790" y="1492" width="595" height="21" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="902" y="1502" width="888" height="62" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
   </g>
-  <g style="">
+  <g style="pointer-events: none;">
     <title>singles</title>
     <rect x="58" y="1492" width="842" height="21" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
       <title>wall</title>
@@ -88,10 +88,10 @@
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1153" y="549">
       <title>label bridge</title>
     </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="703" y="785">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="703" y="775">
       <title>label locker</title>
     </rect>
-    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1603" y="785">
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1603" y="775">
       <title>label locker</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="253" y="1299">
@@ -114,6 +114,12 @@
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="403" y="1899">
       <title>label office</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="300" y="650">
+      <title>label cpu</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="2000" y="650">
+      <title>label cpu</title>
     </rect>
   </g>
 </svg>
