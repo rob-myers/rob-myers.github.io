@@ -7,6 +7,9 @@ import useSiteStore from 'store/site.store';
 import { computeJsonModel, factory, TabMeta } from './TabsAux';
 import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
 
+/**
+ * TODO clean and simplify this component
+ */
 export default function Tabs(props: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(props.tabs)), [props.tabs]);
   const rootRef = React.useRef<HTMLDivElement>(null);
@@ -15,12 +18,7 @@ export default function Tabs(props: Props) {
     if (props.storeKey) {
       useSiteStore.getState().tabs[props.storeKey] = {
         key: props.storeKey,
-        /** Select last tab whose id is a suffix of `tabId` */
-        selectTab: (tabId: string) => {
-          model.visitNodes(x => x.getId().startsWith(tabId)
-            && model.doAction(Actions.selectTab(x.getId()))
-          );
-        },
+        selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
         scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
       };
       return () => void delete useSiteStore.getState().tabs[props.storeKey || ''];
@@ -32,7 +30,7 @@ export default function Tabs(props: Props) {
   React.useEffect(() => void setColour(enabled ? 'clear' : 'faded'), []);
 
   return (
-    <div
+    <figure
       ref={rootRef}
       className={classNames("tabs", "scrollable", rootCss(props.height))}
     >
@@ -46,7 +44,7 @@ export default function Tabs(props: Props) {
         }} />
         <LoadingOverlay colour={colour} />
       </div>
-    </div>
+    </figure>
   );
 }
 

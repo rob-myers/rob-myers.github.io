@@ -74,9 +74,13 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
 
         children: tabs.map((meta) => ({
           type: 'tab',
+          /**
+           * Tabs must not be duplicated within same `Tabs`,
+           * for otherwise their `id` will conflict.
+           */
           id: meta.key === 'terminal'
-            ? `${meta.key}--${meta.session}--${globalTabCount++}`
-            : `${meta.key}--${meta.filepath}--${globalTabCount++}`,
+            ? `${meta.key}--${meta.session}`
+            : `${meta.key}--${meta.filepath}`,
           name: meta.key === 'terminal'
             ? `@${meta.session}`
             : meta.key === 'code'
@@ -95,8 +99,6 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
     }
   };
 }
-
-let globalTabCount = 0;
 
 export type TabMeta = (
   | { key: 'code'; filepath: Lookup.CodeFilepathKey; folds?: CodeMirror.Position[] }
