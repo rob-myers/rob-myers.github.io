@@ -78,8 +78,9 @@ __TODO__ Demo in-browser terminal.
 ### Setting
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
-  > _The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2020 Far Future Enterprises._
-- Space vehicles/station/docks.
+  
+  <font size="3"> _The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._</font>
+- Space vehicles, stations, and docks.
 - Buddhist backdrop via [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
 - Horror backdrop via [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
@@ -87,7 +88,7 @@ __TODO__ Demo in-browser terminal.
 
 __TODO__ Background info about Traveller.
 
-__TODO__ Intro our setting: Religious Ship AIs and Karmic Loop.
+__TODO__ Our setting: Religious Ship AIs and Karmic Loop.
 </aside>
 
 Over time we'll clarify the above constraints, but first we emphasise:
