@@ -59,7 +59,8 @@ const titleCss = css`
     letter-spacing: 2px;
     font-size: 1.4rem;
     margin: 0;
-    padding: 48px 0 64px;
+    padding: 40px 0 48px;
+    font-weight: 300;
     
     @media(max-width: 800px) {
       font-size: 1rem;
