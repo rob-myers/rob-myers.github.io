@@ -65,6 +65,7 @@ const titleCss = css`
     @media(max-width: 800px) {
       font-size: 1rem;
       padding: 20px 0 20px;
+      color: #222;
     }
   }
 `;

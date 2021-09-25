@@ -138,7 +138,7 @@ const blogCss = css`
 
   ul, ol {
     @media(max-width: 800px) {
-      padding-left: 32px;
+      padding-left: 20px;
     }
     + p {
       padding-top: 6px;

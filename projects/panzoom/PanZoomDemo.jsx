@@ -24,7 +24,7 @@ export default function PanZoomDemo() {
 
 const pngRect = new Rect(-6, -22, 1212, 628);
 const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const initViewBox = pngRect.clone();
+const initViewBox = pngRect.clone().outset(50);
 
 const rootCss = css`
   display: flex;

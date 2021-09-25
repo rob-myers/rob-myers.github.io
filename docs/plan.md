@@ -13,9 +13,9 @@ Each __TODO__ should either:
 ### _Constraints_
 
 - Link to a CodeSandbox ✅
-- Image of a navpath and a raycast
+- Demo terminal
+- Background about setting
 - Image related to Bardo Thodol
-- Different Geomorphs being connected
 
 ### _Technology_ i.e. tech intro + js
 
@@ -43,6 +43,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- Tabs not in initial bundle
 - Create geomorph 101
 - Add missing labels to 302
 - Tabs don't load until scroll into view
