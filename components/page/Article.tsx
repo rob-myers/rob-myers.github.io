@@ -44,15 +44,12 @@ const blogCss = css`
     border: none;
   }
 
-  > div.example {
+  > aside {
     margin: 32px 0;
-    padding: 24px 32px;
-    background: #ddd;
+    padding: 0px 32px;
     color: #333;
-    background-size: 24.04px 24.04px;
     border-radius: 8px;
-    line-height: 1.5;
-    border: 5px solid #ccc;
+    border: 2px solid #ccc;
   }
 
   position: relative;

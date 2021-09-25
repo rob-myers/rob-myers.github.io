@@ -20,14 +20,14 @@ An environment is needed to make it meaningful, fixed narratives/missions are no
 
 We'll focus on combining navigation-based behaviours in a flexible manner.
 Game AI should be compositional, not forced into a narrative straight-jacket.
-The environment will be based on thousands of [Traveller-themed assets](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+The environment will be based on thousands of Traveller-themed assets.
 
 <!-- TODO resize img e.g. TinyPNG -->
 <image src="/geomorph/g-301--bridge.debug.png" style="width:100%" />
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-The latter PDFs provide a large number of architectural drawings by Robert Pearce, under a reasonably permissive license.
+Robert Pearce provides these PDFs on his website, each containing a large number of architectural drawings, under a reasonably permissive license.
 Starship Geomorphs are sections of spaceships designed to be glued together.
 Their 2nd version was released in 2020, and soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/), distributed under the same license.
 It is these 2000+ symbols which form the underlying basis of Rogue Markup.
@@ -52,13 +52,13 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Support mobile/desktop devices.
 
 
-<div class="example">
+<aside>
 
-__\`Example\`__. Here's a [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
-Delving into the details will reveal our rectangle class _Rect_, and a Geomorph PNG.
+Here's our first [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+If you peruse the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
 Our CodeSandboxes use React, whereas this website uses _Preact_.
 More on that later.
-</div>
+</aside>
 
 ### Game mechanics
 
@@ -70,24 +70,25 @@ More on that later.
 - Do not use a Physics engine.
 <!-- - Use procedural generation for spaceship building. -->
 
+<aside>
 
-<div class="example">
-
-_\`Example\`_. Demo in-browser terminal.
-</div>
+Demo in-browser terminal...
+</aside>
 
 ### Setting
   
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
-  > _The Traveller game in all forms is owned by Far Future Enterprises. Copyright © 1977 – 2020 Far Future Enterprises._
+  > _The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2020 Far Future Enterprises._
 - Space vehicles/station/docks.
 - Buddhist backdrop via [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
 - Horror backdrop via [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
-<div class="example">
+<aside>
 
-_\`Example\`_. Bardo Thodol image
-</div>
+Background info about Traveller...
+
+Rough ideas concerning Religious Ship AIs and Karmic Loop.
+</aside>
 
 Over time we'll clarify the above constraints, but first we emphasise:
 > _creating a video game is really fucking hard_.
