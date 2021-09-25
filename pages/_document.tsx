@@ -11,7 +11,7 @@ export default class MyDocument extends Document<{ css: string }> {
 
   render() {
     return (
-      <Html>
+      <Html lang="en">
         <Head>
           <link rel="icon" href="/favicon.ico" />
           <style
