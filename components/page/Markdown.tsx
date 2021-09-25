@@ -22,11 +22,12 @@ const blogComponents = {
     return (
       <a
         href={href}
+        title={title}
         {...['@new-tab'].includes(title) && {
           className: 'new-tab-link',
-          target: '_blank',          
+          target: '_blank',
+          rel: 'noopener',
         }}
-        title={title}
         {...href === '#command' && {
           onClick: (e) => {
             e.preventDefault();
