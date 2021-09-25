@@ -100,8 +100,9 @@ const blogCss = css`
   }
 
   blockquote {
+    margin: 32px 40px;
     @media(max-width: 800px) {
-      margin-left: 16px;
+      margin: 20px 0 20px 16px;
     }
   }
 
