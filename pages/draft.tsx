@@ -73,11 +73,12 @@ More on that later.
 
         <aside>
           <p>
-            Demo in-browser terminal...
+            To query, control and debug NPC behaviours,
+            we'll use an in-browser terminal...
           </p>
 
           <Tabs
-            height={400}
+            height={300}
             tabs={[
               { key: 'terminal', session: 'test' },
             ]}

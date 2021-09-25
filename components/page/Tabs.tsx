@@ -1,30 +1,15 @@
 import React from 'react';
 import { css } from 'goober';
-import { Layout, Model, Actions } from 'flexlayout-react';
 import classNames from 'classnames';
-
-import useSiteStore from 'store/site.store';
-import { computeJsonModel, factory, TabMeta } from './TabsAux';
+import { Layout } from 'components/dynamic';
+import type { TabMeta } from './TabsAux';
 import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
 
 /**
  * TODO clean and simplify this component
  */
 export default function Tabs(props: Props) {
-  const model = React.useMemo(() => Model.fromJson(computeJsonModel(props.tabs)), [props.tabs]);
-  const rootRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (props.storeKey) {
-      useSiteStore.getState().tabs[props.storeKey] = {
-        key: props.storeKey,
-        selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
-        scrollIntoView: () => rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
-      };
-      return () => void delete useSiteStore.getState().tabs[props.storeKey || ''];
-    }
-  }, [model]);
-
+  const rootRef = React.useRef<HTMLElement>(null);
   const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
   const [enabled, setEnabled] = React.useState(!!props.enabled);
   React.useEffect(() => void setColour(enabled ? 'clear' : 'faded'), []);
@@ -36,7 +21,7 @@ export default function Tabs(props: Props) {
     >
       <div className={overlayCss(props.height)}>
         {colour !== 'black' && (
-          <Layout model={model} factory={factory} />
+          <Layout storeKey={props.storeKey} tabs={props.tabs} rootRef={rootRef} />
         )}
         <ControlsOverlay enabled={enabled} toggleEnabled={() => {
           setEnabled(!enabled);
@@ -48,7 +33,7 @@ export default function Tabs(props: Props) {
   );
 }
 
-interface Props {
+export interface Props {
   /** Initially enabled? */
   enabled?: boolean;
   height: number;
