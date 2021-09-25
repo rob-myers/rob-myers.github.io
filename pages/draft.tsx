@@ -54,9 +54,9 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 <aside>
 
-Here's our first [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
-If you peruse the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
-Our CodeSandboxes use React, whereas this website uses _Preact_.
+Here's our 1st [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+Perusing the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
+Our CodeSandboxes use React, whereas this site uses _Preact_.
 More on that later.
 </aside>
 
@@ -72,7 +72,7 @@ More on that later.
 
 <aside>
 
-Demo in-browser terminal...
+__TODO__ Demo in-browser terminal.
 </aside>
 
 ### Setting
@@ -85,9 +85,9 @@ Demo in-browser terminal...
 
 <aside>
 
-Background info about Traveller...
+__TODO__ Background info about Traveller.
 
-Rough ideas concerning Religious Ship AIs and Karmic Loop.
+__TODO__ Intro our setting: Religious Ship AIs and Karmic Loop.
 </aside>
 
 Over time we'll clarify the above constraints, but first we emphasise:
@@ -114,14 +114,6 @@ Graphically, see Starship Geomorphs 2.0.
 Rogue Markup will be easy to extend.
 We'll achieve this via compositional code, escape hatches to CodeSandbox, clear explanations, and [GitHub](https://github.com/) comments.
 
-<!--
-[NetHack](https://en.wikipedia.org/wiki/NetHack)'s ≥ 34 year history shows _we needn't spell out a story_.
--->
-<!--
-We'll add cameras, guards, doors, keys, weapons etc.
-All NPC decisions will be depicted graphically, such as future navpaths with probabilistic branches.
--->
-
 ### 3. Experience
 
 _Games I’m good at making_. I work as a web developer, using React and CSS-in-JS on a daily basis. 
@@ -147,7 +139,8 @@ Let us describe the underlying technologies.
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
-| Live analysis | Our own in-browser terminal. |
+| Live analysis | In-browser terminal based on [mvdan-sh](https://github.com/mvdan/sh). |
+| Scripting | [TS Node](https://www.npmjs.com/package/ts-node). |
 | Code viewing | [CodeMirror](https://codemirror.net/) to view JS. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | Show [GitHub](https://github.com/) comments, provide GitHub [repo](https://github.com/rob-myers/rob-myers.github.io). |
@@ -292,9 +285,9 @@ A React function component is rendered whenever an ancestor is (modulo React.mem
 
 > \`const [data, setData] = React.useState(() => initialState)\`.
 
-These declarations cannot be nested and must occur at the "top-level" of the React function component, always executing in the same order.
+These declarations cannot be nested, must occur at the "top-level" of the React function component, and must always execute in the same order.
 This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their enclosing component.
-To change state we execute _setData(nextData)_ e.g. in response to a click. If _nextData_ differs from _data_, the component is re-rendered relative to the new data.
+To change state we execute _setData(nextData)_ e.g. in response to a click. If _nextData_ differs from _data_, the function _setData_ causes the component to re-render relative to the new data.
 
 In _panzoom/PanZoom.jsx_ the variable _state_ corresponds to _data_, but there is no correspondent of _setData_.
 
