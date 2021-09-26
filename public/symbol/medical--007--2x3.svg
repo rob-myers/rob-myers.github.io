@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="920" height="620" x="-10" y="-10" xlink:href="data:image/png;base64,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"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>obstacles</title>
+    <rect x="650" width="250" height="436.4" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="163.6"/>
+    <rect width="201.3" height="436.4" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="163.6" x="347"/>
+    <rect width="300" height="149.7" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="450.3"/>
+    <rect width="102.2" height="121.9" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="340.3" x="99.3"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>walls</title>
+    <rect x="890" y="-10" width="20" height="610" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect width="910" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" y="590"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>singles</title>
+    <rect x="40" y="880" width="220" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 900, 0.900024)">
+      <title>door door-w</title>
+    </rect>
+    <rect x="40" width="220" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" y="-20">
+      <title>door door-n</title>
+    </rect>
+    <rect x="209.1" y="209.1" width="90.9" height="90.9" style="fill: rgb(216, 216, 216);">
+      <title>label medical</title>
+    </rect>
+    <rect y="-10" width="20" height="610" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="-10">
+      <title>wall</title>
+    </rect>
+    <rect width="900" height="20" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" y="-10">
+      <title>wall</title>
+    </rect>
+  </g>
+</svg>

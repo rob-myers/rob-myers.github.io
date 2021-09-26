@@ -23,6 +23,7 @@
  * yarn rename-pngs symbol "media/Symbols/Ship's Locker" media/symbol-ships-locker
  * yarn rename-pngs symbol "media/Symbols/Shop & Repair Area" media/symbol-shop-repair-area
  * yarn rename-pngs symbol media/Symbols/Fresher media/symbol-fresher
+ * yarn rename-pngs symbol media/Symbols/Medical media/symbol-medical
  * 
  * yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft

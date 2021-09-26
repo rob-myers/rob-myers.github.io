@@ -14,7 +14,7 @@ export default function TestPage() {
 
         <Tabs
         enabled
-          height={400}
+          height={600}
           tabs={[
             { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },
             // { key: 'terminal', session: 'test' },

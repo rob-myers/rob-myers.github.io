@@ -19,12 +19,14 @@ const layoutDefs = {
       { symbol: 'stateroom--019--2x3', transform: [-1, 0, 0, -1, 840, 420] },
 
       { symbol: 'empty-room--013--2x3', transform: [0, 1, -1, 0, 180, 360] },
+      { symbol: 'medical--008--2x3', transform: [0, -1, -1, 0, 360, 540], tags: ['door-w'] },
       { symbol: 'stateroom--020--2x3', transform: [0, -1, 1, 0, 360, 540] },
       { symbol: 'stateroom--020--2x3', transform: [0, -1, -1, 0, 840, 540] },
       { symbol: 'fresher--025--2x3', transform: [0, -1, 1, 0, 840, 540] },
       { symbol: 'office--023--2x3', transform: [0, -1, -1, 0, 1200, 480] },
       
-      { symbol: 'empty-room--039--3x4', transform: [-1, 0, 0, 1, 180,480] },
+      { symbol: 'empty-room--039--3x4', transform: [-1, 0, 0, 1, 180, 480] },
+      { symbol: 'medical--007--2x3', transform: [0, 1, -1, 0, 360, 660], tags: ['door-w'] },
       { symbol: 'empty-room--013--2x3', transform: [0, -1, -1, 0, 180, 840] },
       { symbol: 'fresher--025--2x3', transform: [0, 1, 1, 0, 840, 660] },
       { symbol: 'office--061--3x4', transform: [1, 0, 0, 1, 1020, 480] },

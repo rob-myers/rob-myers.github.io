@@ -1,0 +1,519 @@
+{
+  "parentFolder": "Medical",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Medical 001 [10x10].png",
+      "dstName": "medical--001--2x2.png",
+      "id": 1,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Medical 002 [10x15].png",
+      "dstName": "medical--002--2x3.png",
+      "id": 2,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Medical 003 [10x15].png",
+      "dstName": "medical--003--2x3.png",
+      "id": 3,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Medical 004 [10x20].png",
+      "dstName": "medical--004--2x4.png",
+      "id": 4,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Medical 005 [10x20].png",
+      "dstName": "medical--005--2x4.png",
+      "id": 5,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Medical 006 [10x10].png",
+      "dstName": "medical--006--2x2.png",
+      "id": 6,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Medical 007 [10x15].png",
+      "dstName": "medical--007--2x3.png",
+      "id": 7,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Medical 008 [10x15].png",
+      "dstName": "medical--008--2x3.png",
+      "id": 8,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Medical 009 [10x20].png",
+      "dstName": "medical--009--2x4.png",
+      "id": 9,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Medical 010 [10x20].png",
+      "dstName": "medical--010--2x4.png",
+      "id": 10,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Medical 011 [10x20].png",
+      "dstName": "medical--011--2x4.png",
+      "id": 11,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Medical 012 [10x20].png",
+      "dstName": "medical--012--2x4.png",
+      "id": 12,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Medical 013 [10x20].png",
+      "dstName": "medical--013--2x4.png",
+      "id": 13,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Medical 014 [10x20].png",
+      "dstName": "medical--014--2x4.png",
+      "id": 14,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Medical 015 [10x15].png",
+      "dstName": "medical--015--2x3.png",
+      "id": 15,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Medical 016 [15x15].png",
+      "dstName": "medical--016--3x3.png",
+      "id": 16,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Medical 017 [15x15].png",
+      "dstName": "medical--017--3x3.png",
+      "id": 17,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Medical 018 [15x20].png",
+      "dstName": "medical--018--3x4.png",
+      "id": 18,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Medical 019 [15x20].png",
+      "dstName": "medical--019--3x4.png",
+      "id": 19,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Medical 020 [10x20].png",
+      "dstName": "medical--020--2x4.png",
+      "id": 20,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Medical 021 [15x20].png",
+      "dstName": "medical--021--3x4.png",
+      "id": 21,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Medical 022 [15x20].png",
+      "dstName": "medical--022--3x4.png",
+      "id": 22,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Medical 023 [20x20].png",
+      "dstName": "medical--023--4x4.png",
+      "id": 23,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Medical 024 [20x20].png",
+      "dstName": "medical--024--4x4.png",
+      "id": 24,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Medical 025 [20x20].png",
+      "dstName": "medical--025--4x4.png",
+      "id": 25,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Medical 026 [20x20].png",
+      "dstName": "medical--026--4x4.png",
+      "id": 26,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Medical 027 [20x20].png",
+      "dstName": "medical--027--4x4.png",
+      "id": 27,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Medical 028 [20x20].png",
+      "dstName": "medical--028--4x4.png",
+      "id": 28,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Medical 029 [20x20].png",
+      "dstName": "medical--029--4x4.png",
+      "id": 29,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Medical 030 [20x20].png",
+      "dstName": "medical--030--4x4.png",
+      "id": 30,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Medical 031 [20x20].png",
+      "dstName": "medical--031--4x4.png",
+      "id": 31,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Medical 032 [20x20].png",
+      "dstName": "medical--032--4x4.png",
+      "id": 32,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Medical 033 [20x20].png",
+      "dstName": "medical--033--4x4.png",
+      "id": 33,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Medical 034 [15x20].png",
+      "dstName": "medical--034--3x4.png",
+      "id": 34,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Medical 035 [15x20].png",
+      "dstName": "medical--035--3x4.png",
+      "id": 35,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Medical 036 [20x35].png",
+      "dstName": "medical--036--4x7.png",
+      "id": 36,
+      "gridDim": [4, 7],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Medical 037 [20x40].png",
+      "dstName": "medical--037--4x8.png",
+      "id": 37,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Medical 038 [15x20].png",
+      "dstName": "medical--038--3x4.png",
+      "id": 38,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Medical 039 [15x15].png",
+      "dstName": "medical--039--3x3.png",
+      "id": 39,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Medical 040 [10x15].png",
+      "dstName": "medical--040--2x3.png",
+      "id": 40,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Medical 041 [20x40].png",
+      "dstName": "medical--041--4x8.png",
+      "id": 41,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Medical 042 [20x40].png",
+      "dstName": "medical--042--4x8.png",
+      "id": 42,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Medical 043 [10x20].png",
+      "dstName": "medical--043--2x4.png",
+      "id": 43,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Medical 044 [20x20].png",
+      "dstName": "medical--044--4x4.png",
+      "id": 44,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Medical 045 [10x20].png",
+      "dstName": "medical--045--2x4.png",
+      "id": 45,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Medical 046 [10x20].png",
+      "dstName": "medical--046--2x4.png",
+      "id": 46,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Medical 047 [5x20].png",
+      "dstName": "medical--047--1x4.png",
+      "id": 47,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Medical 048 [10x20].png",
+      "dstName": "medical--048--2x4.png",
+      "id": 48,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Medical 049 [5x10].png",
+      "dstName": "medical--049--1x2.png",
+      "id": 49,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [49]
+    },
+    {
+      "srcName": "Medical 050 [10x10].png",
+      "dstName": "medical--050--2x2.png",
+      "id": 50,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Medical 051 [10x20].png",
+      "dstName": "medical--051--2x4.png",
+      "id": 51,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Medical 052 [10x20].png",
+      "dstName": "medical--052--2x4.png",
+      "id": 52,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Medical 053 [15x15].png",
+      "dstName": "medical--053--3x3.png",
+      "id": 53,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    },
+    {
+      "srcName": "Medical 054 [20x20].png",
+      "dstName": "medical--054--4x4.png",
+      "id": 54,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [54]
+    },
+    {
+      "srcName": "Medical 055 [20x20].png",
+      "dstName": "medical--055--4x4.png",
+      "id": 55,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [55]
+    },
+    {
+      "srcName": "Medical 056 [20x20].png",
+      "dstName": "medical--056--4x4.png",
+      "id": 56,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [56]
+    },
+    {
+      "srcName": "Medical 057 [15x20].png",
+      "dstName": "medical--057--3x4.png",
+      "id": 57,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [57]
+    }
+  ]
+}
