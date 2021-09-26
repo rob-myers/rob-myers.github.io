@@ -1717,26 +1717,45 @@
     ],
     "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 620}
   },
-  "machinery--155--1.8x3.6": {
-    "key": "machinery--155--1.8x3.6",
+  "machinery--091--1.6x1.8": {
+    "key": "machinery--091--1.6x1.8",
     "hull": [],
     "obstacles": [
       {
         "type": "Polygon",
         "coordinates": [
           [
-            [41.3, 49.7],
-            [562.5, 49.7],
-            [562.5, 1150.3],
-            [41.3, 1150.3],
-            [41.3, 49.7]
+            [-10, 550],
+            [0, 174.4],
+            [27.9, 103.9],
+            [93.6, 35.3],
+            [180.3, 0],
+            [300, 0],
+            [381.6, 30.1],
+            [457.8, 113.9],
+            [480, 173.3],
+            [490, 550],
+            [-10, 550]
           ]
         ]
       }
     ],
     "walls": [],
     "singles": [],
-    "pngRect": {"x": 40, "y": 50, "width": 520, "height": 1100}
+    "pngRect": {"x": -10, "y": -10, "width": 500, "height": 559}
+  },
+  "machinery--155--1.8x3.6": {
+    "key": "machinery--155--1.8x3.6",
+    "hull": [],
+    "obstacles": [
+      {
+        "type": "Polygon",
+        "coordinates": [[[10, 0], [530, 0], [530, 1080], [10, 1080], [10, 0]]]
+      }
+    ],
+    "walls": [],
+    "singles": [],
+    "pngRect": {"x": 10, "y": -10, "width": 520, "height": 1100}
   },
   "machinery--156--1.8x3.6": {
     "key": "machinery--156--1.8x3.6",
@@ -1744,20 +1763,12 @@
     "obstacles": [
       {
         "type": "Polygon",
-        "coordinates": [
-          [
-            [41.3, 49.7],
-            [600, 49.7],
-            [600, 1150.3],
-            [41.3, 1150.3],
-            [41.3, 49.7]
-          ]
-        ]
+        "coordinates": [[[0, 0], [540, 0], [540, 1080], [0, 1080], [0, 0]]]
       }
     ],
     "walls": [],
     "singles": [],
-    "pngRect": {"x": 40, "y": 50, "width": 560, "height": 1100}
+    "pngRect": {"x": -10, "y": -10, "width": 560, "height": 1100}
   },
   "machinery--158--1.8x3.6": {
     "key": "machinery--158--1.8x3.6",
@@ -1765,14 +1776,27 @@
     "obstacles": [
       {
         "type": "Polygon",
-        "coordinates": [
-          [[0, 49.7], [562.5, 49.7], [562.5, 1150.3], [0, 1150.3], [0, 49.7]]
-        ]
+        "coordinates": [[[0, 0], [540, 0], [540, 1080], [0, 1080], [0, 0]]]
       }
     ],
     "walls": [],
     "singles": [],
-    "pngRect": {"x": 0, "y": 50, "width": 560, "height": 1100}
+    "pngRect": {"x": -10, "y": -10, "width": 560, "height": 1100}
+  },
+  "machinery--357--2.2x4": {
+    "key": "machinery--357--2.2x4",
+    "hull": [],
+    "obstacles": [],
+    "walls": [
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[-9, -10], [1211, -10], [1211, 610], [-9, 610], [-9, -10]]
+        ]
+      }
+    ],
+    "singles": [],
+    "pngRect": {"x": -10, "y": -72.5, "width": 1220, "height": 683}
   },
   "misc-stellar-cartography--023--4x4": {
     "key": "misc-stellar-cartography--023--4x4",
