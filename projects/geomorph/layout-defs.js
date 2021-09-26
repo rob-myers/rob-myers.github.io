@@ -8,11 +8,16 @@ const layoutDefs = {
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 360, 0] },
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 600, 0] },
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 960, 0] },
+
       { symbol: 'machinery--158--1.8x3.6', transform: [0, -1, 1, 0, +10, 240] },
-      { symbol: 'machinery--155--1.8x3.6', transform: [0, -1, 1, 0, 960 + 12, 240 - 4] },
       { symbol: 'stateroom--020--2x3', transform: [0, 1, 1, 0, 360, 120] },
       { symbol: 'fresher--020--2x2', transform: [0, 1, 1, 0, 540, 120] },
       { symbol: 'lounge--009--2x3', transform: [-1, 0, 0, -1, 840, 240] },
+      { symbol: 'machinery--155--1.8x3.6', transform: [0, -1, 1, 0, 960 + 12, 240 - 4] },
+      
+      { symbol: 'stateroom--018--2x3', transform: [1, 0, 0, 1, 360, 240] },
+      { symbol: 'stateroom--019--2x3', transform: [-1, 0, 0, -1, 840, 420] },
+
       { symbol: 'stateroom--020--2x3', transform: [0, -1, 1, 0, 360, 540] },
       { symbol: 'stateroom--020--2x3', transform: [0, -1, -1, 0, 840, 540] },
       { symbol: 'fresher--025--2x3', transform: [0, -1, 1, 0, 840, 540] },
