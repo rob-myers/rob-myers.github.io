@@ -1738,6 +1738,27 @@
     "singles": [],
     "pngRect": {"x": 40, "y": 50, "width": 520, "height": 1100}
   },
+  "machinery--156--1.8x3.6": {
+    "key": "machinery--156--1.8x3.6",
+    "hull": [],
+    "obstacles": [
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [41.3, 49.7],
+            [600, 49.7],
+            [600, 1150.3],
+            [41.3, 1150.3],
+            [41.3, 49.7]
+          ]
+        ]
+      }
+    ],
+    "walls": [],
+    "singles": [],
+    "pngRect": {"x": 40, "y": 50, "width": 560, "height": 1100}
+  },
   "machinery--158--1.8x3.6": {
     "key": "machinery--158--1.8x3.6",
     "hull": [],

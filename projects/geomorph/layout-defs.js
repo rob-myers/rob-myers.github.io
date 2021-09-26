@@ -10,6 +10,7 @@ const layoutDefs = {
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 960, 0] },
       { symbol: 'machinery--158--1.8x3.6', transform: [0, -1, 1, 0, 0, 240] },
       { symbol: 'machinery--155--1.8x3.6', transform: [0, -1, 1, 0, 960, 240] },
+      { symbol: 'machinery--156--1.8x3.6', transform: [0, -1, 1, 0, 0, 1080] },
       { symbol: 'stateroom--020--2x3', transform: [0, 1, 1, 0, 360, 120] },
       { symbol: 'fresher--020--2x2', transform: [0, 1, 1, 0, 540, 120] },
       { symbol: 'stateroom--020--2x3', transform: [0, -1, 1, 0, 360, 540] },
