@@ -1,4 +1,20 @@
 const layoutDefs = {
+  'g-101--multipurpose': /** @type {Geomorph.LayoutDef} */ ({
+    key: 'g-101--multipurpose',
+    id: 101,
+    items: [
+      { symbol: '101--hull', tags: ['door'] },
+      { symbol: 'fuel--010--2x4' },
+      { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 360, 0] },
+      { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 600, 0] },
+      { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 960, 0] },
+      { symbol: 'machinery--158--1.8x3.6', transform: [0, -1, 1, 0, 0, 240] },
+      { symbol: 'machinery--155--1.8x3.6', transform: [0, -1, 1, 0, 960, 240] },
+      { symbol: 'stateroom--020--2x3', transform: [0, 1, 1, 0, 360, 120] },
+      { symbol: 'stateroom--020--2x3', transform: [0, -1, 1, 0, 360, 540] },
+      { symbol: 'stateroom--020--2x3', transform: [0, -1, -1, 0, 840, 540] },
+    ],
+  }),
   'g-301--bridge': /** @type {Geomorph.LayoutDef} */ ({
     key: 'g-301--bridge',
     id: 301,

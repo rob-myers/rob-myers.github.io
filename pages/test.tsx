@@ -13,10 +13,12 @@ export default function TestPage() {
         `}/>
 
         <Tabs
+        enabled
           height={400}
           tabs={[
-            { key: 'terminal', session: 'test' },
-            { key: 'terminal', session: 'other' },
+            { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },
+            // { key: 'terminal', session: 'test' },
+            // { key: 'terminal', session: 'other' },
           ]}
         />
 
