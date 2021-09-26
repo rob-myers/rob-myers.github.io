@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="620" height="934" x="-10" y="-10" xlink:href="data:image/png;base64,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"/>
+  </g>
+  <g>
+    <title>obstacles</title>
+    <rect x="448" y="300" width="152" height="600" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+    <rect x="55.9" y="50.2" width="493.3" height="197" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+    <rect x="335.4" y="400.2" width="97.8" height="100.9" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+    <rect x="335.4" y="700.2" width="97.8" height="100.9" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>walls</title>
+    <rect x="590" y="-10" width="20" height="910" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect width="600" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" y="-10"/>
+    <rect y="-10" width="20" height="910" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" x="-10"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>singles</title>
+    <rect y="890" width="600" height="20" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);">
+      <title>wall</title>
+    </rect>
+    <rect x="40" y="880" width="220" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;">
+      <title>door</title>
+    </rect>
+    <rect x="250" y="100" width="90.9" height="90.9" style="fill: rgb(216, 216, 216); pointer-events: auto;">
+      <title>label cpu</title>
+    </rect>
+    <rect x="164.2" y="550" width="90.9" height="90.9" style="fill: rgb(216, 216, 216); pointer-events: auto;">
+      <title>label office</title>
+    </rect>
+  </g>
+</svg>
