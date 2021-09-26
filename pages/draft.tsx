@@ -27,8 +27,8 @@ The environment will be based on thousands of Traveller-themed assets.
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-Robert Pearce provides these PDFs on his website, each containing a large number of architectural drawings, under a reasonably permissive license.
-Starship Geomorphs are sections of spaceships designed to be glued together.
+These graphics were created by Robert Pearce, and provided as PDFs on his website, under a reasonably permissive license.
+Starship Geomorphs are rectangular slices of spaceships designed to be glued together.
 Their 2nd version was released in 2020, and soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/), distributed under the same license.
 It is these 2000+ symbols which form the underlying basis of Rogue Markup.
         `}/>
