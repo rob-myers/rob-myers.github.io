@@ -1,0 +1,483 @@
+{
+  "parentFolder": "Fresher",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Fresher 001 [5x5].png",
+      "dstName": "fresher--001--1x1.png",
+      "id": 1,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Fresher 002 [5x5].png",
+      "dstName": "fresher--002--1x1.png",
+      "id": 2,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Fresher 003 [5x5].png",
+      "dstName": "fresher--003--1x1.png",
+      "id": 3,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Fresher 004 [5x5].png",
+      "dstName": "fresher--004--1x1.png",
+      "id": 4,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Fresher 005 [5x5].png",
+      "dstName": "fresher--005--1x1.png",
+      "id": 5,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Fresher 006 [5x15].png",
+      "dstName": "fresher--006--1x3.png",
+      "id": 6,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Fresher 007 [5x10].png",
+      "dstName": "fresher--007--1x2.png",
+      "id": 7,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Fresher 008 [5x15].png",
+      "dstName": "fresher--008--1x3.png",
+      "id": 8,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Fresher 009 [5x10].png",
+      "dstName": "fresher--009--1x2.png",
+      "id": 9,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Fresher 010 [5x10].png",
+      "dstName": "fresher--010--1x2.png",
+      "id": 10,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Fresher 011 [5x10].png",
+      "dstName": "fresher--011--1x2.png",
+      "id": 11,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Fresher 012 [5x15].png",
+      "dstName": "fresher--012--1x3.png",
+      "id": 12,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Fresher 013 [5x15].png",
+      "dstName": "fresher--013--1x3.png",
+      "id": 13,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Fresher 014 [5x15].png",
+      "dstName": "fresher--014--1x3.png",
+      "id": 14,
+      "gridDim": [1, 3],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Fresher 015 [5x10].png",
+      "dstName": "fresher--015--1x2.png",
+      "id": 15,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Fresher 016 [5x10].png",
+      "dstName": "fresher--016--1x2.png",
+      "id": 16,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Fresher 017 [5x10].png",
+      "dstName": "fresher--017--1x2.png",
+      "id": 17,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Fresher 018 [5x10].png",
+      "dstName": "fresher--018--1x2.png",
+      "id": 18,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Fresher 019 [10x10].png",
+      "dstName": "fresher--019--2x2.png",
+      "id": 19,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Fresher 020 [10x10].png",
+      "dstName": "fresher--020--2x2.png",
+      "id": 20,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Fresher 021 [10x10].png",
+      "dstName": "fresher--021--2x2.png",
+      "id": 21,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Fresher 022 [10x10].png",
+      "dstName": "fresher--022--2x2.png",
+      "id": 22,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Fresher 023 [10x10].png",
+      "dstName": "fresher--023--2x2.png",
+      "id": 23,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Fresher 024 [10x15].png",
+      "dstName": "fresher--024--2x3.png",
+      "id": 24,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Fresher 025 [10x15].png",
+      "dstName": "fresher--025--2x3.png",
+      "id": 25,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Fresher 026 [10x15].png",
+      "dstName": "fresher--026--2x3.png",
+      "id": 26,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Fresher 027 [10x15].png",
+      "dstName": "fresher--027--2x3.png",
+      "id": 27,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Fresher 028 [10x20].png",
+      "dstName": "fresher--028--2x4.png",
+      "id": 28,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Fresher 029 [10x15].png",
+      "dstName": "fresher--029--2x3.png",
+      "id": 29,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Fresher 030 [10x15].png",
+      "dstName": "fresher--030--2x3.png",
+      "id": 30,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Fresher 031 [10x15].png",
+      "dstName": "fresher--031--2x3.png",
+      "id": 31,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Fresher 032 [10x15].png",
+      "dstName": "fresher--032--2x3.png",
+      "id": 32,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Fresher 033 [10x20].png",
+      "dstName": "fresher--033--2x4.png",
+      "id": 33,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Fresher 034 [10x20].png",
+      "dstName": "fresher--034--2x4.png",
+      "id": 34,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Fresher 035 [10x20].png",
+      "dstName": "fresher--035--2x4.png",
+      "id": 35,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Fresher 036 [10x20].png",
+      "dstName": "fresher--036--2x4.png",
+      "id": 36,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Fresher 037 [10x20].png",
+      "dstName": "fresher--037--2x4.png",
+      "id": 37,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Fresher 038 [10x20].png",
+      "dstName": "fresher--038--2x4.png",
+      "id": 38,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Fresher 039 [10x20].png",
+      "dstName": "fresher--039--2x4.png",
+      "id": 39,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Fresher 040 [10x20].png",
+      "dstName": "fresher--040--2x4.png",
+      "id": 40,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Fresher 041 [10x20].png",
+      "dstName": "fresher--041--2x4.png",
+      "id": 41,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Fresher 042 [10x20].png",
+      "dstName": "fresher--042--2x4.png",
+      "id": 42,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Fresher 043 [10x20].png",
+      "dstName": "fresher--043--2x4.png",
+      "id": 43,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Fresher 044 [15x20].png",
+      "dstName": "fresher--044--3x4.png",
+      "id": 44,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Fresher 045 [10x25].png",
+      "dstName": "fresher--045--2x5.png",
+      "id": 45,
+      "gridDim": [2, 5],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Fresher 046 [15x20].png",
+      "dstName": "fresher--046--3x4.png",
+      "id": 46,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Fresher 047 [15x20].png",
+      "dstName": "fresher--047--3x4.png",
+      "id": 47,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Fresher 048 [10x15].png",
+      "dstName": "fresher--048--2x3.png",
+      "id": 48,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Fresher 049 [15x15].png",
+      "dstName": "fresher--049--3x3.png",
+      "id": 49,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [49]
+    },
+    {
+      "srcName": "Fresher 050 [20x20].png",
+      "dstName": "fresher--050--4x4.png",
+      "id": 50,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Fresher 051 [20x20].png",
+      "dstName": "fresher--051--4x4.png",
+      "id": 51,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Fresher 052 [10x10].png",
+      "dstName": "fresher--052--2x2.png",
+      "id": 52,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Fresher 053 [10x10].png",
+      "dstName": "fresher--053--2x2.png",
+      "id": 53,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    }
+  ]
+}
