@@ -32,9 +32,10 @@ const outputDir = path.resolve(publicDir, 'geomorph');
 const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.png' : '.png'}`)
 
 /** @type {Geomorph.RenderOpts} */
-const renderOpts = debug
-  ? { scale: 2, obsBounds: true, wallBounds: true, doors: true, labels: true, navTris: true }
-  : { scale: 2, obsBounds: false, wallBounds: false };
+const renderOpts = {
+  scale: 2, obsBounds: false, wallBounds: false,
+  ...debug && { obsBounds: true, wallBounds: true, doors: true, labels: true, navTris: true }
+};
 
 /** @param {Geomorph.LayoutDef} def */
 async function computeLayout(def) {

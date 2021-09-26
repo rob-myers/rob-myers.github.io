@@ -1,7 +1,7 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat } from '../geom';
-import { svgPathToPolygons } from '../service';
+import { svgPathToPolygon } from '../service';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -122,7 +122,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     hull: Poly.union(hull),
     obstacles: Poly.union(obstacles),
     walls: Poly.union(walls),
-    singles: singles.map((/** @type {*} */ poly) =>({ tags: poly._ownTags, poly })),
+    singles: singles.map((/** @type {*} */ poly) => ({ tags: poly._ownTags, poly })),
   };
 }
 
@@ -205,8 +205,9 @@ function extractGeom(api, el) {
     const poly = Poly.fromRect(new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)))
     output.push(Object.assign(poly, { _ownTags }));
   } else if (tagName === 'path') {
-    const polys = svgPathToPolygons(a.d);
-    output.push(...polys.map(p => Object.assign(p, { _ownTags })));
+    // Must be a single connected polygon with ≥ 0 holes
+    const poly = svgPathToPolygon(a.d);
+    poly && output.push(Object.assign(poly, { _ownTags }));
   } else {
     console.warn('extractGeom: unexpected tagName:', tagName);
   }

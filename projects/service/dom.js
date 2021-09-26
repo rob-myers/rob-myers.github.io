@@ -49,26 +49,27 @@ export function getSvgMid(ptrs) {
 
 /**
  * Based on https://github.com/Phrogz/svg-path-to-polygons/blob/master/svg-path-to-polygons.js.
- * Only supports straight lines i.e. M, L, H, V, Z.
- * Creates a list of polygons without holes.
- * @param {string} svgPathString 
+ * - Only supports straight lines i.e. M, L, H, V, Z.
+ * - Expects a __single polygon__ with ≥ 0 holes.
+ * @param {string} svgPathString
+ * @returns {null | Poly}
  */
-export function svgPathToPolygons(svgPathString) {
-	const polys = /** @type {Vect[][]} */ ([]);
-	let poly = /** @type {Vect[]} */ ([]);
+export function svgPathToPolygon(svgPathString) {
+	const rings = /** @type {Vect[][]} */ ([]);
+	let ring = /** @type {Vect[]} */ ([]);
 
 	/**
 	 * @param {number} x 
 	 * @param {number} y 
 	 */
   function add(x, y){
-    poly.push(new Vect(x, y));
+    ring.push(new Vect(x, y));
   }
 
 	makeAbsolute(parseSVG(svgPathString)).forEach(cmd => {
 		switch(cmd.code) {
 			case 'M':
-				polys.push(poly = []);
+				rings.push(ring = []);
 			// eslint-disable-next-line no-fallthrough
 			case 'L':
 			case 'H':
@@ -81,7 +82,20 @@ export function svgPathToPolygons(svgPathString) {
 		}
 	});
 
-	return polys.map(ps => new Poly(ps));
+	const polys = rings.map(ps => new Poly(ps));
+	
+	if (polys.length === 0) {
+		return null;
+	} else if (polys.length === 1) {
+		return polys[0];
+	}
+
+	// Largest polygon 1st
+	polys.sort((a, b) => a.rect.area < b.rect.area ? 1 : -1);
+	return new Poly(
+		polys[0].outline,
+		polys.slice(1).map(poly => poly.outline),
+	);
 }
 
 /** https://stackoverflow.com/a/4819886/2917822 */
