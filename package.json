@@ -18,7 +18,7 @@
     "svg-meta": "yarn ts-script media/scripts/svg-meta",
     "watch-svg-meta": "nodemon --delay 2s --config media/scripts/svg-meta.nodemon.json --exec 'yarn svg-meta'",
     "https-proxy": "node_modules/local-ssl-proxy/bin/local-ssl-proxy --source 443 --target 3002",
-    "local-deploy": "rm -rf .next && yarn build && yarn export",
+    "local-deploy": "yarn build && yarn export",
     "deploy-from-local": "touch out/.nojekyll && cd scripts && ts-node gh-pages.ts",
     "deploy": "yarn local-deploy && yarn deploy-from-local"
   },
