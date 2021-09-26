@@ -36,7 +36,9 @@ const layoutDefs = {
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 840] },
 
       { symbol: 'machinery--091--1.6x1.8', transform: [1, 0, 0, 1, 540 + 10, 960] },
+      { symbol: 'office--025--2x3', transform: [0, 1, 1, 0, 360, 960], tags: ['door-w'] },
       { symbol: 'machinery--156--1.8x3.6', transform: [0, -1, 1, 0, +12, 1080 - 12] },
+      { symbol: 'office--025--2x3', transform: [0, 1, -1, 0, 840, 960], tags: ['door-w'] },
       { symbol: 'machinery--357--2.2x4', transform: [1, 0, 0, 1, 960, 960] },
 
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 0, 1080] },

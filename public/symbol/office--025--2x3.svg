@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="620" height="920" x="-10" y="-10" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAmwAAAOYAgMAAAAVj0cNAAAABGdBTUEAALGPC/xhBQAAAAd0SU1FB+UJGg4oMb70doEAAAAQY2FOdgAAAnoAAAOYAAAADgAAAAAXuRznAAAADFBMVEUAAAAAAADNzc3///8NgwZfAAAAAXRSTlMAQObYZgAAAAFiS0dEAxEMTPIAAASvSURBVHja7d3Bces2EABQ8MAS2I9K0EEYHVUK+0k/KSXHP/yHHGJP7E9hSYIr620DekNiQcBeLEoZas64lFKS0uqtpH1stZYyprVdypTWdk1su6VNBbZ4orKxsbGxsb2UrWQLNjY2NjY2NjY2NjY2NjY2NjY2NjY2NrZXsp1XZ3NZtZ1agPRn25nlSWu2M8uTLiu2M0uArolttxVbZXs5W2VjY2NjY/tJtr/6BxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsb264291awsbGxsbG9rM29isfYphNta3eMjoltZ95pu3ZvbOa7gE98qVf3YrOxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsbGxsf10W7QG4N1tlY2N7V/bfWkNNjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2Nja2lhjYgraa2TbnzYX6SGub2gdcN9vYPuB62uastiGxLZAMO9nq93ENJ8Pxtls4GfaxDU/Y2gdcP1v7gOtomxLbxtZk6GhrXorsZfv2dX2yzVltJbOtNRl62sbUtntaW2ui7mD7MIHMf7SVU22PNdvc2TY+bWtM1K62MbXtntY2pLbV7rZ5WX7Vx/LrS9uHLUNJaLvFJpG+timxrW0S2de2vizPa2ubRN7bdv+8LGf7n2350vYIb2d2tf39lW3+vJ05y7Ysyz/zylYrr61pgmOLreDYXsLWNPmyfdyiZrbNbAHbmNr2YAvYBrag7c4WsBW2oK2yRWwT2w+0zWwB28jGxta6KGd7ruyAjY2NjY2N7V1tN7YfZZs+Flsls42JbUOt9ZLUVjYMt8NtY/yVHm7bEmzvbhtT22Y2NrbI3/DZYv8zYktvq2x9agnYYrUrbLFaKbbGJTnbplrQfraJLWhb0toqW8x2T2sb2EK2wBkotsZPVm/bdJpt/YznabZjzsayxc5iH2nbek68ly1y9v8dbI+vf2BTr4k3tm3qbXKw7ZLVtrWXzkbboT2IutkeaW1TYluoV9iPtT3d/y3Wm25b/Gdb9tsA7mQ7tt9gH1ush2QfW6z35tvbgr1et9uO65HbxTYltgV7MvewRXtZ97CNJ9me6Z0e7U++OcbvbZdoKuxle+rRPrLawvcIdIjw3RAdInynRsrh1s0Wv8Oli23Ja7uzhXKBjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2Nje1Q21CzRik1r21IbBsT2ya2kK2ysbGxhePGFrTl/S5cE3/rM9suedeWt1LSPrhr+Q0TC9ygf16L6gAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wOS0yNlQxNDo0MDo0MCswMDowMCt/kFQAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDktMjZUMTQ6NDA6NDArMDA6MDBaIijoAAAAAElFTkSuQmCC"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>obstacles</title>
+    <rect x="388.3" width="211.7" height="600" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="300"/>
+    <rect x="237.3" width="151" height="151.7" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="523.9"/>
+    <rect x="49.4" width="500.3" height="200.4" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="50.6"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>walls</title>
+    <rect x="590" y="-10" width="20" height="920" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect width="610" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" y="890"/>
+    <rect width="610" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" y="-10"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>singles</title>
+    <rect x="40" y="880" width="220" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 900, 600.900024)">
+      <title>door</title>
+    </rect>
+    <rect x="186.8" y="356.5" width="90.9" height="90.9" style="fill: rgb(216, 216, 216);">
+      <title>label office</title>
+    </rect>
+    <rect y="-10" width="20" height="920" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="-10">
+      <title>wall</title>
+    </rect>
+  </g>
+</svg>

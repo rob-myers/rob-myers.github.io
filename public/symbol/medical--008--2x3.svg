@@ -10,16 +10,14 @@
   <g style="pointer-events: none;">
     <title>obstacles</title>
     <rect x="553.3" width="346.7" height="600" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
-    <rect width="114.9" height="300" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="300"/>
-    <rect width="300" height="110.3" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="489.7"/>
-    <rect width="153.4" height="138" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" y="276.2" x="135.4" transform="matrix(0.707107, 0.707107, -0.707107, 0.707107, 302.882568, -0.865028)"/>
+    <path d="M 203.3 290.2 L 311.8 398.7 L 220.7 489.7 L 300 489.7 L 300 600 L 0 600 L 0 300 L 114.9 300 L 114.9 378.6 L 203.3 290.2 Z" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
   </g>
-  <g style="">
+  <g style="pointer-events: none;">
     <title>walls</title>
     <rect x="890" y="-10" width="20" height="610" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
     <rect width="910" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" y="590"/>
   </g>
-  <g style="">
+  <g style="pointer-events: none;">
     <title>singles</title>
     <rect x="40" y="880" width="220" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 900, 0.900024)">
       <title>door door-w</title>
