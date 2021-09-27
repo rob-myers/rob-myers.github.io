@@ -117,7 +117,7 @@ const blogCss = css`
     color: #444;
   }
 
-  > img {
+  img {
     margin: 24px 0;
     @media(max-width: 800px) {
       margin: 8px 0;

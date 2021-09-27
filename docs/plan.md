@@ -42,6 +42,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- onclick img zoom, show modal with larger img
 - Doors represented via `<rect>`s
 - Create geomorph 101
 - Add missing labels to 302
