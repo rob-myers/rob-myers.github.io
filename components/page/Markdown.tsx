@@ -53,4 +53,11 @@ const blogComponents = {
       </a>
     );
   },
+
+  img({ children, ...props }: any) {
+    console.log({ props });
+    return (
+      <img {...props} >{children}</img>
+    );
+  }
 };

@@ -18,6 +18,7 @@ import layoutDefs from '../../projects/geomorph/layout-defs';
 import { createLayout, deserializeSvgJson } from '../../projects/geomorph/geomorph.model';
 import { renderGeomorph } from '../../projects/geomorph/geomorph.render';
 
+const defaultScale = 2;
 const geomorphId = Number(process.argv[2]);
 const layoutDef = Object.values(layoutDefs).find(x => x.id === geomorphId);
 
@@ -33,7 +34,7 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.p
 
 /** @type {Geomorph.RenderOpts} */
 const renderOpts = {
-  scale: 2, obsBounds: false, wallBounds: false,
+  scale: defaultScale, obsBounds: false, wallBounds: false,
   ...debug && { obsBounds: true, wallBounds: true, doors: true, labels: true, navTris: true }
 };
 
