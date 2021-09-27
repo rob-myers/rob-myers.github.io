@@ -1,13 +1,15 @@
 import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
+import classNames from "classnames";
+
 import { Rect } from "../geom";
 import { loadImage } from "../service";
 import { createLayout, deserializeSvgJson, labelMeta, singlesToPolys } from "./geomorph.model";
-import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
-import PanZoom from '../panzoom/PanZoom';
 import layoutDefs from "./layout-defs";
 import { renderGeomorph } from "./geomorph.render";
+import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
+import PanZoom from '../panzoom/PanZoom';
 
 export default function GeomorphDemo() {
   return (
@@ -26,20 +28,12 @@ export default function GeomorphDemo() {
 function Geomorph({ def, transform }) {
   const { data: gm } = useQuery(`layout-${def.key}`, () => computeLayout(def));
   return gm ? (
-    <g transform={transform}>
-      <image
-        className="geomorph"
-        href={gm.dataUrl}
-        x={gm.pngRect.x * scale}
-        y={gm.pngRect.y * scale}
-      />
-
+    <g className={classNames("geomorph", def.key)} transform={transform}>
+      <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
       <g className="doors">
         {gm.doors.map((door) => <polygon points={`${door.outline}`} />)}
       </g>
-
       <Labels gm={gm} />
-
       <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
     </g>
   ) : null;

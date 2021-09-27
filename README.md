@@ -34,6 +34,9 @@ convert -fuzz 1% -trim diag-ne.png diag-ne.png
 # lossless PNG minify
 brew install optipng
 optipng *.png
+
+# extract pdf page 20 as high quality PNG
+convert -density 1164 'Starship Geomorphs 2.0.pdf'[19] -quality 100 unsorted/output.png
 ```
 
 ```sh

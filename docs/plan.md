@@ -42,11 +42,12 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- Tabs not in initial bundle
+- Doors represented via `<rect>`s
 - Create geomorph 101
 - Add missing labels to 302
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
+- ✅ `Layout` not in initial bundle
 - ✅ Script can generate .debug.png with doors/labels/etc.
 - ✅ NavDemo working as before, now via port of three-pathfinding
 - ✅ Can show labels
