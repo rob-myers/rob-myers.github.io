@@ -44,6 +44,15 @@ export interface Props {
 const rootCss = (height: number) => css`
   background: var(--focus-bg);
 
+  @keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .flexlayout__tabset {
+    animation: fadein 1s;
+  }
+
   .flexlayout__tabset, .flexlayout__tab {
     background: white;
   }

@@ -32,12 +32,6 @@ const blogCss = css`
     border: none;
   }
 
-  > figure.tabs {
-    padding: 24px 0 20px;
-    @media(max-width: 800px) {
-      padding: 24px 0;
-    }
-  }
   > aside > figure.tabs {
     padding: 8px 0 24px;
     @media(max-width: 800px) {
@@ -59,6 +53,16 @@ const blogCss = css`
 
   figure {
     margin: 0;
+  }
+  
+  > figure.tabs {
+    border: 10px solid #333;
+    border-radius: 8px 8px 0 0;
+    margin: 48px 24px 48px 0;
+    @media(max-width: 800px) {
+      margin: 32px 0;
+      border: 5px solid #333;
+    }
   }
 
   position: relative;

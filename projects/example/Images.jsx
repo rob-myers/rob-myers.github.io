@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import { css } from 'goober';
 
 /**
@@ -6,7 +7,7 @@ import { css } from 'goober';
  */
 export default function Images() {
   return (
-    <div className={rootCss}>
+    <div className={classNames('scrollable', rootCss)}>
       <img
         draggable={false}
         src="/pics/g-301--bridge.debug.x1.png"
