@@ -20,15 +20,18 @@ An environment is needed to make it meaningful, fixed narratives/missions are no
 
 We'll focus on combining navigation-based behaviours in a flexible manner.
 Game AI should be compositional, not forced into a narrative straight-jacket.
-The environment will be based on thousands of Traveller-themed assets.
+As for the environment, it'll be driven by thousands of Traveller-based assets.
 
-<!-- TODO resize img e.g. TinyPNG -->
-<image src="/geomorph/g-301--bridge.debug.png" style="width:100%" />
+<img 
+  src="/pics/g-301--bridge.debug.x1.png"
+  large-src="/geomorph/g-301--bridge.debug.x2.png"
+  style="width:100%"
+/>
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 These graphics were created by Robert Pearce, and provided as PDFs on his website, under a reasonably permissive license.
-Starship Geomorphs are rectangular slices of spaceships designed to be glued together.
+Starship Geomorphs are (mostly) rectangular slices of spaceships designed to be glued together.
 Their 2nd version was released in 2020, and soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/), distributed under the same license.
 It is these 2000+ symbols which form the underlying basis of Rogue Markup.
         `}/>
