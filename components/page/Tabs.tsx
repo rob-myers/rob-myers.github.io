@@ -45,7 +45,7 @@ const rootCss = (height: number) => css`
   background: var(--focus-bg);
 
   .flexlayout__tabset, .flexlayout__tab {
-    background: none;
+    background: white;
   }
 
   > .flexlayout__layout {
