@@ -21,12 +21,16 @@ An environment is needed to make it meaningful, fixed narratives/missions are no
 We'll focus on combining navigation-based behaviours in a flexible manner.
 Game AI should be compositional, not forced into a narrative straight-jacket.
 As for the environment, it'll be driven by thousands of Traveller-based assets.
-<img 
-  src="/pics/g-301--bridge.debug.x1.png"
-  large-src="/geomorph/g-301--bridge.debug.x2.png"
-  style="width:100%"
-/>
+        `}/>
 
+          <Tabs
+            height={400}
+            tabs={[
+              { key: 'component', filepath: 'example/Images.jsx' },
+            ]}
+          />
+
+        <Markdown children={`
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 These graphics were created by Robert Pearce, and provided as PDFs on his website, under a reasonably permissive license.

@@ -44,6 +44,10 @@ export interface Props {
 const rootCss = (height: number) => css`
   background: var(--focus-bg);
 
+  .flexlayout__tabset, .flexlayout__tab {
+    background: none;
+  }
+
   > .flexlayout__layout {
     background: #444;
     position: relative;

@@ -117,13 +117,6 @@ const blogCss = css`
     color: #444;
   }
 
-  img {
-    margin: 24px 0;
-    @media(max-width: 800px) {
-      margin: 8px 0;
-    }
-  }
-
   table {
     padding: 8px;
     border: 1px solid #bbb;

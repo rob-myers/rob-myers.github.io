@@ -1,6 +1,7 @@
 import PanZoomDemo from 'projects/panzoom/PanZoomDemo';
 import NavDemo from 'projects/nav/NavDemo';
 import GeomorphDemo from 'projects/geomorph/GeomorphDemo';
+import Images from 'projects/example/Images';
 
 import panZoomJsx from '!!raw-loader!projects/panzoom/PanZoom.jsx';
 import panZoomDemoJsx from '!!raw-loader!projects/panzoom/PanZoomDemo.jsx';
@@ -20,6 +21,7 @@ export const component = {
   'panzoom/PanZoomDemo.jsx': PanZoomDemo,
   'nav/NavDemo.jsx': NavDemo,
   'geomorph/GeomorphDemo.jsx': GeomorphDemo,
+  'example/Images.jsx': Images,
 } as const;
 
 export type ComponentFilepathKey = keyof typeof component;
