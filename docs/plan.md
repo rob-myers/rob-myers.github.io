@@ -42,9 +42,10 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- onclick img zoom, show modal with larger img
 - Doors represented via `<rect>`s
 - Create geomorph 101
+- Add NavBar
+- Add GitHub Comments
 - Add missing labels to 302
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
