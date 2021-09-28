@@ -4,7 +4,7 @@ import { TRIANGLE_INTERSECT_COST, TRAVERSAL_COST } from './constants.js';
 
 /** https://en.wikipedia.org/wiki/Machine_epsilon#Values_for_standard_hardware_floating_point_arithmetics */
 const FLOAT32_EPSILON = Math.pow( 2, - 24 );
-export const BYTES_PER_NODE = 6 * 4 + 4 + 4;
+export const BYTES_PER_NODE = ( /** 2D bounds */ 4) * 4 + 4 + 4;
 export const IS_LEAFNODE_FLAG = 0xFFFF;
 
 /**
@@ -50,7 +50,7 @@ function ensureIndex( geo, options ) {
 function getRootIndexRanges( geo ) {
 
 	if ( ! geo.groups || ! geo.groups.length ) {
-		return [ { offset: 0, count: geo.index.count / 3 } ];
+		return [ { offset: 0, count: geo.index.count / 2 } ];
 	}
 
 	// Unreachable
@@ -66,7 +66,7 @@ function getRootIndexRanges( geo ) {
 	const sortedBoundaries = Array.from( rangeBoundaries.values() ).sort( ( a, b ) => a - b );
 	for ( let i = 0; i < sortedBoundaries.length - 1; i ++ ) {
 		const start = sortedBoundaries[ i ], end = sortedBoundaries[ i + 1 ];
-		ranges.push( { offset: ( start / 3 ), count: ( end - start ) / 3 } );
+		ranges.push( { offset: ( start / 2 ), count: ( end - start ) / 2 } );
 	}
 
 	return ranges;
@@ -84,13 +84,13 @@ function getRootIndexRanges( geo ) {
  */
 function getBounds( triangleBounds, offset, count, target, centroidTarget = null ) {
 
-	let minx = Infinity, miny = Infinity, minz = Infinity;
-	let maxx = - Infinity, maxy = - Infinity, maxz = - Infinity;
-	let cminx = Infinity, cminy = Infinity, cminz = Infinity;
-	let cmaxx = - Infinity, cmaxy = - Infinity, cmaxz = - Infinity;
+	let minx = Infinity, miny = Infinity;
+	let maxx = - Infinity, maxy = - Infinity;
+	let cminx = Infinity, cminy = Infinity;
+	let cmaxx = - Infinity, cmaxy = - Infinity;
 
 	const includeCentroid = centroidTarget !== null;
-	for ( let i = offset * 6, end = ( offset + count ) * 6; i < end; i += 6 ) {
+	for ( let i = offset * 4, end = ( offset + count ) * 4; i < end; i += 4 ) {
 
 		const cx = triangleBounds[ i + 0 ];
 		const hx = triangleBounds[ i + 1 ];
@@ -110,34 +110,19 @@ function getBounds( triangleBounds, offset, count, target, centroidTarget = null
 		if ( includeCentroid && cy < cminy ) cminy = cy;
 		if ( includeCentroid && cy > cmaxy ) cmaxy = cy;
 
-		const cz = triangleBounds[ i + 4 ];
-		const hz = triangleBounds[ i + 5 ];
-		const lz = cz - hz;
-		const rz = cz + hz;
-		if ( lz < minz ) minz = lz;
-		if ( rz > maxz ) maxz = rz;
-		if ( includeCentroid && cz < cminz ) cminz = cz;
-		if ( includeCentroid && cz > cmaxz ) cmaxz = cz;
-
 	}
 
 	target[ 0 ] = minx;
 	target[ 1 ] = miny;
-	target[ 2 ] = minz;
-
-	target[ 3 ] = maxx;
-	target[ 4 ] = maxy;
-	target[ 5 ] = maxz;
+	target[ 2 ] = maxx;
+	target[ 3 ] = maxy;
 
 	if ( includeCentroid ) {
 
 		centroidTarget[ 0 ] = cminx;
 		centroidTarget[ 1 ] = cminy;
-		centroidTarget[ 2 ] = cminz;
-
-		centroidTarget[ 3 ] = cmaxx;
-		centroidTarget[ 4 ] = cmaxy;
-		centroidTarget[ 5 ] = cmaxz;
+		centroidTarget[ 2 ] = cmaxx;
+		centroidTarget[ 3 ] = cmaxy;
 
 	}
 
@@ -154,12 +139,10 @@ function getCentroidBounds( triangleBounds, offset, count, centroidTarget ) {
 
 	let cminx = Infinity;
 	let cminy = Infinity;
-	let cminz = Infinity;
 	let cmaxx = - Infinity;
 	let cmaxy = - Infinity;
-	let cmaxz = - Infinity;
 
-	for ( let i = offset * 6, end = ( offset + count ) * 6; i < end; i += 6 ) {
+	for ( let i = offset * 4, end = ( offset + count ) * 4; i < end; i += 4 ) {
 
 		const cx = triangleBounds[ i + 0 ];
 		if ( cx < cminx ) cminx = cx;
@@ -169,19 +152,12 @@ function getCentroidBounds( triangleBounds, offset, count, centroidTarget ) {
 		if ( cy < cminy ) cminy = cy;
 		if ( cy > cmaxy ) cmaxy = cy;
 
-		const cz = triangleBounds[ i + 4 ];
-		if ( cz < cminz ) cminz = cz;
-		if ( cz > cmaxz ) cmaxz = cz;
-
 	}
 
 	centroidTarget[ 0 ] = cminx;
 	centroidTarget[ 1 ] = cminy;
-	centroidTarget[ 2 ] = cminz;
-
-	centroidTarget[ 3 ] = cmaxx;
-	centroidTarget[ 4 ] = cmaxy;
-	centroidTarget[ 5 ] = cmaxz;
+	centroidTarget[ 2 ] = cmaxx;
+	centroidTarget[ 3 ] = cmaxy;
 
 }
 
@@ -205,35 +181,34 @@ function partition( index, triangleBounds, offset, count, split ) {
 	// hoare partitioning, see e.g. https://en.wikipedia.org/wiki/Quicksort#Hoare_partition_scheme
 	while ( true ) {
 
-		while ( left <= right && triangleBounds[ left * 6 + axisOffset ] < pos ) {
+		while ( left <= right && triangleBounds[ left * 4 + axisOffset ] < pos ) {
 			left ++;
 		}
 
-
 		// if a triangle center lies on the partition plane it is considered to be on the right side
-		while ( left <= right && triangleBounds[ right * 6 + axisOffset ] >= pos ) {
+		while ( left <= right && triangleBounds[ right * 4 + axisOffset ] >= pos ) {
 			right --;
 		}
 
 		if ( left < right ) {
 
-			// we need to swap all of the information associated with the triangles at index
+			// We need to swap all of the information associated with the triangles at index
 			// left and right; that's the verts in the geometry index, the bounds,
 			// and perhaps the SAH planes
 
-			for ( let i = 0; i < 3; i ++ ) {
+			for ( let i = 0; i < 2; i ++ ) {
 
-				let t0 = index[ left * 3 + i ];
-				index[ left * 3 + i ] = index[ right * 3 + i ];
-				index[ right * 3 + i ] = t0;
+				let t0 = index[ left * 2 + i ];
+				index[ left * 2 + i ] = index[ right * 2 + i ];
+				index[ right * 2 + i ] = t0;
 
-				let t1 = triangleBounds[ left * 6 + i * 2 + 0 ];
-				triangleBounds[ left * 6 + i * 2 + 0 ] = triangleBounds[ right * 6 + i * 2 + 0 ];
-				triangleBounds[ right * 6 + i * 2 + 0 ] = t1;
+				let t1 = triangleBounds[ left * 4 + i * 2 + 0 ];
+				triangleBounds[ left * 4 + i * 2 + 0 ] = triangleBounds[ right * 4 + i * 2 + 0 ];
+				triangleBounds[ right * 4 + i * 2 + 0 ] = t1;
 
-				let t2 = triangleBounds[ left * 6 + i * 2 + 1 ];
-				triangleBounds[ left * 6 + i * 2 + 1 ] = triangleBounds[ right * 6 + i * 2 + 1 ];
-				triangleBounds[ right * 6 + i * 2 + 1 ] = t2;
+				let t2 = triangleBounds[ left * 4 + i * 2 + 1 ];
+				triangleBounds[ left * 4 + i * 2 + 1 ] = triangleBounds[ right * 4 + i * 2 + 1 ];
+				triangleBounds[ right * 4 + i * 2 + 1 ] = t2;
 
 			}
 
@@ -251,19 +226,16 @@ function partition( index, triangleBounds, offset, count, split ) {
 }
 
 const BIN_COUNT = 32;
-const sahBins = new Array( BIN_COUNT ).fill(undefined).map( () => {
 
+const sahBins = new Array( BIN_COUNT ).fill(undefined).map(() => {
 	return {
-
 		count: 0,
-		bounds: new Float32Array( 6 ),
-		rightCacheBounds: new Float32Array( 6 ),
+		bounds: new Float32Array( 4 ),
+		rightCacheBounds: new Float32Array( 4 ),
 		candidate: 0,
-
 	};
-
-} );
-const leftBounds = new Float32Array( 6 );
+});
+const leftBounds = new Float32Array( 4 );
 
 /**
  * @param {Float32Array} nodeBoundingData 
@@ -284,18 +256,14 @@ function getOptimalSplit( nodeBoundingData, centroidBoundingData, triangleBounds
 
 		axis = getLongestEdgeIndex( centroidBoundingData );
 		if ( axis !== - 1 ) {
-
-			pos = ( centroidBoundingData[ axis ] + centroidBoundingData[ axis + 3 ] ) / 2;
-
+			pos = ( centroidBoundingData[ axis ] + centroidBoundingData[ axis + 2 ] ) / 2;
 		}
 
 	} else if ( strategy === 'AVERAGE' ) {
 
 		axis = getLongestEdgeIndex( nodeBoundingData );
-		if ( axis !== - 1 ) {
-
+		if ( axis !== -1 ) {
 			pos = getAverage( triangleBounds, offset, count, axis );
-
 		}
 
 	} else if ( strategy === 'SAH' ) {
@@ -304,12 +272,12 @@ function getOptimalSplit( nodeBoundingData, centroidBoundingData, triangleBounds
 		let bestCost = TRIANGLE_INTERSECT_COST * count;
 
 		// iterate over all axes
-		const cStart = offset * 6;
-		const cEnd = ( offset + count ) * 6;
-		for ( let a = 0; a < 3; a ++ ) {
+		const cStart = offset * 4;
+		const cEnd = ( offset + count ) * 4;
+		for ( let a = 0; a < 2; a ++ ) {
 
 			const axisLeft = centroidBoundingData[ a ];
-			const axisRight = centroidBoundingData[ a + 3 ];
+			const axisRight = centroidBoundingData[ a + 2 ];
 			const axisLength = axisRight - axisLeft;
 			const binWidth = axisLength / BIN_COUNT;
 
@@ -321,17 +289,15 @@ function getOptimalSplit( nodeBoundingData, centroidBoundingData, triangleBounds
 				bin.candidate = axisLeft + binWidth + i * binWidth;
 
 				const bounds = bin.bounds;
-				for ( let d = 0; d < 3; d ++ ) {
-
+				for ( let d = 0; d < 2; d ++ ) {
 					bounds[ d ] = Infinity;
-					bounds[ d + 3 ] = - Infinity;
-
+					bounds[ d + 2 ] = - Infinity;
 				}
 
 			}
 
 			// iterate over all center positions
-			for ( let c = cStart; c < cEnd; c += 6 ) {
+			for ( let c = cStart; c < cEnd; c += 4 ) {
 
 				const triCenter = triangleBounds[ c + 2 * a ];
 				const relativeCenter = triCenter - axisLeft;
@@ -354,15 +320,11 @@ function getOptimalSplit( nodeBoundingData, centroidBoundingData, triangleBounds
 					const tMax = tCenter + tHalf;
 
 					if ( tMin < bounds[ d ] ) {
-
 						bounds[ d ] = tMin;
-
 					}
 
-					if ( tMax > bounds[ d + 3 ] ) {
-
-						bounds[ d + 3 ] = tMax;
-
+					if ( tMax > bounds[ d + 2 ] ) {
+						bounds[ d + 2 ] = tMax;
 					}
 
 				}
@@ -457,15 +419,15 @@ function getOptimalSplit( nodeBoundingData, centroidBoundingData, triangleBounds
 function getAverage( triangleBounds, offset, count, axis ) {
 	let avg = 0;
 	for ( let i = offset, end = offset + count; i < end; i ++ ) {
-		avg += triangleBounds[ i * 6 + axis * 2 ];
+		avg += triangleBounds[ i * 4 + axis * 2 ];
 	}
 	return avg / count;
 }
 
 /**
  * Precomputes the bounding box for each triangle; required for quickly calculating tree splits.
- * result is an array of size tris.length * 6 where triangle i maps to a
- * [x_center, x_delta, y_center, y_delta, z_center, z_delta] tuple starting at index i * 6,
+ * result is an array of size tris.length * 4 where triangle i maps to a
+ * `[x_center, x_delta, y_center, y_delta]` tuple starting at index i * 4,
  * representing the center and half-extent in each dimension of triangle i
  * @param {MeshBvh.Geometry} geo 
  * @param {Float32Array} fullBounds 
@@ -476,11 +438,11 @@ function computeTriangleBounds( geo, fullBounds ) {
 	const posArr = posAttr.array;
 	const index = geo.index.array;
 	const triCount = index.length / 3;
-	const triangleBounds = new Float32Array( triCount * 6 );
+	const triangleBounds = new Float32Array( triCount * 4 );
 
 	// support for an interleaved position buffer
 	const bufferOffset = posAttr.offset || 0;
-	let stride = 3;
+	let stride = 2;
 	if ( posAttr.isInterleavedBufferAttribute ) {
 		stride = posAttr.data.stride;
 	}
@@ -493,7 +455,7 @@ function computeTriangleBounds( geo, fullBounds ) {
 		const bi = index[ tri3 + 1 ] * stride + bufferOffset;
 		const ci = index[ tri3 + 2 ] * stride + bufferOffset;
 
-		for ( let el = 0; el < 3; el ++ ) {
+		for ( let el = 0; el < 2; el ++ ) {
 
 			const a = posArr[ ai + el ];
 			const b = posArr[ bi + el ];
@@ -516,7 +478,7 @@ function computeTriangleBounds( geo, fullBounds ) {
 			triangleBounds[ tri6 + el2 + 1 ] = halfExtents + ( Math.abs( min ) + halfExtents ) * FLOAT32_EPSILON;
 
 			if ( min < fullBounds[ el ] ) fullBounds[ el ] = min;
-			if ( max > fullBounds[ el + 3 ] ) fullBounds[ el + 3 ] = max;
+			if ( max > fullBounds[ el + 2 ] ) fullBounds[ el + 2 ] = max;
 
 		}
 
@@ -581,7 +543,7 @@ export function buildTree( geo, options ) {
 			const lstart = offset;
 			const lcount = splitOffset - offset;
 			node.left = left;
-			left.boundingData = new Float32Array( 6 );
+			left.boundingData = new Float32Array( 4 );
 
 			getBounds( triangleBounds, lstart, lcount, left.boundingData, cacheCentroidBoundingData );
 			splitNode( left, lstart, lcount, cacheCentroidBoundingData, depth + 1 );
@@ -591,7 +553,7 @@ export function buildTree( geo, options ) {
 			const rstart = splitOffset;
 			const rcount = count - lcount;
 			node.right = right;
-			right.boundingData = new Float32Array( 6 );
+			right.boundingData = new Float32Array( 4 );
 
 			getBounds( triangleBounds, rstart, rcount, right.boundingData, cacheCentroidBoundingData );
 			splitNode( right, rstart, rcount, cacheCentroidBoundingData, depth + 1 );
@@ -602,11 +564,13 @@ export function buildTree( geo, options ) {
 
 	ensureIndex( geo, options );
 
-	// Compute the full bounds of the geometry at the same time as triangle bounds because
-	// we'll need it for the root bounds in the case with no groups and it should be fast here.
-	// We can't use the geometrying bounding box if it's available because it may be out of date.
-	const fullBounds = new Float32Array( 6 );
-	const cacheCentroidBoundingData = new Float32Array( 6 );
+	/**
+	 * Compute the full bounds of the geometry at the same time as triangle bounds because
+	 * we'll need it for the root bounds in the case with no groups and it should be fast here.
+	 * We can't use the geometrying bounding box if it's available because it may be out of date.
+	 */
+	const fullBounds = new Float32Array( 4 );
+	const cacheCentroidBoundingData = new Float32Array( 4 );
 	const triangleBounds = computeTriangleBounds( geo, fullBounds );
 	const indexArray = geo.index.array;
 	const maxDepth = options.maxDepth;
@@ -633,7 +597,7 @@ export function buildTree( geo, options ) {
 
 		for ( let range of ranges ) {
 			const root = new MeshBVHNode();
-			root.boundingData = new Float32Array( 6 );
+			root.boundingData = new Float32Array( 4 );
 			getBounds( triangleBounds, range.offset, range.count, root.boundingData, cacheCentroidBoundingData );
 
 			splitNode( root, range.offset, range.count, cacheCentroidBoundingData );
@@ -650,7 +614,7 @@ export function buildTree( geo, options ) {
  */
 export function buildPackedTree( geo, options ) {
 
-	// boundingData  				        : 6 float32
+	// boundingData  				        : 4 float32
 	// right / offset 				      : 1 uint32
 	// splitAxis / isLeaf + count 	: 1 uint32 / 2 uint16
 	const roots = buildTree( geo, options );
@@ -689,16 +653,16 @@ export function buildPackedTree( geo, options ) {
 		const stride2Offset = byteOffset / 2;
 		const isLeaf = !!node.count;
 		const boundingData = node.boundingData;
-		for ( let i = 0; i < 6; i ++ ) {
+		for ( let i = 0; i < 4; i ++ ) {
 			float32Array[ stride4Offset + i ] = boundingData[ i ];
 		}
 
 		if ( isLeaf ) {
 			const offset = node.offset;
 			const count = node.count;
-			uint32Array[ stride4Offset + 6 ] = /** @type {number} */ (offset);
-			uint16Array[ stride2Offset + 14 ] = /** @type {number} */ (count);
-			uint16Array[ stride2Offset + 15 ] = IS_LEAFNODE_FLAG;
+			uint32Array[ stride4Offset + 4 ] = /** @type {number} */ (offset);
+			uint16Array[ stride2Offset + 2 * 5 ] = /** @type {number} */ (count);
+			uint16Array[ stride2Offset + 2 * 5 + 1 ] = IS_LEAFNODE_FLAG;
 			return byteOffset + BYTES_PER_NODE;
 
 		} else {
@@ -714,10 +678,10 @@ export function buildPackedTree( geo, options ) {
 				throw new Error( 'MeshBVH: Cannot store child pointer greater than 32 bits.' );
 			}
 
-			uint32Array[ stride4Offset + 6 ] = nextUnusedPointer / 4;
+			uint32Array[ stride4Offset + 4 ] = nextUnusedPointer / 4;
 			nextUnusedPointer = populateBuffer( nextUnusedPointer, /** @type {MeshBVHNode} */ (right) );
 
-			uint32Array[ stride4Offset + 7 ] = splitAxis;
+			uint32Array[ stride4Offset + 4 + 1 ] = splitAxis;
 			return nextUnusedPointer;
 
 		}

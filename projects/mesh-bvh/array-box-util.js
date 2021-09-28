@@ -23,8 +23,8 @@ export function getLongestEdgeIndex( bounds ) {
 	let splitDimIdx = - 1;
 	let splitDist = - Infinity;
 
-	for ( let i = 0; i < 3; i ++ ) {
-		const dist = bounds[ i + 3 ] - bounds[ i ];
+	for ( let i = 0; i < 2; i ++ ) {
+		const dist = bounds[ i + 2 ] - bounds[ i ];
 		if ( dist > splitDist ) {
 			splitDist = dist;
 			splitDimIdx = i;
@@ -50,9 +50,9 @@ export function copyBounds( source, target ) {
  */
 export function unionBounds( a, b, target ) {
 	let aVal, bVal;
-	for ( let d = 0; d < 3; d ++ ) {
+	for ( let d = 0; d < 2; d ++ ) {
 
-		const d3 = d + 3;
+		const d2 = d + 2;
 
 		// set the minimum values
 		aVal = a[ d ];
@@ -60,21 +60,19 @@ export function unionBounds( a, b, target ) {
 		target[ d ] = aVal < bVal ? aVal : bVal;
 
 		// set the max values
-		aVal = a[ d3 ];
-		bVal = b[ d3 ];
-		target[ d3 ] = aVal > bVal ? aVal : bVal;
+		aVal = a[ d2 ];
+		bVal = b[ d2 ];
+		target[ d2 ] = aVal > bVal ? aVal : bVal;
 
 	}
 }
 
 /**
- * Compute bounds surface area
+ * Compute bounds surface area (one-sided)
  * @param {Float32Array} bounds 
  */
 export function computeSurfaceArea( bounds ) {
-	const d0 = bounds[ 3 ] - bounds[ 0 ];
-	const d1 = bounds[ 4 ] - bounds[ 1 ];
-	const d2 = bounds[ 5 ] - bounds[ 2 ];
-
-	return 2 * ( d0 * d1 + d1 * d2 + d2 * d0 );
+	const d0 = bounds[ 2 ] - bounds[ 0 ];
+	const d1 = bounds[ 3 ] - bounds[ 1 ];
+	return d0 * d1;
 }
