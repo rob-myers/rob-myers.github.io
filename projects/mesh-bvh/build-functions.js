@@ -8,36 +8,12 @@ export const BYTES_PER_NODE = ( /** 2D bounds */ 4) * 4 + 4 + 4;
 export const IS_LEAFNODE_FLAG = 0xFFFF;
 
 /**
- * @param {MeshBvh.Geometry} geo 
- * @param {MeshBvh.Options} options 
- */
-function ensureIndex( geo, options ) {
-	// if ( ! geo.index ) {
-		const vertexCount = geo.attributes.position.count;
-		const BufferConstructor = options.useSharedArrayBuffer ? SharedArrayBuffer : ArrayBuffer;
-		/** @type {Uint16Array | Uint32Array} */
-		let index;
-		if ( vertexCount > 65535 ) {
-			index = new Uint32Array( new BufferConstructor( 4 * vertexCount ) );
-		} else {
-			index = new Uint16Array( new BufferConstructor( 2 * vertexCount ) );
-		}
-
-		// geo.setIndex( new BufferAttribute( index, 1 ) );
-		geo.index.array = index;
-
-		for ( let i = 0; i < vertexCount; i ++ ) {
-			index[ i ] = i;
-		}
-	// }
-}
-
-/**
  * ```txt
- * Computes the set of { offset, count } ranges which need independent BVH roots. Each
- * region in the geometry index that belongs to a different set of material groups requires
- * a separate BVH root, so that triangles indices belonging to one group never get swapped
- * with triangle indices belongs to another group. For example, if the groups were like this:
+ * Computes the set of { offset, count } ranges which need independent BVH roots.
+ * Each region in the geometry index that belongs to a different set of material
+ * groups requires a separate BVH root, so that triangles indices belonging to
+ * one group never get swapped with triangle indices belongs to another group.
+ * For example, if the groups were like this:
  * [-------------------------------------------------------------]
  * |__________________|
  *   g0 = [0, 20]  |______________________||_____________________|
@@ -50,7 +26,7 @@ function ensureIndex( geo, options ) {
 function getRootIndexRanges( geo ) {
 
 	if ( ! geo.groups || ! geo.groups.length ) {
-		return [ { offset: 0, count: geo.index.count / 2 } ];
+		return [ { offset: 0, count: geo.index.count / 3 } ];
 	}
 
 	// Unreachable
@@ -66,7 +42,7 @@ function getRootIndexRanges( geo ) {
 	const sortedBoundaries = Array.from( rangeBoundaries.values() ).sort( ( a, b ) => a - b );
 	for ( let i = 0; i < sortedBoundaries.length - 1; i ++ ) {
 		const start = sortedBoundaries[ i ], end = sortedBoundaries[ i + 1 ];
-		ranges.push( { offset: ( start / 2 ), count: ( end - start ) / 2 } );
+		ranges.push( { offset: ( start / 3 ), count: ( end - start ) / 3 } );
 	}
 
 	return ranges;
@@ -562,7 +538,7 @@ export function buildTree( geo, options ) {
 		return node;
 	}
 
-	ensureIndex( geo, options );
+	// ensureIndex( geo, options );
 
 	/**
 	 * Compute the full bounds of the geometry at the same time as triangle bounds because
