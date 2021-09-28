@@ -1,36 +1,6 @@
 import { Poly, Vect } from '../geom';
 
 class GeomService {
-  // /**
-  //  * @param {string} navKey
-  //  * @param {Poly[]} navPolys
-  //  * @param {Partial<INavMeshParameters>} [opts]
-  //  */
-  // async createNavMesh(navKey, navPolys, opts) {
-  //   await recast.ready();
-  //   if (navPolys.length) {
-  //     const triangulation = this.polysToTriangulation(navPolys);
-  //     recast.createNavMesh(navKey, triangulation, opts);
-  //   } else {
-  //     recast.clearNavMesh(navKey);
-  //   }
-  // }
-
-  // /**
-  //  * @param {string} navKey 
-  //  * @param {Geom.VectJson} src
-  //  * @param {Geom.VectJson} dst 
-  //  * @returns {Vect[]}
-  //  */
-  // requestNavPath(navKey, src, dst) {
-  //   try {
-  //     const navPath = recast.computePath(navKey, src, dst);
-  //     return this.removePathReps(navPath.map(x => x.precision(1)));
-  //   } catch (e) {
-  //     console.error('nav error', e);
-  //     return [];
-  //   }
-  // }
 
   /**
    * Compute intersection of two infinite lines i.e.
@@ -44,24 +14,15 @@ class GeomService {
    * @param {Vect} d1
    * @returns {number | null}
    */
-   getLinesIntersection(p0, d0, p1, d1) {
-    const d0x = d0.x,
-      d0y = d0.y,
-      p0x = p0.x,
-      p0y = p0.y,
-      d1x = d1.x,
-      d1y = d1.y,
-      p1x = p1.x,
-      p1y = p1.y;
+   getLinesIntersect(p0, d0, p1, d1) {
     /**
-     * Recall that normal_0 is (-d0y, d0x).
-     * No intersection if the directions d0, d1 are approx. parallel,
-     * ignoring colinear case.
+     * Recall normal_0 is (-d0.y, d0.x).
+     * No intersection if directions d0, d1 approx. parallel, ignoring colinear.
      */
-    if (Math.abs(-d0y * d1x + d0x * d1y) < 0.0001) {
+    if (Math.abs(-d0.y * d1.x + d0.x * d1.y) < 0.0001) {
       return null;
     }
-    return (d1x * (p1y - p0y) - d1y * (p1x - p0x)) / (d0y * d1x - d1y * d0x);
+    return (d1.x * (p1.y - p0.y) - d1.y * (p1.x - p0.x)) / (d0.y * d1.x - d1.y * d0.x);
   }
 
   /**
@@ -84,23 +45,23 @@ class GeomService {
         s, t,
         z = -dqx * dpy + dpx * dqy;
   
-    if(z === 0){
+    if (z === 0){
       /**
-       * Line segs are parallel, so both have un-normalized
+       * Line segs are parallel, so both have non-normalized
        * normal (-dpy, dpx). For colinearity they must have
-       * the same normal w.r.t latter.
+       * the same dot product w.r.t latter.
        */
-      if((p0.x * -dpy + p0.y * dpx) === (q0.x * -dpy + q0.y * dpx)){
+      if ((p0.x * -dpy + p0.y * dpx) === (q0.x * -dpy + q0.y * dpx)){
         /**
          * Check if p0 or p1 lies between both q0 and q1.
          */
         t = dqx * dqx + dqy * dqy;
         s = (p0.x - q0.x) * dqx + (p0.y - q0.y) * dqy;
-        if(0 <= s && s <= t) {
+        if (0 <= s && s <= t) {
           return s / t;
         }
         s = (p1.x - q0.x) * dqx + (p1.y - q0.y) * dqy;
-        if(0 <= s && s <= t) {
+        if (0 <= s && s <= t) {
           return s / t;
         }
       }
@@ -122,8 +83,10 @@ class GeomService {
    */
   joinTriangulations(triangulations) {
     if (triangulations.length === 1) return triangulations[0];
-    const vs = /** @type {Vect[]} */ [];
-    const tris = /** @type {[number, number, number][]} */ ([]);
+    /** @type {Vect[]} */
+    const vs = [];
+    /** @type {[number, number, number][]} */
+    const tris =  [];
     let offset = 0;
     for (const decomp of triangulations) {
       vs.push(...decomp.vs);

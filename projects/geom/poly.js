@@ -242,7 +242,7 @@ export class Poly {
     return edges.map((edge, i) => {
       const nextIndex = (i + 1) % edges.length;
       const nextEdge = edges[nextIndex];
-      const lambda = geom.getLinesIntersection(
+      const lambda = geom.getLinesIntersect(
         edge[1],
         tangents[i],
         nextEdge[0],

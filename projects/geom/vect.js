@@ -85,6 +85,14 @@
     return this.x * other.x + this.y * other.y;
   }
 
+  /**
+   * @param {number} ox 
+   * @param {number} oy 
+   */
+  dotArgs(ox, oy) {
+    return this.x * ox + this.y * oy;
+  }
+
   /** @param {Geom.VectJson} _ */
   equals({ x, y }) {
     return this.x === x && this.y === y;
