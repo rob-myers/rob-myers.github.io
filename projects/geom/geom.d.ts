@@ -1,7 +1,8 @@
 declare namespace Geom {
 
+  export type Vect = import('.').Vect;
   export type Rect = import('.').Rect;
-
+  export type Poly = import('.').Poly;
   export type Coord = [number, number];
 
   export interface GeoJsonPolygon {
