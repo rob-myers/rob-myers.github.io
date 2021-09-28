@@ -3,6 +3,7 @@ import * as polygonClipping from 'polygon-clipping';
 import earcut from 'earcut';
 import { Rect } from "./rect";
 import { Vect } from "./vect";
+import { geom } from '../service';
 
 export class Poly {
 
@@ -225,39 +226,6 @@ export class Poly {
   }
 
   /**
-   * Compute intersection of two infinite lines i.e.
-   * 1. `lambda x. p0 + x * d0`.
-   * 2. `lambda x. p1 + x * d1`.
-   *
-   * If they intersect non-degenerately return solution of (1), else `null`.
-   * @private
-   * @param {Vect} p0
-   * @param {Vect} d0
-   * @param {Vect} p1
-   * @param {Vect} d1
-   * @returns {number | null}
-   */
-  static getLinesIntersection(p0, d0, p1, d1) {
-    const d0x = d0.x,
-      d0y = d0.y,
-      p0x = p0.x,
-      p0y = p0.y,
-      d1x = d1.x,
-      d1y = d1.y,
-      p1x = p1.x,
-      p1y = p1.y;
-    /**
-     * Recall that normal_0 is (-d0y, d0x).
-     * No intersection if the directions d0, d1 are approx. parallel,
-     * ignoring colinear case.
-     */
-    if (Math.abs(-d0y * d1x + d0x * d1y) < 0.0001) {
-      return null;
-    }
-    return (d1x * (p1y - p0y) - d1y * (p1x - p0x)) / (d0y * d1x - d1y * d0x);
-  }
-
-  /**
    * Inset/outset a ring by amount.
    * @private
    * @param {Vect[]} ring 
@@ -274,7 +242,7 @@ export class Poly {
     return edges.map((edge, i) => {
       const nextIndex = (i + 1) % edges.length;
       const nextEdge = edges[nextIndex];
-      const lambda = Poly.getLinesIntersection(
+      const lambda = geom.getLinesIntersection(
         edge[1],
         tangents[i],
         nextEdge[0],

@@ -15,7 +15,7 @@ import PanZoom from "../panzoom/PanZoom";
 export default function NavDemo() {
 
   const [dots, setDots] = useState(/** @type {Geom.VectJson[]} */ ([]));
-  const [path, setPath] = useState(/** @type {Geom.VectJson[]} */ ([]));
+  const [path, setPath] = useState(/** @type {Geom.Vect[]} */ ([]));
   const pathfinding = useMemo(() => new Pathfinding, []);
   const zoneKey = 'myZone';
   const lastDownAt = useRef(0);
@@ -34,7 +34,10 @@ export default function NavDemo() {
     if (dots.length === 2) {
       const groupId = pathfinding.getGroup(zoneKey, dots[0]);
       if (groupId !== null) {
-        setPath([dots[0]].concat(pathfinding.findPath(dots[0], dots[1], zoneKey, groupId) || []));
+        setPath(
+          [dots[0]].concat(pathfinding.findPath(dots[0], dots[1], zoneKey, groupId) || [])
+            .map(Vect.from)
+        );
       }
     } else {
       setPath([]);
