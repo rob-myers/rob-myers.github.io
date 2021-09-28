@@ -36,7 +36,7 @@ Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 A larger version is [available](/pics/g-301--bridge.debug.x2.png "@new-tab").
 The original graphics were created by Robert Pearce, and distributed as PDFs on his website under a permissive non-commercial license.
-_Starship Geomorphs_ are mostly rectangular slices of spaceships designed to be glued together.
+_Starship Geomorphs_ are rectangular slices of spaceships designed to be glued together.
 Their 2nd version was released in 2020, and soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/), distributed under the same license.
 It is these 2000+ symbols which form the underlying basis of Rogue Markup.
 
@@ -53,13 +53,12 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 ### Technology
 
 - Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.
-- Use React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
+- Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
 - Use [Preact](https://www.npmjs.com/package/preact) (like React), and [Goober](https://www.npmjs.com/package/goober) (like [Emotion](https://www.npmjs.com/package/@emotion/styled)).
 - Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
 - Use [NextJS](https://nextjs.org/) as our dev env.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Support mobile/desktop devices.
-
 
 <aside>
 
@@ -82,8 +81,9 @@ More on that later.
 
         <aside>
           <p>
-            To query, control and debug NPC behaviours,
-            we'll use an in-browser terminal...
+            Building user interfaces is <em>hard</em>.
+            We'll avoid many difficulties by using an in-browser terminal.
+            {/* TODO */}
           </p>
 
           <Tabs
@@ -105,17 +105,15 @@ More on that later.
 
 <aside>
 
-Traveller is a Futuristic (pen-and-paper) Roleplaying Game, created in the late 70s.
-It permits faster than light travel, restricted to a few parsecs per week.
-You can learn more on the [offical site](https://www.farfuture.net/) or the [Traveller Wiki](https://wiki.travellerrpg.com/Main_Page).
-You can also explore [Charted Space](https://wiki.travellerrpg.com/Charted_Space) on [Traveller Map](https://travellermap.com/).
-It provides motivation and considerable depth to Starship Geomorphs.
+Traveller is a Futuristic pen-and-paper Roleplaying Game, created in the late 70s.
+It permits faster than light travel, restricted to ≤ 6 parsecs per week.
+You can learn more on the [Wiki](https://wiki.travellerrpg.com/Jump_Drive), the [offical site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
+It directly motivated Starship Geomorphs, and provides considerable depth.
 
 <font size="3">_The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._</font>
 </aside>
 
-Over time we'll clarify the above constraints i.e. Technology, Game mechanics and Setting.
-But first we emphasise:
+Over time we'll clarify the above constraints, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
@@ -159,7 +157,7 @@ Let us describe the underlying technologies.
 
 | Concept | Technology |
 | - | - |
-| Component | React [function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and [Web Components](https://reactjs.org/docs/web-components.html). |
+| Component | [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and [Web Components](https://reactjs.org/docs/web-components.html). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober) & programmatically. |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |

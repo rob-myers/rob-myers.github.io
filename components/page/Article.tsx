@@ -32,22 +32,22 @@ const blogCss = css`
     border: none;
   }
 
-  > aside > figure.tabs {
-    padding: 8px 0 24px;
-    @media(max-width: 800px) {
-      padding: 8px 0 12px;
-    }
-  }
-
   aside {
     margin: 32px 0;
-    padding: 8px 32px;
+    padding: 0 32px;
     border-radius: 8px;
     border: 2px dashed #ccc;
     font-size: 1.1rem;
     @media(max-width: 800px) {
       margin: 8px 0;
       padding: 16px 16px;
+    }
+
+    > figure.tabs {
+      padding: 8px 0 24px;
+      @media(max-width: 800px) {
+        padding: 8px 0 12px;
+      }
     }
   }
 
