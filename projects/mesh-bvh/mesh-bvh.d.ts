@@ -47,11 +47,8 @@ declare namespace MeshBvh {
     /** Derived from triangulation */
     attributes: {
       position: {
-        /** Number of vectors */
-        count: number;
         /** [x1,y1, x2,y2, ...] */
         array: number[];
-
         isInterleavedBufferAttribute: false;
         offset: null;
         data: any;
@@ -62,7 +59,7 @@ declare namespace MeshBvh {
     groups: any[];
 
     index: {
-      /** Populated by algorithm */
+      /** [0, 1, ..., vertexCount - 1] */
       array: Uint16Array | Uint32Array;
       count: number;
       isInterleavedBufferAttribute: false;
