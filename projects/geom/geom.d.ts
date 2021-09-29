@@ -6,6 +6,8 @@ declare namespace Geom {
   export type Ray = import('.').Ray;
   
   export type Coord = [number, number];
+  export type Seg = { src: Vect; dst: Vect };
+
   export interface GeoJsonPolygon {
     /** Identifier amongst GeoJSON formats. */
     type: 'Polygon';
