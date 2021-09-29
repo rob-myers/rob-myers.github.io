@@ -26,7 +26,7 @@ The environment will be driven by thousands of Traveller-based assets.
           <Tabs
             height={400}
             tabs={[
-              { key: 'component', filepath: 'example/Images.jsx' },
+              { key: 'component', filepath: 'example/images.jsx Gm301Debug' },
             ]}
           />
 

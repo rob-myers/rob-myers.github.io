@@ -1,17 +1,12 @@
 import classNames from 'classnames';
 import { css } from 'goober';
 
-/**
- * TODO make generic by passing in prop from Tabs
- * TODO provide larger link explicitly in text
- */
-export default function Images() {
+export function Gm301Debug() {
   return (
     <div className={classNames('scrollable', rootCss)}>
       <img
         draggable={false}
         src="/pics/g-301--bridge.debug.x1.png"
-        // large-src="/geomorph/g-301--bridge.debug.x2.png"
       />
     </div>
   );
