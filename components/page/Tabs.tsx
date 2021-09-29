@@ -33,7 +33,7 @@ export default function Tabs(props: Props) {
   );
 }
 
-export interface Props {
+interface Props {
   /** Initially enabled? */
   enabled?: boolean;
   height: number;

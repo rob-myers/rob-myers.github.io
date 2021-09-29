@@ -9,13 +9,17 @@ import useSiteStore from 'store/site.store';
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
   dateTime: string;
-  dateText: string;
   children: string;
 }>) {
+  const dateText = React.useMemo(() => {
+    const d = new Date(props.dateTime);
+    return `${d.getDate()}${dayth(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }, [props.dateTime]);
+
   return <>
     <article className={classNames('blog', props.className, blogCss)}>
       <time dateTime={props.dateTime}>
-        {props.dateText}
+        {dateText}
       </time>
       <Markdown
         children={props.children}
@@ -217,5 +221,22 @@ const blogComponents = {
       default:
         return <div {...props} />;
     }
-  }
+  },
+
 };
+
+const months = [
+  'Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec',
+];
+
+function dayth(x: number) {
+  if (x > 3) {
+    return 'th';
+  } else if (x === 1) {
+    return 'st'
+  } else if (x === 2) {
+    return 'nd';
+  } else if (x === 3) {
+    return 'rd';
+  }
+}

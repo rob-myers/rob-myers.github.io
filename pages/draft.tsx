@@ -14,37 +14,31 @@ export default function DraftPage() {
 
       <Article
         dateTime="2021-07-19"
-        dateText="19th July 2021"
         children={objectiveMd}
       />
 
       <Article
         dateTime="2021-07-19"
-        dateText="19th July 2021"
         children={constraintsMd}
       />
 
       <Article
         dateTime="2021-07-19"
-        dateText="19th July 2021"
         children={technologyMd}
       />
 
       <Article
         dateTime="2021-07-19"
-        dateText="19th July 2021"
         children={techPt2Md}
       />
 
       <Article
         dateTime="2021-07-19"
-        dateText="19th July 2021"
         children={techPt3Md}
       />
 
       <Article
         dateTime="2021-07-19"
-        dateText="19th July 2021"
         children={geomorphsMd}
       />
 

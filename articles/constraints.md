@@ -19,6 +19,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
   Perusing the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
   Our CodeSandboxes use React, whereas this site uses _Preact_.
   More on that later.
+
 </aside>
 
 ### Game mechanics
@@ -31,16 +32,16 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Do not use a Physics engine.
 
 <aside>
-  <p>
-    Building user interfaces is <em>hard</em>.
-    We'll avoid many difficulties by using an in-browser terminal.
-  </p>
+
+  Building user interfaces is _hard_.
+  We'll avoid many difficulties by using an in-browser terminal.
 
   <div
     className="tabs"
     height="300"
     tabs="[ { key: 'terminal', session: 'test' } ]"
   ></div>
+
 </aside>
 
 
@@ -53,12 +54,16 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 <aside>
 
-Traveller is a Futuristic pen-and-paper Roleplaying Game, created in the late 70s.
-It permits faster than light travel, restricted to ≤ 6 parsecs per week.
-You can learn more on the [Wiki](https://wiki.travellerrpg.com/Jump_Drive), the [offical site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
-It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
+  Traveller is a Futuristic pen-and-paper Roleplaying Game, created in the late 70s.
+  It permits faster than light travel, restricted to ≤ 6 parsecs per week.
+  You can learn more on the [Wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
+  It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
 
-<font size="3">_The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._</font>
+  <div style="font-size:smaller">
+
+  _The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._
+
+  </div>
 </aside>
 
 Over time we'll clarify the above constraints, but first we emphasise:

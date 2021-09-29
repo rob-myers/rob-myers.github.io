@@ -5,7 +5,7 @@ export default function TestPage() {
   return (
     <Main>
 
-      <Article dateTime="2021-07-19" dateText="19th July 2021">
+      <Article dateTime="2021-07-19">
         {`
 
 ## Test page
