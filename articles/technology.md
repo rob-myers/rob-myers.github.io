@@ -70,7 +70,7 @@ Behaviourally:
 They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
 
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
-Notice _PanZoom_ renders _Grid_ by using the XML tag \`<Grid/>\`.
+Notice _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
 Then although React function components are functions, syntactically they are not invoked like functions.
 You can also view the demo code [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
 
@@ -81,11 +81,11 @@ Here's a whirlwind overview of React (and Preact).
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function \`React.createElement\`.
 See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") below.
 - Actually, this website uses Preact, a React alternative with the same API.
-Then \`React.createElement\` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
+Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
 and makes Preact virtual DOM nodes.
 - The root component is usually called _App_.
 Running a React application means [invoking `ReactDOM.render`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-with 2 arguments: \`<App/>\` and a DOM node _el_.
+with 2 arguments: `<App/>` and a DOM node _el_.
 
 - [`ReactDOM.render`](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts \`<App/>\` into a DOM node mounted at _el_.
 A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
@@ -125,7 +125,7 @@ As another example, showing additional search results amounts to a single mutati
 When React renders a component, it computes a rooted subtree of the virtual DOM,
 compares the previous one, and patches the DOM.
 If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
-Developers can also avoid recreating an entire rooted subtree using [\`React.memo\`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
+Developers can also avoid recreating an entire rooted subtree using [`React.memo`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
 But for many websites, the virtual DOM manipulations are neither too large nor too frequent, and React developers may simply ignore their overhead.
 
 However, we are making a realtime video game.
@@ -166,7 +166,7 @@ __TODO__ Server-side rendering cannot handle DOM mutations, so we don't use SSR.
 ### CSS inside JS
 
 Traditionally, CSS is provided in separate files,
-linked in the `<head/>` and referenced by DOM elements via their space-separated attribute \`class\`.
+linked in the `<head/>` and referenced by DOM elements via their space-separated attribute `class`.
 Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.

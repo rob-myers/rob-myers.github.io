@@ -1,7 +1,10 @@
+import React from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
 import Sep from './Sep';
 import Markdown from './Markdown';
+import Tabs from './Tabs';
+import useSiteStore from 'store/site.store';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
@@ -14,7 +17,10 @@ export default function Article(props: React.PropsWithChildren<{
       <time dateTime={props.dateTime}>
         {props.dateText}
       </time>
-      <Markdown children={props.children} />
+      <Markdown
+        children={props.children}
+        components={blogComponents}
+      />
     </article>
     <Sep/>
   </>;
@@ -154,3 +160,62 @@ const blogCss = css`
     margin: 4px 0;
   }
 `;
+
+const blogComponents = {
+  a({ node, href, title, children, ...props}: any) {
+    return (
+      <a
+        href={href}
+        title={title}
+
+        {...['@new-tab'].includes(title) && {
+          className: 'new-tab-link',
+          target: '_blank',
+          rel: 'noopener',
+        }}
+
+        {...href === '#command' && {
+          onClick: (e) => {
+            e.preventDefault();
+            const [cmd, ...args] = title.split(' ');
+            switch (cmd) {
+              case 'open-tab': {
+                const [tabsKey, tabKey] = args;
+                const tabs = useSiteStore.getState().tabs[tabsKey];
+                if (tabs) {// in case tabs not enabled yet 
+                  tabs.selectTab(tabKey),
+                  tabs.scrollIntoView();
+                }
+                break;
+              }
+              default:
+                console.warn('link triggered unrecognised command:', title);
+            }
+          }
+        }}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  },
+
+  div(props: any) {
+    switch (props.className) {
+      case 'tabs': {
+        const height = Number(props.height || 100);
+        const def = React.useMemo(() => Function(`return ${props.tabs || '[]'}`)(), [props.tabs]);
+        return (
+          <Tabs
+            height={height}
+            tabs={def}
+            enabled={!!props.enabled}
+            storeKey={props.storeKey}
+          />
+        );
+      }
+      default:
+        return <div {...props} />;
+    }
+  }
+};
