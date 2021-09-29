@@ -26,7 +26,7 @@ The environment will be driven by thousands of Traveller-based assets.
           <Tabs
             height={400}
             tabs={[
-              { key: 'component', filepath: 'example/images.jsx Gm301Debug' },
+              { key: 'component', filepath: 'images/Gm301Debug' },
             ]}
           />
 
@@ -206,7 +206,7 @@ Let's consider an example, a pannable and zoomable grid.
           storeKey="panzoom"
           height={400}
           tabs={[
-            { key: 'component', filepath: 'panzoom/PanZoomDemo.jsx' },
+            { key: 'component', filepath: 'panzoom/PanZoomDemo' },
             { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
             { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
           ]}
@@ -344,7 +344,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
           // enabled
           height={400}
           tabs={[
-            { key: 'component', filepath: 'nav/NavDemo.jsx' },
+            { key: 'component', filepath: 'nav/NavDemo' },
           ]}
         />
 
@@ -416,7 +416,7 @@ public/svg
           // enabled
           height={400}
           tabs={[
-            { key: 'component', filepath: 'geomorph/GeomorphDemo.jsx' },
+            { key: 'component', filepath: 'geomorph/GeomorphDemo' },
           ]}
         />
 

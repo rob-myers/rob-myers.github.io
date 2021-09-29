@@ -18,10 +18,11 @@ export const code = {
 } as const;
 
 export const component = {
-  'panzoom/PanZoomDemo.jsx': PanZoomDemo,
-  'nav/NavDemo.jsx': NavDemo,
-  'geomorph/GeomorphDemo.jsx': GeomorphDemo,
-  'example/images.jsx Gm301Debug': images.Gm301Debug,
+  'panzoom/PanZoomDemo': PanZoomDemo,
+  'nav/NavDemo': NavDemo,
+  'geomorph/GeomorphDemo': GeomorphDemo,
+  // example/images.jsx Gm301Debug
+  'images/Gm301Debug': images.Gm301Debug,
 } as const;
 
 export type ComponentFilepathKey = keyof typeof component;
