@@ -9,7 +9,9 @@ import { NextJsConfigCtxt, Phase, NextJsConfig, WebpackCtxt } from './next.model
 import applySsrWorkersPatch from './ssr-workers-patch';
 
 const production = process.env.NODE_ENV === 'production';
-console.log({ production });
+console.log({
+  production,
+});
 
 export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
 
@@ -25,19 +27,11 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
       return webpackMerge(
         config,
         {
-          resolve: {
-            fallback: {// Needed by box2d-wasm
-              fs: false,
-              path: false, 
-            },
-          },
-          // output: {
-          //   webassemblyModuleFilename: 'static/wasm/[modulehash].wasm',
-          // },
-          // experiments: {
-          //   asyncWebAssembly: true,
-          //   syncWebAssembly: true,
-          // },
+          module: {
+            rules: [
+              { test: /\.md$/, use: 'raw-loader' },
+            ],
+          }
         },
         // Bundle analyzer
         process.env.ANALYZE === 'true' ? {

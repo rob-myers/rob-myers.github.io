@@ -1,18 +1,20 @@
 import classNames from 'classnames';
 import { css } from 'goober';
 import Sep from './Sep';
+import Markdown from './Markdown';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
   dateTime: string;
   dateText: string;
+  children: string;
 }>) {
   return <>
     <article className={classNames('blog', props.className, blogCss)}>
       <time dateTime={props.dateTime}>
         {props.dateText}
       </time>
-      {props.children}
+      <Markdown children={props.children} />
     </article>
     <Sep/>
   </>;

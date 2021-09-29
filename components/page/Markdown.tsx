@@ -1,8 +1,9 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
-import gfm from 'remark-gfm';
+import remarkGfm from 'remark-gfm';
 import useSiteStore from 'store/site.store';
+import Tabs from './Tabs';
 
 export default function Markdown(
   props: ReactMarkdown.ReactMarkdownOptions
@@ -10,7 +11,7 @@ export default function Markdown(
   return (
     <ReactMarkdown
       rehypePlugins={[rehypeRaw]} // Permit html
-      remarkPlugins={[gfm]}
+      remarkPlugins={[remarkGfm]}
       components={props.components || blogComponents}
       {...props}
     />
@@ -53,4 +54,24 @@ const blogComponents = {
       </a>
     );
   },
+
+  div(props: any) {
+    switch (props.className) {
+      case 'tabs': {
+        const height = Number(props.height || 100);
+        const def = Function(`return ${props.tabs || '[]'}`)();
+        // console.log({ height, def });
+        return (
+          <Tabs
+            height={height}
+            tabs={def}
+            enabled={!!props.enabled}
+            storeKey={props.storeKey}
+          />
+        );
+      }
+      default:
+        return <div {...props} />;
+    }
+  }
 };
