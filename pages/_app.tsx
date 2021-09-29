@@ -13,7 +13,7 @@ setup(
   shouldForwardProp(prop => !prop.startsWith('__')),
 );
 
-import 'styles/globals.css'
+import 'components/globals.css';
 import 'xterm/css/xterm.css';
 import 'flexlayout-react/style/light.css'
 import 'codemirror/lib/codemirror.css';

@@ -10,7 +10,7 @@ export default function Title() {
 # Rogue Markup
 
 $( game ai | roguelike | web dev )
-    `}/>
+      `}/>
     </header>
   );
 }
