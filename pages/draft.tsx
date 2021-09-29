@@ -9,6 +9,7 @@ export default function DraftPage() {
 
       <Article dateTime="2021-07-19" dateText="19th July 2021">
         <Markdown children={`
+
 ## Objective
 
 We'll create a _Game AI focused_ roguelike, set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
@@ -21,14 +22,15 @@ An environment is needed to make it meaningful, fixed narratives/missions are no
 We'll focus on combining navigation-based behaviours in a flexible manner.
 Game AI should be compositional, not forced into a narrative straight-jacket.
 The environment will be driven by thousands of Traveller-based assets.
+
         `}/>
 
-          <Tabs
-            height={400}
-            tabs={[
-              { key: 'component', filepath: 'images/Gm301Debug' },
-            ]}
-          />
+        <Tabs
+          height={400}
+          tabs={[
+            { key: 'component', filepath: 'images/Gm301Debug' },
+          ]}
+        />
 
         <Markdown children={`
 
@@ -44,6 +46,7 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
       </Article>
 
       <Article dateTime="2021-07-19" dateText="19th July 2021">
+
         <Markdown children={`
 ## Constraints
 
@@ -76,7 +79,6 @@ More on that later.
 - Use navigation & raycasting algorithms.
 - Use an in-browser terminal.
 - Do not use a Physics engine.
-<!-- - Use procedural generation for spaceship building. -->
         `}/>
 
         <aside>

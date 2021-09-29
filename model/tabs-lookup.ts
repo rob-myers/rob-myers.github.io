@@ -21,7 +21,7 @@ export const component = {
   'panzoom/PanZoomDemo': PanZoomDemo,
   'nav/NavDemo': NavDemo,
   'geomorph/GeomorphDemo': GeomorphDemo,
-  // example/images.jsx Gm301Debug
+  /** example/images.jsx Gm301Debug */
   'images/Gm301Debug': images.Gm301Debug,
 } as const;
 
