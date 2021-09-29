@@ -108,7 +108,7 @@ More on that later.
 Traveller is a Futuristic pen-and-paper Roleplaying Game, created in the late 70s.
 It permits faster than light travel, restricted to ≤ 6 parsecs per week.
 You can learn more on the [Wiki](https://wiki.travellerrpg.com/Jump_Drive), the [offical site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
-It directly motivated Starship Geomorphs, and provides considerable depth.
+It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
 
 <font size="3">_The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._</font>
 </aside>
@@ -131,7 +131,7 @@ I am particularly interested in navigation i.e. combining the movement of many c
 _Games I want to have made_. As an end result I want a highly replayable tactical/action game sandbox.
 Procedurally generated missions will involve going from A to B and doing C (ever was it so).
 Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
-Functionally, think [Teleglitch](https://en.wikipedia.org/wiki/Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
+Functionally, think [Teleglitch](https://www.youtube.com/results?search_query=Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
 Graphically, see Starship Geomorphs 2.0.
 
 Rogue Markup will be easy to extend.
@@ -158,12 +158,13 @@ Let us describe the underlying technologies.
 | Concept | Technology |
 | - | - |
 | Component | [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and [Web Components](https://reactjs.org/docs/web-components.html). |
-| Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober) & programmatically. |
+| Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
+| Raycasting | Geometry/Partitioning  |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
-| Live analysis | In-browser terminal based on [mvdan-sh](https://github.com/mvdan/sh). |
-| Scripting | [TS Node](https://www.npmjs.com/package/ts-node). |
+| Live analysis | In-browser terminal, via [xterm.js](https://www.npmjs.com/package/xterm) and [mvdan-sh](https://www.npmjs.com/package/mvdan-sh). |
+| Scripting | [TS Node](https://www.npmjs.com/package/ts-node) i.e. Node.js with types. |
 | Code viewing | [CodeMirror](https://codemirror.net/) to view JS. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | Show [GitHub](https://github.com/) comments, provide GitHub [repo](https://github.com/rob-myers/rob-myers.github.io). |
