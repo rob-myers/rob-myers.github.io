@@ -10,7 +10,7 @@ Let us describe the underlying technologies.
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
-| Raycasting | Geometry/Partitioning  |
+| Raycasting | Our own geometry code  |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | In-browser terminal, via [xterm.js](https://www.npmjs.com/package/xterm) and [mvdan-sh](https://www.npmjs.com/package/mvdan-sh). |
 | Scripting | [TS Node](https://www.npmjs.com/package/ts-node) i.e. Node.js with types. |
@@ -72,10 +72,10 @@ Behaviourally:
   <aside>
   
   SVG user units become concrete via the `<svg>`'s viewBox attribute and dimension in the DOM.
-  We'll follow a convention based on the work of Robert Pearce and Eric B. Smith. That is, 60 user units correspond to 1.5 meters (one large grid square).
+  We'll follow a convention based on the work of Robert Pearce and Eric B. Smith. That is, 60 user units (one large grid square) correspond to 1.5 meters.
   </aside>
 
-The above JS functions have a single parameter, returning something which looks like HTML (but isn't).
+The above JavaScript functions have a single parameter, and return something which looks like HTML (but isn't).
 Notice _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
 Then although React function components are functions, syntactically they are not invoked like functions. For more details, the above demo is available [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab").
 
@@ -83,16 +83,16 @@ Here's a whirlwind overview of React (and Preact).
 
 - React devs use a grammatical extension of JS with XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)).
 - React applications are often built by composing React function components, using the XML syntax for their return value.
-- Dev tools convert JSX into JS, by replacing XML tags with invocations of the function `React.createElement`.
+- Dev tools convert JSX into JS by replacing XML tags with invocations of the function `React.createElement`.
   See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") below.
 - Actually, this website uses Preact, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
-  and makes Preact virtual DOM nodes.
+  and creates Preact virtual DOM nodes.
 - The root component is usually called _App_.
   Running a React application means [invoking `ReactDOM.render`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
   with 2 arguments: `<App/>` and a DOM node _el_.
 
-- [`ReactDOM.render`](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts \`<App/>\` into a DOM node mounted at _el_.
+- [`ReactDOM.render`](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts `<App/>` into a DOM node mounted at _el_.
   A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
   It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
 

@@ -50,7 +50,7 @@ const blogCss = css`
 
   aside {
     margin: 32px 0;
-    padding: 0 32px;
+    padding: 8px 32px;
     border-radius: 8px;
     border: 2px dashed #ccc;
     font-size: 1.1rem;
