@@ -4,7 +4,7 @@ We'll create a _Game AI focused_ roguelike, set in the [Traveller universe](http
 
 _Why?_
 
-Because NPC behaviour is more interesting than any particular game.
+Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game.
 An environment is needed to make it meaningful, fixed narratives/missions are not.
 
 We'll focus on combining navigation-based behaviours in a flexible manner.
