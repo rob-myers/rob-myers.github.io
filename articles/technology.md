@@ -85,7 +85,7 @@ Here's a whirlwind overview of React (and Preact).
 - React applications are often built by composing React function components, using the XML syntax for their return value.
 - Dev tools convert JSX into JS by replacing XML tags with invocations of the function `React.createElement`.
   See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") below.
-- Actually, this website uses Preact, a React alternative with the same API.
+- This website actually uses Preact, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and creates Preact virtual DOM nodes.
 - The root component is usually called _App_.
@@ -96,25 +96,12 @@ Here's a whirlwind overview of React (and Preact).
   A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
   It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
 
-<!--
-- If \`<App/>\` is a website, it is often [rendered as HTML server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js), so the client can render it immediately.
-The client then invokes [\`ReactDOM.hydrate\`](https://github.com/preactjs/preact/blob/master/src/render.js) instead of \`ReactDOM.render\`, but with the same arguments.
--->
-
 <div
   class="tabs"
   height="340"
   store-key="jsx-to-js"
   tabs="[ { key: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
 ></div>
-
-<!--
-So, React function components are written using syntactic-sugar (JSX), and composed together like HTML.
-We're using Preact (its codebase is smaller, and it has reputation for being faster,
-although React has a _much_ wider scope via [custom renderers](https://github.com/chentsulin/awesome-react-renderer)).
-Rendering a component involves (re)constructing virtual DOM nodes and diffing them.
-Finally, the first render is often precomputed, to load faster.
--->
 
 ### React Renders and Web Components
 
