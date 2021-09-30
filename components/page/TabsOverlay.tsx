@@ -37,8 +37,8 @@ const controlsCss = css`
     cursor: pointer;
     background: #333;
     color: #fff;
-    border-radius: 4px 4px 0 0;
     font-size: 1rem;
+    font-weight: 300;
   }
 
   > .central {
