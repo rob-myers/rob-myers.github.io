@@ -95,9 +95,9 @@ const blogCss = css`
   > figure.tabs {
     border: 10px solid #333;
     border-radius: 8px 8px 0 0;
-    margin: 48px 24px 48px 0;
+    margin: 40px 0;
     @media(max-width: 800px) {
-      margin: 32px 0;
+      margin: 16px 0;
       border: 5px solid #333;
     }
   }
