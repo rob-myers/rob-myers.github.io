@@ -83,6 +83,9 @@ const blogCss = css`
     font-family: sans-serif;
     letter-spacing: 1px;
     color: #444;
+    font-size: smaller;
+    letter-spacing: 2px;
+    padding: 0 2px;
   }
 
   figure {

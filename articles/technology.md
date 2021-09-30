@@ -103,7 +103,7 @@ Here's a whirlwind overview of React (and Preact).
   tabs="[ { key: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
 ></div>
 
-### React Renders and Web Components
+### Avoiding React Renders
 
 <!--
 Websites respond to interaction, sometimes without changing the DOM.
@@ -126,37 +126,53 @@ Take another look at _panzoom/PanZoom.jsx_.
 <div
   class="tabs"
   height="360"
+  store-key="panzoom-again"
   tabs="[
     { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
     { key: 'code', filepath: 'geom/rect.js' },
   ]"
 ></div>
 
-_PanZoom_ returns an `<svg/>` with a viewBox attribute determined by _state.viewBox_.
-When a user zooms via mousewheel, the event handler _state.onWheel_ updates _state.viewBox_.
+_PanZoom_ returns an `<svg/>` with a viewBox attribute determined by `state.viewBox`.
+When a user zooms via mousewheel, the event handler `state.onWheel` updates `state.viewBox`.
 But updating this variable does not automatically update the virtual DOM.
-The canonical React approach would be to re-render, so that _PanZoom_ returns `<svg/>` with the updated viewBox, and the DOM-diffing algorithm does the update.
+Usually one would _trigger a re-render_, so _PanZoom_ returns `<svg/>` with the updated viewBox, and the DOM-diffing algorithm does the update.
 But how do we trigger a re-render?
 
 A React function component is rendered whenever an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
 
-> `const [data, setData] = React.useState(() => initialState)`.
+> `const [value, setValue] = React.useState(() => initialValue)`
 
 These declarations cannot be nested, must occur at the "top-level" of the React function component, and must always execute in the same order.
 This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their enclosing component.
-To change state we execute _setData(nextData)_ e.g. in response to a click. If _nextData_ differs from _data_, the function _setData_ causes the component to re-render relative to the new data.
+To change state we execute `setValue(nextValue)` e.g. in response to a click. If `nextValue` differs from `value`, the function `setValue` causes the component to re-render in the context of the new value.
 
-In _panzoom/PanZoom.jsx_ the variable _state_ corresponds to _data_, but there is no correspondent of _setData_.
+In _panzoom/PanZoom.jsx_,
+the variable `value` corresponds to `state` but there is no correspondent of `setValue`.
+Why?
+Because we never inform React we've changed `state`, despite mutating it on mouse and pointer events.
+Instead, we directly mutate the DOM via:
 
-__TODO__ _we'll control the rendering i.e. React should only render initially or during fast refresh. We'll manipulate the DOM directly using Web Components. By keeping the initial virtual DOM mostly constant, the DOM diffing won't interfere._
+> ``state.root.setAttribute('viewBox', `${state.viewBox}`);``
 
-__TODO__ Server-side rendering cannot handle DOM mutations, so we don't use SSR.
+<!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again code--geom/rect.js"). -->
 
+As far as React is concerned, nothing has changed.
+Moreover if React renders for some other reason (e.g. an ancestral render), it will use the mutated `state` to set the viewBox attribute (so, no change).
+Why bother though?
+To avoid needlessly recomputing `<Grid />` and `children`.
+Our game scene may have many elements, and we'd rather not recompute their virtual DOM many times per second.
 
-### CSS inside JS
+The above situation is handled by a single DOM mutation.
+But what about more complex situations?
+React often relieves frontend developers from the pain of complex non-canonical DOM mutations.
+If and when these mutations become more complex, we'll integrate [_Web Components_](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
+More on that later.
+
+<!-- ### CSS inside JS
 
 Traditionally, CSS is provided in separate files,
 linked in the `<head/>` and referenced by DOM elements via their space-separated attribute `class`.
 Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
-The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us.
+The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us. -->
