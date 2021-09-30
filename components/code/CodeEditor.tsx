@@ -20,6 +20,7 @@ export default function CodeEditor({
   height,
   readOnly,
   folds,
+  wrap,
 }: Props) {
   const editorRoot = useRef<HTMLDivElement>(null);
 
@@ -58,7 +59,7 @@ export default function CodeEditor({
           foldGutter: true,
           gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
         },
-        // lineWrapping: true,
+        lineWrapping: !!wrap,
       });
 
       if (folds) {
@@ -87,6 +88,7 @@ export interface Props {
   readOnly?: boolean;
   height: string;
   folds?: CodeMirror.Position[];
+  wrap?: boolean;
 }
 
 const Root = styled('div', React.forwardRef)<{
@@ -107,7 +109,8 @@ const Root = styled('div', React.forwardRef)<{
       margin: ${props => props.padding}px 0;
     }
     .CodeMirror-line {
-      margin: 0 ${props => props.padding}px;
+      /* margin: 0 ${props => props.padding}px; */
+      padding: 0 ${props => props.padding}px;
     }
     .CodeMirror-scrollbar-filler {
       background: none;
