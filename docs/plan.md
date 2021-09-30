@@ -50,6 +50,7 @@ Each __TODO__ should either:
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+- ✅ Fix brace expansions like `echo {1..5}$( echo foo )`
 - ✅ `Layout` not in initial bundle
 - ✅ Script can generate .debug.png with doors/labels/etc.
 - ✅ NavDemo working as before, now via port of three-pathfinding

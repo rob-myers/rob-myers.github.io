@@ -296,39 +296,54 @@ class SemanticsService {
       for (const wordPart of node.Parts) {
         wordPart.string = (await this.lastExpanded(sem.ExpandPart(wordPart))).value;
       }
-      /*
-      * Is the last value computed via a parameter/command-expansion,
-      * and does it have trailing whitespace?
-      */
+      /** Is last value a parameter/command-expansion AND has trailing whitespace? */
       let lastTrailing = false;
-      const values = [] as string[];
+      /** Items can be arrays via brace expansion of literals */
+      const values = [] as (string | string[])[];
 
-      for (const { type, string } of node.Parts) {
-        const value = string!;
-        if (type === 'ParamExp' || type === 'CmdSubst') {
+      for (const part of node.Parts) {
+        const value = part.string!;
+        const brace = part.type === 'Lit' && (part as any).braceExp;
+
+        if (part.type === 'ParamExp' || part.type === 'CmdSubst') {
           const vs = normalizeWhitespace(value!, false); // Do not trim
-          if (!vs.length) continue;
-          else if (!values.length || lastTrailing || /^\s/.test(vs[0])) {
+          if (!vs.length) {
+            continue;
+          } else if (!values.length || lastTrailing || vs[0].startsWith(' ')) {
             // Freely add, although trim 1st and last
             values.push(...vs.map((x) => x.trim()));
+          } else if (last(values) instanceof Array) {
+            values.push((values.pop() as string[]).map(x => `${x}${vs[0].trim()}`));
+            values.push(...vs.slice(1).map((x) => x.trim()));
           } else {
             // Either `last(vs)` a trailing quote, or it has no trailing space
             // Since vs[0] has no leading space we must join words
             values.push(values.pop() + vs[0].trim());
             values.push(...vs.slice(1).map((x) => x.trim()));
-          } // Check last element (pre-trim)
-          lastTrailing = /\s$/.test(last(vs) as string);
+          }
+          lastTrailing = last(vs)!.endsWith(' ');
         } else if (!values.length || lastTrailing) {// Freely add
-          values.push(value);
+          values.push(brace ? value.split(' ') : value);
           lastTrailing = false;
-        } else {// Must join
+        } else if (last(values) instanceof Array) {
+          values.push(brace
+            ? (values.pop() as string[]).flatMap(x => value.split(' ').map(y =>`${x}${y}`))
+            : (values.pop() as string[]).map(x => `${x}${value}`)
+          );
+          lastTrailing = false;
+        } else if (brace) {
+          const prev = values.pop() as string;
+          values.push(value.split(' ').map(x => `${prev}${x}`));
+          lastTrailing = false;
+        } else {
           values.push(values.pop() + value);
           lastTrailing = false;
         }
       }
 
-      node.string = values.join(' ');
-      yield expand(values);
+      const allValues = values.flatMap(x => x);
+      node.string = allValues.join(' ');
+      yield expand(allValues);
     } else {
       for await (const expanded of this.ExpandPart(node.Parts[0])) {
         node.string = expanded.value;
@@ -353,7 +368,12 @@ class SemanticsService {
         return;
       }
       case 'Lit': {
-        yield expand(literal(node));
+        const literals = literal(node);
+        /**
+         * HACK node.braceExp
+         */
+        (literals.length > 1) && Object.assign(node, { braceExp: true });
+        yield expand(literals);
         break;
       }
       case 'SglQuoted': {
