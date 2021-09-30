@@ -55,7 +55,7 @@ const titleCss = css`
   
   /** Site subtitle */
   p {
-    color: #666;
+    color: #444;
     letter-spacing: 2px;
     font-size: 1.4rem;
     margin: 0;
