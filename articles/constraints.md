@@ -59,11 +59,11 @@ We've chosen the underlying technology, low-level game mechanics, and where even
   Learn more on the [wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
   It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
 
-  <div style="font-size:smaller">
+  <div style="font-size:smaller; padding-bottom: 6px">
 
   _The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._
-
   </div>
+
 </aside>
 
 Over time we'll clarify the above constraints, but first we emphasise:

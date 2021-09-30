@@ -43,7 +43,7 @@ One popular approach uses _React function components_, which are just JavaScript
 
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-  This returned value amounts to an HTML fragment to be rendered,
+  This returned value ultimately amounts to an HTML fragment to be rendered,
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers use a grammatical extension of JavaScript called JSX.
@@ -69,16 +69,21 @@ Behaviourally:
 - _Grid_ renders part of an SVG i.e. two grid patterns.
   They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
 
-They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
+  <aside>
+  
+  SVG user units become concrete via the `<svg>`'s viewBox attribute and dimension in the DOM.
+  We'll follow a convention based on the work of Robert Pearce and Eric B. Smith. That is, 60 user units correspond to 1.5 meters (one large grid square).
+  </aside>
+
+The above JS functions have a single parameter, returning something which looks like HTML (but isn't).
 Notice _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
-Then although React function components are functions, syntactically they are not invoked like functions.
-You can also view the demo code [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab"), which permits code editing.
+Then although React function components are functions, syntactically they are not invoked like functions. For more details, the above demo is available [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab").
 
 Here's a whirlwind overview of React (and Preact).
 
 - React devs use a grammatical extension of JS with XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)).
 - React applications are often built by composing React function components, using the XML syntax for their return value.
-- Dev tools convert JSX into JS, by replacing XML tags with invocations of the function \`React.createElement\`.
+- Dev tools convert JSX into JS, by replacing XML tags with invocations of the function `React.createElement`.
   See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") below.
 - Actually, this website uses Preact, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),

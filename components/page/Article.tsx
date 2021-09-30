@@ -55,8 +55,9 @@ const blogCss = css`
     border: 2px dashed #ccc;
     font-size: 1.1rem;
     @media(max-width: 800px) {
+      font-size: 1rem;
       margin: 8px 0;
-      padding: 16px 16px;
+      padding: 0 16px;
     }
 
     > figure.tabs {
