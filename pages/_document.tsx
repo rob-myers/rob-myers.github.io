@@ -13,6 +13,7 @@ export default class MyDocument extends Document<{ css: string }> {
     return (
       <Html lang="en">
         <Head>
+          <meta name="description" content="A Game AI focused roguelike, built blog by blog." />
           <link rel="icon" href="/favicon.ico" />
           <style
             id="_goober"

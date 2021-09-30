@@ -7,6 +7,7 @@ export function Gm301Debug() {
       <img
         draggable={false}
         src="/pics/g-301--bridge.debug.x1.png"
+        alt="Geomorph 301 Debug"
       />
     </div>
   );
