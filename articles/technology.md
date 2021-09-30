@@ -5,7 +5,7 @@ It will start to get fun once things are moving about.
 Let us describe the underlying technologies.
 
 | Concept | Technology |
-| - | - |
+| ------- | ---------- |
 | Component | [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and [Web Components](https://reactjs.org/docs/web-components.html). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
