@@ -9,7 +9,7 @@ const rootCss = css`
   border-color: var(--focus-bg);
 
   @media(min-width: 800px) {
-    padding-bottom: 64px;
+    padding-bottom: 80px;
     border: 0;
   }
 `;
