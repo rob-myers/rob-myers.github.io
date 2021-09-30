@@ -47,9 +47,11 @@ a.new-tab-link::after {
   height: 9px;
   overflow: auto;
 }
+
 .scrollable ::-webkit-scrollbar-track {
   background: transparent;
 }
+
 .scrollable ::-webkit-scrollbar-thumb {
   background-color: rgba(155, 155, 155, 0.5);
   border-radius: 20px;

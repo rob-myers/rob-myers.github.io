@@ -38,7 +38,7 @@ const blogCss = css`
   padding: 48px 96px 96px 96px;
   border: var(--blog-border-width) solid var(--border-bg);
   
-  @media(max-width: 800px) {
+  @media(max-width: 500px) {
     padding: 8px 12px;
     font-size: 1.1rem;
     border: none;
@@ -54,7 +54,7 @@ const blogCss = css`
     border-radius: 8px;
     border: 2px dashed #ccc;
     font-size: 1.1rem;
-    @media(max-width: 800px) {
+    @media(max-width: 500px) {
       font-size: 1rem;
       margin: 8px 0;
       padding: 0 16px;
@@ -62,7 +62,7 @@ const blogCss = css`
 
     > figure.tabs {
       padding: 8px 0 24px;
-      @media(max-width: 800px) {
+      @media(max-width: 500px) {
         padding: 8px 0 12px;
       }
     }
@@ -73,7 +73,7 @@ const blogCss = css`
     border-left: 10px solid #ddd;
     padding-left: 30px;
     
-    @media(max-width: 800px) {
+    @media(max-width: 500px) {
       margin: 20px 0;
       padding-left: 20px;
     }
@@ -96,7 +96,7 @@ const blogCss = css`
     border: 10px solid #333;
     border-radius: 8px 8px 0 0;
     margin: 40px 0;
-    @media(max-width: 800px) {
+    @media(max-width: 500px) {
       margin: 16px 0;
       border: 5px solid #333;
     }
@@ -108,14 +108,14 @@ const blogCss = css`
   }
   h2 {
     font-size: 2.4rem;
-    @media(max-width: 800px) {
+    @media(max-width: 500px) {
       margin: 16px 0 0 0;
       font-size: 1.8rem;
     }
   }
   h3 {
     font-size: 1.6rem;
-    @media(max-width: 800px) {
+    @media(max-width: 500px) {
       font-size: 1.3em;
     }
   }
@@ -124,7 +124,7 @@ const blogCss = css`
     padding: 8px;
     border: 1px solid #bbb;
     width: 100%;
-    @media(min-width: 800px) {
+    @media(min-width: 500px) {
       margin: 32px 0;
     }
 
@@ -150,7 +150,7 @@ const blogCss = css`
     font-size: 1rem;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
-    @media(max-width: 800px) {
+    @media(max-width: 500px) {
       top: 16px;
       right: 0;
       border-radius: 0 0 0 4px;
@@ -160,7 +160,7 @@ const blogCss = css`
   }
 
   ul, ol {
-    @media(max-width: 800px) {
+    @media(max-width: 500px) {
       padding-left: 20px;
     }
     + p {
