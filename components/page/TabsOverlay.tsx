@@ -43,7 +43,7 @@ const controlsCss = css`
 
   > .central {
     position: absolute;
-    z-index: 10;
+    z-index: 11;
     left: calc(50% - 56px);
     top: calc(50% - 20px);
     
@@ -82,7 +82,7 @@ const loadingCss = css`
   }
 
   position: absolute;
-  z-index: 5;
+  z-index: 10;
   width: inherit;
   height: inherit;
   background: #000;
