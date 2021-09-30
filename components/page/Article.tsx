@@ -44,6 +44,10 @@ const blogCss = css`
     border: none;
   }
 
+  a code {
+    color: unset;
+  }
+
   aside {
     margin: 32px 0;
     padding: 0 32px;
@@ -63,6 +67,23 @@ const blogCss = css`
     }
   }
 
+  blockquote {
+    margin: 32px 0;
+    border-left: 10px solid #ddd;
+    padding-left: 30px;
+    
+    @media(max-width: 800px) {
+      margin: 20px 0;
+      padding-left: 20px;
+    }
+  }
+
+  code {
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    color: #444;
+  }
+
   figure {
     margin: 0;
   }
@@ -74,6 +95,42 @@ const blogCss = css`
     @media(max-width: 800px) {
       margin: 32px 0;
       border: 5px solid #333;
+    }
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-weight: 400;
+  }
+  h2 {
+    font-size: 2.4rem;
+    @media(max-width: 800px) {
+      margin: 16px 0 0 0;
+      font-size: 1.8rem;
+    }
+  }
+  h3 {
+    font-size: 1.6rem;
+    @media(max-width: 800px) {
+      font-size: 1.3em;
+    }
+  }
+
+  table {
+    padding: 8px;
+    border: 1px solid #bbb;
+    width: 100%;
+    @media(min-width: 800px) {
+      margin: 32px 0;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      padding: 8px;
+      @media(max-width: 540px) {
+        padding: 4px 2px;
+      }
     }
   }
 
@@ -98,59 +155,6 @@ const blogCss = css`
     }
   }
 
-  h1, h2, h3, h4 {
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-weight: 400;
-  }
-  h2 {
-    font-size: 2.4rem;
-    @media(max-width: 800px) {
-      margin: 16px 0 0 0;
-      font-size: 1.8rem;
-    }
-  }
-  h3 {
-    font-size: 1.6rem;
-    @media(max-width: 800px) {
-      font-size: 1.3em;
-    }
-  }
-
-  a code {
-    color: unset;
-  }
-
-  blockquote {
-    margin: 32px 40px;
-    @media(max-width: 800px) {
-      margin: 20px 0 20px 16px;
-    }
-  }
-
-  code {
-    font-family: sans-serif;
-    letter-spacing: 1px;
-    color: #444;
-  }
-
-  table {
-    padding: 8px;
-    border: 1px solid #bbb;
-    width: 100%;
-    @media(min-width: 800px) {
-      margin: 32px 0;
-    }
-
-    th, td {
-      text-align: left;
-      vertical-align: top;
-      padding: 8px;
-      @media(max-width: 540px) {
-        padding: 4px 2px;
-      }
-    }
-  }
-
   ul, ol {
     @media(max-width: 800px) {
       padding-left: 20px;
@@ -163,6 +167,7 @@ const blogCss = css`
   ul li, ol li {
     margin: 4px 0;
   }
+
 `;
 
 const blogComponents = {
