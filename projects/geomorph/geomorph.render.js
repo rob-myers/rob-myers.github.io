@@ -100,12 +100,12 @@ export async function renderGeomorph(
 
   if (labels) {
     ctxt.font = labelMeta.font;
-    ctxt.textBaseline = 'bottom';
+    ctxt.textBaseline = 'top';
     for (const { text, rect, padded } of layout.labels) {
       ctxt.fillStyle = 'black';
       ctxt.fillRect(padded.x, padded.y, padded.width, padded.height);
       ctxt.fillStyle = 'white';
-      ctxt.fillText(text, rect.x, rect.y + rect.height)
+      ctxt.fillText(text, rect.x, rect.y)
     }
   }
   //#endregion

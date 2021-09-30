@@ -74,7 +74,8 @@ export function createLayout(def, lookup) {
     .map(({ poly, tags }) => {
       const center = poly.rect.center.json;
       const text = tags.filter(x => x !== 'label').join(' ');
-      const dim = { x: measurer.measureText(text).width, y: labelMeta.sizePx };
+      const noTail = !text.match(/[gjpqy]/);
+      const dim = { x: measurer.measureText(text).width, y: noTail ? labelMeta.noTailPx : labelMeta.sizePx };
       const rect = { x: center.x - 0.5 * dim.x, y: center.y - 0.5 * dim.y, width: dim.x, height: dim.y };
       const padded = (new Rect).copy(rect).outset(labelMeta.padX, labelMeta.padY).json;
       return { text, center, rect, padded };
@@ -99,7 +100,14 @@ export function createLayout(def, lookup) {
   };
 }
 
-export const labelMeta = { sizePx: 11, font: `${11}px sans-serif`, padX: 4, padY: 1 };
+export const labelMeta = {
+  sizePx: 11,
+  /** Text has no tail if it doesn't contain g, j, p, q or y */
+  noTailPx: 10,
+  font: `${11}px sans-serif`,
+  padX: 4,
+  padY: 2,
+};
 
 /**
  * @param {string} symbolName
