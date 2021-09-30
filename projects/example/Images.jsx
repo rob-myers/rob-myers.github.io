@@ -3,13 +3,16 @@ import { css } from 'goober';
 
 export function Gm301Debug() {
   return (
-    <div className={classNames('scrollable', rootCss)}>
+    <picture className={classNames('scrollable', rootCss)}>
+      {/* <source media="(min-width: 1200px)" srcset="/pics/g-301--bridge.debug.x2.png" /> */}
       <img
         draggable={false}
         src="/pics/g-301--bridge.debug.x1.png"
-        alt="Geomorph 301 Debug"
+        alt="Geomorph 301 (Debug)"
+        width={1212}
+        height={628}
       />
-    </div>
+    </picture>
   );
 }
 

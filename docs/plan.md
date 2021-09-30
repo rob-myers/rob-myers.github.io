@@ -49,6 +49,9 @@ Each __TODO__ should either:
 - Add missing labels to 302
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
+- GitHub Pages TTL is 10mins; Could use CDN:
+  > https://rogue-markup.imgix.net/
+  > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 - ✅ `Layout` not in initial bundle
 - ✅ Script can generate .debug.png with doors/labels/etc.
 - ✅ NavDemo working as before, now via port of three-pathfinding
