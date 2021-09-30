@@ -12,17 +12,15 @@ Each __TODO__ should either:
 ### _Constraints_
 
 - Link to a CodeSandbox ✅
-- Demo terminal
-- Background about setting 🚧
-- Image related to Bardo Thodol
+- Demo terminal 🚧
+- Background about setting ✅
 
 ### _Technology_ i.e. tech intro + js
 
 - `PanZoomDemo` uses a Geomorph PNG ✅
 - Redo CodeSandbox ✅
-- CodeSandbox link more prominent 🚧
-- Finish "React Renders and Web Components" 🚧
-- Finish "CSS inside JS" 🚧
+- CodeSandbox link more prominent ✅
+- Finish "React Renders and Web Components" ✅
 
 ### _Technology (Part 2)_ i.e. nav and raycast
 
