@@ -205,7 +205,7 @@ const blogComponents = {
   },
 
   div(props: any) {
-    switch (props.className) {
+    switch (props.class) {
       case 'tabs': {
         const height = Number(props.height || 100);
         const def = React.useMemo(() => Function(`return ${props.tabs || '[]'}`)(), [props.tabs]);
@@ -213,8 +213,8 @@ const blogComponents = {
           <Tabs
             height={height}
             tabs={def}
-            enabled={!!props.enabled}
-            storeKey={props.storeKey}
+            enabled={props.enabled === 'true'}
+            storeKey={props['store-key']}
           />
         );
       }

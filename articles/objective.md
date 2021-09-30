@@ -12,7 +12,7 @@ Game AI should be compositional, not forced into a narrative straight-jacket.
 The environment will be driven by thousands of Traveller-based assets.
 
 <div
-  className="tabs"
+  class="tabs"
   height="400"
   tabs="[{ key: 'component', filepath: 'images/Gm301Debug' }]"
 ></div>

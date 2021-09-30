@@ -37,7 +37,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
   We'll avoid many difficulties by using an in-browser terminal.
 
   <div
-    className="tabs"
+    class="tabs"
     height="300"
     tabs="[ { key: 'terminal', session: 'test' } ]"
   ></div>
@@ -55,8 +55,8 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 <aside>
 
   Traveller is a Futuristic pen-and-paper Roleplaying Game, created in the late 70s.
-  It permits faster than light travel, restricted to ≤ 6 parsecs per week.
-  You can learn more on the [Wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
+  It permits faster than light travel, but ≤ 6 parsecs per week.
+  You can learn more on the [wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
   It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
 
   <div style="font-size:smaller">

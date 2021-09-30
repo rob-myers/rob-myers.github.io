@@ -34,7 +34,7 @@ public/svg
 - Geomorph hulls
 
 <div
-  className="tabs"
+  class="tabs"
   enabled="true"
   height="400"
   tabs="[

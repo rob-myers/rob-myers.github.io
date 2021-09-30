@@ -38,22 +38,22 @@ One popular approach uses _React function components_, which are just JavaScript
 
 - They have a single parameter, conventionally called _props_.
 
-It is a JavaScript object defining the component's named inputs,
-and possibly special properties like _children_, _key_ and _ref_.
+  It is a JavaScript object defining the component's named inputs,
+  and possibly special properties like _children_, _key_ and _ref_.
 
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
 
-This returned value amounts to an HTML fragment to be rendered,
-and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
+  This returned value amounts to an HTML fragment to be rendered,
+  and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers use a grammatical extension of JavaScript called JSX.
 It permits composing components using an XML-like syntax, to obtain the desired dynamic DOM tree.
 Let's consider an example, a pannable and zoomable grid.
 
 <div
-  className="tabs"
-  storeKey="panzoom"
+  class="tabs"
   height="400"
+  store-key="panzoom"
   tabs="[
     { key: 'component', filepath: 'panzoom/PanZoomDemo' },
     { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
@@ -67,7 +67,7 @@ Behaviourally:
 - _PanZoom_ renders an SVG consisting of its children (the Geomorph image provided in _PanZoomDemo_) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 - _Grid_ renders part of an SVG i.e. two grid patterns.
-They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
+  They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
 
 They are JS functions with a single parameter, returning something which looks like HTML (but isn't).
 Notice _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
@@ -79,17 +79,17 @@ Here's a whirlwind overview of React (and Preact).
 - React devs use a grammatical extension of JS with XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)).
 - React applications are often built by composing React function components, using the XML syntax for their return value.
 - Dev tools convert JSX into JS, by replacing XML tags with invocations of the function \`React.createElement\`.
-See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") below.
+  See [example/jsx-to-js.jsx](#command "open-tab jsx-to-js") below.
 - Actually, this website uses Preact, a React alternative with the same API.
-Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
-and makes Preact virtual DOM nodes.
+  Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
+  and makes Preact virtual DOM nodes.
 - The root component is usually called _App_.
-Running a React application means [invoking `ReactDOM.render`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-with 2 arguments: `<App/>` and a DOM node _el_.
+  Running a React application means [invoking `ReactDOM.render`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
+  with 2 arguments: `<App/>` and a DOM node _el_.
 
 - [`ReactDOM.render`](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts \`<App/>\` into a DOM node mounted at _el_.
-A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
-It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
+  A subcomponent may subsequently re-render, recursively recreating a virtual DOM node.
+  It is then [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js), and only the difference is applied to the DOM.
 
 <!--
 - If \`<App/>\` is a website, it is often [rendered as HTML server-side](https://github.com/preactjs/preact-render-to-string/blob/master/src/index.js), so the client can render it immediately.
@@ -97,12 +97,10 @@ The client then invokes [\`ReactDOM.hydrate\`](https://github.com/preactjs/preac
 -->
 
 <div
-  className="tabs"
-  storeKey="jsx-to-js"
+  class="tabs"
   height="340"
-  tabs="[
-    { key: 'code', filepath: 'example/jsx-to-js.jsx' },
-  ]"
+  store-key="jsx-to-js"
+  tabs="[ { key: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
 ></div>
 
 <!--
@@ -134,7 +132,7 @@ If we allowed React (actually, Preact) to render in response to user interaction
 Take another look at _panzoom/PanZoom.jsx_.
 
 <div
-  className="tabs"
+  class="tabs"
   height="360"
   tabs="[
     { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
