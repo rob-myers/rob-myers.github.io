@@ -244,6 +244,7 @@ export class Pathfinding {
       if (depth > 2) continue;
 
       for (let i = 0; i < currentNode.neighbours.length; i++) {
+        /** @type {Nav.GraphNode} */
         const neighbour = nodes[currentNode.neighbours[i]];
         if (neighbour.id in nodeDepth) continue;
 

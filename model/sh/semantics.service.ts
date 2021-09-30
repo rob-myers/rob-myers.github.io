@@ -268,8 +268,8 @@ class SemanticsService {
       }
     } catch (e) {
       const command = node.type === 'CallExpr' ? node.Args[0].string || 'unknown CallExpr' : node.type;
-      const error = e instanceof ShError ? e : new ShError('', 1, e);
-      error.message = `${node.meta.stack.concat(command).join(': ')}: ${e.message || e}`;
+      const error = e instanceof ShError ? e : new ShError('', 1, e as Error);
+      error.message = `${node.meta.stack.concat(command).join(': ')}: ${(e as Error).message || e}`;
       sem.handleShError(node, e);
     }
   }

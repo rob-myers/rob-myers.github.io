@@ -85,7 +85,7 @@ class ParseShService {
 
     } catch (e) {
       console.error(e);
-      return { key: 'failed' as 'failed', error: `${e.Error()}` };
+      return { key: 'failed' as 'failed', error: `${(e as any).Error()}` };
     }
   }
 
