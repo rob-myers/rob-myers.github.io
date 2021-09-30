@@ -134,10 +134,10 @@ Take another look at _panzoom/PanZoom.jsx_.
 _PanZoom_ returns an `<svg/>` with a viewBox attribute determined by `state.viewBox`.
 When a user zooms via mousewheel, the event handler `state.onWheel` updates `state.viewBox`.
 But updating this variable does not automatically update the virtual DOM.
-Usually one would _trigger a re-render_, so _PanZoom_ returns `<svg/>` with the updated viewBox, and the DOM-diffing algorithm does the update.
+Usually one would _trigger a re-render_, so that _PanZoom_ returns `<svg/>` with the updated viewBox, and the DOM-diffing algorithm does the update.
 But how do we trigger a re-render?
 
-A React function component is rendered whenever an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
+A React function component is rendered if an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
 
 > `const [value, setValue] = React.useState(() => initialValue)`
 
