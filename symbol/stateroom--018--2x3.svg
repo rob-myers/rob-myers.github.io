@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 600 900" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="620" height="920" x="-10" y="-10" xlink:href="data:image/png;base64,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"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>obstacles</title>
+    <rect x="120.4" y="54.6" width="378.7" height="196.3" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+    <rect y="8" width="148.9" height="892" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+    <rect x="120.4" y="654.6" width="378.7" height="196.3" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+    <rect x="165.9" y="399.2" width="95.9" height="101.9" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>walls</title>
+    <rect x="-10" y="-10" width="20" height="910" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect y="-10" width="590" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect y="890" width="590" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>singles</title>
+    <rect x="590" y="-10" width="20" height="910" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);">
+      <title>wall</title>
+    </rect>
+    <rect x="265.7" y="275" width="240" height="48" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 899, 64.299988)">
+      <title>door</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="360" y="400">
+      <title>label bedroom</title>
+    </rect>
+  </g>
+</svg>

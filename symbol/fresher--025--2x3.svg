@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 900 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="">
+    <title>background</title>
+    <image width="920" height="620" x="-10" y="-10" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA5gAAAJsAgMAAADl0uSVAAAABGdBTUEAALGPC/xhBQAAAAd0SU1FB+UJGgojDXVmexEAAAAQY2FOdgAAA6UAAAJsAAAADQAAAABnXrm6AAAACVBMVEUAAAAAAAD///+D3c/SAAAAAXRSTlMAQObYZgAAAAFiS0dEAmYLfGQAAAl9SURBVHja7d1NkqNGGsbxlxyxNouqve8xjjA3sBalU6oW+AY5ETOnkRZ4LSJyFpKqAOUX0XpBFH8t7G51P5R/ZJKfgAsp9/LTPydr5Ocr5V1MIRv41Ga3BWZlqi0wd0Y28TH1FpTFVkoTJkyYMGHChAkTJsy1z8REROTwlGMdv/4hIu916KDu89LcfnmYK0GlhQkTJkyYMKcOD8Z9a86A4WRXtMu02Up7/BQROR2jscvRiog7NiuutFLuTxnRg2tWXJrirv+y8WArIiLdaplFLSI2tbv7JiKdlDRBr860IlLcKmXw04mIVG69THfdprd1/NKsRES6HZX2tZm1+xRxtkj0QycrcpZq7aWZd9m1a2Ue7/1lbIRz+fwaDa23ND9EiuSgvKxF3ld8bRYHEZHyI55734uIHOqVMi/lx/XCLD4iA7nmUF8vzPfarpLZa1OczWmezmtk3mm7aDN6p9XZLfKLMc/fQ/aivoQK05a9IXyzPmYfEBb0zkXkZLww8wboooL7ubArKk4TLMyg4DyYi66jOI0HUEQF93NRrenqNANAMV4iaHyFWY1WGwLFaWNT1ZkTZvBnb6MBke8H2GI09KlSy0avVmnLenQyvCO+j9GpLOupc5dW5k7sHlYEBsXpQosLg+IM/7jLqNan1+l1Ev3S7K2L3MGPQ9beusgdvOueOB/VSZjERLrNOajLbiLS67o6id2gxXmsjzlfhddTLqMtJ/eZWEnTShhvdfw+Cw+nxvdTg7OxphifkNSERilhYi2Qpw1yvqLzt0GtyLiHkn30WtJLmFRXa3MulS7w1biLlTLykzQT/ZbWdxHUsYs59t2rDg+81fGhPvpqtq97fVnm+btMehuXu8to3P5dvL090LpZDfNHf4yvQ9x/X5JFsI8se5fky+8x7HytTXkItkG9v39YURtkklM3mzP06ibMEsPTNr2ESQ3ZquToz591/rGuCw+BNRPczPbcKz8yBJkhYZKTqTZnbudWU5q7rJMVOLf1pistzIWY/R5ocF9iF+iPhvcl2uzrNXIZ6yVMasBWZK2HVK8xCggmzNR8xg9fzbWZdddzKWtnbqSlzVoTdqtnptZGr5fmbo3MNqfMXM6IMN6OxRoutYTxDeqqIjTaq/t9S7We0Z7/lv6PnGjiUZV28p8oJjbX0nZZYwD7C8OJV2AGt7Wq9BpJID3/pnTwW71Ku8SdFMGE7rXZTa7dSgmT6hLbnErisqty4u2FWgmT7PnqZP8T+r6b3FqpJbY3dLc5JyZ7Gzc8sl/iD0zisnNZB27XU5rPXiQJnBI3eW73jERvnbbLmW35bxrJmri9Rmn6d9bHm/Dem0b8+/kLjAKCCZPI2Jwf+fprXyY1ZawzOshgd+omL6woJUy8Pj5UR2/Vbqv8KhUvea1Ej+lrgx7Xe3xtkM0aQUXLXTlh4qXd5nyVNxpedFnBJPrEKqeHLLKr1FI3mpp4fXysjp6qHVzJbCcPmLQSJtonejpETxvUVlkrD9HlB+XEYIZyGRfnp++44y8vdlqnbicvOPx6wgxaqPO4bfFUx3r8wGMbWaRtJ4/xdRJ9ZlGPKuTZtzX2NjrO6Imrlx8FPTxF5AeMnyI6h7cJPW1T4uldrYSJCAKA4ckIF+Zrbso/CEKA4ck4R/d8uwnLOpoJExYEAf2TsYor82HJqycIA/onI1qYj91u6nZxrYQZC3I65resgd4Ll6ZU99dvXD6LYHdYfL3J42jfooNN99g0JDZldRJjZnl9NZs7NrEZ0P76arbTMbF/aycvNCglvK8TzHqfyinnb9UTJ49aiYfvDu46Zi1iO9bl4XQ9ie91dBTWZn03Q8L36pW9iBxSr145iEiZfvWKnTh5VErsvGWVU2nTf2kzW0XdaArbVnaZBLcN//LHPSyp2Dq5I6KT0C3NV1yO1vgU0d/Ol7i2tErvV7O1dcPz3KXW0JUS2k1QPXFIo5RQZbajLqyTnFVXjYRyaY6WcKt2oYQysxuc2TZryUMjYXSRoyulTq3taCWUS9MNWj3rlko8s0M5eDrq/wy6tC7V22sldEtzuISRWvBQTGj3m23kdzMmjDKy6630dzub/M9WSuhPxNpJJaOU0L5t2FXfV4r9LecmYJWE/kTMeX8zc0K90v6v19b/sVhCmWml/Woful2bdV+IRsKotz9fQ+m2ytxiV0ioV9rvSa7NfChHI6E+Q3H/vd2ScZF/523KaiT0+81/brWoLdrlEvrM7rrp6+zOLpdQn4iJu+6An+WvrOeUdRLaDw43e/m7tkcRKc95L4FXSWhX2k6ku67VVDbv+UeVhDbTibhSRKT4M/PZepWE+tPuzV6ag3x+yCn3f1ygkZhheHDru61kd/bPT6gznYiz8iGX7PdBaCT0+00rcmrk1OQ/rqKQ0H8TxVnu/6+fZrmEfmm6h18skJhhU95+NxSLJWZg3pv4ZsHEDMyvSdKCiTnuJDlPLBqFxBxMd8y9D1AtMc+rjY5LJ7j9CSZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhPplpRcQ951jTDzVHYlOl2YpI95xjTT/UHIkrs7tln/CZfqg5Elemu1X4J3ymH2qOxO3abOTyrCtg+qHmSIiIFD++9TkwPIAJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwoQJEyZMmDBhwvyBn0LK/SZKc7+JSlts49rcbYNZ0dL+IGZNacKECRMmTJiZH/ev0++U5s9htltQdqbbArM1bgtMa6T5+cqT/B+B7eUYmsEBJQAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wOS0yNlQxMDozNDo0MiswMDowMFyJXhIAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDktMjZUMTA6MzQ6NDIrMDA6MDAt1OauAAAAAElFTkSuQmCC"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>obstacles</title>
+    <rect width="300" height="119.5" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+    <rect width="115" height="153" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" x="342.5"/>
+    <rect width="115" height="153" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" x="542.5"/>
+    <rect width="115" height="153" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" x="742.5"/>
+  </g>
+  <g style="">
+    <title>walls</title>
+    <rect y="-10" width="20" height="610" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" x="890"/>
+    <rect y="-10" width="900" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
+    <rect y="-10" width="20" height="317.1" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" x="290"/>
+    <rect y="-10" width="20" height="317.1" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" x="490"/>
+    <rect width="900" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" y="590"/>
+    <rect y="-10" width="20" height="317.1" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" x="690"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>singles</title>
+    <rect y="-10" width="20" height="610" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="-10">
+      <title>wall</title>
+    </rect>
+    <rect x="227.6" y="578" width="220" height="48" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 602, 112.399994)">
+      <title>door</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="251.9" y="388.2">
+      <title>label toilet</title>
+    </rect>
+  </g>
+</svg>
