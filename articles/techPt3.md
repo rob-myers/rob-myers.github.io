@@ -1,4 +1,4 @@
-## Technology (Part 3)
+## Technology (3)
 
 ### Static Analysis
 

@@ -1,4 +1,4 @@
-## Technology (Part 2)
+## Technology (2)
 
 ### Navigation
 

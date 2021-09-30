@@ -1,4 +1,4 @@
-## Starship Geomorphs
+## Geomorphs
 
 ### Filesystem structure
 
