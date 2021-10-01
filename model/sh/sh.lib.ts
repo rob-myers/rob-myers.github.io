@@ -52,9 +52,11 @@ export const preloadedFunctions = {
     const arg = args[0] || ""
     while ((datum = await api.read()) !== null) {
       if (datum instanceof Array) {
-        yield* datum
+        // yield* datum
+        yield { __chunk__: true, items: datum };
       } else if (typeof datum === "string") {
-        yield* datum.split(arg)
+        // yield* datum.split(arg)
+        yield { __chunk__: true, items: datum.split(arg) };
       }
     }
   }' "$@"`,
