@@ -10,7 +10,7 @@ Let us describe the underlying technologies.
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
-| Raycasting | Basic geometry and spacial partitions  |
+| Raycasting | Basic geometry and spacial partitions.  |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | In-browser terminal, via [xterm.js](https://www.npmjs.com/package/xterm) and [mvdan-sh](https://www.npmjs.com/package/mvdan-sh). |
 | Scripting | [TS Node](https://www.npmjs.com/package/ts-node) i.e. Node.js with types. |
@@ -155,14 +155,13 @@ Instead, we directly mutate the DOM via:
 <!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again code--geom/rect.js"). -->
 
 As far as React is concerned, nothing has changed.
-Moreover if React renders for some other reason (e.g. an ancestral render), it will use the mutated `state` to set the viewBox attribute (so, no change).
+Also, if React renders for another reason (e.g. an ancestral render), it'll use the mutated `state` to set the viewBox attribute (so, no change).
 Why bother though?
-To avoid needlessly recomputing `<Grid />` and `children`.
-Our game may contain many elements, and we'd rather not recompute their virtual DOM many times per second.
+To avoid needlessly recomputing `<Grid />` and `children` whenever we pan or zoom.
+Our game may contain many elements, and we'd rather not needlessly recompute their virtual DOM many times per second.
 
 The above situation is handled by a single DOM mutation.
 But what about more complex situations?
-React often relieves frontend developers from the pain of complex non-canonical DOM mutations.
 If and when these mutations become more complex, we'll integrate [_Web Components_](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
 More on that later.
 
