@@ -48,6 +48,13 @@ const blogCss = css`
   a code {
     color: unset;
   }
+  a.copy-link {
+    color: #555;
+    font-family: monospace;
+    letter-spacing: 1px;
+    font-size: smaller;
+    padding: 0 2px;
+  }
 
   aside {
     margin: 32px 0;
@@ -126,7 +133,7 @@ const blogCss = css`
     border: 1px solid #bbb;
     width: 100%;
     @media(min-width: 500px) {
-      margin: 32px 0;
+      margin: 16px 0;
     }
 
     th, td {
@@ -177,6 +184,7 @@ const blogCss = css`
 
 const blogComponents = {
   a({ node, href, title, children, ...props}: any) {
+    console.log({ title });
     return (
       <a
         href={href}
@@ -214,6 +222,9 @@ const blogComponents = {
               default:
                 console.warn('link triggered unrecognised command:', title);
             }
+          },
+          ...(title as string)?.startsWith('copy ') && {
+            className: 'copy-link',
           }
         }}
         {...props}

@@ -34,14 +34,16 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 <aside>
 
-<!-- TODO auto-copy link for mobile users -->
   Building user interfaces is _hard_.
-  Many difficulties will be avoiding via an in-browser terminal.
+  We'll avoid many difficulties by using an in-browser terminal.
   Try entering the commands below, or copy by clicking.
-  - [`ls`](#command "copy ls"), [`pwd`](#command  "copy pwd"), [`cd /home/test`](#command "copy cd /home/test"), [`cd ..`](#command "copy cd .."), [`/home`](#command "copy /home")
-  - [`seq 10`](#command "copy seq 10"), [`history`](#command "copy history"), [`declare`](#command "copy declare"), [`help`](#command "copy help")
-  - [`echo foo{1..5}`](#command "copy echo foo{1..5}"), [`expr '2 ** 10'`](#command "copy expr '2 ** 10'")
-  - [`expr window | map Object.keys | split`](#command "copy expr window | map Object.keys | split")
+
+| Category | Examples  |
+| ------- | ---------- |
+| Navigation | [ls](#command "copy ls"), [pwd](#command  "copy pwd"), [cd /home/test](#command "copy cd /home/test"), [cd ..](#command "copy cd ..") |
+| C.R.U.D | [echo foo >/home/bar](#command "copy echo foo >/home/bar"), [/home/bar](#command "copy /home/bar"), [rm bar](#command "copy rm bar") |
+| Output | [seq 10](#command "copy seq 10"), [echo foo{1..5}](#command "copy echo foo{1..5}"), [expr 2**10](#command "copy expr '2 ** 10'") |
+| Meta | [history](#command "copy history"), [declare](#command "copy declare"), [help](#command "copy help"), [ps](#command "copy ps") |
 
   <div
     class="tabs"
@@ -49,7 +51,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
     tabs="[ { key: 'terminal', session: 'test' } ]"
   ></div>
 
-As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process". Try terminating a [5 seconds sleep](#command "copy sleep 5").
+As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process". For example, try terminating a [5 seconds sleep](#command "copy sleep 5").
 
 </aside>
 

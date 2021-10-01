@@ -24,13 +24,13 @@ Each __TODO__ should either:
 
 ### _Technology (Part 2)_ i.e. nav and raycast
 
-- NavDemo: can drag navpath src/dst
-- NavDemo: can disable nav nodes
-- Write text
+- Write text 🚧
+- NavDemo: can drag navpath src/dst 🚧
+- NavDemo: can disable nav nodes 🚧
 
 ### _Technology (Part 3)_ i.e. static and runtime analysis
 
-- Write text
+- Write text 🚧
 
 ### _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
 
