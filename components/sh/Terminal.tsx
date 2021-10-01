@@ -12,9 +12,9 @@ export default function Terminal({ sessionKey, env }: Props) {
   useBeforeunload(() => useSession.api.persist(sessionKey));
 
   useEffect(() => {
-    useSession.api.ensureSession(sessionKey, env);
-    // useSession.api.createSession(sessionKey, env);
-    // return () => useSession.api.removeSession(sessionKey);
+    // useSession.api.ensureSession(sessionKey, env);
+    useSession.api.createSession(sessionKey, env);
+    return () => useSession.api.removeSession(sessionKey);
   }, [sessionKey]);
 
 
