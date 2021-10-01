@@ -18,7 +18,7 @@ Object.assign(codemirror.commands, {
       for (const range of ranges) {
         const [from, to] = [range.from(), range.to()];
         const selection = lines.slice(from.line, to.line + 1);
-        console.log(selection);
+        // console.log(selection);
         if (selection.every(x => x.styles.every(y => typeof y !== 'string' || y === 'comment'))) {
           // Currently includes case {/** ... */}
         }

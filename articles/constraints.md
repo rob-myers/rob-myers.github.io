@@ -40,10 +40,10 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 | Category | Examples  |
 | ------- | ---------- |
-| Navigation | [ls](#command "copy ls"), [pwd](#command  "copy pwd"), [cd /home/test](#command "copy cd /home/test"), [cd ..](#command "copy cd ..") |
-| C.R.U.D | [echo foo >/home/bar](#command "copy echo foo >/home/bar"), [/home/bar](#command "copy /home/bar"), [rm bar](#command "copy rm bar") |
-| Output | [seq 10](#command "copy seq 10"), [echo foo{1..5}](#command "copy echo foo{1..5}"), [expr 2**10](#command "copy expr '2 ** 10'") |
-| Meta | [history](#command "copy history"), [declare](#command "copy declare"), [help](#command "copy help"), [ps](#command "copy ps") |
+| Navigation | <span class="cmd">ls</span>, <span class="cmd">pwd</span>, <span class="cmd">cd /home/test</span>, <span class="cmd">cd ..</span> |
+| C.R.U.D | <span class="cmd">echo foo >/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">rm bar</span> |
+| Output | <span class="cmd">seq 10</span>, <span class="cmd">echo foo{1..5}</span>, <span class="cmd">expr '2 ** 10'</span> |
+| Meta | <span class="cmd">history</span>, <span class="cmd"> declare</span>, <span class="cmd">help</span>, <span class="cmd"> ps</span> |
 
   <div
     class="tabs"
