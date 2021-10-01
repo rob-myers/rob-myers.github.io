@@ -22,6 +22,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 </aside>
 
+
 ### Game mechanics
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
@@ -35,12 +36,19 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
   Building user interfaces is _hard_.
   We'll avoid many difficulties by using an in-browser terminal.
+  Try these commands:
+  - `ls`, `pwd`, `cd /home/test`, `cd ..`, `/home`
+  - `seq 10`, `history`, `declare`, `help`
+  - `echo foo{1..5}`, `expr '2 ** 10'`
+  - `expr window | map Object.keys | split`
 
   <div
     class="tabs"
     height="300"
     tabs="[ { key: 'terminal', session: 'test' } ]"
   ></div>
+
+  As usual, Ctrl+C terminates the "foreground process".
 
 </aside>
 
@@ -54,8 +62,8 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 <aside>
 
-  Traveller is a Futuristic pen-and-paper Roleplaying Game, created in the late 70s.
-  It permits faster than light travel, but ≤ 6 parsecs per week.
+  Traveller is a Futuristic pen-and-paper Role-playing Game, created in the late 70s.
+  It permits faster than light travel, at ≤ 6 parsecs per week.
   Learn more on the [wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
   It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
 
@@ -77,7 +85,6 @@ We'll address them.
 _Games I want to make_. My underlying motivation is the lack of Game AI resources available on the web.
 It is hard to discuss the subject without actually building a game, so I chose a setting and game mechanics which felt fun for me.
 I am particularly interested in navigation i.e. combining the movement of many characters in a flexible manner.
-<!-- In particular, we'll control and monitor NPC behaviour using an in-browser terminal. -->
 
 ### 2. The Result
 
