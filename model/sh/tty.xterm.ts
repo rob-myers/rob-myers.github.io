@@ -591,7 +591,7 @@ export class TtyXterm {
   /**
    * Send kill signal to foreground process group.
    */
-  private sendSigKill() {
+  sendSigKill() {
     this.input = '';
     this.setCursor(0);
     this.xterm.write('^C\r\n');

@@ -5,6 +5,7 @@ import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
 import useSiteStore from 'store/site.store';
+import useSessionStore from 'store/session.store';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
@@ -61,7 +62,7 @@ const blogCss = css`
     }
 
     > figure.tabs {
-      padding: 8px 0 24px;
+      padding: 8px 0;
       @media(max-width: 500px) {
         padding: 8px 0 12px;
       }
@@ -199,6 +200,15 @@ const blogComponents = {
                   tabs.selectTab(tabKey),
                   tabs.scrollIntoView();
                 }
+                break;
+              }
+              case 'copy': {
+                navigator.clipboard.writeText(args.join(' '));
+                break;
+              }
+              case 'sigkill': {
+                const { ttyShell } = useSessionStore.api.getSession(args[0])
+                ttyShell.xterm.sendSigKill();
                 break;
               }
               default:
