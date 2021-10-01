@@ -51,7 +51,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
     tabs="[ { key: 'terminal', session: 'test' } ]"
   ></div>
 
-As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process". For example, try terminating a [5 seconds sleep](#command "copy sleep 5").
+As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process". For example, try terminating [sleep 5](#command "copy sleep 5").
 
 </aside>
 

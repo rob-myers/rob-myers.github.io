@@ -34,11 +34,12 @@ export default function Article(props: React.PropsWithChildren<{
 const blogCss = css`
 
   line-height: 1.55;
-  font-size: 1.2rem;
   background: var(--focus-bg);
+
   padding: 48px 96px 96px 96px;
+  font-size: 1.2rem;
   border: var(--blog-border-width) solid var(--border-bg);
-  
+
   @media(max-width: 500px) {
     padding: 8px 12px;
     font-size: 1.1rem;
