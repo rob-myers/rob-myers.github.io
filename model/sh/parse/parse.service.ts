@@ -77,7 +77,9 @@ class ParseShService {
       // Parser.Interactive expects terminal newline.
       const src = buffer.join('\n') + '\n';
       const { incomplete, parsed } = this.interactiveParse(src);
-      // if (parsed) console.log('parsed shell code', parsed);
+      // if (parsed) {
+      //   console.log('parsed shell code', parsed);
+      // }
 
       return incomplete
         ? { key: 'incomplete' as 'incomplete' }
