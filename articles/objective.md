@@ -9,7 +9,7 @@ An environment is needed to make it meaningful, fixed narratives/missions are no
 
 We'll focus on combining navigation-based behaviours in a flexible manner.
 Game AI should be compositional, not forced into a narrative straight-jacket.
-The environment will be driven by thousands of Traveller-based assets.
+As for the environment, it will be driven by thousands of Traveller-based assets.
 
 <div
   class="tabs"
