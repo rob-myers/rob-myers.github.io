@@ -9,8 +9,11 @@
  * Examples:
  * ```sh
  * yarn rename-pngs root media/Symbols media/symbol-root
+ * yarn rename-pngs small-craft 'media/Small Craft' media/symbol-small-craft
+ *
  * yarn rename-pngs geomorph 'media/Geomorphs/100x50 Edge' media/geomorph-edge
  * yarn rename-pngs geomorph 'media/Geomorphs/100x100 Core' media/geomorph-core
+ *
  * yarn rename-pngs symbol media/Symbols/Bridge media/symbol-bridge
  * yarn rename-pngs symbol media/Symbols/Staterooms media/symbol-staterooms
  * yarn rename-pngs symbol media/Symbols/Offices media/symbol-offices
@@ -49,12 +52,19 @@ import {
   error,
   info,
   warn,
+  smallCraftFilenameRegex,
+  metaFromSmallCraftFilename,
 } from './service';
 
 const [,, inputType, srcDir, dstDir] = process.argv;
 
 if (
-  !(inputType === 'root' || inputType === 'geomorph' || inputType == 'symbol')
+  !(
+    inputType === 'root'
+    || inputType === 'geomorph'
+    || inputType === 'symbol'
+    || inputType === 'small-craft'
+  )
   || !srcDir
   || !dstDir
   || !fs.existsSync(srcDir)
@@ -82,6 +92,9 @@ const fileMetas = [] as FileMeta[];
 info('creating manifest', manifestPath);
 
 switch (inputType) {
+  /**
+   * Convert those PNGs directly inside `Symbols/`
+   */
   case 'root':
     srcFilenames.forEach(filename => {
       const matched = filename.match(rootFilenameRegex);
@@ -89,6 +102,9 @@ switch (inputType) {
       else if (filename.match(/\.png$/)) warn('ignoring PNG:', filename);
     });
     break;
+  /**
+   * Convert some fixed subfolder of `Geomorphs/`
+   */
   case 'geomorph':
     srcFilenames.forEach(filename => {
       const matched = filename.match(geomorphsFilenameRegex);
@@ -96,6 +112,9 @@ switch (inputType) {
       else if (filename.match(/\.png$/)) warn('ignoring PNG:', filename);
     });
     break;
+  /**
+   * Convert some fixed subfolder of `Symbols/`
+   */
   case 'symbol':
     srcFilenames.forEach(filename => {
       let matched = filename.match(symbolsFilenameRegex);
@@ -105,6 +124,16 @@ switch (inputType) {
         if (matched) fileMetas.push(metaFromAltSymbolFilename(matched))
         else if (filename.match(/\.png$/)) warn('ignoring PNG:', filename);
       }
+    });
+    break;
+  /**
+   * Convert those PNGs directly inside `Small Craft/`
+   */
+  case 'small-craft':
+    srcFilenames.forEach(filename => {
+      const matched = filename.match(smallCraftFilenameRegex);
+      if (matched) fileMetas.push(metaFromSmallCraftFilename(matched))
+      else if (filename.match(/\.png$/)) warn('ignoring PNG:', filename);
     });
     break;
 }

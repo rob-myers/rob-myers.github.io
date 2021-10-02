@@ -1,0 +1,906 @@
+{
+  "parentFolder": "Small Craft",
+  "sourceType": "small-craft",
+  "fileMetas": [
+    {
+      "srcName": "10-dTon Launch Outline.png",
+      "dstName": "10-dton-launch-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dTon Launch, Cargo.png",
+      "dstName": "10-dton-launch-cargo.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dTon Launch, Passenger.png",
+      "dstName": "10-dton-launch-passenger.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dTon Runabout Outline.png",
+      "dstName": "10-dton-runabout-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dTon Runabout.png",
+      "dstName": "10-dton-runabout.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dTon Shuttle Outline.png",
+      "dstName": "10-dton-shuttle-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dTon Shuttle, Cargo.png",
+      "dstName": "10-dton-shuttle-cargo.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dTon Shuttle, Utility.png",
+      "dstName": "10-dton-shuttle-utility.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dton Ship's Boat Outline.png",
+      "dstName": "10-dton-ships-boat-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "10-dton Ship's Boat.png",
+      "dstName": "10-dton-ships-boat.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "100-dTon XBoat Outline.png",
+      "dstName": "100-dton-xboat-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Customs Gig Outline.png",
+      "dstName": "20-dton-customs-gig-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Customs Gig.png",
+      "dstName": "20-dton-customs-gig.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Gig Outline.png",
+      "dstName": "20-dton-gig-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Gig.png",
+      "dstName": "20-dton-gig.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Gunboat Outline.png",
+      "dstName": "20-dton-gunboat-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Gunboat.png",
+      "dstName": "20-dton-gunboat.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Launch Outline.png",
+      "dstName": "20-dton-launch-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Launch, Cargo.png",
+      "dstName": "20-dton-launch-cargo.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Launch, Hunting.png",
+      "dstName": "20-dton-launch-hunting.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Launch, Passenger.png",
+      "dstName": "20-dton-launch-passenger.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Shuttle Outline.png",
+      "dstName": "20-dton-shuttle-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "20-dTon Shuttle.png",
+      "dstName": "20-dton-shuttle.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "30-dTon Custom Launch.png",
+      "dstName": "30-dton-custom-launch.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Launch Outline.png",
+      "dstName": "50-dton-launch-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Launch, Cargo Module.png",
+      "dstName": "50-dton-launch-cargo-module.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Launch, Fuel Module.png",
+      "dstName": "50-dton-launch-fuel-module.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Launch, Low Berth Module.png",
+      "dstName": "50-dton-launch-low-berth-module.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Launch, Medical Module.png",
+      "dstName": "50-dton-launch-medical-module.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Launch, Passenger & Cargo Module.png",
+      "dstName": "50-dton-launch-passenger-and-cargo-module.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Launch, Passenger Module.png",
+      "dstName": "50-dton-launch-passenger-module.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Saucer Launch.png",
+      "dstName": "50-dton-saucer-launch.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Shuttle Outline.png",
+      "dstName": "50-dton-shuttle-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "50-dTon Shuttle.png",
+      "dstName": "50-dton-shuttle.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Cargo Shuttle, Medium Outline.png",
+      "dstName": "cargo-shuttle-medium-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Cargo Shuttle, Medium.png",
+      "dstName": "cargo-shuttle-medium.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Cargo Shuttle, Small Outline.png",
+      "dstName": "cargo-shuttle-small-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Cargo Shuttle, Small.png",
+      "dstName": "cargo-shuttle-small.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Dragonfly Fighter, Exterior, Wings Folded.png",
+      "dstName": "dragonfly-fighter-exterior-wings-folded.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Dragonfly Fighter, Exterior, Wings Out Outline.png",
+      "dstName": "dragonfly-fighter-exterior-wings-out-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Dragonfly Fighter, Exterior, Wings Out.png",
+      "dstName": "dragonfly-fighter-exterior-wings-out.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Dragonfly Fighter, Interior, 1 Man.png",
+      "dstName": "dragonfly-fighter-interior-1-man.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Dragonfly Fighter, Interior, 2 Man Side-by-Side.png",
+      "dstName": "dragonfly-fighter-interior-2-man-side-by-side.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Dragonfly Fighter, Interior, 2 Man.png",
+      "dstName": "dragonfly-fighter-interior-2-man.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Dragonfly Fighter, Wings Folded Outline.png",
+      "dstName": "dragonfly-fighter-wings-folded-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Dragonfly Fighter, Wings Out Outline.png",
+      "dstName": "dragonfly-fighter-wings-out-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Escape Pod, 1 Man Outline.png",
+      "dstName": "escape-pod-1-man-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Escape Pod, 1 Man in Launcher Outline.png",
+      "dstName": "escape-pod-1-man-in-launcher-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Escape Pod, 1 Man.png",
+      "dstName": "escape-pod-1-man.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Escape Pod, 4x1 Man in Launcher.png",
+      "dstName": "escape-pod-4x1-man-in-launcher.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Escape Pod, 8 Person Outline.png",
+      "dstName": "escape-pod-8-person-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Escape Pod, 8 Person.png",
+      "dstName": "escape-pod-8-person.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Fast Shuttle Outline.png",
+      "dstName": "fast-shuttle-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Fast Shuttle.png",
+      "dstName": "fast-shuttle.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Figher, Medium.png",
+      "dstName": "figher-medium.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Fighter, Large.png",
+      "dstName": "fighter-large.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "G-Carrier External.png",
+      "dstName": "g-carrier-external.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "G-Carrier Internal.png",
+      "dstName": "g-carrier-internal.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "G-Carrier Outline.png",
+      "dstName": "g-carrier-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Grav Bike Outline.png",
+      "dstName": "grav-bike-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Grav Bike.png",
+      "dstName": "grav-bike.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Grav Fighter Outline.png",
+      "dstName": "grav-fighter-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Grav Fighter.png",
+      "dstName": "grav-fighter.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Grav Mining Vehicle Outline.png",
+      "dstName": "grav-mining-vehicle-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Grav Mining Vehicle.png",
+      "dstName": "grav-mining-vehicle.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Grav Tank Outline.png",
+      "dstName": "grav-tank-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Grav Tank.png",
+      "dstName": "grav-tank.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Heavy Grav Tank Outline.png",
+      "dstName": "heavy-grav-tank-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Heavy Grav Tank.png",
+      "dstName": "heavy-grav-tank.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Hunting Launch Outline.png",
+      "dstName": "hunting-launch-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Hunting Launch.png",
+      "dstName": "hunting-launch.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "IISS Survey G-Carrier Outline.png",
+      "dstName": "iiss-survey-g-carrier-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "IISS Survey G-Carrier.png",
+      "dstName": "iiss-survey-g-carrier.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Legacy-Class Starship (Old Layout).png",
+      "dstName": "legacy-class-starship-old-layout.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Legacy-Class Starship.png",
+      "dstName": "legacy-class-starship.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Lifeboat Outline.png",
+      "dstName": "lifeboat-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Lifeboat.png",
+      "dstName": "lifeboat.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Liftbot, Grav Hauler with Cargo.png",
+      "dstName": "liftbot-grav-hauler-with-cargo.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Liftbot, Grav Hauler.png",
+      "dstName": "liftbot-grav-hauler.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Liftbot.png",
+      "dstName": "liftbot.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Manta Fighter Outline.png",
+      "dstName": "manta-fighter-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Manta Fighter.png",
+      "dstName": "manta-fighter.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Mech Outline.png",
+      "dstName": "mech-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Mech.png",
+      "dstName": "mech.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Passenger Shuttle, Medium Outline.png",
+      "dstName": "passenger-shuttle-medium-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Passenger Shuttle, Medium.png",
+      "dstName": "passenger-shuttle-medium.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Rampart Fighter Outline.png",
+      "dstName": "rampart-fighter-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Rampart Fighter, 1 Seat.png",
+      "dstName": "rampart-fighter-1-seat.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Rampart Fighter, 2 Seat.png",
+      "dstName": "rampart-fighter-2-seat.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Rampart Fighter, Tail Sitting.png",
+      "dstName": "rampart-fighter-tail-sitting.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Ursus-Class Starship.png",
+      "dstName": "ursus-class-starship.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Valkyrie Fighter Outline.png",
+      "dstName": "valkyrie-fighter-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Valkyrie Fighter.png",
+      "dstName": "valkyrie-fighter.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Wheeled ATV Outline.png",
+      "dstName": "wheeled-atv-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Wheeled ATV.png",
+      "dstName": "wheeled-atv.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Work Pod 1.png",
+      "dstName": "work-pod-1.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Work Pod 2.png",
+      "dstName": "work-pod-2.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Wraith-Class Starship.png",
+      "dstName": "wraith-class-starship.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Zhodani Chanjitl Fighter External.png",
+      "dstName": "zhodani-chanjitl-fighter-external.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    },
+    {
+      "srcName": "Zhodani Chanjitl Fighter Outline.png",
+      "dstName": "zhodani-chanjitl-fighter-outline.png",
+      "id": -1,
+      "gridDim": [0, 0],
+      "is": [],
+      "has": [],
+      "ids": [-1]
+    }
+  ]
+}

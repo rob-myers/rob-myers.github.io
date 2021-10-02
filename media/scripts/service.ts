@@ -75,6 +75,19 @@ export function metaFromAltSymbolFilename(matched: RegExpMatchArray): FileMeta {
   };
 }
 
+export const smallCraftFilenameRegex = /^(.*).png$/;
+
+export function metaFromSmallCraftFilename(matched: RegExpMatchArray): FileMeta {
+  return {
+    srcName: matched[0],
+    dstName: `${normalizeChars(matched[1])}.png`,
+    id: -1,
+    /** Unfortunately, grid dimension not provided in original filename. */
+    gridDim: [0, 0],
+    is: [], has: [], ids: [-1],
+  };
+}
+
 function extractGeomorphInfo(info: string): FilenameMeta {
   const is = [] as string[];
   const has = [] as string[];
