@@ -71,18 +71,19 @@ Behaviourally:
 
   <aside>
   
-  SVG user units become concrete via the `<svg>`'s viewBox attribute and dimension in the DOM.
-  We'll follow a convention based on the work of Robert Pearce and Eric B. Smith. That is, 60 user units (one large grid square) correspond to 1.5 meters.
+  SVG user units become concrete via the `<svg>`'s viewBox attribute and its width/height within the DOM.
+  We'll follow a convention based on the work of Robert Pearce and Eric B. Smith. That is, 60 abstract user units (one large grid square) correspond to 1.5 meters.
   </aside>
 
 The above two JS functions each have a single parameter `props`, and return something which looks like HTML (but isn't).
 For example, _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
 Then although React function components are functions, syntactically they are not invoked like functions i.e. we do not write `Grid(props)`.
-To get the gist of what React function components are actually returning, here's a whirlwind overview.
+But what are React function components actually returning?
+Here's a whirlwind overview.
 
 - React devs use a grammatical extension of JS with XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)).
 - React applications are built by composing React function components, using the XML syntax for their return value.
-- Dev tools convert JSX into JS by replacing XML tags with invocations of the function `React.createElement` (see [example/jsx-to-js.jsx](#command "open-tab jsx-to-js")).
+- Dev tools convert JSX into JS by replacing XML tags with invocations of the function `React.createElement` ([example/jsx-to-js.jsx](#command "open-tab jsx-to-js")).
 - This website actually uses _Preact_, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
   and creates Preact virtual DOM nodes.
@@ -158,11 +159,10 @@ As far as React is concerned, nothing has changed.
 Also, if React renders for another reason (e.g. an ancestral render), it'll use the mutated `state` to set the viewBox attribute (so, no change).
 Why bother though?
 To avoid needlessly recomputing `<Grid />` and `children` whenever we pan or zoom.
-Our game may contain many elements, and we'd rather not needlessly recompute their virtual DOM many times per second.
+Our game may contain many elements, and we'd rather not recompute their virtual DOM many times per second.
 
 The above situation is handled by a single DOM mutation.
-But what about more complex situations?
-If and when these mutations become more complex, we'll integrate [_Web Components_](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
+In more complex situations we'll integrate [_Web Components_](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
 More on that later.
 
 <!-- ### CSS inside JS
