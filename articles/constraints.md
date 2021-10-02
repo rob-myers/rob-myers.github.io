@@ -13,15 +13,10 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Support mobile/desktop devices.
 
-<aside>
-
-  Here's our first [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
-  Perusing the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
-  Our CodeSandboxes use React, whereas this site uses _Preact_.
-  More on that later.
-
-</aside>
-
+For example, here's a [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+If you peruse the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
+Our CodeSandboxes use React, whereas this site uses _Preact_.
+More on that later.
 
 ### Game mechanics
 
@@ -32,18 +27,15 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 - Use an in-browser terminal.
 - Do not use a Physics engine.
 
-<aside>
 
-  Building user interfaces is _hard_.
-  We'll avoid many difficulties by using an in-browser terminal.
-  Try entering the commands below, or copy by clicking.
+Try entering (or copy-paste) commands into our in-browser terminal.
 
-| Category | Examples  |
-| ------- | ---------- |
-| Navigation | <span class="cmd">ls</span>, <span class="cmd">pwd</span>, <span class="cmd">cd /home/test</span>, <span class="cmd">cd ..</span> |
-| C.R.U.D | <span class="cmd">echo foo >/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">rm bar</span> |
-| Output | <span class="cmd">seq 10</span>, <span class="cmd">echo foo{1..5}</span>, <span class="cmd">expr '2 ** 10'</span> |
-| Meta | <span class="cmd">history</span>, <span class="cmd"> declare</span>, <span class="cmd">help</span>, <span class="cmd"> ps</span> |
+  | Category | Examples  |
+  | ------- | ---------- |
+  | Nav | <span class="cmd">ls</span>, <span class="cmd">pwd</span>, <span class="cmd">cd /home/test</span>, <span class="cmd">cd ..</span> |
+  | CRUD | <span class="cmd">echo foo >/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">cd; rm bar</span> |
+  | Out | <span class="cmd">seq 10</span>, <span class="cmd">echo foo{1..5}</span>, <span class="cmd">expr '2**10'</span> |
+  | Meta | <span class="cmd">history</span>, <span class="cmd"> declare</span>, <span class="cmd">help</span>, <span class="cmd"> ps</span> |
 
   <div
     class="tabs"
@@ -51,10 +43,8 @@ We've chosen the underlying technology, low-level game mechanics, and where even
     tabs="[ { key: 'terminal', session: 'test' } ]"
   ></div>
 
-As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process". For example, try terminating [sleep 5](#command "copy sleep 5").
-
-</aside>
-
+As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process".
+For example, try terminating <span class="cmd">sleep 5</span>.
 
 ### Setting
 
@@ -63,19 +53,18 @@ As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process".
 - Buddhist backdrop via [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol).
 - Horror backdrop via [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land).
 
-<aside>
 
-  Traveller is a Futuristic pen-and-paper Role-playing Game, created in the late 70s.
-  It permits faster than light travel, at ≤ 6 parsecs per week.
-  Learn more on the [wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
-  It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
+Traveller is a Futuristic pen-and-paper Role-playing Game, created in the late 70s.
+It permits faster than light travel, at ≤ 6 parsecs per week.
+Learn more on the [wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
+It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
 
-  <div style="font-size:smaller; padding-bottom: 6px">
+<div style="font-size:smaller; padding-bottom: 6px">
 
-  _The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._
-  </div>
+_The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._
+</div>
 
-</aside>
+---
 
 Over time we'll clarify the above constraints, but first we emphasise:
 > _creating a video game is really fucking hard_.

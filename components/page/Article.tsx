@@ -36,7 +36,7 @@ const blogCss = css`
   line-height: 1.55;
   background: var(--focus-bg);
 
-  padding: 48px 96px 96px 96px;
+  padding: 64px 128px 96px 128px;
   font-size: 1.2rem;
   border: var(--blog-border-width) solid var(--border-bg);
 
@@ -56,7 +56,9 @@ const blogCss = css`
     letter-spacing: 1px;
     font-size: smaller;
     padding: 2px 4px;
-    user-select: all;
+    @media(max-width: 500px) {
+      user-select: all;
+    }
   }
 
   aside {
@@ -118,14 +120,14 @@ const blogCss = css`
     font-weight: 400;
   }
   h2 {
-    font-size: 2.4rem;
+    font-size: 2.8rem;
     @media(max-width: 500px) {
       margin: 16px 0 0 0;
       font-size: 1.8rem;
     }
   }
   h3 {
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     @media(max-width: 500px) {
       font-size: 1.3em;
     }
