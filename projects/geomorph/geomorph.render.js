@@ -1,6 +1,6 @@
 import { Vect } from "../geom";
 import { labelMeta, singlesToPolys } from './geomorph.model';
-import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle } from '../service';
+import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service';
 
 /**
  * Render a single geomorph PNG without doors
@@ -89,6 +89,11 @@ export async function renderGeomorph(
       fillPolygon(ctxt, [poly]);
     }
   });
+
+  // // TEST
+  // setStyle(ctxt, 'rgba(0, 0, 0, 0.5)', 'red', 2);
+  // strokePolygon(ctxt, walls.flatMap(x => x.createOutset(12)));
+  // // fillPolygon(ctxt, walls.flatMap(x => x.createOutset(12)));
 
   if (doors) {
     const doors = singlesToPolys(singles, 'door');

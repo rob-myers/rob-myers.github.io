@@ -105,7 +105,10 @@ declare namespace Geomorph {
   export interface LayoutDefItem {
     symbol: string;
     transform?: [number, number, number, number, number, number];
-    tags?: string[];
+    /** Door tags */
+    doors?: string[];
+    /** Wall tags */
+    walls?: string[];
   }
 
 }

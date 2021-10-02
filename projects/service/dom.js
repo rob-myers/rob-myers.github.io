@@ -136,6 +136,21 @@ export function fillPolygon(ctxt, polys) {
 
 /**
  * @param {CanvasRenderingContext2D} ctxt
+ * @param {Poly[]} polys
+ */
+export function strokePolygon(ctxt, polys) {
+	for (const poly of polys) {
+		ctxt.beginPath();
+    fillRing(ctxt, poly.outline, false);
+    for (const hole of poly.holes) {
+      fillRing(ctxt, hole, false);
+    }
+    ctxt.stroke();
+  }
+}
+
+/**
+ * @param {CanvasRenderingContext2D} ctxt
  * @param {Vect} from
  * @param {Vect} to
  */

@@ -26,16 +26,21 @@ export function createLayout(def, lookup) {
        */
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
-    // Transform singles and restrict doors by tags
-    groups.singles.push(...singles
+    // Transform singles (restricting doors/walls by tags)
+    const restricted = singles
       .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m).precision(1) }))
-      .filter(({ tags }) =>
-        !item.tags || !tags.includes('door') || tags.some(tag => item.tags?.includes(tag))
-      ))
+      .filter(({ tags }) => {
+        if (item.doors && tags.includes('door'))
+          return tags.some(tag => /** @type {string[]} */ (item.doors).includes(tag));
+        else if (item.walls && tags.includes('wall'))
+          return tags.some(tag => /** @type {string[]} */ (item.walls).includes(tag));
+        return true;
+      });
+    groups.singles.push(...restricted);
     groups.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     groups.walls.push(
       ...walls.map(x => x.clone().applyMatrix(m)),
-      ...singlesToPolys(singles, 'wall').map(x => x.clone().applyMatrix(m)),
+      ...singlesToPolys(restricted, 'wall'),
       // Hull symbol (1st symbol) has "hull" walls
       ...hull.flatMap(x => x.createOutset(2)).map(x => x.applyMatrix(m)),
     );

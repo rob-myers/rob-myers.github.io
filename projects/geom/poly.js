@@ -132,7 +132,7 @@ export class Poly {
    */
   createInset(amount) {
     if (amount === 0) return [this.clone()];
-    this.cleanFinalReps(); // TEST
+    this.cleanFinalReps(); // Required
 
     // Compute 4-gons inset or outset along edge normals by `amount`
     const [outerQuads, ...holesQuads] = [
@@ -156,8 +156,9 @@ export class Poly {
 
     if (amount > 0) {// Inset
       return Poly.cutOut(outerQuads.concat(...holesQuads), [this.clone()]);
+    } else {// Outset
+      return Poly.union([this.clone()].concat(outerQuads, ...holesQuads));
     }
-    return Poly.union([this.clone()].concat(outerQuads, ...holesQuads));
   }
 
   /** @param {number} amount */
