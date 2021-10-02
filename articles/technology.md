@@ -144,7 +144,7 @@ A React function component is rendered if an ancestor is (modulo React.memo), or
 
 These declarations cannot be nested, must occur at the "top-level" of the React function component, and must always execute in the same order.
 This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their enclosing component.
-To change state we execute `setValue(nextValue)` e.g. in response to a click. If `nextValue` differs from `value`, the function `setValue` causes the component to re-render in the context of the new value.
+To change state we execute `setValue(nextValue)` e.g. in response to a click. If `nextValue` differs from `value`, the function `setValue` causes the component to re-render (i.e. be invoked) where `value` has the new value.
 
 In _panzoom/PanZoom.jsx_, `value` corresponds to `state` but there is no correspondent of `setValue`.
 Why?
@@ -155,14 +155,14 @@ Instead, we directly mutate the DOM via:
 
 <!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again code--geom/rect.js"). -->
 
-As far as React is concerned, nothing has changed.
+As far as React is concerned nothing has changed.
 Also, if React renders for another reason (e.g. an ancestral render), it'll use the mutated `state` to set the viewBox attribute (so, no change).
 Why bother though?
 To avoid needlessly recomputing `<Grid />` and `children` whenever we pan or zoom.
 Our game may contain many elements, and we'd rather not recompute their virtual DOM many times per second.
 
 The above situation is handled by a single DOM mutation.
-In more complex situations we'll integrate [_Web Components_](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
+In more complex situations we'll integrate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
 More on that later.
 
 <!-- ### CSS inside JS
