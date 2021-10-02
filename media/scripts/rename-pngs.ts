@@ -160,8 +160,14 @@ const tempDir = `temp_${nanoid()}`;
 childProcess.execSync(`
   mkdir ${path.join(dstDir, tempDir)}
   cd '${dstDir}'
+
   time find *.png -print0 |
-    xargs -0 -I £ -P 40 convert -fuzz 1% -trim -colors 32 £ ./${tempDir}/£
+    xargs -0 -I £ -P 40 ${
+      'convert -fuzz 1%'
+    } ${
+      '-trim -colors 32'
+    } £ ./${tempDir}/£
+
   mv ${tempDir}/*.png .
   rmdir ${tempDir}
 `);

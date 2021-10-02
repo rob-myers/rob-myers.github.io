@@ -27,7 +27,8 @@ const layoutDefs = {
       { symbol: 'fresher--025--2x3', transform: [0, -1, 1, 0, 840, 540] },
       { symbol: 'office--023--2x3', transform: [0, -1, -1, 0, 1200, 480] },
       
-      { symbol: 'empty-room--039--3x4', transform: [-1, 0, 0, 1, 180, 480] },
+      { symbol: 'empty-room--039--3x4', transform: [-1, 0, 0, 1, 180, 480], tags: ['door', 'wall-w'] },
+      { symbol: 'lifeboat', transform: [1, 0, 0, 1, 0, 480 + 8] },
       { symbol: 'medical--007--2x3', transform: [0, 1, -1, 0, 360, 660], tags: ['door-w'] },
       { symbol: 'office--026--2x3', transform: [0, 1, -1, 0, 540, 660] },
       { symbol: 'office--026--2x3', transform: [0, 1, 1, 0, 660, 660] },

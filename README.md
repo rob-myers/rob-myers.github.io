@@ -49,3 +49,6 @@ yarn https-proxy
 # Find local ip address for mobile development
 ifconfig | grep "inet " | grep -v 127.0.0.1
 ```
+
+Fix Gimp fill colour:
+> Image → Mode → RGB (rather than Indexed)
