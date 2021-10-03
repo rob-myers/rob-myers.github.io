@@ -88,10 +88,11 @@ const layoutDefs = {
     id: 302,
     items: [
       { symbol: '302--hull' },
-      { symbol: 'office--006--2x2', transform: [0, 1, -1, 0, 120, 120], doors: ['door-e'] },
+      { symbol: 'office--006--2x2', transform: [0, 1, -1, 0, 120, 120], doors: ['e', 'w'] },
+
       { symbol: 'lounge--015--2x4', transform: [-1, 0, 0, -1, 480, 540] },
       { symbol: 'window--007--0x2.4', transform: [1, 0, 0, 1, 240, 420 - 8] },
-      { symbol: 'empty-room--006--2x2', transform: [0, 1, -1, 0, 600, 420], doors: ['door-e'] },
+      { symbol: 'empty-room--006--2x2', transform: [0, 1, -1, 0, 600, 420], doors: ['e'] },
       { symbol: 'ships-locker--011--1x2', transform: [0, 1, 1, 0, 540, 420] },
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, -1, 0, 1200, 240] },
       { symbol: 'empty-room--020--2x4', transform: [-1, 0, 0, 1, 1200, 0], doors: ['door-s'] },

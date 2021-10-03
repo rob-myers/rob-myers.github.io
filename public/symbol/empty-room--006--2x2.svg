@@ -16,11 +16,11 @@
   </g>
   <g style="">
     <title>singles</title>
-    <rect x="300" y="375.7" width="290" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 995.666626, 0)">
-      <title>door door-e</title>
+    <rect x="237.9" y="375.7" width="230" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 995.666626, 97.100006)">
+      <title>door e</title>
     </rect>
-    <rect x="300" y="375.7" width="290" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 396.666656, 0)">
-      <title>door door-w</title>
+    <rect x="237.9" y="375.7" width="230" height="40" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;" transform="matrix(0, 1, -1, 0, 396.666656, 97.100006)">
+      <title>door w</title>
     </rect>
     <rect x="-10" y="-10" width="20" height="620" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);">
       <title>wall</title>
