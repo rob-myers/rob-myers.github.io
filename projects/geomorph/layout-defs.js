@@ -89,13 +89,13 @@ const layoutDefs = {
     items: [
       { symbol: '302--hull' },
       { symbol: 'office--006--2x2', transform: [0, 1, -1, 0, 120, 120], doors: ['e', 'w'] },
+      { symbol: 'empty-room--020--2x4', transform: [-1, 0, 0, 1, 1200, 0], doors: ['s'] },
 
       { symbol: 'lounge--015--2x4', transform: [-1, 0, 0, -1, 480, 540] },
       { symbol: 'window--007--0x2.4', transform: [1, 0, 0, 1, 240, 420 - 8] },
       { symbol: 'empty-room--006--2x2', transform: [0, 1, -1, 0, 600, 420], doors: ['e'] },
       { symbol: 'ships-locker--011--1x2', transform: [0, 1, 1, 0, 540, 420] },
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, -1, 0, 1200, 240] },
-      { symbol: 'empty-room--020--2x4', transform: [-1, 0, 0, 1, 1200, 0], doors: ['door-s'] },
       { symbol: 'shop--028--0.8x1.6', transform: [0, 1, -1, 0, 660, 420] },
       { symbol: 'shop--027--0.4x1.6', transform: [-1, 0, 0, 1, 900, 480] },
       { symbol: 'sensors--003--1x1.4', transform: [...getAngle(45), 90 + 5, -60 + 1] },
