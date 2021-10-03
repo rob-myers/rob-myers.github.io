@@ -29,9 +29,10 @@ const controlsCss = css`
 
   > .top-right {
     position: absolute;
-    right: 0;
-    top: 2px;
+    right: -10px;
+    top: calc(-32px + 4px);
     z-index: 10;
+    border-radius: 4px 4px 0 0;
     padding: 2px 8px;
     
     cursor: pointer;

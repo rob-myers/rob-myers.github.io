@@ -111,7 +111,6 @@ const blogCss = css`
     margin: 40px 0;
     @media(max-width: 500px) {
       margin: 16px 0;
-      border: 5px solid #333;
     }
   }
 
