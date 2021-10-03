@@ -128,33 +128,35 @@ export default function PanZoom(props) {
 
 /** @param {{ bounds: Geom.Rect }} props */
 function Grid(props) {
+  const uid = React.useMemo(() => gridPatternCount++, []);
+
   return <>
-    {[10, 60].map(dim =>
-      <>
-        <defs>
-          <pattern
-            id={`pattern-grid-${dim}-${dim}`}
-            width={dim}
-            height={dim}
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d={`M ${dim} 0 L 0 0 0 ${dim}`}
-              fill="none"
-              stroke="rgba(0,0,0,0.5)"
-              strokeWidth="0.3"
-            />
-          </pattern>
-        </defs>
-        <rect
-          className="grid"
-          x={props.bounds.x}
-          y={props.bounds.y}
-          width={props.bounds.width}
-          height={props.bounds.height}
-          fill={`url(#pattern-grid-${dim}-${dim})`}
-        />
-      </>
-    )}
+    {[10, 60].map(dim => [
+      <defs>
+        <pattern
+          id={`pattern-grid-${dim}x${dim}--${uid}`}
+          width={dim}
+          height={dim}
+          patternUnits="userSpaceOnUse"
+        >
+          <path
+            d={`M ${dim} 0 L 0 0 0 ${dim}`}
+            fill="none"
+            stroke="rgba(0,0,0,0.5)"
+            strokeWidth="0.3"
+          />
+        </pattern>
+      </defs>,
+      <rect
+        className="grid"
+        x={props.bounds.x}
+        y={props.bounds.y}
+        width={props.bounds.width}
+        height={props.bounds.height}
+        fill={`url(#pattern-grid-${dim}x${dim}--${uid})`}
+      />
+    ])}
   </>;
 }
+
+let gridPatternCount = 0;
