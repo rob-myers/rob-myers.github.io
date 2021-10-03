@@ -1,4 +1,4 @@
-import { Vect } from "../geom";
+import { Poly, Vect } from "../geom";
 import { labelMeta, singlesToPolys } from './geomorph.model';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service';
 
@@ -90,10 +90,10 @@ export async function renderGeomorph(
     }
   });
 
-  // // TEST
+  // // Outset testing
+  // // We do not support polygon outlines which self-intersect after being outset
   // setStyle(ctxt, 'rgba(0, 0, 0, 0.5)', 'red', 2);
-  // strokePolygon(ctxt, walls.flatMap(x => x.createOutset(12)));
-  // // fillPolygon(ctxt, walls.flatMap(x => x.createOutset(12)));
+  // strokePolygon(ctxt, walls.flatMap(x => new Poly(Poly.insetRing(x.outline, -12))) );
 
   if (doors) {
     const doors = singlesToPolys(singles, 'door');

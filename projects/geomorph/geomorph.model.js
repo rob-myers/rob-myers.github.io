@@ -39,10 +39,13 @@ export function createLayout(def, lookup) {
     groups.singles.push(...restricted);
     groups.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
     groups.walls.push(
-      ...walls.map(x => x.clone().applyMatrix(m)),
-      ...singlesToPolys(restricted, 'wall'),
-      // Hull symbol (1st symbol) has "hull" walls
-      ...hull.flatMap(x => x.createOutset(2)).map(x => x.applyMatrix(m)),
+      ...Poly.union([
+        ...walls.map(x => x.clone().applyMatrix(m)),
+        // singles can also have walls e.g. to support optional doors
+        ...singlesToPolys(restricted, 'wall'),
+        // The hull symbol (the 1st symbol) has "hull" walls
+        ...hull.flatMap(x => x.createOutset(2)).map(x => x.applyMatrix(m)),
+      ])
     );
   });
 
@@ -52,7 +55,10 @@ export function createLayout(def, lookup) {
   
   // Cut doors from walls
   const doors = singlesToPolys(groups.singles, 'door');
-  groups.walls = Poly.cutOut(doors, groups.walls);
+  // Do not union walls yet, as may self-intersect when outset
+  // Our polygon outset doesn't support self-intersecting outer ring
+  const walls = groups.walls.flatMap(x => Poly.cutOut(doors, [x]))
+  groups.walls = Poly.union(walls);
   groups.singles = groups.singles.reduce((agg, single) =>
     agg.concat(single.tags.includes('wall')
       ? Poly.cutOut(doors, [single.poly]).map(poly => ({ ...single, poly }))
@@ -67,7 +73,7 @@ export function createLayout(def, lookup) {
 
   // Navigation polygon
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
-    groups.walls.flatMap(x => x.createOutset(12)),
+    walls.flatMap(x => x.createOutset(12)), // Use non-unioned walls
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
