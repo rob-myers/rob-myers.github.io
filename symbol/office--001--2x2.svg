@@ -22,10 +22,10 @@
   <g>
     <title>singles</title>
     <rect x="575" y="300" width="48" height="275" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
-      <title>door door-e</title>
+      <title>door e</title>
     </rect>
-    <rect x="300" y="575" width="275" height="48" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
-      <title>door door-s</title>
+    <rect x="330" y="575" width="230" height="48" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
+      <title>door s</title>
     </rect>
     <rect y="590" width="610" height="20" style="fill-opacity: 0.5; pointer-events: auto; fill: rgb(255, 255, 0);">
       <title>wall</title>
