@@ -1308,12 +1308,8 @@
             [-10, -10],
             [10, -10],
             [10, 890],
-            [590, 890],
-            [590, -10],
-            [610, -10],
-            [610, 900],
-            [590, 900],
-            [590, 910],
+            [610, 890],
+            [610, 910],
             [0, 910],
             [0, 900],
             [-10, 900],
@@ -1331,10 +1327,17 @@
         }
       },
       {
-        "tags": ["wall"],
+        "tags": ["wall", "n"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[0, -10], [0, 10], [590, 10], [590, -10]]]
+        }
+      },
+      {
+        "tags": ["wall", "e"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[590, -10], [590, 900], [610, 900], [610, -10]]]
         }
       }
     ],
@@ -1407,14 +1410,14 @@
     ],
     "singles": [
       {
-        "tags": ["wall", "wall-w"],
+        "tags": ["wall", "w"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[-9, 0], [-9, 1210], [11, 1210], [11, 0]]]
         }
       },
       {
-        "tags": ["wall", "wall-s"],
+        "tags": ["wall", "s"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[0, 1190], [0, 1210], [900, 1210], [900, 1190]]]
@@ -2090,7 +2093,7 @@
     ],
     "singles": [
       {
-        "tags": ["door", "door-w"],
+        "tags": ["door", "w"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -2104,7 +2107,7 @@
         }
       },
       {
-        "tags": ["door", "door-n"],
+        "tags": ["door", "n"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[40, -20], [40, 20], [260, 20], [260, -20]]]
@@ -2182,7 +2185,7 @@
     ],
     "singles": [
       {
-        "tags": ["door", "door-w"],
+        "tags": ["door", "w"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -2196,7 +2199,7 @@
         }
       },
       {
-        "tags": ["door", "door-n"],
+        "tags": ["door", "n"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[40, -20], [40, 20], [260, 20], [260, -20]]]
@@ -2764,7 +2767,7 @@
     ],
     "singles": [
       {
-        "tags": ["door", "door-w"],
+        "tags": ["door", "w"],
         "poly": {
           "type": "Polygon",
           "coordinates": [

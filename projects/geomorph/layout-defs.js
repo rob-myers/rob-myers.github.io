@@ -1,5 +1,6 @@
+/** @type {Record<Geomorph.LayoutKey, Geomorph.LayoutDef>} */
 const layoutDefs = {
-  'g-101--multipurpose': /** @type {Geomorph.LayoutDef} */ ({
+  'g-101--multipurpose': {
     key: 'g-101--multipurpose',
     id: 101,
     items: [
@@ -21,31 +22,31 @@ const layoutDefs = {
       { symbol: 'stateroom--019--2x3', transform: [-1, 0, 0, -1, 840, 420] },
 
       { symbol: 'empty-room--013--2x3', transform: [0, 1, -1, 0, 180, 360] },
-      { symbol: 'medical--008--2x3', transform: [0, -1, -1, 0, 360, 540], doors: ['door-w'] },
+      { symbol: 'medical--008--2x3', transform: [0, -1, -1, 0, 360, 540], doors: ['w'] },
       { symbol: 'stateroom--020--2x3', transform: [0, -1, 1, 0, 360, 540] },
       { symbol: 'stateroom--020--2x3', transform: [0, -1, -1, 0, 840, 540] },
       { symbol: 'fresher--025--2x3', transform: [0, -1, 1, 0, 840, 540] },
       { symbol: 'office--023--2x3', transform: [0, -1, -1, 0, 1200, 480] },
       
-      { symbol: 'empty-room--039--3x4', transform: [-1, 0, 0, 1, 180, 480], walls: ['wall-w'] },
+      { symbol: 'empty-room--039--3x4', transform: [-1, 0, 0, 1, 180, 480], walls: ['w'] },
       { symbol: 'lifeboat', transform: [1, 0, 0, 1, 0, 480 + 8] },
-      { symbol: 'medical--007--2x3', transform: [0, 1, -1, 0, 360, 660], doors: ['door-w'] },
+      { symbol: 'medical--007--2x3', transform: [0, 1, -1, 0, 360, 660], doors: ['w'] },
       { symbol: 'office--026--2x3', transform: [0, 1, -1, 0, 540, 660] },
       { symbol: 'office--026--2x3', transform: [0, 1, 1, 0, 660, 660] },
       
       { symbol: 'office--020--2x3', transform: [1, 0, 0, 1, 360, 780] },
       { symbol: 'office--020--2x3', transform: [-1, 0, 0, 1, 840, 780] },
 
-      // { symbol: 'empty-room--013--2x3', transform: [0, -1, -1, 0, 180, 840] },
+      { symbol: 'empty-room--013--2x3', transform: [0, -1, -1, 0, 180, 840], walls: ['n'] },
       { symbol: 'fresher--025--2x3', transform: [0, 1, 1, 0, 840, 660] },
       { symbol: 'office--061--3x4', transform: [1, 0, 0, 1, 1020, 480] },
       { symbol: 'office--023--2x3', transform: [0, 1, -1, 0, 1200, 720] },
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 840] },
 
       { symbol: 'machinery--091--1.6x1.8', transform: [1, 0, 0, 1, 540 + 10, 960] },
-      { symbol: 'office--025--2x3', transform: [0, 1, 1, 0, 360, 960], doors: ['door-w'] },
+      { symbol: 'office--025--2x3', transform: [0, 1, 1, 0, 360, 960], doors: ['w'] },
       { symbol: 'machinery--156--1.8x3.6', transform: [0, -1, 1, 0, +12, 1080 - 12] },
-      { symbol: 'office--025--2x3', transform: [0, 1, -1, 0, 840, 960], doors: ['door-w'] },
+      { symbol: 'office--025--2x3', transform: [0, 1, -1, 0, 840, 960], doors: ['w'] },
       { symbol: 'machinery--357--2.2x4', transform: [1, 0, 0, 1, 960, 960] },
 
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 0, 1080] },
@@ -54,8 +55,8 @@ const layoutDefs = {
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 600, 1080] },
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 960, 1080] },
     ],
-  }),
-  'g-301--bridge': /** @type {Geomorph.LayoutDef} */ ({
+  },
+  'g-301--bridge': {
     key: 'g-301--bridge',
     id: 301,
     items: [
@@ -78,8 +79,8 @@ const layoutDefs = {
       { symbol: 'weaponry--013--1x2', transform: [-1, 0, 0, 1, 360, -60] },
       { symbol: 'weaponry--013--1x2', transform: [1, 0, 0, 1, 840, -60] },
     ],
-  }),
-  'g-302--xboat-repair-bay': /** @type {Geomorph.LayoutDef} */ ({
+  },
+  'g-302--xboat-repair-bay': {
     key: 'g-302--xboat-repair-bay',
     id: 302,
     items: [
@@ -95,7 +96,7 @@ const layoutDefs = {
       { symbol: 'shop--027--0.4x1.6', transform: [-1, 0, 0, 1, 900, 480] },
       { symbol: 'sensors--003--1x1.4', transform: [...getAngle(45), 90 + 5, -60 + 1] },
     ],
-  }),
+  },
 };
 
 export default layoutDefs;

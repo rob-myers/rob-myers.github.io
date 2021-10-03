@@ -111,4 +111,10 @@ declare namespace Geomorph {
     walls?: string[];
   }
 
+  export type LayoutKey = (
+    | 'g-101--multipurpose'
+    | 'g-301--bridge'
+    | 'g-302--xboat-repair-bay'
+  );
+
 }
