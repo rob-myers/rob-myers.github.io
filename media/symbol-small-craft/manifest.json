@@ -4,7 +4,7 @@
   "fileMetas": [
     {
       "srcName": "10-dTon Launch Outline.png",
-      "dstName": "10-dton-launch-outline.png",
+      "dstName": "10-dton-launch-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -13,7 +13,7 @@
     },
     {
       "srcName": "10-dTon Launch, Cargo.png",
-      "dstName": "10-dton-launch-cargo.png",
+      "dstName": "10-dton-launch-cargo--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -22,7 +22,7 @@
     },
     {
       "srcName": "10-dTon Launch, Passenger.png",
-      "dstName": "10-dton-launch-passenger.png",
+      "dstName": "10-dton-launch-passenger--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -31,7 +31,7 @@
     },
     {
       "srcName": "10-dTon Runabout Outline.png",
-      "dstName": "10-dton-runabout-outline.png",
+      "dstName": "10-dton-runabout-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -40,7 +40,7 @@
     },
     {
       "srcName": "10-dTon Runabout.png",
-      "dstName": "10-dton-runabout.png",
+      "dstName": "10-dton-runabout--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -49,7 +49,7 @@
     },
     {
       "srcName": "10-dTon Shuttle Outline.png",
-      "dstName": "10-dton-shuttle-outline.png",
+      "dstName": "10-dton-shuttle-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -58,7 +58,7 @@
     },
     {
       "srcName": "10-dTon Shuttle, Cargo.png",
-      "dstName": "10-dton-shuttle-cargo.png",
+      "dstName": "10-dton-shuttle-cargo--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -67,7 +67,7 @@
     },
     {
       "srcName": "10-dTon Shuttle, Utility.png",
-      "dstName": "10-dton-shuttle-utility.png",
+      "dstName": "10-dton-shuttle-utility--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -76,7 +76,7 @@
     },
     {
       "srcName": "10-dton Ship's Boat Outline.png",
-      "dstName": "10-dton-ships-boat-outline.png",
+      "dstName": "10-dton-ships-boat-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -85,7 +85,7 @@
     },
     {
       "srcName": "10-dton Ship's Boat.png",
-      "dstName": "10-dton-ships-boat.png",
+      "dstName": "10-dton-ships-boat--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -94,7 +94,7 @@
     },
     {
       "srcName": "100-dTon XBoat Outline.png",
-      "dstName": "100-dton-xboat-outline.png",
+      "dstName": "100-dton-xboat-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -103,7 +103,7 @@
     },
     {
       "srcName": "20-dTon Customs Gig Outline.png",
-      "dstName": "20-dton-customs-gig-outline.png",
+      "dstName": "20-dton-customs-gig-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -112,7 +112,7 @@
     },
     {
       "srcName": "20-dTon Customs Gig.png",
-      "dstName": "20-dton-customs-gig.png",
+      "dstName": "20-dton-customs-gig--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -121,7 +121,7 @@
     },
     {
       "srcName": "20-dTon Gig Outline.png",
-      "dstName": "20-dton-gig-outline.png",
+      "dstName": "20-dton-gig-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -130,7 +130,7 @@
     },
     {
       "srcName": "20-dTon Gig.png",
-      "dstName": "20-dton-gig.png",
+      "dstName": "20-dton-gig--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -139,7 +139,7 @@
     },
     {
       "srcName": "20-dTon Gunboat Outline.png",
-      "dstName": "20-dton-gunboat-outline.png",
+      "dstName": "20-dton-gunboat-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -148,7 +148,7 @@
     },
     {
       "srcName": "20-dTon Gunboat.png",
-      "dstName": "20-dton-gunboat.png",
+      "dstName": "20-dton-gunboat--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -157,7 +157,7 @@
     },
     {
       "srcName": "20-dTon Launch Outline.png",
-      "dstName": "20-dton-launch-outline.png",
+      "dstName": "20-dton-launch-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -166,7 +166,7 @@
     },
     {
       "srcName": "20-dTon Launch, Cargo.png",
-      "dstName": "20-dton-launch-cargo.png",
+      "dstName": "20-dton-launch-cargo--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -175,7 +175,7 @@
     },
     {
       "srcName": "20-dTon Launch, Hunting.png",
-      "dstName": "20-dton-launch-hunting.png",
+      "dstName": "20-dton-launch-hunting--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -184,7 +184,7 @@
     },
     {
       "srcName": "20-dTon Launch, Passenger.png",
-      "dstName": "20-dton-launch-passenger.png",
+      "dstName": "20-dton-launch-passenger--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -193,7 +193,7 @@
     },
     {
       "srcName": "20-dTon Shuttle Outline.png",
-      "dstName": "20-dton-shuttle-outline.png",
+      "dstName": "20-dton-shuttle-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -202,7 +202,7 @@
     },
     {
       "srcName": "20-dTon Shuttle.png",
-      "dstName": "20-dton-shuttle.png",
+      "dstName": "20-dton-shuttle--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -211,7 +211,7 @@
     },
     {
       "srcName": "30-dTon Custom Launch.png",
-      "dstName": "30-dton-custom-launch.png",
+      "dstName": "30-dton-custom-launch--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -220,7 +220,7 @@
     },
     {
       "srcName": "50-dTon Launch Outline.png",
-      "dstName": "50-dton-launch-outline.png",
+      "dstName": "50-dton-launch-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -229,7 +229,7 @@
     },
     {
       "srcName": "50-dTon Launch, Cargo Module.png",
-      "dstName": "50-dton-launch-cargo-module.png",
+      "dstName": "50-dton-launch-cargo-module--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -238,7 +238,7 @@
     },
     {
       "srcName": "50-dTon Launch, Fuel Module.png",
-      "dstName": "50-dton-launch-fuel-module.png",
+      "dstName": "50-dton-launch-fuel-module--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -247,7 +247,7 @@
     },
     {
       "srcName": "50-dTon Launch, Low Berth Module.png",
-      "dstName": "50-dton-launch-low-berth-module.png",
+      "dstName": "50-dton-launch-low-berth-module--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -256,7 +256,7 @@
     },
     {
       "srcName": "50-dTon Launch, Medical Module.png",
-      "dstName": "50-dton-launch-medical-module.png",
+      "dstName": "50-dton-launch-medical-module--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -265,7 +265,7 @@
     },
     {
       "srcName": "50-dTon Launch, Passenger & Cargo Module.png",
-      "dstName": "50-dton-launch-passenger-and-cargo-module.png",
+      "dstName": "50-dton-launch-passenger-and-cargo-module--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -274,7 +274,7 @@
     },
     {
       "srcName": "50-dTon Launch, Passenger Module.png",
-      "dstName": "50-dton-launch-passenger-module.png",
+      "dstName": "50-dton-launch-passenger-module--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -283,7 +283,7 @@
     },
     {
       "srcName": "50-dTon Saucer Launch.png",
-      "dstName": "50-dton-saucer-launch.png",
+      "dstName": "50-dton-saucer-launch--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -292,7 +292,7 @@
     },
     {
       "srcName": "50-dTon Shuttle Outline.png",
-      "dstName": "50-dton-shuttle-outline.png",
+      "dstName": "50-dton-shuttle-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -301,7 +301,7 @@
     },
     {
       "srcName": "50-dTon Shuttle.png",
-      "dstName": "50-dton-shuttle.png",
+      "dstName": "50-dton-shuttle--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -310,7 +310,7 @@
     },
     {
       "srcName": "Cargo Shuttle, Medium Outline.png",
-      "dstName": "cargo-shuttle-medium-outline.png",
+      "dstName": "cargo-shuttle-medium-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -319,7 +319,7 @@
     },
     {
       "srcName": "Cargo Shuttle, Medium.png",
-      "dstName": "cargo-shuttle-medium.png",
+      "dstName": "cargo-shuttle-medium--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -328,7 +328,7 @@
     },
     {
       "srcName": "Cargo Shuttle, Small Outline.png",
-      "dstName": "cargo-shuttle-small-outline.png",
+      "dstName": "cargo-shuttle-small-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -337,7 +337,7 @@
     },
     {
       "srcName": "Cargo Shuttle, Small.png",
-      "dstName": "cargo-shuttle-small.png",
+      "dstName": "cargo-shuttle-small--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -346,7 +346,7 @@
     },
     {
       "srcName": "Dragonfly Fighter, Exterior, Wings Folded.png",
-      "dstName": "dragonfly-fighter-exterior-wings-folded.png",
+      "dstName": "dragonfly-fighter-exterior-wings-folded--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -355,7 +355,7 @@
     },
     {
       "srcName": "Dragonfly Fighter, Exterior, Wings Out Outline.png",
-      "dstName": "dragonfly-fighter-exterior-wings-out-outline.png",
+      "dstName": "dragonfly-fighter-exterior-wings-out-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -364,7 +364,7 @@
     },
     {
       "srcName": "Dragonfly Fighter, Exterior, Wings Out.png",
-      "dstName": "dragonfly-fighter-exterior-wings-out.png",
+      "dstName": "dragonfly-fighter-exterior-wings-out--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -373,7 +373,7 @@
     },
     {
       "srcName": "Dragonfly Fighter, Interior, 1 Man.png",
-      "dstName": "dragonfly-fighter-interior-1-man.png",
+      "dstName": "dragonfly-fighter-interior-1-man--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -382,7 +382,7 @@
     },
     {
       "srcName": "Dragonfly Fighter, Interior, 2 Man Side-by-Side.png",
-      "dstName": "dragonfly-fighter-interior-2-man-side-by-side.png",
+      "dstName": "dragonfly-fighter-interior-2-man-side-by-side--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -391,7 +391,7 @@
     },
     {
       "srcName": "Dragonfly Fighter, Interior, 2 Man.png",
-      "dstName": "dragonfly-fighter-interior-2-man.png",
+      "dstName": "dragonfly-fighter-interior-2-man--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -400,7 +400,7 @@
     },
     {
       "srcName": "Dragonfly Fighter, Wings Folded Outline.png",
-      "dstName": "dragonfly-fighter-wings-folded-outline.png",
+      "dstName": "dragonfly-fighter-wings-folded-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -409,7 +409,7 @@
     },
     {
       "srcName": "Dragonfly Fighter, Wings Out Outline.png",
-      "dstName": "dragonfly-fighter-wings-out-outline.png",
+      "dstName": "dragonfly-fighter-wings-out-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -418,7 +418,7 @@
     },
     {
       "srcName": "Escape Pod, 1 Man Outline.png",
-      "dstName": "escape-pod-1-man-outline.png",
+      "dstName": "escape-pod-1-man-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -427,7 +427,7 @@
     },
     {
       "srcName": "Escape Pod, 1 Man in Launcher Outline.png",
-      "dstName": "escape-pod-1-man-in-launcher-outline.png",
+      "dstName": "escape-pod-1-man-in-launcher-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -436,7 +436,7 @@
     },
     {
       "srcName": "Escape Pod, 1 Man.png",
-      "dstName": "escape-pod-1-man.png",
+      "dstName": "escape-pod-1-man--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -445,7 +445,7 @@
     },
     {
       "srcName": "Escape Pod, 4x1 Man in Launcher.png",
-      "dstName": "escape-pod-4x1-man-in-launcher.png",
+      "dstName": "escape-pod-4x1-man-in-launcher--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -454,7 +454,7 @@
     },
     {
       "srcName": "Escape Pod, 8 Person Outline.png",
-      "dstName": "escape-pod-8-person-outline.png",
+      "dstName": "escape-pod-8-person-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -463,7 +463,7 @@
     },
     {
       "srcName": "Escape Pod, 8 Person.png",
-      "dstName": "escape-pod-8-person.png",
+      "dstName": "escape-pod-8-person--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -472,7 +472,7 @@
     },
     {
       "srcName": "Fast Shuttle Outline.png",
-      "dstName": "fast-shuttle-outline.png",
+      "dstName": "fast-shuttle-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -481,7 +481,7 @@
     },
     {
       "srcName": "Fast Shuttle.png",
-      "dstName": "fast-shuttle.png",
+      "dstName": "fast-shuttle--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -490,7 +490,7 @@
     },
     {
       "srcName": "Figher, Medium.png",
-      "dstName": "figher-medium.png",
+      "dstName": "figher-medium--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -499,7 +499,7 @@
     },
     {
       "srcName": "Fighter, Large.png",
-      "dstName": "fighter-large.png",
+      "dstName": "fighter-large--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -508,7 +508,7 @@
     },
     {
       "srcName": "G-Carrier External.png",
-      "dstName": "g-carrier-external.png",
+      "dstName": "g-carrier-external--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -517,7 +517,7 @@
     },
     {
       "srcName": "G-Carrier Internal.png",
-      "dstName": "g-carrier-internal.png",
+      "dstName": "g-carrier-internal--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -526,7 +526,7 @@
     },
     {
       "srcName": "G-Carrier Outline.png",
-      "dstName": "g-carrier-outline.png",
+      "dstName": "g-carrier-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -535,7 +535,7 @@
     },
     {
       "srcName": "Grav Bike Outline.png",
-      "dstName": "grav-bike-outline.png",
+      "dstName": "grav-bike-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -544,7 +544,7 @@
     },
     {
       "srcName": "Grav Bike.png",
-      "dstName": "grav-bike.png",
+      "dstName": "grav-bike--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -553,7 +553,7 @@
     },
     {
       "srcName": "Grav Fighter Outline.png",
-      "dstName": "grav-fighter-outline.png",
+      "dstName": "grav-fighter-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -562,7 +562,7 @@
     },
     {
       "srcName": "Grav Fighter.png",
-      "dstName": "grav-fighter.png",
+      "dstName": "grav-fighter--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -571,7 +571,7 @@
     },
     {
       "srcName": "Grav Mining Vehicle Outline.png",
-      "dstName": "grav-mining-vehicle-outline.png",
+      "dstName": "grav-mining-vehicle-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -580,7 +580,7 @@
     },
     {
       "srcName": "Grav Mining Vehicle.png",
-      "dstName": "grav-mining-vehicle.png",
+      "dstName": "grav-mining-vehicle--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -589,7 +589,7 @@
     },
     {
       "srcName": "Grav Tank Outline.png",
-      "dstName": "grav-tank-outline.png",
+      "dstName": "grav-tank-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -598,7 +598,7 @@
     },
     {
       "srcName": "Grav Tank.png",
-      "dstName": "grav-tank.png",
+      "dstName": "grav-tank--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -607,7 +607,7 @@
     },
     {
       "srcName": "Heavy Grav Tank Outline.png",
-      "dstName": "heavy-grav-tank-outline.png",
+      "dstName": "heavy-grav-tank-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -616,7 +616,7 @@
     },
     {
       "srcName": "Heavy Grav Tank.png",
-      "dstName": "heavy-grav-tank.png",
+      "dstName": "heavy-grav-tank--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -625,7 +625,7 @@
     },
     {
       "srcName": "Hunting Launch Outline.png",
-      "dstName": "hunting-launch-outline.png",
+      "dstName": "hunting-launch-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -634,7 +634,7 @@
     },
     {
       "srcName": "Hunting Launch.png",
-      "dstName": "hunting-launch.png",
+      "dstName": "hunting-launch--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -643,7 +643,7 @@
     },
     {
       "srcName": "IISS Survey G-Carrier Outline.png",
-      "dstName": "iiss-survey-g-carrier-outline.png",
+      "dstName": "iiss-survey-g-carrier-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -652,7 +652,7 @@
     },
     {
       "srcName": "IISS Survey G-Carrier.png",
-      "dstName": "iiss-survey-g-carrier.png",
+      "dstName": "iiss-survey-g-carrier--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -661,7 +661,7 @@
     },
     {
       "srcName": "Legacy-Class Starship (Old Layout).png",
-      "dstName": "legacy-class-starship-old-layout.png",
+      "dstName": "legacy-class-starship-old-layout--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -670,7 +670,7 @@
     },
     {
       "srcName": "Legacy-Class Starship.png",
-      "dstName": "legacy-class-starship.png",
+      "dstName": "legacy-class-starship--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -679,7 +679,7 @@
     },
     {
       "srcName": "Lifeboat Outline.png",
-      "dstName": "lifeboat-outline.png",
+      "dstName": "lifeboat-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -688,7 +688,7 @@
     },
     {
       "srcName": "Lifeboat.png",
-      "dstName": "lifeboat.png",
+      "dstName": "lifeboat--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -697,7 +697,7 @@
     },
     {
       "srcName": "Liftbot, Grav Hauler with Cargo.png",
-      "dstName": "liftbot-grav-hauler-with-cargo.png",
+      "dstName": "liftbot-grav-hauler-with-cargo--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -706,7 +706,7 @@
     },
     {
       "srcName": "Liftbot, Grav Hauler.png",
-      "dstName": "liftbot-grav-hauler.png",
+      "dstName": "liftbot-grav-hauler--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -715,7 +715,7 @@
     },
     {
       "srcName": "Liftbot.png",
-      "dstName": "liftbot.png",
+      "dstName": "liftbot--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -724,7 +724,7 @@
     },
     {
       "srcName": "Manta Fighter Outline.png",
-      "dstName": "manta-fighter-outline.png",
+      "dstName": "manta-fighter-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -733,7 +733,7 @@
     },
     {
       "srcName": "Manta Fighter.png",
-      "dstName": "manta-fighter.png",
+      "dstName": "manta-fighter--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -742,7 +742,7 @@
     },
     {
       "srcName": "Mech Outline.png",
-      "dstName": "mech-outline.png",
+      "dstName": "mech-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -751,7 +751,7 @@
     },
     {
       "srcName": "Mech.png",
-      "dstName": "mech.png",
+      "dstName": "mech--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -760,7 +760,7 @@
     },
     {
       "srcName": "Passenger Shuttle, Medium Outline.png",
-      "dstName": "passenger-shuttle-medium-outline.png",
+      "dstName": "passenger-shuttle-medium-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -769,7 +769,7 @@
     },
     {
       "srcName": "Passenger Shuttle, Medium.png",
-      "dstName": "passenger-shuttle-medium.png",
+      "dstName": "passenger-shuttle-medium--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -778,7 +778,7 @@
     },
     {
       "srcName": "Rampart Fighter Outline.png",
-      "dstName": "rampart-fighter-outline.png",
+      "dstName": "rampart-fighter-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -787,7 +787,7 @@
     },
     {
       "srcName": "Rampart Fighter, 1 Seat.png",
-      "dstName": "rampart-fighter-1-seat.png",
+      "dstName": "rampart-fighter-1-seat--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -796,7 +796,7 @@
     },
     {
       "srcName": "Rampart Fighter, 2 Seat.png",
-      "dstName": "rampart-fighter-2-seat.png",
+      "dstName": "rampart-fighter-2-seat--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -805,7 +805,7 @@
     },
     {
       "srcName": "Rampart Fighter, Tail Sitting.png",
-      "dstName": "rampart-fighter-tail-sitting.png",
+      "dstName": "rampart-fighter-tail-sitting--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -814,7 +814,7 @@
     },
     {
       "srcName": "Ursus-Class Starship.png",
-      "dstName": "ursus-class-starship.png",
+      "dstName": "ursus-class-starship--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -823,7 +823,7 @@
     },
     {
       "srcName": "Valkyrie Fighter Outline.png",
-      "dstName": "valkyrie-fighter-outline.png",
+      "dstName": "valkyrie-fighter-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -832,7 +832,7 @@
     },
     {
       "srcName": "Valkyrie Fighter.png",
-      "dstName": "valkyrie-fighter.png",
+      "dstName": "valkyrie-fighter--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -841,7 +841,7 @@
     },
     {
       "srcName": "Wheeled ATV Outline.png",
-      "dstName": "wheeled-atv-outline.png",
+      "dstName": "wheeled-atv-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -850,7 +850,7 @@
     },
     {
       "srcName": "Wheeled ATV.png",
-      "dstName": "wheeled-atv.png",
+      "dstName": "wheeled-atv--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -859,7 +859,7 @@
     },
     {
       "srcName": "Work Pod 1.png",
-      "dstName": "work-pod-1.png",
+      "dstName": "work-pod-1--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -868,7 +868,7 @@
     },
     {
       "srcName": "Work Pod 2.png",
-      "dstName": "work-pod-2.png",
+      "dstName": "work-pod-2--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -877,7 +877,7 @@
     },
     {
       "srcName": "Wraith-Class Starship.png",
-      "dstName": "wraith-class-starship.png",
+      "dstName": "wraith-class-starship--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -886,7 +886,7 @@
     },
     {
       "srcName": "Zhodani Chanjitl Fighter External.png",
-      "dstName": "zhodani-chanjitl-fighter-external.png",
+      "dstName": "zhodani-chanjitl-fighter-external--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],
@@ -895,7 +895,7 @@
     },
     {
       "srcName": "Zhodani Chanjitl Fighter Outline.png",
-      "dstName": "zhodani-chanjitl-fighter-outline.png",
+      "dstName": "zhodani-chanjitl-fighter-outline--small-craft.png",
       "id": -1,
       "gridDim": [0, 0],
       "is": [],

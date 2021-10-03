@@ -80,7 +80,7 @@ export const smallCraftFilenameRegex = /^(.*).png$/;
 export function metaFromSmallCraftFilename(matched: RegExpMatchArray): FileMeta {
   return {
     srcName: matched[0],
-    dstName: `${normalizeChars(matched[1])}.png`,
+    dstName: `${normalizeChars(matched[1])}--small-craft.png`,
     id: -1,
     /** Unfortunately, grid dimension not provided in original filename. */
     gridDim: [0, 0],

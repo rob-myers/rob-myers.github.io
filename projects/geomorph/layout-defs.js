@@ -29,7 +29,7 @@ const layoutDefs = {
       { symbol: 'office--023--2x3', transform: [0, -1, -1, 0, 1200, 480] },
       
       { symbol: 'empty-room--039--3x4', transform: [-1, 0, 0, 1, 180, 480], walls: ['w'] },
-      { symbol: 'lifeboat', transform: [1, 0, 0, 1, 0, 480 + 8] },
+      { symbol: 'lifeboat--small-craft', transform: [1, 0, 0, 1, 0, 480 + 8] },
       { symbol: 'medical--007--2x3', transform: [0, 1, -1, 0, 360, 660], doors: ['w'] },
       { symbol: 'office--026--2x3', transform: [0, 1, -1, 0, 540, 660] },
       { symbol: 'office--026--2x3', transform: [0, 1, 1, 0, 660, 660] },
@@ -60,24 +60,27 @@ const layoutDefs = {
     key: 'g-301--bridge',
     id: 301,
     items: [
-      { symbol: '301--hull'  }, // Hull must be first
-      { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
+      { symbol: '301--hull' }, // Hull must be first
+      { symbol: 'weaponry--013--1x2', transform: [-1, 0, 0, 1, 360, -60] },
+      { symbol: 'weaponry--013--1x2', transform: [1, 0, 0, 1, 840, -60] },
+
+      { symbol: 'stateroom--036--2x4' },
+      { symbol: 'office--001--2x2', transform: [-1, 0, 0, 1, 240, 120], doors: ['s'] },
+      { symbol: 'bridge--042--8x9', transform: [1, 0, 0, 1, 360, 60] },
+      { symbol: 'office--001--2x2', transform: [1, 0, 0, 1, 960, 120], doors: ['s'] },
+      { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, 1, 1200, 0] },
+
       { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 0, 480] },
       { symbol: 'stateroom--014--2x2', transform: [1, 0, 0, -1, 120, 480] },
-      { symbol: 'office--001--2x2', transform: [-1, 0, 0, 1, 240, 120], doors: ['door-s'] },
-      { symbol: 'office--001--2x2', transform: [1, 0, 0, 1, 960, 120], doors: ['door-s'] },
-      { symbol: 'stateroom--036--2x4' },
-      { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, 1, 1200, 0] },
+
       { symbol: 'stateroom--036--2x4', transform: [0, -1, 1, 0, 0, 600] },
-      { symbol: 'bridge--042--8x9', transform: [1, 0, 0, 1, 360, 60] },
       { symbol: 'iris-valves--005--1x1', transform: [0, -1, 1, 0, 0, 360] },
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
       { symbol: 'iris-valves--005--1x1', transform: [-1, 0, 0, 1, 360, 540] },
       { symbol: 'iris-valves--005--1x1', transform: [-1, 0, 0, 1, 960, 540] },
       { symbol: 'console--031--1x1.2', transform: [-1, 0, 0, 1, 360, 60] },
       { symbol: 'console--031--1x1.2', transform: [1, 0, 0, 1, 840, 60] },
-      { symbol: 'weaponry--013--1x2', transform: [-1, 0, 0, 1, 360, -60] },
-      { symbol: 'weaponry--013--1x2', transform: [1, 0, 0, 1, 840, -60] },
+      { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     ],
   },
   'g-302--xboat-repair-bay': {

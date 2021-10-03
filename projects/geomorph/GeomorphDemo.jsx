@@ -15,8 +15,8 @@ export default function GeomorphDemo() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
-        <Geomorph def={layoutDefs["g-101--multipurpose"]} />
-        {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}
+        {/* <Geomorph def={layoutDefs["g-101--multipurpose"]} /> */}
+        <Geomorph def={layoutDefs["g-301--bridge"]} />
         {/* <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} /> */}
         {/* <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" /> */}
       </PanZoom>
