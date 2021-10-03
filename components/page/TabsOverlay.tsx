@@ -7,39 +7,44 @@ export function ControlsOverlay({ enabled, toggleEnabled }: {
 }) {
   return (
     <div className={controlsCss}>
-      {enabled
-        ? (
-          <div className="top-right" onClick={toggleEnabled}>
-            disable
-          </div>
-        ) : (
-          <div
-            className={classNames("central", enabled && 'enabled')}
-            onClick={toggleEnabled}
-          >
-            interact
-          </div>
-        )}
+      <div
+        className={classNames("top-right", enabled && 'enabled')}
+        onClick={enabled ? toggleEnabled : undefined}
+      >
+        disable
+      </div>
+      {!enabled && (
+        <div
+          className={classNames("central", enabled && 'enabled')}
+          onClick={toggleEnabled}
+        >
+          interact
+        </div>
+      )}
     </div>
   );
 }
 
 const controlsCss = css`
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  font-family: Roboto, Arial, sans-serif;
 
   > .top-right {
     position: absolute;
     right: -10px;
-    top: calc(-32px + 4px);
+    top: calc(-32px + 6px);
     z-index: 10;
     border-radius: 4px 4px 0 0;
-    padding: 2px 8px;
+    padding: 2px 16px;
     
     cursor: pointer;
     background: #333;
-    color: #fff;
-    font-size: 1rem;
+    color: #777;
+    font-size: 14px;
     font-weight: 300;
+    
+    &.enabled {
+      color: #fff;
+    }
   }
 
   > .central {

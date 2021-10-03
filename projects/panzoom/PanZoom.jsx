@@ -131,7 +131,7 @@ function Grid(props) {
   const uid = React.useMemo(() => gridPatternCount++, []);
 
   return <>
-    {[10, 60].map(dim => [
+    {[10, 60].flatMap(dim => [
       <defs>
         <pattern
           id={`pattern-grid-${dim}x${dim}--${uid}`}
