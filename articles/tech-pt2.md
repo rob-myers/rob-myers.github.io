@@ -1,8 +1,8 @@
 ## Technology (2)
 
 Thus far we've described our objective, constrained our approach, and listed the technologies we'll use.
-Concerning technology, we've outlined our chosen notion of _JavaScript component_.
-This particular blog is devoted to Game AI related tech i.e. _navigation_ and _raycasting_.
+Concerning technology, we've outlined our chosen notion of JavaScript component.
+We now consider Game AI related technology i.e. _navigation_ and _raycasting_.
 
 ### Navigation
 
@@ -14,9 +14,9 @@ This particular blog is devoted to Game AI related tech i.e. _navigation_ and _r
 - Geomorph 101
 -->
 
-We'll look down from above at the interior of starships.
+We'll view the interior of starships from a birdseye viewpoint.
 The [crew](https://wiki.travellerrpg.com/Crew) will have tasks e.g. manning the bridge, patrolling the decks, monitoring [low berths](https://wiki.travellerrpg.com/Low_Passage).
-These behaviours will be constrained by e.g. sleep patterns and personal dislikes, and interruptible by e.g. hardware failures or attacks.
+These behaviours will be constrained by e.g. sleep patterns and personal taste, and interruptible by e.g. hardware failures or enemy fire.
 
 To effect these behaviours we'll need to move the crew from A to B.
 
