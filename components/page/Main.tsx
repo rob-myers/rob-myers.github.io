@@ -1,16 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import classNames from 'classnames';
 import { css } from "goober";
 import Title from "./Title";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
   const [navOpen, setNavOpen] = React.useState(false);
-
-  useEffect(() => {
-    const close = (e: MouseEvent) => setNavOpen(false);
-    document.body.addEventListener('click', close);
-    return () => document.body.removeEventListener('click', close);
-  }, []);
 
   return <>
     <nav
@@ -52,7 +46,7 @@ export const rootCss = css`
 
 `;
 
-const sidebarWidth = 120;
+const sidebarWidth = 200;
 const handleWidth = 20;
 
 const navCss = css`
@@ -73,7 +67,7 @@ const navCss = css`
   }
 
   .handle {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(120, 0, 0, 1);
     position: absolute;
     width: ${handleWidth}px;
     top: 0;

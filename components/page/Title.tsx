@@ -35,8 +35,8 @@ const titleCss = css`
   @media(max-width: 500px) {
     padding-left: 8px;
     border-bottom: 2px solid #999;
-    border: 32px solid #aaa;
-    border-width: 36px 0 2px;
+    border: 0 solid #000;
+    border-width: 23px 0 2px;
     padding-top: 8px;
   }
 
