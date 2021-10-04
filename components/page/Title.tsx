@@ -44,6 +44,7 @@ const titleCss = css`
     cursor: pointer;
     color: #333;
     margin: 0;
+    display: inline-block;
     
     @media(max-width: 800px) {
       font-size: 5rem;
