@@ -27,8 +27,8 @@ More on that later.
 - Use an in-browser terminal.
 - Do not use a Physics engine.
 
-
-Try entering (or copy-paste) commands into our in-browser terminal.
+To debug and illustrate Game AI, we'll use a terminal.
+Try entering (or copy-pasting) the commands below.
 
   | Category | Examples  |
   | ------- | ---------- |
@@ -44,7 +44,7 @@ Try entering (or copy-paste) commands into our in-browser terminal.
   ></div>
 
 As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process".
-For example, try terminating <span class="cmd">sleep 5</span>.
+Try terminating <span class="cmd">sleep 5</span>.
 
 ### Setting
 
