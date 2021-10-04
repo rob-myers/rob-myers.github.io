@@ -6,6 +6,7 @@ import Markdown from './Markdown';
 export default function Title() {
   return (
     <header className={classNames('title', titleCss)}>
+      <div className="top-block" />
       <Markdown components={titleComponents} children={`
 # Rogue Markup
 
@@ -36,9 +37,8 @@ const titleCss = css`
     padding-left: 8px;
     border-bottom: 2px solid #999;
     border: 0 solid #000;
-    border-width: 23px 0 2px;
-    padding-top: 8px;
   }
+  padding-top: 40px;
 
   h1 {
     margin: 0;
@@ -67,8 +67,9 @@ const titleCss = css`
     
     @media(max-width: 500px) {
       font-size: 1rem;
-      padding: 20px 0 20px;
+      padding: 20px 0 20px 8px;
       color: #222;
     }
   }
+
 `;
