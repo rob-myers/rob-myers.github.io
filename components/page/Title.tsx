@@ -31,19 +31,21 @@ const titleComponents = {
 
 const titleCss = css`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-
+  
   @media(max-width: 500px) {
     padding-left: 8px;
-    margin-top: 16px;
     border-bottom: 2px solid #999;
+    border: 32px solid #aaa;
+    border-width: 36px 0 2px;
+    padding-top: 8px;
   }
 
   h1 {
+    margin: 0;
     font-size: 6rem;
     font-weight: 300;
     cursor: pointer;
     color: #333;
-    margin: 0;
     display: inline-block;
     
     @media(max-width: 800px) {
