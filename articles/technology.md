@@ -144,12 +144,13 @@ A React function component is rendered if an ancestor is (modulo React.memo), or
 
 These declarations cannot be nested, must occur at the "top-level" of the React function component, and must always execute in the same order.
 This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their enclosing component.
-To change state we execute `setValue(nextValue)` e.g. in response to a click. If `nextValue` differs from `value`, the function `setValue` causes the component to re-render (i.e. be invoked) where `value` has the new value.
+To change state we execute `setValue(nextValue)` e.g. in response to a click. If `nextValue` differs from `value`, the function `setValue` causes the component to re-render where now `React.setState(...)[0]` has the new value.
+This propagation of internal state is possible because hooks must always execute in the same order.
 
 In _panzoom/PanZoom.jsx_, `value` corresponds to `state` but there is no correspondent of `setValue`.
 Why?
 Because we never inform React we've changed `state`, despite mutating it on mouse and pointer events.
-Instead, we directly mutate the DOM via:
+Instead we directly mutate the DOM via:
 
 > ``state.root.setAttribute('viewBox', `${state.viewBox}`);``
 
