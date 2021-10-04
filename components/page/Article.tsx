@@ -40,6 +40,9 @@ const blogCss = css`
   font-size: 1.2rem;
   border: var(--blog-border-width) solid var(--border-bg);
 
+  @media(max-width: 800px) {
+    padding: 32px 64px 48px 64px;
+  }
   @media(max-width: 500px) {
     padding: 8px 12px;
     font-size: 1.1rem;
@@ -105,12 +108,12 @@ const blogCss = css`
     margin: 0;
   }
   
-  > figure.tabs {
+  figure.tabs {
     border: 10px solid #333;
-    border-radius: 8px 8px 0 0;
+    border-radius: 8px;
     margin: 40px 0;
     @media(max-width: 500px) {
-      margin: 16px 0;
+      margin: 24px 0 16px;
     }
   }
 
@@ -122,7 +125,7 @@ const blogCss = css`
     font-size: 2.8rem;
     @media(max-width: 500px) {
       margin: 16px 0 0 0;
-      font-size: 1.8rem;
+      font-size: 1.7rem;
     }
   }
   h3 {

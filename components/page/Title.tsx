@@ -48,7 +48,7 @@ const titleCss = css`
     @media(max-width: 800px) {
       font-size: 5rem;
     }
-    @media(max-width: 600px) {
+    @media(max-width: 500px) {
       font-size: 3rem;
     }
   }
