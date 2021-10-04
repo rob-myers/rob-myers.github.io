@@ -32,16 +32,6 @@ a {
   text-decoration: none;
 }
 
-a.new-tab-link::after {
-  display: inline-block;
-  content: '';
-  background-image: url('/icon/ext-link-icon.svg');
-  background-size: 13px 13px;
-  height: 13px;
-  width: 13px;
-  margin-left: 4px;
-}
-
 .scrollable ::-webkit-scrollbar {
   width: 9px;
   height: 9px;

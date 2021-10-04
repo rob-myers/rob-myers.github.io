@@ -52,6 +52,16 @@ const blogCss = css`
   a code {
     color: unset;
   }
+  a.new-tab-link::after {
+    display: inline-block;
+    content: '';
+    background-image: url('/icon/ext-link-icon.svg');
+    background-size: 13px 13px;
+    height: 13px;
+    width: 13px;
+    margin-left: 4px;
+  }
+
   span.cmd {
     color: #555;
     background: #ddd;
