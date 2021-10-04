@@ -1,0 +1,361 @@
+<!DOCTYPE html><html lang="en"><head><meta name="description" content="A Game AI focused roguelike, built blog by blog." /><link rel="icon" href="/favicon.ico" /><style id="_goober"> .go1959823099{font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;padding-top:40px;}@media(max-width: 500px){.go1959823099{padding-left:8px;border-bottom:2px solid #999;border:0 solid #000;}}.go1959823099 h1{margin:0;font-size:6rem;font-weight:300;cursor:pointer;color:#333;display:inline-block;}@media(max-width: 800px){.go1959823099 h1{font-size:5rem;}}@media(max-width: 500px){.go1959823099 h1{font-size:3rem;}}.go1959823099 p{color:#444;letter-spacing:2px;font-size:1.4rem;margin:0;padding:40px 0 48px;font-weight:300;}@media(max-width: 500px){.go1959823099 p{font-size:1rem;padding:20px 0 20px 8px;color:#222;}}.go1558155979{padding:0 0 0 12px;color:#aaa;font-size:1.2rem;}.go1558155979 h3{font-weight:400;}.go1558155979 ul{padding:0;}.go1558155979 ul a{color:#888;}.go1558155979 ul a:hover{color:#ccc;}.go1558155979 ul li{list-style:none;list-style-position:inside;padding:6px 4px;}.go846527474{max-width:1024px;width:100%;padding:48px 64px;}@media(max-width: 1024px){.go846527474{padding:32px 64px;margin:0;}}@media(max-width: 800px){.go846527474{padding:32px 8px;}}@media(max-width: 500px){.go846527474{padding:0;}}.go4210717919{font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-weight:300;color:white;background-color:black;cursor:pointer;opacity:0.9;position:fixed;z-index:20;left:0;height:100%;width:256px;padding:8px;transition:left 500ms ease;}@media(max-width: 1400px){.go4210717919.closed{left:-256px;}.go4210717919 > .handle-bg{position:absolute;top:0;left:256px;width:2256px;height:32px;background:rgba(0, 0, 0, .3);}}.go4210717919 > .handle{background:rgba(120, 0, 0, 1);position:absolute;z-index:19;width:30px;top:0;right:-30px;text-align:center;padding:7px 0;user-select:none;transition:opacity 300ms ease;}@media(min-width: 1400px){.go4210717919 > .handle{opacity:0;}}.go4141088543{position:fixed;background:#ccc;right:0;width:200px;height:100%;transition:opacity 300ms ease;}@media(max-width: 1400px){.go4141088543{opacity:0;}}.go1763247448{margin:0;border-color:var(--focus-bg);}@media(min-width: 800px){.go1763247448{padding-bottom:80px;border:0;}}.go3968713689{font-family:Roboto, Arial, sans-serif;}.go3968713689 > .top-right{position:absolute;right:-10px;top:calc(-32px + 6px);z-index:10;border-radius:4px 4px 0 0;padding:2px 16px;cursor:pointer;background:#333;color:#777;font-size:14px;font-weight:300;}.go3968713689 > .top-right.enabled{color:#fff;}.go3968713689 > .central{position:absolute;z-index:11;left:calc(50% - 56px);top:calc(50% - 20px);cursor:pointer;color:#ddd;background:#000;padding:12px 32px;border-radius:4px;border:1px solid #ddd;font-size:1.2rem;opacity:1;transition:300ms opacity ease;}.go3968713689 > .central.enabled{opacity:0;}.go327449662{position:absolute;z-index:10;width:inherit;height:inherit;background:#000;font-family:sans-serif;opacity:1;transition:opacity 1s ease-in;}.go327449662:not(.faded){pointer-events:none;}.go327449662.clear{opacity:0;transition:opacity 0.5s ease-in;}.go327449662.faded{opacity:0.5;transition:opacity 0.5s ease-in;}.go3672139518{line-height:1.55;background:var(--focus-bg);padding:64px 128px 96px 128px;font-size:1.2rem;border:var(--blog-border-width) solid var(--border-bg);position:relative;}@media(max-width: 800px){.go3672139518{padding:32px 64px 48px 64px;}}@media(max-width: 500px){.go3672139518{padding:8px 12px;font-size:1.1rem;border:none;}}.go3672139518 a code{color:unset;}.go3672139518 a.new-tab-link::after{display:inline-block;content:'';background-image:url('/icon/ext-link-icon.svg');background-size:13px 13px;height:13px;width:13px;margin-left:4px;}.go3672139518 span.cmd{color:#555;background:#ddd;font-family:monospace;letter-spacing:1px;font-size:smaller;padding:2px 4px;}@media(max-width: 500px){.go3672139518 span.cmd{user-select:all;}}.go3672139518 aside{margin:32px 0;padding:8px 32px;border-radius:8px;border:2px dashed #ccc;font-size:1.1rem;}@media(max-width: 500px){.go3672139518 aside{font-size:1rem;margin:8px 0;padding:0 16px;}}.go3672139518 aside > figure.tabs{padding:8px 0;}@media(max-width: 500px){.go3672139518 aside > figure.tabs{padding:8px 0 12px;}}.go3672139518 blockquote{margin:32px 0;border-left:10px solid #ddd;padding-left:30px;}@media(max-width: 500px){.go3672139518 blockquote{margin:20px 0;padding-left:20px;}}.go3672139518 code{font-family:sans-serif;letter-spacing:2px;color:#444;font-size:smaller;padding:0 2px;}.go3672139518 figure{margin:0;}.go3672139518 figure.tabs{border:10px solid #333;border-radius:8px;margin:40px 0;}@media(max-width: 500px){.go3672139518 figure.tabs{margin:24px 0 16px;}}.go3672139518 h1,.go3672139518  h2,.go3672139518  h3,.go3672139518  h4{font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;font-weight:400;}.go3672139518 h2{font-size:2.8rem;}@media(max-width: 500px){.go3672139518 h2{margin:16px 0 0 0;font-size:1.7rem;}}.go3672139518 h3{font-size:1.8rem;}@media(max-width: 500px){.go3672139518 h3{font-size:1.3em;}}.go3672139518 table{padding:8px;border:1px solid #bbb;width:100%;margin:16px 0;}.go3672139518 table th,.go3672139518 table  td{text-align:left;vertical-align:top;padding:8px;}@media(max-width: 540px){.go3672139518 table th,.go3672139518 table  td{padding:4px 2px;}}.go3672139518 > time{position:absolute;right:-10px;top:-50px;background:var(--border-bg);color:#555;border-radius:6px 6px 0 0;padding:12px;font-size:1rem;font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;}@media(max-width: 500px){.go3672139518 > time{top:16px;right:0;border-radius:0 0 0 4px;background:none;font-size:1.1rem;}}@media(max-width: 500px){.go3672139518 ul,.go3672139518  ol{padding-left:20px;}}.go3672139518 ul + p,.go3672139518  ol + p{padding-top:6px;}.go3672139518 ul li,.go3672139518  ol li{margin:4px 0;}.go1506804081{background:var(--focus-bg);}@keyframes fadein{from{opacity:0;}to{opacity:1;}}.go1506804081 .flexlayout__tabset{animation:fadein 1s;}.go1506804081 .flexlayout__tabset,.go1506804081  .flexlayout__tab{background:white;}.go1506804081 > .flexlayout__layout{background:#444;position:relative;height:400px;}.go1506804081 .flexlayout__tab{border-top:6px solid #444;position:relative;overflow:hidden;}.go1506804081 .flexlayout__tabset_tabbar_outer{background:#222;border-bottom:1px solid #555;}.go1506804081 .flexlayout__tab_button--selected,.go1506804081  .flexlayout__tab_button:hover{background:#444;}.go1506804081 .flexlayout__tab_button_content{user-select:none;font-size:13px;color:#aaa;}.go1506804081 .flexlayout__tab_button--selected .flexlayout__tab_button_content{color:#fff;}.go1506804081 .flexlayout__tab_button:hover:not(.flexlayout__tab_button--selected) .flexlayout__tab_button_content{color:#ddd;}.go1506804081 .flexlayout__splitter_vert,.go1506804081  .flexlayout__splitter_horz{background:#827575;}.go3574057674{width:100%;height:400px;position:relative;}.go4204185124{background:var(--focus-bg);}@keyframes fadein{from{opacity:0;}to{opacity:1;}}.go4204185124 .flexlayout__tabset{animation:fadein 1s;}.go4204185124 .flexlayout__tabset,.go4204185124  .flexlayout__tab{background:white;}.go4204185124 > .flexlayout__layout{background:#444;position:relative;height:300px;}.go4204185124 .flexlayout__tab{border-top:6px solid #444;position:relative;overflow:hidden;}.go4204185124 .flexlayout__tabset_tabbar_outer{background:#222;border-bottom:1px solid #555;}.go4204185124 .flexlayout__tab_button--selected,.go4204185124  .flexlayout__tab_button:hover{background:#444;}.go4204185124 .flexlayout__tab_button_content{user-select:none;font-size:13px;color:#aaa;}.go4204185124 .flexlayout__tab_button--selected .flexlayout__tab_button_content{color:#fff;}.go4204185124 .flexlayout__tab_button:hover:not(.flexlayout__tab_button--selected) .flexlayout__tab_button_content{color:#ddd;}.go4204185124 .flexlayout__splitter_vert,.go4204185124  .flexlayout__splitter_horz{background:#827575;}.go3944991801{width:100%;height:300px;position:relative;}.go4097358152{background:var(--focus-bg);}@keyframes fadein{from{opacity:0;}to{opacity:1;}}.go4097358152 .flexlayout__tabset{animation:fadein 1s;}.go4097358152 .flexlayout__tabset,.go4097358152  .flexlayout__tab{background:white;}.go4097358152 > .flexlayout__layout{background:#444;position:relative;height:340px;}.go4097358152 .flexlayout__tab{border-top:6px solid #444;position:relative;overflow:hidden;}.go4097358152 .flexlayout__tabset_tabbar_outer{background:#222;border-bottom:1px solid #555;}.go4097358152 .flexlayout__tab_button--selected,.go4097358152  .flexlayout__tab_button:hover{background:#444;}.go4097358152 .flexlayout__tab_button_content{user-select:none;font-size:13px;color:#aaa;}.go4097358152 .flexlayout__tab_button--selected .flexlayout__tab_button_content{color:#fff;}.go4097358152 .flexlayout__tab_button:hover:not(.flexlayout__tab_button--selected) .flexlayout__tab_button_content{color:#ddd;}.go4097358152 .flexlayout__splitter_vert,.go4097358152  .flexlayout__splitter_horz{background:#827575;}.go2697092909{width:100%;height:340px;position:relative;}.go4043944666{background:var(--focus-bg);}@keyframes fadein{from{opacity:0;}to{opacity:1;}}.go4043944666 .flexlayout__tabset{animation:fadein 1s;}.go4043944666 .flexlayout__tabset,.go4043944666  .flexlayout__tab{background:white;}.go4043944666 > .flexlayout__layout{background:#444;position:relative;height:360px;}.go4043944666 .flexlayout__tab{border-top:6px solid #444;position:relative;overflow:hidden;}.go4043944666 .flexlayout__tabset_tabbar_outer{background:#222;border-bottom:1px solid #555;}.go4043944666 .flexlayout__tab_button--selected,.go4043944666  .flexlayout__tab_button:hover{background:#444;}.go4043944666 .flexlayout__tab_button_content{user-select:none;font-size:13px;color:#aaa;}.go4043944666 .flexlayout__tab_button--selected .flexlayout__tab_button_content{color:#fff;}.go4043944666 .flexlayout__tab_button:hover:not(.flexlayout__tab_button--selected) .flexlayout__tab_button_content{color:#ddd;}.go4043944666 .flexlayout__splitter_vert,.go4043944666  .flexlayout__splitter_horz{background:#827575;}.go4220627111{width:100%;height:360px;position:relative;}</style><meta name="next-font-preconnect" /><meta name="viewport" content="width=device-width" /><meta charSet="utf-8" /><title>Rogue Markup</title><meta name="next-head-count" content="3" /><link rel="preload" href="/_next/static/css/ca091235a1d672a05ec5.css" as="style" /><link rel="stylesheet" href="/_next/static/css/ca091235a1d672a05ec5.css" data-n-g /><noscript data-n-css></noscript><script defer noModule src="/_next/static/chunks/polyfills-a40ef1678bae11e696dba45124eadd70.js"></script><script src="/_next/static/chunks/webpack-5444cd9c05db470fc61e.js" defer></script><script src="/_next/static/chunks/framework-571220e3661128bb4007.js" defer></script><script src="/_next/static/chunks/main-aba050664ec743567e3e.js" defer></script><script src="/_next/static/chunks/pages/_app-b2b30124c6ff6f246dc0.js" defer></script><script src="/_next/static/chunks/35-e2998fc4d0adcf80975c.js" defer></script><script src="/_next/static/chunks/953-6d41e281375a514c0019.js" defer></script><script src="/_next/static/chunks/pages/debug-ec206da43aad5602866c.js" defer></script><script src="/_next/static/cOyaI0AXaWHPdiYJCwspR/_buildManifest.js" defer></script><script src="/_next/static/cOyaI0AXaWHPdiYJCwspR/_ssgManifest.js" defer></script></head><body><div id="__next"><nav class="go4210717919 closed"><div class="handle-bg"></div><div class="handle">&gt;</div><section class="go1558155979"><h3>Rogue Markup</h3><ul><li><a href="/blog/1#objective">objective</a></li><li><a href="/blog/1#constraints">constraints</a></li><li><a href="/blog/2#technology">technology</a></li><li><a href="/blog/2#tech-2">technology (2)</a></li><li><a href="/blog/2#tech-3">technology (3)</a></li><li><a href="/blog/3">geomorphs</a></li></ul></section></nav><div class="go4141088543"></div><section class="go846527474"><header class="title go1959823099"><div class="top-block"></div><h1 level="1" node="[object Object]">Rogue Markup</h1>
+<p>$( game ai | roguelike | web dev )</p></header><main><article class="blog go3672139518"><time dateTime="2021-07-19">19th July 2021</time><h2>Objective</h2>
+<p>We'll create a <em>Game AI focused</em> roguelike, set in the <a href="https://travellermap.com/?p=-1.329!-23.768!3">Traveller universe</a>.</p>
+<p><em>Why?</em></p>
+<p>Because <a href="https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter">NPC</a> behaviour is more interesting than any particular game.
+An environment is needed to make it meaningful, fixed narratives/missions are not.</p>
+<p>We'll focus on combining navigation-based behaviours in a flexible manner.
+Game AI should be compositional, not forced into a narrative straight-jacket.
+As for the environment, it will be driven by thousands of Traveller-based assets.</p>
+<figure class="tabs scrollable go1506804081"><div class="go3574057674"><div class="go3968713689"><div class="top-right">disable</div><div class="central">interact</div></div><div class="go327449662"></div></div></figure>
+<p>Above we've recreated Geomorph 301 (a.k.a. <em>Bridge</em>) from <a href="http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html">Starship Geomorphs 2.0</a>,
+using 8 assets from <a href="http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html">Starship Symbols</a>.
+A larger version is <a href="/pics/g-301--bridge.debug.x2.png" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">available</a>.
+Roughly speaking, a &quot;Starship Geomorph&quot; is a rectangular slice of a starship designed to be cut out and glued to others.
+They were created by Robert Pearce, and distributed as PDFs on his <a href="http://travellerrpgblog.blogspot.com/">blog</a>.
+Their 2nd version was released in 2020, and soon afterwards Eric B. Smith transformed them into <a href="http://gurpsland.no-ip.org/geomorphs/">transparent PNGs</a>.
+The latter 2000+ symbols will form the underlying basis of <em>Rogue Markup</em>.</p></article><hr class="go1763247448" /><article class="blog go3672139518"><time dateTime="2021-07-19">19th July 2021</time><h2>Constraints</h2>
+<p>This project needs a backbone.
+We've chosen the underlying technology, low-level game mechanics, and where events take place.</p>
+<h3>Technology</h3>
+<ul>
+<li>Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.</li>
+<li>Use <a href="https://reactjs.org/docs/components-and-props.html#function-and-class-components">React function components</a> and CSS-in-JS.</li>
+<li>Use <a href="https://www.npmjs.com/package/preact">Preact</a> (like React), and <a href="https://www.npmjs.com/package/goober">Goober</a> (like <a href="https://www.npmjs.com/package/@emotion/styled">Emotion</a>).</li>
+<li>Use <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components">Web Components</a> to avoid React renders.</li>
+<li>Use <a href="https://nextjs.org/">NextJS</a> as our dev env.</li>
+<li>Use <a href="https://codesandbox.io">CodeSandbox</a> to share editable code.</li>
+<li>Support mobile/desktop devices.</li>
+</ul>
+<p>For example, here's a <a href="https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">CodeSandbox</a>.
+If you peruse the files, you'll find the rectangle class <em>Rect</em> and a Geomorph PNG.
+Our CodeSandboxes use React, whereas this site uses <em>Preact</em>.
+More on that later.</p>
+<h3>Game mechanics</h3>
+<ul>
+<li>Use <a href="http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html">Starship Geomorphs 2.0</a> for graphics.</li>
+<li>Use a realtime birdseye camera.</li>
+<li>Use the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API">Web Animations API</a>.</li>
+<li>Use navigation &amp; raycasting algorithms.</li>
+<li>Use an in-browser terminal.</li>
+<li>Do not use a Physics engine.</li>
+</ul>
+<p>To debug and illustrate Game AI, we'll use a terminal.
+Try entering (or copy-pasting) the commands below.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Category</th><th>Examples</th></tr></thead><tbody><tr><td>Nav</td><td><span class="cmd">ls</span>, <span class="cmd">pwd</span>, <span class="cmd">cd /home/test</span>, <span class="cmd">cd ..</span></td></tr><tr><td>CRUD</td><td><span class="cmd">echo foo &gt;/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">cd; rm bar</span></td></tr><tr><td>Out</td><td><span class="cmd">seq 10</span>, <span class="cmd">echo foo{1..5}</span>, <span class="cmd">expr '2**10'</span></td></tr><tr><td>Meta</td><td><span class="cmd">history</span>, <span class="cmd"> declare</span>, <span class="cmd">help</span>, <span class="cmd"> ps</span></td></tr></tbody></table>
+  <figure class="tabs scrollable go4204185124"><div class="go3944991801"><div class="go3968713689"><div class="top-right">disable</div><div class="central">interact</div></div><div class="go327449662"></div></div></figure>
+<p>As usual, <a href="#command" title="sigkill test">Ctrl+C</a> terminates the &quot;foreground process&quot;.
+Try terminating <span class="cmd">sleep 5</span>.</p>
+<h3>Setting</h3>
+<ul>
+<li>The <a href="https://travellermap.com/?p=-1.329!-23.768!3">Traveller Universe</a>.</li>
+<li>Space vehicles, stations, and docks.</li>
+<li>Buddhist backdrop via <a href="https://en.wikipedia.org/wiki/Bardo_Thodol">Bardo Thodol</a>.</li>
+<li>Horror backdrop via <a href="https://en.wikipedia.org/wiki/The_Night_Land">The Night Land</a>.</li>
+</ul>
+<p>Traveller is a Futuristic pen-and-paper Role-playing Game, created in the late 70s.
+It permits faster than light travel, at ≤ 6 parsecs per week.
+Learn more on the <a href="https://wiki.travellerrpg.com/Jump_Drive">wiki</a>, the <a href="https://www.farfuture.net/">official site</a> or explore <a href="https://travellermap.com/">Traveller Map</a>.
+It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.</p>
+<div style="font-size: smaller; padding-bottom: 6px;" node="[object Object]">
+<p><em>The Traveller game in all forms is owned by <a href="https://www.farfuture.net/">Far Future Enterprises</a>. Copyright © 1977 – 2021 Far Future Enterprises.</em></p>
+</div>
+<hr />
+<p>Over time we'll clarify the above constraints, but first we emphasise:</p>
+<blockquote>
+<p><em>creating a video game is really fucking hard</em>.</p>
+</blockquote>
+<p>Spelunky's creator suggested <a href="https://makegames.tumblr.com/post/1136623767/finishing-a-game">three important requirements</a>.
+We'll address them.</p>
+<h3>1. Fun to develop</h3>
+<p><em>Games I want to make</em>. My underlying motivation is the lack of Game AI resources available on the web.
+It is hard to discuss the subject without actually building a game, so I chose a setting and game mechanics which felt fun for me.
+I am particularly interested in navigation i.e. combining the movement of many characters in a flexible manner.</p>
+<h3>2. The Result</h3>
+<p><em>Games I want to have made</em>. As an end result I want a highly replayable tactical/action game sandbox.
+Procedurally generated missions will involve going from A to B and doing C (ever was it so).
+Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
+Functionally, think <a href="https://www.youtube.com/results?search_query=Teleglitch">Teleglitch</a> with richer NPCs and the ability to <em>place</em> <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=175359117">room modules</a> when upgrading/docking.
+Graphically, see Starship Geomorphs 2.0.</p>
+<p>Rogue Markup will be easy to extend.
+We'll achieve this via compositional code, escape hatches to CodeSandbox, clear explanations, and <a href="https://github.com/">GitHub</a> comments.</p>
+<h3>3. Experience</h3>
+<p><em>Games I’m good at making</em>. I work as a web developer, using React and CSS-in-JS on a daily basis.
+I have a <a href="https://dblp.org/pid/81/8748.html">strong background</a> in Theoretical Computer Science,
+so won't confuse Game AI with AI, nor fall prey to the Deep Learning hype.
+I have also created similar game mechanics <em>many</em> times over the years.
+Here's hoping my chain of unfinished projects is coming to a close!</p></article><hr class="go1763247448" /><article class="blog go3672139518"><time dateTime="2021-07-19">19th July 2021</time><h2>Technology</h2>
+<p>So, we're building a roguelike, directly on this website.
+It will start to get fun once things are moving about.
+Let us describe the underlying technologies.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Concept</th><th>Technology</th></tr></thead><tbody><tr><td>Component</td><td><a href="https://reactjs.org/docs/components-and-props.html#function-and-class-components">React function components</a>, and <a href="https://reactjs.org/docs/web-components.html">Web Components</a>.</td></tr><tr><td>Styles</td><td>CSS-in-JS via <a href="https://www.npmjs.com/package/goober">Goober</a>.</td></tr><tr><td>Component framework</td><td><a href="https://preactjs.com/">Preact</a>, a DOM-diffing alternative to React.</td></tr><tr><td>Pathfinding</td><td>Based on <a href="https://www.npmjs.com/package/three-pathfinding">three-pathfinding</a>.</td></tr><tr><td>Raycasting</td><td>Basic geometry and spacial partitions.</td></tr><tr><td>Static analysis</td><td>TypeScript via <a href="https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html">JSDoc</a>; also <a href="https://www.npmjs.com/package/eslint">ESLint</a>.</td></tr><tr><td>Live analysis</td><td>In-browser terminal, via <a href="https://www.npmjs.com/package/xterm">xterm.js</a> and <a href="https://www.npmjs.com/package/mvdan-sh">mvdan-sh</a>.</td></tr><tr><td>Scripting</td><td><a href="https://www.npmjs.com/package/ts-node">TS Node</a> i.e. Node.js with types.</td></tr><tr><td>Code viewing</td><td><a href="https://codemirror.net/">CodeMirror</a> to view JS.</td></tr><tr><td>Code editing</td><td>External <a href="https://codesandbox.io/">CodeSandbox</a> links, using React.</td></tr><tr><td>Code sharing</td><td>Show <a href="https://github.com/">GitHub</a> comments, provide GitHub <a href="https://github.com/rob-myers/rob-myers.github.io">repo</a>.</td></tr></tbody></table>
+
+<p>The early 90s brought three pillars: HTML, CSS and JavaScript.
+Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
+Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links, hovers and CSS animations).
+More precisely, all subsequent DOM mutations are performed by JavaScript.
+It is now common to generate the initial HTML using JS too,
+either during a build-step or on a Node.js server.
+In particular, JavaScript has become the central web technology.</p>
+<blockquote>
+<p>ℹ️ <em>We'll spend the next two sections describing how we use JS.</em>
+<em>The discussion is full of jargon, but the details can be picked up later on.</em></p>
+</blockquote>
+<h3>React and Preact</h3>
+<p>Competing JavaScript frameworks exist, often with their own notion of component.
+One popular approach uses <em>React function components</em>, which are just JavaScript functions with constraints on their parameters and return value.</p>
+<ul>
+<li>
+<p>They have a single parameter, conventionally called <em>props</em>.</p>
+<p>It is a JavaScript object defining the component's named inputs,
+and possibly special properties like <em>children</em>, <em>key</em> and <em>ref</em>.</p>
+</li>
+<li>
+<p>They must return either null or a virtual <a href="https://developer.mozilla.org/en-US/docs/Web/API/Node">DOM node</a>.</p>
+<p>This returned value ultimately amounts to an HTML fragment to be rendered,
+and may depend on the component's props and internal state (via <a href="https://reactjs.org/docs/hooks-intro.html">hooks</a>).</p>
+</li>
+</ul>
+<p>React developers use a grammatical extension of JavaScript called JSX.
+It permits composing components using an XML-like syntax, to obtain the desired dynamic DOM tree.
+Let's consider an example, a pannable and zoomable grid (also <a href="https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">on CodeSandbox</a>).</p>
+<figure class="tabs scrollable go1506804081"><div class="go3574057674"><div class="go3968713689"><div class="top-right">disable</div><div class="central">interact</div></div><div class="go327449662"></div></div></figure>
+<p>The file <em>panzoom/PanZoom.jsx</em> (see <a href="#command" title="open-tab panzoom code--panzoom/PanZoom.jsx">tab above</a>) defines two React function components, <em>PanZoom</em> and <em>Grid</em>.
+Behaviourally:</p>
+<ul>
+<li>
+<p><em>PanZoom</em> renders an SVG consisting of its children (the Geomorph image provided in <em>PanZoomDemo</em>) and <em>Grid</em>. It adjusts the <a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox">SVG viewBox</a> in response to mouse/pointer events.</p>
+</li>
+<li>
+<p><em>Grid</em> renders part of an SVG i.e. two grid patterns.
+They repeat squares of size 10x10 and 60x60 in abstract <a href="https://www.w3.org/TR/SVG2/coords.html#TermUserUnits" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">SVG user units</a>.</p>
+<aside>
+<p>SVG user units become concrete via the <code>&lt;svg&gt;</code>'s viewBox attribute and its width/height within the DOM.
+We'll follow a convention based on the work of Robert Pearce and Eric B. Smith. That is, 60 abstract user units (one large grid square) correspond to 1.5 meters.</p>
+</aside>
+</li>
+</ul>
+<p>The above two JS functions each have a single parameter <code>props</code>, and return something which looks like HTML (but isn't).
+For example, <em>PanZoom</em> renders <em>Grid</em> by using the XML tag <code>&lt;Grid/&gt;</code>.
+Then although React function components are functions, syntactically they are not invoked like functions i.e. we do not write <code>Grid(props)</code>.
+But what are React function components actually returning?
+Here's a whirlwind overview.</p>
+<ul>
+<li>
+<p>React devs use a grammatical extension of JS with XML called <a href="https://en.wikipedia.org/wiki/JSX_(JavaScript)">JSX</a>.</p>
+</li>
+<li>
+<p>React applications are built by composing React function components, using the XML syntax for their return value.</p>
+</li>
+<li>
+<p>Dev tools convert JSX into JS by replacing XML tags with invocations of <code>React.createElement</code> (<a href="#command" title="open-tab jsx-to-js">example/jsx-to-js.jsx</a>).</p>
+</li>
+<li>
+<p>This website actually uses <em>Preact</em>, a React alternative with the same API.
+Then <code>React.createElement</code> is <a href="https://github.com/preactjs/preact/blob/master/src/create-element.js" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">this function</a>,
+and creates Preact virtual DOM nodes.</p>
+</li>
+<li>
+<p>The root component is usually called <em>App</em>.
+Running a React application means <a href="https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">invoking <code>ReactDOM.render</code></a>
+with 2 arguments: <code>&lt;App/&gt;</code> and a DOM node <em>el</em>.</p>
+</li>
+<li>
+<p><a href="https://github.com/preactjs/preact/blob/master/src/render.js" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link"><code>ReactDOM.render</code></a> initially converts <code>&lt;App/&gt;</code> into a DOM node mounted at <em>el</em>.
+A subcomponent may re-render, recursively recreating a virtual DOM node.
+It is <a href="https://github.com/preactjs/preact/blob/master/src/diff/index.js" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">diffed</a> and only the difference is applied to the DOM.</p>
+</li>
+</ul>
+<figure class="tabs scrollable go4097358152"><div class="go2697092909"><div class="go3968713689"><div class="top-right">disable</div><div class="central">interact</div></div><div class="go327449662"></div></div></figure>
+<h3>Avoiding React Renders</h3>
+
+<p>When React renders a component, it computes a rooted subtree of the virtual DOM,
+compares the previous one, and patches the DOM.
+If many components change in a small amount of time, <a href="https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">some renders are automatically avoided</a> via the ancestral relationship.
+Developers can also avoid recreating an entire rooted subtree using <a href="https://github.com/preactjs/preact/blob/master/compat/src/memo.js" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link"><code>React.memo</code></a>.
+But for many websites, the virtual DOM manipulations are neither too large nor too frequent, and React developers may simply ignore their overhead.</p>
+<p>However, we are making a realtime video game.
+We want to control the rendering as much as possible, to ensure good performance and aid debugging e.g. when many objects are onscreen.
+If we allowed React (actually, Preact) to render in response to user interaction, we'd lose this control.
+Take another look at <em>panzoom/PanZoom.jsx</em>.</p>
+<figure class="tabs scrollable go4043944666"><div class="go4220627111"><div class="go3968713689"><div class="top-right">disable</div><div class="central">interact</div></div><div class="go327449662"></div></div></figure>
+<p><em>PanZoom</em> returns an <code>&lt;svg/&gt;</code> with a viewBox attribute determined by <code>state.viewBox</code>.
+When a user zooms via mousewheel, the event handler <code>state.onWheel</code> updates <code>state.viewBox</code>.
+But updating this variable does not automatically update the virtual DOM.
+Usually one would <em>trigger a re-render</em>, so that <em>PanZoom</em> returns <code>&lt;svg/&gt;</code> with the updated viewBox, and the DOM-diffing algorithm does the update.
+But how do we trigger a re-render?</p>
+<p>A React function component is rendered if an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the <a href="https://reactjs.org/docs/hooks-state.html">React.useState hook</a> e.g.</p>
+<blockquote>
+<p><code>const [value, setValue] = React.useState(() =&gt; initialValue)</code></p>
+</blockquote>
+<p>These declarations cannot be nested, must occur at the &quot;top-level&quot; of the React function component, and must always execute in the same order.
+This induces a <a href="https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">well-defined association</a> with their enclosing component.
+To change state we execute <code>setValue(nextValue)</code> e.g. in response to a click. If <code>nextValue</code> differs from <code>value</code>, the function <code>setValue</code> causes the component to re-render where now <code>React.setState(...)[0]</code> has the new value.
+This propagation of internal state is possible because hooks must always execute in the same order.</p>
+<p>In <em>panzoom/PanZoom.jsx</em>, <code>value</code> corresponds to <code>state</code> but there is no correspondent of <code>setValue</code>.
+Why?
+Because we never inform React we've changed <code>state</code>, despite mutating it on mouse and pointer events.
+Instead we directly mutate the DOM via:</p>
+<blockquote>
+<p><code>state.root.setAttribute('viewBox', `${state.viewBox}`);</code></p>
+</blockquote>
+
+<p>As far as React is concerned nothing has changed.
+Also, if React renders for another reason (e.g. an ancestral render), it'll use the mutated <code>state</code> to set the viewBox attribute (so, no change).
+Why bother though?
+To avoid needlessly recomputing <code>&lt;Grid /&gt;</code> and <code>children</code> whenever we pan or zoom.
+Our game may contain many elements, and we'd rather not recompute their virtual DOM many times per second.</p>
+<p>The above situation is handled by a single DOM mutation.
+In more complex situations we'll integrate <a href="https://developer.mozilla.org/en-US/docs/Web/Web_Components">Web Components</a>.
+More on that later.</p>
+</article><hr class="go1763247448" /><article class="blog go3672139518"><time dateTime="2021-07-19">19th July 2021</time><h2>Technology (2)</h2>
+<p>Thus far we've described our objective, constrained our approach, and listed the technologies we'll use.
+Having outlined our chosen notion of JavaScript component,
+we turn to Game AI related technology i.e. <em>navigation</em> and <em>raycasting</em>.</p>
+<h3>Navigation</h3>
+
+<p><em>Rogue Markup</em> will present a birdseye viewpoint of the interior of starships.
+The <a href="https://wiki.travellerrpg.com/Crew" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">crew</a> will have tasks e.g. manning the bridge, patrolling the decks, monitoring <a href="https://wiki.travellerrpg.com/Low_Passage" title="@new-tab" target="_blank" rel="noopener" class="new-tab-link">low berths</a>.
+These behaviours will be constrained by e.g. sleep patterns, the behaviour of others, and hardware failures.
+But how do video games simulate these behaviours?</p>
+<p>Three systems are often used: navigation, animation and physics.
+Navigation does high-level planning e.g. find a route from A to B.
+Animation provides realism (such as limb movement) and also information indicating NPC actions.
+Physics provides collision detection and permits moving characters around via forces.</p>
+<p>Now, we chose not to use a physics engine.</p>
+<p><a href>Constraints</a></p>
+
+
+<figure class="tabs scrollable go1506804081"><div class="go3574057674"><div class="go3968713689"><div class="top-right enabled">disable</div></div><div class="go327449662"></div></div></figure>
+<h3>Raycasting</h3>
+<p>...</p></article><hr class="go1763247448" /><article class="blog go3672139518"><time dateTime="2021-07-19">19th July 2021</time><h2>Technology (3)</h2>
+<h3>Static Analysis</h3>
+<ul>
+<li>Typescript via JSDoc, referring to CodeSandbox.</li>
+</ul>
+<h3>Runtime Analysis</h3>
+<ul>
+<li>Terminal + Game AI</li>
+</ul>
+<h3>Comments</h3>
+<ul>
+<li>Display GitHub comments from Issue (build-time)</li>
+<li>Can use anonymous credits to get recent</li>
+</ul></article><hr class="go1763247448" /><article class="blog go3672139518"><time dateTime="2021-07-19">19th July 2021</time><h2>Geomorphs</h2>
+<h3>Filesystem structure</h3>
+<p>media</p>
+<ul>
+<li>Starship Geomorphs 2.0.pdf (Original source)</li>
+<li>Starship Symbols.pdf (Original source)</li>
+<li>Geomorphs.zip (Transparent PNGs obtained from Starship Geomorphs 2.0)</li>
+<li>SymbolsHighRes.zip (Transparent PNGs obtained from Starship Symbols)</li>
+</ul>
+<p>media/Geomorph</p>
+<ul>
+<li>PNGs of lower quality (relatively).</li>
+<li>Extracted from &quot;Starship Geomorphs 2.0.pdf&quot; by ...</li>
+</ul>
+<p>media/Symbols</p>
+<ul>
+<li>PNGs of higher quality.</li>
+<li>Extracted from &quot;Starship Symbols.pdf&quot; by ...</li>
+</ul>
+<p>media/scripts</p>
+<ul>
+<li>ts-node scripts launched via npm scripts</li>
+<li>Directories generated by scripts</li>
+<li>media/geomorph-edge (Edge Geomorphs)</li>
+<li>media/symbol-bridge</li>
+<li>media/symbol-dock-small-craft</li>
+<li>media/symbol-staterooms</li>
+<li>media/symbol-lounge</li>
+<li>media/symbol-root</li>
+</ul>
+<p>public/png</p>
+<ul>
+<li>PNGs from media/symbol-* with labels removed</li>
+</ul>
+<p>public/svg</p>
+<ul>
+<li>Enriched symbols</li>
+<li>Geomorph hulls</li>
+</ul>
+<figure class="tabs scrollable go1506804081"><div class="go3574057674"><div class="go3968713689"><div class="top-right">disable</div><div class="central">interact</div></div><div class="go327449662"></div></div></figure></article><hr class="go1763247448" /></main></section></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{}},"page":"/debug","query":{},"buildId":"cOyaI0AXaWHPdiYJCwspR","nextExport":true,"autoExport":true,"isFallback":false,"scriptLoader":[]}</script></body></html>
