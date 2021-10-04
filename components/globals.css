@@ -21,10 +21,7 @@ body {
 
 #__next {
   display: flex;
-  flex-direction: column;
-  padding-bottom: 2rem;
-  max-width: 1024px;  
-  margin: 0 auto;
+  justify-content: center;
 }
 
 a {

@@ -42,6 +42,7 @@ Each __TODO__ should either:
 ## TODO (unsorted)
 
 - NavBar moves between pages
+  > indicate next/prev too
 - Doors represented via `<rect>`s
 - Create geomorph 101
 - Add GitHub Comments

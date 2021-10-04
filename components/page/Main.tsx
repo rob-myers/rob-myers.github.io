@@ -1,16 +1,22 @@
 import { css } from "goober";
 import Title from "./Title";
+import SideNav from "./SideNav";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
-  return (
-    <main className={rootCss}>
+  return <>
+    <SideNav />
+    <section className={rootCss}>
       <Title />
-      {children}
-    </main>
-  )
+      <main>
+        {children}
+      </main>
+    </section>
+  </>;
 }
 
 export const rootCss = css`
+  max-width: 1024px;
+
   padding: 48px 64px;
   @media(max-width: 1024px) {
     padding: 32px 64px;
