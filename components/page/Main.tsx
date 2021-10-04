@@ -2,6 +2,7 @@ import React, { useLayoutEffect } from 'react';
 import classNames from 'classnames';
 import { css } from "goober";
 import Title from "./Title";
+import NavItems from './NavItems';
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
   const [navOpen, setNavOpen] = React.useState(false);
@@ -16,23 +17,18 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
         className={classNames(navCss, !navOpen && 'closed')}
         onClick={(e) => {
           e.stopPropagation();
-          if (matchMedia(`( max-width: ${forceOpenWidth}px )`).matches) {
+          if (matchMedia(`(max-width: ${forceOpenWidth}px)`).matches) {
             setNavOpen(x => !x);
             localStorage.setItem('nav-open', !navOpen ? 'true' : 'false');
           }
         }}
       >
-        <div className="handle">
-          {navOpen ? '<' : '>'}
-        </div>
         <div className="handle-bg" />
-        <div className="contents">
-          Rogue Markup
-        </div>
+        <div className="handle">{navOpen ? '<' : '>'}</div>
+        <NavItems/>
       </nav>
 
-      <div className={metaPanelCss}>
-      </div>
+      <div className={metaPanelCss} />
 
       <section className={rootCss}>
         <Title />
@@ -112,11 +108,6 @@ const navCss = css`
     @media(min-width: ${forceOpenWidth}px) {
       opacity: 0;
     }
-  }
-
-  > .contents {
-    color: #fff;
-    font-size: 1.4rem;
   }
 `;
 
