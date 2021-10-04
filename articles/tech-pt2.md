@@ -1,8 +1,8 @@
 ## Technology (2)
 
 Thus far we've described our objective, constrained our approach, and listed the technologies we'll use.
-Concerning technology, we've outlined our chosen notion of JavaScript component.
-We now consider Game AI related technology i.e. _navigation_ and _raycasting_.
+Having outlined our chosen notion of JavaScript component,
+we turn to Game AI related technology i.e. _navigation_ and _raycasting_.
 
 ### Navigation
 
@@ -14,11 +14,16 @@ We now consider Game AI related technology i.e. _navigation_ and _raycasting_.
 - Geomorph 101
 -->
 
-We'll view the interior of starships from a birdseye viewpoint.
-The [crew](https://wiki.travellerrpg.com/Crew) will have tasks e.g. manning the bridge, patrolling the decks, monitoring [low berths](https://wiki.travellerrpg.com/Low_Passage).
-These behaviours will be constrained by e.g. sleep patterns and personal taste, and interruptible by e.g. hardware failures or enemy fire.
+Usually we'll present a birdseye viewpoint of the interior of starships.
+The [crew](https://wiki.travellerrpg.com/Crew "@new-tab") will have tasks e.g. manning the bridge, patrolling the decks, monitoring [low berths](https://wiki.travellerrpg.com/Low_Passage "@new-tab").
+These behaviours will be constrained by e.g. sleep patterns, the behaviour of others, and hardware failures.
+But how do video games simulate these behaviours?
 
-To effect these behaviours we'll need to move the crew from A to B.
+Three systems are often used: navigation, animation and physics.
+Navigation does high-level planning e.g. finding a route from A to B.
+Animation provides realism (e.g. limb movement) and representation, such as indicating whether an NPC is using a computer.
+Physics provides collision detection and an environment for executing high-level plans i.e. moving characters around via forces.
+
 
 <!-- Pathfinding is central to Game AI.
 Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors. -->
