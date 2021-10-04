@@ -1,6 +1,7 @@
 # Plan
 
 __Aim towards website release__.
+
 Each __TODO__ should either:
 (a) contribute to one of the initial articles
 (b) have a clear general nature which cannot be avoided
@@ -40,9 +41,9 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- NavBar moves between pages
 - Doors represented via `<rect>`s
 - Create geomorph 101
-- Add NavBar
 - Add GitHub Comments
 - Add missing labels to 302
 - Tabs don't load until scroll into view
@@ -50,6 +51,7 @@ Each __TODO__ should either:
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+- ✅ Split blogs into separate pages
 - ✅ Fix `seq ${large number}`
 - ✅ Fix brace expansions like `echo {1..5}$( echo foo )`
 - ✅ `Layout` not in initial bundle
