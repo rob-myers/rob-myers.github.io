@@ -67,7 +67,7 @@ Behaviourally:
 - _PanZoom_ renders an SVG consisting of its children (the Geomorph image provided in _PanZoomDemo_) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 - _Grid_ renders part of an SVG i.e. two grid patterns.
-  They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
+  They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits "@new-tab").
 
   <aside>
   
@@ -83,17 +83,17 @@ Here's a whirlwind overview.
 
 - React devs use a grammatical extension of JS with XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)).
 - React applications are built by composing React function components, using the XML syntax for their return value.
-- Dev tools convert JSX into JS by replacing XML tags with invocations of the function `React.createElement` ([example/jsx-to-js.jsx](#command "open-tab jsx-to-js")).
+- Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` ([example/jsx-to-js.jsx](#command "open-tab jsx-to-js")).
 - This website actually uses _Preact_, a React alternative with the same API.
-  Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js),
+  Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js "@new-tab"),
   and creates Preact virtual DOM nodes.
 - The root component is usually called _App_.
   Running a React application means [invoking `ReactDOM.render`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
   with 2 arguments: `<App/>` and a DOM node _el_.
 
-- [`ReactDOM.render`](https://github.com/preactjs/preact/blob/master/src/render.js) initially converts `<App/>` into a DOM node mounted at _el_.
+- [`ReactDOM.render`](https://github.com/preactjs/preact/blob/master/src/render.js "@new-tab") initially converts `<App/>` into a DOM node mounted at _el_.
   A subcomponent may re-render, recursively recreating a virtual DOM node.
-  It is [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js) and only the difference is applied to the DOM.
+  It is [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js "@new-tab") and only the difference is applied to the DOM.
 
 <div
   class="tabs"
@@ -113,8 +113,8 @@ As another example, showing additional search results amounts to a single mutati
 
 When React renders a component, it computes a rooted subtree of the virtual DOM,
 compares the previous one, and patches the DOM.
-If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221) via the ancestral relationship.
-Developers can also avoid recreating an entire rooted subtree using [`React.memo`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js).
+If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221 "@new-tab") via the ancestral relationship.
+Developers can also avoid recreating an entire rooted subtree using [`React.memo`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js "@new-tab").
 But for many websites, the virtual DOM manipulations are neither too large nor too frequent, and React developers may simply ignore their overhead.
 
 However, we are making a realtime video game.
@@ -143,7 +143,7 @@ A React function component is rendered if an ancestor is (modulo React.memo), or
 > `const [value, setValue] = React.useState(() => initialValue)`
 
 These declarations cannot be nested, must occur at the "top-level" of the React function component, and must always execute in the same order.
-This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109) with their enclosing component.
+This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109 "@new-tab") with their enclosing component.
 To change state we execute `setValue(nextValue)` e.g. in response to a click. If `nextValue` differs from `value`, the function `setValue` causes the component to re-render where now `React.setState(...)[0]` has the new value.
 This propagation of internal state is possible because hooks must always execute in the same order.
 
