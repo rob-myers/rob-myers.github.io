@@ -40,7 +40,10 @@ Try entering (or copy-pasting) the commands below.
   <div
     class="tabs"
     height="300"
-    tabs="[ { key: 'terminal', session: 'test' } ]"
+    tabs="[
+      { key: 'terminal', session: 'test' },
+      { key: 'terminal', session: 'other' },
+    ]"
   ></div>
 
 As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process".
