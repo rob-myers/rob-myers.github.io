@@ -13,7 +13,7 @@ As for the environment, it will be driven by thousands of Traveller-based assets
 
 <div
   class="tabs"
-  height="400"
+  height="340"
   tabs="[{ key: 'component', filepath: 'images/Gm301Debug' }]"
 ></div>
 

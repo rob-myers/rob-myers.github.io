@@ -140,7 +140,7 @@ But how do we trigger a re-render?
 
 A React function component is rendered if an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
 
-> `const [value, setValue] = React.useState(() => initialValue)`
+> `const [value, setValue] = React.useState(() => initialValue);`
 
 These declarations cannot be nested, must occur at the "top-level" of the React function component, and must always execute in the same order.
 This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109 "@new-tab") with their enclosing component.
