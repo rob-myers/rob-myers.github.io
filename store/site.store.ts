@@ -1,10 +1,11 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { KeyedLookup } from 'model/generic.model';
+import { ArticleKey } from 'articles/index';
 
 export type State = {
   /** Key of currently viewed article */
-  articleKey: null | string;
+  articleKey: null | ArticleKey;
   /** Key of last article we navigated to */
   lastNavKey: null | string;
   /** Articles available on current page */
@@ -32,7 +33,7 @@ const useStore = create<State>(devtools((set, get) => ({
 }), 'site'));
 
 interface ArticleState {
-  key: string;
+  key: ArticleKey;
   /** Article bounds in coords relative to page (not viewport) */
   rect: Geom.Rect;
 }

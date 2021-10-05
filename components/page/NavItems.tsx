@@ -18,11 +18,14 @@ export default function NavItems() {
         </Link>
       </h3>
       <ul>
-        {navItems.map(({ key, label, href }) =>
+        {navItems.map(({ key, label, href, page }) =>
           <li
             className={key === articleKey ? 'current' : undefined}
           >
-            <Link href={href} scroll={false}>
+            <Link
+              href={href}
+              scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
+            >
               <a 
                 onClick={() => {
                   setTimeout(() => useSiteStore.setState({ lastNavKey: key }));
