@@ -69,7 +69,7 @@ export const articlesMeta = {
   },
   'tech-2': {
     key: 'tech-2',
-    label: 'tech: sim',
+    label: 'tech: ai',
     info: 'We describe tech directly related to game mechanics',
     markdown: techPt2Md,
     timestamp: '2021-07-19',
