@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import { articlesMeta } from "articles";
 import { css } from "goober";
+import { articlesMeta } from "articles/index";
 import useSiteStore from "store/site.store";
 
-const navItems = Object.values(articlesMeta).filter(x => x.page !== null);
+const navItems = Object.values(articlesMeta).filter((x) => x.page > 0 && x.href);
 
 export default function NavItems() {
   const articleKey = useSiteStore(x => x.articleKey);

@@ -1,16 +1,17 @@
 import React from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
+import useSiteStore from 'store/site.store';
+import useSessionStore from 'store/session.store';
+import { ArticleKey } from 'articles';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
-import useSiteStore from 'store/site.store';
-import useSessionStore from 'store/session.store';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
   dateTime: string;
-  articleKey: string;
+  articleKey: ArticleKey;
   children: string;
 }>) {
   const dateText = React.useMemo(() => {

@@ -1,4 +1,5 @@
 import testMd from 'articles/test.md';
+import comingSoonMd from 'articles/coming-soon.md';
 
 import objectiveMd from 'articles/objective.md';
 import constraintsMd from 'articles/constraints.md';
@@ -15,8 +16,16 @@ export const articlesMeta = {
     label: 'test',
     markdown: testMd,
     timestamp: '2021-07-19',
-    page: null,
-    href: '/test',
+    page: -1,
+    href: '',
+  },
+  'coming-soon': {
+    key: 'coming-soon',
+    label: 'coming-soon',
+    markdown: comingSoonMd,
+    timestamp: '2021-07-19',
+    page: -1,
+    href: '',
   },
 
   objective: {
