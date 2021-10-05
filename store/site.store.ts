@@ -30,7 +30,8 @@ const useStore = create<State>(devtools((set, get) => ({
 
 interface ArticleState {
   key: string;
-  rect: DOMRect;
+  /** Article bounds in coords relative to page (not viewport) */
+  rect: Geom.Rect;
 }
 
 interface TabsState {

@@ -1,6 +1,7 @@
 import { useRef, useEffect } from "react";
 import { ArticleKey, articlesMeta } from "articles";
 import useSiteStore from 'store/site.store';
+import { Rect } from "projects/geom";
 import Article, { articleClassName } from "./Article";
 
 export default function Articles({ keys }: {
@@ -14,12 +15,13 @@ export default function Articles({ keys }: {
       Array.from(root.current!.children).filter(el => el.classList.contains(articleClassName))
         .forEach((el, i) => useSiteStore.getState().articles[keys[i]] = {
           key: keys[i],
-          rect: el!.getBoundingClientRect(),
+          rect: Rect.fromJson(el!.getBoundingClientRect())
+            .delta(window.scrollX, window.scrollY),
         });
       useSiteStore.setState({});
     };
     window.addEventListener('resize', resize), resize();
-    useSiteStore.api.updateArticleKey(0);
+    useSiteStore.api.updateArticleKey(window.scrollY);
     return () => {
       window.removeEventListener('resize', resize);
       keys.forEach(key => delete useSiteStore.getState().articles[key]);
