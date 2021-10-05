@@ -1,9 +1,11 @@
+import { useRouter } from 'next/router';
 import React, { useEffect, useLayoutEffect } from 'react';
 import classNames from 'classnames';
 import { css } from "goober";
+import useSiteStore from 'store/site.store';
+import { articleKeys } from 'articles/index';
 import Title from "./Title";
 import NavItems from './NavItems';
-import useSiteStore from 'store/site.store';
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
   const [navOpen, setNavOpen] = React.useState(true);
@@ -17,14 +19,27 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Scroll to article indicated by lastNavKey
   const lastNavKey = useSiteStore(x => x.lastNavKey);
-
   useEffect(() => {
     const article = useSiteStore.getState().articles[lastNavKey || ''];
     if (article) {
       window.scrollTo({ top: article.rect.y, behavior: 'smooth' });
     }
   }, [lastNavKey]);
+
+  // Scroll to article on back/forward using fragment identifier
+  // We only use the fragment identifier here
+  const router = useRouter();
+  useEffect(() => {
+    router.beforePopState(({ url: next }) => {
+      const matched = next.match(/^\/blog\/\d+#(\S+)$/);
+      if (matched && articleKeys.includes(matched[1] as any)) {
+        useSiteStore.setState({ lastNavKey: matched[1] as any });
+      }
+      return true;
+    })
+  }, []);
 
   return (
     <>
@@ -75,10 +90,10 @@ const navCss = css`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-weight: 300;
 
+  background-color: #222;
   color: white;
-  background-color: black;
   cursor: pointer;
-  opacity: 0.95;
+  opacity: 0.975;
   
   position: fixed;
   z-index: 20;
@@ -93,8 +108,8 @@ const navCss = css`
   > .handle-bg {
     position: absolute;
     top: 0;
-    left: ${sidebarWidth }px;
-    width: ${sidebarWidth + 2000}px;
+    left: ${sidebarWidth}px;
+    width: calc(${sidebarWidth}px + 100vw);
     height: 32px;
     background: rgba(0, 0, 0, .1);
   }

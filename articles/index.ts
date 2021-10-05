@@ -99,3 +99,5 @@ export const articlesMeta = {
 export type ArticleKey = keyof typeof articlesMeta;
 
 export type ArticleMeta = typeof articlesMeta[ArticleKey];
+
+export const articleKeys = Object.keys(articlesMeta) as ArticleKey[];

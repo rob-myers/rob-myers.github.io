@@ -7,7 +7,7 @@ export type State = {
   /** Key of currently viewed article */
   articleKey: null | ArticleKey;
   /** Key of last article we navigated to */
-  lastNavKey: null | string;
+  lastNavKey: null | ArticleKey;
   /** Articles available on current page */
   articles: KeyedLookup<ArticleState>;
   /** Tabs available on current page with a storeKey */

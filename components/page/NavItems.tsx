@@ -3,13 +3,6 @@ import { css } from "goober";
 import { ArticleMeta, articlesMeta } from "articles/index";
 import useSiteStore from "store/site.store";
 
-const navGroups = Object.values(articlesMeta)
-  .filter((x) => x.page > 0 && x.href)
-  .reduce((agg, item) => {
-    (agg[item.page] = agg[item.page] || []).push(item);
-    return agg;
-  }, [] as ArticleMeta[][]);
-
 export default function NavItems() {
   const articleKey = useSiteStore(x => x.articleKey);
 
@@ -26,13 +19,11 @@ export default function NavItems() {
           {navItems.map(({ key, label, info, href, page }) =>
             <li key={key} className={key === articleKey ? 'current' : undefined} >
               <Link
-                href={href}
+                href={`${href}#${key}`}
                 scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
               >
                 <a 
-                  onClick={() => {
-                    setTimeout(() => useSiteStore.setState({ lastNavKey: key }));
-                  }}
+                  onClick={() => setTimeout(() => useSiteStore.setState({ lastNavKey: key }))}
                   title={info}
                 >
                   {label}
@@ -45,6 +36,13 @@ export default function NavItems() {
     </section>
   );
 }
+
+const navGroups = Object.values(articlesMeta)
+  .filter((x) => x.page > 0 && x.href)
+  .reduce((agg, item) => {
+    (agg[item.page] = agg[item.page] || []).push(item);
+    return agg;
+  }, [] as ArticleMeta[][]);
 
 const rootCss = css`
   padding: 0;
@@ -64,7 +62,7 @@ const rootCss = css`
   
   ul {
     font-size: 1.2rem;
-    padding: 0;
+    padding: 6px 0;
     margin: 0;
     border: 0 solid #aaa;
     border-width: 0 0 2px;
@@ -73,7 +71,6 @@ const rootCss = css`
       list-style: none;
       list-style-position: inside;
       display: flex;
-      background: #111;
     }
     li.current {
       a {
