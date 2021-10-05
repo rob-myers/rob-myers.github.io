@@ -65,7 +65,6 @@ const rootCss = css`
     li {
       list-style: none;
       list-style-position: inside;
-      padding: 8px 12px;
       display: flex;
       background: #111;
     }
@@ -75,6 +74,7 @@ const rootCss = css`
       }
     }
     a {
+      padding: 8px 12px;
       width: 100%;
       color: #888;
       &:hover {

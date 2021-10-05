@@ -41,6 +41,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- Implement front page
 - Doors represented via `<rect>`s
 - Create geomorph 101
 - Add GitHub Comments
