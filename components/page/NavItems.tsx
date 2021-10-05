@@ -1,10 +1,14 @@
 import Link from 'next/link'
 import { css } from "goober";
-import { articlesMeta } from "articles/index";
+import { ArticleMeta, articlesMeta } from "articles/index";
 import useSiteStore from "store/site.store";
 
-const navItems = Object.values(articlesMeta)
-  .filter((x) => x.page > 0 && x.href);
+const navGroups = Object.values(articlesMeta)
+  .filter((x) => x.page > 0 && x.href)
+  .reduce((agg, item) => {
+    (agg[item.page] = agg[item.page] || []).push(item);
+    return agg;
+  }, [] as ArticleMeta[][]);
 
 export default function NavItems() {
   const articleKey = useSiteStore(x => x.articleKey);
@@ -13,32 +17,31 @@ export default function NavItems() {
     <section className={rootCss}>
       <h3>
         <Link href="/" scroll={false}>
-          <a>
-            Rogue Markup
-          </a>
+          <a>Rogue Markup</a>
         </Link>
       </h3>
-      <ul>
-        {navItems.map(({ key, label, info, href, page }) =>
-          <li
-            className={key === articleKey ? 'current' : undefined}
-          >
-            <Link
-              href={href}
-              scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
-            >
-              <a 
-                onClick={() => {
-                  setTimeout(() => useSiteStore.setState({ lastNavKey: key }));
-                }}
-                title={info}
+
+      {navGroups.map((navItems, i) =>
+        <ul key={i}>
+          {navItems.map(({ key, label, info, href, page }) =>
+            <li key={key} className={key === articleKey ? 'current' : undefined} >
+              <Link
+                href={href}
+                scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
               >
-                {label}
-              </a>
-            </Link>
-          </li>
-        )}
-      </ul>
+                <a 
+                  onClick={() => {
+                    setTimeout(() => useSiteStore.setState({ lastNavKey: key }));
+                  }}
+                  title={info}
+                >
+                  {label}
+                </a>
+              </Link>
+            </li>
+          )}
+        </ul>
+      )}
     </section>
   );
 }
@@ -48,19 +51,23 @@ const rootCss = css`
   color: #aaa;
   
   h3 {
-    padding: 0 12px;
+    padding: 20px 12px;
     font-size: 1.8rem;
     font-weight: 300;
-    margin: 16px 0;
+    margin: 0;
     a {
       color: #aaa;
     }
+    border: 0 solid #aaa;
+    border-width: 0 0 2px;
   }
   
   ul {
     font-size: 1.2rem;
     padding: 0;
     margin: 0;
+    border: 0 solid #aaa;
+    border-width: 0 0 2px;
 
     li {
       list-style: none;
@@ -74,7 +81,7 @@ const rootCss = css`
       }
     }
     a {
-      padding: 8px 12px;
+      padding: 10px 12px;
       width: 100%;
       color: #888;
       &:hover {

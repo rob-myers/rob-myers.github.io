@@ -4,7 +4,11 @@ import Articles from 'components/page/Articles';
 export default function TechnologyPage() {
   return (
     <Main>
-      <Articles keys={['technology', 'tech-2', 'tech-3']} />
+      <Articles keys={[
+        'tech-1',
+        'tech-2',
+        'tech-3',
+      ]} />
     </Main>
   );
 }

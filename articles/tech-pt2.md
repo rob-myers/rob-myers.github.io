@@ -1,4 +1,4 @@
-## Technology (2)
+## Technology (ai)
 
 Thus far we've described our objective, constrained our approach, and listed the technologies we'll use.
 Having outlined our chosen notion of JavaScript component,
