@@ -50,7 +50,7 @@ const controlsCss = css`
   > .central {
     position: absolute;
     z-index: 11;
-    left: calc(50% - 56px);
+    left: calc(50% - (128px / 2));
     top: calc(50% - 20px);
     
     cursor: pointer;
