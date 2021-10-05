@@ -1,7 +1,7 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { KeyedLookup } from 'model/generic.model';
-import { ArticleKey } from 'articles/index';
+import type { KeyedLookup } from 'model/generic.model';
+import type { ArticleKey } from 'articles/index';
 
 export type State = {
   /** Key of currently viewed article */

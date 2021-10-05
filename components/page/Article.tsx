@@ -2,8 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
 import useSiteStore from 'store/site.store';
-import useSessionStore from 'store/session.store';
-import { ArticleKey } from 'articles';
+import type { ArticleKey } from 'articles/index';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
@@ -230,8 +229,10 @@ const blogComponents = {
                 break;
               }
               case 'sigkill': {
-                const { ttyShell } = useSessionStore.api.getSession(args[0])
-                ttyShell.xterm.sendSigKill();
+                import('store/session.store').then(({ default: useSessionStore }) => {
+                  const { ttyShell } = useSessionStore.api.getSession(args[0])
+                  ttyShell.xterm.sendSigKill();
+                });
                 break;
               }
               default:

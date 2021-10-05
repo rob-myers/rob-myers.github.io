@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "yarn next-cfg && concurrently 'next -p 3002' 'yarn watch-svg-meta'",
     "build": "yarn next-cfg && next build",
+    "analyze": "ANALYZE=true yarn build",
     "export": "next export",
     "start": "yarn next-cfg && next start",
     "next-cfg": "tsc -p scripts",

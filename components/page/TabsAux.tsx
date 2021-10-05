@@ -1,9 +1,9 @@
 import React from 'react';
-import {TabNode, IJsonModel} from 'flexlayout-react';
+import { TabNode, IJsonModel } from 'flexlayout-react';
 import { css } from 'goober';
 
 import * as Lookup from 'model/tabs-lookup';
-import {CodeEditor} from 'components/dynamic';
+import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 
 export function factory(node: TabNode) {

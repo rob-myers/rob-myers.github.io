@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react";
-import { ArticleKey, articlesMeta } from "articles";
+import { ArticleKey, articlesMeta } from "articles/index";
 import useSiteStore from 'store/site.store';
-import { Rect } from "projects/geom";
+import { Rect } from "projects/geom/rect";
 import Article, { articleClassName } from "./Article";
 
 export default function Articles({ keys }: {
