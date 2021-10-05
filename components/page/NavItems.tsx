@@ -3,7 +3,8 @@ import { css } from "goober";
 import { articlesMeta } from "articles/index";
 import useSiteStore from "store/site.store";
 
-const navItems = Object.values(articlesMeta).filter((x) => x.page > 0 && x.href);
+const navItems = Object.values(articlesMeta)
+  .filter((x) => x.page > 0 && x.href);
 
 export default function NavItems() {
   const articleKey = useSiteStore(x => x.articleKey);
@@ -43,10 +44,11 @@ export default function NavItems() {
 }
 
 const rootCss = css`
-  padding: 0 20px;
+  padding: 0;
   color: #aaa;
   
   h3 {
+    padding: 0 12px;
     font-size: 1.8rem;
     font-weight: 300;
     margin: 16px 0;
@@ -63,7 +65,7 @@ const rootCss = css`
     li {
       list-style: none;
       list-style-position: inside;
-      padding: 8px 6px;
+      padding: 8px 12px;
       display: flex;
       background: #111;
     }
