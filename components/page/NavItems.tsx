@@ -25,7 +25,8 @@ export default function NavItems() {
               >
                 <a 
                   onClick={() => setTimeout(() =>
-                    useSiteStore.setState({ navKey: key, lastNav: Date.now() })
+                    useSiteStore.setState({ navKey: key, lastNav: Date.now() }),
+                    30
                   )}
                   title={info}
                 >
