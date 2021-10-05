@@ -7,7 +7,9 @@ export type State = {
   /** Key of currently viewed article */
   articleKey: null | ArticleKey;
   /** Key of last article we navigated to */
-  lastNavKey: null | ArticleKey;
+  navKey: null | ArticleKey;
+  /** Last time a navigation was triggered (epoch ms) */
+  lastNav: number;
   /** Articles available on current page */
   articles: KeyedLookup<ArticleState>;
   /** Tabs available on current page with a storeKey */
@@ -19,7 +21,8 @@ export type State = {
 
 const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
-  lastNavKey: null,
+  navKey: null,
+  lastNav: Date.now(),
   articles: {},
   tabs: {},
   api: {

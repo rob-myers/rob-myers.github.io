@@ -10,8 +10,7 @@ import NavItems from './NavItems';
 export default function Main({ children }: React.PropsWithChildren<{}>) {
   const [navOpen, setNavOpen] = React.useState(true);
 
-  useLayoutEffect(() => {
-    // Remember if nav open
+  useLayoutEffect(() => {// Remember if nav open
     setNavOpen(localStorage.getItem('nav-open') === 'true');
     // Detect current article
     const onScroll = () => useSiteStore.api.updateArticleKey();
@@ -19,23 +18,20 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Scroll to article indicated by lastNavKey
-  const lastNavKey = useSiteStore(x => x.lastNavKey);
-  useEffect(() => {
-    const article = useSiteStore.getState().articles[lastNavKey || ''];
-    if (article) {
-      window.scrollTo({ top: article.rect.y, behavior: 'smooth' });
+  const lastNav = useSiteStore(x => x.lastNav);
+  useEffect(() => {// Scroll to article indicated by navKey
+    const { navKey, articles } = useSiteStore.getState();
+    if (articles[navKey || '']) {
+      window.scrollTo({ top: articles[navKey || ''].rect.y, behavior: 'smooth' });
     }
-  }, [lastNavKey]);
+  }, [lastNav]);
 
-  // Scroll to article on back/forward using fragment identifier
-  // We only use the fragment identifier here
   const router = useRouter();
-  useEffect(() => {
+  useEffect(() => {// Scroll to article on back/forward via fragment identifier
     router.beforePopState(({ url: next }) => {
       const matched = next.match(/^\/blog\/\d+#(\S+)$/);
       if (matched && articleKeys.includes(matched[1] as any)) {
-        useSiteStore.setState({ lastNavKey: matched[1] as any });
+        useSiteStore.setState({ navKey: matched[1] as any });
       }
       return true;
     })

@@ -8,6 +8,7 @@ export default function NavItems() {
 
   return (
     <section className={rootCss}>
+
       <h3>
         <Link href="/" scroll={false}>
           <a>Rogue Markup</a>
@@ -23,7 +24,9 @@ export default function NavItems() {
                 scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
               >
                 <a 
-                  onClick={() => setTimeout(() => useSiteStore.setState({ lastNavKey: key }))}
+                  onClick={() => setTimeout(() =>
+                    useSiteStore.setState({ navKey: key, lastNav: Date.now() })
+                  )}
                   title={info}
                 >
                   {label}
@@ -33,6 +36,7 @@ export default function NavItems() {
           )}
         </ul>
       )}
+
     </section>
   );
 }
