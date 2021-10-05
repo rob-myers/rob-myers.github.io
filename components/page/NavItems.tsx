@@ -23,13 +23,7 @@ export default function NavItems() {
                 href={`${href}#goto-${key}`}
                 scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
               >
-                <a 
-                  onClick={(e) => {
-                    if (window.location.hash === `#${key}`) e.preventDefault();
-                    setTimeout(() => useSiteStore.setState({ navKey: key, lastNav: Date.now() }));
-                  }}
-                  title={info}
-                >
+                <a title={info}>
                   {label}
                 </a>
               </Link>

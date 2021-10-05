@@ -6,8 +6,8 @@ import Title from "./Title";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
 
-  // Scroll to article navKey onchange lastNav
-  // Initially, <Articles> must already be mounted
+  // Scroll to article navKey onchange lastNav.
+  // Initially, <Articles> must already be mounted.
   const lastNav = useSiteStore(x => x.lastNav);
   useEffect(() => {
     const { navKey, articles } = useSiteStore.getState();

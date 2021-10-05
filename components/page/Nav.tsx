@@ -1,4 +1,4 @@
-import { useRouter } from 'next/router';
+import { NextRouter, useRouter } from 'next/router';
 import React, { useEffect, useLayoutEffect } from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
@@ -19,15 +19,11 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // Navigate to article on back/forward via fragment identifier
   useEffect(() => {
-    router.beforePopState(({ url: next }) => {
-      const matched = next.match(/^\/blog\/\d+#(\S+)$/);
-      if (matched && articleKeys.includes(matched[1] as any)) {
-        setTimeout(() => useSiteStore.setState({ navKey: matched[1] as any, lastNav: Date.now() }));
-      }
-      return true;
-    })
+    router.events.on('routeChangeComplete', () => handleArticleRoute({ regex: 'either' }));
+    router.events.on('hashChangeComplete', () => handleArticleRoute({ regex: 'goto', rewriteGoto: router }));
+    window.addEventListener('hashchange', () => handleArticleRoute({ regex: 'either' }));
+    window.addEventListener('load', () => handleArticleRoute({ regex: 'goto' }));
   }, []);
 
   return (
@@ -45,6 +41,19 @@ export default function Nav() {
       <NavItems/>
     </nav>
   );
+}
+
+function handleArticleRoute(opt: { regex: 'goto' | 'either'; rewriteGoto?: NextRouter; }) {
+  const current = `${window.location.pathname}${window.location.hash}`;
+  const matched = current.match(
+    opt.regex === 'either' ? /^\/blog\/\d+#(?:goto-)?(\S+)$/ : /^\/blog\/\d+#goto-(\S+)$/
+  );
+  if (matched && articleKeys.includes(matched[1] as any)) {
+    if (opt.rewriteGoto && useSiteStore.getState().navKey === matched[1] as any) {
+      opt.rewriteGoto.replace(current.replace('#goto-', '#'));
+    }
+    setTimeout(() => useSiteStore.setState({ navKey: matched[1] as any, lastNav: Date.now() }));
+  }
 }
 
 const sidebarWidth = 256;
