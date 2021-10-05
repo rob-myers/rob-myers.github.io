@@ -3,7 +3,11 @@ import { css } from "goober";
 export default function NavItems() {
   return (
     <section className={rootCss}>
-      <h3>Rogue Markup</h3>
+      <h3>
+        <a href="/">
+          Rogue Markup
+        </a>
+      </h3>
       <ul>
         {navItems.map(({ label, href }) =>
           <li><a href={href}>{label}</a></li>
@@ -23,16 +27,22 @@ const navItems = [
 ];
 
 const rootCss = css`
-  padding: 0 0 0 12px;
+  padding: 0 0 0 20px;
   color: #aaa;
-  font-size: 1.2rem;
-
+  
   h3 {
+    font-size: 1.5rem;
     font-weight: 400;
+    margin: 16px 0;
+    a {
+      color: #aaa;
+    }
   }
-
+  
   ul {
+    font-size: 1.2rem;
     padding: 0;
+    margin: 0;
     a {
       color: #888;
       &:hover {
@@ -42,7 +52,7 @@ const rootCss = css`
     li {
       list-style: none;
       list-style-position: inside;
-      padding: 6px 4px;
+      padding: 6px 0;
     }
   }
 `;

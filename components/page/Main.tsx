@@ -9,6 +9,13 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
 
   useLayoutEffect(() => {
     setNavOpen(localStorage.getItem('nav-open') === 'true');
+
+    const onScroll = () => {
+      // TODO register article screenY and detect current article
+      console.log(window.scrollY);
+    };
+    window.addEventListener('scroll', onScroll);
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
@@ -17,18 +24,15 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
         className={classNames(navCss, !navOpen && 'closed')}
         onClick={(e) => {
           e.stopPropagation();
-          if (matchMedia(`(max-width: ${forceOpenWidth}px)`).matches) {
-            setNavOpen(x => !x);
-            localStorage.setItem('nav-open', !navOpen ? 'true' : 'false');
-          }
+          if (e.target instanceof HTMLAnchorElement) return;
+          setNavOpen(!navOpen);
+          localStorage.setItem('nav-open', !navOpen ? 'true' : 'false');
         }}
       >
         <div className="handle-bg" />
         <div className="handle">{navOpen ? '<' : '>'}</div>
         <NavItems/>
       </nav>
-
-      <div className={metaPanelCss} />
 
       <section className={rootCss}>
         <Title />
@@ -59,9 +63,10 @@ export const rootCss = css`
 
 const sidebarWidth = 256;
 const handleWidth = 30;
-const forceOpenWidth = 1400;
 
 const navCss = css`
+  width: ${sidebarWidth}px;
+
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-weight: 300;
 
@@ -72,25 +77,21 @@ const navCss = css`
   
   position: fixed;
   z-index: 20;
-  left: 0;
   height: 100%;
-  width: ${sidebarWidth}px;
-
-  padding: 8px;
-
+  left: 0;
+  
   transition: left 500ms ease;
-  @media(max-width: ${forceOpenWidth}px) {
-    &.closed {
-      left: -${sidebarWidth}px;
-    }
-    > .handle-bg {
-      position: absolute;
-      top: 0;
-      left: ${sidebarWidth }px;
-      width: ${sidebarWidth + 2000}px;
-      height: 32px;
-      background: rgba(0, 0, 0, .3);
-    }
+  &.closed {
+    left: -${sidebarWidth}px;
+  }
+
+  > .handle-bg {
+    position: absolute;
+    top: 0;
+    left: ${sidebarWidth }px;
+    width: ${sidebarWidth + 2000}px;
+    height: 32px;
+    background: rgba(0, 0, 0, .1);
   }
   
   > .handle {
@@ -103,22 +104,5 @@ const navCss = css`
     text-align: center;
     padding: 7px 0;
     user-select: none;
-
-    transition: opacity 300ms ease;
-    @media(min-width: ${forceOpenWidth}px) {
-      opacity: 0;
-    }
-  }
-`;
-
-const metaPanelCss = css`
-  position: fixed;
-  background: #ccc;
-  right: 0;
-  width: 200px;
-  height: 100%;
-  transition: opacity 300ms ease;
-  @media(max-width: ${forceOpenWidth}px) {
-    opacity: 0;
   }
 `;
