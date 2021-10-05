@@ -81,7 +81,7 @@ const navCss = css`
   color: white;
   background-color: black;
   cursor: pointer;
-  opacity: 0.9;
+  opacity: 0.95;
   
   position: fixed;
   z-index: 20;

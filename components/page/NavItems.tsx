@@ -18,7 +18,7 @@ export default function NavItems() {
         </Link>
       </h3>
       <ul>
-        {navItems.map(({ key, label, href, page }) =>
+        {navItems.map(({ key, label, info, href, page }) =>
           <li
             className={key === articleKey ? 'current' : undefined}
           >
@@ -30,6 +30,7 @@ export default function NavItems() {
                 onClick={() => {
                   setTimeout(() => useSiteStore.setState({ lastNavKey: key }));
                 }}
+                title={info}
               >
                 {label}
               </a>
@@ -42,12 +43,12 @@ export default function NavItems() {
 }
 
 const rootCss = css`
-  padding: 0 0 0 20px;
+  padding: 0 20px;
   color: #aaa;
   
   h3 {
-    font-size: 1.5rem;
-    font-weight: 400;
+    font-size: 1.8rem;
+    font-weight: 300;
     margin: 16px 0;
     a {
       color: #aaa;
@@ -58,20 +59,24 @@ const rootCss = css`
     font-size: 1.2rem;
     padding: 0;
     margin: 0;
-    a {
-      color: #888;
-      &:hover {
-        color: #ccc;
-      }
-    }
+
     li {
       list-style: none;
       list-style-position: inside;
-      padding: 6px 0;
+      padding: 8px 6px;
+      display: flex;
+      background: #111;
     }
     li.current {
       a {
         color: white;
+      }
+    }
+    a {
+      width: 100%;
+      color: #888;
+      &:hover {
+        color: #ccc;
       }
     }
   }
