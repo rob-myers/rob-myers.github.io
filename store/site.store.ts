@@ -1,16 +1,37 @@
 import create from 'zustand';
+import { devtools } from 'zustand/middleware';
 import { KeyedLookup } from 'model/generic.model';
-import { Model } from 'flexlayout-react';
 
 export type State = {
+  /** Key of current article on current page */
+  articleKey: null | string;
+  /** Articles available on current page */
+  articles: KeyedLookup<ArticleState>;
+  /** Tabs available on current page with a storeKey */
   tabs: KeyedLookup<TabsState>;
-  readonly api: {};
+  readonly api: {
+    updateArticleKey: (scrollY: number) => void; 
+  };
 };
 
-const useStore = create<State>((set, get) => ({
+const useStore = create<State>(devtools((set, get) => ({
+  articleKey: null,
+  articles: {},
   tabs: {},
-  api: {},
-}));
+  api: {
+    updateArticleKey: (scrollY) => {
+      const found = Object.values(get().articles).find(x => scrollY < x.rect.bottom);
+      if (found && found.key !== get().articleKey) {
+        set({ articleKey: found.key });
+      }
+    },
+  },
+}), 'site'));
+
+interface ArticleState {
+  key: string;
+  rect: DOMRect;
+}
 
 interface TabsState {
   key: string;

@@ -10,6 +10,7 @@ import useSessionStore from 'store/session.store';
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
   dateTime: string;
+  articleKey: string;
   children: string;
 }>) {
   const dateText = React.useMemo(() => {
@@ -18,7 +19,7 @@ export default function Article(props: React.PropsWithChildren<{
   }, [props.dateTime]);
 
   return <>
-    <article className={classNames('blog', props.className, blogCss)}>
+    <article className={classNames(articleClassName, props.className, blogCss)}>
       <time dateTime={props.dateTime}>
         {dateText}
       </time>
@@ -30,6 +31,8 @@ export default function Article(props: React.PropsWithChildren<{
     <Sep/>
   </>;
 }
+
+export const articleClassName = 'article';
 
 const blogCss = css`
 

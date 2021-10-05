@@ -1,17 +1,10 @@
 import Main from 'components/page/Main';
-import Article from 'components/page/Article';
-
-import geomorphsMd from 'articles/geomorphs.md';
+import Articles from 'components/page/Articles';
 
 export default function GeomorphsPage() {
   return (
     <Main>
-
-      <Article
-        dateTime="2021-07-19"
-        children={geomorphsMd}
-      />
-
+      <Articles keys={['geomorphs']} />
     </Main>
   );
 }

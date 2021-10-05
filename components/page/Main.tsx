@@ -1,18 +1,17 @@
-import React, { useLayoutEffect } from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import classNames from 'classnames';
 import { css } from "goober";
 import Title from "./Title";
 import NavItems from './NavItems';
+import useSiteStore from 'store/site.store';
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
   const [navOpen, setNavOpen] = React.useState(false);
 
   useLayoutEffect(() => {
     setNavOpen(localStorage.getItem('nav-open') === 'true');
-
     const onScroll = () => {
-      // TODO register article screenY and detect current article
-      console.log(window.scrollY);
+      useSiteStore.api.updateArticleKey(window.scrollY);
     };
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);

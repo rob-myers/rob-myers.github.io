@@ -1,23 +1,10 @@
 import Main from 'components/page/Main';
-import Article from 'components/page/Article';
+import Articles from 'components/page/Articles';
 
-import objectiveMd from 'articles/objective.md';
-import constraintsMd from 'articles/constraints.md';
-
-export default function ObjectivePage() {
+export default function Page1() {
   return (
     <Main>
-
-      <Article
-        dateTime="2021-07-19"
-        children={objectiveMd}
-      />
-
-      <Article
-        dateTime="2021-07-19"
-        children={constraintsMd}
-      />
-
+      <Articles keys={['objective', 'constraints']} />
     </Main>
   );
 }

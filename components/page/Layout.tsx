@@ -7,7 +7,7 @@ export default function Layout(props: Props) {
   const model = React.useMemo(() => Model.fromJson(computeJsonModel(props.tabs)), [props.tabs]);
 
   React.useEffect(() => {
-    if (props.storeKey) {
+    if (props.storeKey) {// Register tabs with state
       useSiteStore.getState().tabs[props.storeKey] = {
         key: props.storeKey,
         selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
