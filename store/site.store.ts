@@ -2,6 +2,7 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { KeyedLookup } from 'model/generic.model';
 import type { ArticleKey } from 'articles/index';
+import { NextRouter } from 'next/router';
 
 export type State = {
   /** Key of currently viewed article */
@@ -15,7 +16,7 @@ export type State = {
   /** Tabs available on current page with a storeKey */
   tabs: KeyedLookup<TabsState>;
   readonly api: {
-    updateArticleKey: () => void; 
+    updateArticleKey: (router?: NextRouter) => void; 
   };
 };
 
@@ -26,10 +27,11 @@ const useStore = create<State>(devtools((set, get) => ({
   articles: {},
   tabs: {},
   api: {
-    updateArticleKey: () => {
-      const found = Object.values(get().articles).find(x => window.scrollY < x.rect.bottom);
+    updateArticleKey: (router) => {
+      const found = Object.values(get().articles).find(x => window.scrollY <= x.rect.bottom);
       if (found && found.key !== get().articleKey) {
         set({ articleKey: found.key });
+        router?.replace(`${window.location.pathname}#${found.key}`);
       }
     },
   },

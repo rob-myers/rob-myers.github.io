@@ -8,25 +8,23 @@ import NavItems from './NavItems';
 
 export default function Nav() {
   const [navOpen, setNavOpen] = React.useState(true);
+  const router = useRouter();
 
   useLayoutEffect(() => {
     // Remember if nav was open
     setNavOpen(localStorage.getItem('nav-open') === 'true');
     // Detect currently viewed article
-    const onScroll = () => useSiteStore.api.updateArticleKey();
+    const onScroll = () => useSiteStore.api.updateArticleKey(router);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   // Navigate to article on back/forward via fragment identifier
-  const router = useRouter();
   useEffect(() => {
     router.beforePopState(({ url: next }) => {
       const matched = next.match(/^\/blog\/\d+#(\S+)$/);
       if (matched && articleKeys.includes(matched[1] as any)) {
-        setTimeout(
-          () => useSiteStore.setState({ navKey: matched[1] as any, lastNav: Date.now() }), 30
-        );
+        setTimeout(() => useSiteStore.setState({ navKey: matched[1] as any, lastNav: Date.now() }));
       }
       return true;
     })

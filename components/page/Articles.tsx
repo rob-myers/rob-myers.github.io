@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useRef, useEffect } from "react";
 import { ArticleKey, articlesMeta } from "articles/index";
 import useSiteStore from 'store/site.store';
@@ -8,7 +9,8 @@ export default function Articles({ keys }: {
   keys: ArticleKey[];
 }) {
   const root = useRef<HTMLDivElement>(null);
-  
+  const router = useRouter();
+
   // Register articles with state
   useEffect(()  => {
     const onResize = () => {
@@ -22,7 +24,7 @@ export default function Articles({ keys }: {
       useSiteStore.setState({});
     };
     window.addEventListener('resize', onResize), onResize();
-    useSiteStore.api.updateArticleKey();
+    useSiteStore.api.updateArticleKey(router);
     return () => {
       window.removeEventListener('resize', onResize);
       keys.forEach(key => delete useSiteStore.getState().articles[key]);

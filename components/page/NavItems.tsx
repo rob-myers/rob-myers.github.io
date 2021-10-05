@@ -20,14 +20,14 @@ export default function NavItems() {
           {navItems.map(({ key, label, info, href, page }) =>
             <li key={key} className={key === articleKey ? 'current' : undefined} >
               <Link
-                href={`${href}#${key}`}
+                href={`${href}#goto-${key}`}
                 scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
               >
                 <a 
-                  onClick={() => setTimeout(() =>
-                    useSiteStore.setState({ navKey: key, lastNav: Date.now() }),
-                    30
-                  )}
+                  onClick={(e) => {
+                    if (window.location.hash === `#${key}`) e.preventDefault();
+                    setTimeout(() => useSiteStore.setState({ navKey: key, lastNav: Date.now() }));
+                  }}
                   title={info}
                 >
                   {label}
