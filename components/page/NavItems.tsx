@@ -11,7 +11,7 @@ export default function NavItems() {
   return (
     <section className={rootCss}>
       <h3>
-        <Link href="/">
+        <Link href="/" scroll={false}>
           <a>
             Rogue Markup
           </a>
@@ -22,7 +22,7 @@ export default function NavItems() {
           <li
             className={key === articleKey ? 'current' : undefined}
           >
-            <Link href={href}>
+            <Link href={href} scroll={false}>
               <a 
                 onClick={() => {
                   setTimeout(() => useSiteStore.setState({ lastNavKey: key }));
