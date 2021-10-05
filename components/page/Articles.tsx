@@ -7,9 +7,9 @@ import Article, { articleClassName } from "./Article";
 export default function Articles({ keys }: {
   keys: ArticleKey[];
 }) {
-
-  // Register articles with state
   const root = useRef<HTMLDivElement>(null);
+  
+  // Register articles with state
   useEffect(()  => {
     const onResize = () => {
       Array.from(root.current!.children)

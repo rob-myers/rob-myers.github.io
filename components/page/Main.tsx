@@ -31,7 +31,7 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
     router.beforePopState(({ url: next }) => {
       const matched = next.match(/^\/blog\/\d+#(\S+)$/);
       if (matched && articleKeys.includes(matched[1] as any)) {
-        useSiteStore.setState({ navKey: matched[1] as any });
+        setTimeout(() => useSiteStore.setState({ navKey: matched[1] as any, lastNav: Date.now() }));
       }
       return true;
     })
