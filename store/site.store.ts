@@ -3,24 +3,27 @@ import { devtools } from 'zustand/middleware';
 import { KeyedLookup } from 'model/generic.model';
 
 export type State = {
-  /** Key of current article on current page */
+  /** Key of currently viewed article */
   articleKey: null | string;
+  /** Key of last article we navigated to */
+  lastNavKey: null | string;
   /** Articles available on current page */
   articles: KeyedLookup<ArticleState>;
   /** Tabs available on current page with a storeKey */
   tabs: KeyedLookup<TabsState>;
   readonly api: {
-    updateArticleKey: (scrollY: number) => void; 
+    updateArticleKey: () => void; 
   };
 };
 
 const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
+  lastNavKey: null,
   articles: {},
   tabs: {},
   api: {
-    updateArticleKey: (scrollY) => {
-      const found = Object.values(get().articles).find(x => scrollY < x.rect.bottom);
+    updateArticleKey: () => {
+      const found = Object.values(get().articles).find(x => window.scrollY < x.rect.bottom);
       if (found && found.key !== get().articleKey) {
         set({ articleKey: found.key });
       }

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { articlesMeta } from "articles";
 import { css } from "goober";
 import useSiteStore from "store/site.store";
@@ -10,18 +11,26 @@ export default function NavItems() {
   return (
     <section className={rootCss}>
       <h3>
-        <a href="/">
-          Rogue Markup
-        </a>
+        <Link href="/">
+          <a>
+            Rogue Markup
+          </a>
+        </Link>
       </h3>
       <ul>
         {navItems.map(({ key, label, href }) =>
           <li
             className={key === articleKey ? 'current' : undefined}
           >
-            <a href={href}>
-              {label}
-            </a>
+            <Link href={href}>
+              <a 
+                onClick={() => {
+                  setTimeout(() => useSiteStore.setState({ lastNavKey: key }));
+                }}
+              >
+                {label}
+              </a>
+            </Link>
           </li>
         )}
       </ul>

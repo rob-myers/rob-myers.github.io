@@ -11,8 +11,9 @@ export default function Articles({ keys }: {
   // Register articles with state
   const root = useRef<HTMLDivElement>(null);
   useEffect(()  => {
-    const resize = () => {
-      Array.from(root.current!.children).filter(el => el.classList.contains(articleClassName))
+    const onResize = () => {
+      Array.from(root.current!.children)
+        .filter(el => el.classList.contains(articleClassName))
         .forEach((el, i) => useSiteStore.getState().articles[keys[i]] = {
           key: keys[i],
           rect: Rect.fromJson(el!.getBoundingClientRect())
@@ -20,10 +21,10 @@ export default function Articles({ keys }: {
         });
       useSiteStore.setState({});
     };
-    window.addEventListener('resize', resize), resize();
-    useSiteStore.api.updateArticleKey(window.scrollY);
+    window.addEventListener('resize', onResize), onResize();
+    useSiteStore.api.updateArticleKey();
     return () => {
-      window.removeEventListener('resize', resize);
+      window.removeEventListener('resize', onResize);
       keys.forEach(key => delete useSiteStore.getState().articles[key]);
     };
   }, []);

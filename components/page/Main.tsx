@@ -6,16 +6,25 @@ import NavItems from './NavItems';
 import useSiteStore from 'store/site.store';
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
-  const [navOpen, setNavOpen] = React.useState(false);
+  const [navOpen, setNavOpen] = React.useState(true);
 
   useLayoutEffect(() => {
+    // Remember if nav open
     setNavOpen(localStorage.getItem('nav-open') === 'true');
-    const onScroll = () => {
-      useSiteStore.api.updateArticleKey(window.scrollY);
-    };
+    // Detect current article
+    const onScroll = () => useSiteStore.api.updateArticleKey();
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  const lastNavKey = useSiteStore(x => x.lastNavKey);
+
+  useEffect(() => {
+    const article = useSiteStore.getState().articles[lastNavKey || ''];
+    if (article) {
+      window.scrollTo({ top: article.rect.y, behavior: 'smooth' });
+    }
+  }, [lastNavKey]);
 
   return (
     <>

@@ -41,8 +41,6 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- NavBar moves between pages
-  > indicate next/prev too
 - Doors represented via `<rect>`s
 - Create geomorph 101
 - Add GitHub Comments
@@ -52,6 +50,8 @@ Each __TODO__ should either:
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+- ✅ SideNav scrolls to article
+- ✅ SideNav moves between pages
 - ✅ Split blogs into separate pages
 - ✅ Fix `seq ${large number}`
 - ✅ Fix brace expansions like `echo {1..5}$( echo foo )`
