@@ -41,6 +41,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- Use `/blog/{pageNumber}?a={article}&goto`
 - Implement front page
 - Show next/prev in navbar
 - Show next/prev at bottom/top of page

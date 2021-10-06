@@ -2,7 +2,7 @@
 
 Thus far we've described our objective, constrained our approach, and listed the technologies we'll use.
 Having outlined our chosen notion of JavaScript component,
-we turn to Game AI related technology i.e. _navigation_ and _raycasting_.
+we turn to Game AI i.e. _navigation_ and _raycasting_.
 
 ### Navigation
 
@@ -19,16 +19,15 @@ The [crew](https://wiki.travellerrpg.com/Crew "@new-tab") will have tasks e.g. m
 These behaviours will be constrained by e.g. sleep patterns, the behaviour of others, and hardware failures.
 But how do video games simulate these behaviours?
 
-Three systems are often used: navigation, animation and physics.
-Navigation does high-level planning e.g. find a route from A to B.
-Animation provides realism (such as limb movement) and also information indicating NPC actions.
-Physics provides collision detection and permits moving characters around via forces.
+Three systems are often used:
 
-Now, we chose not to use a physics engine.
+> **Navigation**: _high-level planning e.g. find a route from A to B._
+>
+> **Animation**: _realism (e.g. limb movement) and representation (e.g. indicate NPC actions)._
+>
+> **Physics**: collision detection & force-driven rigid bodies.
 
-[Constraints]()
-
-<!-- TODO can link to other blogs -->
+We've [chosen](/blog/1#constraints) not to use a Physics Engine.
 
 <!-- Pathfinding is central to Game AI.
 Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors. -->
