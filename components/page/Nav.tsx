@@ -3,7 +3,7 @@ import React, { useEffect, useLayoutEffect } from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
 import useSiteStore from 'store/site.store';
-import { articleKeys } from 'articles/index';
+import { ArticleKey, articlesMeta } from 'articles/index';
 import NavItems from './NavItems';
 
 export default function Nav() {
@@ -19,11 +19,70 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  /**
+   * Scroll when navigating between articles.
+   * We don't scroll when refreshing current article /blog/{n}#{articleKey}
+   */
   useEffect(() => {
-    router.events.on('routeChangeComplete', () => handleArticleRoute({ regex: 'either' }));
-    router.events.on('hashChangeComplete', () => handleArticleRoute({ regex: 'goto', rewriteGoto: router }));
-    window.addEventListener('hashchange', () => handleArticleRoute({ regex: 'either' }));
-    window.addEventListener('load', () => handleArticleRoute({ regex: 'goto' }));
+    const relPath = () => `${window.location.pathname}${window.location.hash}`;
+    const isArticleKey = (x: string): x is ArticleKey => x in articlesMeta;
+
+    function triggerScroll(navKey: ArticleKey) {
+      return setTimeout(() => useSiteStore.setState({ navKey, lastNav: Date.now() }));
+    }
+    function removeGoto() {
+      router.asPath.includes('#goto-') && router.replace(relPath().replace('#goto-', '#'));
+    }
+    function removeGotoIfSelf(nextNavKey: ArticleKey) {
+      useSiteStore.getState().navKey === nextNavKey && removeGoto();
+    }
+
+    // Triggered when navigate to /blog/2#goto-bar from /blog/1#foo 
+    // Triggered when go forward/back between /blog/1#foo
+    router.events.on('routeChangeComplete', () => {
+      const matched = relPath().match(/^\/blog\/\d+#(?:goto-)?(\S+)$/);
+      if (matched && isArticleKey(matched[1])) {
+        removeGoto(); // Ensure goto removed when don't scroll into new article
+        triggerScroll(matched[1]);
+      }
+    });
+
+    // Triggered when navigate to /blog/1#goto-baz from /blog/1#foo
+    // Must not trigger when navigate to /blog/1#foo (e.g. while auto-scroll)
+    router.events.on('hashChangeComplete', () => {
+      const matched = relPath().match(/^\/blog\/\d+#goto-(\S+)$/);
+      if (matched && isArticleKey(matched[1])) {
+        removeGotoIfSelf(matched[1]);
+        triggerScroll(matched[1]);
+      }
+    });
+
+    // Triggered on user manually change hash
+    window.addEventListener('hashchange', () => {
+      const matched = relPath().match(/^\/blog\/\d+#(?:goto-)?(\S+)$/);
+      if (matched) {
+        if (matched[0].includes('#goto-') && isArticleKey(matched[1])) {
+          removeGotoIfSelf(matched[1]);
+          triggerScroll(matched[1]);
+        } else if (isArticleKey(matched[1]) && matched[1] !== useSiteStore.getState().articleKey) {
+          triggerScroll(matched[1]); // Scroll to non-goto if not current article
+        }
+      }
+    });
+
+    // Triggered initially, and on user navigate
+    window.addEventListener('load', () => {
+      const matched = relPath().match(/^\/blog\/\d+#(?:goto-)?(\S+)$/);
+      if (matched) {
+        if (matched[0].includes('#goto-') && isArticleKey(matched[1])) {
+          removeGoto();
+          triggerScroll(matched[1]);
+        } else if (isArticleKey(matched[1]) && matched[1] !== useSiteStore.getState().articleKey) {
+          triggerScroll(matched[1]); // Scroll to non-goto if not current article
+        }
+      }
+    });
+
   }, []);
 
   return (
@@ -31,7 +90,9 @@ export default function Nav() {
       className={classNames(navCss, !navOpen && 'closed')}
       onClick={(e) => {
         e.stopPropagation();
-        if (e.target instanceof HTMLAnchorElement) return;
+        if (e.target instanceof HTMLAnchorElement) {
+          return;
+        }
         setNavOpen(!navOpen);
         localStorage.setItem('nav-open', !navOpen ? 'true' : 'false');
       }}
@@ -41,19 +102,6 @@ export default function Nav() {
       <NavItems/>
     </nav>
   );
-}
-
-function handleArticleRoute(opt: { regex: 'goto' | 'either'; rewriteGoto?: NextRouter; }) {
-  const current = `${window.location.pathname}${window.location.hash}`;
-  const matched = current.match(
-    opt.regex === 'either' ? /^\/blog\/\d+#(?:goto-)?(\S+)$/ : /^\/blog\/\d+#goto-(\S+)$/
-  );
-  if (matched && articleKeys.includes(matched[1] as any)) {
-    if (opt.rewriteGoto && useSiteStore.getState().navKey === matched[1] as any) {
-      opt.rewriteGoto.replace(current.replace('#goto-', '#'));
-    }
-    setTimeout(() => useSiteStore.setState({ navKey: matched[1] as any, lastNav: Date.now() }));
-  }
 }
 
 const sidebarWidth = 256;
@@ -69,10 +117,12 @@ const navCss = css`
   color: white;
   cursor: pointer;
   opacity: 0.975;
+  /** https://stackoverflow.com/questions/21003535/anyway-to-prevent-the-blue-highlighting-of-elements-in-chrome-when-clicking-quic  */
+  -webkit-tap-highlight-color: transparent;
   
   position: fixed;
   z-index: 20;
-  height: 100%;
+  height: calc(100% + 200px);
   left: 0;
   
   transition: left 500ms ease;
@@ -86,15 +136,21 @@ const navCss = css`
     left: ${sidebarWidth}px;
     width: calc(${sidebarWidth}px + 100vw);
     height: 32px;
-    background: rgba(0, 0, 0, .1);
+    background: rgba(0, 0, 0, .4);
+  }
+  @media(max-width: 500px) {
+    &:not(.closed) > .handle-bg {
+      height: 100%;
+    }
   }
   
   > .handle {
     background: rgba(120, 0, 0, 1);
     position: absolute;
     z-index: 19;
+    top: -1px;
     width: ${handleWidth}px;
-    top: 0;
+    min-height: 33px;
     right: -${handleWidth}px;
     text-align: center;
     padding: 7px 0;
