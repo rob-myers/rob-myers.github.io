@@ -46,11 +46,12 @@ Behaviourally:
 
 The above two JS functions each have a single parameter `props`, and return something which looks like HTML (but isn't).
 For example, _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
-Then although React function components are functions, syntactically they are not invoked like functions i.e. we do not write `Grid(props)`.
-But what are React function components actually returning?
+Then although React function components are functions, syntactically they are not invoked like functions (we don't write `Grid(props)`).
+Then what does this XML syntax mean?
+That is, what are React function components actually returning?
 Here's a whirlwind overview.
 
-- React devs use a grammatical extension of JS with XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript)).
+- React devs use a grammatical extension of JS by XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript) "@new-tab").
 - React applications are built by composing React function components, using the XML syntax for their return value.
 - Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` ([example/jsx-to-js.jsx](#command "open-tab jsx-to-js")).
 - This website actually uses _Preact_, a React alternative with the same API.
