@@ -41,6 +41,8 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- Can we avoid reloading tabs on change markdown?
+  > Maybe via reverse portals
 - Use `/blog/{pageNumber}?a={article}&goto`
 - Implement front page
 - Show next/prev in navbar
