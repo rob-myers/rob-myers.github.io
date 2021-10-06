@@ -29,9 +29,11 @@ const useStore = create<State>(devtools((set, get) => ({
   api: {
     updateArticleKey: (router) => {
       const found = Object.values(get().articles).find(x => window.scrollY <= x.rect.bottom);
-      if (found && found.key !== get().articleKey) {
-        set({ articleKey: found.key });
-        router?.replace(`${window.location.pathname}#${found.key}`);
+      if (found) {
+        if (found.key !== get().articleKey) {
+          set({ articleKey: found.key });
+          router?.replace(`${window.location.pathname}#${found.key}`);
+        }
         return found.key;
       }
     },
