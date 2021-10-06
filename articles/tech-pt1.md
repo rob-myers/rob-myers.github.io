@@ -67,8 +67,8 @@ Here's a whirlwind overview.
 
 <div
   class="tabs"
-  height="340"
   store-key="jsx-to-js"
+  height="340"
   tabs="[ { key: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
 ></div>
 

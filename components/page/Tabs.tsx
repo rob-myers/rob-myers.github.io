@@ -37,7 +37,7 @@ interface Props {
   /** Initially enabled? */
   enabled?: boolean;
   height: number;
-  storeKey?: string;
+  storeKey: string;
   tabs: TabMeta[];
 }
 

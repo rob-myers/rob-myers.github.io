@@ -13,7 +13,7 @@ export type State = {
   lastNav: number;
   /** Articles available on current page */
   articles: KeyedLookup<ArticleState>;
-  /** Tabs available on current page with a storeKey */
+  /** Currently available Tabs i.e. on current page */
   tabs: KeyedLookup<TabsState>;
   readonly api: {
     updateArticleKey: (router?: NextRouter) => string | undefined; 

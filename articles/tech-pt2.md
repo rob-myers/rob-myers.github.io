@@ -34,6 +34,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 
 <div
   class="tabs"
+  store-key="nav-demo"
   height="400"
   enabled="false"
   tabs="[
