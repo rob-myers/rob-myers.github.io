@@ -42,6 +42,8 @@ Each __TODO__ should either:
 ## TODO (unsorted)
 
 - Implement front page
+- Show next/prev in navbar
+- Show next/prev at bottom/top of page
 - Doors represented via `<rect>`s
 - Create geomorph 101
 - Add GitHub Comments
