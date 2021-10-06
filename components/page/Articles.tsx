@@ -20,6 +20,7 @@ export default function Articles({ keys }: {
             .delta(window.scrollX, window.scrollY),
         });
       useSiteStore.setState({});
+      useSiteStore.api.updateArticleKey();
     };
     window.addEventListener('resize', onResize), onResize();
     return () => {
