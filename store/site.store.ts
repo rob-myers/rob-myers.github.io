@@ -16,7 +16,7 @@ export type State = {
   /** Tabs available on current page with a storeKey */
   tabs: KeyedLookup<TabsState>;
   readonly api: {
-    updateArticleKey: (router?: NextRouter) => void; 
+    updateArticleKey: (router?: NextRouter) => string | undefined; 
   };
 };
 
@@ -32,6 +32,7 @@ const useStore = create<State>(devtools((set, get) => ({
       if (found && found.key !== get().articleKey) {
         set({ articleKey: found.key });
         router?.replace(`${window.location.pathname}#${found.key}`);
+        return found.key;
       }
     },
   },
