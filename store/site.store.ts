@@ -1,20 +1,24 @@
+import { NextRouter } from 'next/router';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
+import { HtmlPortalNode } from 'react-reverse-portal';
+
 import type { KeyedLookup } from 'model/generic.model';
 import type { ArticleKey } from 'articles/index';
-import { NextRouter } from 'next/router';
+import type { TabMeta } from 'components/page/TabsAux';
 
 export type State = {
   /** Key of currently viewed article */
   articleKey: null | ArticleKey;
-  /** Key of last article we navigated to */
-  navKey: null | ArticleKey;
-  /** Last time a navigation was triggered (epoch ms) */
-  lastNav: number;
   /** Articles available on current page */
   articles: KeyedLookup<ArticleState>;
+  /** Last time a navigation was triggered (epoch ms) */
+  lastNav: number;
+  /** Key of last article we navigated to */
+  navKey: null | ArticleKey;
   /** Currently available Tabs i.e. on current page */
   tabs: KeyedLookup<TabsState>;
+
   readonly api: {
     updateArticleKey: (router?: NextRouter) => string | undefined; 
   };
@@ -22,10 +26,11 @@ export type State = {
 
 const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
-  navKey: null,
-  lastNav: Date.now(),
   articles: {},
+  lastNav: Date.now(),
+  navKey: null,
   tabs: {},
+
   api: {
     updateArticleKey: (router) => {
       const found = Object.values(get().articles).find(x => window.scrollY <= x.rect.bottom);
@@ -48,6 +53,8 @@ interface ArticleState {
 
 interface TabsState {
   key: string;
+  def: TabMeta[];
+  portal: HtmlPortalNode;
   selectTab: (tabId: string) => void;
   scrollIntoView: () => void;
 }

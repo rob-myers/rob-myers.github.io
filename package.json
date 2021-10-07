@@ -49,6 +49,7 @@
     "react-intersection-observer": "^8.32.0",
     "react-markdown": "^6.0.2",
     "react-query": "^3.18.1",
+    "react-reverse-portal": "^2.1.0",
     "react-ssr-prepass": "npm:preact-ssr-prepass",
     "react-use-measure": "^2.0.4",
     "rehype-raw": "^5.1.0",

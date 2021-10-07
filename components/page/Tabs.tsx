@@ -21,7 +21,11 @@ export default function Tabs(props: Props) {
     >
       <div className={overlayCss(props.height)}>
         {colour !== 'black' && (
-          <Layout storeKey={props.storeKey} tabs={props.tabs} rootRef={rootRef} />
+          <Layout
+            storeKey={props.storeKey}
+            tabs={props.tabs}
+            rootRef={rootRef}
+          />
         )}
         <ControlsOverlay enabled={enabled} toggleEnabled={() => {
           setEnabled(!enabled);
@@ -37,6 +41,7 @@ interface Props {
   /** Initially enabled? */
   enabled?: boolean;
   height: number;
+  /** Required */
   storeKey: string;
   tabs: TabMeta[];
 }

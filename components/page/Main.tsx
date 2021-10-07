@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { css } from "goober";
 import useSiteStore from 'store/site.store';
 import Nav from './Nav';
+import Portals from './Portals';
 import Title from "./Title";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
@@ -19,6 +20,7 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
   return (
     <>
       <Nav/>
+      <Portals />
       <section className={rootCss}>
         <Title />
         <main>
