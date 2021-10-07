@@ -45,9 +45,15 @@ const useStore = create<State>(devtools((set, get) => ({
       });
     },
     updateArticleKey: () => {
-      const article = Object.values(get().articles).find(x => window.scrollY <= x.rect.bottom);
+      const article = Object.values(get().articles)
+        .find(x => window.scrollY <= x.rect.bottom);
       if (article) {
-        article.key !== get().articleKey && set({ articleKey: article.key });
+        if (article.key !== get().articleKey) {
+          set({ articleKey: article.key });
+        }
+        if (get().targetNavKey) {
+           set({ targetNavKey: null });
+        }
         return article.key;
       }
     },
