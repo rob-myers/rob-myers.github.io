@@ -47,8 +47,8 @@ const articleCss = css`
   @media(max-width: 800px) {
     padding: 32px 64px 48px 64px;
   }
-  @media(max-width: 500px) {
-    padding: 32px 12px;
+  @media(max-width: 600px) {
+    padding: 8px 12px;
     font-size: 1.1rem;
     border: none;
   }
@@ -73,7 +73,7 @@ const articleCss = css`
     letter-spacing: 1px;
     font-size: smaller;
     padding: 2px 4px;
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       user-select: all;
     }
   }
@@ -84,7 +84,7 @@ const articleCss = css`
     border-radius: 8px;
     border: 2px dashed #ccc;
     font-size: 1.1rem;
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       font-size: 1rem;
       margin: 8px 0;
       padding: 0 16px;
@@ -92,7 +92,7 @@ const articleCss = css`
 
     > figure.tabs {
       padding: 8px 0;
-      @media(max-width: 500px) {
+      @media(max-width: 600px) {
         padding: 8px 0 12px;
       }
     }
@@ -103,7 +103,7 @@ const articleCss = css`
     border-left: 10px solid #ddd;
     padding-left: 30px;
     
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       margin: 20px 0;
       padding-left: 20px;
     }
@@ -126,7 +126,7 @@ const articleCss = css`
     border: 10px solid #333;
     border-radius: 8px;
     margin: 48px 0;
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       margin: 24px 0 16px;
     }
   }
@@ -137,21 +137,21 @@ const articleCss = css`
   }
   h2 {
     font-size: 2.8rem;
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       margin: 16px 0 24px;
       font-size: 2rem;
     }
   }
   h3 {
     font-size: 1.8rem;
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       font-size: 1.3em;
     }
   }
 
   p {
    margin: 32px 0;
-   @media(max-width: 500px) {
+   @media(max-width: 600px) {
      margin: 16px 0;
    }
   }
@@ -161,7 +161,7 @@ const articleCss = css`
     border: 1px solid #bbb;
     width: 100%;
     margin: 48px 0;
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       margin: 20px 0;
     }
 
@@ -169,7 +169,7 @@ const articleCss = css`
       text-align: left;
       vertical-align: top;
       padding: 8px;
-      @media(max-width: 500px) {
+      @media(max-width: 600px) {
         padding: 4px 2px;
       }
     }
@@ -187,8 +187,8 @@ const articleCss = css`
     font-size: 1rem;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
-    @media(max-width: 500px) {
-      top: calc(16px + 32px);
+    @media(max-width: 600px) {
+      top: 16px;
       right: 0;
       border-radius: 0 0 0 4px;
       background: none;
@@ -197,7 +197,7 @@ const articleCss = css`
   }
 
   ul, ol {
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       padding-left: 20px;
     }
     + p {

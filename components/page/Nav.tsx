@@ -127,7 +127,7 @@ const navCss = css`
     height: 32px;
     background: rgba(0, 0, 0, .4);
   }
-  @media(max-width: 500px) {
+  @media(max-width: 600px) {
     
     &:not(.closed) > .handle-bg {
       height: 100%;
@@ -157,7 +157,7 @@ const fillerCss = css`
     min-width: 0;
   }
 
-  @media(max-width: 500px) {
+  @media(max-width: 600px) {
     display: none;
   }
 `;

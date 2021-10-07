@@ -33,7 +33,7 @@ const titleComponents = {
 const titleCss = css`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   
-  @media(max-width: 500px) {
+  @media(max-width: 600px) {
     padding-left: 8px;
     border-bottom: 2px solid #999;
     border: 0 solid #000;
@@ -52,7 +52,7 @@ const titleCss = css`
     @media(max-width: 800px) {
       font-size: 5rem;
     }
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       font-size: 3rem;
     }
   }
@@ -66,7 +66,7 @@ const titleCss = css`
     padding: 40px 0 48px;
     font-weight: 300;
     
-    @media(max-width: 500px) {
+    @media(max-width: 600px) {
       font-size: 1rem;
       padding: 20px 0 20px 8px;
       color: #222;

@@ -13,7 +13,7 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
     const { targetNavKey, articles } = useSiteStore.getState();
     lastNav && targetNavKey && articles[targetNavKey] && window.scrollTo({
       behavior: 'smooth',
-      top: articles[targetNavKey].rect.y,
+      top: articles[targetNavKey].rect.y - 32,
     });
   }, [lastNav]);
 
@@ -41,7 +41,7 @@ export const rootCss = css`
     padding: 32px 64px;
     margin: 0;
   }
-  @media(max-width: 500px) {
+  @media(max-width: 600px) {
     padding: 0;
   }
 `;
