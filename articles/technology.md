@@ -24,7 +24,7 @@ Let us describe the underlying technologies.
 
 The early 90s brought three pillars: HTML, CSS and JavaScript (JS).
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
-Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity (beyond links, hovers and CSS animations).
+Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity.
 More precisely, all subsequent DOM mutations are performed by JavaScript.
 It is now common to generate the initial HTML using JS too,
 either during a build-step or on a Node.js server.

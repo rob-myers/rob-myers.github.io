@@ -159,13 +159,16 @@ const blogCss = css`
     padding: 8px;
     border: 1px solid #bbb;
     width: 100%;
-    margin: 16px 0;
+    margin: 48px 0;
+    @media(max-width: 500px) {
+      margin: 20px 0;
+    }
 
     th, td {
       text-align: left;
       vertical-align: top;
       padding: 8px;
-      @media(max-width: 540px) {
+      @media(max-width: 500px) {
         padding: 4px 2px;
       }
     }
