@@ -1,4 +1,5 @@
 import { NextComponentType, NextPageContext } from 'next';
+import Head from 'next/head';
 import { AppInitialProps } from 'next/app';
 import { Router } from 'next/router';
 import React from 'react';
@@ -22,12 +23,17 @@ import 'components/code/codemirror/custom-theme.css';
 const queryClient = new QueryClient;
 
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
-  return (
+  return <>
+    <Head>
+      <title>
+        Rogue Markup
+      </title>
+    </Head>
     <QueryClientProvider client={queryClient} >
       <Nav/>
       <Component {...pageProps} />
     </QueryClientProvider>
-  );
+  </>;
 }
 
 interface RootProps extends AppInitialProps {
