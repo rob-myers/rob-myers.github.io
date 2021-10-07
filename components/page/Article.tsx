@@ -36,7 +36,7 @@ export const articleClassName = 'article';
 
 const blogCss = css`
 
-  line-height: 1.55;
+  line-height: 1.6;
   background: var(--focus-bg);
 
   padding: 64px 128px 96px 128px;
@@ -124,7 +124,7 @@ const blogCss = css`
   figure.tabs {
     border: 10px solid #333;
     border-radius: 8px;
-    margin: 40px 0;
+    margin: 48px 0;
     @media(max-width: 500px) {
       margin: 24px 0 16px;
     }
@@ -146,6 +146,13 @@ const blogCss = css`
     @media(max-width: 500px) {
       font-size: 1.3em;
     }
+  }
+
+  p {
+   margin: 32px 0;
+   @media(max-width: 500px) {
+     margin: 16px 0;
+   }
   }
 
   table {
