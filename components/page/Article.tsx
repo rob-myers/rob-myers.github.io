@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import classNames from 'classnames';
 import { css } from 'goober';
 import useSiteStore from 'store/site.store';
@@ -19,13 +20,13 @@ export default function Article(props: React.PropsWithChildren<{
   }, [props.dateTime]);
 
   return <>
-    <article className={classNames(articleClassName, props.className, blogCss)}>
+    <article className={classNames(articleClassName, props.className, articleCss)}>
       <time dateTime={props.dateTime}>
         {dateText}
       </time>
       <Markdown
         children={props.children}
-        components={blogComponents}
+        components={articleComponents}
       />
     </article>
     <Sep/>
@@ -34,7 +35,7 @@ export default function Article(props: React.PropsWithChildren<{
 
 export const articleClassName = 'article';
 
-const blogCss = css`
+const articleCss = css`
 
   line-height: 1.6;
   background: var(--focus-bg);
@@ -210,8 +211,13 @@ const blogCss = css`
 
 `;
 
-const blogComponents = {
+const articleComponents = {
   a({ node, href, title, children, ...props}: any) {
+
+    if (href?.startsWith('/')) {
+      return <Link href={href}><a title={title}>{children}</a></Link>
+    }
+
     return (
       <a
         href={href}
@@ -222,7 +228,6 @@ const blogComponents = {
           target: '_blank',
           rel: 'noopener',
         }}
-
 
         {...href === '#command' && {
           onClick: (e) => {
@@ -255,6 +260,7 @@ const blogComponents = {
         {children}
       </a>
     );
+
   },
 
   div(props: any) {
