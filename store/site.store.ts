@@ -5,14 +5,13 @@ import { HtmlPortalNode } from 'react-reverse-portal';
 import type { KeyedLookup } from 'model/generic.model';
 import type { ArticleKey } from 'articles/index';
 import type { TabMeta } from 'components/page/TabsAux';
+import { NextRouter } from 'next/router';
 
 export type State = {
   /** Key of currently viewed article */
   articleKey: null | ArticleKey;
   /** Articles available on current page */
   articles: KeyedLookup<ArticleState>;
-  /** Should we ignore next hash change? */
-  ignoreNextHash: boolean;
   /** Last time a navigation was triggered (epoch ms) */
   navAt: number;
   /** Key of last article we targeted */
@@ -22,34 +21,35 @@ export type State = {
 
   readonly api: {
     onLoadArticles: (cb: (state: State) => void) => void;
-    updateArticleKey: () => string | undefined;
+    updateArticleKey: (router?: NextRouter) => string | undefined;
   };
 };
 
 const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
   articles: {},
-  ignoreNextHash: false,
-  loaded: false,
   navAt: 0,
   tabs: {},
   targetNavKey: null,
 
   api: {
     onLoadArticles: (cb) => {
-      if (Object.keys(get().articles).length) cb(get());
-      else {
+      if (Object.keys(get().articles).length) {
+        cb(get());
+      } else {
         const unsub = useSiteStore.subscribe(({ articles }) => {
           if (Object.keys(articles).length) cb(get()), unsub();
         });
       }
     },
-    updateArticleKey: () => {
+    updateArticleKey: (router) => {
       const article = Object.values(get().articles)
         .find(x => window.scrollY <= x.rect.bottom);
+
       if (article) {
         if (article.key !== get().articleKey) {
           set({ articleKey: article.key });
+          router?.replace(`${window.location.pathname}#near-${article.key}`);
         }
         if (get().targetNavKey) {
            set({ targetNavKey: null });

@@ -7,42 +7,33 @@ import { ArticleKey, articlesMeta, navGroups } from 'articles/index';
 import NavItems from './NavItems';
 
 export default function Nav() {
-  // Initially closed on full page refresh
   const [navOpen, setNavOpen] = React.useState(false);
   const router = useRouter();
 
   useLayoutEffect(() => {
-    // Remember if nav was open
-    setTimeout(() => setNavOpen(localStorage.getItem('nav-open') === 'true'), 1000);
-
     // Detect currently viewed article
-    const onScroll = () => useSiteStore.api.updateArticleKey();
+    const onScroll = () => useSiteStore.api.updateArticleKey(router);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  /**
-   * Scroll when navigating between articles.
-   * We don't scroll when refreshing current article /blog/{n}#{articleKey}
-   */
   useEffect(() => {
 
-    const pathRegex = /^\/blog\/\d+#(\S+)$/;
-    const relPath = () => `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    const pathRegex = /^\/blog\/\d+#goto-(\S+)$/;
+    const relPath = () => `${window.location.pathname}${window.location.hash}`;
     const isArticleKey = (x: string): x is ArticleKey => x in articlesMeta;
     const triggerScroll = (navKey: ArticleKey) => {
       setTimeout(() => useSiteStore.setState({ targetNavKey: navKey, navAt: Date.now() }));
-    }
+    };
 
     // Handle nav links to another page (click/back/forward)
     function routeChangeComplete() {
       useSiteStore.setState({ targetNavKey: null });
       const matched = relPath().match(pathRegex);
-
       if (matched && isArticleKey(matched[1])) {
         if (navGroups.some(group => group[0].key === matched[1])) {
           // No need to scroll to 1st article
-        } else {// Scroll when articles are ready
+        } else {
           const articleKey = matched[1];
           useSiteStore.api.onLoadArticles(() => triggerScroll(articleKey));
         }
@@ -62,18 +53,34 @@ export default function Nav() {
       }
     }
 
+    // On back/forward rewrite #near- as #goto-
+    router.beforePopState(() => {
+      if (relPath().match(/^\/blog\/\d+#near-(\S+)$/)) {
+        router.replace(relPath().replace('#near-', '#goto-'))
+        hashChangeComplete(); // Why does this help?
+        return false;
+      }
+      return true;
+    });
+
+    function onLoad() {
+      useSiteStore.api.onLoadArticles(hashChangeComplete);
+    }
+
     router.events.on('routeChangeComplete', routeChangeComplete);
     router.events.on('hashChangeComplete', hashChangeComplete);
+    window.addEventListener('load', onLoad);
 
     return () => {
       router.events.off('routeChangeComplete', routeChangeComplete);
       router.events.off('hashChangeComplete', hashChangeComplete);
+      window.removeEventListener('load', onLoad);
     };
   }, []);
 
   return <>
     <nav
-      className={classNames(navCss, !navOpen && 'closed')}
+      className={classNames(navCss, navOpen ? 'open' : 'closed')}
       onClick={(e) => {
         e.stopPropagation();
         if (e.target instanceof HTMLAnchorElement) {
@@ -87,9 +94,6 @@ export default function Nav() {
       <div className="handle">{navOpen ? '<' : '>'}</div>
       <NavItems/>
     </nav>
-    <div
-      className={classNames(fillerCss, !navOpen && 'closed')}
-    />
   </>;
 }
 
@@ -112,9 +116,11 @@ const navCss = css`
   position: fixed;
   z-index: 20;
   height: calc(100% + 200px);
-  left: 0;
   
   transition: left 500ms ease;
+  &.open {
+    left: 0;
+  }
   &.closed {
     left: -${sidebarWidth}px;
   }
@@ -148,16 +154,4 @@ const navCss = css`
     user-select: none;
   }
 
-`;
-
-const fillerCss = css`
-  min-width: ${sidebarWidth}px;
-  transition: min-width 500ms ease;
-  &.closed {
-    min-width: 0;
-  }
-
-  @media(max-width: 600px) {
-    display: none;
-  }
 `;

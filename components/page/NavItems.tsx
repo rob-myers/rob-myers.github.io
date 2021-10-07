@@ -20,7 +20,7 @@ export default function NavItems() {
           {navItems.map(({ key, label, info, href, page }) =>
             <li key={key} className={key === articleKey ? 'current' : undefined} >
               <Link
-                href={`${href}#${key}`}
+                href={`${href}#goto-${key}`}
                 scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
               >
                 <a title={info}>
