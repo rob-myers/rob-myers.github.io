@@ -41,9 +41,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- Simplify nav e.g. remove `#goto-{...}`
 - Avoid reloading tabs onchange markdown via reverse portals
-- Fix initial Nav animation (SSR)
 - Implement front page
 - Show next/prev in navbar
 - Show next/prev at bottom/top of page
@@ -56,6 +54,8 @@ Each __TODO__ should either:
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+- ✅ Fix initial Nav animation (SSR)
+- ✅ Simplify nav e.g. remove `#goto-{...}`
 - ✅ Group nav items by page
 - ✅ SideNav scrolls to article
 - ✅ SideNav moves between pages

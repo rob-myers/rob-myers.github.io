@@ -37,12 +37,12 @@ const useStore = create<State>(devtools((set, get) => ({
 
   api: {
     onLoadArticles: (cb) => {
-      const unsub = useSiteStore.subscribe(({ articles }) => {
-        if (Object.keys(articles).length) {
-          cb(get());
-          unsub();
-        }
-      });
+      if (Object.keys(get().articles).length) cb(get());
+      else {
+        const unsub = useSiteStore.subscribe(({ articles }) => {
+          if (Object.keys(articles).length) cb(get()), unsub();
+        });
+      }
     },
     updateArticleKey: () => {
       const article = Object.values(get().articles)
