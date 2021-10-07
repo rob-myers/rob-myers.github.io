@@ -125,8 +125,10 @@ const navCss = css`
     background: rgba(0, 0, 0, .4);
   }
   @media(max-width: 500px) {
+    
     &:not(.closed) > .handle-bg {
       height: 100%;
+      background: rgba(0, 0, 0, .5);
     }
   }
   

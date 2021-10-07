@@ -47,7 +47,7 @@ const blogCss = css`
     padding: 32px 64px 48px 64px;
   }
   @media(max-width: 500px) {
-    padding: 8px 12px;
+    padding: 32px 12px;
     font-size: 1.1rem;
     border: none;
   }
@@ -137,8 +137,8 @@ const blogCss = css`
   h2 {
     font-size: 2.8rem;
     @media(max-width: 500px) {
-      margin: 16px 0 0 0;
-      font-size: 1.7rem;
+      margin: 16px 0 24px;
+      font-size: 2rem;
     }
   }
   h3 {
@@ -187,7 +187,7 @@ const blogCss = css`
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
     @media(max-width: 500px) {
-      top: 16px;
+      top: calc(16px + 32px);
       right: 0;
       border-radius: 0 0 0 4px;
       background: none;
