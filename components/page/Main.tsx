@@ -1,26 +1,27 @@
 import React, { useEffect } from 'react';
 import { css } from "goober";
 import useSiteStore from 'store/site.store';
-import Nav from './Nav';
 import Portals from './Portals';
 import Title from "./Title";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
+  const lastNav = useSiteStore(x => x.navAt);
 
-  // Scroll to article navKey onchange lastNav.
-  // Initially, <Articles> must already be mounted.
-  const lastNav = useSiteStore(x => x.lastNav);
+  // Scroll to article navKey on change lastNav.
+  // Initially <Articles> must already be mounted.
   useEffect(() => {
-    const { navKey, articles } = useSiteStore.getState();
-    if (articles[navKey || '']) {
-      window.scrollTo({ top: articles[navKey || ''].rect.y, behavior: 'smooth' });
-    }
+    const { targetNavKey, articles } = useSiteStore.getState();
+    lastNav && targetNavKey && articles[targetNavKey] && window.scrollTo({
+      behavior: 'smooth',
+      top: articles[targetNavKey].rect.y,
+    });
   }, [lastNav]);
 
   return (
     <>
-      <Nav/>
-      <Portals />
+      <Portals
+        // TODO site-wide portals in _app
+      />
       <section className={rootCss}>
         <Title />
         <main>

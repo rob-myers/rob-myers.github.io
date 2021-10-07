@@ -1,4 +1,3 @@
-import { NextRouter } from 'next/router';
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { HtmlPortalNode } from 'react-reverse-portal';
@@ -12,34 +11,44 @@ export type State = {
   articleKey: null | ArticleKey;
   /** Articles available on current page */
   articles: KeyedLookup<ArticleState>;
+  /** Should we ignore next hash change? */
+  ignoreNextHash: boolean;
   /** Last time a navigation was triggered (epoch ms) */
-  lastNav: number;
-  /** Key of last article we navigated to */
-  navKey: null | ArticleKey;
+  navAt: number;
+  /** Key of last article we targeted */
+  targetNavKey: null | ArticleKey;
   /** Currently available Tabs i.e. on current page */
   tabs: KeyedLookup<TabsState>;
 
   readonly api: {
-    updateArticleKey: (router?: NextRouter) => string | undefined; 
+    onLoadArticles: (cb: (state: State) => void) => void;
+    updateArticleKey: () => string | undefined;
   };
 };
 
 const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
   articles: {},
-  lastNav: Date.now(),
-  navKey: null,
+  ignoreNextHash: false,
+  loaded: false,
+  navAt: 0,
   tabs: {},
+  targetNavKey: null,
 
   api: {
-    updateArticleKey: (router) => {
-      const found = Object.values(get().articles).find(x => window.scrollY <= x.rect.bottom);
-      if (found) {
-        if (found.key !== get().articleKey) {
-          set({ articleKey: found.key });
-          router?.replace(`${window.location.pathname}#${found.key}`);
+    onLoadArticles: (cb) => {
+      const unsub = useSiteStore.subscribe(({ articles }) => {
+        if (Object.keys(articles).length) {
+          cb(get());
+          unsub();
         }
-        return found.key;
+      });
+    },
+    updateArticleKey: () => {
+      const article = Object.values(get().articles).find(x => window.scrollY <= x.rect.bottom);
+      if (article) {
+        article.key !== get().articleKey && set({ articleKey: article.key });
+        return article.key;
       }
     },
   },

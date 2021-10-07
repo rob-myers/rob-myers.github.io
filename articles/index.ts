@@ -99,3 +99,11 @@ export const articlesMeta = {
 export type ArticleKey = keyof typeof articlesMeta;
 
 export type ArticleMeta = typeof articlesMeta[ArticleKey];
+
+export const navGroups = Object.values(articlesMeta)
+  .filter((x) => x.page > 0 && x.href)
+  .reduce((agg, item) => {
+    (agg[item.page] = agg[item.page] || []).push(item);
+    return agg;
+  }, [] as ArticleMeta[][],
+);

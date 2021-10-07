@@ -1,20 +1,22 @@
-import { NextRouter, useRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import React, { useEffect, useLayoutEffect } from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
 import useSiteStore from 'store/site.store';
-import { ArticleKey, articlesMeta } from 'articles/index';
+import { ArticleKey, articlesMeta, navGroups } from 'articles/index';
 import NavItems from './NavItems';
 
 export default function Nav() {
-  const [navOpen, setNavOpen] = React.useState(true);
+  // Initially closed on full page refresh
+  const [navOpen, setNavOpen] = React.useState(false);
   const router = useRouter();
 
   useLayoutEffect(() => {
     // Remember if nav was open
-    setNavOpen(localStorage.getItem('nav-open') === 'true');
+    setTimeout(() => setNavOpen(localStorage.getItem('nav-open') === 'true'), 1000);
+
     // Detect currently viewed article
-    const onScroll = () => useSiteStore.api.updateArticleKey(router);
+    const onScroll = () => useSiteStore.api.updateArticleKey();
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
@@ -24,65 +26,49 @@ export default function Nav() {
    * We don't scroll when refreshing current article /blog/{n}#{articleKey}
    */
   useEffect(() => {
-    const relPath = () => `${window.location.pathname}${window.location.hash}`;
+
+    const pathRegex = /^\/blog\/\d+#(\S+)$/;
+    const relPath = () => `${window.location.pathname}${window.location.search}${window.location.hash}`;
     const isArticleKey = (x: string): x is ArticleKey => x in articlesMeta;
-
-    function triggerScroll(navKey: ArticleKey) {
-      return setTimeout(() => useSiteStore.setState({ navKey, lastNav: Date.now() }));
-    }
-    function removeGoto() {
-      router.asPath.includes('#goto-') && router.replace(relPath().replace('#goto-', '#'));
-    }
-    function removeGotoIfSelf(nextNavKey: ArticleKey) {
-      useSiteStore.getState().navKey === nextNavKey && removeGoto();
+    const triggerScroll = (navKey: ArticleKey) => {
+      setTimeout(() => useSiteStore.setState({ targetNavKey: navKey, navAt: Date.now() }));
     }
 
-    // Triggered when navigate to /blog/2#goto-bar from /blog/1#foo 
-    // Triggered when go forward/back between /blog/1#foo
-    router.events.on('routeChangeComplete', () => {
-      const matched = relPath().match(/^\/blog\/\d+#(?:goto-)?(\S+)$/);
+    // Handle nav links to another page (click/back/forward)
+    function routeChangeComplete() {
+      useSiteStore.setState({ targetNavKey: null });
+      const matched = relPath().match(pathRegex);
+
       if (matched && isArticleKey(matched[1])) {
-        removeGoto(); // Ensure goto removed when don't scroll into new article
-        triggerScroll(matched[1]);
-      }
-    });
-
-    // Triggered when navigate to /blog/1#goto-baz from /blog/1#foo
-    // Must not trigger when navigate to /blog/1#foo (e.g. while auto-scroll)
-    router.events.on('hashChangeComplete', () => {
-      const matched = relPath().match(/^\/blog\/\d+#goto-(\S+)$/);
-      if (matched && isArticleKey(matched[1])) {
-        removeGotoIfSelf(matched[1]);
-        triggerScroll(matched[1]);
-      }
-    });
-
-    // Triggered on user manually change hash
-    window.addEventListener('hashchange', () => {
-      const matched = relPath().match(/^\/blog\/\d+#(?:goto-)?(\S+)$/);
-      if (matched) {
-        if (matched[0].includes('#goto-') && isArticleKey(matched[1])) {
-          removeGotoIfSelf(matched[1]);
-          triggerScroll(matched[1]);
-        } else if (isArticleKey(matched[1]) && matched[1] !== useSiteStore.getState().articleKey) {
-          triggerScroll(matched[1]); // Scroll to non-goto if not current article
+        if (navGroups.some(group => group[0].key === matched[1])) {
+          // No need to scroll to 1st article
+        } else {// Scroll when articles are ready
+          const articleKey = matched[1];
+          useSiteStore.api.onLoadArticles(() => triggerScroll(articleKey));
         }
       }
-    });
+    }
 
-    // Triggered initially, and on user navigate
-    window.addEventListener('load', () => {
-      const matched = relPath().match(/^\/blog\/\d+#(?:goto-)?(\S+)$/);
-      if (matched) {
-        if (matched[0].includes('#goto-') && isArticleKey(matched[1])) {
-          removeGoto();
+    // Handle nav links within same page (click/back/forward)
+    function hashChangeComplete() {
+      const matched = relPath().match(pathRegex);
+      if (matched && isArticleKey(matched[1])) {
+        const { targetNavKey, articleKey } = useSiteStore.getState();
+        if (targetNavKey === null || articleKey === targetNavKey) {
           triggerScroll(matched[1]);
-        } else if (isArticleKey(matched[1]) && matched[1] !== useSiteStore.getState().articleKey) {
-          triggerScroll(matched[1]); // Scroll to non-goto if not current article
+        } else if (targetNavKey === matched[1]) {// Just arrived
+          useSiteStore.setState({ targetNavKey: null });
         }
       }
-    });
+    }
 
+    router.events.on('routeChangeComplete', routeChangeComplete);
+    router.events.on('hashChangeComplete', hashChangeComplete);
+
+    return () => {
+      router.events.off('routeChangeComplete', routeChangeComplete);
+      router.events.off('hashChangeComplete', hashChangeComplete);
+    };
   }, []);
 
   return (

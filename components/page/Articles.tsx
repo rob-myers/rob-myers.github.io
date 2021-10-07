@@ -3,6 +3,7 @@ import { ArticleKey, articlesMeta } from "articles/index";
 import useSiteStore from 'store/site.store';
 import { Rect } from "projects/geom/rect";
 import Article, { articleClassName } from "./Article";
+import { lookupFromValues } from "model/generic.model";
 
 export default function Articles({ keys }: {
   keys: ArticleKey[];
@@ -12,14 +13,13 @@ export default function Articles({ keys }: {
   // Register articles with state
   useEffect(()  => {
     const onResize = () => {
-      Array.from(root.current?.children || [])
+      const articles = Array.from(root.current?.children || [])
         .filter(el => el.classList.contains(articleClassName))
-        .forEach((el, i) => useSiteStore.getState().articles[keys[i]] = {
+        .map((el, i) => ({
           key: keys[i],
-          rect: Rect.fromJson(el!.getBoundingClientRect())
-            .delta(window.scrollX, window.scrollY),
-        });
-      useSiteStore.setState({});
+          rect: Rect.fromJson(el!.getBoundingClientRect()).delta(window.scrollX, window.scrollY),
+        }));
+      useSiteStore.setState({ articles: lookupFromValues(articles) });
       useSiteStore.api.updateArticleKey();
     };
     window.addEventListener('resize', onResize), onResize();

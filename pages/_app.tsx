@@ -1,8 +1,6 @@
 import { NextComponentType, NextPageContext } from 'next';
 import { AppInitialProps } from 'next/app';
-import Head from 'next/head';
 import { Router } from 'next/router';
-
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
@@ -12,6 +10,8 @@ setup(
   React.createElement, undefined, undefined,
   shouldForwardProp(prop => !prop.startsWith('__')),
 );
+
+import Nav from 'components/page/Nav';
 
 import 'components/globals.css';
 import 'xterm/css/xterm.css';
@@ -23,16 +23,10 @@ const queryClient = new QueryClient;
 
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
   return (
-    <>
-      <Head>
-        <title>
-          Rogue Markup
-        </title>
-      </Head>
-      <QueryClientProvider client={queryClient} >
-        <Component {...pageProps} />
-      </QueryClientProvider>
-    </>
+    <QueryClientProvider client={queryClient} >
+      <Nav/>
+      <Component {...pageProps} />
+    </QueryClientProvider>
   );
 }
 

@@ -19,6 +19,9 @@ export default class MyDocument extends Document<{ css: string }> {
             id="_goober"
             dangerouslySetInnerHTML={{ __html: ' ' + this.props.css }}
           />
+          <title>
+            Rogue Markup
+          </title>
         </Head>
         <body>
           <Main />
