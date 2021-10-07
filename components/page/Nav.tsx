@@ -71,7 +71,7 @@ export default function Nav() {
     };
   }, []);
 
-  return (
+  return <>
     <nav
       className={classNames(navCss, !navOpen && 'closed')}
       onClick={(e) => {
@@ -87,7 +87,10 @@ export default function Nav() {
       <div className="handle">{navOpen ? '<' : '>'}</div>
       <NavItems/>
     </nav>
-  );
+    <div
+      className={classNames(fillerCss, !navOpen && 'closed')}
+    />
+  </>;
 }
 
 const sidebarWidth = 256;
@@ -143,5 +146,18 @@ const navCss = css`
     text-align: center;
     padding: 7px 0;
     user-select: none;
+  }
+
+`;
+
+const fillerCss = css`
+  min-width: ${sidebarWidth}px;
+  transition: min-width 500ms ease;
+  &.closed {
+    min-width: 0;
+  }
+
+  @media(max-width: 500px) {
+    display: none;
   }
 `;
