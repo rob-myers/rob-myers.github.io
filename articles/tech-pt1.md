@@ -122,7 +122,7 @@ Why?
 Because we never inform React we've changed `state`, despite mutating it on mouse and pointer events.
 Instead we directly mutate the DOM via:
 
-> ``state.root.setAttribute('viewBox', `${state.viewBox}`);``
+> ``state.root.setAttribute( 'viewBox', `${state.viewBox}` );``
 
 <!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again code--geom/rect.js"). -->
 

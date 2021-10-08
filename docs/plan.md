@@ -41,7 +41,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- track ids in articles for better refresh
+- track ids (tabs, headers) in articles for better refresh
 - Avoid reloading tabs onchange markdown via reverse portals
 - Implement front page
 - Show next/prev in navbar
