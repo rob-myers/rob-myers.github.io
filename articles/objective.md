@@ -13,7 +13,7 @@ As for the environment, it will be driven by thousands of Traveller-based assets
 
 <div
   class="tabs"
-  store-key="geomorph-301-debug"
+  id="geomorph-301-debug-tab"
   height="340"
   tabs="[{ key: 'component', filepath: 'images/Gm301Debug' }]"
 ></div>

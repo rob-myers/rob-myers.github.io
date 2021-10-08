@@ -16,13 +16,14 @@ export default function Tabs(props: Props) {
 
   return (
     <figure
+      id={props.id}
       ref={rootRef}
       className={classNames("tabs", "scrollable", rootCss(props.height))}
     >
       <div className={overlayCss(props.height)}>
         {colour !== 'black' && (
           <Layout
-            storeKey={props.storeKey}
+            id={props.id}
             tabs={props.tabs}
             rootRef={rootRef}
           />
@@ -42,7 +43,7 @@ interface Props {
   enabled?: boolean;
   height: number;
   /** Required */
-  storeKey: string;
+  id: string;
   tabs: TabMeta[];
 }
 

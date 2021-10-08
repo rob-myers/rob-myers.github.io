@@ -9,26 +9,26 @@ export default function Layout(props: Props) {
 
   React.useEffect(() => {
     const { tabs } = useSiteStore.getState();
-    if (!props.storeKey) {
-      return console.warn('Tabs has no storeKey', props.tabs);
+    if (!props.id) {
+      return console.warn('Tabs has no id', props.tabs);
     }
     // Register tabs with state
-    tabs[props.storeKey] = tabs[props.storeKey] || {
-      key: props.storeKey,
+    tabs[props.id] = tabs[props.id] || {
+      key: props.id,
       def: props.tabs,
       portal: portals.createHtmlPortalNode(),
       selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
       scrollIntoView: () => props.rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
     };
     useSiteStore.setState({});
-    return () => void delete useSiteStore.getState().tabs[props.storeKey];
+    return () => void delete useSiteStore.getState().tabs[props.id];
   }, [model]);
 
   return <FlexLayout model={model} factory={factory} />
 }
 
 interface Props {
-  storeKey: string;
+  id: string;
   rootRef: React.RefObject<HTMLElement>; // TODO ?
   tabs: TabMeta[];
 }

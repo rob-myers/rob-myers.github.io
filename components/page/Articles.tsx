@@ -10,27 +10,37 @@ export default function Articles({ keys }: {
 }) {
   const root = useRef<HTMLDivElement>(null);
 
-  // Register articles with state
+  // Register articles and anchors with state
   useEffect(()  => {
     const onResize = () => {
       const articles = Array.from(root.current?.children || [])
-        .filter(el => el.classList.contains(articleClassName))
-        .map((el, i) => ({
+        .filter(el => el.classList.contains(articleClassName));
+
+      const anchors = articles.flatMap(x => [x].concat(Array.from(x.children)))
+        .filter(el => el.id);
+      
+      console.log(anchors);
+
+      useSiteStore.setState({
+        articles: lookupFromValues(articles.map((el, i) => ({
           key: keys[i],
           rect: Rect.fromJson(el!.getBoundingClientRect()).delta(window.scrollX, window.scrollY),
-        }));
-      useSiteStore.setState({ articles: lookupFromValues(articles) });
+        }))),
+      });
       useSiteStore.api.updateArticleKey();
     };
+
     window.addEventListener('resize', onResize), onResize();
+
     return () => {
       window.removeEventListener('resize', onResize);
       keys.forEach(key => delete useSiteStore.getState().articles[key]);
+      useSiteStore.setState({});
     };
   }, []);
 
   return (
-    <div ref={root}>
+    <div className="articles" ref={root}>
       {keys.map(key =>
         <Article
           articleKey={key}

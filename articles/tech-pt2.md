@@ -21,9 +21,9 @@ But how do video games simulate these behaviours?
 
 Three systems are often used:
 
-> **Navigation**: _high-level planning e.g. find a route from A to B._
+> **Navigation**: _high-level planning e.g. route from A to B._
 >
-> **Animation**: _realism (e.g. limb movement) and representation (e.g. indicate NPC actions)._
+> **Animation**: _realism (e.g. limb movement) and visual cues by indicating NPC actions._
 >
 > **Physics**: collision detection & force-driven rigid bodies.
 
@@ -34,7 +34,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
 
 <div
   class="tabs"
-  store-key="nav-demo"
+  id="nav-demo-tab"
   height="400"
   enabled="false"
   tabs="[

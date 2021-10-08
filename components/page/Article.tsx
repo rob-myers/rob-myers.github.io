@@ -277,7 +277,7 @@ const articleComponents = {
             height={height}
             tabs={def}
             enabled={props.enabled === 'true'}
-            storeKey={props['store-key']}
+            id={props.id}
           />
         );
       }
