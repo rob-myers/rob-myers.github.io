@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { css } from "goober";
-import { ArticleKey, articlesMeta, navGroups } from "articles/index";
+import { navGroups } from "articles/index";
 import useSiteStore from "store/site.store";
 
 export default function NavItems() {
@@ -21,7 +21,7 @@ export default function NavItems() {
             <li key={key} className={key === articleKey ? 'current' : undefined} >
               <Link
                 href={`${href}#article-${key}`}
-                scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
+                scroll={false}
               >
                 <a title={info}>
                   {label}

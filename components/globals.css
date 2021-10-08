@@ -6,6 +6,10 @@
 }
 
 html {
+  /**
+   * Unsupported by Safari. In future, try polyfill + approach from:
+   * https://gist.github.com/vinaypuppal/b7271ad84a0d69c9cfafaaa83afed199
+   */
   scroll-behavior: smooth;
 }
 
