@@ -21,7 +21,7 @@ export type State = {
 
   readonly api: {
     onLoadArticles: (cb: (state: State) => void) => void;
-    updateArticleKey: (router?: NextRouter) => string | undefined;
+    updateArticleKey: () => void;
   };
 };
 
@@ -34,27 +34,17 @@ const useStore = create<State>(devtools((set, get) => ({
 
   api: {
     onLoadArticles: (cb) => {
-      if (Object.keys(get().articles).length) {
-        cb(get());
-      } else {
+      if (Object.keys(get().articles).length) cb(get());
+      else {
         const unsub = useSiteStore.subscribe(({ articles }) => {
           if (Object.keys(articles).length) cb(get()), unsub();
         });
       }
     },
-    updateArticleKey: (router) => {
-      const article = Object.values(get().articles)
-        .find(x => window.scrollY <= x.rect.bottom);
-
-      if (article) {
-        if (article.key !== get().articleKey) {
-          set({ articleKey: article.key });
-          router?.replace(`${window.location.pathname}#near-${article.key}`);
-        }
-        if (get().targetNavKey) {
-           set({ targetNavKey: null });
-        }
-        return article.key;
+    updateArticleKey: () => {
+      const article = Object.values(get().articles).find(x => window.scrollY <= x.rect.bottom);
+      if (article && article.key !== get().articleKey) {
+        set({ articleKey: article.key });
       }
     },
   },

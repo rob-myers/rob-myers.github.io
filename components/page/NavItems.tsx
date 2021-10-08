@@ -20,7 +20,7 @@ export default function NavItems() {
           {navItems.map(({ key, label, info, href, page }) =>
             <li key={key} className={key === articleKey ? 'current' : undefined} >
               <Link
-                href={`${href}#goto-${key}`}
+                href={`${href}#article-${key}`}
                 scroll={!articleKey || articlesMeta[articleKey]?.page !== page}
               >
                 <a title={info}>
@@ -34,10 +34,6 @@ export default function NavItems() {
 
     </section>
   );
-}
-
-function triggerScroll(navKey: ArticleKey) {
-  setTimeout(() => useSiteStore.setState({ targetNavKey: navKey, navAt: Date.now() }));
 }
 
 const rootCss = css`

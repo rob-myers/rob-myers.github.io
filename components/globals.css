@@ -5,6 +5,10 @@
   --blog-border-width: 10px;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 * {
   box-sizing: border-box;
 }

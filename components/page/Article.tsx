@@ -20,7 +20,10 @@ export default function Article(props: React.PropsWithChildren<{
   }, [props.dateTime]);
 
   return <>
-    <article className={classNames(articleClassName, props.className, articleCss)}>
+    <article
+      id={`article-${props.articleKey}`}
+      className={classNames(articleClassName, props.className, articleCss)}
+    >
       <time dateTime={props.dateTime}>
         {dateText}
       </time>

@@ -27,7 +27,7 @@ Three systems are often used:
 >
 > **Physics**: collision detection & force-driven rigid bodies.
 
-We've [chosen](/blog/1#constraints) not to use a Physics Engine.
+We've [chosen](/blog/1#article-constraints) not to use a Physics Engine.
 
 <!-- Pathfinding is central to Game AI.
 Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors. -->
