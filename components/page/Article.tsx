@@ -216,8 +216,9 @@ const articleCss = css`
 
 const articleComponents = {
   a({ node, href, title, children, ...props}: any) {
+    const newTab = title === '@new-tab';
 
-    if (href?.startsWith('/')) {
+    if (href?.startsWith('/') && !newTab) {
       return <Link href={href}><a title={title}>{children}</a></Link>
     }
 
@@ -226,7 +227,7 @@ const articleComponents = {
         href={href}
         title={title}
 
-        {...['@new-tab'].includes(title) && {
+        {...newTab && {
           className: 'new-tab-link',
           target: '_blank',
           rel: 'noopener',
