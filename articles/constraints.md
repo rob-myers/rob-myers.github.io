@@ -39,7 +39,7 @@ Try entering (or copy-pasting) the commands below.
 
   <div
     class="tabs"
-    id="terminal-demo-tabs"
+    id="tabs-terminal-demo"
     height="300"
     tabs="[
       { key: 'terminal', session: 'test' },
