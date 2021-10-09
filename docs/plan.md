@@ -41,20 +41,23 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- track ids (tabs, headers) in articles for better refresh
 - Avoid reloading tabs onchange markdown via reverse portals
 - Implement front page
 - Show next/prev in navbar
 - Show next/prev at bottom/top of page
+
 - Doors represented via `<rect>`s
 - Create geomorph 101
-- Add GitHub Comments
 - Add missing labels to 302
+
+- Add GitHub Comments
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
+
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+- ✅ track ids (tabs, headers, links) in articles e.g. for better refresh
 - ✅ Fix initial Nav animation (SSR)
 - ✅ Simplify nav e.g. remove `#goto-{...}`
 - ✅ Group nav items by page

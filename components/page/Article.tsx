@@ -243,8 +243,9 @@ const articleComponents = (
 
   a({ node, href, title, children, ...props}: any) {
     const newTab = title === '@new-tab';
+    const command = href = '#command'
 
-    if (!['#', '/'].includes(href?.[0]) || newTab) {
+    if (!['#', '/'].includes(href?.[0]) || command || newTab) {
       return (
         <a href={href} title={title}
   
