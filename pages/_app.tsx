@@ -2,8 +2,13 @@ import { NextComponentType, NextPageContext } from 'next';
 import Head from 'next/head';
 import { AppInitialProps } from 'next/app';
 import { Router } from 'next/router';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+
+import { ResizeObserver } from '@juggle/resize-observer';
+if (typeof window !== 'undefined') {
+  window.ResizeObserver = window.ResizeObserver || ResizeObserver;
+}
 
 import { setup } from 'goober';
 import { shouldForwardProp } from 'goober/should-forward-prop';
@@ -23,6 +28,15 @@ import 'components/code/codemirror/custom-theme.css';
 const queryClient = new QueryClient;
 
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
+
+  useEffect(() => {
+    if (!('scrollBehavior' in document.documentElement.style)) {
+      import('smoothscroll-polyfill').then(x => x.default.polyfill())
+        //@ts-ignore
+        .then(() => import('smoothscroll-anchor-polyfill'));
+    }
+  }, []);
+
   return <>
     <Head>
       <title>
