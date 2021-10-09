@@ -14,10 +14,13 @@ export default function Article(props: React.PropsWithChildren<{
   articleKey: ArticleKey;
   children: string;
 }>) {
+
   const dateText = React.useMemo(() => {
     const d = new Date(props.dateTime);
     return `${d.getDate()}${dayth(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }, [props.dateTime]);
+
+  const components = React.useMemo(() => articleComponents(props.articleKey), [props.articleKey]);
 
   return <>
     <article
@@ -29,7 +32,7 @@ export default function Article(props: React.PropsWithChildren<{
       </time>
       <Markdown
         children={props.children}
-        components={articleComponents}
+        components={components}
       />
     </article>
     <Sep/>
@@ -150,6 +153,11 @@ const articleCss = css`
     @media(max-width: 600px) {
       font-size: 1.3em;
     }
+    position: relative;
+    > div.anchor {
+      position: absolute;
+      top: -48px;
+    }
   }
 
   p {
@@ -214,7 +222,8 @@ const articleCss = css`
 
 `;
 
-const articleComponents = {
+const articleComponents = (articleKey: string) => ({
+
   a({ node, href, title, children, ...props}: any) {
     const newTab = title === '@new-tab';
 
@@ -286,7 +295,34 @@ const articleComponents = {
     }
   },
 
-};
+  h2({ node, children, ...props }: any) {
+    return (
+      <h2 id={`article-${articleKey}`} {...props}>
+        <Link href={`#article-${articleKey}`}>
+          <a>{children}</a>
+        </Link>
+      </h2>
+    );
+  },
+
+  h3({ node, children, ...props }: any) {
+    const id = React.useMemo(() =>
+      `part-${articleKey}-${
+        React.Children.toArray(children)[0]
+      }`.toLowerCase().replace(/\s/g, '-')
+    , []);
+
+    return (
+      <h3 {...props}>
+        <div id={id} className="anchor" />
+        <Link href={`#${id}`}>
+          <a>{children}</a>
+        </Link>
+      </h3>
+    );
+  }
+
+});
 
 const months = [
   'Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec',

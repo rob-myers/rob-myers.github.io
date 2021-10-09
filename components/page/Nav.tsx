@@ -1,4 +1,5 @@
-import React, { useLayoutEffect } from 'react';
+import React from 'react';
+import debounce from 'debounce';
 import classNames from 'classnames';
 import { css } from 'goober';
 import useSiteStore from 'store/site.store';
@@ -7,9 +8,9 @@ import NavItems from './NavItems';
 export default function Nav() {
   const [navOpen, setNavOpen] = React.useState(false);
 
-  useLayoutEffect(() => {
+  React.useEffect(() => {
     // Detect currently viewed article
-    const onScroll = () => useSiteStore.api.updateArticleKey();
+    const onScroll = debounce(() => useSiteStore.api.updateArticleKey(), 30);
     window.addEventListener('scroll', onScroll);
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
