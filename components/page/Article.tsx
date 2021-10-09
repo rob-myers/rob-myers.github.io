@@ -79,8 +79,8 @@ const articleCss = css`
     background-image: url('/icon/ext-link-icon.svg');
     background-size: 13px 13px;
     height: 13px;
-    width: 12px;
-    margin-left: 4px;
+    width: 13px;
+    margin-left: 2px;
   }
 
   span.cmd {
@@ -236,10 +236,7 @@ const articleCss = css`
 
 `;
 
-const articleComponents = (
-  articleKey: string,
-  router: NextRouter,
-) => ({
+const articleComponents = (articleKey: string, router: NextRouter) => ({
 
   a({ node, href, title, children, ...props}: any) {
     const newTab = (title === '@new-tab');
@@ -290,10 +287,7 @@ const articleComponents = (
     }
 
     const id = React.useMemo(() =>
-      `link-${
-        React.Children.toArray(children)[0]
-          .toString().toLowerCase().replace(/\s/g, '-')
-      }--${articleKey}`
+      `link-${childrenToKebabText(children)}--${articleKey}`
     , []);
 
     return (
@@ -363,6 +357,11 @@ const articleComponents = (
   }
 
 });
+
+function childrenToKebabText(children: React.ReactChildren) {
+  return React.Children.toArray(children)[0]
+    .toString().toLowerCase().replace(/\s/g, '-');
+}
 
 const months = [
   'Jan', 'Feb', 'March', 'April', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec',
