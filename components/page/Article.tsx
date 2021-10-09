@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { NextRouter, useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
 import useSiteStore from 'store/site.store';
@@ -15,12 +16,14 @@ export default function Article(props: React.PropsWithChildren<{
   children: string;
 }>) {
 
+  const router = useRouter();
+
   const dateText = React.useMemo(() => {
     const d = new Date(props.dateTime);
     return `${d.getDate()}${dayth(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }, [props.dateTime]);
 
-  const components = React.useMemo(() => articleComponents(props.articleKey), [props.articleKey]);
+  const components = React.useMemo(() => articleComponents(props.articleKey, router), [props.articleKey]);
 
   return <>
     <article
@@ -59,8 +62,16 @@ const articleCss = css`
     border: none;
   }
 
-  a code {
-    color: unset;
+  a {
+    code {
+      color: unset;
+    }
+    display: inline-block;
+    position: relative;
+    > div.anchor {
+      position: absolute;
+      top: -32px;
+    }
   }
   a.new-tab-link::after {
     display: inline-block;
@@ -225,59 +236,82 @@ const articleCss = css`
 
 `;
 
-const articleComponents = (articleKey: string) => ({
+const articleComponents = (
+  articleKey: string,
+  router: NextRouter,
+) => ({
 
   a({ node, href, title, children, ...props}: any) {
     const newTab = title === '@new-tab';
 
-    if (href?.startsWith('/') && !newTab) {
-      return <Link href={href}><a title={title}>{children}</a></Link>
+    if (!['#', '/'].includes(href?.[0]) || newTab) {
+      return (
+        <a href={href} title={title}
+  
+          {...newTab && {
+            className: 'new-tab-link',
+            target: '_blank',
+            rel: 'noopener',
+          }}
+  
+          {...href === '#command' && {
+            onClick: (e) => {
+              e.preventDefault();
+              const [cmd, ...args] = title.split(' ');
+              switch (cmd) {
+                case 'open-tab': {
+                  const [tabsKey, tabKey] = args;
+                  const tabs = useSiteStore.getState().tabs[tabsKey];
+                  if (tabs) {// in case tabs not enabled yet
+                    tabs.selectTab(tabKey),
+                    tabs.scrollIntoView();
+                  }
+                  break;
+                }
+                case 'sigkill': {
+                  import('store/session.store').then(({ default: useSessionStore }) => {
+                    const { ttyShell } = useSessionStore.api.getSession(args[0])
+                    ttyShell.xterm.sendSigKill();
+                  });
+                  break;
+                }
+                default:
+                  console.warn('link triggered unrecognised command:', title);
+              }
+            },
+          }}
+  
+          {...props}
+        >
+          {children}
+        </a>
+      );
     }
 
+    const id = React.useMemo(() =>
+      `link-${
+        React.Children.toArray(children)[0]
+          .toString().toLowerCase().replace(/\s/g, '-')
+      }--${articleKey}`
+    , []);
+
     return (
-      <a
-        href={href}
-        title={title}
-
-        {...newTab && {
-          className: 'new-tab-link',
-          target: '_blank',
-          rel: 'noopener',
-        }}
-
-        {...href === '#command' && {
-          onClick: (e) => {
+      <Link href={href}>
+        <a
+          title={title}
+          onClick={(e) => {
             e.preventDefault();
-            const [cmd, ...args] = title.split(' ');
-            switch (cmd) {
-              case 'open-tab': {
-                const [tabsKey, tabKey] = args;
-                const tabs = useSiteStore.getState().tabs[tabsKey];
-                if (tabs) {// in case tabs not enabled yet 
-                  tabs.selectTab(tabKey),
-                  tabs.scrollIntoView();
-                }
-                break;
-              }
-              case 'sigkill': {
-                import('store/session.store').then(({ default: useSessionStore }) => {
-                  const { ttyShell } = useSessionStore.api.getSession(args[0])
-                  ttyShell.xterm.sendSigKill();
-                });
-                break;
-              }
-              default:
-                console.warn('link triggered unrecognised command:', title);
-            }
-          },
-        }}
-
-        {...props}
-      >
-        {children}
-      </a>
+            // Store this link as current anchor
+            router.replace(`#${id}`);
+            // Resume default behaviour
+            router.push(href);
+          }}
+        >
+          <div id={id} className="anchor" />
+          {children}
+        </a>
+      </Link>
     );
-
   },
 
   div(props: any) {
@@ -311,7 +345,7 @@ const articleComponents = (articleKey: string) => ({
 
   h3({ node, children, ...props }: any) {
     const id = React.useMemo(() =>
-      `article-${
+      `${
         React.Children.toArray(children)[0]
           .toString().toLowerCase().replace(/\s/g, '-')
       }--${articleKey}`

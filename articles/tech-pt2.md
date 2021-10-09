@@ -1,7 +1,7 @@
 ## Technology (ai)
 
 Thus far we've described our objective, constrained our approach, and listed the technologies we'll use.
-Having outlined our chosen notion of JavaScript component,
+Having discussed [JavaScript components](#react-and-preact--tech-1),
 we turn to Game AI i.e. _navigation_ and _raycasting_.
 
 ### Navigation
