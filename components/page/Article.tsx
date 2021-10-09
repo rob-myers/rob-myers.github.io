@@ -242,7 +242,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
     const newTab = (title === '@new-tab');
     const command = (href === '#command');
 
-    if (!['#', '/'].includes(href?.[0]) || command || newTab) {
+    if (href?.startsWith('http') || command || newTab) {
       return (
         <a href={href} title={title}
   
