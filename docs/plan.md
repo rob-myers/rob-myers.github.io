@@ -45,6 +45,7 @@ Each __TODO__ should either:
 - Implement front page
 - Show next/prev in navbar
 - Show next/prev at bottom/top of page
+- Should focus Tab on interact
 
 - Doors represented via `<rect>`s
 - Create geomorph 101

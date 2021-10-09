@@ -242,8 +242,8 @@ const articleComponents = (
 ) => ({
 
   a({ node, href, title, children, ...props}: any) {
-    const newTab = title === '@new-tab';
-    const command = href = '#command'
+    const newTab = (title === '@new-tab');
+    const command = (href === '#command');
 
     if (!['#', '/'].includes(href?.[0]) || command || newTab) {
       return (
@@ -302,8 +302,8 @@ const articleComponents = (
           title={title}
           onClick={(e) => {
             e.preventDefault();
-            // Store this link as current anchor
-            router.replace(`#${id}`);
+            // Store this link so can go back
+            router.push(`#${id}`);
             // Resume default behaviour
             router.push(href);
           }}
