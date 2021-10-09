@@ -71,7 +71,6 @@ const navCss = css`
     background: rgba(0, 0, 0, .4);
   }
   @media(max-width: 600px) {
-    
     &:not(.closed) > .handle-bg {
       height: 100%;
       background: rgba(0, 0, 0, .5);
@@ -100,7 +99,7 @@ const fillerCss = css`
     min-width: 0;
   }
 
-  @media(max-width: 600px) {
+  @media(max-width: 1280px) {
     display: none;
   }
 `;

@@ -133,7 +133,7 @@ const articleCss = css`
     border-radius: 8px;
     margin: 48px 0;
     @media(max-width: 600px) {
-      margin: 24px 0 16px;
+      margin: 32px 0;
     }
   }
 
@@ -301,7 +301,7 @@ const articleComponents = (articleKey: string) => ({
 
   h2({ node, children, ...props }: any) {
     return (
-      <h2 id={`article-${articleKey}`} {...props}>
+      <h2 {...props}>
         <Link href={`#article-${articleKey}`}>
           <a>{children}</a>
         </Link>

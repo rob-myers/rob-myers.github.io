@@ -68,7 +68,7 @@ const titleCss = css`
     
     @media(max-width: 600px) {
       font-size: 1rem;
-      padding: 20px 0 20px 8px;
+      padding: 20px 0 20px 4px;
       color: #222;
     }
   }
