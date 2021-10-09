@@ -68,7 +68,7 @@ const articleCss = css`
     background-image: url('/icon/ext-link-icon.svg');
     background-size: 13px 13px;
     height: 13px;
-    width: 13px;
+    width: 12px;
     margin-left: 4px;
   }
 
@@ -140,6 +140,9 @@ const articleCss = css`
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 400;
+    a {
+      color: #008;
+    }
   }
   h2 {
     font-size: 2.8rem;
@@ -268,6 +271,7 @@ const articleComponents = (articleKey: string) => ({
             }
           },
         }}
+
         {...props}
       >
         {children}
@@ -307,9 +311,10 @@ const articleComponents = (articleKey: string) => ({
 
   h3({ node, children, ...props }: any) {
     const id = React.useMemo(() =>
-      `part-${articleKey}-${
+      `article-${
         React.Children.toArray(children)[0]
-      }`.toLowerCase().replace(/\s/g, '-')
+          .toString().toLowerCase().replace(/\s/g, '-')
+      }--${articleKey}`
     , []);
 
     return (
