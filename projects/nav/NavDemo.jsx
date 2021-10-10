@@ -48,11 +48,17 @@ export default function NavDemo() {
     <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}>
       <g
         className={rootCss}
-        onPointerDown={_ => lastDownAt.current = Date.now()}
-        onPointerUp={e => {
-          if (Date.now() - lastDownAt.current < 200) {
-            const point = getSvgPos(projectSvgEvt(e));
-            setDots(dots.slice(0, 1).concat(point));
+        ref={(el) => {
+          if (el) {// Use native events so polyfill works
+            el.addEventListener('pointerdown', () => {
+              lastDownAt.current = Date.now();
+            });
+            el.addEventListener('pointerup', (e) => {
+              if (Date.now() - lastDownAt.current < 200) {
+                const point = getSvgPos(projectSvgEvt(e));
+                setDots(dots.slice(0, 1).concat(point));
+              }
+            });
           }
         }}
       >

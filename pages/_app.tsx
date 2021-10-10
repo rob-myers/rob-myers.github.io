@@ -18,6 +18,9 @@ if (typeof window !== 'undefined') {
       .then(x => x.default.polyfill())
       .then(() => import('smoothscroll-anchor-polyfill'));
   }
+  if (!('onpointerdown' in document.documentElement)) {
+    import('pepjs');
+  }
 }
 //#endregion
 
