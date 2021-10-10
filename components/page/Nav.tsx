@@ -38,6 +38,9 @@ const sidebarWidth = 256;
 const handleWidth = 30;
 
 const navCss = css`
+  position: fixed;
+  z-index: 20;
+  height: calc(100% + 200px);
   width: ${sidebarWidth}px;
 
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
@@ -49,10 +52,6 @@ const navCss = css`
   opacity: 0.975;
   /** https://stackoverflow.com/questions/21003535/anyway-to-prevent-the-blue-highlighting-of-elements-in-chrome-when-clicking-quic  */
   -webkit-tap-highlight-color: transparent;
-  
-  position: fixed;
-  z-index: 20;
-  height: calc(100% + 200px);
   
   transition: left 500ms ease;
   &.open {

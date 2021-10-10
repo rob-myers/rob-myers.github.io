@@ -2,13 +2,24 @@ import { NextComponentType, NextPageContext } from 'next';
 import Head from 'next/head';
 import { AppInitialProps } from 'next/app';
 import { Router } from 'next/router';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
+//#region polyfill
 import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
-  window.ResizeObserver = window.ResizeObserver || ResizeObserver;
+  if (!window.ResizeObserver) {
+    window.ResizeObserver = ResizeObserver
+  }
+  if (!('scrollBehavior' in document.documentElement.style)) {
+    // For Safari, and combined with NextJS patch
+    // https://github.com/rob-myers/rob-myers.github.io/commit/2272840c2e62c58482cff884a77fa9721b943f32
+    import('smoothscroll-polyfill')
+      .then(x => x.default.polyfill())
+      .then(() => import('smoothscroll-anchor-polyfill'));
+  }
 }
+//#endregion
 
 import { setup } from 'goober';
 import { shouldForwardProp } from 'goober/should-forward-prop';
@@ -28,17 +39,6 @@ import 'components/code/codemirror/custom-theme.css';
 const queryClient = new QueryClient;
 
 const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
-
-  useEffect(() => {
-    if (!('scrollBehavior' in document.documentElement.style)) {
-      // For Safari, and combined with NextJS patch
-      // https://github.com/rob-myers/rob-myers.github.io/commit/2272840c2e62c58482cff884a77fa9721b943f32
-      import('smoothscroll-polyfill')
-        .then(x => x.default.polyfill())
-        .then(() => import('smoothscroll-anchor-polyfill'));
-    }
-  }, []);
-
   return <>
     <Head>
       <title>
