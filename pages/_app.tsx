@@ -31,8 +31,10 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
 
   useEffect(() => {
     if (!('scrollBehavior' in document.documentElement.style)) {
-      import('smoothscroll-polyfill').then(x => x.default.polyfill())
-        //@ts-ignore
+      // For Safari, and combined with NextJS patch
+      // https://github.com/rob-myers/rob-myers.github.io/commit/2272840c2e62c58482cff884a77fa9721b943f32
+      import('smoothscroll-polyfill')
+        .then(x => x.default.polyfill())
         .then(() => import('smoothscroll-anchor-polyfill'));
     }
   }, []);

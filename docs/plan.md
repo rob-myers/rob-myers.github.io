@@ -41,6 +41,8 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- 404 page too narrow
+
 - Avoid reloading tabs onchange markdown via reverse portals
 - Implement front page
 - Show next/prev in navbar
