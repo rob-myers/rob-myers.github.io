@@ -1,7 +1,7 @@
 ## Technology (ai)
 
 So far we've described our objective, constrained our approach, and listed the technologies we'll use.
-Having discussed [JavaScript components](#tech-1--react-and-preact),
+Having discussed [JavaScript components](2#tech-1--react-and-preact),
 we turn to Game AI.
 
 ### Overview
@@ -20,7 +20,7 @@ There are three standard systems:
 > **Physics**: collision detection, force-driven rigid bodies, raycasting.
 
 Navigation is of central importance and will be discussed shortly.
-Concerning animation, we're not going to obsess over realism.
+Concerning animation, we're definitely not going to obsess over realism.
 Nevertheless we'll need visual cues to indicate NPC actions,
 and a _sense of flow_ via interdependent concurrent animations.
 As for a physics engine, we [already mentioned](1#constraints--game-mechanics) we won't be using one. Instead:

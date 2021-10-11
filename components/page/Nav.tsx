@@ -4,6 +4,7 @@ import classNames from 'classnames';
 import { css } from 'goober';
 import useSiteStore from 'store/site.store';
 import NavItems from './NavItems';
+import NavBar from './NavBar';
 
 export default function Nav() {
   const [navOpen, setNavOpen] = React.useState(false);
@@ -26,6 +27,7 @@ export default function Nav() {
     >
       <div className="handle-bg" />
       <div className="handle">{navOpen ? '<' : '>'}</div>
+      <NavBar/>
       <NavItems/>
     </nav>
     <div

@@ -70,7 +70,7 @@ const articleCss = css`
     position: relative;
     > div.anchor {
       position: absolute;
-      top: -32px;
+      top: -96px;
     }
   }
   a.new-tab-link::after {

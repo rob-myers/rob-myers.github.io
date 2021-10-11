@@ -17,14 +17,14 @@ export default function NavItems() {
 
       {navGroups.map((navItems, i) =>
         <ul key={i}>
-          {navItems.map(({ key, label, info, part }) =>
+          {navItems.map(({ key, label, info, part }, i) =>
             <li key={key} className={key === articleKey ? 'current' : undefined} >
               <Link
                 href={`${pagePrefix}${part}#article-${key}`}
                 scroll={false}
               >
                 <a title={info}>
-                  {label}
+                  {part}{String.fromCharCode(97 + i)} {label}
                 </a>
               </Link>
             </li>
