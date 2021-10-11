@@ -6,8 +6,9 @@ import { Rect } from "projects/geom/rect";
 import Article, { articleClassName } from "./Article";
 import { lookupFromValues } from "model/generic.model";
 
-export default function Articles({ keys }: {
+export default function Articles({ keys, markdown }: {
   keys: ArticleKey[];
+  markdown: Partial<Record<ArticleKey, string>>;
 }) {
   const root = useRef<HTMLDivElement>();
   const [ref, rect] = useMeasure({ debounce: 30, scroll: true });
@@ -39,7 +40,7 @@ export default function Articles({ keys }: {
         <Article
           articleKey={key}
           dateTime={articlesMeta[key].timestamp}
-          children={articlesMeta[key].markdown}
+          children={markdown[key] || ''}
         />
       )}
     </div>

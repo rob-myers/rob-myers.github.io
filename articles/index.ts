@@ -1,22 +1,11 @@
-import testMd from 'articles/test.md';
-import comingSoonMd from 'articles/coming-soon.md';
-
-import objectiveMd from 'articles/objective.md';
-import constraintsMd from 'articles/constraints.md';
-
-import technologyMd from 'articles/technology.md';
-import techPt1Md from 'articles/tech-pt1.md';
-import techPt2Md from 'articles/tech-pt2.md';
-import techPt3Md from 'articles/tech-pt3.md';
-
-import geomorphsMd from 'articles/geomorphs.md';
-
+/**
+ * Each key corresponds to filename `articles/${key}.md`.
+ */
 export const articlesMeta = {
   test: {
     key: 'test',
     label: 'test',
     info: 'Test page for development purposes',
-    markdown: testMd,
     timestamp: '2021-07-19',
     part: -1,
   },
@@ -24,7 +13,6 @@ export const articlesMeta = {
     key: 'coming-soon',
     label: 'coming-soon',
     info: 'Placeholder on frontpage',
-    markdown: comingSoonMd,
     timestamp: '2021-07-19',
     part: -1,
   },
@@ -33,7 +21,6 @@ export const articlesMeta = {
     key: 'objective',
     label: 'objective',
     info: 'We outline our overall objective',
-    markdown: objectiveMd,
     timestamp: '2021-07-19',
     part: 1,
   },
@@ -41,7 +28,6 @@ export const articlesMeta = {
     key: 'constraints',
     label: 'constraints',
     info: 'We constrain the tech we\'ll use, the low-level game mechanics, and also the backdrop',
-    markdown: constraintsMd,
     timestamp: '2021-07-19',
     part: 1,
   },
@@ -49,7 +35,6 @@ export const articlesMeta = {
     key: 'technology',
     label: 'technology',
     info: 'We list the tech we\'ll use and discuss JavaScript components',
-    markdown: technologyMd,
     timestamp: '2021-07-19',
     part: 2,
   },
@@ -57,7 +42,6 @@ export const articlesMeta = {
     key: 'tech-1',
     label: 'tech: js',
     info: 'Our choice of JavaScript components',
-    markdown: techPt1Md,
     timestamp: '2021-07-19',
     part: 2,
   },
@@ -65,7 +49,6 @@ export const articlesMeta = {
     key: 'tech-2',
     label: 'tech: ai',
     info: 'We describe tech directly related to game mechanics',
-    markdown: techPt2Md,
     timestamp: '2021-07-19',
     part: 3,
   },
@@ -73,7 +56,6 @@ export const articlesMeta = {
     key: 'tech-3',
     label: 'tech: dev',
     info: 'Concerning our dev env and in-browser terminal',
-    markdown: techPt3Md,
     timestamp: '2021-07-19',
     part: 3,
   },
@@ -81,7 +63,6 @@ export const articlesMeta = {
     key: 'geomorphs',
     label: 'geomorphs',
     info: 'Concerning our approach to Starship Geomorphs',
-    markdown: geomorphsMd,
     timestamp: '2021-07-19',
     part: 4,
   },

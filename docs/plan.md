@@ -41,14 +41,14 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- 404 page too narrow
-- add to history on Tabs interact
+- import code/components async and on demand
+- custom 404 page
+- anchor and focus on Tabs interact
 
 - Avoid reloading tabs onchange markdown via reverse portals
 - Implement front page
 - Show next/prev in navbar
 - Show next/prev at bottom/top of page
-- Should focus Tab on interact
 
 - Doors represented via `<rect>`s
 - Create geomorph 101
@@ -61,6 +61,8 @@ Each __TODO__ should either:
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+
+- ✅ import markdown separately into each page
 - ✅ track ids (tabs, headers, links) in articles e.g. for better refresh
 - ✅ Fix initial Nav animation (SSR)
 - ✅ Simplify nav e.g. remove `#goto-{...}`
