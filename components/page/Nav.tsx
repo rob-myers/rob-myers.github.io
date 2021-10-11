@@ -26,6 +26,7 @@ export default function Nav() {
       }}
     >
       <div className="handle-bg" />
+      <div className="article-overlay" />
       <div className="handle">{navOpen ? '<' : '>'}</div>
       <NavBar/>
       <NavItems/>
@@ -63,21 +64,20 @@ const navCss = css`
     left: -${sidebarWidth}px;
   }
 
-  > .handle-bg {
+  > .handle-bg, .article-overlay {
     position: absolute;
     top: 0;
     left: ${sidebarWidth}px;
     width: calc(${sidebarWidth}px + 100vw);
     height: 32px;
-    background: rgba(0, 0, 0, .4);
+    background: rgba(0, 0, 0, .25);
   }
   @media(max-width: 600px) {
-    &:not(.closed) > .handle-bg {
+    &:not(.closed) > .article-overlay {
       height: 100%;
       background: rgba(0, 0, 0, .5);
     }
   }
-  
   > .handle {
     background: rgba(120, 0, 0, 1);
     position: absolute;
