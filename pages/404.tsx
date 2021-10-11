@@ -17,12 +17,16 @@ The requested path was not found:
 }
 
 const rootCss = css`
-  background: #444;
-  color: white;
-  padding: 32px 32px 64px 32px;
+  background: #aaa;
+  padding: 32px;
+  min-height: 300px;
 
+  h2 {
+    font-weight: 300;
+    font-size: 2rem;
+  }
   code {
-    color: #aaa;
+    color: #a00;
     font-size: larger;
   }
 `;
