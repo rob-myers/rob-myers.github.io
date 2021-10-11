@@ -155,6 +155,12 @@ const articleCss = css`
     @media(max-width: 600px) {
       margin: 32px 0;
     }
+
+    position: relative;
+    > div.anchor {
+      position: absolute;
+      top: -64px;
+    }
   }
 
   h1, h2, h3, h4 {
@@ -176,6 +182,7 @@ const articleCss = css`
     @media(max-width: 600px) {
       font-size: 1.3em;
     }
+
     position: relative;
     > div.anchor {
       position: absolute;
@@ -264,14 +271,17 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
           {...href === '#command' && {
             onClick: (e) => {
               e.preventDefault();
+
               const [cmd, ...args] = title.split(' ');
+              console.log(cmd, args);
+
               switch (cmd) {
                 case 'open-tab': {
                   const [tabsKey, tabKey] = args;
                   const tabs = useSiteStore.getState().tabs[tabsKey];
                   if (tabs) {// in case tabs not enabled yet
                     tabs.selectTab(tabKey),
-                    tabs.scrollIntoView();
+                    router.push(`#${tabsKey}`);
                   }
                   break;
                 }
@@ -349,12 +359,11 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
   },
 
   h3({ node, children, ...props }: any) {
-    const id = React.useMemo(() =>
-      `${
-        React.Children.toArray(children)[0]
-          .toString().toLowerCase().replace(/\s/g, '-')
-      }--${articleKey}`
-    , []);
+    const id = React.useMemo(() => `${articleKey}--${
+      React.Children.toArray(children)[0]
+        .toString().toLowerCase().replace(/\s/g, '-')
+    }`
+  , []);
 
     return (
       <h3 {...props}>

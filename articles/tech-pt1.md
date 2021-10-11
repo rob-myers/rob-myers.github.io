@@ -30,7 +30,7 @@ Let's consider an example, a pannable and zoomable grid (also [on CodeSandbox](h
   ]"
 ></div>
 
-The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom code--panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
+The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab tabs-panzoom code--panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
 - _PanZoom_ renders an SVG consisting of its children (the Geomorph image provided in _PanZoomDemo_) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
@@ -53,7 +53,7 @@ Here's a whirlwind overview.
 
 - React devs use a grammatical extension of JS by XML called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript) "@new-tab").
 - React applications are built by composing React function components, using the XML syntax for their return value.
-- Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` ([example/jsx-to-js.jsx](#command "open-tab jsx-to-js")).
+- Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` (see [example/jsx-to-js.jsx](#command "open-tab tabs-jsx-to-js") below).
 - This website actually uses _Preact_, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js "@new-tab"),
   and creates Preact virtual DOM nodes.
@@ -126,9 +126,9 @@ Instead we directly mutate the DOM via:
 
 <!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again code--geom/rect.js"). -->
 
-As far as React is concerned nothing has changed.
-Also, if React renders for another reason (e.g. an ancestral render), it'll use the mutated `state` to set the viewBox attribute (so, no change).
-Why bother though?
+As far as React is concerned, nothing has changed.
+Moreover if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (so, no change).
+Why bother avoiding these virtual DOM computations though?
 To avoid needlessly recomputing `<Grid />` and `children` whenever we pan or zoom.
 Our game may contain many elements, and we'd rather not recompute their virtual DOM many times per second.
 

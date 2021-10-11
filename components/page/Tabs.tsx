@@ -16,10 +16,10 @@ export default function Tabs(props: Props) {
 
   return (
     <figure
-      id={props.id}
       ref={rootRef}
       className={classNames("tabs", "scrollable", rootCss(props.height))}
     >
+      <div id={props.id} className="anchor" />
       <div className={overlayCss(props.height)}>
         {colour !== 'black' && (
           <Layout
