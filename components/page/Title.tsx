@@ -6,7 +6,6 @@ import Markdown from './Markdown';
 export default function Title() {
   return (
     <header className={classNames('title', titleCss)}>
-      <div className="top-block" />
       <Markdown components={titleComponents} children={`
 # Rogue Markup
 
@@ -32,7 +31,7 @@ const titleComponents = {
 
 const titleCss = css`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-  
+
   @media(max-width: 600px) {
     padding-left: 8px;
     border-bottom: 2px solid #999;
