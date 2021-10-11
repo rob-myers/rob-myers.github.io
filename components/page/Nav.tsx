@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { css } from 'goober';
 import useSiteStore from 'store/site.store';
 import NavItems from './NavItems';
-import NavBar from './NavBar';
 
 export default function Nav() {
   const [navOpen, setNavOpen] = React.useState(false);
@@ -16,25 +15,24 @@ export default function Nav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  return <>
-    <nav
-      className={classNames(navCss, navOpen ? 'open' : 'closed')}
-      onClick={(e) => {
-        e.stopPropagation();
-        if (e.target instanceof HTMLAnchorElement) return;
-        setNavOpen(!navOpen);
-      }}
-    >
-      <div className="handle-bg" />
-      <div className="article-overlay" />
-      <div className="handle">{navOpen ? '<' : '>'}</div>
-      <NavBar/>
-      <NavItems/>
-    </nav>
-    <div
-      className={classNames(fillerCss, !navOpen && 'closed')}
-    />
-  </>;
+  return (
+    <>
+      <nav
+        className={classNames(navCss, navOpen ? 'open' : 'closed')}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (e.target instanceof HTMLAnchorElement) return;
+          setNavOpen(!navOpen);
+        }}
+      >
+        <div className="handle-bg" />
+        <div className="article-overlay" />
+        <div className="handle">{navOpen ? '<' : '>'}</div>
+        <NavItems/>
+      </nav>
+      <FillBar navOpen={navOpen} />
+    </>
+  );
 }
 
 const sidebarWidth = 256;
@@ -68,7 +66,7 @@ const navCss = css`
     position: absolute;
     top: 0;
     left: ${sidebarWidth}px;
-    width: calc(${sidebarWidth}px + 100vw);
+    width: 100vw;
     height: 32px;
     background: rgba(0, 0, 0, .25);
   }
@@ -92,6 +90,12 @@ const navCss = css`
   }
 
 `;
+
+function FillBar({ navOpen } : { navOpen: boolean }) {
+  return (
+    <div className={classNames(fillerCss, !navOpen && 'closed')} />
+  );
+}
 
 const fillerCss = css`
   min-width: ${sidebarWidth}px;
