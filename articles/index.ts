@@ -18,8 +18,7 @@ export const articlesMeta = {
     info: 'Test page for development purposes',
     markdown: testMd,
     timestamp: '2021-07-19',
-    page: -1,
-    href: '',
+    part: -1,
   },
   'coming-soon': {
     key: 'coming-soon',
@@ -27,8 +26,7 @@ export const articlesMeta = {
     info: 'Placeholder on frontpage',
     markdown: comingSoonMd,
     timestamp: '2021-07-19',
-    page: -1,
-    href: '',
+    part: -1,
   },
 
   objective: {
@@ -37,8 +35,7 @@ export const articlesMeta = {
     info: 'We outline our overall objective',
     markdown: objectiveMd,
     timestamp: '2021-07-19',
-    page: 1,
-    href: '/blog/1',
+    part: 1,
   },
   constraints: {
     key: 'constraints',
@@ -46,8 +43,7 @@ export const articlesMeta = {
     info: 'We constrain the tech we\'ll use, the low-level game mechanics, and also the backdrop',
     markdown: constraintsMd,
     timestamp: '2021-07-19',
-    page: 1,
-    href: '/blog/1',
+    part: 1,
   },
   technology: {
     key: 'technology',
@@ -55,8 +51,7 @@ export const articlesMeta = {
     info: 'We list the tech we\'ll use and discuss JavaScript components',
     markdown: technologyMd,
     timestamp: '2021-07-19',
-    page: 1,
-    href: '/blog/1',
+    part: 1,
   },
   'tech-1': {
     key: 'tech-1',
@@ -64,8 +59,7 @@ export const articlesMeta = {
     info: 'Our choice of JavaScript components',
     markdown: techPt1Md,
     timestamp: '2021-07-19',
-    page: 2,
-    href: '/blog/2',
+    part: 2,
   },
   'tech-2': {
     key: 'tech-2',
@@ -73,8 +67,7 @@ export const articlesMeta = {
     info: 'We describe tech directly related to game mechanics',
     markdown: techPt2Md,
     timestamp: '2021-07-19',
-    page: 2,
-    href: '/blog/2',
+    part: 2,
   },
   'tech-3': {
     key: 'tech-3',
@@ -82,8 +75,7 @@ export const articlesMeta = {
     info: 'Concerning our dev env and in-browser terminal',
     markdown: techPt3Md,
     timestamp: '2021-07-19',
-    page: 2,
-    href: '/blog/2',
+    part: 2,
   },
   geomorphs: {
     key: 'geomorphs',
@@ -91,8 +83,7 @@ export const articlesMeta = {
     info: 'Concerning our approach to Starship Geomorphs',
     markdown: geomorphsMd,
     timestamp: '2021-07-19',
-    page: 3,
-    href: '/blog/3',
+    part: 3,
   },
 } as const;
 
@@ -101,9 +92,11 @@ export type ArticleKey = keyof typeof articlesMeta;
 export type ArticleMeta = typeof articlesMeta[ArticleKey];
 
 export const navGroups = Object.values(articlesMeta)
-  .filter((x) => x.page > 0 && x.href)
+  .filter((x) => x.part > 0)
   .reduce((agg, item) => {
-    (agg[item.page] = agg[item.page] || []).push(item);
+    (agg[item.part] = agg[item.part] || []).push(item);
     return agg;
   }, [] as ArticleMeta[][],
 );
+
+export const pagePrefix = '/part/';

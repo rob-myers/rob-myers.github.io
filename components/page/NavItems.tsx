@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { css } from "goober";
-import { navGroups } from "articles/index";
+import { navGroups, pagePrefix } from "articles/index";
 import useSiteStore from "store/site.store";
 
 export default function NavItems() {
@@ -17,10 +17,10 @@ export default function NavItems() {
 
       {navGroups.map((navItems, i) =>
         <ul key={i}>
-          {navItems.map(({ key, label, info, href, page }) =>
+          {navItems.map(({ key, label, info, part }) =>
             <li key={key} className={key === articleKey ? 'current' : undefined} >
               <Link
-                href={`${href}#article-${key}`}
+                href={`${pagePrefix}${part}#article-${key}`}
                 scroll={false}
               >
                 <a title={info}>
