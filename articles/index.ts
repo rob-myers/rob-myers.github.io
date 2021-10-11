@@ -51,7 +51,7 @@ export const articlesMeta = {
     info: 'We list the tech we\'ll use and discuss JavaScript components',
     markdown: technologyMd,
     timestamp: '2021-07-19',
-    part: 1,
+    part: 2,
   },
   'tech-1': {
     key: 'tech-1',
@@ -67,7 +67,7 @@ export const articlesMeta = {
     info: 'We describe tech directly related to game mechanics',
     markdown: techPt2Md,
     timestamp: '2021-07-19',
-    part: 2,
+    part: 3,
   },
   'tech-3': {
     key: 'tech-3',
@@ -75,7 +75,7 @@ export const articlesMeta = {
     info: 'Concerning our dev env and in-browser terminal',
     markdown: techPt3Md,
     timestamp: '2021-07-19',
-    part: 2,
+    part: 3,
   },
   geomorphs: {
     key: 'geomorphs',
@@ -83,7 +83,7 @@ export const articlesMeta = {
     info: 'Concerning our approach to Starship Geomorphs',
     markdown: geomorphsMd,
     timestamp: '2021-07-19',
-    part: 3,
+    part: 4,
   },
 } as const;
 

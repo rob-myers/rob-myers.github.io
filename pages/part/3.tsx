@@ -1,12 +1,5 @@
-import Main from 'components/page/Main';
-import Articles from 'components/page/Articles';
+import Part from 'components/page/Part';
 
-export default function Part() {
-  return (
-    <Main>
-      <Articles keys={[
-        'geomorphs',
-      ]} />
-    </Main>
-  );
+export default function Page() {
+  return <Part part={3} />;
 }
