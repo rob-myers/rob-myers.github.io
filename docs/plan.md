@@ -42,7 +42,6 @@ Each __TODO__ should either:
 ## TODO (unsorted)
 
 - import code/components async and on demand
-- custom 404 page
 - anchor and focus on Tabs interact
 
 - Avoid reloading tabs onchange markdown via reverse portals
@@ -62,6 +61,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ basic custom 404 page
 - ✅ import markdown separately into each page
 - ✅ track ids (tabs, headers, links) in articles e.g. for better refresh
 - ✅ Fix initial Nav animation (SSR)
