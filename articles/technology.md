@@ -29,6 +29,3 @@ More precisely, all subsequent DOM mutations are performed by JavaScript.
 It is now common to generate the initial HTML using JS too,
 either during a build-step or on a Node.js server.
 In particular, JavaScript has become the central web technology.
-
-The next article discusses our chosen JavaScript component framework.
-It will be full of jargon, but relevant details can be picked up later on.

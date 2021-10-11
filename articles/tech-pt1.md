@@ -1,5 +1,8 @@
 ## Technology (js)
 
+We'll now discuss our chosen JavaScript component framework.
+Please excuse the jargon, the relevant details can be picked up later on.
+
 ### React and Preact
 
 Competing JavaScript frameworks exist, often with their own notion of component.
