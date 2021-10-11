@@ -1,10 +1,10 @@
 ## Technology (ai)
 
-Thus far we've described our objective, constrained our approach, and listed the technologies we'll use.
-Having discussed [JavaScript components](#react-and-preact--tech-1),
-we turn to Game AI i.e. _navigation_ and _raycasting_.
+So far we've described our objective, constrained our approach, and listed the technologies we'll use.
+Having discussed [JavaScript components](/#tech-1--react-and-preact),
+we now turn to Game AI.
 
-### Navigation
+### Overview
 
 <!-- __TODO__
 - Rodney Brooks layers.
@@ -25,13 +25,16 @@ There are three standard systems:
 >
 > **Animation**: _realism (e.g. limb movement) and visual cues._
 >
-> **Physics**: collision detection and force-driven rigid bodies.
+> **Physics**: collision detection, force-driven rigid bodies, raycasting.
 
-Concerning animation, we're not going to bother with realism.
-Nevertheless, we'll need visual cues to indicate NPC actions,
+Navigation is of central importance to our approach and will be discussed shortly.
+Concerning animation, we're not going to obsess over realism.
+Nevertheless we'll need visual cues to indicate NPC actions,
 and a _sense of flow_ via interdependent concurrent animations.
-As for a physics engine, we [already mentioned](1#game-mechanics--constraints) we won't be using one.
-We'll rely on the Web Animations API instead, although 
+As for a physics engine, we [already mentioned](1#constraints--game-mechanics) we won't be using one.
+We'll rely on the Web Animations API instead, and our own raycasting algorithms.
+
+### Navigation
 
 
 <!-- Pathfinding is central to Game AI.

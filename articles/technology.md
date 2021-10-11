@@ -30,6 +30,5 @@ It is now common to generate the initial HTML using JS too,
 either during a build-step or on a Node.js server.
 In particular, JavaScript has become the central web technology.
 
-Almost all the above technologies are concerned with JavaScript.
-In the next article we'll discuss our chosen component framework i.e. React.
+In the next article we'll discuss our chosen JavaScript component framework.
 The discussion is full of jargon, but the details can be picked up later on.
