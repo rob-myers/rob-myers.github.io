@@ -82,6 +82,15 @@ const articleCss = css`
     width: 13px;
     margin-left: 2px;
   }
+  a.anchor-link::after {
+    display: inline-block;
+    content: '';
+    background-image: url('/icon/anchor-icon.svg');
+    background-size: 13px 13px;
+    height: 13px;
+    width: 13px;
+    margin: 0 2px 0 4px;
+  }
 
   span.cmd {
     color: #555;
@@ -293,6 +302,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
     return (
       <Link href={href}>
         <a
+          className="anchor-link"
           title={title}
           onClick={(e) => {
             e.preventDefault();
