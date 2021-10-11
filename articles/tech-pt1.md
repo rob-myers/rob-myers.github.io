@@ -1,7 +1,18 @@
 ## Technology (js)
 
 We'll now discuss our chosen JavaScript component framework.
-Please excuse the jargon, the relevant details can be picked up later on.
+> Please excuse the jargon, the details can be picked up later on.
+
+### JavaScript
+
+The early 90s brought three pillars: HTML, CSS and JavaScript (JS).
+Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
+Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity.
+More precisely, all subsequent DOM mutations are performed by JavaScript.
+It is now common to generate the initial HTML using JS too,
+either during a build-step or on a Node.js server.
+In particular, JavaScript has become the central web technology.
+
 
 ### React and Preact
 
@@ -133,7 +144,7 @@ As far as React is concerned, nothing has changed.
 Moreover if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (so, no change).
 Why bother avoiding these virtual DOM computations though?
 To avoid needlessly recomputing `<Grid />` and `children` whenever we pan or zoom.
-Our game may contain many elements, and we'd rather not recompute their virtual DOM many times per second.
+Our game may contain many elements, and we'd rather not recompute their virtual DOM tens of times per second.
 
 The above situation is handled by a single DOM mutation.
 In more complex situations we'll integrate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).

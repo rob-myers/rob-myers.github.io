@@ -2,7 +2,7 @@
 
 So far we've described our objective, constrained our approach, and listed the technologies we'll use.
 Having discussed [JavaScript components](#tech-1--react-and-preact),
-we now turn to Game AI.
+we turn to Game AI.
 
 ### Overview
 
