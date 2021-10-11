@@ -66,7 +66,6 @@ const articleCss = css`
     code {
       color: unset;
     }
-    display: inline-block;
     position: relative;
     > div.anchor {
       position: absolute;
