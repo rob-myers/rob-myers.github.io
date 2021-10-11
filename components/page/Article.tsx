@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { NextRouter, useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
-import useSiteStore from 'store/site.store';
 import type { ArticleKey } from 'articles/index';
+
+import useSiteStore from 'store/site.store';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
@@ -305,7 +306,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
     }
 
     const id = React.useMemo(() =>
-      `link-${childrenToKebabText(children)}--${articleKey}`
+      `${articleKey}--link-${childrenToKebabText(children)}`
     , []);
 
     return (
