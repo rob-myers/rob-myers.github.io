@@ -26,7 +26,7 @@ and a _sense of flow_ via interdependent concurrent animations.
 As for a physics engine, we [already mentioned](1#constraints--game-mechanics) we won't be using one. Instead:
 - Collision detection will be handled at a higher level (navigation).
 - The Web Animations API will replace force-driven movement.
-- We'll write our own raycaster e.g. line-of-sight detection.
+- We'll write our own raycaster e.g. for line-of-sight detection.
 
 It is worth discussing Navigation and Raycasting in more detail.
 

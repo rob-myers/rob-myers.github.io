@@ -178,7 +178,7 @@ const articleCss = css`
     }
   }
   h3 {
-    font-size: 1.8rem;
+    font-size: 1.9rem;
     @media(max-width: 600px) {
       font-size: 1.3em;
     }
