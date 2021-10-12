@@ -25,8 +25,8 @@ export default function Nav() {
           setNavOpen(!navOpen);
         }}
       >
-        <div className="handle-bg" />
         <div className="article-overlay" />
+        <div className="handle-bg" />
         <div className="handle">{navOpen ? '<' : '>'}</div>
         <NavItems/>
       </nav>
@@ -77,24 +77,22 @@ const navCss = css`
     }
   }
   > .handle {
-    background: rgba(120, 0, 0, 1);
     position: absolute;
     z-index: 19;
     top: -1px;
+    right: -${handleWidth}px;
     width: ${handleWidth}px;
     min-height: 33px;
-    right: -${handleWidth}px;
+
+    background: rgba(120, 0, 0, 1);
     text-align: center;
     padding: 7px 0;
     user-select: none;
   }
-
 `;
 
 function FillBar({ navOpen } : { navOpen: boolean }) {
-  return (
-    <div className={classNames(fillerCss, !navOpen && 'closed')} />
-  );
+  return <div className={classNames(fillerCss, !navOpen && 'closed')} />;
 }
 
 const fillerCss = css`
@@ -103,7 +101,6 @@ const fillerCss = css`
   &.closed {
     min-width: 0;
   }
-
   @media(max-width: 1280px) {
     display: none;
   }
