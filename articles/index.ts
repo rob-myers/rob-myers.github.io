@@ -12,10 +12,10 @@ export const articlesMeta = {
     prev: null,
     next: null,
   },
-  'coming-soon': {
-    key: 'coming-soon',
-    label: 'coming-soon',
-    info: 'Placeholder on frontpage',
+  'frontpage': {
+    key: 'frontpage',
+    label: '',
+    info: 'The frontpage',
     timestamp: '2021-07-19',
     part: -1,
     index: '',

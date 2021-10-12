@@ -10,7 +10,7 @@ export default function NavItems() {
     <section className={rootCss}>
 
       <h3>
-        <Link href="/" scroll={false}>
+        <Link href="/#article--frontpage" scroll={false}>
           <a>Rogue Markup</a>
         </Link>
       </h3>
