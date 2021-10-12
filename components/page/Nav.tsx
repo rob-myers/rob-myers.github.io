@@ -38,7 +38,7 @@ export default function Nav() {
 }
 
 const sidebarWidth = 256;
-const handleWidth = 30;
+const handleWidth = 36;
 export const barHeight = 40;
 
 const navCss = css`

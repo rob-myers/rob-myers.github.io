@@ -33,10 +33,10 @@ export const rootCss = css`
   }
 
   @keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    0% { opacity: 0; }
+    100%   { opacity: 1; }
   }
-  > main {
+  > main, > header > h1, > header > p  {
     animation: fadein 1s;
   }
 `;
