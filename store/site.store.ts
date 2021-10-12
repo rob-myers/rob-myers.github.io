@@ -5,6 +5,7 @@ import { HtmlPortalNode } from 'react-reverse-portal';
 import type { KeyedLookup } from 'model/generic.model';
 import type { ArticleKey } from 'articles/index';
 import type { TabMeta } from 'components/page/TabsAux';
+import { last } from 'lodash';
 
 export type State = {
   /** Key of currently viewed article */
@@ -41,10 +42,16 @@ const useStore = create<State>(devtools((set, get) => ({
       }
     },
     updateArticleKey: () => {
-      // Offset must cover `article > div.anchor`
-      const offset = 64;
-      const article = Object.values(get().articles)
-        .find(x => window.scrollY + offset <= x.rect.bottom);
+      const articles = Object.values(get().articles);
+      let article = undefined as undefined | ArticleState;
+      const offset = 64; // Offset must cover `article > div.anchor`
+
+      if (window.scrollY + offset >= document.body.offsetHeight - window.innerHeight) {
+        article = last(articles);
+      } else {
+        article = articles.find(x => window.scrollY + offset <= x.rect.bottom);
+      }
+
       if (article && article.key !== get().articleKey) {
         set({ articleKey: article.key });
       }

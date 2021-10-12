@@ -54,7 +54,7 @@ const articleCss = css`
   border: var(--blog-border-width) solid var(--border-bg);
   font-size: 1.2rem;
   
-  padding: 64px 128px 96px 128px;
+  padding: 48px 128px 96px 128px;
   @media(max-width: 800px) {
     padding: 32px 64px 48px 64px;
   }
@@ -173,14 +173,14 @@ const articleCss = css`
     }
   }
   h2 {
-    font-size: 2.8rem;
+    font-size: 2.6rem;
     @media(max-width: 600px) {
       margin: 16px 0 24px;
       font-size: 2rem;
     }
   }
   h3 {
-    font-size: 1.9rem;
+    font-size: 1.8rem;
     @media(max-width: 600px) {
       font-size: 1.3em;
     }
