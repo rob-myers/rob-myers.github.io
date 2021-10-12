@@ -188,7 +188,7 @@ const articleCss = css`
     position: relative;
     > div.anchor {
       position: absolute;
-      top: 48px;
+      top: -48px;
     }
   }
 
