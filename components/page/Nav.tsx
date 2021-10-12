@@ -10,9 +10,11 @@ export default function Nav() {
 
   React.useEffect(() => {
     // Detect currently viewed article
-    const onScroll = debounce(() => useSiteStore.api.updateArticleKey(), 30);
+    const onScroll = debounce(() => useSiteStore.api.updateArticleKey(), 5);
     window.addEventListener('scroll', onScroll);
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+    };
   }, []);
 
   return (
@@ -73,7 +75,7 @@ const navCss = css`
   @media(max-width: 600px) {
     &:not(.closed) > .article-overlay {
       height: 100%;
-      background: rgba(0, 0, 0, .5);
+      background: rgba(0, 0, 0, .25);
     }
   }
   > .handle {

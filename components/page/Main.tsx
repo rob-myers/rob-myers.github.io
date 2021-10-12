@@ -31,4 +31,10 @@ export const rootCss = css`
   @media(max-width: 600px) {
     padding: 0;
   }
+
+  @keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  animation: fadein 1s;
 `;
