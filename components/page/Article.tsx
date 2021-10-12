@@ -31,9 +31,9 @@ export default function Article(props: React.PropsWithChildren<{
 
   return <>
     <article
-      id={`article-${props.articleKey}`}
       className={classNames(articleClassName, props.className, articleCss)}
     >
+      <div className="anchor" id={`article-${props.articleKey}`} />
       <time dateTime={props.dateTime}>
         {dateText}
       </time>
@@ -237,6 +237,10 @@ const articleCss = css`
       background: none;
       font-size: 1.1rem;
     }
+  }
+  > div.anchor {
+    position: absolute;
+    top: -16px;
   }
 
   ul, ol {
