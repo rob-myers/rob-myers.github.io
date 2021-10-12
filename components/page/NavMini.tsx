@@ -32,14 +32,11 @@ const rootCss = css`
   position: absolute;
   z-index: 20;
   right: ${width}px;
-
   top: -48px;
-  @media(max-width: 1024px) {
-    top: -32px;
-  }
-  @media(max-width: 600px) {
-    top: 0;
-  }
+  @media(max-width: 1024px) { top: -32px; }
+  @media(max-width: 600px) { top: 0; }
+
+  font-family: sans-serif;
 
   > nav {
     position: fixed;
@@ -48,7 +45,6 @@ const rootCss = css`
     background: rgba(0, 0, 0, 0.5);
     
     @media(min-width: 600px) {
-      font-size: 1.1rem;
       background: rgba(0, 0, 0, 0.7);
       &:hover {
         background: rgba(0, 0, 0, 0.9);

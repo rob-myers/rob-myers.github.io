@@ -42,6 +42,7 @@ const rootCss = css`
   
   h3 {
     padding: 20px 12px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 1.8rem;
     font-weight: 300;
     margin: 0;
@@ -53,7 +54,7 @@ const rootCss = css`
   }
   
   ul {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     padding: 6px 0;
     margin: 0;
     border: 0 solid #aaa;

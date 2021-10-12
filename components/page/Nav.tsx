@@ -48,6 +48,7 @@ const navCss = css`
   width: ${sidebarWidth}px;
   font-weight: 300;
 
+  font-family: sans-serif;
   background-color: #222;
   color: white;
   cursor: pointer;
