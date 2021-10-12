@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { css } from "goober";
-import { navGroups, pagePrefix } from "articles/index";
+import { getArticleHref, navGroups, pagePrefix } from "articles/index";
 import useSiteStore from "store/site.store";
 
 export default function NavItems() {
@@ -17,14 +17,14 @@ export default function NavItems() {
 
       {navGroups.map((navItems, i) =>
         <ul key={i}>
-          {navItems.map(({ key, label, info, part, index }, i) =>
-            <li key={key} className={key === articleKey ? 'current' : undefined} >
+          {navItems.map((meta) =>
+            <li key={meta.key} className={meta.key === articleKey ? 'current' : undefined} >
               <Link
-                href={`${pagePrefix}${part}#article-${key}`}
+                href={getArticleHref(meta)}
                 scroll={false}
               >
-                <a title={info}>
-                  {index} {label}
+                <a title={meta.info}>
+                  {meta.index} {meta.label}
                 </a>
               </Link>
             </li>

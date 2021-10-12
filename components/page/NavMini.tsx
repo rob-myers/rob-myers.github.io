@@ -1,11 +1,20 @@
+import Link from "next/link";
 import { css } from "goober";
+import { articlesMeta, getArticleHref } from "articles";
+import useSiteStore from "store/site.store";
 
 export default function NavMini() {
+  const meta = useSiteStore(x => x.articleKey ? articlesMeta[x.articleKey] : null);
+
   return (
     <div className={rootCss}>
-      <div className="inner">
-        todo
-      </div>
+      <nav>
+        {meta && (
+          <Link href={getArticleHref(meta)}>
+            <a>{meta.index}</a>
+          </Link>
+        )}
+      </nav>
     </div>
   );
 }
@@ -23,7 +32,7 @@ const rootCss = css`
     top: 0;
   }
 
-  .inner {
+  nav {
     position: fixed;
     width: 64px;
     height: 32px;
@@ -32,5 +41,8 @@ const rootCss = css`
     color: white;
     display: flex;
     justify-content: center;
+  }
+  a {
+    color: white;
   }
 `;

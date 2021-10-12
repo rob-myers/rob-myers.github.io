@@ -106,3 +106,7 @@ export const navGroups = realArticles.reduce((agg, item) => {
 }, [] as ArticleMeta[][]);
 
 export const pagePrefix = '/part/';
+
+export function getArticleHref(meta: ArticleMeta) {
+  return `${pagePrefix}${meta.part}#article-${meta.key}`;
+}
