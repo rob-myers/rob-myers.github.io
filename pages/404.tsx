@@ -17,7 +17,7 @@ The requested path was not found:
 }
 
 const rootCss = css`
-  background: #aaa;
+  background: #fff;
   padding: 32px;
   min-height: 300px;
 
