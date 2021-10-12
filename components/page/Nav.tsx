@@ -59,6 +59,7 @@ const navCss = css`
   transition: left 500ms ease;
   &.open {
     left: 0;
+    z-index: 22;
   }
   &.closed {
     left: -${sidebarWidth}px;

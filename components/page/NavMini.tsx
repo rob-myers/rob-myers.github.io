@@ -44,7 +44,7 @@ const rootCss = css`
     position: fixed;
     width: ${width}px;
     height: 32px;
-    padding: 6px;
+    padding: 4px 0;
     background: #444;
     font-size: 1.1rem;
     display: flex;
