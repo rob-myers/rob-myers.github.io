@@ -2,7 +2,7 @@
 
 So, we're building a roguelike, directly on this website.
 It will start to get fun once things are moving about.
-Let us describe the underlying technologies.
+Let us list the underlying technologies.
 
 | Concept | Technology |
 | ------- | ---------- |

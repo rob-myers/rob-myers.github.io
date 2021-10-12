@@ -1,4 +1,4 @@
-## Technology (dev)
+## Tech (dev)
 
 ### Static Analysis
 

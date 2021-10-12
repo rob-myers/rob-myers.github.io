@@ -29,6 +29,7 @@ More on that later.
 
 To debug and illustrate Game AI, we'll use a terminal.
 Try entering (or copy-pasting) the commands below.
+You'll probably find it a bit fiddly on a mobile device.
 
   | Category | Examples  |
   | ------- | ---------- |
