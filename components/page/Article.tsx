@@ -3,8 +3,8 @@ import Link from 'next/link';
 import { NextRouter, useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
-import type { ArticleKey } from 'articles/index';
 
+import type { ArticleKey } from 'articles/index';
 import useSiteStore from 'store/site.store';
 import Sep from './Sep';
 import Markdown from './Markdown';
@@ -24,7 +24,10 @@ export default function Article(props: React.PropsWithChildren<{
     return `${d.getDate()}${dayth(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }, [props.dateTime]);
 
-  const components = React.useMemo(() => articleComponents(props.articleKey, router), [props.articleKey]);
+  const components = React.useMemo(
+    () => articleComponents(props.articleKey, router),
+    [props.articleKey],
+  );
 
   return <>
     <article
@@ -49,11 +52,10 @@ const articleCss = css`
 
   line-height: 1.6;
   background: var(--focus-bg);
+  border: var(--blog-border-width) solid var(--border-bg);
+  font-size: 1.2rem;
 
   padding: 64px 128px 96px 128px;
-  font-size: 1.2rem;
-  border: var(--blog-border-width) solid var(--border-bg);
-
   @media(max-width: 800px) {
     padding: 32px 64px 48px 64px;
   }
