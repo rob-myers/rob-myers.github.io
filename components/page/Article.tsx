@@ -53,7 +53,7 @@ const articleCss = css`
   background: var(--focus-bg);
   border: var(--blog-border-width) solid var(--border-bg);
   font-size: 1.2rem;
-
+  
   padding: 64px 128px 96px 128px;
   @media(max-width: 800px) {
     padding: 32px 64px 48px 64px;
@@ -263,78 +263,81 @@ const articleCss = css`
 const articleComponents = (articleKey: string, router: NextRouter) => ({
 
   a({ node, href, title, children, ...props}: any) {
-    const newTab = (title === '@new-tab');
-    const command = (href === '#command');
+    const anchor = (title === '@anchor');
 
-    if (href?.startsWith('http') || command || newTab) {
+    if (anchor) {
+      const id = React.useMemo(() =>
+        `${articleKey}--link-${childrenToKebabText(children)}`
+      , []);
+
       return (
-        <a href={href} title={title}
-  
-          {...newTab && {
-            className: 'new-tab-link',
-            target: '_blank',
-            rel: 'noopener',
-          }}
-  
-          {...href === '#command' && {
-            onClick: (e) => {
+        <Link href={href}>
+          <a
+            className="anchor-link"
+            title={title}
+            onClick={(e) => {
               e.preventDefault();
-
-              const [cmd, ...args] = title.split(' ');
-              console.log(cmd, args);
-
-              switch (cmd) {
-                case 'open-tab': {
-                  const [tabsKey, tabKey] = args;
-                  const tabs = useSiteStore.getState().tabs[tabsKey];
-                  if (tabs) {// in case tabs not enabled yet
-                    tabs.selectTab(tabKey),
-                    router.push(`#${tabsKey}`);
-                  }
-                  break;
-                }
-                case 'sigkill': {
-                  import('store/session.store').then(({ default: useSessionStore }) => {
-                    const { ttyShell } = useSessionStore.api.getSession(args[0])
-                    ttyShell.xterm.sendSigKill();
-                  });
-                  break;
-                }
-                default:
-                  console.warn('link triggered unrecognised command:', title);
-              }
-            },
-          }}
-  
-          {...props}
-        >
-          {children}
-        </a>
+              // Store this link so can go back
+              router.push(`#${id}`);
+              // Resume default behaviour
+              router.push(href);
+            }}
+          >
+            <div id={id} className="anchor" />
+            {children}
+          </a>
+        </Link>
       );
     }
 
-    const id = React.useMemo(() =>
-      `${articleKey}--link-${childrenToKebabText(children)}`
-    , []);
+    const newTab = (title === '@new-tab');
 
     return (
-      <Link href={href}>
-        <a
-          className="anchor-link"
-          title={title}
-          onClick={(e) => {
+      <a href={href} title={title}
+
+        {...newTab && {
+          className: 'new-tab-link',
+          target: '_blank',
+          rel: 'noopener',
+        }}
+
+        {...href === '#command' && {
+          onClick: (e) => {
             e.preventDefault();
-            // Store this link so can go back
-            router.push(`#${id}`);
-            // Resume default behaviour
-            router.push(href);
-          }}
-        >
-          <div id={id} className="anchor" />
-          {children}
-        </a>
-      </Link>
+
+            const [cmd, ...args] = title.split(' ');
+            console.log(cmd, args);
+
+            switch (cmd) {
+              case 'open-tab': {
+                const [tabsKey, tabKey] = args;
+                const tabs = useSiteStore.getState().tabs[tabsKey];
+                if (tabs) {// in case tabs not enabled yet
+                  tabs.selectTab(tabKey),
+                  router.push(`#${tabsKey}`);
+                }
+                break;
+              }
+              case 'sigkill': {
+                import('store/session.store').then(({ default: useSessionStore }) => {
+                  const { ttyShell } = useSessionStore.api.getSession(args[0])
+                  ttyShell.xterm.sendSigKill();
+                });
+                break;
+              }
+              default:
+                console.warn('link triggered unrecognised command:', title);
+            }
+          },
+        }}
+
+        {...props}
+      >
+        {children}
+      </a>
     );
+
+
   },
 
   div(props: any) {
