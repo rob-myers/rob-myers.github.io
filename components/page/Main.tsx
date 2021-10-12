@@ -36,7 +36,7 @@ export const rootCss = css`
     0% { opacity: 0; }
     100%   { opacity: 1; }
   }
-  > main, > header > h1, > header > p  {
-    animation: fadein 1s;
+  > header > h1, > header > p, > main > div  {
+    animation: fadein 2s;
   }
 `;

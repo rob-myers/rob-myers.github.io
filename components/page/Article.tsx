@@ -188,7 +188,7 @@ const articleCss = css`
     position: relative;
     > div.anchor {
       position: absolute;
-      top: -48px;
+      top: 48px;
     }
   }
 
@@ -207,12 +207,13 @@ const articleCss = css`
     @media(max-width: 600px) {
       margin: 20px 0;
     }
-
+    
     th, td {
       text-align: left;
       vertical-align: top;
       padding: 8px;
       @media(max-width: 600px) {
+        font-size: 1rem;
         padding: 4px 2px;
       }
     }
@@ -242,7 +243,7 @@ const articleCss = css`
   }
   > div.anchor {
     position: absolute;
-    top: -32px;
+    top: -48px;
   }
 
   ul, ol {
