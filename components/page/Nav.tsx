@@ -39,6 +39,7 @@ export default function Nav() {
 
 const sidebarWidth = 256;
 const handleWidth = 30;
+export const barHeight = 40;
 
 const navCss = css`
   position: fixed;
@@ -70,7 +71,7 @@ const navCss = css`
     top: 0;
     left: ${sidebarWidth}px;
     width: 100vw;
-    height: 32px;
+    height: ${barHeight}px;
     background: rgba(0, 0, 0, .25);
   }
   @media(max-width: 600px) {
@@ -85,11 +86,12 @@ const navCss = css`
     top: -1px;
     right: -${handleWidth}px;
     width: ${handleWidth}px;
-    min-height: 33px;
+    min-height: ${barHeight + 1}px;
 
     background: rgba(120, 0, 0, 1);
-    text-align: center;
-    padding: 7px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     user-select: none;
   }
 `;

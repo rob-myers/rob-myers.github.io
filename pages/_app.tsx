@@ -40,7 +40,7 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
       <title>
         Rogue Markup
       </title>
-      <script>history.scrollRestoration = "manual"</script>    
+      <script>history.scrollRestoration = 'manual'</script>    
     </Head>
     <QueryClientProvider client={queryClient} >
       <Nav/>

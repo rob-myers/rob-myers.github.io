@@ -2,6 +2,7 @@ import Link from "next/link";
 import { css } from "goober";
 import { articlesMeta, getArticleHref } from "articles";
 import useSiteStore from "store/site.store";
+import { barHeight } from "./Nav";
 
 export default function NavMini() {
   const meta = useSiteStore(x => x.articleKey ? articlesMeta[x.articleKey] : null);
@@ -43,12 +44,13 @@ const rootCss = css`
   > nav {
     position: fixed;
     width: ${width}px;
-    height: 32px;
-    padding: 4px 0;
+    height: ${barHeight}px;
+    padding-bottom: 2px;
     background: #444;
     font-size: 1.1rem;
     display: flex;
     justify-content: space-around;
+    align-items: center;
     a {
       color: #ccc;
     }
