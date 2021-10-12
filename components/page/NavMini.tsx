@@ -5,24 +5,32 @@ import useSiteStore from "store/site.store";
 
 export default function NavMini() {
   const meta = useSiteStore(x => x.articleKey ? articlesMeta[x.articleKey] : null);
+  const prev = meta?.prev ? articlesMeta[meta.prev] : null;
+  const next = meta?.next ? articlesMeta[meta.next] : null;
 
-  return (
+  return meta?.index ? (
     <div className={rootCss}>
       <nav>
-        {meta && (
-          <Link href={getArticleHref(meta)}>
-            <a>{meta.index}</a>
-          </Link>
-        )}
+        <Link href={getArticleHref(prev || meta)}>
+          <a>prev</a>
+        </Link>
+        <Link href={getArticleHref(meta)}>
+          <a className="primary">{meta.index}</a>
+        </Link>
+        <Link href={getArticleHref(next || meta)}>
+          <a>next</a>
+        </Link>
       </nav>
     </div>
-  );
+  ) : null;
 }
+
+const width = 140;
 
 const rootCss = css`
   position: absolute;
   z-index: 20;
-  right: 64px;
+  right: ${width}px;
 
   top: -48px;
   @media(max-width: 1024px) {
@@ -32,17 +40,20 @@ const rootCss = css`
     top: 0;
   }
 
-  nav {
+  > nav {
     position: fixed;
-    width: 64px;
+    width: ${width}px;
     height: 32px;
     padding: 6px;
-    background: black;
-    color: white;
+    background: #444;
+    font-size: 1.1rem;
     display: flex;
-    justify-content: center;
-  }
-  a {
-    color: white;
+    justify-content: space-around;
+    a {
+      color: #ccc;
+    }
+    a.primary {
+      color: #fff;
+    }
   }
 `;
