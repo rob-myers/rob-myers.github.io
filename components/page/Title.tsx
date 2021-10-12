@@ -2,10 +2,12 @@ import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
 import Markdown from './Markdown';
+import NavMini from './NavMini';
 
 export default function Title() {
   return (
     <header className={classNames('title', titleCss)}>
+      <NavMini/>
       <Markdown components={titleComponents} children={`
 # Rogue Markup
 
@@ -31,6 +33,7 @@ const titleComponents = {
 
 const titleCss = css`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  position: relative;
 
   @media(max-width: 600px) {
     padding-left: 8px;
