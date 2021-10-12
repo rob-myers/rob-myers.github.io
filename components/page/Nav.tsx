@@ -46,8 +46,6 @@ const navCss = css`
   z-index: 20;
   height: calc(100% + 200px);
   width: ${sidebarWidth}px;
-
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   font-weight: 300;
 
   background-color: #222;
@@ -72,7 +70,7 @@ const navCss = css`
     left: ${sidebarWidth}px;
     width: 100vw;
     height: ${barHeight}px;
-    background: rgba(0, 0, 0, .25);
+    background: rgba(0, 0, 0, .1);
   }
   @media(max-width: 600px) {
     &:not(.closed) > .article-overlay {

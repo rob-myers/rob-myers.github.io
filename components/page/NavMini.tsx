@@ -45,9 +45,14 @@ const rootCss = css`
     position: fixed;
     width: ${width}px;
     height: ${barHeight}px;
-    background: #444;
+    background: rgba(0, 0, 0, 0.5);
+    
     @media(min-width: 600px) {
       font-size: 1.1rem;
+      background: rgba(0, 0, 0, 0.2);
+      &:hover {
+        background: rgba(0, 0, 0, 0.5);
+      }
     }
     display: grid;
     grid-template-columns: 40% 20% 40%;
