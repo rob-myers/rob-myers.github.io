@@ -75,7 +75,7 @@ const navCss = css`
     height: ${barHeight}px;
     background: rgba(0, 0, 0, .1);
   }
-  @media(max-width: 600px) {
+  @media(max-width: 1280px) {
     &:not(.closed) > .article-overlay {
       height: 100%;
       background: rgba(0, 0, 0, .25);
