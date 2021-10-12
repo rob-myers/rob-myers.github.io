@@ -223,7 +223,9 @@ const articleCss = css`
     position: absolute;
     right: -10px;
     top: -50px;
+    width: 136px;
     background: var(--border-bg);
+    text-align: center;
     color: #555;
     border-radius: 6px 6px 0 0;
     padding: 12px;
@@ -240,7 +242,7 @@ const articleCss = css`
   }
   > div.anchor {
     position: absolute;
-    top: -16px;
+    top: -40px;
   }
 
   ul, ol {

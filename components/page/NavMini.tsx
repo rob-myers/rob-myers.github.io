@@ -49,9 +49,9 @@ const rootCss = css`
     
     @media(min-width: 600px) {
       font-size: 1.1rem;
-      background: rgba(0, 0, 0, 0.2);
+      background: rgba(0, 0, 0, 0.7);
       &:hover {
-        background: rgba(0, 0, 0, 0.5);
+        background: rgba(0, 0, 0, 0.9);
       }
     }
     display: grid;

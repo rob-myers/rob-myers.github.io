@@ -41,13 +41,13 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- Show next at bottom of page
+
 - import code/components async and on demand
 - anchor and focus on Tabs interact
 
 - Avoid reloading tabs onchange markdown via reverse portals
 - Implement front page
-- Show next/prev in navbar
-- Show next/prev at bottom/top of page
 
 - Doors represented via `<rect>`s
 - Create geomorph 101
@@ -61,6 +61,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Show next/prev in navbar
 - ✅ basic custom 404 page
 - ✅ import markdown separately into each page
 - ✅ track ids (tabs, headers, links) in articles e.g. for better refresh
