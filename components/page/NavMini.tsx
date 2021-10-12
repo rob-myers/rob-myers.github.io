@@ -26,7 +26,7 @@ export default function NavMini() {
   ) : null;
 }
 
-const width = 140;
+const width = 136;
 
 const rootCss = css`
   position: absolute;
@@ -45,15 +45,22 @@ const rootCss = css`
     position: fixed;
     width: ${width}px;
     height: ${barHeight}px;
-    padding-bottom: 2px;
     background: #444;
-    font-size: 1.1rem;
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
+    @media(min-width: 600px) {
+      font-size: 1.1rem;
+    }
+    display: grid;
+    grid-template-columns: 40% 20% 40%;
+
     a {
       color: #ccc;
+      /* border: 1px solid #ddd; */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding-bottom: 2px;
     }
+
     a.primary {
       color: #fff;
     }
