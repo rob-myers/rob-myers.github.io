@@ -1,6 +1,6 @@
 ## Entrypoint
 
-Welcome! The road towards the roguelike begins with [part/1](part/1).
+The road towards the roguelike begins with [part/1](part/1).
 
 ## Changelog
 
