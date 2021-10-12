@@ -13,53 +13,43 @@ export default function NavMini() {
     <div className={rootCss}>
       <nav>
         <Link href={getArticleHref(prev || meta)}>
-          <a>prev</a>
+          <a>{'<'}</a>
         </Link>
         <Link href={getArticleHref(meta)}>
           <a className="primary">{meta.index}</a>
         </Link>
         <Link href={getArticleHref(next || meta)}>
-          <a>next</a>
+          <a>{'>'}</a>
         </Link>
       </nav>
     </div>
   ) : null;
 }
 
-const width = 136;
+const width = 96;
 
 const rootCss = css`
   position: absolute;
-  z-index: 20;
+  z-index: 10;
   right: ${width}px;
   top: -48px;
   @media(max-width: 1024px) { top: -32px; }
   @media(max-width: 600px) { top: 0; }
 
-  font-family: sans-serif;
-
   > nav {
     position: fixed;
     width: ${width}px;
     height: ${barHeight}px;
-    background: rgba(0, 0, 0, 0.5);
-    
-    @media(min-width: 600px) {
-      background: rgba(0, 0, 0, 0.7);
-      &:hover {
-        background: rgba(0, 0, 0, 0.9);
-      }
-    }
+
     display: grid;
     grid-template-columns: 40% 20% 40%;
 
     a {
       color: #ccc;
-      /* border: 1px solid #ddd; */
       display: flex;
       justify-content: center;
       align-items: center;
-      padding-bottom: 2px;
+      padding-top: 1px;
     }
 
     a.primary {

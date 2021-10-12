@@ -28,11 +28,15 @@ export default function Nav() {
         }}
       >
         <div className="article-overlay" />
-        <div className="handle-bg" />
-        <div className="handle">{navOpen ? '<' : '>'}</div>
+        <div className="handle">
+          <TopBar />
+          <div className="icon">
+            {navOpen ? '<' : '>'}
+          </div>
+        </div>
         <NavItems/>
       </nav>
-      <FillBar navOpen={navOpen} />
+      <HorizontalFillBar navOpen={navOpen} />
     </>
   );
 }
@@ -43,11 +47,11 @@ export const barHeight = 40;
 
 const navCss = css`
   position: fixed;
-  z-index: 20;
+  z-index: 10;
   height: calc(100% + 200px);
   width: ${sidebarWidth}px;
-  font-weight: 300;
 
+  font-weight: 300;
   font-family: sans-serif;
   background-color: #222;
   color: white;
@@ -59,15 +63,12 @@ const navCss = css`
   transition: left 500ms ease;
   &.open {
     left: 0;
-    @media(max-width: 600px) {
-      z-index: 22;
-    }
   }
   &.closed {
     left: -${sidebarWidth}px;
   }
 
-  > .handle-bg, .article-overlay {
+  > .article-overlay {
     position: absolute;
     top: 0;
     left: ${sidebarWidth}px;
@@ -76,32 +77,55 @@ const navCss = css`
     background: rgba(0, 0, 0, .1);
   }
   @media(max-width: 1280px) {
-    &:not(.closed) > .article-overlay {
+    &.open > .article-overlay {
       height: 100%;
       background: rgba(0, 0, 0, .25);
     }
   }
   > .handle {
     position: absolute;
-    z-index: 19;
+    z-index: 10;
     top: -1px;
     right: -${handleWidth}px;
     width: ${handleWidth}px;
     min-height: ${barHeight + 1}px;
 
-    background: rgba(120, 0, 0, 1);
     display: flex;
     justify-content: center;
     align-items: center;
     user-select: none;
+    
+    .icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #555;
+      border-radius: 28px;
+      width: 28px;
+      height: 28px;
+      padding: 0 0 2px 0;
+    }
   }
 `;
 
-function FillBar({ navOpen } : { navOpen: boolean }) {
-  return <div className={classNames(fillerCss, !navOpen && 'closed')} />;
+function TopBar() {
+  return <div className={topBarCss} />
 }
 
-const fillerCss = css`
+const topBarCss = css`
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  width: calc(100vw + ${sidebarWidth}px);
+  height: ${barHeight}px;
+  background: black;
+`;
+
+function HorizontalFillBar({ navOpen } : { navOpen: boolean }) {
+  return <div className={classNames(fillBarCss, !navOpen && 'closed')} />;
+}
+
+const fillBarCss = css`
   min-width: ${sidebarWidth}px;
   transition: min-width 500ms ease;
   &.closed {

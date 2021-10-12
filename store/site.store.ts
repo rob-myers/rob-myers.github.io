@@ -5,7 +5,6 @@ import { HtmlPortalNode } from 'react-reverse-portal';
 import type { KeyedLookup } from 'model/generic.model';
 import type { ArticleKey } from 'articles/index';
 import type { TabMeta } from 'components/page/TabsAux';
-import { NextRouter } from 'next/router';
 
 export type State = {
   /** Key of currently viewed article */
@@ -42,7 +41,10 @@ const useStore = create<State>(devtools((set, get) => ({
       }
     },
     updateArticleKey: () => {
-      const article = Object.values(get().articles).find(x => window.scrollY <= x.rect.bottom);
+      // Offset must cover `article > div.anchor`
+      const offset = 64;
+      const article = Object.values(get().articles)
+        .find(x => window.scrollY + offset <= x.rect.bottom);
       if (article && article.key !== get().articleKey) {
         set({ articleKey: article.key });
       }

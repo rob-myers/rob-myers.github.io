@@ -242,7 +242,7 @@ const articleCss = css`
   }
   > div.anchor {
     position: absolute;
-    top: -40px;
+    top: -32px;
   }
 
   ul, ol {

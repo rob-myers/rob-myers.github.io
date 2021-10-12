@@ -39,7 +39,7 @@ const titleCss = css`
     padding-left: 8px;
     border-bottom: 2px solid #999;
     border: 0 solid #000;
-    padding-top: 48px;
+    padding-top: 64px;
   }
   padding-top: 40px;
 
