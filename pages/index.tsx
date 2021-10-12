@@ -1,11 +1,11 @@
 import Main from 'components/page/Main';
 import Articles from 'components/page/Articles';
-import frontpage from 'articles/frontpage.md';
+import homePage from 'articles/home-page.md';
 
 export default function IndexPage() {
   return (
     <Main>
-      <Articles keys={["frontpage"]} markdown={{ frontpage }} />
+      <Articles keys={["home-page"]} markdown={{ 'home-page': homePage }} />
     </Main>
   );
 }

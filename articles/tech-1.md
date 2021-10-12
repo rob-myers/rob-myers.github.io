@@ -30,7 +30,7 @@ One popular approach uses _React function components_, which are just JavaScript
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers use a grammatical extension of JavaScript called JSX.
-It freely combines JS with XML, so callbacks can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. The grammar is particularly suitable for specifying dynamic DOM trees.
+It freely combines JS with XML, so JavaScript values can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. The grammar is particularly suitable for specifying dynamic DOM trees.
 Let's consider an example, a pannable and zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
 
 <div

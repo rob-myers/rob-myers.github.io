@@ -12,10 +12,10 @@ export const articlesMeta = {
     prev: null,
     next: null,
   },
-  'frontpage': {
-    key: 'frontpage',
+  'home-page': {
+    key: 'home-page',
     label: '',
-    info: 'The frontpage',
+    info: 'The home page',
     timestamp: '2021-07-19',
     part: -1,
     index: '',
