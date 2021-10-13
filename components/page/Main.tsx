@@ -31,12 +31,4 @@ export const rootCss = css`
   @media(max-width: 600px) {
     padding: 0;
   }
-
-  @keyframes fadein {
-    0% { opacity: 0; }
-    100%   { opacity: 1; }
-  }
-  > header > h1, > header > p, > main > div  {
-    animation: fadein 2s;
-  }
 `;

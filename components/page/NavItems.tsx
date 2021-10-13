@@ -1,17 +1,18 @@
-import Link from 'next/link'
 import { css } from "goober";
-import { getArticleHref, navGroups, pagePrefix } from "articles/index";
+import { articlesMeta, getArticleHref, navGroups } from "articles/index";
+import Link from 'components/page/Link'
 import useSiteStore from "store/site.store";
 
 export default function NavItems() {
   const articleKey = useSiteStore(x => x.articleKey);
+  const part = articleKey ? articlesMeta[articleKey].part : null;
 
   return (
     <section className={rootCss}>
 
       <h3>
-        <Link href="/#article--frontpage" scroll={false}>
-          <a>Rogue Markup</a>
+        <Link href="/#article--frontpage">
+          Rogue Markup
         </Link>
       </h3>
 
@@ -21,11 +22,10 @@ export default function NavItems() {
             <li key={meta.key} className={meta.key === articleKey ? 'current' : undefined} >
               <Link
                 href={getArticleHref(meta)}
-                scroll={false}
+                title={meta.info}
+                bottom={!!part && (meta.part > part)}
               >
-                <a title={meta.info}>
-                  {meta.index} {meta.label}
-                </a>
+                {meta.index} {meta.label}
               </Link>
             </li>
           )}

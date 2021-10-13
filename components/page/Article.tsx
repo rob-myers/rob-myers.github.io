@@ -1,9 +1,9 @@
 import React from 'react';
-import Link from 'next/link';
 import { NextRouter, useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
 
+import Link from 'components/page/Link';
 import type { ArticleKey } from 'articles/index';
 import useSiteStore from 'store/site.store';
 import Sep from './Sep';
@@ -272,21 +272,16 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
       , []);
 
       return (
-        <Link href={href}>
-          <a
-            className="anchor-link"
-            title={title}
-            onClick={(e) => {
-              e.preventDefault();
-              // Store this link so can go back
-              router.push(`#${id}`);
-              // Resume default behaviour
-              router.push(href);
-            }}
-          >
-            <div id={id} className="anchor" />
-            {children}
-          </a>
+        <Link
+          href={href}
+          className="anchor-link"
+          title={title}
+          onBefore={() => {
+            router.push(`#${id}`);
+          }}
+        >
+          <div id={id} className="anchor" />
+          {children}
         </Link>
       );
     }

@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { css } from "goober";
-import { articlesMeta, getArticleHref } from "articles";
+import { articlesMeta, getArticleHref } from "articles/index";
+import Link from "components/page/Link";
 import useSiteStore from "store/site.store";
 import { barHeight } from "./Nav";
 
@@ -13,13 +13,13 @@ export default function NavMini() {
     <div className={rootCss}>
       <nav>
         <Link href={getArticleHref(prev || meta)}>
-          <a>{'<'}</a>
+          {'<'}
         </Link>
         <Link href={getArticleHref(meta)}>
           <a className="primary">{meta.index}</a>
         </Link>
-        <Link href={getArticleHref(next || meta)}>
-          <a>{'>'}</a>
+        <Link href={getArticleHref(next || meta)} bottom>
+          {'>'}
         </Link>
       </nav>
     </div>
