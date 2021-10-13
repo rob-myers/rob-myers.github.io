@@ -10,10 +10,6 @@ export default function Link(props: Props) {
       onClick={async (e) => {
         e.preventDefault();
 
-        if (props.direct) {
-          return Router.push(props.href);
-        }
-
         const { pathname, hash } = new URL(props.href, location.href);
 
         if (pathname === location.pathname) {
@@ -24,7 +20,7 @@ export default function Link(props: Props) {
             props.onBefore?.();
             Router.push(hash);
           }
-        } else if (props.forward) {
+        } else if (props.forward && !props.direct) {
           if (window.scrollY + 32 < document.body.scrollHeight - window.innerHeight) {
             window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
             await pause(800);
@@ -41,13 +37,20 @@ export default function Link(props: Props) {
           }
         } else {
           if (window.scrollY > 32) {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            await pause(800);
+            if (!props.direct) {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              await pause(800);
+            } else {
+              window.scrollTo({ top: 0 });
+              await pause(100);
+            }
           }
           props.onBefore?.();
           if (hash) {
             await Router.push(pathname);
-            window.scrollTo({ top: document.body.scrollHeight });
+            if (!props.direct) {
+              window.scrollTo({ top: document.body.scrollHeight });
+            }
             document.getElementById(hash.slice(1))
               ?.scrollIntoView({ behavior: 'smooth' });
             await pause(800);
@@ -68,7 +71,11 @@ type Props = React.PropsWithChildren<{
   title?: string;
   className?: string;
   onBefore?: () =>  void; 
-  /** Scroll to bottom first */
+  /**
+   * Scroll to bottom 1st then scroll down from top.
+   * Otherwise we scroll to top 1st then scroll up from bottom.
+   */
   forward?: boolean;
+  /** Directly jump to top of page and scroll down to hash */
   direct?: boolean;
 }>
