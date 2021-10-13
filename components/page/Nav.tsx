@@ -88,7 +88,7 @@ const navCss = css`
     top: -1px;
     right: -${handleWidth}px;
     width: ${handleWidth}px;
-    min-height: ${barHeight + 1}px;
+    height: ${barHeight + 1}px;
 
     display: flex;
     justify-content: center;
@@ -100,10 +100,9 @@ const navCss = css`
       justify-content: center;
       align-items: center;
       background: #900;
-      border-radius: 24px;
       color: #fff;
-      width: 24px;
-      height: 24px;
+      width: inherit;
+      height: inherit;
       padding: 0 0 2px 0;
     }
   }
