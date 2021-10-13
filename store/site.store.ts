@@ -12,15 +12,12 @@ export type State = {
   articleKey: null | ArticleKey;
   /** Articles available on current page */
   articles: KeyedLookup<ArticleState>;
-  /** Last time a navigation was triggered (epoch ms) */
-  navAt: number;
-  /** Key of last article we targeted */
-  targetNavKey: null | ArticleKey;
   /** Currently available Tabs i.e. on current page */
   tabs: KeyedLookup<TabsState>;
+  /** Is a navigation in process? */
+  navigating: boolean;
 
   readonly api: {
-    onLoadArticles: (cb: (state: State) => void) => void;
     updateArticleKey: () => void;
   };
 };
@@ -28,19 +25,10 @@ export type State = {
 const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
   articles: {},
-  navAt: 0,
   tabs: {},
-  targetNavKey: null,
+  navigating: false,
 
   api: {
-    onLoadArticles: (cb) => {
-      if (Object.keys(get().articles).length) cb(get());
-      else {
-        const unsub = useSiteStore.subscribe(({ articles }) => {
-          if (Object.keys(articles).length) cb(get()), unsub();
-        });
-      }
-    },
     updateArticleKey: () => {
       const articles = Object.values(get().articles);
       let article = undefined as undefined | ArticleState;
