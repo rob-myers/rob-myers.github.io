@@ -1,6 +1,5 @@
 import Router from 'next/router';
 import { pause } from 'model/generic.model';
-import useSiteStore from 'store/site.store';
 
 export default function Link(props: Props) {
   return (
@@ -11,15 +10,10 @@ export default function Link(props: Props) {
       onClick={async (e) => {
         e.preventDefault();
 
-        if (useSiteStore.getState().navigating) {
-          return;
-        }
-
         if (props.direct) {
           return Router.push(props.href);
         }
 
-        useSiteStore.setState({ navigating: true });
         const { pathname, hash } = new URL(props.href, location.href);
 
         if (pathname === location.pathname) {
@@ -62,8 +56,6 @@ export default function Link(props: Props) {
             Router.push(props.href);
           }
         }
-
-        useSiteStore.setState({ navigating: false });
       }}
     >
       {props.children}

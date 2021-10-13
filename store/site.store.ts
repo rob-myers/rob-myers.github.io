@@ -14,8 +14,6 @@ export type State = {
   articles: KeyedLookup<ArticleState>;
   /** Currently available Tabs i.e. on current page */
   tabs: KeyedLookup<TabsState>;
-  /** Is a navigation in process? */
-  navigating: boolean;
 
   readonly api: {
     updateArticleKey: () => void;
@@ -26,7 +24,6 @@ const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
   articles: {},
   tabs: {},
-  navigating: false,
 
   api: {
     updateArticleKey: () => {
