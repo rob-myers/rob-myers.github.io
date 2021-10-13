@@ -13,13 +13,13 @@ export default function NavMini() {
     <div className={rootCss}>
       <nav>
         <Link href={getArticleHref(prev || meta)}>
-          {'<'}
+          <span className="prev">{'<'}</span>
         </Link>
         <Link href={getArticleHref(meta)}>
           <a className="primary">{meta.index}</a>
         </Link>
         <Link href={getArticleHref(next || meta)} forward>
-          {'>'}
+          <span className="next">{'>'}</span>
         </Link>
       </nav>
     </div>
@@ -54,6 +54,10 @@ const rootCss = css`
 
     a.primary {
       color: #fff;
+    }
+
+    span.prev, span.next {
+      padding-top: 2px;
     }
   }
 `;
