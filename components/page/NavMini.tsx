@@ -42,8 +42,7 @@ const rootCss = css`
   @media(max-width: 1024px) { top: -32px; }
   @media(max-width: 600px) { top: 0; }
 
-  font-family: monospace;
-  font-size: 0.9rem;
+  font-size: 1rem;
 
   > ul {
     position: fixed;
@@ -53,14 +52,13 @@ const rootCss = css`
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 1px solid #555;
     padding: 0;
     margin: 0;
 
     li {
       list-style: none;
       list-style-position: inside;
-      padding: 0 4px;
+      padding: 0 5px;
     }
     a {
       color: #ccc;
