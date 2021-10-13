@@ -10,6 +10,11 @@ export default function Link(props: Props) {
       title={props.title}
       onClick={async (e) => {
         e.preventDefault();
+
+        if (zenscroll.moving()) {
+          return zenscroll.stop();
+        }
+
         props.onBefore?.();
         const { pathname, hash } = new URL(props.href, location.href);
 
@@ -24,9 +29,7 @@ export default function Link(props: Props) {
           // Browser-independent, controllable, smooth scroll
           const delta = Math.min(500, Math.abs(zenscroll.getTopOf(el) - scrollY));
           const ms = delta < 500 ? 100 + 400 * (delta / 400) : 1000;
-          await new Promise<void>(
-            (resolve) => zenscroll.to(el, ms, resolve)
-          );
+          await new Promise<void>((resolve) => zenscroll.to(el, ms, resolve));
         }
         Router.replace(hash);
       }}
