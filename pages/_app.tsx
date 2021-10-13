@@ -16,6 +16,7 @@ if (typeof window !== 'undefined') {
     import('pepjs');
   }
   zenscroll.setup(500, 0);
+  history.scrollRestoration = 'manual';
 }
 //#endregion
 
@@ -42,9 +43,6 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
       <title>
         Rogue Markup
       </title>
-      <script>
-        history.scrollRestoration = 'manual'
-      </script>    
     </Head>
     <QueryClientProvider client={queryClient} >
       <Nav/>
