@@ -10,23 +10,29 @@ export default function NavMini() {
   const next = meta?.next ? articlesMeta[meta.next] : null;
 
   return meta?.index ? (
-    <div className={rootCss}>
-      <nav>
-        <Link href={getArticleHref(prev || meta)}>
-          <span className="prev">{'<'}</span>
-        </Link>
-        <Link href={getArticleHref(meta)}>
-          <a className="primary">{meta.index}</a>
-        </Link>
-        <Link href={getArticleHref(next || meta)} forward>
-          <span className="next">{'>'}</span>
-        </Link>
-      </nav>
-    </div>
+    <nav className={rootCss}>
+      <ul>
+        <li>
+          <Link href={getArticleHref(prev || meta)}>
+            <span className="prev">prev</span>
+          </Link>
+        </li>
+        <li>
+          <Link href={getArticleHref(meta)}>
+            <a className="primary">{meta.index}</a>
+          </Link>
+        </li>
+        <li>
+          <Link href={getArticleHref(next || meta)} forward>
+            <span className="next">next</span>
+          </Link>
+        </li>
+      </ul>
+    </nav>
   ) : null;
 }
 
-const width = 96;
+const width = 140;
 
 const rootCss = css`
   position: absolute;
@@ -36,28 +42,31 @@ const rootCss = css`
   @media(max-width: 1024px) { top: -32px; }
   @media(max-width: 600px) { top: 0; }
 
-  > nav {
+  font-family: monospace;
+  font-size: 0.9rem;
+
+  > ul {
     position: fixed;
     width: ${width}px;
     height: ${barHeight}px;
 
-    display: grid;
-    grid-template-columns: 40% 20% 40%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #555;
+    padding: 0;
+    margin: 0;
 
+    li {
+      list-style: none;
+      list-style-position: inside;
+      padding: 0 4px;
+    }
     a {
       color: #ccc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding-top: 1px;
     }
-
     a.primary {
       color: #fff;
-    }
-
-    span.prev, span.next {
-      padding-top: 2px;
     }
   }
 `;
