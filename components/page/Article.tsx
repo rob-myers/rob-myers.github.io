@@ -9,6 +9,7 @@ import useSiteStore from 'store/site.store';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
+import { pause } from 'model/generic.model';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
@@ -343,8 +344,12 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
         <a
           href={href}
           title={title}
-          onClick={() => {
+          onClick={async (e) => {
+            e.preventDefault();
+            document.getElementById(id)!.scrollIntoView({ behavior: 'smooth' });
+            await pause(500);
             window.location.href = `#${id}`;
+            window.location.href = href;
           }}
         >
           <span id={id} className="anchor" />
