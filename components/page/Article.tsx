@@ -33,7 +33,7 @@ export default function Article(props: React.PropsWithChildren<{
     <article
       className={classNames(articleClassName, props.className, articleCss)}
     >
-      <div className="anchor" id={`article-${props.articleKey}`} />
+      <span className="anchor" id={`article-${props.articleKey}`} />
       <time dateTime={props.dateTime}>
         {dateText}
       </time>
@@ -70,7 +70,7 @@ const articleCss = css`
       color: unset;
     }
     position: relative;
-    > div.anchor {
+    > span.anchor {
       position: absolute;
       top: -96px;
     }
@@ -104,6 +104,11 @@ const articleCss = css`
     @media(max-width: 600px) {
       user-select: all;
     }
+  }
+
+  > span.anchor {
+    position: absolute;
+    top: -48px;
   }
 
   aside {
@@ -159,7 +164,7 @@ const articleCss = css`
     }
 
     position: relative;
-    > div.anchor {
+    > span.anchor {
       position: absolute;
       top: -64px;
     }
@@ -186,7 +191,7 @@ const articleCss = css`
     }
 
     position: relative;
-    > div.anchor {
+    > span.anchor {
       position: absolute;
       top: -48px;
     }
@@ -241,10 +246,6 @@ const articleCss = css`
       font-size: 1.1rem;
     }
   }
-  > div.anchor {
-    position: absolute;
-    top: -48px;
-  }
 
   ul, ol {
     @media(max-width: 600px) {
@@ -267,10 +268,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
 
     // Relative anchor link
     if (title === '@anchor') {
-      const id = React.useMemo(() =>
-        `${articleKey}--link-${childrenToKebabText(children)}`
-      , []);
-
+      const id = `${articleKey}--link-${childrenToKebabText(children)}`;
       return (
         <Link
           href={href}
@@ -280,7 +278,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
             router.push(`#${id}`);
           }}
         >
-          <div id={id} className="anchor" />
+          <span id={id} className="anchor" />
           {children}
         </Link>
       );
@@ -340,8 +338,16 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
 
     // External link
     if (/^(?:http)|(?:mailto)/.test(href)) {
+      const id = `${articleKey}--link-${childrenToKebabText(children)}`;
       return (
-        <a href={href} title={title}>
+        <a
+          href={href}
+          title={title}
+          onClick={() => {
+            window.location.href = `#${id}`;
+          }}
+        >
+          <span id={id} className="anchor" />
           {children}
         </a>
       );
@@ -394,7 +400,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
 
     return (
       <h3 {...props}>
-        <div id={id} className="anchor" />
+        <span id={id} className="anchor" />
         <Link href={`#${id}`}>
           <a>{children}</a>
         </Link>
