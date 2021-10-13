@@ -232,6 +232,7 @@ const articleCss = css`
     right: -10px;
     top: -50px;
     width: 136px;
+
     background: var(--border-bg);
     text-align: center;
     color: #555;
@@ -246,6 +247,8 @@ const articleCss = css`
       border-radius: 0 0 0 4px;
       background: none;
       font-size: 1.1rem;
+      width: unset;
+      margin-top: 8px;
     }
   }
 
