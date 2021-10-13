@@ -4,10 +4,16 @@ The road towards the roguelike begins with [part/1](part/1).
 
 ### Changelog
 
+Check here for updates.
+
 | Date | Change |
-| ------- | ---------- |
-| 2nd Dec 2021 | Launched site.
-| 1st Dec 2021 | Created first 7 articles.
+| -----| -------|
+| 2nd Dec 2021  | Launched site.
+| 1st Dec 2021  | Created first 7 articles.
+
+### Gallery
+
+_TODO_ geomorphs and symbols here
 
 ### Metadata
 

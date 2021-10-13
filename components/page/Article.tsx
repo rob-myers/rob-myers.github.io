@@ -209,15 +209,16 @@ const articleCss = css`
     padding: 8px;
     border: 1px solid #bbb;
     width: 100%;
-    margin: 48px 0;
+    margin: 32px 0;
     @media(max-width: 600px) {
       margin: 20px 0;
     }
     
     th, td {
+      padding: 3px;
       text-align: left;
       vertical-align: top;
-      padding: 8px;
+      font-size: 1.1rem;
       @media(max-width: 600px) {
         font-size: 1rem;
         padding: 4px 2px;
