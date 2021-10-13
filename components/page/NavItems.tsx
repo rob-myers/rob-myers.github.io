@@ -11,7 +11,7 @@ export default function NavItems() {
     <section className={rootCss}>
 
       <h3>
-        <Link href="/#article--frontpage">
+        <Link href="/" direct>
           Rogue Markup
         </Link>
       </h3>
@@ -47,7 +47,7 @@ const rootCss = css`
     font-weight: 300;
     margin: 0;
     a {
-      color: #aaa;
+      color: #ddd;
     }
     border: 0 solid #aaa;
     border-width: 0 0 2px;

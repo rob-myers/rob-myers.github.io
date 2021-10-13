@@ -9,6 +9,11 @@ export default function Link(props: Props) {
       title={props.title}
       onClick={async (e) => {
         e.preventDefault();
+
+        if (props.direct) {
+          return Router.push(props.href);
+        }
+
         const { pathname, hash } = new URL(props.href, location.href);
 
         if (pathname === location.pathname) {
@@ -65,4 +70,5 @@ type Props = React.PropsWithChildren<{
   onBefore?: () =>  void; 
   /** Scroll to bottom first */
   forward?: boolean;
+  direct?: boolean;
 }>
