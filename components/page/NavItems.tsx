@@ -23,7 +23,7 @@ export default function NavItems() {
               <Link
                 href={getArticleHref(meta)}
                 title={meta.info}
-                bottom={!!part && (meta.part > part)}
+                forward={!!part && (meta.part > part)}
               >
                 {meta.index} {meta.label}
               </Link>

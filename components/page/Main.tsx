@@ -1,4 +1,3 @@
-import React from 'react';
 import { css } from "goober";
 import Portals from './Portals';
 import Title from "./Title";

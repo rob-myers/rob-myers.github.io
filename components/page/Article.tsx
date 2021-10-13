@@ -264,9 +264,8 @@ const articleCss = css`
 const articleComponents = (articleKey: string, router: NextRouter) => ({
 
   a({ node, href, title, children, ...props}: any) {
-    const anchor = (title === '@anchor');
 
-    if (anchor) {
+    if (title === '@anchor') {// Relative anchor link
       const id = React.useMemo(() =>
         `${articleKey}--link-${childrenToKebabText(children)}`
       , []);
@@ -286,53 +285,59 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
       );
     }
 
-    const newTab = (title === '@new-tab');
+    if (/^(?:http)|(?:mailto)|(?:#command$)/.test(href)) {
+      return (
+        <a href={href} title={title}
 
-    return (
-      <a href={href} title={title}
+          {...title === '@new-tab' && {
+            className: 'new-tab-link',
+            target: '_blank',
+            rel: 'noopener',
+          }}
 
-        {...newTab && {
-          className: 'new-tab-link',
-          target: '_blank',
-          rel: 'noopener',
-        }}
+          {...href === '#command' && {
+            onClick: (e) => {
+              e.preventDefault();
 
-        {...href === '#command' && {
-          onClick: (e) => {
-            e.preventDefault();
+              const [cmd, ...args] = title.split(' ');
+              console.log(cmd, args);
 
-            const [cmd, ...args] = title.split(' ');
-            console.log(cmd, args);
-
-            switch (cmd) {
-              case 'open-tab': {
-                const [tabsKey, tabKey] = args;
-                const tabs = useSiteStore.getState().tabs[tabsKey];
-                if (tabs) {// in case tabs not enabled yet
-                  tabs.selectTab(tabKey),
-                  router.push(`#${tabsKey}`);
+              switch (cmd) {
+                case 'open-tab': {
+                  const [tabsKey, tabKey] = args;
+                  const tabs = useSiteStore.getState().tabs[tabsKey];
+                  if (tabs) {// in case tabs not enabled yet
+                    tabs.selectTab(tabKey),
+                    router.push(`#${tabsKey}`);
+                  }
+                  break;
                 }
-                break;
+                case 'sigkill': {
+                  import('store/session.store').then(({ default: useSessionStore }) => {
+                    const { ttyShell } = useSessionStore.api.getSession(args[0])
+                    ttyShell.xterm.sendSigKill();
+                  });
+                  break;
+                }
+                default:
+                  console.warn('link triggered unrecognised command:', title);
               }
-              case 'sigkill': {
-                import('store/session.store').then(({ default: useSessionStore }) => {
-                  const { ttyShell } = useSessionStore.api.getSession(args[0])
-                  ttyShell.xterm.sendSigKill();
-                });
-                break;
-              }
-              default:
-                console.warn('link triggered unrecognised command:', title);
-            }
-          },
-        }}
+            },
+          }}
 
-        {...props}
-      >
+          {...props}
+        >
+          {children}
+        </a>
+      );
+    }
+
+    // Relative link
+    return (
+      <Link href={href} title={title}>
         {children}
-      </a>
+      </Link>
     );
-
 
   },
 

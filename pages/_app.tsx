@@ -9,7 +9,7 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
   if (!window.ResizeObserver) {
-    window.ResizeObserver = ResizeObserver
+    window.ResizeObserver = ResizeObserver;
   }
   if (!('scrollBehavior' in document.documentElement.style)) {
     // For Safari, and combined with NextJS patch
@@ -48,7 +48,9 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
       <title>
         Rogue Markup
       </title>
-      <script>history.scrollRestoration = 'manual'</script>    
+      <script>
+        history.scrollRestoration = 'manual'
+      </script>    
     </Head>
     <QueryClientProvider client={queryClient} >
       <Nav/>

@@ -1,4 +1,4 @@
-## Home Page
+## Home
 
 The road towards the roguelike begins with [part/1](part/1).
 
