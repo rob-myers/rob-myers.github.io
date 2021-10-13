@@ -60,7 +60,7 @@ function NextArticle() {
   return (
     <section className={nextArticleCss}>
       <Link href={href} forward>
-        Continue to the next article
+        Next article
       </Link>
     </section>
   );
