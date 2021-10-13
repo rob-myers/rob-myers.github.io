@@ -10,6 +10,7 @@ import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
 import { pause } from 'model/generic.model';
+import zenscroll from 'zenscroll';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
@@ -55,7 +56,7 @@ const articleCss = css`
   border: var(--blog-border-width) solid var(--border-bg);
   font-size: 1.2rem;
   
-  padding: 48px 128px 96px 128px;
+  padding: 64px 128px 96px 128px;
   @media(max-width: 800px) {
     padding: 32px 64px 48px 64px;
   }
@@ -167,7 +168,7 @@ const articleCss = css`
     position: relative;
     > span.anchor {
       position: absolute;
-      top: -64px;
+      top: -96px;
     }
   }
 
@@ -310,7 +311,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
         <a
           href={href}
           title={title}
-          onClick={(e) => {
+          onClick={async (e) => {
             e.preventDefault();
             const [cmd, ...args] = title.split(' ');
 
@@ -318,8 +319,11 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
               case 'open-tab': {
                 const [tabsKey, tabKey] = args;
                 const tabs = useSiteStore.getState().tabs[tabsKey];
-                if (tabs) {// in case tabs not enabled yet
-                  tabs.selectTab(tabKey),
+                if (tabs) {
+                  tabs.selectTab(tabKey);
+                  await new Promise<void>(resolve => 
+                    zenscroll.to(document.getElementById(tabsKey)!, 500, resolve)
+                  );
                   router.push(`#${tabsKey}`);
                 }
                 break;
@@ -350,8 +354,9 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
           title={title}
           onClick={async (e) => {
             e.preventDefault();
-            document.getElementById(id)!.scrollIntoView({ behavior: 'smooth' });
-            await pause(500);
+            await new Promise<void>(resolve => 
+              zenscroll.to(document.getElementById(id)!, 500, resolve)
+            );
             window.location.href = `#${id}`;
             window.location.href = href;
           }}

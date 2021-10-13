@@ -42,7 +42,7 @@ export default function Nav() {
 }
 
 const sidebarWidth = 256;
-const handleWidth = 36;
+const handleWidth = 40;
 export const barHeight = 40;
 
 const navCss = css`
@@ -99,10 +99,11 @@ const navCss = css`
       display: flex;
       justify-content: center;
       align-items: center;
-      background: #555;
-      border-radius: 28px;
-      width: 28px;
-      height: 28px;
+      background: #900;
+      border-radius: 24px;
+      color: #fff;
+      width: 24px;
+      height: 24px;
       padding: 0 0 2px 0;
     }
   }

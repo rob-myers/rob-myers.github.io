@@ -4,6 +4,7 @@ import { AppInitialProps } from 'next/app';
 import { Router } from 'next/router';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import zenscroll from 'zenscroll';
 
 //#region polyfill
 import { ResizeObserver } from '@juggle/resize-observer';
@@ -11,17 +12,10 @@ if (typeof window !== 'undefined') {
   if (!window.ResizeObserver) {
     window.ResizeObserver = ResizeObserver;
   }
-  if (!('scrollBehavior' in document.documentElement.style)) {
-    // For Safari, and combined with NextJS patch
-    // https://github.com/rob-myers/rob-myers.github.io/commit/2272840c2e62c58482cff884a77fa9721b943f32
-    import('smoothscroll-polyfill')
-      .then(x => x.default.polyfill())
-      //@ts-ignore
-      .then(() => import('smoothscroll-anchor-polyfill'));
-  }
   if (!('onpointerdown' in document.documentElement)) {
     import('pepjs');
   }
+  zenscroll.setup(500, 0);
 }
 //#endregion
 

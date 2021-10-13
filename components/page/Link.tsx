@@ -1,4 +1,5 @@
 import Router from 'next/router';
+import zenscroll from 'zenscroll';
 import { pause } from 'model/generic.model';
 
 export default function Link(props: Props) {
@@ -9,56 +10,25 @@ export default function Link(props: Props) {
       title={props.title}
       onClick={async (e) => {
         e.preventDefault();
-
+        props.onBefore?.();
         const { pathname, hash } = new URL(props.href, location.href);
 
-        if (pathname === location.pathname) {
-          if (hash) {
-            document.getElementById(hash.slice(1))
-              ?.scrollIntoView({ behavior: 'smooth' });
-            await pause(800);
-            props.onBefore?.();
-            Router.push(hash);
-          }
-        } else if (props.forward && !props.direct) {
-          if (window.scrollY + 32 < document.body.scrollHeight - window.innerHeight) {
-            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-            await pause(800);
-          }
-          props.onBefore?.();
+        if (pathname !== location.pathname) {
           await Router.push(pathname);
-          window.scrollTo({ top: 0 });
-          if (hash) {
-            await pause(100);
-            document.getElementById(hash.slice(1))
-              ?.scrollIntoView({ behavior: 'smooth' });
-            await pause(800);
-            Router.replace(hash);
-          }
-        } else {
-          if (window.scrollY > 32) {
-            if (!props.direct) {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-              await pause(800);
-            } else {
-              window.scrollTo({ top: 0 });
-              await pause(100);
-            }
-          }
-          props.onBefore?.();
-          if (hash) {
-            await Router.push(pathname);
-            if (!props.direct) {
-              window.scrollTo({ top: document.body.scrollHeight });
-            }
-            document.getElementById(hash.slice(1))
-              ?.scrollIntoView({ behavior: 'smooth' });
-            await pause(800);
-            Router.replace(hash);
-          } else {
-            Router.push(props.href);
-          }
+          window.scrollTo({ top: props.forward ? 0 : document.body.scrollHeight });
+          await pause(100);
         }
+
+        const el = document.getElementById(hash.slice(1));
+        if (el) {
+          // Browser-independent, controllable, smooth scroll
+          const delta = Math.min(500, Math.abs(zenscroll.getTopOf(el) - scrollY));
+          const ms = delta < 500 ? 100 + 400 * (delta / 400) : 1000;
+          await new Promise<void>(
+            (resolve) => zenscroll.to(el, ms, resolve)
+          );
+        }
+        Router.replace(hash);
       }}
     >
       {props.children}
@@ -72,10 +42,8 @@ type Props = React.PropsWithChildren<{
   className?: string;
   onBefore?: () =>  void; 
   /**
-   * Scroll to bottom 1st then scroll down from top.
-   * Otherwise we scroll to top 1st then scroll up from bottom.
+   * Scroll to start of next page, then smooth scroll down.
+   * Scroll to end of next page, then smooth scroll up.
    */
   forward?: boolean;
-  /** Directly jump to top of page and scroll down to hash */
-  direct?: boolean;
 }>

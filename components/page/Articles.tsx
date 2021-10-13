@@ -1,15 +1,15 @@
 import { useRef, useEffect } from "react";
 import useMeasure from "react-use-measure";
-import { ArticleKey, articlesMeta } from "articles/index";
+import { css } from "goober";
+
+import { lookupFromValues } from "model/generic.model";
+import { ArticleKey, articlesMeta, getArticleHref } from "articles/index";
 import useSiteStore from 'store/site.store';
 import { Rect } from "projects/geom/rect";
-import { lookupFromValues } from "model/generic.model";
 import Article, { articleClassName } from "./Article";
+import Link from "./Link";
 
-export default function Articles({ keys, markdown }: {
-  keys: ArticleKey[];
-  markdown: Partial<Record<ArticleKey, string>>;
-}) {
+export default function Articles({ keys, markdown }: Props) {
   const root = useRef<HTMLDivElement>();
   const [ref, rect] = useMeasure({ debounce: 30, scroll: true });
 
@@ -43,7 +43,45 @@ export default function Articles({ keys, markdown }: {
           children={markdown[key] || ''}
         />
       )}
+      <NextArticle />
     </div>
   );
   
 }
+
+interface Props {
+  keys: ArticleKey[];
+  markdown: Partial<Record<ArticleKey, string>>;
+}
+
+function NextArticle() {
+  const article = useSiteStore(x => x.articleKey ? articlesMeta[x.articleKey] : null);
+  const href = article?.next ? getArticleHref(articlesMeta[article.next]) : '';
+  return (
+    <section className={nextArticleCss}>
+      <Link href={href} forward>
+        Continue to the next article
+      </Link>
+    </section>
+  );
+}
+
+const nextArticleCss = css`
+  margin-top: -32px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  background: #666;
+
+  height: 64px;
+  display: flex;
+
+  a {
+    color: white;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+`;
