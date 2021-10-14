@@ -183,11 +183,17 @@ const articleCss = css`
       margin: 16px 0 24px;
       font-size: 2rem;
     }
+    @media(max-width: 800px) {
+      font-size: 2.2rem;
+    }
   }
   h3 {
     font-size: 1.8rem;
     @media(max-width: 600px) {
       font-size: 1.3em;
+    }
+    @media(max-width: 800px) {
+      font-size: 1.4em;
     }
 
     position: relative;

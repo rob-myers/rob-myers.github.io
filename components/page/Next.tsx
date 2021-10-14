@@ -6,7 +6,7 @@ export default function NextArticle(props: Props) {
   return props.article ? (
     <div className={nextArticleCss}>
       <Link href={getArticleHref(props.article)} forward>
-        Next
+        continue
       </Link>
     </div>
   ) : null;
@@ -17,21 +17,21 @@ interface Props {
 }
 
 const nextArticleCss = css`
-  font-size: 1.1rem;
   cursor: pointer;
-  background: #666;
+  font-family: sans-serif;
+  text-decoration: underline;
   
   height: 64px;
   display: flex;
-  @media(min-width: 600px) {
-    margin-top: 16px;
-  }
-  @media(min-width: 800px) {
-    margin-top: -32px;
+  margin-top: -64px;
+  font-size: 1.3rem;
+  @media(max-width: 800px) {
+    font-size: 1.1rem;
+    margin-top: 0px;
   }
 
   a {
-    color: white;
+    color: #222;
     width: 100%;
     height: 100%;
     text-align: center;
