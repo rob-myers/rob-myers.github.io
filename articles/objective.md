@@ -20,6 +20,7 @@ As for the environment, it will be driven by thousands of Traveller-based assets
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
+Additional colours indicate obstacles: those you can see over (green) and those you cannot (red). Together with the doors and the other walls, they collectively induce a navigable polygon (blue).
 
 > A larger version is [available](/pics/g-301--bridge.debug.x2.png "@new-tab").
 
