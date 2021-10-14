@@ -33,7 +33,7 @@ export default function Article(props: React.PropsWithChildren<{
 
   return <>
     <article
-      className={classNames(articleClassName, props.className, articleCss)}
+      className={classNames(props.className, articleCss)}
     >
       <span className="anchor" id={`article-${props.articleKey}`} />
       <time dateTime={props.dateTime}>
@@ -47,8 +47,6 @@ export default function Article(props: React.PropsWithChildren<{
     <Sep/>
   </>;
 }
-
-export const articleClassName = 'article';
 
 const articleCss = css`
   line-height: 1.6;
