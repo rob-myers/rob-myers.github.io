@@ -180,7 +180,7 @@ const articleCss = css`
     }
   }
   h2 {
-    font-size: 2.6rem;
+    font-size: 2.7rem;
     @media(max-width: 600px) {
       margin: 16px 0 24px;
       font-size: 2rem;
@@ -280,9 +280,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
           href={href}
           className="anchor-link"
           title={title}
-          onBefore={() => {
-            router.push(`#${id}`);
-          }}
+          prePush={`#${id}`}
         >
           <span id={id} className="anchor" />
           {children}
