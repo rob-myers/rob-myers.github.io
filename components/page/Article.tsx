@@ -52,7 +52,7 @@ const articleCss = css`
   line-height: 1.6;
   background: var(--focus-bg);
   border: var(--blog-border-width) solid var(--border-bg);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   
   padding: 64px 128px 96px 128px;
   @media(max-width: 800px) {
