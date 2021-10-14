@@ -14,7 +14,7 @@ either during a build-step or on a Node.js server.
 In particular, JavaScript has become the central web technology.
 
 
-### React and Preact
+### React Function Components
 
 Competing JavaScript frameworks exist, often with their own notion of component.
 One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return value.
@@ -58,6 +58,8 @@ Behaviourally:
   We'll follow a convention based on the work of Robert Pearce and Eric B. Smith. That is, 60 abstract user units (one large grid square) correspond to 1.5 meters.
   </aside>
 
+### React and Preact
+
 The above two JS functions each have a single parameter `props`, and return something which looks like HTML (but isn't).
 For example, _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
 Then although React function components are functions, syntactically they are not invoked like functions (we don't write `Grid(props)`).
@@ -67,7 +69,7 @@ Here's a whirlwind overview.
 
 - React devs use a grammatical extension [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript) "@new-tab") of JS by XML.
 - React applications are built by composing React function components, using the XML syntax for their return value.
-- Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` (see [example/jsx-to-js.jsx](#command "open-tab tabs-jsx-to-js") below).
+- Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` (see [example below](#command "open-tab tabs-jsx-to-js")).
 - This website actually uses _Preact_, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js "@new-tab"),
   and creates Preact virtual DOM nodes.
@@ -86,7 +88,7 @@ Here's a whirlwind overview.
   tabs="[ { key: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
 ></div>
 
-### Avoiding React Renders
+### React Renders
 
 <!--
 Websites respond to interaction, sometimes without changing the DOM.
@@ -122,14 +124,18 @@ But updating this variable does not automatically update the virtual DOM.
 Usually one would _trigger a re-render_, so that _PanZoom_ returns `<svg/>` with the updated viewBox, and the DOM-diffing algorithm does the update.
 But how do we trigger a re-render?
 
-A React function component is rendered if an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
+### Internal state via `useState`
+
+A React function component is rendered whenever an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
 
 > `const [value, setValue] = React.useState(() => initialValue);`
 
 These declarations cannot be nested, must occur at the "top-level" of the React function component, and must always execute in the same order.
 This induces a [well-defined association](https://github.com/preactjs/preact/blob/98f130ee8695c2b4f7535205ddf02168192cdcac/hooks/src/index.js#L109 "@new-tab") with their enclosing component.
 To change state we execute `setValue(nextValue)` e.g. in response to a click. If `nextValue` differs from `value`, the function `setValue` causes the component to re-render where now `React.setState(...)[0]` has the new value.
-This propagation of internal state is possible because hooks must always execute in the same order.
+This propagation of internal state is possible because a component's hooks must always execute in the same order.
+
+### Avoiding React Renders
 
 In _panzoom/PanZoom.jsx_, `value` corresponds to `state` but there is no correspondent of `setValue`.
 Why?
@@ -141,8 +147,8 @@ Instead we directly mutate the DOM via:
 <!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again code--geom/rect.js"). -->
 
 As far as React is concerned, nothing has changed.
-Moreover if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (so, no change).
-Why bother avoiding these virtual DOM computations though?
+Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (no change).
+Why don't we use `setState`?
 To avoid needlessly recomputing `<Grid />` and `children` whenever we pan or zoom.
 Our game may contain many elements, and we'd rather not recompute their virtual DOM tens of times per second.
 
