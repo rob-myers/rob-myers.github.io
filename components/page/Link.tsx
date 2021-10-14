@@ -10,34 +10,38 @@ export default function Link(props: Props) {
       title={props.title}
       onClick={async (e) => {
         e.preventDefault();
-        let pushHash = false;
         const { pathname, hash } = new URL(props.href, location.href);
+        const changePage = pathname !== location.pathname;
 
         if (zenscroll.moving()) {
           return zenscroll.stop();
         }
 
         if (props.prePush) {
-          // Push hash into history if we don't change page,
-          // otherwise we'll overwrite the prePrush
-          pushHash = pathname === location.pathname;
           await Router.push(props.prePush);
         }
 
-        if (pathname !== location.pathname) {
+        if (changePage) {
           await Router.push(pathname);
           window.scrollTo({ top: props.forward ? 0 : document.body.scrollHeight });
-          await pause(100);
         }
 
         const el = document.getElementById(hash.slice(1));
         if (el) {// Browser-independent, controllable, smooth scroll
           const delta = Math.min(500, Math.abs(zenscroll.getTopOf(el) - scrollY));
-          const ms = delta < 500 ? 100 + 400 * (delta / 400) : 1000;
+          const ms = delta < 500 && !changePage
+            ? 100 + 500 * (delta / 500)
+            : 1000;
           await new Promise<void>((resolve) => zenscroll.to(el, ms, resolve));
         }
 
-        (pushHash ? Router.push : Router.replace)(hash);
+        if (props.prePush && !changePage) {
+          // Push hash into history if we didn't change page,
+          // otherwise we'll overwrite the prePrush
+          Router.push(hash)
+        } else {
+          Router.replace(hash);
+        }
       }}
     >
       {props.children}
