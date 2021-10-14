@@ -23,15 +23,16 @@ export default function Link(props: Props) {
 
         if (changePage) {
           await Router.push(pathname);
-          window.scrollTo({ top: props.forward ? 0 : document.body.scrollHeight });
+          if (!props.forward) {
+            window.scrollTo({ top: document.body.scrollHeight });
+          }
         }
 
         const el = document.getElementById(hash.slice(1));
         if (el) {// Browser-independent, controllable, smooth scroll
           const delta = Math.min(500, Math.abs(zenscroll.getTopOf(el) - scrollY));
           const ms = delta < 500 && !changePage
-            ? 100 + 500 * (delta / 500)
-            : 1000;
+            ? 100 + 400 * (delta / 400) : 600;
           await new Promise<void>((resolve) => zenscroll.to(el, ms, resolve));
         }
 
