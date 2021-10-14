@@ -20,11 +20,11 @@ As for the environment, it will be driven by thousands of Traveller-based assets
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-Additional colours indicate obstacles: those you can see over (green) and those you cannot (red). Together with the doors and the other walls, they collectively induce a navigable polygon (blue).
+Green indicates obstacles you can see over, whereas red indicates obstacles which are essentially walls. Together with the white doors and black walls (including the hull), they induce a navigable polygon shown in blue.
 
 > A larger version is [available](/pics/g-301--bridge.debug.x2.png "@new-tab").
 
-Roughly speaking, a "Starship Geomorph" is a rectangular partial floorplan of a starship, designed to be cut out and glued to others.
-They were created by Robert Pearce, and distributed as PDFs on his [blog](http://travellerrpgblog.blogspot.com/).
-Their 2nd version was released in 2020, and soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/).
+A "Starship Geomorph" is a rectangular partial floorplan of a starship, designed to be cut out and glued to other ones.
+They were created by Robert Pearce, and distributed as a PDF on his [blog](http://travellerrpgblog.blogspot.com/).
+A 2nd version was released in 2020, along with another PDF containing many individual symbols e.g. offices, fuel tanks and bedrooms. Soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/).
 The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
