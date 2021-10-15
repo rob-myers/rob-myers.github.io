@@ -1,6 +1,6 @@
 import Router from 'next/router';
 import { pause } from 'model/generic.model';
-import { scrollFinish } from 'model/dom.model';
+import { maxScrollHeight, scrollFinish } from 'model/dom.model';
 
 export default function Link(props: Props) {
   return (
@@ -19,7 +19,7 @@ export default function Link(props: Props) {
 
         if (changePage) {
           await Router.push(pathname);
-          window.scrollTo({ top: props.forward ? 0 : document.body.scrollHeight });
+          window.scrollTo({ top: props.backward ? maxScrollHeight() : 0 });
           await pause(50);
         }
         
@@ -51,8 +51,8 @@ type Props = React.PropsWithChildren<{
   /** Optional path to push before navigating, so can return afterwards */
   prePush?: string;
   /**
-   * Scroll to start of next page, then smooth scroll down.
-   * Scroll to end of next page, then smooth scroll up.
+   * If true (backward) goto end of next page, then smooth scroll up.
+   * If false (forward) goto start of next page, then smooth scroll down.
    */
-  forward?: boolean;
+  backward?: boolean;
 }>

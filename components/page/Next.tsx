@@ -7,7 +7,6 @@ export default function NextArticle(props: Props) {
     <div className={nextArticleCss}>
       <Link
         href={getArticleHref(props.article)}
-        forward
         title="Continue to next article"
       >
         Next

@@ -11,7 +11,7 @@ export default function NavItems() {
     <section className={rootCss}>
 
       <h3>
-        <Link href="/" forward>
+        <Link href="/">
           Rogue Markup
         </Link>
       </h3>
@@ -23,7 +23,7 @@ export default function NavItems() {
               <Link
                 href={getArticleHref(meta)}
                 title={meta.info}
-                forward={part === null || part === -1 || meta.part > part}
+                backward={!!part && meta.part < part}
               >
                 {meta.index} {meta.label}
               </Link>

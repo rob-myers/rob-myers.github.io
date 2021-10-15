@@ -13,7 +13,7 @@ export default function NavMini() {
     <nav className={rootCss}>
       <ul>
         <li>
-          <Link href={getArticleHref(prev || meta)}>
+          <Link href={getArticleHref(prev || meta)} backward>
             <span className="prev">prev</span>
           </Link>
         </li>
@@ -23,7 +23,7 @@ export default function NavMini() {
           </Link>
         </li>
         <li>
-          <Link href={getArticleHref(next || meta)} forward>
+          <Link href={getArticleHref(next || meta)}>
             <span className="next">next</span>
           </Link>
         </li>
