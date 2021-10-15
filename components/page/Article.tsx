@@ -214,7 +214,7 @@ const articleCss = css`
     padding: 8px;
     border: 1px solid #bbb;
     width: 100%;
-    margin: 32px 0;
+    margin: 40px 0;
     @media(max-width: 600px) {
       margin: 20px 0;
     }
