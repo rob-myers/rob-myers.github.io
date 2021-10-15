@@ -2,7 +2,8 @@
 
 So, we're going to build a roguelike, directly on this website.
 It will start to get fun once things are moving about.
-Let us list the underlying technologies.
+The next few articles are dedicated to the technologies we'll use, providing relevant background and motivation.
+The table below expands upon the constraints [mentioned earlier](/part/1#constraints--technology "@anchor").
 
 | Concept | Technology |
 | ------- | ---------- |
@@ -10,7 +11,7 @@ Let us list the underlying technologies.
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
-| Raycasting | Basic geometry and spacial partitions.  |
+| Raycasting | Basic geometry and spacial partitioning.  |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | In-browser terminal, via [xterm.js](https://www.npmjs.com/package/xterm) and [mvdan-sh](https://www.npmjs.com/package/mvdan-sh). |
 | Scripting | [TS Node](https://www.npmjs.com/package/ts-node) i.e. Node.js with types. |
@@ -19,5 +20,3 @@ Let us list the underlying technologies.
 | Code sharing | Show [GitHub](https://github.com/) comments, provide GitHub [repo](https://github.com/rob-myers/rob-myers.github.io). |
 
 <!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
-
-We'll spend the next few articles clarifying the above table.
