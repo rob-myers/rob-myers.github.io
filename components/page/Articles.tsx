@@ -29,7 +29,7 @@ export default function Articles({ keys, markdown }: Props) {
   }, []);
 
   return (
-    <ul
+    <ol
       className={rootCss}
       ref={(el) => { ref(el), el && (root.current = el) }}
     >
@@ -42,7 +42,7 @@ export default function Articles({ keys, markdown }: Props) {
           />
         </li>
       )}
-    </ul>
+    </ol>
   );
   
 }
