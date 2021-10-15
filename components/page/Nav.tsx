@@ -29,13 +29,11 @@ export default function Nav() {
       >
         <div className="article-overlay" />
         <div className="handle">
-          <TopBar />
-          <div className="icon">
-            {navOpen ? '<' : '>'}
-          </div>
+          <div className="icon">{navOpen ? '<' : '>'}</div>
         </div>
         <NavItems/>
       </nav>
+      <TopBar />
       <HorizontalFillBar navOpen={navOpen} />
     </>
   );
@@ -47,7 +45,7 @@ export const barHeight = 40;
 
 const navCss = css`
   position: fixed;
-  z-index: 10;
+  z-index: 11;
   height: calc(100% + 200px);
   width: ${sidebarWidth}px;
 
@@ -84,7 +82,6 @@ const navCss = css`
   }
   > .handle {
     position: absolute;
-    z-index: 10;
     top: -1px;
     right: -${handleWidth}px;
     width: ${handleWidth}px;
@@ -113,8 +110,8 @@ function TopBar() {
 }
 
 const topBarCss = css`
-  position: absolute;
-  z-index: -1;
+  position: fixed;
+  z-index: 1;
   left: 0;
   width: calc(100vw + ${sidebarWidth}px);
   height: ${barHeight}px;

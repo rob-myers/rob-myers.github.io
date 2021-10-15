@@ -523,11 +523,6 @@
     "@types/node" "*"
     "@types/webpack" "*"
 
-"@types/zenscroll@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@types/zenscroll/-/zenscroll-4.0.1.tgz#881e92d5cc44ef900d2919ca0295a0b8d9011858"
-  integrity sha512-r1h1/SPJQn8kL4rzyJvf4HJvqv20YrTV++qRGiPuA1mYbCSkMBaUOsCXLN780gI6BZfRzDbmjU0/sWq9yi1WgQ==
-
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
   resolved "https://registry.npmjs.org/@webassemblyjs/ast/-/ast-1.11.1.tgz"
