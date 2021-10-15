@@ -1,6 +1,6 @@
 ## Technology
 
-So, we're building a roguelike, directly on this website.
+So, we're going to build a roguelike, directly on this website.
 It will start to get fun once things are moving about.
 Let us list the underlying technologies.
 
