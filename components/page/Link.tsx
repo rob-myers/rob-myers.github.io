@@ -26,20 +26,20 @@ export default function Link(props: Props) {
           if (!props.forward) {
             window.scrollTo({ top: document.body.scrollHeight });
           }
+          await pause(500);
         }
 
         const el = document.getElementById(hash.slice(1));
         if (el) {// Browser-independent, controllable, smooth scroll
-          const delta = Math.min(500, Math.abs(zenscroll.getTopOf(el) - scrollY));
-          const ms = delta < 500 && !changePage
-            ? 100 + 400 * (delta / 400) : 600;
+          const delta = Math.min(1000, Math.abs(zenscroll.getTopOf(el) - scrollY));
+          const ms = delta < 1000 && !changePage ? 100 + 400 * (delta / 400) : 600;
           await new Promise<void>((resolve) => zenscroll.to(el, ms, resolve));
         }
 
         if (props.prePush && !changePage) {
           // Push hash into history if we didn't change page,
           // otherwise we'll overwrite the prePrush
-          Router.push(hash)
+          Router.push(hash);
         } else {
           Router.replace(hash);
         }
