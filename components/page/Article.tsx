@@ -327,7 +327,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
                   tabs.selectTab(tabKey);
                   const { top } = document.getElementById(tabsKey)!.getBoundingClientRect();
                   window.scrollBy({ top, behavior: 'smooth' });
-                  try { await scrollFinish(scrollY + top) } catch { return }
+                  try { await scrollFinish(window.pageYOffset + top) } catch { return }
                   router.push(`#${tabsKey}`);
                 }
                 break;
@@ -358,9 +358,10 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
           title={title}
           onClick={async (e) => {
             e.preventDefault();
+
             const { top } = document.getElementById(id)!.getBoundingClientRect();
             window.scrollBy({ top, behavior: 'smooth' });
-            try { await scrollFinish(scrollY + top) } catch { return }
+            try { await scrollFinish(window.pageYOffset + top) } catch { return }
 
             window.location.href = `#${id}`;
             window.location.href = href;
