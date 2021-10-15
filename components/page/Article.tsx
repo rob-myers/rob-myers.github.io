@@ -275,7 +275,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
 
   a({ node, href, title, children, ...props}: any) {
 
-    // Relative anchor link
+    // Relative link with added auto-anchor
     if (title === '@anchor') {
       const id = `${articleKey}--link-${childrenToKebabText(children)}`;
       return (
@@ -324,7 +324,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
                   tabs.selectTab(tabKey);
                   const { top } = document.getElementById(tabsKey)!.getBoundingClientRect();
                   window.scrollBy({ top, behavior: 'smooth' });
-                  await scrollFinish();
+                  try { await scrollFinish(scrollY + top) } catch { return }
                   router.push(`#${tabsKey}`);
                 }
                 break;
@@ -357,7 +357,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
             e.preventDefault();
             const { top } = document.getElementById(id)!.getBoundingClientRect();
             window.scrollBy({ top, behavior: 'smooth' });
-            await scrollFinish();
+            try { await scrollFinish(scrollY + top) } catch { return }
 
             window.location.href = `#${id}`;
             window.location.href = href;
@@ -369,7 +369,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
       );
     }
 
-    // Otherwise, relative link (non-anchor)
+    // Otherwise, relative link without auto-anchor
     return (
       <Link href={href} title={title}>
         {children}

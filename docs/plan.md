@@ -41,7 +41,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- Fix scrolling yet again: zenscroll doesn't work well on android.
+- Mobile NavMini overlapped by open Nav 
 - Fix hard refresh scrolling
 - Fix back/forward scrolling
 
@@ -63,6 +63,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Fix scrolling yet again: zenscroll doesn't work well on android.
 - ✅ Show next at bottom of page
 - ✅ Show next/prev in navbar
 - ✅ basic custom 404 page

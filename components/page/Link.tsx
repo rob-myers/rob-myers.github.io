@@ -27,7 +27,7 @@ export default function Link(props: Props) {
         if (el) {
           const { top } = el.getBoundingClientRect();
           window.scrollBy({ top, behavior: 'smooth' });
-          await scrollFinish();
+          try { await scrollFinish(scrollY + top) } catch { return }
         }
 
         if (props.prePush && !changePage) {
