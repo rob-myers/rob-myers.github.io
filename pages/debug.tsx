@@ -1,6 +1,6 @@
+import { keys } from 'model/generic.model';
 import Main from 'components/page/Main';
 import Articles from 'components/page/Articles';
-
 import type { ArticleKey } from 'articles';
 
 import objective from 'articles/objective.md';
@@ -23,20 +23,11 @@ const markdown: Partial<Record<ArticleKey, string>> = {
   geomorphs,
 };
 
-export default function DraftPage() {
+export default function DebugPage() {
   return (
     <Main>
       <Articles
-        keys={[
-          'objective',
-          'constraints',
-          'finishing',
-          'technology',
-          'tech1',
-          'tech2',
-          'tech3',
-          'geomorphs',
-        ]}
+        keys={keys(markdown)}
         markdown={markdown}
       />
     </Main>
