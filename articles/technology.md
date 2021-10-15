@@ -2,7 +2,7 @@
 
 So, we're going to build a roguelike, directly on this website.
 The next few articles are dedicated to the technologies we'll use, providing relevant background and motivation.
-The table below expands upon the constraints [mentioned earlier](/part/1#constraints--technology "@anchor").
+The table below expands upon constraints [mentioned earlier](/part/1#constraints--technology "@anchor").
 
 | Concept | Technology |
 | ------- | ---------- |
