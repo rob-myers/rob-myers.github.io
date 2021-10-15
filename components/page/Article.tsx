@@ -150,6 +150,10 @@ const articleCss = css`
     padding: 0 2px;
   }
 
+  div.small-print {
+    font-size: smaller;
+  }
+
   figure {
     margin: 0;
   }
@@ -377,7 +381,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
 
   },
 
-  div(props: any) {
+  div({ node, ...props }: any) {
     switch (props.class) {
       case 'tabs': {
         const height = Number(props.height || 100);
