@@ -217,9 +217,8 @@ const articleCss = css`
     @media(max-width: 600px) {
       margin: 20px 0;
     }
-    
     th, td {
-      padding: 3px;
+      padding: 6px;
       text-align: left;
       vertical-align: top;
       font-size: 1.1rem;
