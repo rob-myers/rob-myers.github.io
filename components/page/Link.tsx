@@ -10,6 +10,11 @@ export default function Link(props: Props) {
       title={props.title}
       onClick={async (e) => {
         e.preventDefault();
+
+        if (e.metaKey || e.ctrlKey) {// Open "new tab"
+          return window.open(props.href);
+        }
+
         const { pathname, hash } = new URL(props.href, location.href);
         const changePage = pathname !== location.pathname;
 

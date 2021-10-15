@@ -364,6 +364,9 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
             try { await scrollFinish(window.pageYOffset + top) } catch { return }
 
             window.location.href = `#${id}`;
+            if (e.metaKey || e.ctrlKey) {
+              return window.open(href);
+            }
             window.location.href = href;
           }}
         >
