@@ -5,15 +5,31 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 ### Technology
 
-- Use CSS/SVG/PNGs, not HTMLCanvas/WebGL.
-- Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
-- Use [Preact](https://www.npmjs.com/package/preact) (like React), and [Goober](https://www.npmjs.com/package/goober) (like [Emotion](https://www.npmjs.com/package/@emotion/styled)).
-- Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
-- Use [NextJS](https://nextjs.org/) as our dev env.
-- Use [CodeSandbox](https://codesandbox.io) to share editable code.
-- Support mobile/desktop devices.
+We begin with the tools we'll use.  
 
-For example, here's a [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+- Use standard web development, rather than HTMLCanvas and [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).
+- Use [NextJS](https://nextjs.org/) as our development environment.
+- Use [CodeSandbox](https://codesandbox.io) to share editable code.
+- Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
+- Use [Preact](https://www.npmjs.com/package/preact) (a React alternative), and [Goober](https://www.npmjs.com/package/goober) (an [Emotion](https://www.npmjs.com/package/@emotion/styled) alternative).
+- Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
+- Support both mobile and desktop devices.
+
+The name _Rogue Markup_ refers to the video game [_Rogue_](https://en.wikipedia.org/wiki/Rogue_(video_game)), and the HyperText _Markup_ Language (HTML).
+Since HTML may be used in many different ways,
+we've clarified our particular path above.
+As a general principle, we'll use standard website technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
+
+<aside>
+
+Although WebGL permits far richer 3D graphics than CSS,
+it leads away from the declarative nature of Markup.
+Sticking to central web technologies makes our approach relevant to a far larger audience.
+We also want to avoid obsessing over graphics: we want superior Game AI instead.
+
+</aside>
+
+If you're unfamiliar with CodeSandbox (or similar sites), check out  [this example](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
 If you peruse the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
 Our CodeSandboxes use React, whereas this site uses _Preact_.
 More on that later.
