@@ -50,14 +50,14 @@ By a realtime birdseye camera we just mean a pannable and zoomable SVG.
 Using the Web Animations API provides access to the underlying technology driving CSS animations.
 As for navigation and raycasting algorithms, this amounts to using a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and computing ray/geometry collisions efficiently.
 
-Importantly, in order to develop complex Game AI, we'll use a terminal.
+In order to develop complex Game AI, we'll use a terminal.
 Try entering (or copy-pasting) the commands below.
 Mobile users may find copy-pasting easier.
 
   | Category | Examples  |
   | ------- | ---------- |
   | Nav | <span class="cmd">ls</span>, <span class="cmd">pwd</span>, <span class="cmd">cd /home/test</span>, <span class="cmd">cd ..</span> |
-  | CRUD | <span class="cmd">echo foo >/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">cd; rm bar</span> |
+  | [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete "@new-tab") | <span class="cmd">echo foo >/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">cd; rm bar</span> |
   | Out | <span class="cmd">seq 10</span>, <span class="cmd">echo foo{1..5}</span>, <span class="cmd">expr '2**10'</span> |
   | Meta | <span class="cmd">history</span>, <span class="cmd"> declare</span>, <span class="cmd">help</span>, <span class="cmd"> ps</span> |
 
@@ -71,7 +71,9 @@ Mobile users may find copy-pasting easier.
     ]"
   ></div>
 
-As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process" e.g. try terminating <span class="cmd">sleep 5</span>. We'll use terminals to monitor the current state of our Game AI, issue direct commands, and specify long-running behaviour.
+As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process" e.g. try terminating <span class="cmd">sleep 5</span>.
+Pipelines and background processes are also supported.
+We'll use terminals to monitor the current state of our Game AI, issue direct commands, and specify long-running behaviour.
 
 ### Setting
 
