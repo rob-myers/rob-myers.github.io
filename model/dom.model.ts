@@ -1,7 +1,9 @@
 import debounce from 'debounce';
 
 /**
- * A promise which resolves when scrolling finishes at `targetScrollY`.
+ * A promise which resolves when:
+ * - scrolling stops for ≥ 100ms
+ * - we've scrolled to `min(targetScrollY, maxScrollHeight)`.
  */
 export async function scrollFinish(targetScrollY: number){
   if (
@@ -11,8 +13,9 @@ export async function scrollFinish(targetScrollY: number){
   ) {// Already there, or end of page and cannot scroll further
     return;
   }
+
   return new Promise<void>((resolve, reject) => {
-    const onScroll = debounce((e: Event) => {
+    const onScroll = debounce(() => {
       if (
         Math.abs(window.pageYOffset - targetScrollY) >= 2
         && window.pageYOffset <= maxScrollHeight() - 2
