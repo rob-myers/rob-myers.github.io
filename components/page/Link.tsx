@@ -11,8 +11,8 @@ export default function Link(props: Props) {
       onClick={async (e) => {
         e.preventDefault();
 
-        if (e.metaKey || e.ctrlKey) {// Open "new tab"
-          return window.open(props.href);
+        if (e.metaKey || e.ctrlKey || e.shiftKey) {
+          return window.open(props.href, 'Rogue Markup', !e.metaKey && !e.ctrlKey ? 'scrollbars' : undefined);
         }
 
         const { pathname, hash } = new URL(props.href, location.href);

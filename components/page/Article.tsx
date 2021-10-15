@@ -362,10 +362,10 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
             const { top } = document.getElementById(id)!.getBoundingClientRect();
             window.scrollBy({ top, behavior: 'smooth' });
             try { await scrollFinish(window.pageYOffset + top) } catch { return }
-
             window.location.href = `#${id}`;
-            if (e.metaKey || e.ctrlKey) {
-              return window.open(href);
+
+            if (e.metaKey || e.ctrlKey || e.shiftKey) {
+              return window.open(href, 'Rogue Markup', !e.metaKey && !e.ctrlKey ? 'scrollbars' : undefined);
             }
             window.location.href = href;
           }}
