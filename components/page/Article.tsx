@@ -9,8 +9,7 @@ import useSiteStore from 'store/site.store';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
-import { pause } from 'model/generic.model';
-import zenscroll from 'zenscroll';
+import { scrollFinish } from 'model/dom.model';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
@@ -323,9 +322,9 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
                 const tabs = useSiteStore.getState().tabs[tabsKey];
                 if (tabs) {
                   tabs.selectTab(tabKey);
-                  await new Promise<void>(resolve => 
-                    zenscroll.to(document.getElementById(tabsKey)!, 500, resolve)
-                  );
+                  const { top } = document.getElementById(tabsKey)!.getBoundingClientRect();
+                  window.scrollBy({ top, behavior: 'smooth' });
+                  await scrollFinish();
                   router.push(`#${tabsKey}`);
                 }
                 break;
@@ -356,9 +355,10 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
           title={title}
           onClick={async (e) => {
             e.preventDefault();
-            await new Promise<void>(resolve => 
-              zenscroll.to(document.getElementById(id)!, 500, resolve)
-            );
+            const { top } = document.getElementById(id)!.getBoundingClientRect();
+            window.scrollBy({ top, behavior: 'smooth' });
+            await scrollFinish();
+
             window.location.href = `#${id}`;
             window.location.href = href;
           }}

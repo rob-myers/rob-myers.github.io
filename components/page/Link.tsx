@@ -1,6 +1,6 @@
 import Router from 'next/router';
-import zenscroll from 'zenscroll';
 import { pause } from 'model/generic.model';
+import { scrollFinish } from 'model/dom.model';
 
 export default function Link(props: Props) {
   return (
@@ -13,28 +13,21 @@ export default function Link(props: Props) {
         const { pathname, hash } = new URL(props.href, location.href);
         const changePage = pathname !== location.pathname;
 
-        if (zenscroll.moving()) {
-          return zenscroll.stop();
-        }
-
         if (props.prePush) {
           await Router.push(props.prePush);
         }
 
         if (changePage) {
           await Router.push(pathname);
-          if (!props.forward) {
-            window.scrollTo({ top: document.body.scrollHeight });
-          }
+          window.scrollTo({ top: props.forward ? 0 : document.body.scrollHeight });
+          await pause(50);
         }
         
         const el = document.getElementById(hash.slice(1));
         if (el) {
-          changePage && await pause(500);
-          // Browser-independent, controllable, smooth scroll
-          const delta = Math.min(1000, Math.abs(zenscroll.getTopOf(el) - scrollY));
-          const ms = delta < 1000 && !changePage ? 100 + 400 * (delta / 400) : 600;
-          await new Promise<void>((resolve) => zenscroll.to(el, ms, resolve));
+          const { top } = el.getBoundingClientRect();
+          window.scrollBy({ top, behavior: 'smooth' });
+          await scrollFinish();
         }
 
         if (props.prePush && !changePage) {

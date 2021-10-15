@@ -41,7 +41,9 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- Show next at bottom of page
+- Fix scrolling yet again: zenscroll doesn't work well on android.
+- Fix hard refresh scrolling
+- Fix back/forward scrolling
 
 - import code/components async and on demand
 - anchor and focus on Tabs interact
@@ -61,6 +63,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Show next at bottom of page
 - ✅ Show next/prev in navbar
 - ✅ basic custom 404 page
 - ✅ import markdown separately into each page

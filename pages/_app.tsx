@@ -4,19 +4,22 @@ import { AppInitialProps } from 'next/app';
 import { Router } from 'next/router';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import zenscroll from 'zenscroll';
 
 //#region polyfill
 import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
+  history.scrollRestoration = 'manual';
   if (!window.ResizeObserver) {
     window.ResizeObserver = ResizeObserver;
+  }
+  if (!('scrollBehavior' in document.documentElement.style)) {
+    import('smoothscroll-polyfill')
+      .then(x => x.default.polyfill())
+      // .then(() => import('smoothscroll-anchor-polyfill'));
   }
   if (!('onpointerdown' in document.documentElement)) {
     import('pepjs');
   }
-  zenscroll.setup(500, 0);
-  history.scrollRestoration = 'manual';
 }
 //#endregion
 

@@ -185,7 +185,6 @@ export function drawTriangulation(ctxt, decomp) {
 	}
 }
 
-/** @param {string} src */
 /**
  * @param {string} src
  * @returns {Promise<HTMLImageElement>}
