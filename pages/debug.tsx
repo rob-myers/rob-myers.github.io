@@ -5,17 +5,21 @@ import type { ArticleKey } from 'articles';
 
 import objective from 'articles/objective.md';
 import constraints from 'articles/constraints.md';
+import finishing from 'articles/finishing.md';
 import technology from 'articles/constraints.md';
-import techPart2 from 'articles/tech-2.md';
-import techPart3 from 'articles/tech-3.md';
+import tech1 from 'articles/tech2.md';
+import tech2 from 'articles/tech2.md';
+import tech3 from 'articles/tech3.md';
 import geomorphs from 'articles/geomorphs.md';
 
 const markdown: Partial<Record<ArticleKey, string>> = {
   objective,
   constraints,
+  finishing,
   technology,
-  'tech-2': techPart2,
-  'tech-3': techPart3,
+  tech1,
+  tech2,
+  tech3,
   geomorphs,
 };
 
@@ -26,9 +30,11 @@ export default function DraftPage() {
         keys={[
           'objective',
           'constraints',
+          'finishing',
           'technology',
-          'tech-2',
-          'tech-3',
+          'tech1',
+          'tech2',
+          'tech3',
           'geomorphs',
         ]}
         markdown={markdown}

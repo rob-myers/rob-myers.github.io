@@ -1,7 +1,7 @@
 ## Tech (ai)
 
 So far we've described our objective, constrained our approach, and listed the technologies we'll use.
-Having discussed [JavaScript components](2#tech-1--react-and-preact "@anchor"),
+Having discussed [JavaScript components](2#tech1--react-and-preact "@anchor"),
 we turn to Game AI.
 
 ### Overview

@@ -9,7 +9,7 @@ Check here for updates.
 | Date | Change |
 | -----| -------|
 | 2nd Dec 2021  | Launched site.
-| 1st Dec 2021  | Created first 7 articles.
+| 1st Dec 2021  | Created first 8 articles.
 
 ### Gallery
 
