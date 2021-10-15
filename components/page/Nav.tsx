@@ -33,7 +33,15 @@ export default function Nav() {
         </div>
         <NavItems/>
       </nav>
-      <TopBar />
+
+      <div
+        className={topBarCss}
+        onClick={(e) => {
+          e.stopPropagation();
+          if (e.target instanceof HTMLAnchorElement) return;
+          setNavOpen(!navOpen);
+        }}
+      />
       <HorizontalFillBar navOpen={navOpen} />
     </>
   );
@@ -71,7 +79,7 @@ const navCss = css`
     top: 0;
     left: ${sidebarWidth}px;
     width: 100vw;
-    height: ${barHeight}px;
+    height: 0;
     background: rgba(0, 0, 0, .1);
   }
   @media(max-width: 1280px) {
@@ -105,12 +113,9 @@ const navCss = css`
   }
 `;
 
-function TopBar() {
-  return <div className={topBarCss} />
-}
-
 const topBarCss = css`
   position: fixed;
+  cursor: pointer;
   z-index: 1;
   left: 0;
   width: calc(100vw + ${sidebarWidth}px);
