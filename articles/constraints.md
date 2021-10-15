@@ -48,11 +48,11 @@ Next, gameplay related constraints.
 We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") of a Geomorph in the previous article.
 By a realtime birdseye camera we just mean a pannable and zoomable SVG.
 Using the Web Animations API provides access to the underlying technology driving CSS animations.
-As for navigation and raycasting algorithms, we mean using a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and detecting ray/geometry collisions.
+As for navigation and raycasting algorithms, this amounts to using a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and computing ray/geometry collisions efficiently.
 
-Importantly, in order to debug and illustrate Game AI, we'll use a terminal.
+Importantly, in order to develop complex Game AI, we'll use a terminal.
 Try entering (or copy-pasting) the commands below.
-If you're using a mobile device you may find copy-pasting easier.
+Mobile users may find copy-pasting easier.
 
   | Category | Examples  |
   | ------- | ---------- |

@@ -1,6 +1,6 @@
 ## Finishing
 
-Over time we'll clarify the above constraints, but first we emphasise:
+Over time we'll further clarify the above constraints, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
 Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
