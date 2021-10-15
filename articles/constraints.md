@@ -25,7 +25,7 @@ As a general principle, we'll use standard website technologies e.g. CSS, SVGs, 
 Although WebGL permits far richer 3D graphics than CSS,
 it leads away from the declarative nature of Markup.
 Sticking to central web technologies makes our approach relevant to a far larger audience.
-We also want to avoid obsessing over graphics: we want superior Game AI instead.
+We also want to avoid obsessing over graphics, seeking superior Game AI instead.
 
 </aside>
 
@@ -83,13 +83,13 @@ Finally we constrain the setting.
 - Events are inspired by the [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol),
   >  e.g. Ship AIs may recite it to dying [Low Berth](https://wiki.travellerrpg.com/Low_Berth_Rack "@new-tab") travellers.
 - Events are inspired by [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land),
-  > e.g. Earth assumed lost to Watchers and other such Powers, actually manifestations from Buddhist hells.
+  > e.g. Earth is assumed lost to Watchers and other "Evil Powers", actually manifestations from Buddhist hells.
 
 
 Traveller is a Futuristic pen-and-paper Role-playing Game, created in the late 70s.
 It permits faster than light travel bounded by 6 parsecs per week.
 Learn more on the [wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
-It directly motivated Robert Pearce's Starship Geomorphs, and provides a huge amount of depth.
+It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
 
 <!-- <div style="font-size:smaller; padding-bottom: 6px"> -->
 <div class="small-print">
@@ -98,4 +98,4 @@ _The Traveller game in all forms is owned by [Far Future Enterprises](https://ww
 
 </div>
 
-We'll also leverage two sources of inspiration i.e. _Liberation Through Hearing in the Intermediate State_ (Bardo Thodol) and a famous Science Fiction story from 1912 (The Night Land).
+We'll leverage two additional sources of inspiration i.e. _Liberation Through Hearing in the Intermediate State_ (Bardo Thodol) and a famous Science Fiction story from 1912 (The Night Land).
