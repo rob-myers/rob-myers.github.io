@@ -48,10 +48,11 @@ interface Props {
   env: Record<string, any>;
 }
 
-const Root = styled('section')<{}>`
+const Root = styled('div')<{}>`
   grid-area: terminal;
   background: black;
   height: 100%;
+  padding: 4px;
 `;
 
 const options: ITerminalOptions = {

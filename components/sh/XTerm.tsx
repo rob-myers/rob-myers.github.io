@@ -54,7 +54,6 @@ const rootCss = css`
   height: inherit;
   > div {
     width: 100%;
-    padding: 4px;
   }
 `;
 
