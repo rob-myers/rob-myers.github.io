@@ -1,7 +1,6 @@
 ## Technology
 
 So, we're going to build a roguelike, directly on this website.
-It will start to get fun once things are moving about.
 The next few articles are dedicated to the technologies we'll use, providing relevant background and motivation.
 The table below expands upon the constraints [mentioned earlier](/part/1#constraints--technology "@anchor").
 

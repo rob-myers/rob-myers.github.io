@@ -3,7 +3,7 @@
 Over time we'll clarify the above constraints, but first we emphasise:
 > _creating a video game is really fucking hard_.
 
-Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game).
+Spelunky's creator suggested [three important requirements](https://makegames.tumblr.com/post/1136623767/finishing-a-game) for finishing a game.
 We'll address them.
 
 ### 1. Fun to develop

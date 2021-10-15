@@ -1,7 +1,9 @@
 ## Tech (js)
 
-We'll now discuss our chosen JavaScript component framework.
-> Please excuse the jargon, the details can be picked up later on.
+We begin with JavaScript and our chosen notion of component.
+Please excuse the jargon, the details can be picked up later on.
+
+<!-- FROM HERE -->
 
 ### JavaScript
 
