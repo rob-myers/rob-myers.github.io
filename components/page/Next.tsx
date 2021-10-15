@@ -19,7 +19,7 @@ interface Props {
 const nextArticleCss = css`
   cursor: pointer;
   font-family: sans-serif;
-  text-decoration: underline;
+  letter-spacing: 4px;
   
   height: 64px;
   display: flex;
@@ -31,7 +31,7 @@ const nextArticleCss = css`
   }
 
   a {
-    color: #222;
+    color: #555;
     width: 100%;
     height: 100%;
     text-align: center;
