@@ -36,6 +36,8 @@ More on that later.
 
 ### Game mechanics
 
+Next, gameplay related constraints.
+
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
 - Use a realtime birdseye camera.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
@@ -43,9 +45,14 @@ More on that later.
 - Use an in-browser terminal.
 - Do not use a Physics engine.
 
-To debug and illustrate Game AI, we'll use a terminal.
+We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") of a Geomorph in the previous article.
+By a realtime birdseye camera we just mean a pannable and zoomable SVG.
+Using the Web Animations API provides access to the underlying technology driving CSS animations.
+As for navigation and raycasting algorithms, we mean using a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and detecting ray/geometry collisions.
+
+Importantly, in order to debug and illustrate Game AI, we'll use a terminal.
 Try entering (or copy-pasting) the commands below.
-You'll probably find it a bit fiddly on a mobile device.
+If you're using a mobile device you may find copy-pasting easier.
 
   | Category | Examples  |
   | ------- | ---------- |
@@ -64,10 +71,11 @@ You'll probably find it a bit fiddly on a mobile device.
     ]"
   ></div>
 
-As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process".
-Try terminating <span class="cmd">sleep 5</span>.
+As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process" e.g. try terminating <span class="cmd">sleep 5</span>. We'll use terminals to monitor the current state of our Game AI, issue direct commands, and specify long-running behaviour.
 
 ### Setting
+
+<!-- TODO from here -->
 
 - The [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3).
 - Space vehicles, stations, and docks.
