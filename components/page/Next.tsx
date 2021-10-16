@@ -33,8 +33,9 @@ const nextArticleCss = css`
   align-items: center;
 
   a {
-    color: #444;
-    border: 2px solid #666;
+    color: #555;
+    border: 1px solid #666;
+    background: #fff;
     padding: 8px 16px;
     border-radius: 4px;
   }
