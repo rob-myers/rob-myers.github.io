@@ -142,10 +142,10 @@ const articleCss = css`
   }
 
   code {
-    font-family: sans-serif;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     letter-spacing: 1px;
     color: #444;
-    font-size: smaller;
+    /* font-size: smaller; */
     letter-spacing: 2px;
     padding: 0 2px;
   }
