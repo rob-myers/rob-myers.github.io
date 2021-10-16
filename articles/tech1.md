@@ -3,24 +3,26 @@
 The early 90s brought three pillars: HTML, CSS and JavaScript (JS).
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
 Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity.
-More precisely, all subsequent DOM mutations are performed by JavaScript.
 
 <aside>
 
-The DOM
-<!-- Explain DOM and later how React determines it -->
+More precisely, all subsequent [DOM](https://en.wikipedia.org/wiki/Document_Object_Model#JavaScript) mutations are performed by JavaScript.
+The DOM is the programmatic interface to the current _document_ viewed in the browser.
+It amounts to parsed HTML decorated with matching CSS and bound JS, together with APIs for reading and modifying it.
 
 </aside>
 
-It is now common to generate the initial HTML using JS too,
-either during a build-step or on-the-fly.
+Although HTML, CSS and JS are separate standards, 
+it is now common to generate the initial HTML using JS (Server-Side Rendering),
+and also generate CSS using JavaScript tagged template literals (CSS-in-JS).
 In particular, JavaScript has become the central web technology.
 
 
 ### React Function Components
 
-Competing definitions of _JavaScript component_ exist.
-One popular approach uses _React function components_.
+Although JS can perform arbitrary calculations, its central purpose is to mutate the DOM.
+Such JavaScript is usually broken down into "components", which _mutate the DOM in one particular way_ and are reusable.
+Competing notions exist in the wild, one popular approach being _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
 
 - They have a single parameter, usually called _props_.
