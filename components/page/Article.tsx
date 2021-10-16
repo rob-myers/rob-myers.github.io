@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { css } from 'goober';
 
 import { scrollFinished } from 'model/dom.model';
-import type { ArticleKey } from 'articles/index';
+import { ArticleKey, articlesMeta } from 'articles/index';
 import useSiteStore from 'store/site.store';
 import Link from './Link';
 import Sep from './Sep';
@@ -274,19 +274,21 @@ const articleCss = css`
 
 `;
 
-const articleComponents = (articleKey: string, router: NextRouter) => ({
+const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
 
   a({ node, href, title, children, ...props}: any) {
 
     // Relative link with added auto-anchor
     if (title === '@anchor') {
       const id = `${articleKey}--link-${childrenToKebabText(children)}`;
+      const part = Number((href || '').split('#')[0]) || null;
       return (
         <Link
           href={href}
           className="anchor-link"
           title={title}
           prePush={`#${id}`}
+          backward={!!part && (part < articlesMeta[articleKey].part)}
         >
           <span id={id} className="anchor" />
           {children}
