@@ -1,6 +1,6 @@
 import Router from 'next/router';
 import { pause } from 'model/generic.model';
-import { maxScrollHeight, scrollFinish } from 'model/dom.model';
+import { maxScrollHeight, scrollFinished } from 'model/dom.model';
 
 export default function Link(props: Props) {
   return (
@@ -29,7 +29,7 @@ export default function Link(props: Props) {
         if (el) {
           const { top } = el.getBoundingClientRect();
           window.scrollBy({ top, behavior: 'smooth' });
-          if (! await scrollFinish(window.pageYOffset + top)) return;
+          if (! await scrollFinished(window.pageYOffset + top)) return;
         }
 
         if (props.prePush && !changePage) {

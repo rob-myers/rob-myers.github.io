@@ -4,7 +4,7 @@ import debounce from 'debounce';
  * A promise which resolves a boolean if scrolling stops for ≥ 100ms.
  * It resolves `true` iff we've scrolled to the target.
  */
-export async function scrollFinish(targetScrollY: number){
+export async function scrollFinished(targetScrollY: number){
   if (
     Math.abs(window.pageYOffset - targetScrollY) <= 2
     || window.pageYOffset >= maxScrollHeight() - 2

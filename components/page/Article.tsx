@@ -3,13 +3,13 @@ import { NextRouter, useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
 
-import Link from 'components/page/Link';
+import { scrollFinished } from 'model/dom.model';
 import type { ArticleKey } from 'articles/index';
 import useSiteStore from 'store/site.store';
+import Link from './Link';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
-import { scrollFinish } from 'model/dom.model';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
@@ -327,7 +327,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
                   tabs.selectTab(tabKey);
                   const { top } = document.getElementById(tabsKey)!.getBoundingClientRect();
                   window.scrollBy({ top, behavior: 'smooth' });
-                  if (! await scrollFinish(window.pageYOffset + top)) return;
+                  if (! await scrollFinished(window.pageYOffset + top)) return;
                   router.push(`#${tabsKey}`);
                 }
                 break;
@@ -362,7 +362,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
 
             const { top } = document.getElementById(id)!.getBoundingClientRect();
             window.scrollBy({ top, behavior: 'smooth', });
-            if (! await scrollFinish(window.pageYOffset + top)) return;
+            if (! await scrollFinished(window.pageYOffset + top)) return;
 
             location.href = `#${id}`;
             location.href = href;
