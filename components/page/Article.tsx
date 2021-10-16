@@ -93,37 +93,24 @@ const articleCss = css`
     margin: 0 2px 0 4px;
   }
 
-  span.cmd {
-    color: #555;
-    background: #ddd;
-    font-family: monospace;
-    letter-spacing: 1px;
-    font-size: smaller;
-    padding: 2px 4px;
-    @media(max-width: 600px) {
-      user-select: all;
-    }
-  }
-
-  > span.anchor {
-    position: absolute;
-    top: -48px;
-  }
-
   aside {
     margin: 32px 0;
     padding: 8px 32px;
     border-radius: 8px;
     border: 2px dashed #ccc;
-    font-size: 1.1rem;
+    font-size: 1rem;
     @media(max-width: 600px) {
-      font-size: 1rem;
       margin: 8px 0;
       padding: 0 16px;
     }
 
+    p {
+      margin: 20px 0;
+    }
+    > blockquote {
+      margin: 0;
+    }
     > figure.tabs {
-      padding: 8px 0;
       @media(max-width: 600px) {
         padding: 8px 0 12px;
       }
@@ -211,6 +198,23 @@ const articleCss = css`
    @media(max-width: 600px) {
      margin: 16px 0;
    }
+  }
+
+  span.cmd {
+    color: #555;
+    background: #ddd;
+    font-family: monospace;
+    letter-spacing: 1px;
+    font-size: smaller;
+    padding: 2px 4px;
+    @media(max-width: 600px) {
+      user-select: all;
+    }
+  }
+
+  > span.anchor {
+    position: absolute;
+    top: -48px;
   }
 
   table {
