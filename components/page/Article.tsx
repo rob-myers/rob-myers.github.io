@@ -327,7 +327,7 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
                   tabs.selectTab(tabKey);
                   const { top } = document.getElementById(tabsKey)!.getBoundingClientRect();
                   window.scrollBy({ top, behavior: 'smooth' });
-                  try { await scrollFinish(window.pageYOffset + top) } catch { return }
+                  if (! await scrollFinish(window.pageYOffset + top)) return;
                   router.push(`#${tabsKey}`);
                 }
                 break;
@@ -357,17 +357,15 @@ const articleComponents = (articleKey: string, router: NextRouter) => ({
           href={href}
           title={title}
           onClick={async (e) => {
+            if (e.metaKey || e.ctrlKey || e.shiftKey) return;
             e.preventDefault();
 
             const { top } = document.getElementById(id)!.getBoundingClientRect();
-            window.scrollBy({ top, behavior: 'smooth' });
-            try { await scrollFinish(window.pageYOffset + top) } catch { return }
-            window.location.href = `#${id}`;
+            window.scrollBy({ top, behavior: 'smooth', });
+            if (! await scrollFinish(window.pageYOffset + top)) return;
 
-            if (e.metaKey || e.ctrlKey || e.shiftKey) {
-              return window.open(href, 'Rogue Markup', !e.metaKey && !e.ctrlKey ? 'scrollbars' : undefined);
-            }
-            window.location.href = href;
+            location.href = `#${id}`;
+            location.href = href;
           }}
         >
           <span id={id} className="anchor" />

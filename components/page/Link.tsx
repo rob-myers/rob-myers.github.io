@@ -9,11 +9,8 @@ export default function Link(props: Props) {
       className={props.className}
       title={props.title}
       onClick={async (e) => {
+        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
         e.preventDefault();
-
-        if (e.metaKey || e.ctrlKey || e.shiftKey) {
-          return window.open(props.href, 'Rogue Markup', !e.metaKey && !e.ctrlKey ? 'scrollbars' : undefined);
-        }
 
         const { pathname, hash } = new URL(props.href, location.href);
         const changePage = pathname !== location.pathname;
@@ -32,7 +29,7 @@ export default function Link(props: Props) {
         if (el) {
           const { top } = el.getBoundingClientRect();
           window.scrollBy({ top, behavior: 'smooth' });
-          try { await scrollFinish(window.pageYOffset + top) } catch { return }
+          if (! await scrollFinish(window.pageYOffset + top)) return;
         }
 
         if (props.prePush && !changePage) {
