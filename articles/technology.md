@@ -1,8 +1,7 @@
 ## Technology
 
-So, we're going to build a roguelike, directly on this website.
-The next few articles are dedicated to the technologies we'll use, providing relevant background and motivation.
-The table below expands upon constraints [mentioned earlier](1#constraints--technology "@anchor").
+So, we're going to build a roguelike directly on this website.
+We sketched the [technological constraints earlier](1#constraints--technology "@anchor") and now provide more detail.
 
 | Concept | Technology |
 | ------- | ---------- |
@@ -18,4 +17,4 @@ The table below expands upon constraints [mentioned earlier](1#constraints--tech
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | Show [GitHub](https://github.com/) comments, provide GitHub [repo](https://github.com/rob-myers/rob-myers.github.io). |
 
-<!-- Our in-browser terminal is built using [Xterm.js](https://xtermjs.org/) and the shell parser [mvdan-sh](https://github.com/mvdan/sh/tree/master/_js). -->
+We'll explain the above over the next few articles.
