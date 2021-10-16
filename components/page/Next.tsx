@@ -25,12 +25,17 @@ const nextArticleCss = css`
   margin-top: -64px;
   @media(max-width: 800px) {
     margin-top: 0;
+    font-size: 1rem;
   }
 
   display: flex;
   justify-content: center;
   align-items: center;
+
   a {
     color: #444;
+    border: 2px solid #666;
+    padding: 8px 16px;
+    border-radius: 4px;
   }
 `;
