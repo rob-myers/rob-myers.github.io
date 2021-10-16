@@ -1,27 +1,29 @@
 ## Tech (js)
 
-We begin with JavaScript and our chosen notion of component.
-Please excuse the jargon, the details can be picked up later on.
-
-<!-- FROM HERE -->
-
-### JavaScript
-
 The early 90s brought three pillars: HTML, CSS and JavaScript (JS).
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
 Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity.
 More precisely, all subsequent DOM mutations are performed by JavaScript.
+
+<aside>
+
+The DOM
+<!-- Explain DOM and later how React determines it -->
+
+</aside>
+
 It is now common to generate the initial HTML using JS too,
-either during a build-step or on a Node.js server.
+either during a build-step or on-the-fly.
 In particular, JavaScript has become the central web technology.
 
 
 ### React Function Components
 
-Competing JavaScript frameworks exist, often with their own notion of component.
-One popular approach uses _React function components_, which are just JavaScript functions with constraints on their parameters and return value.
+Competing definitions of _JavaScript component_ exist.
+One popular approach uses _React function components_.
+They are just JavaScript functions with constraints on their parameters and return value.
 
-- They have a single parameter, conventionally called _props_.
+- They have a single parameter, usually called _props_.
 
   It is a JavaScript object defining the component's named inputs,
   and possibly special properties like _children_, _key_ and _ref_.
