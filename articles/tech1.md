@@ -14,15 +14,15 @@ It amounts to parsed HTML decorated with matching CSS and bound JS, together wit
 
 Although HTML, CSS and JS are separate standards, 
 it is now common to generate the initial HTML using JS (Server-Side Rendering),
-and also generate CSS using JavaScript tagged template literals (CSS-in-JS).
+and the initial CSS via JavaScript tagged template literals (CSS-in-JS).
 In particular, JavaScript has become the central web technology.
 
 
 ### React Function Components
 
 Although JS can perform arbitrary calculations, its central purpose is to mutate the DOM.
-Such JavaScript is usually broken down into "components", which _mutate the DOM in one particular way_ and are reusable.
-Competing notions exist in the wild, one popular approach being _React function components_.
+Such JavaScript is usually broken down into "components", which _do one thing well_ and are reusable.
+Competing notions exist in the wild, a popular approach being _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
 
 - They have a single parameter, usually called _props_.
@@ -56,12 +56,14 @@ Behaviourally:
 - _PanZoom_ renders an SVG consisting of its children (the Geomorph image provided in _PanZoomDemo_) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 - _Grid_ renders part of an SVG i.e. two grid patterns.
-  They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits "@new-tab").
+  They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
 
   <aside>
   
-  SVG user units become concrete via the `<svg>`'s viewBox attribute and its width/height within the DOM.
-  We'll follow a convention based on the work of Robert Pearce and Eric B. Smith. That is, 60 abstract user units (one large grid square) correspond to 1.5 meters.
+  SVG user units become concrete via the `<svg>`'s viewBox attribute and its width/height in the DOM.
+  We'll follow a convention based on the work of Robert Pearce and Eric B. Smith: 
+  > 60 abstract user units (one large grid square) correspond to 1.5 meters.
+
   </aside>
 
 ### React and Preact
