@@ -5,10 +5,11 @@ import { Router } from 'next/router';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 
-//#region polyfill
 import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
   history.scrollRestoration = 'manual';
+
+  //#region polyfill
   if (!window.ResizeObserver) {
     window.ResizeObserver = ResizeObserver;
   }
@@ -20,8 +21,8 @@ if (typeof window !== 'undefined') {
   if (!('onpointerdown' in document.documentElement)) {
     import('pepjs');
   }
+  //#endregion
 }
-//#endregion
 
 import { setup } from 'goober';
 import { shouldForwardProp } from 'goober/should-forward-prop';
@@ -31,6 +32,7 @@ setup(
 );
 
 import Nav from 'components/page/Nav';
+import Portals from 'components/page/Portals';
 
 import 'components/globals.css';
 import 'xterm/css/xterm.css';
@@ -48,8 +50,9 @@ const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
       </title>
     </Head>
     <QueryClientProvider client={queryClient} >
-      <Nav/>
+      <Nav />
       <Component {...pageProps} />
+      <Portals />
     </QueryClientProvider>
   </>;
 }

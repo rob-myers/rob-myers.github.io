@@ -4,17 +4,12 @@ import Title from "./Title";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
   return (
-    <>
-      <Portals
-        // TODO site-wide portals in _app
-      />
-      <section className={rootCss}>
-        <Title />
-        <main>
-          {children}
-        </main>
-      </section>
-    </>
+    <section className={rootCss}>
+      <Title />
+      <main>
+        {children}
+      </main>
+    </section>
   );
 }
 
