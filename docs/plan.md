@@ -41,15 +41,16 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- anchor and focus on Tabs interact
-- Avoid reloading tabs onchange markdown via reverse portals
+- Implement Tabs tab portals
+- Doors represented via `<rect>`
+- Make NavDoorsDemo
 
+- anchor and focus on Tabs interact
 - Fix hard refresh scrolling
 - Fix back/forward scrolling
 - import code/components async and on demand
 - Implement front page
 
-- Doors represented via `<rect>`s
 - Create geomorph 101
 - Add missing labels to 302
 

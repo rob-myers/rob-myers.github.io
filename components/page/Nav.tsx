@@ -116,7 +116,7 @@ const navCss = css`
 const topBarCss = css`
   position: fixed;
   cursor: pointer;
-  z-index: 3;
+  z-index: 6;
   left: 0;
   width: calc(100vw + ${sidebarWidth}px);
   height: ${barHeight}px;
