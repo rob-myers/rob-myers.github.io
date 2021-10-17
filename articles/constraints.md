@@ -15,10 +15,12 @@ We begin with the tools we'll use.
 - Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
 - Support both mobile and desktop devices.
 
-The name _Rogue Markup_ refers to the video game [_Rogue_](https://en.wikipedia.org/wiki/Rogue_(video_game)), and the HyperText _Markup_ Language (HTML).
+<!-- NOTE italics inside link currently unsupported -->
+
+The name _Rogue Markup_ refers to the video game _[Rogue](https://en.wikipedia.org/wiki/Rogue_(video_game))_, and the HyperText _Markup_ Language (HTML).
 Since HTML may be used in many different ways,
 we've clarified our particular path above.
-As a general principle, we'll use standard website technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
+Generally speaking, we'll use standard website technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
 
 <aside>
 
@@ -45,14 +47,15 @@ Next, gameplay related constraints.
 - Use an in-browser terminal.
 - Do not use a Physics engine.
 
-We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") of a Geomorph in the previous article.
-By a realtime birdseye camera we just mean a pannable and zoomable SVG.
-Using the Web Animations API provides access to the underlying technology driving CSS animations.
-As for navigation and raycasting algorithms, this amounts to using a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and computing ray/geometry collisions efficiently.
+Let's clarify the above.
+We already saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") of a Geomorph in the previous article.
+Next, by a realtime birdseye camera we just mean a pannable and zoomable SVG.
+The Web Animations API provides access to the underlying technology driving CSS animations.
+As for navigation and raycasting algorithms, we'll use a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and compute ray/geometry collisions.
 
-In order to develop complex Game AI, we'll use a terminal.
-Try entering (or copy-pasting) the commands below.
-Mobile users may find copy-pasting easier.
+Importantly, in order to develop complex Game AI, we'll use a terminal.
+Try entering or copy-pasting the commands below
+(mobile users may find copy-pasting easier).
 
   | Category | Examples  |
   | ------- | ---------- |
@@ -73,18 +76,17 @@ Mobile users may find copy-pasting easier.
 
 As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process" e.g. try terminating <span class="cmd">sleep 5</span>.
 Pipelines and background processes are also supported.
-We'll use terminals to monitor the current state of our Game AI, issue direct commands, and enact long-running behaviour.
+We'll use terminals to monitor the current state of our Game AI, issue direct commands, and develop long-running behaviour.
 
 ### Setting
 
-Finally we constrain the setting.
+It remains to constrain the setting.
 
 - Events take place in the [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3), onboard Space vehicles, stations and docks.
 - Events are inspired by the [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol),
   >  e.g. Ship AIs may recite it to dying [Low Berth](https://wiki.travellerrpg.com/Low_Berth_Rack "@new-tab") travellers.
 - Events are inspired by [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land),
-  > e.g. Earth is assumed lost to Watchers and other "Evil Powers", actually manifestations from Buddhist hells.
-
+  > e.g. Earth is assumed lost after a Karmic Loop was created, letting in the Watchers and other manifestations from Buddhist hells.
 
 Traveller is a Futuristic pen-and-paper Role-playing Game, created in the late 70s.
 It permits faster than light travel bounded by 6 parsecs per week.
@@ -98,4 +100,4 @@ _The Traveller game in all forms is owned by [Far Future Enterprises](https://ww
 
 </div>
 
-We'll leverage two additional sources of inspiration i.e. _Liberation Through Hearing in the Intermediate State_ (Bardo Thodol) and a famous Science Fiction story from 1912 (The Night Land).
+We'll leverage two additional sources of inspiration i.e. _Liberation Through Hearing in the Intermediate State_ (Bardo Thodol) and a famous Science Fiction story from 1912 (_The Night Land_).
