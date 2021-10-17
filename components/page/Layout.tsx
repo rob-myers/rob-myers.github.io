@@ -1,8 +1,8 @@
 import React from 'react';
 import { Actions, Layout as FlexLayout, Model } from 'flexlayout-react';
-import * as portals from 'react-reverse-portal';
+import type { TabMeta } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
-import { computeJsonModel, factory, TabMeta } from './TabsAux';
+import { computeJsonModel, factory } from './TabsAux';
 
 export default function Layout(props: Props) {
   const model = React.useMemo(

@@ -1,7 +1,7 @@
 import React from "react";
 import { createHtmlPortalNode } from "react-reverse-portal";
 import useSiteStore from "store/site.store";
-import { getTabInternalId, TabMeta } from "./TabsAux";
+import { getTabInternalId, TabMeta } from "model/tabs/tabs.model";
 
 export default function Portal(props: Props) {
   const portalKey = getTabInternalId(props);

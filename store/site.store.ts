@@ -1,11 +1,10 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
-import { HtmlPortalNode } from 'react-reverse-portal';
+import type { HtmlPortalNode } from 'react-reverse-portal';
 
-import type { KeyedLookup } from 'model/generic.model';
+import { KeyedLookup, last } from 'model/generic.model';
+import type { TabMeta } from 'model/tabs/tabs.model';
 import type { ArticleKey } from 'articles/index';
-import type { TabMeta } from 'components/page/TabsAux';
-import { last } from 'lodash';
 
 export type State = {
   /** Key of currently viewed article */

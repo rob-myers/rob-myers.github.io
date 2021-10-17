@@ -4,13 +4,13 @@ import classNames from 'classnames';
 import { css } from 'goober';
 
 import { scrollFinished } from 'model/dom.model';
+import { getTabId } from 'model/tabs/tabs.model';
 import { ArticleKey, articlesMeta } from 'articles/index';
 import useSiteStore from 'store/site.store';
 import Link from './Link';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
-import { getTabId } from './TabsAux';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;

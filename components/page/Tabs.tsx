@@ -1,8 +1,8 @@
 import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
+import type { TabMeta } from 'model/tabs/tabs.model';
 import { Layout } from 'components/dynamic';
-import type { TabMeta } from './TabsAux';
 import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
 
 export default function Tabs(props: Props) {
