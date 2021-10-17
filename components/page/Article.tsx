@@ -10,6 +10,7 @@ import Link from './Link';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
+import { getTabId } from './TabsAux';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
@@ -327,8 +328,10 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
 
             switch (cmd) {
               case 'open-tab': {
-                const [tabsKey, tabKey] = args;
+                const [tabsName, tabKey] = args;
+                const tabsKey = getTabId(articleKey, tabsName);
                 const tabs = useSiteStore.getState().tabs[tabsKey];
+
                 if (tabs) {
                   tabs.selectTab(tabKey);
                   const { top } = document.getElementById(tabsKey)!.getBoundingClientRect();
@@ -394,12 +397,13 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
       case 'tabs': {
         const height = Number(props.height || 100);
         const def = React.useMemo(() => Function(`return ${props.tabs || '[]'}`)(), [props.tabs]);
+
         return (
           <Tabs
             height={height}
             tabs={def}
             enabled={props.enabled === 'true'}
-            id={props.id}
+            id={props.name ? getTabId(articleKey, props.name) : ''}
           />
         );
       }

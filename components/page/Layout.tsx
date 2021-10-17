@@ -21,6 +21,7 @@ export default function Layout(props: Props) {
       scrollIntoView: () => props.rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
     };
     useSiteStore.setState({});
+
     return () => void delete useSiteStore.getState().tabs[props.id];
   }, [model]);
 

@@ -11,7 +11,7 @@ export function factory(node: TabNode) {
     key: TabMeta['key'];
     folds?: CodeMirror.Position[];
   };
-
+  
   switch (nodeKey) {
     case 'code': {
       const componentKey = node.getComponent() as string;
@@ -45,7 +45,7 @@ export function factory(node: TabNode) {
     case 'terminal': {
       const sessionKey = node.getConfig().session as string;
       const env = {
-        test: {},
+        test: {}, // TODO
       };
       return <Terminal sessionKey={sessionKey} env={env} />;
     }
@@ -76,16 +76,10 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
           type: 'tab',
           /**
            * Tabs must not be duplicated within same `Tabs`,
-           * for otherwise their `id` will conflict.
+           * for otherwise this internal `id` will conflict.
            */
-          id: meta.key === 'terminal'
-            ? `${meta.key}--${meta.session}`
-            : `${meta.key}--${meta.filepath}`,
-          name: meta.key === 'terminal'
-            ? `@${meta.session}`
-            : meta.key === 'code'
-              ? meta.filepath
-              : meta.filepath,
+          id: getTabInternalId(meta),
+          name: getTabInternalId(meta),
           config: {
             key: meta.key,
             folds: 'folds' in meta ? meta.folds : undefined,
@@ -104,6 +98,15 @@ export type TabMeta = (
   | { key: 'component'; filepath: Lookup.ComponentFilepathKey }
   | { key: 'terminal'; session: string }
 );
+
+/** Compute internal tab uid used by npm module `flexlayout-react`  */
+export function getTabInternalId(meta: TabMeta) {
+  return meta.key === 'terminal' ? `@${meta.session}` : meta.filepath;
+}
+
+export function getTabId(articleKey: string, tabsName: string) {
+  return `${articleKey}--tabs--${tabsName}`;
+}
 
 export function ErrorMessage({ children }: React.PropsWithChildren<{}>) {
   return (

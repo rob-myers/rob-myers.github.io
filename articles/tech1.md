@@ -42,7 +42,7 @@ Let's consider an example, a pannable and zoomable grid (also [on CodeSandbox](h
 <div
   class="tabs"
   height="400"
-  id="tabs-panzoom"
+  name="panzoom"
   tabs="[
     { key: 'component', filepath: 'panzoom/PanZoomDemo' },
     { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
@@ -50,7 +50,7 @@ Let's consider an example, a pannable and zoomable grid (also [on CodeSandbox](h
   ]"
 ></div>
 
-The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab tabs-panzoom code--panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
+The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
 - _PanZoom_ renders an SVG consisting of its children (the Geomorph image provided in _PanZoomDemo_) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
@@ -77,7 +77,7 @@ Here's a whirlwind overview.
 
 - React devs use a grammatical extension [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript) "@new-tab") of JS by XML.
 - React applications are built by composing React function components, using the XML syntax for their return value.
-- Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` (see [example below](#command "open-tab tabs-jsx-to-js")).
+- Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` (see [example below](#command "open-tab jsx-to-js")).
 - This website actually uses _Preact_, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js "@new-tab"),
   and creates Preact virtual DOM nodes.
@@ -91,7 +91,7 @@ Here's a whirlwind overview.
 
 <div
   class="tabs"
-  id="tabs-jsx-to-js"
+  name="jsx-to-js"
   height="340"
   tabs="[ { key: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
 ></div>
@@ -119,7 +119,7 @@ Take another look at _panzoom/PanZoom.jsx_.
 <div
   class="tabs"
   height="360"
-  id="tabs-panzoom-again"
+  name="panzoom-again"
   tabs="[
     { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
     { key: 'code', filepath: 'geom/rect.js' },
@@ -152,7 +152,7 @@ Instead we directly mutate the DOM via:
 
 > ``state.root.setAttribute( 'viewBox', `${state.viewBox}` );``
 
-<!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again code--geom/rect.js"). -->
+<!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again geom/rect.js"). -->
 
 As far as React is concerned, nothing has changed.
 Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (no change).

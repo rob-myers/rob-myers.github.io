@@ -63,7 +63,7 @@ Mobile users may find copy-pasting easier.
 
   <div
     class="tabs"
-    id="tabs-terminal-demo"
+    name="terminal-demo"
     height="300"
     tabs="[
       { key: 'terminal', session: 'test' },

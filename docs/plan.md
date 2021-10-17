@@ -46,6 +46,7 @@ Each __TODO__ should either:
 - Make NavDoorsDemo
 
 - anchor and focus on Tabs interact
+- ids on roots and select `#{id} > span.anchor`
 - Fix hard refresh scrolling
 - Fix back/forward scrolling
 - import code/components async and on demand

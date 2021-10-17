@@ -5,13 +5,11 @@ import { Layout } from 'components/dynamic';
 import type { TabMeta } from './TabsAux';
 import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
 
-/**
- * TODO clean and simplify this component
- */
 export default function Tabs(props: Props) {
   const rootRef = React.useRef<HTMLElement>(null);
-  const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
   const [enabled, setEnabled] = React.useState(!!props.enabled);
+  // initially 'black', afterwards in {'faded', 'clear'}
+  const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
   React.useEffect(() => void setColour(enabled ? 'clear' : 'faded'), []);
 
   return (
