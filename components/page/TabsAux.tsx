@@ -11,7 +11,10 @@ export function factory(node: TabNode) {
     key: TabMeta['key'];
     folds?: CodeMirror.Position[];
   };
-  
+
+  /**
+   * TODO use <Portal>
+   */
   switch (nodeKey) {
     case 'code': {
       const componentKey = node.getComponent() as string;
@@ -99,7 +102,11 @@ export type TabMeta = (
   | { key: 'terminal'; session: string }
 );
 
-/** Compute internal tab uid used by npm module `flexlayout-react`  */
+/**
+ * Internal tab uid, used:
+ * - by npm module `flexlayout-react`
+ * - as portal keys
+ */
 export function getTabInternalId(meta: TabMeta) {
   return meta.key === 'terminal' ? `@${meta.session}` : meta.filepath;
 }

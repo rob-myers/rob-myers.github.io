@@ -10,9 +10,11 @@ import { last } from 'lodash';
 export type State = {
   /** Key of currently viewed article */
   articleKey: null | ArticleKey;
-  /** Articles available on current page */
+  /** <Article>s on current page */
   articles: KeyedLookup<ArticleState>;
-  /** Currently available Tabs i.e. on current page */
+  /** Site-wide portals, corresponding to individual tabs */
+  portal: KeyedLookup<PortalState>;
+  /** <Tabs> on current page */
   tabs: KeyedLookup<TabsState>;
 
   readonly api: {
@@ -23,6 +25,7 @@ export type State = {
 const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
   articles: {},
+  portal: {},
   tabs: {},
 
   api: {
@@ -50,10 +53,15 @@ interface ArticleState {
   rect: Geom.Rect;
 }
 
+export interface PortalState {
+  key: string;
+  meta: TabMeta;
+  portal: HtmlPortalNode;
+}
+
 interface TabsState {
   key: string;
   def: TabMeta[];
-  portal: HtmlPortalNode;
   selectTab: (tabId: string) => void;
   scrollIntoView: () => void;
 }

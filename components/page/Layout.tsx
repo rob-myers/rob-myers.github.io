@@ -5,8 +5,23 @@ import useSiteStore from 'store/site.store';
 import { computeJsonModel, factory, TabMeta } from './TabsAux';
 
 export default function Layout(props: Props) {
-  const model = React.useMemo(() => Model.fromJson(computeJsonModel(props.tabs)), [props.tabs]);
+  const model = React.useMemo(
+    () => Model.fromJson(computeJsonModel(props.tabs)),
+    [props.tabs],
+  );
+  useRegisterTabs(props, model);
+  return (
+    <FlexLayout model={model} factory={factory} />
+  );
+}
 
+interface Props {
+  id: string;
+  rootRef: React.RefObject<HTMLElement>; // TODO ?
+  tabs: TabMeta[];
+}
+
+function useRegisterTabs(props: Props, model: Model) {
   React.useEffect(() => {
     const { tabs } = useSiteStore.getState();
     if (!props.id) {
@@ -16,7 +31,6 @@ export default function Layout(props: Props) {
     tabs[props.id] = tabs[props.id] || {
       key: props.id,
       def: props.tabs,
-      portal: portals.createHtmlPortalNode(),
       selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
       scrollIntoView: () => props.rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
     };
@@ -24,12 +38,4 @@ export default function Layout(props: Props) {
 
     return () => void delete useSiteStore.getState().tabs[props.id];
   }, [model]);
-
-  return <FlexLayout model={model} factory={factory} />
-}
-
-interface Props {
-  id: string;
-  rootRef: React.RefObject<HTMLElement>; // TODO ?
-  tabs: TabMeta[];
 }
