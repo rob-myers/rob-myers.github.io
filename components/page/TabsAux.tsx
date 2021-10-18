@@ -38,7 +38,6 @@ export function factory(node: TabNode) {
         // syntax setState(() => func) avoids setState(prev => next)
         getComponent(componentKey as ComponentFilepathKey).then(x => setComponent(() => x));
       }, []);
-      console.log({ componentKey, component })
       return component ? React.createElement(component) : null;
     }
     case 'terminal': {

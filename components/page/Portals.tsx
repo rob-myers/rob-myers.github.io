@@ -1,11 +1,10 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import * as portals from "react-reverse-portal";
 import { css } from 'goober';
 
-import { getCode } from 'model/tabs/tabs.content';
+import { getCode, getComponent } from 'model/tabs/tabs.content';
 import useSiteStore from "store/site.store";
-import { CodeEditor } from 'components/dynamic';
-import Terminal from 'components/sh/Terminal';
+import { CodeEditor, Terminal } from 'components/dynamic';
 
 /**
  * TODO
@@ -16,50 +15,57 @@ import Terminal from 'components/sh/Terminal';
  */
 export default function Portals() {
   const lookup = useSiteStore(x => x.portal);
-  const items = useMemo(() => Object.values(lookup), [lookup]);
+  const items = React.useMemo(() => Object.values(lookup), [lookup]);
 
-  return items.map(({ key, meta, portal }) => {
-    switch (meta.key) {
-      case 'code':
-        return (
-          <portals.InPortal key={key} node={portal}>
-            <div style={{ height: '100%', background: '#444' }}>
-              <CodeEditor
-                height="100%"
-                lineNumbers
-                readOnly
-                code={getCode(meta.filepath)}
-                folds={meta.folds}
-              />
-          </div>
-          </portals.InPortal>
-        );
-      case 'component':
-        return (
-          <portals.InPortal key={key} node={portal}>
-            {/* TODO */}
-          </portals.InPortal>
-        );
-      case 'terminal': {
-        const env = {
-          test: {}, // TODO
-        };
-        return (
-          <portals.InPortal key={key} node={portal}>
-            <Terminal sessionKey={meta.session} env={env} />;
-          </portals.InPortal>
-        );
+  return <>
+    {items.map(({ key, meta, portal }) => {
+      switch (meta.key) {
+        case 'code':
+          return (
+            <portals.InPortal key={key} node={portal}>
+              <div style={{ height: '100%', background: '#444' }}>
+                <CodeEditor
+                  height="100%"
+                  lineNumbers
+                  readOnly
+                  code={getCode(meta.filepath)}
+                  folds={meta.folds}
+                />
+            </div>
+            </portals.InPortal>
+          );
+        case 'component': {
+          const [component, setComponent] = React.useState<() => JSX.Element>();
+          React.useEffect(() => {// setState(() => func) avoids setState(prev => next)
+            getComponent(meta.filepath).then(func => setComponent(() => func));
+          }, []);
+          return (
+            <portals.InPortal key={key} node={portal}>
+              {component}
+            </portals.InPortal>
+          );
+        }
+        case 'terminal': {
+          const env = {
+            test: {}, // TODO
+          };
+          return (
+            <portals.InPortal key={key} node={portal}>
+              <Terminal sessionKey={meta.session} env={env} />;
+            </portals.InPortal>
+          );
+        }
+        default:
+          return (
+            <portals.InPortal key={key} node={portal}>
+              <ErrorMessage>
+                ⚠️ Unknown <em>Tab</em> with name "{key}".
+              </ErrorMessage>
+            </portals.InPortal>
+          );
       }
-      default:
-        return (
-          <portals.InPortal key={key} node={portal}>
-            <ErrorMessage>
-              ⚠️ Unknown <em>TabNode</em> with name "{key}".
-            </ErrorMessage>
-          </portals.InPortal>
-        );
-    }
-  });
+    })}
+  </>
 }
 
 function ErrorMessage({ children }: React.PropsWithChildren<{}>) {
