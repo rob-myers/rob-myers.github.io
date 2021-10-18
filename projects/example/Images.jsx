@@ -1,7 +1,10 @@
 import classNames from 'classnames';
 import { css } from 'goober';
 
-export function Gm301Debug() {
+/**
+ * TODO not default export, and new Tab type 'image'
+ */
+export default function Gm301Debug() {
   return (
     <div className={classNames('scrollable', rootCss)}>
       <picture>

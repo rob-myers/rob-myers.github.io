@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import * as portals from "react-reverse-portal";
 import { css } from 'goober';
 
-import * as Lookup from 'model/tabs/tabs-lookup';
+import { getCode } from 'model/tabs/tabs.content';
 import useSiteStore from "store/site.store";
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
@@ -28,7 +28,7 @@ export default function Portals() {
                 height="100%"
                 lineNumbers
                 readOnly
-                code={Lookup.code[meta.filepath]}
+                code={getCode(meta.filepath)}
                 folds={meta.folds}
               />
           </div>

@@ -1,10 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TabNode, IJsonModel } from 'flexlayout-react';
 import { css } from 'goober';
 
-import * as Lookup from 'model/tabs/tabs-lookup';
 import { getTabInternalId, TabMeta } from 'model/tabs/tabs.model';
-import { getCode } from 'model/tabs/tabs.content';
+import { CodeFilepathKey, ComponentFilepathKey, getCode, getComponent } from 'model/tabs/tabs.content';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 
@@ -20,32 +19,27 @@ export function factory(node: TabNode) {
   switch (nodeKey) {
     case 'code': {
       const componentKey = node.getComponent() as string;
-      if (componentKey in Lookup.code) {
-        return (
-          <div style={{ height: '100%', background: '#444' }}>
-            <CodeEditor
-              height="100%"
-              lineNumbers
-              readOnly
-              code={getCode(componentKey as Lookup.CodeFilepathKey)}
-              folds={folds}
-            />
-          </div>
-        );
-      }
       return (
-        <ErrorMessage>
-          Unknown code with filepath {componentKey}
-        </ErrorMessage>
+        <div style={{ height: '100%', background: '#444' }}>
+          <CodeEditor
+            height="100%"
+            lineNumbers
+            readOnly
+            code={getCode(componentKey as CodeFilepathKey)}
+            folds={folds}
+          />
+        </div>
       );
     }
     case 'component': {
       const componentKey = node.getComponent() as string;
-      if (componentKey in Lookup.component) {
-        return React.createElement(
-          Lookup.component[componentKey as Lookup.ComponentFilepathKey]
-        );
-      }
+      const [component, setComponent] = React.useState<() => JSX.Element>();
+      useEffect(() => {
+        // syntax setState(() => func) avoids setState(prev => next)
+        getComponent(componentKey as ComponentFilepathKey).then(x => setComponent(() => x));
+      }, []);
+      console.log({ componentKey, component })
+      return component ? React.createElement(component) : null;
     }
     case 'terminal': {
       const sessionKey = node.getConfig().session as string;
@@ -97,8 +91,6 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
     }
   };
 }
-
-
 
 export function ErrorMessage({ children }: React.PropsWithChildren<{}>) {
   return (

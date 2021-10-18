@@ -1,4 +1,4 @@
-import type * as Lookup from './tabs-lookup';
+import { CodeFilepathKey, ComponentFilepathKey } from './tabs.content';
 
 /**
  * Internal tab uid, used:
@@ -14,7 +14,7 @@ export function getTabId(articleKey: string, tabsName: string) {
 }
 
 export type TabMeta = (
-  | { key: 'code'; filepath: Lookup.CodeFilepathKey; folds?: CodeMirror.Position[] }
-  | { key: 'component'; filepath: Lookup.ComponentFilepathKey }
+  | { key: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
+  | { key: 'component'; filepath: ComponentFilepathKey }
   | { key: 'terminal'; session: string }
 );
