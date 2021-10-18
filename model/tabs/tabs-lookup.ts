@@ -1,3 +1,6 @@
+/**
+ * TODO code split
+ */
 import PanZoomDemo from 'projects/panzoom/PanZoomDemo';
 import NavDemo from 'projects/nav/NavDemo';
 import GeomorphDemo from 'projects/geomorph/GeomorphDemo';

@@ -25,51 +25,55 @@ export default function CodeEditor({
   const editorRoot = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (editorRoot.current) {
-      const cm = CodeMirror(editorRoot.current, {
-        autoCloseBrackets: true,
-        keyMap: 'sublime',
-        theme: 'vscode-dark',
-        lineNumbers,
-        matchBrackets: true,
-        // mode: 'jsx',
-        mode: 'jsx-styled',
-        tabSize: 2,
-        value: (code || '').trim(),
-        extraKeys: {
-          "Cmd-Ctrl-Up": "noOp",
-          "Cmd-Ctrl-Down": "noOp",
-          "Ctrl-Alt-Up": "swapLineUp",
-          "Ctrl-Alt-Down": "swapLineDown",
-          "Cmd-/": "customToggleComment",
-          "Ctrl-Q": function(cm){
-            cm.foldCode(cm.getCursor());
-          },
-        },
-        addModeClass: true,
-        readOnly: readOnly
-          // prevent text-edit UI on mobile device
-          ? window.matchMedia('(max-width: 400px)').matches ? 'nocursor' : true
-          : false,
 
-        ...lineNumbers && {
-          foldOptions: {
-            rangeFinder: CodeMirror.fold.indent,
+    (async function() {
+      const text = (await code) || '';
+      
+      if (editorRoot.current) {
+        const cm = CodeMirror(editorRoot.current, {
+          autoCloseBrackets: true,
+          keyMap: 'sublime',
+          theme: 'vscode-dark',
+          lineNumbers,
+          matchBrackets: true,
+          // mode: 'jsx',
+          mode: 'jsx-styled',
+          tabSize: 2,
+          value: text.trim(),
+          extraKeys: {
+            "Cmd-Ctrl-Up": "noOp",
+            "Cmd-Ctrl-Down": "noOp",
+            "Ctrl-Alt-Up": "swapLineUp",
+            "Ctrl-Alt-Down": "swapLineDown",
+            "Cmd-/": "customToggleComment",
+            "Ctrl-Q": function(cm) {
+              cm.foldCode(cm.getCursor());
+            },
           },
-          foldGutter: true,
-          gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
-        },
-        lineWrapping: !!wrap,
-      });
-
-      if (folds) {
-        cm.refresh();
-        folds.forEach(range => cm.foldCode(range));
+          addModeClass: true,
+          readOnly: readOnly
+            // prevent text-edit UI on mobile device
+            ? window.matchMedia('(max-width: 400px)').matches ? 'nocursor' : true
+            : false,
+      
+          ...lineNumbers && {
+            foldOptions: {
+              rangeFinder: CodeMirror.fold.indent,
+            },
+            foldGutter: true,
+            gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
+          },
+          lineWrapping: !!wrap,
+        });
+      
+        if (folds) {
+          cm.refresh();
+          folds.forEach(range => cm.foldCode(range));
+        }
       }
-    }
-    return () => {
-      editorRoot.current?.childNodes.forEach(x => x.remove());
-    };
+    })();
+
+    return () => editorRoot.current?.childNodes.forEach(x => x.remove())
   }, []);
 
   return (
@@ -82,7 +86,7 @@ export default function CodeEditor({
 }
 
 export interface Props {
-  code: string;
+  code: string | Promise<string>;
   gridArea?: string;
   lineNumbers?: boolean;
   readOnly?: boolean;
@@ -91,7 +95,9 @@ export interface Props {
   wrap?: boolean;
 }
 
-const Root = styled('div', React.forwardRef)<{
+const Root = styled(
+  'div',
+  React.forwardRef)<{
   height?: string;
   padding: number;
 }>`

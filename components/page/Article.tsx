@@ -358,7 +358,7 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
       );
     }
 
-    // Otherwise, relative or external link without auto-anchor
+    // Otherwise, external link or relative link sans auto-anchor
     return (
       <Link
         href={href}
@@ -448,5 +448,5 @@ function getArticleLinkId(
   articleKey: string,
   children: React.ReactChildren,
 ) {
-  return `${articleKey}--link-_${childrenToKebabText(children)}`;
+  return `${articleKey}--link--${childrenToKebabText(children)}`;
 }

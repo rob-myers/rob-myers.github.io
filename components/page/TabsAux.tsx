@@ -4,6 +4,7 @@ import { css } from 'goober';
 
 import * as Lookup from 'model/tabs/tabs-lookup';
 import { getTabInternalId, TabMeta } from 'model/tabs/tabs.model';
+import { getCode } from 'model/tabs/tabs.content';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 
@@ -26,7 +27,7 @@ export function factory(node: TabNode) {
               height="100%"
               lineNumbers
               readOnly
-              code={Lookup.code[componentKey as Lookup.CodeFilepathKey]}
+              code={getCode(componentKey as Lookup.CodeFilepathKey)}
               folds={folds}
             />
           </div>

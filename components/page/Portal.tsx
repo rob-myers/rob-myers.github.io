@@ -1,15 +1,17 @@
 import React from "react";
-import { createHtmlPortalNode } from "react-reverse-portal";
+import * as portals from "react-reverse-portal";
 import useSiteStore from "store/site.store";
 import { getTabInternalId, TabMeta } from "model/tabs/tabs.model";
 
 export default function Portal(props: Props) {
   const portalKey = getTabInternalId(props);
-  const portal = useSiteStore(x => portalKey in x ? x.portal[portalKey] : null);
+  const state = useSiteStore(x => portalKey in x ? x.portal[portalKey] : null);
 
-  useEnsurePortal(props, !!portal);
+  useEnsurePortal(props, !!state);
 
-  return null;
+  return state
+    ? <portals.OutPortal node={state.portal} />
+    : null;
 }
 
 type Props = TabMeta;
@@ -25,7 +27,7 @@ function useEnsurePortal(
         portal: { ...portal, [portalKey]: {
           key: portalKey,
           meta,
-          portal: createHtmlPortalNode(),
+          portal: portals.createHtmlPortalNode(),
         }},
       }));
     }
