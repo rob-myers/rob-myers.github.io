@@ -9,9 +9,16 @@ export default function Link(props: Props) {
       className={props.className}
       title={props.title}
       onClick={async (e) => {
-        if (e.metaKey || e.ctrlKey || e.shiftKey) return;
+        if (e.metaKey || e.ctrlKey || e.shiftKey) {
+          return;
+        }
         e.preventDefault();
 
+        if (isExternalHref(props.href)) {
+          return await navigateNatively(props);
+        }
+
+        // Otherwise, use client-side routing
         const { pathname, hash } = new URL(props.href, location.href);
         const changePage = pathname !== location.pathname;
 
@@ -41,6 +48,7 @@ export default function Link(props: Props) {
         }
       }}
     >
+      {props.id && <span id={props.id} className="anchor" />}
       {props.children}
     </a>
   );
@@ -50,7 +58,10 @@ type Props = React.PropsWithChildren<{
   href: string;
   title?: string;
   className?: string;
-  /** Optional path to push before navigating, so can return afterwards */
+  id?: string;
+  /**
+   * Optional path to push before navigating, so can return afterwards.
+   */
   prePush?: string;
   /**
    * If true (backward) goto end of next page, then smooth scroll up.
@@ -58,3 +69,17 @@ type Props = React.PropsWithChildren<{
    */
   backward?: boolean;
 }>
+
+async function navigateNatively(props: Props) {
+  if (props.id) {
+    const { top } = document.getElementById(props.id)!.getBoundingClientRect();
+    window.scrollBy({ top, behavior: 'smooth', });
+    if (! await scrollFinished(window.pageYOffset + top)) return;
+    location.href = `#${props.id}`;
+  }
+  location.href = props.href;
+}
+
+export function isExternalHref(href: string) {
+  return /^(?:http)|(?:mailto)/.test(href);
+}

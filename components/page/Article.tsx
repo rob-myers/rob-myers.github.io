@@ -285,17 +285,17 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
 
     // Relative link with added auto-anchor
     if (title === '@anchor') {
-      const id = `${articleKey}--link-${childrenToKebabText(children)}`;
+      const id = getArticleLinkId(articleKey, children);
       const part = Number((href || '').split('#')[0]) || null;
       return (
         <Link
           href={href}
           className="anchor-link"
+          id={id}
           title={title}
           prePush={`#${id}`}
           backward={!!part && (part < articlesMeta[articleKey].part)}
         >
-          <span id={id} className="anchor" />
           {children}
         </Link>
       );
@@ -358,34 +358,13 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
       );
     }
 
-    // External link
-    if (/^(?:http)|(?:mailto)/.test(href)) {
-      const id = `${articleKey}--link-${childrenToKebabText(children)}`;
-      return (
-        <a
-          href={href}
-          title={title}
-          onClick={async (e) => {
-            if (e.metaKey || e.ctrlKey || e.shiftKey) return;
-            e.preventDefault();
-
-            const { top } = document.getElementById(id)!.getBoundingClientRect();
-            window.scrollBy({ top, behavior: 'smooth', });
-            if (! await scrollFinished(window.pageYOffset + top)) return;
-
-            location.href = `#${id}`;
-            location.href = href;
-          }}
-        >
-          <span id={id} className="anchor" />
-          {children}
-        </a>
-      );
-    }
-
-    // Otherwise, relative link without auto-anchor
+    // Otherwise, relative or external link without auto-anchor
     return (
-      <Link href={href} title={title}>
+      <Link
+        href={href}
+        title={title}
+        id={getArticleLinkId(articleKey, children)}
+      >
         {children}
       </Link>
     );
@@ -460,4 +439,14 @@ function dayth(x: number) {
   } else if (x === 3) {
     return 'rd';
   }
+}
+
+/**
+ * Hacky e.g. does not support markdown `[_foo_](bar)`.
+ */
+function getArticleLinkId(
+  articleKey: string,
+  children: React.ReactChildren,
+) {
+  return `${articleKey}--link-_${childrenToKebabText(children)}`;
 }
