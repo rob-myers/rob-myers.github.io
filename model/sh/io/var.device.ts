@@ -3,6 +3,7 @@ import useSessionStore from "store/session.store";
 import { Device, ReadResult, isDataChunk } from "./io.model";
 
 export type VarDeviceMode = 'array' | 'last';
+
 export class VarDevice implements Device {
 
   public key: string;

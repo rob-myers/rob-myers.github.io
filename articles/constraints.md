@@ -100,4 +100,4 @@ _The Traveller game in all forms is owned by [Far Future Enterprises](https://ww
 
 </div>
 
-We'll leverage two additional sources of inspiration i.e. _Liberation Through Hearing in the Intermediate State_ (Bardo Thodol) and a famous Science Fiction story from 1912 (_The Night Land_).
+We'll leverage two additional sources of inspiration i.e. _Liberation Through Hearing in the Intermediate State_ (Bardo Thodol) and a famous Science Fiction story from 1912 (The Night Land).

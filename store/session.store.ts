@@ -17,7 +17,6 @@ import { computeNormalizedParts, resolveNormalized, ShError } from 'model/sh/sh.
 export type State = {
   session: KeyedLookup<Session>;
   device: KeyedLookup<Device>;
-  rehydrated: boolean;
   
   readonly api: {
     addCleanup: (meta: BaseMeta, ...cleanups: (() => void)[]) => void;
@@ -101,7 +100,6 @@ const useStore = create<State>(devtools((set, get) => ({
   device: {},
   session: {},
   persist: {},
-  rehydrated: false,
 
   api: {
     addCleanup: (meta, ...cleanups) => {
