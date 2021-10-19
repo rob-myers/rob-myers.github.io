@@ -132,7 +132,6 @@ const articleCss = css`
   code {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     letter-spacing: 1px;
-    font-size: 1rem;
     color: #444;
     letter-spacing: 2px;
     padding: 0 2px;
@@ -198,6 +197,10 @@ const articleCss = css`
    margin: 32px 0;
    @media(max-width: 600px) {
      margin: 16px 0;
+   }
+
+   code {
+     font-size: 1rem;
    }
   }
 
