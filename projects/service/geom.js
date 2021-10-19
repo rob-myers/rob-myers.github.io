@@ -110,7 +110,7 @@ class GeomService {
    * @param {Geom.Poly} poly
    * @returns {Geom.AngledRect}
    */
-  polyRectToRect(poly) {
+  polyToAngledRect(poly) {
     const ps = poly.outline;
     const h = tempVect.copy(ps[2]).sub(ps[1]).length;
     const w = tempVect.copy(ps[1]).sub(ps[0]).length;

@@ -94,13 +94,12 @@ async function computeLayout(def) {
     { scale, navTris: false },
   );
 
-
   return {
     dataUrl: canvas.toDataURL(),
     /** Unscaled */
     pngRect: layout.items[0].pngRect,
     doors: singlesToPolys(layout.groups.singles, 'door')
-      .map(poly => geom.polyRectToRect(poly)),
+      .map(poly => geom.polyToAngledRect(poly)),
     /** Debug only */
     pngHref: layout.items[0].pngHref,
     labels: layout.labels,
