@@ -9,9 +9,14 @@ export default function Layout(props: Props) {
     () => Model.fromJson(computeJsonModel(props.tabs)),
     [props.tabs],
   );
+
   useRegisterTabs(props, model);
+
   return (
-    <FlexLayout model={model} factory={factory} />
+    <FlexLayout
+      model={model}
+      factory={factory}
+    />
   );
 }
 
@@ -32,7 +37,6 @@ function useRegisterTabs(props: Props, model: Model) {
       key: props.id,
       def: props.tabs,
       selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
-      scrollIntoView: () => props.rootRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }),
     };
     useSiteStore.setState({});
 

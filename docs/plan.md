@@ -51,6 +51,7 @@ Each __TODO__ should either:
 - Fix back/forward scrolling
 - import code/components async and on demand
 - Implement front page
+- option to resume from last scroll (?)
 
 - Create geomorph 101
 - Add missing labels to 302

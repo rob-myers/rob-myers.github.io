@@ -62,7 +62,6 @@ interface TabsState {
   key: string;
   def: TabMeta[];
   selectTab: (tabId: string) => void;
-  scrollIntoView: () => void;
 }
 
 const api = useStore.getState().api;

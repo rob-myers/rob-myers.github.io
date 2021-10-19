@@ -1,6 +1,7 @@
 import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
+
 import type { TabMeta } from 'model/tabs/tabs.model';
 import { Layout } from 'components/dynamic';
 import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
@@ -8,6 +9,7 @@ import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
 export default function Tabs(props: Props) {
   const rootRef = React.useRef<HTMLElement>(null);
   const [enabled, setEnabled] = React.useState(!!props.enabled);
+
   // initially 'black', afterwards in {'faded', 'clear'}
   const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
   React.useEffect(() => void setColour(enabled ? 'clear' : 'faded'), []);

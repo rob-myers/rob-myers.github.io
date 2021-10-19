@@ -3,54 +3,48 @@ import { TabNode, IJsonModel } from 'flexlayout-react';
 import { css } from 'goober';
 
 import { getTabInternalId, TabMeta } from 'model/tabs/tabs.model';
-import { CodeFilepathKey, ComponentFilepathKey, getCode, getComponent } from 'model/tabs/tabs.content';
+import { getCode, getComponent } from 'model/tabs/tabs.content';
 import { CodeEditor } from 'components/dynamic';
 import Terminal from 'components/sh/Terminal';
 
 export function factory(node: TabNode) {
-  const { key: nodeKey, folds } = node.getConfig() as {
-    key: TabMeta['key'];
-    folds?: CodeMirror.Position[];
-  };
+  
+  const meta = node.getConfig() as TabMeta;
 
   /**
    * TODO use <Portal>
    */
-  switch (nodeKey) {
+  switch (meta.key) {
     case 'code': {
-      const componentKey = node.getComponent() as string;
       return (
         <div style={{ height: '100%', background: '#444' }}>
           <CodeEditor
             height="100%"
             lineNumbers
             readOnly
-            code={getCode(componentKey as CodeFilepathKey)}
-            folds={folds}
+            code={getCode(meta.filepath)}
+            folds={meta.folds}
           />
         </div>
       );
     }
     case 'component': {
-      const componentKey = node.getComponent() as string;
       const [component, setComponent] = React.useState<() => JSX.Element>();
-      useEffect(() => {
-        // syntax setState(() => func) avoids setState(prev => next)
-        getComponent(componentKey as ComponentFilepathKey).then(x => setComponent(() => x));
+      useEffect(() => {// setState(() => func) avoids setState(prev => next)
+        getComponent(meta.filepath).then(x => setComponent(() => x));
       }, []);
       return component ? React.createElement(component) : null;
     }
     case 'terminal': {
-      const sessionKey = node.getConfig().session as string;
       const env = {
         test: {}, // TODO
       };
-      return <Terminal sessionKey={sessionKey} env={env} />;
+      return <Terminal sessionKey={meta.session} env={env} />;
     }
     default:
       return (
         <ErrorMessage>
-          ⚠️ Unknown <em>TabNode</em> with name "{nodeKey}".
+          ⚠️ Unknown <em>TabNode</em> with name "{(meta as any).key}".
         </ErrorMessage>
       );
   }
@@ -78,11 +72,7 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
            */
           id: getTabInternalId(meta),
           name: getTabInternalId(meta),
-          config: {
-            key: meta.key,
-            folds: 'folds' in meta ? meta.folds : undefined,
-            session: 'session' in meta ? meta.session : undefined,
-          },
+          config: meta,
           component: meta.key === 'terminal' ? 'terminal' : meta.filepath,
           enableClose: false,
         })),
