@@ -73,6 +73,12 @@ const rootCss = (height: number) => css`
     position: relative;
     /** Handle svg overflow */
     overflow: hidden;
+
+    /** react-reverse-portal wraps things in a div  */
+    > div.portal {
+      width: 100%;
+      height: 100%;
+    }
   }
   .flexlayout__tabset_tabbar_outer {
     background: #222;

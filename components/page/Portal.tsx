@@ -5,7 +5,7 @@ import { getTabInternalId, TabMeta } from "model/tabs/tabs.model";
 
 export default function Portal(props: Props) {
   const portalKey = getTabInternalId(props);
-  const state = useSiteStore(x => portalKey in x ? x.portal[portalKey] : null);
+  const state = useSiteStore(({ portal }) => portalKey in portal ? portal[portalKey] : null);
 
   useEnsurePortal(props, !!state);
 
@@ -27,7 +27,9 @@ function useEnsurePortal(
         portal: { ...portal, [portalKey]: {
           key: portalKey,
           meta,
-          portal: portals.createHtmlPortalNode(),
+          portal: portals.createHtmlPortalNode({
+            attributes: { class: 'portal' }
+          }),
         }},
       }));
     }

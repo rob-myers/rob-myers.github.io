@@ -6,13 +6,6 @@ import { getCode, getComponent } from 'model/tabs/tabs.content';
 import useSiteStore from "store/site.store";
 import { CodeEditor, Terminal } from 'components/dynamic';
 
-/**
- * TODO
- * - Used by Tabs code/component/terminal
- * - ensure hot-reloading is improved
- * - can do "modal view" of Tabs
- * - will preserve state between pages
- */
 export default function Portals() {
   const lookup = useSiteStore(x => x.portal);
   const items = React.useMemo(() => Object.values(lookup), [lookup]);
@@ -36,12 +29,13 @@ export default function Portals() {
           );
         case 'component': {
           const [component, setComponent] = React.useState<() => JSX.Element>();
-          React.useEffect(() => {// setState(() => func) avoids setState(prev => next)
+          React.useEffect(() => {
+            // setState(() => func) avoids setState(prev => next)
             getComponent(meta.filepath).then(func => setComponent(() => func));
           }, []);
           return (
             <portals.InPortal key={key} node={portal}>
-              {component}
+              {component && React.createElement(component)}
             </portals.InPortal>
           );
         }
@@ -59,7 +53,7 @@ export default function Portals() {
           return (
             <portals.InPortal key={key} node={portal}>
               <ErrorMessage>
-                ⚠️ Unknown <em>Tab</em> with name "{key}".
+                ⚠️ Unknown Tab with key "{key}".
               </ErrorMessage>
             </portals.InPortal>
           );

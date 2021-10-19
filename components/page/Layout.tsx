@@ -1,8 +1,8 @@
 import React from 'react';
-import { Actions, Layout as FlexLayout, Model } from 'flexlayout-react';
-import type { TabMeta } from 'model/tabs/tabs.model';
+import { Actions, Layout as FlexLayout, Model, TabNode } from 'flexlayout-react';
+import { TabMeta, computeJsonModel } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
-import { computeJsonModel, factory } from './TabsAux';
+import Portal from './Portal';
 
 export default function Layout(props: Props) {
   const model = React.useMemo(
@@ -26,6 +26,9 @@ interface Props {
   tabs: TabMeta[];
 }
 
+/**
+ * Register <Tabs> with redux e.g. so can select tab.
+ */
 function useRegisterTabs(props: Props, model: Model) {
   React.useEffect(() => {
     const { tabs } = useSiteStore.getState();
@@ -42,4 +45,9 @@ function useRegisterTabs(props: Props, model: Model) {
 
     return () => void delete useSiteStore.getState().tabs[props.id];
   }, [model]);
+}
+
+function factory(node: TabNode) {
+  const meta = node.getConfig() as TabMeta;
+  return <Portal {...meta} />;
 }
