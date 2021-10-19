@@ -9,7 +9,7 @@ import { CodeFilepathKey, ComponentFilepathKey } from './tabs.content';
   return meta.key === 'terminal' ? `@${meta.session}` : meta.filepath;
 }
 
-export function getTabId(articleKey: string, tabsName: string) {
+export function getTabsId(articleKey: string, tabsName: string) {
   return `${articleKey}--tabs--${tabsName}`;
 }
 

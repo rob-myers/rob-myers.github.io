@@ -62,6 +62,7 @@ interface TabsState {
   key: string;
   def: TabMeta[];
   selectTab: (tabId: string) => void;
+  scrollTo: () => void;
 }
 
 const api = useStore.getState().api;

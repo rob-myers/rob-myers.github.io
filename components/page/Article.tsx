@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { css } from 'goober';
 
 import { scrollFinished } from 'model/dom.model';
-import { getTabId } from 'model/tabs/tabs.model';
+import { getTabsId } from 'model/tabs/tabs.model';
 import { ArticleKey, articlesMeta } from 'articles/index';
 import useSiteStore from 'store/site.store';
 import Link from './Link';
@@ -332,16 +332,10 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
             switch (cmd) {
               case 'open-tab': {
                 const [tabsName, tabKey] = args;
-                const tabsKey = getTabId(articleKey, tabsName);
+                const tabsKey = getTabsId(articleKey, tabsName);
                 const tabs = useSiteStore.getState().tabs[tabsKey];
-
-                if (tabs) {
-                  tabs.selectTab(tabKey);
-                  const { top } = document.getElementById(tabsKey)!.getBoundingClientRect();
-                  window.scrollBy({ top, behavior: 'smooth' });
-                  if (! await scrollFinished(window.pageYOffset + top)) return;
-                  router.push(`#${tabsKey}`);
-                }
+                tabs?.selectTab(tabKey);
+                tabs?.scrollTo();
                 break;
               }
               case 'sigkill': {
@@ -385,7 +379,7 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
             height={height}
             tabs={def}
             enabled={props.enabled === 'true'}
-            id={props.name ? getTabId(articleKey, props.name) : ''}
+            id={props.name ? getTabsId(articleKey, props.name) : ''}
           />
         );
       }

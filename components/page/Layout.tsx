@@ -1,6 +1,8 @@
+import Router from 'next/router';
 import React from 'react';
 import { Actions, Layout as FlexLayout, Model, TabNode } from 'flexlayout-react';
 import { TabMeta, computeJsonModel } from 'model/tabs/tabs.model';
+import { scrollFinished } from 'model/dom.model';
 import useSiteStore from 'store/site.store';
 import Portal from './Portal';
 
@@ -36,11 +38,20 @@ function useRegisterTabs(props: Props, model: Model) {
       return console.warn('Tabs has no id', props.tabs);
     }
     // Register tabs with state
-    tabs[props.id] = tabs[props.id] || {
-      key: props.id,
-      def: props.tabs,
-      selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
-    };
+    if (!tabs[props.id]) {
+      tabs[props.id] = {
+        key: props.id,
+        def: props.tabs,
+        selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
+        scrollTo: async () => {
+          const id = props.id;
+          const { top } = document.getElementById(id)!.getBoundingClientRect();
+          window.scrollBy({ top, behavior: 'smooth' });
+          if (! await scrollFinished(window.pageYOffset + top)) return;
+          Router.push(`#${id}`);
+        },
+      };
+    }
     useSiteStore.setState({});
 
     return () => void delete useSiteStore.getState().tabs[props.id];

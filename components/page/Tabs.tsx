@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import type { TabMeta } from 'model/tabs/tabs.model';
 import { Layout } from 'components/dynamic';
 import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
+import useSiteStore from 'store/site.store';
 
 export default function Tabs(props: Props) {
   const rootRef = React.useRef<HTMLElement>(null);
@@ -29,8 +30,13 @@ export default function Tabs(props: Props) {
           />
         )}
         <ControlsOverlay enabled={enabled} toggleEnabled={() => {
-          setEnabled(!enabled);
+          const next = !enabled;
+          setEnabled(next);
           setColour(colour === 'clear' ? 'faded' : 'clear');
+          if (next) {
+            const tabs = useSiteStore.getState().tabs[props.id];
+            tabs?.scrollTo();
+          }
         }} />
         <LoadingOverlay colour={colour} />
       </div>
