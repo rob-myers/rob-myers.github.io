@@ -24,7 +24,7 @@ export default function Portals() {
                   code={getCode(meta.filepath)}
                   folds={meta.folds}
                 />
-            </div>
+              </div>
             </portals.InPortal>
           );
         case 'component': {
@@ -45,7 +45,7 @@ export default function Portals() {
           };
           return (
             <portals.InPortal key={key} node={portal}>
-              <Terminal sessionKey={meta.session} env={env} />;
+              <Terminal sessionKey={meta.session} env={env} />
             </portals.InPortal>
           );
         }

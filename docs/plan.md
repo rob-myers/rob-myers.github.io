@@ -41,8 +41,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- Implement Tabs tab portals 🚧
-- Doors represented via `<rect>`
+- Doors represented via `<rect>` 🚧
 - Make NavDoorsDemo
 
 - anchor and focus on Tabs interact
@@ -51,6 +50,7 @@ Each __TODO__ should either:
 - Fix back/forward scrolling
 - import code/components async and on demand
 - Implement front page
+- preserve scroll inside tab pane
 - option to resume from last scroll (?)
 
 - Create geomorph 101
@@ -64,6 +64,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Implement Tabs tab portals
 - ✅ Mobile NavMini should be overlapped by open Nav 
 - ✅ Fix scrolling yet again: zenscroll doesn't work well on android.
 - ✅ Show next at bottom of page
