@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import classNames from "classnames";
 
 import { Rect } from "../geom";
-import { loadImage } from "../service";
+import { geom, loadImage } from "../service";
 import { createLayout, deserializeSvgJson, labelMeta, singlesToPolys } from "./geomorph.model";
 import layoutDefs from "./layout-defs";
 import { renderGeomorph } from "./geomorph.render";
@@ -27,14 +27,25 @@ export default function GeomorphDemo() {
 /** @param {{ def: Geomorph.LayoutDef; transform?: string }} _ */
 function Geomorph({ def, transform }) {
   const { data: gm } = useQuery(`layout-${def.key}`, () => computeLayout(def));
+
   return gm ? (
     <g className={classNames("geomorph", def.key)} transform={transform}>
       <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
+
       <g className="doors">
-        {gm.doors.map((door) => <polygon points={`${door.outline}`} />)}
+        {gm.doors.map(({ rect, angle }) =>
+          <rect
+            {...rect.json}
+            style={{
+              transformOrigin: `${rect.points[0].x}px ${rect.points[0].y}px`,
+              transform: `rotate(${angle}rad)`,
+            }} />
+        )}
       </g>
+
       <Labels gm={gm} />
-      <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
+
+      {/* <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/> */}
     </g>
   ) : null;
 }
@@ -72,16 +83,19 @@ async function computeLayout(def) {
   const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
   const layout = createLayout(def, symbolLookup);
   const canvas = document.createElement('canvas');
+
   await renderGeomorph(
     layout, symbolLookup, canvas, (pngHref) => loadImage(pngHref),
     { scale, navTris: false },
   );
 
+
   return {
     dataUrl: canvas.toDataURL(),
     /** Unscaled */
     pngRect: layout.items[0].pngRect,
-    doors: singlesToPolys(layout.groups.singles, 'door'),
+    doors: singlesToPolys(layout.groups.singles, 'door')
+      .map(poly => geom.polyRectToRect(poly)),
     /** Debug only */
     pngHref: layout.items[0].pngHref,
     labels: layout.labels,
@@ -101,7 +115,8 @@ const rootCss = css`
     transform: scale(${1 / scale});
     pointer-events: none;
   }
-  g > .doors polygon {
+  /* g > .doors polygon { */
+  g > .doors rect {
     fill: white;
     stroke: black;
   }

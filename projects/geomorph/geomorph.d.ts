@@ -76,7 +76,7 @@ declare namespace Geomorph {
   export interface BrowserLayout {
     dataUrl: string;
     pngRect: Geom.RectJson;
-    doors: Poly[];
+    doors: Geom.AngledRect[];
     labels: LayoutLabel[];
     pngHref: string;
   }

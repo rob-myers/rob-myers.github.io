@@ -1,4 +1,4 @@
-import { Poly, Vect } from '../geom';
+import { Poly, Rect, Vect } from '../geom';
 
 class GeomService {
 
@@ -14,7 +14,7 @@ class GeomService {
    * @param {Vect} d1
    * @returns {number | null}
    */
-   getLinesIntersect(p0, d0, p1, d1) {
+  getLinesIntersect(p0, d0, p1, d1) {
     /**
      * Recall normal_0 is (-d0.y, d0.x).
      * No intersection if directions d0, d1 approx. parallel, ignoring colinear.
@@ -37,7 +37,7 @@ class GeomService {
    * @param {Vect} q0
    * @param {Vect} q1
    */
-   getLineSegsIntersection(p0, p1, q0, q1) {
+  getLineSegsIntersection(p0, p1, q0, q1) {
     let dpx = p1.x - p0.x,
         dpy = p1.y - p0.y,
         dqx = q1.x - q0.x,
@@ -105,6 +105,21 @@ class GeomService {
     return this.joinTriangulations(decomps);
   }
 
+  /**
+   * Convert a polygonal rectangle back into a Rect with angle.
+   * @param {Geom.Poly} poly
+   * @returns {Geom.AngledRect}
+   */
+  polyRectToRect(poly) {
+    const ps = poly.outline;
+    const h = tempVect.copy(ps[2]).sub(ps[1]).length;
+    const w = tempVect.copy(ps[1]).sub(ps[0]).length;
+    return {
+      rect: new Rect(ps[0].x, ps[0].y, w, h),
+      angle: Math.atan2(tempVect.y, tempVect.x),
+    };
+  }
+
   /** @param {Vect[]} path */
   removePathReps(path) {
     /** @type {Geom.VectJson} */
@@ -117,5 +132,7 @@ class GeomService {
     }, /** @type {typeof path} */ ([]));
   }
 }
+
+const tempVect = new Vect;
 
 export const geom = new GeomService;

@@ -36,4 +36,9 @@ declare namespace Geom {
     tris: [number, number, number][];
   }
 
+  export interface AngledRect {
+    rect: Geom.Rect;
+    angle: number;
+  }
+
 }

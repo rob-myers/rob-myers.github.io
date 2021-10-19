@@ -35,6 +35,7 @@ public/svg
 
 <div
   class="tabs"
+  name="geomorph-101"
   enabled="false"
   height="400"
   tabs="[
