@@ -49,6 +49,7 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
   height="400"
   enabled="false"
   tabs="[
+     { key: 'component', filepath: 'nav/DoorsDemo' },
      { key: 'component', filepath: 'nav/NavDemo' },
    ]"
 ></div>

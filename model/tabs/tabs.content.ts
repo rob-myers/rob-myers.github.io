@@ -14,15 +14,16 @@ const code = {
 } as const;
 
 const component = {
-  'panzoom/PanZoomDemo': () =>
-    import('projects/panzoom/PanZoomDemo'),
-  'nav/NavDemo': () =>
-    import('projects/nav/NavDemo'),
+  'example/Gm301Debug': () =>
+    import('projects/example/Gm301Debug'),
   'geomorph/GeomorphDemo': () =>
     import('projects/geomorph/GeomorphDemo'),
-  /** example/images.jsx Gm301Debug */
-  'images/Gm301Debug': () =>
-    import('projects/example/images'),
+  'panzoom/PanZoomDemo': () =>
+    import('projects/panzoom/PanZoomDemo'),
+  'nav/DoorsDemo': () =>
+    import('projects/nav/DoorsDemo'),
+  'nav/NavDemo': () =>
+    import('projects/nav/NavDemo'),
 };
 
 export async function getCode(key: CodeFilepathKey) {

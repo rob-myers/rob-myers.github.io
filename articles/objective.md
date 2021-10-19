@@ -15,7 +15,7 @@ As for the environment, it will be driven by thousands of Traveller-based assets
   class="tabs"
   name="geomorph-301-debug"
   height="340"
-  tabs="[{ key: 'component', filepath: 'images/Gm301Debug' }]"
+  tabs="[{ key: 'component', filepath: 'example/Gm301Debug' }]"
 ></div>
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),

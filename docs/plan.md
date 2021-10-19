@@ -44,7 +44,6 @@ Each __TODO__ should either:
 - Make `NavDoorsDemo` 🚧
 - start using public/geomorphs i.e. precomputed geomorphs
 
-- anchor and focus on Tabs interact
 - ids on roots and select `#{id} > span.anchor`
 - Fix hard refresh scrolling
 - Fix back/forward scrolling
@@ -64,6 +63,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ anchor and focus on Tabs interact
 - ✅ Doors represented via rotated `<rect>`
 - ✅ Implement Tabs tab portals
 - ✅ Mobile NavMini should be overlapped by open Nav 
