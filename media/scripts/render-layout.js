@@ -43,6 +43,7 @@ async function computeLayout(def) {
   const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
   const layout = createLayout(def, symbolLookup);
   const canvas = createCanvas(0, 0);
+
   await renderGeomorph(
     layout,
     symbolLookup,

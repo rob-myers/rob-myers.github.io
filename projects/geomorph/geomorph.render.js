@@ -1,9 +1,10 @@
-import { Poly, Vect } from "../geom";
+import { Vect } from "../geom";
 import { labelMeta, singlesToPolys } from './geomorph.model';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service';
 
 /**
- * Render a single geomorph PNG without doors
+ * Render a single geomorph PNG,
+ * optionally with e.g. doors.
  * @param {Geomorph.Layout} layout
  * @param {Geomorph.SymbolLookup} lookup
  * @param {Canvas} canvas
@@ -13,7 +14,16 @@ import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePol
  */
 export async function renderGeomorph(
   layout, lookup, canvas, getPng,
-  { scale, obsBounds = true, wallBounds = true, navTris = false, doors = false, labels = false },
+  {
+    scale,
+    obsBounds = true,
+    wallBounds = true,
+    navTris = false,
+    doors = false,
+    labels = false,
+    floorColor = 'rgba(200, 200, 200, 1)',
+    navColor = 'rgba(0, 0, 100, 0.3)',
+  },
 ) {
   const hullSym = lookup[layout.items[0].key];
   const pngRect = hullSym.pngRect;
@@ -25,8 +35,7 @@ export async function renderGeomorph(
   ctxt.translate(-pngRect.x, -pngRect.y);
 
   //#region underlay
-  // ctxt.fillStyle = 'rgba(100, 100, 100, 0.4)';
-  ctxt.fillStyle = 'rgba(200, 200, 200, 1)';
+  ctxt.fillStyle = floorColor;
   if (hullSym.hull.length === 1 && hullSym.hull[0].holes.length) {
     const hullOutline = hullSym.hull[0].outline;
     fillRing(ctxt, hullOutline);
@@ -34,7 +43,7 @@ export async function renderGeomorph(
     console.error('hull walls must: exist, be connected, have a hole');
   }
 
-  ctxt.fillStyle = 'rgba(0, 0, 100, 0.2)';
+  ctxt.fillStyle = navColor;
   fillPolygon(ctxt, layout.navPoly);
   if (navTris) {
     ctxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
