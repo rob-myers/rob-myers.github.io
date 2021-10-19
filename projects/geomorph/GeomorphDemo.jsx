@@ -30,20 +30,10 @@ function Geomorph({ def, transform }) {
 
   return gm ? (
     <g className={classNames("geomorph", def.key)} transform={transform}>
+
       <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
 
-      <g className="doors">
-        {gm.doors.map(({ rect, angle }) =>
-          <rect
-            {...rect.json}
-            style={{
-              transformOrigin: `${rect.points[0].x}px ${rect.points[0].y}px`,
-              transform: `rotate(${angle}rad)`,
-            }} />
-        )}
-      </g>
-
-      <Labels gm={gm} />
+      <ForeignObject gm={gm} />
 
       {/* <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/> */}
     </g>
@@ -51,7 +41,7 @@ function Geomorph({ def, transform }) {
 }
 
 /** @param {{ gm: Geomorph.BrowserLayout }} props */
-function Labels({ gm }) {
+function ForeignObject({ gm }) {
 
   /** @param {React.MouseEvent<HTMLElement>} e */
   const onClick = (e) => {
@@ -60,16 +50,31 @@ function Labels({ gm }) {
   };
 
   return (
-    <foreignObject className="labels" {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
+    <foreignObject {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
       <div onClick={onClick}>
         {gm.labels.map(({ text, padded }) => (
           <div
             className="label"
-            style={{ left: padded.x - gm.pngRect.x, top: padded.y - gm.pngRect.y }}
+            style={{
+              left: padded.x - gm.pngRect.x,
+              top: padded.y - gm.pngRect.y,
+            }}
           >
             {text}
           </div>
         ))}
+        {gm.doors.map(({ rect, angle }) =>
+          <div
+            className="door"
+            style={{
+              left: rect.x - gm.pngRect.x,
+              top: rect.y - gm.pngRect.y,
+              width: rect.width,
+              height: rect.height,
+              transformOrigin: 'top left',
+              transform: `rotate(${angle}rad)`,
+            }} />
+        )}
       </div>
   </foreignObject>
   );
@@ -115,22 +120,30 @@ const rootCss = css`
     transform: scale(${1 / scale});
     pointer-events: none;
   }
-  /* g > .doors polygon { */
   g > .doors rect {
     fill: white;
     stroke: black;
   }
-  g > .labels {
+
+  g > foreignObject {
     font: ${labelMeta.font};
-    pointer-events: none;
+
     div.label {
-      background: black;
-      color: white;
       position: absolute;
       padding: ${labelMeta.padY}px ${labelMeta.padX}px;
+      
       cursor: pointer;
       pointer-events: auto;
       user-select: none; /** TODO better way? */
+
+      background: black;
+      color: white;
+    }
+    div.door {
+      position: absolute;
+      cursor: pointer;
+      background: white;
+      border: 1px solid black;
     }
     circle {
       fill: red;
