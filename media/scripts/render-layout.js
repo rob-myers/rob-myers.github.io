@@ -17,6 +17,7 @@ import svgJson from '../../public/symbol/svg.json';
 import layoutDefs from '../../projects/geomorph/layout-defs';
 import { createLayout, deserializeSvgJson } from '../../projects/geomorph/geomorph.model';
 import { renderGeomorph } from '../../projects/geomorph/geomorph.render';
+import { geom } from '../../projects/service';
 
 const defaultScale = 2;
 const geomorphId = Number(process.argv[2]);
@@ -65,7 +66,10 @@ async function computeLayout(def) {
     pngRect: layout.items[0].pngRect,
     doors: layout.groups.singles
       .filter(x => x.tags.includes('door'))
-      .map(({ poly, tags }) => ({ poly: poly.geoJson, tags })),
+      .map(({ poly, tags }) => {
+        const { angle, rect } = geom.polyToAngledRect(poly);
+        return { angle, rect: rect.json, poly: poly.geoJson, tags };
+      }),
     navPoly: layout.navPoly.map(x => x.geoJson),
   };
 

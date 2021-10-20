@@ -108,7 +108,7 @@ class GeomService {
   /**
    * Convert a polygonal rectangle back into a Rect with angle.
    * @param {Geom.Poly} poly
-   * @returns {Geom.AngledRect}
+   * @returns {Geom.FourGon<Geom.Rect>}
    */
   polyToAngledRect(poly) {
     const ps = poly.outline;
@@ -116,7 +116,7 @@ class GeomService {
     const w = tempVect.copy(ps[1]).sub(ps[0]).length;
     return {
       rect: new Rect(ps[0].x, ps[0].y, w, h),
-      angle: Math.atan2(tempVect.y, tempVect.x),
+      angle: Math.atan2(tempVect.y, tempVect.x) * (180 / Math.PI),
     };
   }
 

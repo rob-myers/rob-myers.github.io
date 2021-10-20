@@ -72,7 +72,7 @@ function ForeignObject({ gm }) {
               width: rect.width,
               height: rect.height,
               transformOrigin: 'top left',
-              transform: `rotate(${angle}rad)`,
+              transform: `rotate(${angle}deg)`,
             }} />
         )}
       </div>

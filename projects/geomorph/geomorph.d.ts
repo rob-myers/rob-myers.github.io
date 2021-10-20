@@ -19,7 +19,7 @@ declare namespace Geomorph {
     key: string;
     id: number;
     pngRect: Geom.RectJson;
-    doors: SvgGroups<Geom.GeoJsonPolygon>['singles'];
+    doors: Geom.Tagged4GonJson[];
     navPoly: Geom.GeoJsonPolygon[];
   }
 
@@ -78,7 +78,7 @@ declare namespace Geomorph {
   export interface BrowserLayout {
     dataUrl: string;
     pngRect: Geom.RectJson;
-    doors: Geom.AngledRect[];
+    doors: Geom.TaggedRect[];
     labels: LayoutLabel[];
     pngHref: string;
   }
