@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { css } from 'goober';
+import classNames from 'classnames';
 import { Vect } from '../geom';
 import { getSvgPos, getSvgMid, canTouchDevice, projectSvgEvt } from '../service';
 
@@ -109,7 +110,7 @@ export default function PanZoom(props) {
       preserveAspectRatio="xMinYMin"
       viewBox={`${state.viewBox}`}
     >
-      <g className="content">
+      <g className={classNames("content", props.className)}>
         {props.children}
       </g>
       <Grid bounds={props.gridBounds} />
@@ -124,6 +125,7 @@ export default function PanZoom(props) {
  * @property {number} [minZoom] Minimum zoom factor (default 0.5)
  * @property {number} [maxZoom] Maximum zoom factor (default 2)
  * @property {number} [initZoom] Initial zoom factor (default 1)
+ * @property {string} [className]
  */
 
 /** @param {{ bounds: Geom.Rect }} props */

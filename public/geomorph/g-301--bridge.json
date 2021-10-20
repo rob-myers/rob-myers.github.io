@@ -22,8 +22,8 @@
       "tags": ["door", "door-e"]
     },
     {
-      "angle": 90,
-      "rect": {"x": 348, "y": 594, "width": 12, "height": 98},
+      "angle": 180,
+      "rect": {"x": 348, "y": 606, "width": 98, "height": 12},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[348, 594], [348, 606], [250, 606], [250, 594]]]
@@ -31,8 +31,8 @@
       "tags": ["door", "door-s-e"]
     },
     {
-      "angle": 90,
-      "rect": {"x": 948, "y": 594, "width": 12, "height": 98},
+      "angle": 180,
+      "rect": {"x": 948, "y": 606, "width": 98, "height": 12},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[948, 594], [948, 606], [850, 606], [850, 594]]]
@@ -40,8 +40,8 @@
       "tags": ["door", "door-s-w"]
     },
     {
-      "angle": 90,
-      "rect": {"x": 112, "y": 55.2, "width": 9.599999999999994, "height": 44},
+      "angle": 180,
+      "rect": {"x": 112, "y": 64.8, "width": 44, "height": 9.599999999999994},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[112, 55.2], [112, 64.8], [68, 64.8], [68, 55.2]]]
@@ -49,8 +49,8 @@
       "tags": ["door"]
     },
     {
-      "angle": 90,
-      "rect": {"x": 112, "y": 235.2, "width": 9.600000000000023, "height": 46},
+      "angle": 180,
+      "rect": {"x": 112, "y": 244.8, "width": 46, "height": 9.600000000000023},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[112, 235.2], [112, 244.8], [66, 244.8], [66, 235.2]]]
@@ -58,8 +58,8 @@
       "tags": ["door"]
     },
     {
-      "angle": 90,
-      "rect": {"x": 174, "y": 235, "width": 9.599999999999994, "height": 46},
+      "angle": 180,
+      "rect": {"x": 174, "y": 244.6, "width": 46, "height": 9.599999999999994},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[174, 235], [174, 244.6], [128, 244.6], [128, 235]]]
@@ -171,8 +171,8 @@
       "tags": ["door", "iris"]
     },
     {
-      "angle": 90,
-      "rect": {"x": 1072, "y": 235, "width": 9.599999999999994, "height": 46},
+      "angle": 180,
+      "rect": {"x": 1072, "y": 244.6, "width": 46, "height": 9.599999999999994},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -182,8 +182,8 @@
       "tags": ["door", "s"]
     },
     {
-      "angle": 90,
-      "rect": {"x": 1132, "y": 55.2, "width": 9.599999999999994, "height": 44},
+      "angle": 180,
+      "rect": {"x": 1132, "y": 64.8, "width": 44, "height": 9.599999999999994},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -193,8 +193,8 @@
       "tags": ["door"]
     },
     {
-      "angle": 90,
-      "rect": {"x": 1134, "y": 235.2, "width": 9.600000000000023, "height": 46},
+      "angle": 180,
+      "rect": {"x": 1134, "y": 244.8, "width": 46, "height": 9.600000000000023},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -204,8 +204,8 @@
       "tags": ["door"]
     },
     {
-      "angle": -90,
-      "rect": {"x": 66, "y": 364.4, "width": 9.599999999999966, "height": 46},
+      "angle": 0,
+      "rect": {"x": 66, "y": 354.8, "width": 46, "height": 9.599999999999966},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[66, 364.4], [66, 354.8], [112, 354.8], [112, 364.4]]]
@@ -213,8 +213,8 @@
       "tags": ["door"]
     },
     {
-      "angle": -90,
-      "rect": {"x": 66, "y": 425, "width": 9.600000000000023, "height": 46},
+      "angle": 0,
+      "rect": {"x": 66, "y": 415.4, "width": 46, "height": 9.600000000000023},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[66, 425], [66, 415.4], [112, 415.4], [112, 425]]]
@@ -222,8 +222,8 @@
       "tags": ["door"]
     },
     {
-      "angle": -90,
-      "rect": {"x": 186, "y": 364.4, "width": 9.599999999999966, "height": 46},
+      "angle": 0,
+      "rect": {"x": 186, "y": 354.8, "width": 46, "height": 9.599999999999966},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -233,8 +233,8 @@
       "tags": ["door"]
     },
     {
-      "angle": -90,
-      "rect": {"x": 186, "y": 425, "width": 9.600000000000023, "height": 46},
+      "angle": 0,
+      "rect": {"x": 186, "y": 415.4, "width": 46, "height": 9.600000000000023},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[186, 425], [186, 415.4], [232, 415.4], [232, 425]]]
@@ -242,8 +242,8 @@
       "tags": ["door"]
     },
     {
-      "angle": 0,
-      "rect": {"x": 55.2, "y": 488, "width": 9.599999999999994, "height": 44},
+      "angle": 90,
+      "rect": {"x": 64.8, "y": 488, "width": 44, "height": 9.599999999999994},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[55.2, 488], [64.8, 488], [64.8, 532], [55.2, 532]]]
@@ -251,8 +251,8 @@
       "tags": ["door"]
     },
     {
-      "angle": 0,
-      "rect": {"x": 235.2, "y": 488, "width": 9.600000000000023, "height": 46},
+      "angle": 90,
+      "rect": {"x": 244.8, "y": 488, "width": 46, "height": 9.600000000000023},
       "poly": {
         "type": "Polygon",
         "coordinates": [

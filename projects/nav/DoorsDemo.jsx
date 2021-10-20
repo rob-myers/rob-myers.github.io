@@ -1,3 +1,4 @@
+import React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 import { Rect } from "../geom";
@@ -7,7 +8,7 @@ export default function DoorsDemo() {
 
   const { data } = useQuery('gm-101-json', async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
-    return (fetch('/geomorph/g-101--multipurpose.json').then(x => x.json()));
+    return fetch('/geomorph/g-101--multipurpose.json').then(x => x.json());
   });
 
   return (
@@ -15,16 +16,16 @@ export default function DoorsDemo() {
       gridBounds={gridBounds}
       initViewBox={initViewBox}
       maxZoom={6}
-
+      className={rootCss}
     >
-      {data && <g className={rootCss}>
+      {data && <>
         <image
           {...data.pngRect}
           className="geomorph"
           href="/geomorph/g-101--multipurpose.png"
         />
         <ForeignObject json={data} />
-      </g>}
+      </>}
     </PanZoom>
   );
 }
@@ -34,12 +35,22 @@ const initViewBox = new Rect(0, 0, 1200, 600);
 
 /** @param {{ json: Geomorph.GeomorphJson }} _ */
 function ForeignObject({ json }) {
+
+  /** @param {React.MouseEvent} e */
+  const onClick = (e) => {
+    const div = /** @type {HTMLDivElement} */ (e.target);
+    const [width, index] = [div.clientWidth, Number(div.getAttribute('data-index'))];
+    const nextWidth = width <= 5 ? json.doors[index].rect.width : 5; // Leq for borders
+    div.style.width = `${nextWidth}px`;
+  };
+
   return (
     <foreignObject {...json.pngRect} xmlns="http://www.w3.org/1999/xhtml">
-      <div>
-        {json.doors.map(({ rect, angle }) =>
+      <div onClick={onClick}>
+        {json.doors.map(({ rect, angle }, i) =>
           <div
             className="door"
+            data-index={i}
             style={{
               left: rect.x - json.pngRect.x,
               top: rect.y - json.pngRect.y,
@@ -62,6 +73,11 @@ const rootCss = css`
       cursor: pointer;
       background: white;
       border: 1px solid black;
+
+      transition: width 500ms ease;
+      &.open {
+        width: 0;
+      }
     }
   }
 `;

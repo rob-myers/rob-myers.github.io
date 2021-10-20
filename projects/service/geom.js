@@ -107,17 +107,26 @@ class GeomService {
 
   /**
    * Convert a polygonal rectangle back into a Rect with angle.
+   * We ensure the width is greater than or equal to the height.
    * @param {Geom.Poly} poly
    * @returns {Geom.FourGon<Geom.Rect>}
    */
   polyToAngledRect(poly) {
     const ps = poly.outline;
-    const h = tempVect.copy(ps[2]).sub(ps[1]).length;
     const w = tempVect.copy(ps[1]).sub(ps[0]).length;
-    return {
-      rect: new Rect(ps[0].x, ps[0].y, w, h),
-      angle: Math.atan2(tempVect.y, tempVect.x) * (180 / Math.PI),
-    };
+    const h = tempVect2.copy(ps[2]).sub(ps[1]).length;
+
+    if (w >= h) {
+      return {
+        rect: new Rect(ps[0].x, ps[0].y, w, h),
+        angle: Math.atan2(tempVect.y, tempVect.x) * (180 / Math.PI),
+      };
+    } else {
+      return {
+        rect: new Rect(ps[1].x, ps[1].y, h, w),
+        angle: Math.atan2(tempVect2.y, tempVect2.x) * (180 / Math.PI),
+      };
+    }
   }
 
   /** @param {Vect[]} path */
@@ -134,5 +143,6 @@ class GeomService {
 }
 
 const tempVect = new Vect;
+const tempVect2 = new Vect;
 
 export const geom = new GeomService;
