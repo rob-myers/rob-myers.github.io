@@ -29,13 +29,15 @@ export default function Portals() {
           );
         case 'component': {
           const [component, setComponent] = React.useState<() => JSX.Element>();
+
           React.useEffect(() => {
             // setState(() => func) avoids setState(prev => next)
-            getComponent(meta.filepath).then(func => setComponent(() => func));
+            getComponent(meta.filepath).then(func => setComponent(() => func as any));
           }, []);
+
           return (
             <portals.InPortal key={key} node={portal}>
-              {component && React.createElement(component)}
+              {component && React.createElement(component, meta.props)}
             </portals.InPortal>
           );
         }

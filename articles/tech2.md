@@ -30,16 +30,25 @@ It is worth discussing Navigation and Raycasting in more detail.
 
 ### Navigation
 
-
-<!-- __TODO__
+<!--
+__TODO__
 - Rodney Brooks layers.
 - Navigation based Game AI.
 - Corner-wrapped Pathfinding only provides part of the 
 - Geomorph 101
 -->
 
-<!-- Pathfinding is central to Game AI.
-Our NPCs need to move realistically e.g. they cannot move through walls, windows or locked doors. -->
+
+
+<div
+  class="tabs"
+  name="nav-doors-demo"
+  height="400"
+  enabled="false"
+  tabs="[
+     { key: 'component', filepath: 'nav/DoorsDemo', props: { layoutKey: 'g-101--multipurpose' } },
+   ]"
+></div>
 
 <div
   class="tabs"
@@ -47,7 +56,6 @@ Our NPCs need to move realistically e.g. they cannot move through walls, windows
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'nav/DoorsDemo' },
      { key: 'component', filepath: 'nav/NavDemo' },
    ]"
 ></div>

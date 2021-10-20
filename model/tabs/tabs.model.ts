@@ -15,9 +15,11 @@ export function getTabsId(articleKey: string, tabsName: string) {
 
 export type TabMeta = (
   | { key: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
-  | { key: 'component'; filepath: ComponentFilepathKey }
+  | { key: 'component'; filepath: ComponentFilepathKey; props?: TabComponentProps }
   | { key: 'terminal'; session: string }
 );
+
+export type TabComponentProps = Record<string, string | number | boolean>;
 
 export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
   return {

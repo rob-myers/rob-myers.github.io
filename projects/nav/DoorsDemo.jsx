@@ -4,11 +4,12 @@ import { useQuery } from "react-query";
 import { Rect } from "../geom";
 import PanZoom from "../panzoom/PanZoom";
 
-export default function DoorsDemo() {
+/** @param {{ layoutKey: Geomorph.LayoutKey }} props */
+export default function DoorsDemo(props) {
 
-  const { data } = useQuery('gm-101-json', async () => {
+  const { data } = useQuery(`${props.layoutKey}-json`, async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
-    return fetch('/geomorph/g-101--multipurpose.json').then(x => x.json());
+    return (fetch(`/geomorph/${props.layoutKey}.json`).then(x => x.json()));
   });
 
   return (
@@ -22,7 +23,7 @@ export default function DoorsDemo() {
         <image
           {...data.pngRect}
           className="geomorph"
-          href="/geomorph/g-101--multipurpose.png"
+          href={`/geomorph/${props.layoutKey}.png`}
         />
         <ForeignObject json={data} />
       </>}
