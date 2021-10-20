@@ -98,7 +98,7 @@ const layoutDefs = {
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, -1, 0, 1200, 240] },
       { symbol: 'shop--028--0.8x1.6', transform: [0, 1, -1, 0, 660, 420] },
       { symbol: 'shop--027--0.4x1.6', transform: [-1, 0, 0, 1, 900, 480] },
-      { symbol: 'sensors--003--1x1.4', transform: [...getAngle(45), 90 + 5, -60 + 1] },
+      { symbol: 'sensors--003--1x1.4', transform: [...getAngleMatrix(45), 90 + 5, -60 + 1] },
     ],
   },
 };
@@ -109,7 +109,12 @@ export default layoutDefs;
  * @param {number} degrees 
  * @returns {[number, number, number, number]}
  */
-function getAngle(degrees) {
-  const rads = (degrees / 360) * (2 * Math.PI);
-  return [Math.cos(rads), Math.sin(rads), -Math.sin(rads), Math.cos(rads)];
+function getAngleMatrix(degrees) {
+  const rads = degrees * (Math.PI / 180);
+  return [
+    Math.cos(rads), // a
+    Math.sin(rads), // b
+    -Math.sin(rads),// c
+    Math.cos(rads), // d
+  ];
 }
