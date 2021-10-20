@@ -35,7 +35,7 @@ export default function Article(props: React.PropsWithChildren<{
     <article
       className={classNames(props.className, articleCss)}
     >
-      <span className="anchor" id={`article-${props.articleKey}`} />
+      <span className="anchor" id={props.articleKey} />
       <time dateTime={props.dateTime}>
         {dateText}
       </time>
@@ -391,7 +391,7 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
   h2({ node, children, ...props }: any) {
     return (
       <h2 {...props}>
-        <Link href={`#article-${articleKey}`}>
+        <Link href={`#${articleKey}`}>
           <a>{children}</a>
         </Link>
       </h2>
