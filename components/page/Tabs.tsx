@@ -29,15 +29,18 @@ export default function Tabs(props: Props) {
             rootRef={rootRef}
           />
         )}
-        <ControlsOverlay enabled={enabled} toggleEnabled={() => {
-          const next = !enabled;
-          setEnabled(next);
-          setColour(colour === 'clear' ? 'faded' : 'clear');
-          if (next) {
-            const tabs = useSiteStore.getState().tabs[props.id];
-            tabs?.scrollTo();
-          }
-        }} />
+        <ControlsOverlay
+          enabled={enabled}
+          toggleEnabled={() => {
+            const next = !enabled;
+            setEnabled(next);
+            setColour(colour === 'clear' ? 'faded' : 'clear');
+            if (next) {
+              const tabs = useSiteStore.getState().tabs[props.id];
+              tabs?.scrollTo();
+            }
+          }}
+        />
         <LoadingOverlay colour={colour} />
       </div>
     </figure>

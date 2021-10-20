@@ -14,14 +14,13 @@ const code = {
 } as const;
 
 const component = {
-  'example/Gm301Debug': () =>
-    import('projects/example/Gm301Debug'),
-  'geomorph/GeomorphDemo': () =>
-    import('projects/geomorph/GeomorphDemo'),
-  'panzoom/PanZoomDemo': () =>
-    import('projects/panzoom/PanZoomDemo'),
-  'nav/DoorsDemo': () =>
-    import('projects/nav/DoorsDemo'),
+  'example/Gm301Debug': () => import('projects/example/Gm301Debug'),
+  'geomorph/GeomorphDemo': () => import('projects/geomorph/GeomorphDemo'),
+  'panzoom/PanZoomDemo': () => import('projects/panzoom/PanZoomDemo'),
+  '101@nav/DoorsDemo': () => import('projects/nav/DoorsDemo')
+      .then(x => () => <x.default layoutKey='g-101--multipurpose' />),
+  '301@nav/DoorsDemo': () => import('projects/nav/DoorsDemo')
+      .then(x => () => <x.default layoutKey='g-301--bridge' />),
   'nav/NavDemo': () =>
     import('projects/nav/NavDemo'),
 };
@@ -32,7 +31,7 @@ export async function getCode(key: CodeFilepathKey) {
 }
 
 export async function getComponent(key: ComponentFilepathKey) {
-  return component[key]?.().then(x => x.default)
+  return component[key]?.().then(x => 'default' in x ? x.default : x)
     || (() => React.createElement('div', null, `Component not found: ${key}`));
 }
 

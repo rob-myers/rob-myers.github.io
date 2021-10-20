@@ -1,12 +1,18 @@
 import type { IJsonModel } from 'flexlayout-react';
+import { testNever } from 'model/generic.model';
 import { CodeFilepathKey, ComponentFilepathKey } from './tabs.content';
 
 /**
  * Internal tab uid used by npm module `flexlayout-react`,
  * and also as portal keys.
  */
- export function getTabInternalId(meta: TabMeta) {
-  return meta.key === 'terminal' ? `@${meta.session}` : meta.filepath;
+export function getTabInternalId(meta: TabMeta) {
+  switch (meta.key) {
+    case 'code': return meta.filepath;
+    case 'terminal': return `@${meta.session}`;
+    case 'component': return meta.filepath;
+    default: throw testNever(meta);
+  }
 }
 
 export function getTabsId(articleKey: string, tabsName: string) {
@@ -15,11 +21,9 @@ export function getTabsId(articleKey: string, tabsName: string) {
 
 export type TabMeta = (
   | { key: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
-  | { key: 'component'; filepath: ComponentFilepathKey; props?: TabComponentProps }
+  | { key: 'component'; filepath: ComponentFilepathKey; }
   | { key: 'terminal'; session: string }
 );
-
-export type TabComponentProps = Record<string, string | number | boolean>;
 
 export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
   return {

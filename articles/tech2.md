@@ -18,15 +18,15 @@ Well, there are three standard systems:
 >
 > **Physics**: collision detection, force-driven rigid bodies, raycasting.
 
-Navigation is of central importance to our approach and will be discussed shortly.
+Navigation is of central importance to us and will be discussed shortly.
 Concerning animation, we're definitely _not_ going to obsess over realism.
 Nevertheless we'll need visual cues to indicate NPC actions,
 and a _sense of flow_ via interdependent concurrent animations.
 As for a physics engine, we [mentioned](1#constraints--game-mechanics "@anchor") we won't be using one. In particular:
-- Collision detection will be handled at a higher level i.e. as part of navigation.
+- Collision detection will be handled at a higher level, as part of navigation.
 - Force-driven movement will be replaced by the Web Animations API.
 
-It is worth discussing Navigation and Raycasting in more detail.
+In the rest of this article we'll discuss Navigation and Raycasting in detail.
 
 ### Navigation
 
@@ -46,7 +46,8 @@ __TODO__
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'nav/DoorsDemo', props: { layoutKey: 'g-101--multipurpose' } },
+     { key: 'component', filepath: '101@nav/DoorsDemo' },
+     { key: 'component', filepath: '301@nav/DoorsDemo' },
    ]"
 ></div>
 

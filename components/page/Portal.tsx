@@ -5,7 +5,9 @@ import { getTabInternalId, TabMeta } from "model/tabs/tabs.model";
 
 export default function Portal(props: Props) {
   const portalKey = getTabInternalId(props);
-  const state = useSiteStore(({ portal }) => portalKey in portal ? portal[portalKey] : null);
+  const state = useSiteStore(
+    ({ portal }) => portalKey in portal ? portal[portalKey] : null,
+  );
 
   useEnsurePortal(props, !!state);
 

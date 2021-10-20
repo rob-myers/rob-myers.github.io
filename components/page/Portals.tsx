@@ -37,7 +37,7 @@ export default function Portals() {
 
           return (
             <portals.InPortal key={key} node={portal}>
-              {component && React.createElement(component, meta.props)}
+              {component && React.createElement(component)}
             </portals.InPortal>
           );
         }
