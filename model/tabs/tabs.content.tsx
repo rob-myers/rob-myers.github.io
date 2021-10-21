@@ -17,9 +17,9 @@ const component = {
   'example/Gm301Debug': () => import('projects/example/Gm301Debug'),
   'geomorph/GeomorphDemo': () => import('projects/geomorph/GeomorphDemo'),
   'panzoom/PanZoomDemo': () => import('projects/panzoom/PanZoomDemo'),
-  '101@nav/DoorsDemo': () => import('projects/nav/DoorsDemo')
+  'nav/DoorsDemo#101': () => import('projects/nav/DoorsDemo')
       .then(x => () => <x.default layoutKey='g-101--multipurpose' />),
-  '301@nav/DoorsDemo': () => import('projects/nav/DoorsDemo')
+  'nav/DoorsDemo#301': () => import('projects/nav/DoorsDemo')
       .then(x => () => <x.default layoutKey='g-301--bridge' />),
   'nav/NavDemo': () =>
     import('projects/nav/NavDemo'),
