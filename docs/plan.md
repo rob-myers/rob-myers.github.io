@@ -26,8 +26,7 @@ Each __TODO__ should either:
 ### _Technology (Part 2)_ i.e. nav and raycast
 
 - Write text 🚧
-- NavDemo: can drag navpath src/dst 🚧
-- NavDemo: can disable nav nodes 🚧
+- NavDemo: animate navigation 🚧
 
 ### _Technology (Part 3)_ i.e. static and runtime analysis
 
@@ -41,28 +40,28 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- Make `NavDoorsDemo` 🚧
-- start using public/geomorphs i.e. precomputed geomorphs
-
 - ids on roots and select `#{id} > span.anchor`
 - Fix hard refresh scrolling
 - Fix back/forward scrolling
-- import code/components async and on demand
 - Implement front page
 - preserve scroll inside tab pane
-- option to resume from last scroll (?)
+- option to resume from last scroll
+- can maximise Tabs into a modal
 
-- Create geomorph 101
+- Finish geomorph 101
 - Add missing labels to 302
 
 - Add GitHub Comments
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
 
+- `PanZoom` supports zoom to point via ref API
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ restart using public/geomorphs i.e. precomputed geomorphs
+- ✅ make `nav/DoorsDemo`
 - ✅ anchor and focus on Tabs interact
 - ✅ Doors represented via rotated `<rect>`
 - ✅ Implement Tabs tab portals
