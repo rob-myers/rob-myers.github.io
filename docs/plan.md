@@ -9,6 +9,8 @@ Each __TODO__ should either:
 ### _Objective_ i.e. intro
 
 - Include image of Geomorph with description ✅
+- Add lighting demo
+- Add 3d walls demo
 
 ### _Constraints_
 
