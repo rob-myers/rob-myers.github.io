@@ -26,6 +26,48 @@ class GeomService {
   }
 
   /**
+   * Get intersection between line `p + λ.d` and line segment `[q0, q1]`.
+   * Returns `λ` or null if no intersection.
+   * @param {Geom.Vect} p 
+   * @param {Geom.Vect} d 
+   * @param {Geom.Vect} q0 
+   * @param {Geom.Vect} q1 
+   */
+  getLineLineSegIntersect(p, d, q0, q1) {
+    // normal n = (-dy,dx)
+    let dx = d.x, dy = d.y, px = p.x, py = p.y,
+        // dot products (q0 - p).n and (q1 -p).n
+        k1 = (q0.x - px)*-dy + (q0.y - py)*dx, 
+        k2 = (q1.x - px)*-dy + (q1.y - py)*dx,
+        dqx, dqy, z, s0, s1;
+    
+    // (q0 - p).n and (q1 - p).n are both zero
+    // iff both q0 and q1 lie along the line p + lambda * d
+    if (k1 === 0 && k2 === 0) {
+        // return signed distance to closer point
+        s0 = (q0.x - px)*dx + (q0.y - py)*dy;
+        s1 = (q1.x - px)*dx + (q1.y - py)*dy;
+        return (Math.abs(s0) < Math.abs(s1)) ? s0 : s1;
+    }
+    // if (q0 - p).n and (q1 - p).n have different signs
+    // (where at most one of them is zero)
+    // then they must intersect the line p --d-->
+    else if (k1 * k2 <= 0) {
+        dqx = q1.x - q0.x;
+        dqy = q1.y - q0.y;
+        // compute z-component of cross product d \times (q1 - q0)
+        z = dx * dqy - dy * dqx;
+        // z shouldn't equal 0 since then p,q0,q1 colinear and k1 = k2 = 0
+        // but we check anyway (?)
+        if(z === 0) return null;
+        // otherwise have formula for signed distance
+        // coming from two simultaneous equations for line vs line intersection
+        return (py*dqx + px*-dqy + (q0.x * q1.y - q0.y * q1.x)) / z;
+    }
+    return null;
+  }
+
+  /**
    * Compute intersection of 2 line segments:
    * - p0 -- p1
    * - q0 -- q1
@@ -127,6 +169,16 @@ class GeomService {
         angle: Math.atan2(tempVect2.y, tempVect2.x) * (180 / Math.PI),
       };
     }
+  }
+
+  /**
+   * Force radian to range [0, 2pi).
+   * @param {number} radian
+   */
+  radRange(radian) {
+    radian %= (2 * Math.PI);
+    // if (Math.abs(x) <= 0.001) x = 0;
+    return radian >= 0 ? radian : (2 * Math.PI + radian);
   }
 
   /** @param {Vect[]} path */

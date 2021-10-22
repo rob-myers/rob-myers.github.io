@@ -10,6 +10,7 @@ Each __TODO__ should either:
 
 - Include image of Geomorph with description ✅
 - Add lighting demo
+  > https://github.com/rob-myers/topdown-cli/blob/actors-component/frontend/src/service/geom.service.ts
 - Add 3d walls demo
 
 ### _Constraints_
@@ -29,6 +30,8 @@ Each __TODO__ should either:
 
 - Write text 🚧
 - NavDemo: animate navigation 🚧
+- Raycasting
+  > https://github.com/rob-myers/rob-myers.github.io/blob/dev/model/geom/geom.service.ts
 
 ### _Technology (Part 3)_ i.e. static and runtime analysis
 
