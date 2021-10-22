@@ -10,7 +10,7 @@ The [crew](https://wiki.travellerrpg.com/Crew "@new-tab") will have tasks e.g. m
 These behaviours will be constrained by e.g. sleep patterns, the behaviour of others, and hardware failures.
 
 But how do video games implement these behaviours?
-There are three standard systems:
+Well, there are three standard systems:
 
 > **Navigation**: _planning e.g. route from A to B._
 >
@@ -19,7 +19,7 @@ There are three standard systems:
 > **Physics**: collision detection, force-driven rigid bodies, raycasting.
 
 Navigation is of central importance to us and will be discussed shortly.
-Concerning animation, we're definitely _not_ going to obsess over realism.
+Concerning animation, we're definitely not going to obsess over realism.
 Nevertheless we'll need visual cues to indicate NPC actions,
 and a _sense of flow_ via interdependent concurrent animations.
 As for a physics engine, we [mentioned](1#constraints--game-mechanics "@anchor") we won't be using one. In fact:

@@ -7,7 +7,7 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 We begin with the tools we'll use.  
 
-- Use standard web development, rather than HTMLCanvas and [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).
+- Use standard web development, not [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
@@ -19,7 +19,7 @@ We begin with the tools we'll use.
 
 The name _Rogue Markup_ refers to the video game _[Rogue](https://en.wikipedia.org/wiki/Rogue_(video_game))_, and the HyperText _Markup_ Language (HTML).
 Since HTML may be used in many different ways,
-we've clarified our particular path above.
+we've clarified our approach above.
 Generally speaking, we'll use standard website technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
 
 <aside>
