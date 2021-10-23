@@ -1,5 +1,5 @@
 import type { IJsonModel } from 'flexlayout-react';
-import { testNever } from 'model/generic.model';
+import { deepClone, testNever } from 'model/generic.model';
 import { CodeFilepathKey, ComponentFilepathKey } from './tabs.content';
 
 /**
@@ -39,18 +39,21 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
         weight: 50,
         selected: 0,
 
-        children: tabs.map((meta) => ({
-          type: 'tab',
-          /**
-           * Tabs must not be duplicated within same `Tabs`,
-           * for otherwise this internal `id` will conflict.
-           */
-          id: getTabInternalId(meta),
-          name: getTabInternalId(meta),
-          config: meta,
-          // component: meta.key === 'terminal' ? 'terminal' : meta.filepath,
-          enableClose: false,
-        })),
+        children: tabs.map((meta) => {
+          // console.log('json model', meta);
+          return {
+            type: 'tab',
+            /**
+             * Tabs must not be duplicated within same `Tabs`,
+             * for otherwise this internal `id` will conflict.
+             */
+            id: getTabInternalId(meta),
+            name: getTabInternalId(meta),
+            config: deepClone(meta),
+            // component: meta.key === 'terminal' ? 'terminal' : meta.filepath,
+            enableClose: false,
+          };
+        }),
       }],
     }
   };
