@@ -3,7 +3,6 @@ import { NextRouter, useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
 
-import { scrollFinished } from 'model/dom.model';
 import { getTabsId } from 'model/tabs/tabs.model';
 import { ArticleKey, articlesMeta } from 'articles/index';
 import useSiteStore from 'store/site.store';
