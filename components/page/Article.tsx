@@ -227,7 +227,7 @@ const articleCss = css`
   > time {
     position: absolute;
     right: -10px;
-    top: -50px;
+    top: -52px;
     width: 136px;
 
     background: var(--border-bg);
