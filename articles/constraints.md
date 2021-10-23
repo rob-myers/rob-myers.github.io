@@ -26,7 +26,7 @@ Generally speaking, we'll use standard website technologies e.g. CSS, SVGs, PNGs
 
 Although WebGL permits far richer 3D graphics than CSS,
 it leads away from the declarative nature of Markup.
-Sticking to central web technologies makes our approach relevant to a far larger audience.
+Sticking to core web technologies makes our approach relevant to a far larger audience.
 We also want to avoid obsessing over graphics, seeking superior Game AI instead.
 
 </aside>
