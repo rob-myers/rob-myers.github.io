@@ -121,7 +121,7 @@ Take another look at _panzoom/PanZoom.jsx_.
   height="360"
   name="panzoom-again"
   tabs="[
-    { key: 'code', filepath: 'panzoom/PanZoom.jsx#again' },
+    { key: 'code', filepath: 'panzoom/PanZoom.jsx', idSuffix: '1' },
     { key: 'code', filepath: 'geom/rect.js' },
   ]"
 ></div>

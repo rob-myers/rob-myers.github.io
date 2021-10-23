@@ -65,6 +65,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ tab metas support idSuffix
 - ✅ restart using public/geomorphs i.e. precomputed geomorphs
 - ✅ make `nav/DoorsDemo`
 - ✅ anchor and focus on Tabs interact

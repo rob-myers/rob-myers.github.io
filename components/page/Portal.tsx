@@ -1,6 +1,6 @@
 import React from "react";
 import * as portals from "react-reverse-portal";
-import useSiteStore from "store/site.store";
+import useSiteStore, { PortalState } from "store/site.store";
 import { getTabInternalId, TabMeta } from "model/tabs/tabs.model";
 
 export default function Portal(props: Props) {
@@ -9,7 +9,7 @@ export default function Portal(props: Props) {
     ({ portal }) => portalKey in portal ? portal[portalKey] : null,
   );
 
-  useEnsurePortal(props, !!state);
+  useEnsurePortal(props, state);
 
   return state
     ? <portals.OutPortal node={state.portal} />
@@ -20,10 +20,10 @@ type Props = TabMeta;
 
 function useEnsurePortal(
   meta: TabMeta,
-  exists: boolean,
+  portal: PortalState | null,
 ) {
   React.useEffect(() => {
-    if (!exists) {
+    if (!portal) {
       const portalKey = getTabInternalId(meta);
       useSiteStore.setState(({ portal }) => ({
         portal: { ...portal, [portalKey]: {
@@ -34,6 +34,8 @@ function useEnsurePortal(
           }),
         }},
       }));
+    } else if (JSON.stringify(portal.meta) !== JSON.stringify(meta)) {
+      console.warn('Detected different TabMetas with same portalKey', portal.meta, meta);
     }
   }, []);
 }

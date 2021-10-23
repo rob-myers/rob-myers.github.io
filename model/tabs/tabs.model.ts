@@ -7,11 +7,18 @@ import { CodeFilepathKey, ComponentFilepathKey } from './tabs.content';
  * and also as portal keys.
  */
 export function getTabInternalId(meta: TabMeta) {
+  return `${getTabName(meta)}${meta.idSuffix || ''}`;
+}
+
+function getTabName(meta: TabMeta) {
   switch (meta.key) {
-    case 'code': return meta.filepath;
-    case 'terminal': return `@${meta.session}`;
-    case 'component': return meta.filepath;
-    default: throw testNever(meta);
+    case 'code':
+    case 'component':
+      return meta.filepath;
+    case 'terminal':
+      return `@${meta.session}`;
+    default:
+      throw testNever(meta);
   }
 }
 
@@ -19,7 +26,7 @@ export function getTabsId(articleKey: string, tabsName: string) {
   return `${articleKey}--tabs--${tabsName}`;
 }
 
-export type TabMeta = (
+export type TabMeta = { idSuffix?: string } & (
   | { key: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
   | { key: 'component'; filepath: ComponentFilepathKey; }
   | { key: 'terminal'; session: string }
@@ -48,7 +55,7 @@ export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
              * for otherwise this internal `id` will conflict.
              */
             id: getTabInternalId(meta),
-            name: getTabInternalId(meta),
+            name: getTabName(meta),
             config: deepClone(meta),
             // component: meta.key === 'terminal' ? 'terminal' : meta.filepath,
             enableClose: false,

@@ -3,8 +3,6 @@ import React from 'react';
 const code = {
   'panzoom/PanZoom.jsx': () =>
     import('!!raw-loader!projects/panzoom/PanZoom.jsx'),
-  'panzoom/PanZoom.jsx#again': () =>
-    import('!!raw-loader!projects/panzoom/PanZoom.jsx'),
   'panzoom/PanZoomDemo.jsx': () =>
     import('!!raw-loader!projects/panzoom/PanZoomDemo.jsx'),
   'nav/NavDemo.jsx': () =>
