@@ -193,7 +193,7 @@ const articleCss = css`
   }
 
   p {
-   margin: 32px 0;
+   margin: 40px 0;
    @media(max-width: 600px) {
      margin: 16px 0;
    }
