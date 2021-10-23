@@ -1,4 +1,4 @@
-import { useRef, useEffect } from "react";
+import React from "react";
 import useMeasure from "react-use-measure";
 import { css } from "goober";
 
@@ -10,10 +10,10 @@ import { Rect } from "projects/geom/rect";
 import Article from "./Article";
 
 export default function Articles({ keys, markdown }: Props) {
-  const root = useRef<HTMLUListElement>();
-  const [ref, rect] = useMeasure({ debounce: 30, scroll: true });
+  const root = React.useRef<HTMLUListElement>();
+  const [ref, rect] = useMeasure({ debounce: 30, scroll: false });
 
-  useEffect(()  => {// Register article rects with state
+  React.useEffect(()  => {// Register article rects with state
     const articles = Array.from(root.current?.children || [])
       .map((el, i) => ({
         key: keys[i],
@@ -23,7 +23,7 @@ export default function Articles({ keys, markdown }: Props) {
     useSiteStore.api.updateArticleKey();
   }, [rect]);
   
-  useEffect(() => () => {// Unregister articles
+  React.useEffect(() => () => {// Unregister articles
     keys.forEach(key => delete useSiteStore.getState().articles[key]);
     useSiteStore.setState({});
   }, []);
