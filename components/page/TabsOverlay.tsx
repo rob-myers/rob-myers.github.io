@@ -1,17 +1,24 @@
 import { css } from 'goober';
 import classNames from 'classnames';
+import { iconCss } from './Icons';
 
-export function ControlsOverlay({ enabled, toggleEnabled }: {
+export function ControlsOverlay({ enabled, toggleEnabled, clickAnchor }: {
   enabled: boolean;
   toggleEnabled: () => void;
+  clickAnchor: () => void;
 }) {
   return (
     <div className={controlsCss}>
-      <div
-        className={classNames("top-right", enabled && 'enabled')}
-        onClick={enabled ? toggleEnabled : undefined}
-      >
-        disable
+      <div className={classNames("top-right", enabled && 'enabled')}>
+        <span
+          className={iconCss('anchor-icon-white', 'auto', 10)}
+          onClick={clickAnchor}
+        />
+        <span
+          onClick={enabled ? toggleEnabled : undefined}
+        >
+          disable
+        </span>
       </div>
       {!enabled && (
         <div
@@ -44,6 +51,10 @@ const controlsCss = css`
     
     &.enabled {
       color: #fff;
+    }
+
+    > span:not(:last-child) {
+      margin-right: 8px;
     }
   }
 
