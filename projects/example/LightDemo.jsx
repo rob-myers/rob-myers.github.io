@@ -1,12 +1,10 @@
 import React, { useMemo } from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
-import { Poly, Rect } from "../geom";
+import { Poly, Rect, Vect } from "../geom";
 import PanZoom from "../panzoom/PanZoom";
 import { lightPolygon } from "projects/raycast/light";
 import { geom } from "projects/service";
-
-// TODO use image instead
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function LightDemo(props) {
@@ -16,14 +14,17 @@ export default function LightDemo(props) {
     return (fetch(`/geomorph/${props.layoutKey}.json`).then(x => x.json()));
   });
 
-  const floorPolys = useMemo(() => {
-    const polys = data?.floorPoly.map(x => Poly.from(x)) || [];
-    // const decomps = polys.map(poly => geom.triangulationToPoly(poly.fastTriangulate()));
-    // const lights = decomps.map(({ tris }) => lightPolygon(poly));
-    return polys;
-  }, [data?.floorPoly]);
+  const light = useMemo(() => {
+    /**
+     * TODO apply gradient effect
+     */
+    const polys = (data?.walls.map(x => Poly.from(x)) || []);
+    const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
+    const light = lightPolygon(new Vect(300, 300), 500, triangs);
+    return light;
+  }, [data?.walls]);
 
-  console.log('floorPoly', data?.floorPoly);
+  console.log(light);
 
   return (
     <PanZoom
@@ -38,10 +39,9 @@ export default function LightDemo(props) {
           className="geomorph"
           href={`/geomorph/${props.layoutKey}.png`}
         />
-        {floorPolys.map(x => (
-          <path style={{ fill: 'rgba(255, 0, 0, 0.2)' }} d={x.svgPath} />
-        ))}
-        {/* <ForeignObject json={data} /> */}
+
+        <path style={{ fill: 'rgba(255, 0, 0, 0.2)' }} d={light?.svgPath} />
+        
       </>}
     </PanZoom>
   );
