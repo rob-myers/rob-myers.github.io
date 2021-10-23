@@ -49,7 +49,7 @@ export default function Article(props: React.PropsWithChildren<{
 }
 
 const articleCss = css`
-  line-height: 1.6;
+  line-height: 1.8;
   background: var(--focus-bg);
   border: var(--blog-border-width) solid var(--border-bg);
   font-size: 1.1rem;
