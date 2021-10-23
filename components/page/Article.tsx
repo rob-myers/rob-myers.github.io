@@ -10,6 +10,7 @@ import Link from './Link';
 import Sep from './Sep';
 import Markdown from './Markdown';
 import Tabs from './Tabs';
+import { iconCss } from './Icons';
 
 export default function Article(props: React.PropsWithChildren<{
   className?: string;
@@ -73,24 +74,6 @@ const articleCss = css`
       position: absolute;
       top: -96px;
     }
-  }
-  a.new-tab-link::after {
-    display: inline-block;
-    content: '';
-    background-image: url('/icon/ext-link-icon.svg');
-    background-size: 13px 13px;
-    height: 13px;
-    width: 13px;
-    margin-left: 2px;
-  }
-  a.anchor-link::after {
-    display: inline-block;
-    content: '';
-    background-image: url('/icon/anchor-icon.svg');
-    background-size: 13px 13px;
-    height: 13px;
-    width: 13px;
-    margin: 0 2px 0 4px;
   }
 
   aside {
@@ -292,7 +275,7 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
       return (
         <Link
           href={href}
-          className="anchor-link"
+          className={classNames("anchor-link", iconCss('anchor-icon', '0 2px 0 4px'))}
           id={id}
           title={title}
           prePush={`#${id}`}
@@ -309,7 +292,7 @@ const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
         <a
           href={href}
           title={title}
-          className="new-tab-link"
+          className={classNames("new-tab-link", iconCss('ext-link-icon', '0 2px 0 4px'))}
           target="_blank"
           rel="noopener"
         >
