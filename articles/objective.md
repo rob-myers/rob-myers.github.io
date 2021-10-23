@@ -24,12 +24,14 @@ Green indicates obstacles you can see over, whereas red indicates obstacles whic
 
 > A larger version is [available](/pics/g-301--bridge.debug.x2.png "@new-tab").
 
-A _Starship Geomorph_ is a rectangular partial floorplan of a starship, designed to be cut out and glued to other ones.
+<aside>
+
+A _Starship Geomorph_ is a rectangular partial floorplan of a starship, designed to be cut out and glued.
 They were created by Robert Pearce, and distributed as a PDF on his [blog](http://travellerrpgblog.blogspot.com/).
 A 2nd version was released in 2020, along with another PDF containing many individual symbols e.g. offices, fuel tanks and bedrooms. Soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/).
 The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 
----
+</aside>
 
 We finish with two basic graphical demos.
 You can pan and zoom, drag the light around, and check out the 3D walls in the second tab.
