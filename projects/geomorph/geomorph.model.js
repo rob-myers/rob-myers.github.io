@@ -78,7 +78,10 @@ export function createLayout(def, lookup) {
   ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
   
   // Floor polygon
-  const floorPoly = Poly.cutOut(walls, hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
+  const floorPoly = Poly.cutOut(
+    walls,
+    hullOutline,
+  ).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
