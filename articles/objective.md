@@ -29,9 +29,10 @@ They were created by Robert Pearce, and distributed as a PDF on his [blog](http:
 A 2nd version was released in 2020, along with another PDF containing many individual symbols e.g. offices, fuel tanks and bedrooms. Soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/).
 The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 
-<hr>
+---
 
-__TODO__ finish with two nice demos: (a) lighting, (b) 3d walls
+We finish with two basic graphical demos.
+You can pan and zoom, drag the light around, and check out the 3D walls in the second tab.
 
 <div
   class="tabs"
@@ -39,3 +40,5 @@ __TODO__ finish with two nice demos: (a) lighting, (b) 3d walls
   height="340"
   tabs="[{ key: 'component', filepath: 'example/LightDemo#301' }]"
 ></div>
+
+__TODO__ ☝️
