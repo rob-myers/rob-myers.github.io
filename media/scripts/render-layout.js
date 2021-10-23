@@ -71,6 +71,7 @@ async function computeLayout(def) {
         return { angle, rect: rect.json, poly: poly.geoJson, tags };
       }),
     navPoly: layout.navPoly.map(x => x.geoJson),
+    floorPoly: layout.floorPoly.map(x => x.geoJson),
   };
 
   fs.writeFileSync(

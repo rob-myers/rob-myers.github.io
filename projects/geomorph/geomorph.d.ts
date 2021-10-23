@@ -21,6 +21,7 @@ declare namespace Geomorph {
     pngRect: Geom.RectJson;
     doors: Geom.Tagged4GonJson[];
     navPoly: Geom.GeoJsonPolygon[];
+    floorPoly: Geom.GeoJsonPolygon[];
   }
 
   /** Generated via `yarn svg-meta`. */
@@ -53,7 +54,12 @@ declare namespace Geomorph {
     def: LayoutDef;
     /** Transformed and filtered groups */
     groups: SvgGroups<Poly>;
+    /**
+     * Currently, the navigable area including doorways.
+     */
     navPoly: Poly[];
+    floorPoly: Poly[];
+
     labels: LayoutLabel[];
     /** Bounds of hull */
     hullRect: Geom.RectJson;

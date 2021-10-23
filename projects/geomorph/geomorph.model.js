@@ -76,6 +76,9 @@ export function createLayout(def, lookup) {
     walls.flatMap(x => x.createOutset(12)), // Use non-unioned walls
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
+  
+  // Floor polygon
+  const floorPoly = Poly.cutOut(walls, hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
@@ -96,6 +99,7 @@ export function createLayout(def, lookup) {
     def,
     groups,
     navPoly,
+    floorPoly,
     labels,
     
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
