@@ -167,7 +167,7 @@ const articleCss = css`
     }
   }
   h2 {
-    font-size: 2.7rem;
+    font-size: 2.4rem;
     @media(max-width: 600px) {
       margin: 16px 0 24px;
       font-size: 2rem;
@@ -177,7 +177,7 @@ const articleCss = css`
     }
   }
   h3 {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
     @media(max-width: 600px) {
       font-size: 1.3em;
     }

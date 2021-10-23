@@ -45,7 +45,7 @@ const titleCss = css`
 
   h1 {
     margin: 0;
-    font-size: 6rem;
+    font-size: 5rem;
     font-weight: 300;
     cursor: pointer;
     color: #333;
