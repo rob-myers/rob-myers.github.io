@@ -38,7 +38,7 @@ const controlsCss = css`
   > .top-right {
     position: absolute;
     right: -10px;
-    top: calc(-32px + 6px);
+    top: calc(-32px + 2px);
     z-index: 2;
     border-radius: 4px 4px 0 0;
     padding: 2px 16px;
