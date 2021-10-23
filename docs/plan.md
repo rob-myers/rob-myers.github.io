@@ -11,6 +11,7 @@ Each __TODO__ should either:
 - Include image of Geomorph with description ✅
 - Add lighting demo
   > https://github.com/rob-myers/topdown-cli/blob/actors-component/frontend/src/service/geom.service.ts
+  > https://github.com/rob-myers/topdown-cli/blob/c5abf6487303e907af478aefddd8e5177c5d24b5/frontend/src/components/stage/stage.world.tsx
 - Add 3d walls demo
 
 ### _Constraints_

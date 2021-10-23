@@ -15,16 +15,22 @@ export default function LightDemo(props) {
   });
 
   const light = useMemo(() => {
-    /**
-     * TODO apply gradient effect
-     */
+
     const polys = (data?.walls.map(x => Poly.from(x)) || []);
     const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-    const light = lightPolygon(new Vect(300, 300), 500, triangs);
-    return light;
-  }, [data?.walls]);
+    const position = new Vect(300, 300);
 
-  console.log(light);
+    const polygon = lightPolygon(position, 800, triangs);
+    const { rect: bounds } = polygon;
+    const sourceRatios = new Vect(
+      (position.x - bounds.x) / bounds.width,
+      (position.y - bounds.y) / bounds.height,
+    );
+    return {
+      polygon,
+      sourceRatios,
+    };
+  }, [data?.walls]);
 
   return (
     <PanZoom
@@ -33,6 +39,19 @@ export default function LightDemo(props) {
       maxZoom={6}
       className={rootCss}
     >
+      <defs>
+        <radialGradient
+          id={`light-radial`}
+          cx={`${100 * light?.sourceRatios.x??0}%`}
+          cy={`${100 * light?.sourceRatios.y??0}%`}
+          r="50%"
+        >
+          <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 230, 0.75)' }} />
+          <stop offset="50%" style={{ stopColor: 'rgba(230, 230, 230, 0.2)' }} />
+          <stop offset="100%" style={{ stopColor: 'rgba(255, 200, 255, 0)' }} />
+        </radialGradient>
+      </defs>
+
       {data && <>
         <image
           {...data.pngRect}
@@ -40,7 +59,13 @@ export default function LightDemo(props) {
           href={`/geomorph/${props.layoutKey}.png`}
         />
 
-        <path style={{ fill: 'rgba(255, 0, 0, 0.2)' }} d={light?.svgPath} />
+        https://github.com/rob-myers/topdown-cli/blob/c5abf6487303e907af478aefddd8e5177c5d24b5/frontend/src/components/stage/stage.world.tsx
+
+        <path
+          // style={{ fill: 'rgba(255, 0, 0, 0.2)' }}
+          fill={`url(#light-radial)`}
+          d={light?.polygon.svgPath}
+        />
         
       </>}
     </PanZoom>
