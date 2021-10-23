@@ -192,6 +192,16 @@ class GeomService {
       return agg;
     }, /** @type {typeof path} */ ([]));
   }
+
+  /**
+   * @param {Geom.Triangulation} decomp 
+   * @returns {Geom.Poly[]}
+   */
+  triangulationToPolys(decomp) {
+    return decomp.tris.map(([u, v, w]) =>
+      new Poly([decomp.vs[u], decomp.vs[v], decomp.vs[w]])
+    );
+  }
 }
 
 const tempVect = new Vect;
