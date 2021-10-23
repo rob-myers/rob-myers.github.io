@@ -51,14 +51,15 @@ Each __TODO__ should either:
 - Implement front page
 - preserve scroll inside tab pane
 - option to resume from last scroll
-- can maximise Tabs into a modal
 
 - Finish geomorph 101
 - Add missing labels to 302
 
-- Add GitHub Comments
+- can anchor Tabs via icon
+- can maximise Tabs into a modal
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
+- Add GitHub Comments
 
 - `PanZoom` supports zoom to point via ref API
 - GitHub Pages TTL is 10mins; Could use CDN:

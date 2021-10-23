@@ -35,10 +35,10 @@ export default function Tabs(props: Props) {
             const next = !enabled;
             setEnabled(next);
             setColour(colour === 'clear' ? 'faded' : 'clear');
-            if (next) {
-              const tabs = useSiteStore.getState().tabs[props.id];
-              tabs?.scrollTo();
-            }
+            // if (next) {
+            //   const tabs = useSiteStore.getState().tabs[props.id];
+            //   tabs?.scrollTo();
+            // }
           }}
         />
         <LoadingOverlay colour={colour} />
