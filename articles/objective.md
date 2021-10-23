@@ -32,3 +32,10 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 <hr>
 
 __TODO__ finish with two nice demos: (a) lighting, (b) 3d walls
+
+<div
+  class="tabs"
+  name="light-demo"
+  height="340"
+  tabs="[{ key: 'component', filepath: 'example/LightDemo#301' }]"
+></div>
