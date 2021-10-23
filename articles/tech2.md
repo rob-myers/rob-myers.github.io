@@ -1,7 +1,7 @@
 ## Tech (ai)
 
 We've described our objective, constrained our approach and listed the technologies we'll use.
-We now turn from [JS components](2#tech1 "@anchor") to Game AI.
+We now turn from [JS components](2#tech1--react-function-components "@anchor") to Game AI.
 
 ### Overview
 

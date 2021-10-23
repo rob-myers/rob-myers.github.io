@@ -26,18 +26,16 @@ Competing notions exist in the wild, a popular approach being _React function co
 They are just JavaScript functions with constraints on their parameters and return value.
 
 - They have a single parameter, usually called _props_.
-
   It is a JavaScript object defining the component's named inputs,
   and possibly special properties like _children_, _key_ and _ref_.
 
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
-
   This returned value ultimately amounts to an HTML fragment to be rendered,
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers use a grammatical extension of JavaScript called JSX.
-It freely combines JS with XML, so JavaScript values can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. The grammar is particularly suitable for specifying dynamic DOM trees.
-Let's consider an example, a pannable and zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
+It freely combines JS with XML, so JavaScript values can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. The grammar is particularly suitable for building dynamic DOM trees.
+Let's consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
 
 <div
   class="tabs"
@@ -156,12 +154,12 @@ Instead we directly mutate the DOM via:
 
 As far as React is concerned, nothing has changed.
 Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (no change).
-Why don't we use `setState`?
-To avoid needlessly recomputing `<Grid />` and `children` whenever the player pans or zooms.
+Why not just use `setState`?
+Because it avoids needlessly recomputing `<Grid />` and `children` whenever the player pans or zooms.
 Our game may contain many elements, and we'd rather not recompute their virtual DOM tens of times per second.
 
 The above situation is handled by a single DOM mutation.
-In more complex situations we'll integrate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
+In more complex situations we might integrate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
 More on that later.
 
 <!-- ### CSS inside JS
