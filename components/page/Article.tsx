@@ -130,7 +130,7 @@ const articleCss = css`
   figure.tabs {
     border: 10px solid #333;
     border-radius: 8px;
-    margin: 48px 0;
+    margin: 64px 0;
     @media(max-width: 600px) {
       margin: 32px 0;
     }
@@ -150,13 +150,13 @@ const articleCss = css`
     }
   }
   h2 {
-    font-size: 2.4rem;
-    @media(max-width: 600px) {
-      margin: 16px 0 24px;
-      font-size: 2rem;
-    }
+    font-size: 2.3rem;
     @media(max-width: 800px) {
       font-size: 2.2rem;
+    }
+    @media(max-width: 600px) {
+      margin: 16px 0 24px;
+      font-size: 1.9rem;
     }
   }
   h3 {
