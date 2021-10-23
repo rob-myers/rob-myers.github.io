@@ -3,6 +3,8 @@ import React from 'react';
 const code = {
   'panzoom/PanZoom.jsx': () =>
     import('!!raw-loader!projects/panzoom/PanZoom.jsx'),
+  'panzoom/PanZoom.jsx#again': () =>
+    import('!!raw-loader!projects/panzoom/PanZoom.jsx'),
   'panzoom/PanZoomDemo.jsx': () =>
     import('!!raw-loader!projects/panzoom/PanZoomDemo.jsx'),
   'nav/NavDemo.jsx': () =>
@@ -16,6 +18,8 @@ const code = {
 const component = {
   'example/Gm301Debug': () => import('projects/example/Gm301Debug')
     .then(x => x.default),
+  'example/LightDemo#301': () => import('projects/example/LightDemo')
+    .then(x => () => <x.default layoutKey='g-301--bridge' />),
   'geomorph/GeomorphDemo': () => import('projects/geomorph/GeomorphDemo')
     .then(x => x.default),
   'panzoom/PanZoomDemo': () => import('projects/panzoom/PanZoomDemo')

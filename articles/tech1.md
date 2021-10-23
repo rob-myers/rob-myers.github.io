@@ -45,7 +45,7 @@ Let's consider an example, a pannable and zoomable grid (also [on CodeSandbox](h
   name="panzoom"
   tabs="[
     { key: 'component', filepath: 'panzoom/PanZoomDemo' },
-    { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 8, ch: 0 }] },
+    { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
     { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
   ]"
 ></div>
@@ -121,7 +121,7 @@ Take another look at _panzoom/PanZoom.jsx_.
   height="360"
   name="panzoom-again"
   tabs="[
-    { key: 'code', filepath: 'panzoom/PanZoom.jsx' },
+    { key: 'code', filepath: 'panzoom/PanZoom.jsx#again' },
     { key: 'code', filepath: 'geom/rect.js' },
   ]"
 ></div>
