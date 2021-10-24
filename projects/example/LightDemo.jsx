@@ -1,10 +1,15 @@
 import React, { useMemo } from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
+
 import { Poly, Rect, Vect } from "../geom";
+import { geom } from "../service";
 import PanZoom from "../panzoom/PanZoom";
-import { lightPolygon } from "projects/raycast/light";
-import { geom } from "projects/service";
+import { gridBounds, initViewBox } from "./defaults";
+
+/**
+ * TODO movable light
+ */
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function LightDemo(props) {
@@ -20,7 +25,7 @@ export default function LightDemo(props) {
       const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
       const position = new Vect(300, 300);
   
-      const polygon = lightPolygon(position, 800, triangs);
+      const polygon = geom.lightPolygon(position, 800, triangs);
       const { rect: bounds } = polygon;
       const sourceRatios = new Vect(
         (position.x - bounds.x) / bounds.width,
@@ -67,9 +72,6 @@ export default function LightDemo(props) {
     </PanZoom>
   );
 }
-
-const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const initViewBox = new Rect(0, 0, 1200, 600);
 
 const rootCss = css`
   /* TODO */

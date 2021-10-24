@@ -10,6 +10,9 @@ import layoutDefs from "./layout-defs";
 import { renderGeomorph } from "./geomorph.render";
 import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
 import PanZoom from '../panzoom/PanZoom';
+import { gridBounds, initViewBox } from "../example/defaults";
+
+const scale = 2;
 
 export default function GeomorphDemo() {
   return (
@@ -105,10 +108,6 @@ async function computeLayout(def) {
     labels: layout.labels,
   };
 }
-
-const scale = 2;
-const initViewBox = new Rect(0, 0, 1200, 600);
-const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
 
 const rootCss = css`
   height: 100%;

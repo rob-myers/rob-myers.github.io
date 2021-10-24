@@ -18,6 +18,8 @@ const component = {
     .then(x => x.default),
   'example/LightDemo#301': () => import('projects/example/LightDemo')
     .then(x => () => <x.default layoutKey='g-301--bridge' />),
+  'example/ThreeDDemo#301': () => import('projects/example/ThreeDDemo')
+    .then(x => () => <x.default layoutKey='g-301--bridge' />),
   'geomorph/GeomorphDemo': () => import('projects/geomorph/GeomorphDemo')
     .then(x => x.default),
   'panzoom/PanZoomDemo': () => import('projects/panzoom/PanZoomDemo')

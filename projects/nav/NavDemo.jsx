@@ -2,7 +2,8 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 
-import { Poly, Rect, Vect } from "../geom";
+import { gridBounds, initViewBox } from "../example/defaults";
+import { Poly, Vect } from "../geom";
 import { getSvgPos, geom, projectSvgEvt } from "../service";
 import { Pathfinding } from '../pathfinding/Pathfinding';
 import PanZoom from "../panzoom/PanZoom";
@@ -113,9 +114,6 @@ export default function NavDemo() {
     </PanZoom>
   );
 }
-
-const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const initViewBox = new Rect(0, 0, 1200, 600);
 
 const rootCss = css`
   border: 1px solid #555555;

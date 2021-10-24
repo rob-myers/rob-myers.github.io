@@ -1,7 +1,7 @@
 import React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
-import { Rect } from "../geom";
+import { gridBounds, initViewBox } from "../example/defaults";
 import PanZoom from "../panzoom/PanZoom";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
@@ -30,9 +30,6 @@ export default function DoorsDemo(props) {
     </PanZoom>
   );
 }
-
-const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const initViewBox = new Rect(0, 0, 1200, 600);
 
 /** @param {{ json: Geomorph.GeomorphJson }} _ */
 function ForeignObject({ json }) {

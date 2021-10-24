@@ -2,6 +2,7 @@ import * as React from 'react';
 import { css } from 'goober';
 import PanZoom from './PanZoom';
 import { Rect } from '../geom';
+import { gridBounds, initViewBox } from '../example/defaults';
 
 export default function PanZoomDemo() {
   return (
@@ -9,7 +10,11 @@ export default function PanZoomDemo() {
       <p>
         drag to <strong>pan</strong>, scroll/pinch to <strong>zoom</strong>
       </p>
-      <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={5}>
+      <PanZoom
+        initViewBox={biggerInitViewBox}
+        gridBounds={gridBounds}
+        maxZoom={5}
+      >
         <image
           href="/geomorph/g-301--bridge.debug.png"
           x={pngRect.x * 2}
@@ -23,8 +28,7 @@ export default function PanZoomDemo() {
 }
 
 const pngRect = new Rect(-6, -22, 1212, 628);
-const gridBounds = new Rect(-5000, -5000, 10000 + 1, 10000 + 1);
-const initViewBox = pngRect.clone().outset(50);
+const biggerInitViewBox = initViewBox.clone().outset(50);
 
 const rootCss = css`
   display: flex;
