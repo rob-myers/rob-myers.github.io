@@ -22,7 +22,7 @@ In particular, JavaScript has become the central web technology.
 
 Although JS can perform arbitrary calculations, its central purpose is to mutate the DOM.
 Such JavaScript is usually broken down into "components", which _do one thing well_ and are reusable.
-Competing notions exist in the wild, a popular approach being _React function components_.
+Competing notions of component exist in the wild, a popular approach being _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
 
 - They have a single parameter, usually called _props_.
