@@ -33,6 +33,20 @@ export class Poly {
     };
   }
 
+  /**
+   * Line segs from outline and holes.
+   * @returns {[Vect, Vect][]}
+   */
+  get lineSegs() {
+    return [this.outline, ...this.holes].reduce(
+      (agg, loop) => agg.concat(loop.map((x, i) => [
+        x.clone(),
+        loop[(i + 1) % loop.length].clone(),
+      ])),
+      /** @type {[Vect, Vect][]} */ ([]),
+    );
+  }
+
   get rect() {
     return Rect.from(...this.outline);
   }
@@ -256,6 +270,21 @@ export class Poly {
   }
 
   /**
+   * @param {Vect} pt 
+   * @param {Vect} v1 
+   * @param {Vect} v2 
+   * @param {Vect} v3 
+   */
+  static pointInTriangle(pt, v1, v2, v3) {
+    const d1 = Poly.sign(pt, v1, v2);
+    const d2 = Poly.sign(pt, v2, v3);
+    const d3 = Poly.sign(pt, v3, v1);
+    const hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
+    const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
+    return !(hasNeg && hasPos);
+  }
+
+  /**
    * Quality triangulation via constrained delaunay library 'poly2ti'.
    * Can fail for non-wellformed polygons e.g. given square
    * with a hole, cut another hole meeting 1st hole at a point.
@@ -285,21 +314,6 @@ export class Poly {
       console.error(e);
       return this.fastTriangulate();
     }
-  }
-
-  /**
-   * @param {Vect} pt 
-   * @param {Vect} v1 
-   * @param {Vect} v2 
-   * @param {Vect} v3 
-   */
-  static pointInTriangle(pt, v1, v2, v3) {
-    const d1 = Poly.sign(pt, v1, v2);
-    const d2 = Poly.sign(pt, v2, v3);
-    const d3 = Poly.sign(pt, v3, v1);
-    const hasNeg = (d1 < 0) || (d2 < 0) || (d3 < 0);
-    const hasPos = (d1 > 0) || (d2 > 0) || (d3 > 0);
-    return !(hasNeg && hasPos);
   }
 
   /**
