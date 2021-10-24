@@ -175,6 +175,10 @@ const articleCss = css`
     }
   }
 
+  h2 + p, h3 + p {
+    margin-top: 0px;
+  }
+
   p {
    margin: 40px 0;
    @media(max-width: 600px) {
