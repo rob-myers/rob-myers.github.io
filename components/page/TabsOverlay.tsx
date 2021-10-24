@@ -2,7 +2,7 @@ import { css } from 'goober';
 import classNames from 'classnames';
 import { iconCss } from './Icons';
 
-export function ControlsOverlay({ enabled, toggleEnabled, clickAnchor }: {
+export function TabsOverlay({ enabled, toggleEnabled, clickAnchor }: {
   enabled: boolean;
   toggleEnabled: () => void;
   clickAnchor: () => void;

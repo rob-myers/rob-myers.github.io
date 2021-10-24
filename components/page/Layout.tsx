@@ -29,7 +29,7 @@ interface Props {
 }
 
 /**
- * Register <Tabs> with redux e.g. so can select tab.
+ * Register Tabs with redux e.g. so can select tab programmatically.
  */
 function useRegisterTabs(props: Props, model: Model) {
   React.useEffect(() => {

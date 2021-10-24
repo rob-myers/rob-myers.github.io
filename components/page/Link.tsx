@@ -74,7 +74,9 @@ async function navigateNatively(props: Props) {
   if (props.id) {
     const { top } = document.getElementById(props.id)!.getBoundingClientRect();
     window.scrollBy({ top, behavior: 'smooth', });
-    if (! await scrollFinished(window.pageYOffset + top)) return;
+    if (! await scrollFinished(window.pageYOffset + top)) {
+      return;
+    }
     location.href = `#${props.id}`;
   }
   location.href = props.href;

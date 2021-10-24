@@ -42,7 +42,10 @@ export default function Nav() {
           setNavOpen(!navOpen);
         }}
       />
-      <HorizontalFillBar navOpen={navOpen} />
+
+      <HorizontalFillBar
+        navOpen={navOpen}
+      />
     </>
   );
 }

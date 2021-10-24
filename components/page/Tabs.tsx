@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import type { TabMeta } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
 import { Layout } from 'components/dynamic';
-import { ControlsOverlay, LoadingOverlay } from './TabsOverlay';
+import { TabsOverlay, LoadingOverlay } from './TabsOverlay';
 
 export default function Tabs(props: Props) {
   const rootRef = React.useRef<HTMLElement>(null);
@@ -29,7 +29,7 @@ export default function Tabs(props: Props) {
             rootRef={rootRef}
           />
         )}
-        <ControlsOverlay
+        <TabsOverlay
           enabled={enabled}
           toggleEnabled={() => {
             const next = !enabled;
