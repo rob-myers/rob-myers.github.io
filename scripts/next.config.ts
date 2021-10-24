@@ -20,9 +20,9 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
       // your project has ESLint errors.
       ignoreDuringBuilds: true,
     },
-    experimental: {
-      scrollRestoration: false,
-    },
+    // experimental: {
+    //   scrollRestoration: false,
+    // },
     webpack: (config: webpack.Configuration, options: WebpackCtxt) => {
       return webpackMerge(
         config,

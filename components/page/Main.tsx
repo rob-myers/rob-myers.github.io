@@ -1,5 +1,4 @@
 import { css } from "goober";
-import Portals from './Portals';
 import Title from "./Title";
 
 export default function Main({ children }: React.PropsWithChildren<{}>) {
