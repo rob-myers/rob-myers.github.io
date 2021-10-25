@@ -30,21 +30,13 @@ export default function ThreeDDemo(props) {
 
 /** @param {{ gm: Geomorph.GeomorphJson }} _ */
 function ForeignObject({ gm }) {
+
+  const { wallsDataUrl } = useDataUrls(gm);
+  
   const rootEl = useUpdatePerspective();
 
   const wallSegs = React.useMemo(() => {// TODO clarify `translate`
     return gm.walls.flatMap(json => Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs);
-  }, [gm.walls]);
-
-  const wallsDataUrl = React.useMemo(() => {
-    const walls = gm.walls.map(json => Poly.from(json));
-    const canvas = document.createElement('canvas');
-    [canvas.width, canvas.height] = [gm.pngRect.width, gm.pngRect.height];
-    const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
-    ctxt.fillStyle = '#c00';
-    ctxt.translate(-gm.pngRect.x, -gm.pngRect.y);
-    fillPolygon(ctxt, walls);
-    return canvas.toDataURL();
   }, [gm.walls]);
 
   return (
@@ -87,6 +79,26 @@ const threeDeeCss = css`
     transform: translateZ(${wallHeight}px);
   }
 `;
+
+/**
+ * @param {Geomorph.GeomorphJson} gm 
+ */
+function useDataUrls(gm) {
+  const wallsDataUrl = React.useMemo(() => {
+    const walls = gm.walls.map(json => Poly.from(json));
+    const canvas = document.createElement('canvas');
+    [canvas.width, canvas.height] = [gm.pngRect.width, gm.pngRect.height];
+    const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
+    ctxt.fillStyle = '#c00';
+    ctxt.translate(-gm.pngRect.x, -gm.pngRect.y);
+    fillPolygon(ctxt, walls);
+    return canvas.toDataURL();
+  }, [gm.walls]);
+
+  return {
+    wallsDataUrl,
+  };
+}
 
 function useUpdatePerspective() {
   /** @type {React.Ref<SVGForeignObjectElement>} */
