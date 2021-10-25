@@ -3,11 +3,10 @@ import { useQuery } from "react-query";
 import { css } from "goober";
 import { gridBounds, initViewBox } from "./defaults";
 import { Poly, Vect } from "../geom";
+import { fillPolygon } from "../service";
 import PanZoom from "../panzoom/PanZoom";
 
 // TODO
-// - svg rects instead of foreignObject divs
-// - wall tops
 // - doors
 // - transparent obstacles
 
@@ -23,20 +22,29 @@ export default function ThreeDDemo(props) {
     <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}>
       {data && <>
         <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`}/>
-        <Walls gm={data} />
+        <ForeignObject gm={data} />
       </>}
     </PanZoom>
   );
 }
 
 /** @param {{ gm: Geomorph.GeomorphJson }} _ */
-function Walls({ gm }) {
+function ForeignObject({ gm }) {
   const rootEl = useUpdatePerspective();
 
-  const { walls, wallSegs } = React.useMemo(() => {
-    // TODO clarify `translate`
-    const walls = gm.walls.map(json => Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y));
-    return { walls, wallSegs: walls.flatMap(x => x.lineSegs) };
+  const wallSegs = React.useMemo(() => {// TODO clarify `translate`
+    return gm.walls.flatMap(json => Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs);
+  }, [gm.walls]);
+
+  const wallsDataUrl = React.useMemo(() => {
+    const walls = gm.walls.map(json => Poly.from(json));
+    const canvas = document.createElement('canvas');
+    [canvas.width, canvas.height] = [gm.pngRect.width, gm.pngRect.height];
+    const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
+    ctxt.fillStyle = '#00f';
+    ctxt.translate(-gm.pngRect.x, -gm.pngRect.y);
+    fillPolygon(ctxt, walls);
+    return canvas.toDataURL();
   }, [gm.walls]);
 
   return (
@@ -53,6 +61,7 @@ function Walls({ gm }) {
             />
           );
         })}
+        <img src={wallsDataUrl} className="wall-tops" />
       </div>
     </foreignObject>
   );
@@ -71,10 +80,10 @@ const threeDeeCss = css`
     background: #a00;
     /* backface-visibility: hidden; */
   }
-  .top {
+  .wall-tops {
     position: absolute;
     transform-origin: top left;
-    background: red;
+    transform: translateZ(100px);
   }
 `;
 
