@@ -49,6 +49,18 @@ export class Mat {
     }
   }
 
+  /** @param {number} angle radians */
+  setRotation(angle) {
+    return this.feedFromArray([
+      Math.cos(angle),
+      Math.sin(angle),
+      -Math.sin(angle),
+      Math.cos(angle),
+      0,
+      0,
+    ]);
+  }
+
   /**
    * Transform point, mutating it.
    * @template {Geom.VectJson} T

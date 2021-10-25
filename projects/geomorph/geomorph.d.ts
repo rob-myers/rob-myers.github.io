@@ -19,7 +19,7 @@ declare namespace Geomorph {
     key: string;
     id: number;
     pngRect: Geom.RectJson;
-    doors: Geom.Tagged4GonJson[];
+    doors: DoorJson[];
     navPoly: Geom.GeoJsonPolygon[];
     walls: Geom.GeoJsonPolygon[];
   }
@@ -124,5 +124,11 @@ declare namespace Geomorph {
     | 'g-301--bridge'
     | 'g-302--xboat-repair-bay'
   );
+
+  interface DoorJson extends Geom.AngledRect<RectJson> {
+    poly: GeoJsonPolygon;
+    seg: [Geom.VectJson, Geom.VectJson];
+    tags: string[];
+  }
 
 }

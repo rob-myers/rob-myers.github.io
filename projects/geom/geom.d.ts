@@ -36,14 +36,10 @@ declare namespace Geom {
     tris: [number, number, number][];
   }
 
-  export interface FourGon<T> {
+  export interface AngledRect<T> {
     rect: T;
-    /** Degrees */
+    /** Radians */
     angle: number;
-  }
-  export interface Tagged4GonJson extends FourGon<RectJson> {
-    tags: string[];
-    poly: GeoJsonPolygon;
   }
 
 }

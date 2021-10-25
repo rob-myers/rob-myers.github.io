@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import { useQuery } from "react-query";
 import { css } from "goober";
+
 import { gridBounds, initViewBox } from "./defaults";
 import { Poly, Vect } from "../geom";
 import { fillPolygon } from "../service";
@@ -29,22 +30,24 @@ export default function ThreeDDemo(props) {
 
 /** @param {{ gm: Geomorph.GeomorphJson }} _ */
 function ForeignObject({ gm }) {
-
-  const { wallsDataUrl, doorsDataUrl } = useDataUrls(gm);
-  
+  const { wallsDataUrl } = useDataUrls(gm);
   const rootEl = useUpdatePerspective();
 
   const { wallSegs, doorSegs } = React.useMemo(() => {
     return {
-      wallSegs: gm.walls.flatMap(json => Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs),
-      doorSegs: gm.doors.flatMap(json => Poly.from(json.poly).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs),
+      wallSegs: gm.walls.flatMap(json =>
+        Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs
+      ),
+      doorSegs: gm.doors.map(({ seg: [u, v] }) =>
+        [u, v].map(p => Vect.from(p).translate(-gm.pngRect.x, -gm.pngRect.y))
+      ),
     };
   }, [gm.walls]);
 
   return (
     <foreignObject ref={rootEl} xmlns="http://www.w3.org/1999/xhtml" {...gm.pngRect}>
       <div className={threeDeeCss}>
-        {wallSegs.map(([u, v], i) => {
+        {wallSegs.map(([v, u], i) => { // [v, u] fixes backface culling
           tempPoint.copy(u).sub(v);
           return (
             <div key={`wall-${i}`} className="wall"
@@ -67,7 +70,6 @@ function ForeignObject({ gm }) {
           );
         })}
         <img src={wallsDataUrl} className="wall-tops" />
-        <img src={doorsDataUrl} className="door-tops" />
       </div>
     </foreignObject>
   );
@@ -85,7 +87,7 @@ const threeDeeCss = css`
     transform-origin: top left;
     height: ${wallHeight}px;
     background: #900;
-    /* backface-visibility: hidden; */
+    backface-visibility: hidden;
   }
   .wall-tops {
     position: absolute;
@@ -97,11 +99,6 @@ const threeDeeCss = css`
     transform-origin: top left;
     height: ${wallHeight}px;
     background: #000;    
-  }
-  .door-tops {
-    position: absolute;
-    transform-origin: top left;
-    transform: translateZ(${wallHeight}px);
   }
 `;
 
@@ -121,14 +118,14 @@ function useDataUrls(gm) {
     const wallsDataUrl = canvas.toDataURL();
     ctxt.clearRect(0, 0, canvas.width, canvas.height);
     
-    const doors = gm.doors.map(json => Poly.from(json.poly));
-    ctxt.fillStyle = '#000';
-    fillPolygon(ctxt, doors);
-    const doorsDataUrl = canvas.toDataURL();
+    // const doors = gm.doors.map(json => Poly.from(json.poly));
+    // ctxt.fillStyle = '#fff';
+    // fillPolygon(ctxt, doors);
+    // const doorsDataUrl = canvas.toDataURL();
 
     return {
       wallsDataUrl,
-      doorsDataUrl,
+      // doorsDataUrl,
     }
   }, [gm.walls]);
 }

@@ -3,6 +3,7 @@ import * as polygonClipping from 'polygon-clipping';
 import earcut from 'earcut';
 import { Rect } from "./rect";
 import { Vect } from "./vect";
+import { Mat } from './mat';
 import { geom } from '../service';
 
 export class Poly {
@@ -18,6 +19,10 @@ export class Poly {
 
   get allPoints() {
     return this.outline.concat(...this.holes);
+  }
+
+  get center() {
+    return Vect.average(this.allPoints);
   }
 
   /** @returns {Geom.GeoJsonPolygon} */
@@ -240,6 +245,14 @@ export class Poly {
     return new Poly(rect.points);
   }
 
+  /** @param {Geom.AngledRect<Geom.RectJson>} angled */
+  static fromAngledRect(angled) {
+    const poly = Poly.fromRect(new Rect(0, 0, angled.rect.width, angled.rect.height));
+    poly.applyMatrix(new Mat().setRotation(angled.angle));
+    poly.translate(angled.rect.x, angled.rect.y);
+    return poly;
+  }
+
   /**
    * Inset/outset a ring by amount.
    * @private
@@ -382,3 +395,5 @@ export class Poly {
   }
   
 }
+
+const tempPoint = new Vect;

@@ -3,6 +3,17 @@ import { Poly, Rect, Vect } from '../geom';
 class GeomService {
 
   /**
+   * Get segment through center along 'x+'.
+   * @param {Geom.AngledRect<Geom.Rect>} _ 
+   */
+  getAngledRectSeg({ angle, rect }) {
+    const widthNormal = tempVect.set(Math.cos(angle), Math.sin(angle));
+    const heightNormal = tempVect2.set(-Math.sin(angle), Math.cos(angle));
+    const src = rect.topLeft.addScaledVector(heightNormal, 0.5 * rect.height);
+    return [src, src.clone().addScaledVector(widthNormal, rect.width)];
+  }
+
+  /**
    * Compute intersection of two infinite lines i.e.
    * 1. `lambda x. p0 + x * d0`.
    * 2. `lambda x. p1 + x * d1`.
@@ -218,7 +229,7 @@ class GeomService {
    * Convert a polygonal rectangle back into a Rect with angle.
    * We ensure the width is greater than or equal to the height.
    * @param {Geom.Poly} poly
-   * @returns {Geom.FourGon<Geom.Rect>}
+   * @returns {Geom.AngledRect<Geom.Rect>}
    */
   polyToAngledRect(poly) {
     const ps = poly.outline;
@@ -228,12 +239,12 @@ class GeomService {
     if (w >= h) {
       return {
         rect: new Rect(ps[0].x, ps[0].y, w, h),
-        angle: Math.atan2(tempVect.y, tempVect.x) * (180 / Math.PI),
+        angle: Math.atan2(tempVect.y, tempVect.x),
       };
     } else {
       return {
         rect: new Rect(ps[1].x, ps[1].y, h, w),
-        angle: Math.atan2(tempVect2.y, tempVect2.x) * (180 / Math.PI),
+        angle: Math.atan2(tempVect2.y, tempVect2.x),
       };
     }
   }

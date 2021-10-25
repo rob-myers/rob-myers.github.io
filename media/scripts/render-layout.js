@@ -68,7 +68,8 @@ async function computeLayout(def) {
       .filter(x => x.tags.includes('door'))
       .map(({ poly, tags }) => {
         const { angle, rect } = geom.polyToAngledRect(poly);
-        return { angle, rect: rect.json, poly: poly.geoJson, tags };
+        const [u, v] = geom.getAngledRectSeg({ angle, rect });
+        return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
       }),
     navPoly: layout.navPoly.map(x => x.geoJson),
     walls: layout.walls.map(x => x.geoJson),
