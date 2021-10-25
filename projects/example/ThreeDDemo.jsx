@@ -6,6 +6,7 @@ import { Poly, Vect } from "../geom";
 import PanZoom from "../panzoom/PanZoom";
 
 // TODO
+// - svg rects instead of foreignObject divs
 // - wall tops
 // - doors
 // - transparent obstacles
@@ -19,16 +20,9 @@ export default function ThreeDDemo(props) {
   });
 
   return (
-    <PanZoom
-      gridBounds={gridBounds}
-      initViewBox={initViewBox}
-      maxZoom={6}
-    >
+    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}>
       {data && <>
-        <image {...data.pngRect}
-          className="geomorph"
-          href={`/geomorph/${props.layoutKey}.png`}
-        />
+        <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`}/>
         <Walls gm={data} />
       </>}
     </PanZoom>
@@ -37,27 +31,21 @@ export default function ThreeDDemo(props) {
 
 /** @param {{ gm: Geomorph.GeomorphJson }} _ */
 function Walls({ gm }) {
-
   const rootEl = useUpdatePerspective();
 
-  const { wallSegs } = React.useMemo(() => {// TODO clarify `translate`
+  const { walls, wallSegs } = React.useMemo(() => {
+    // TODO clarify `translate`
     const walls = gm.walls.map(json => Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y));
     return { walls, wallSegs: walls.flatMap(x => x.lineSegs) };
   }, [gm.walls]);
 
   return (
-    <foreignObject
-      ref={rootEl}
-      xmlns="http://www.w3.org/1999/xhtml"
-      {...gm.pngRect}
-    >
+    <foreignObject ref={rootEl} xmlns="http://www.w3.org/1999/xhtml" {...gm.pngRect}>
       <div className={threeDeeCss}>
         {wallSegs.map(([u, v], i) => {
           tempPoint.copy(u).sub(v);
           return (
-            <div
-              key={`wall-${i}`}
-              className="wall"
+            <div key={`wall-${i}`} className="wall"
               style={{
                 transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.angle}rad) rotateX(90deg)`,
                 width: tempPoint.length,
@@ -80,7 +68,7 @@ const threeDeeCss = css`
     position: absolute;
     transform-origin: top left;
     height: 100px;
-    background: #000;
+    background: #a00;
     /* backface-visibility: hidden; */
   }
   .top {
