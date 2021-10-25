@@ -7,7 +7,6 @@ import { fillPolygon } from "../service";
 import PanZoom from "../panzoom/PanZoom";
 
 // TODO
-// - doors
 // - transparent obstacles
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
@@ -31,12 +30,15 @@ export default function ThreeDDemo(props) {
 /** @param {{ gm: Geomorph.GeomorphJson }} _ */
 function ForeignObject({ gm }) {
 
-  const { wallsDataUrl } = useDataUrls(gm);
+  const { wallsDataUrl, doorsDataUrl } = useDataUrls(gm);
   
   const rootEl = useUpdatePerspective();
 
-  const wallSegs = React.useMemo(() => {// TODO clarify `translate`
-    return gm.walls.flatMap(json => Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs);
+  const { wallSegs, doorSegs } = React.useMemo(() => {
+    return {
+      wallSegs: gm.walls.flatMap(json => Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs),
+      doorSegs: gm.doors.flatMap(json => Poly.from(json.poly).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs),
+    };
   }, [gm.walls]);
 
   return (
@@ -53,7 +55,19 @@ function ForeignObject({ gm }) {
             />
           );
         })}
+        {doorSegs.map(([u, v], i) => {
+          tempPoint.copy(u).sub(v);
+          return (
+            <div key={`door-${i}`} className="door"
+              style={{
+                transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.angle}rad) rotateX(90deg)`,
+                width: tempPoint.length,
+              }}
+            />
+          );
+        })}
         <img src={wallsDataUrl} className="wall-tops" />
+        <img src={doorsDataUrl} className="door-tops" />
       </div>
     </foreignObject>
   );
@@ -78,26 +92,45 @@ const threeDeeCss = css`
     transform-origin: top left;
     transform: translateZ(${wallHeight}px);
   }
+  .door {
+    position: absolute;
+    transform-origin: top left;
+    height: ${wallHeight}px;
+    background: #000;    
+  }
+  .door-tops {
+    position: absolute;
+    transform-origin: top left;
+    transform: translateZ(${wallHeight}px);
+  }
 `;
 
 /**
  * @param {Geomorph.GeomorphJson} gm 
  */
 function useDataUrls(gm) {
-  const wallsDataUrl = React.useMemo(() => {
-    const walls = gm.walls.map(json => Poly.from(json));
+  return React.useMemo(() => {
     const canvas = document.createElement('canvas');
-    [canvas.width, canvas.height] = [gm.pngRect.width, gm.pngRect.height];
     const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
-    ctxt.fillStyle = '#c00';
+    [canvas.width, canvas.height] = [gm.pngRect.width, gm.pngRect.height];
     ctxt.translate(-gm.pngRect.x, -gm.pngRect.y);
-    fillPolygon(ctxt, walls);
-    return canvas.toDataURL();
-  }, [gm.walls]);
 
-  return {
-    wallsDataUrl,
-  };
+    const walls = gm.walls.map(json => Poly.from(json));
+    ctxt.fillStyle = '#c00';
+    fillPolygon(ctxt, walls);
+    const wallsDataUrl = canvas.toDataURL();
+    ctxt.clearRect(0, 0, canvas.width, canvas.height);
+    
+    const doors = gm.doors.map(json => Poly.from(json.poly));
+    ctxt.fillStyle = '#000';
+    fillPolygon(ctxt, doors);
+    const doorsDataUrl = canvas.toDataURL();
+
+    return {
+      wallsDataUrl,
+      doorsDataUrl,
+    }
+  }, [gm.walls]);
 }
 
 function useUpdatePerspective() {
