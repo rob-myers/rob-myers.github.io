@@ -41,7 +41,7 @@ function ForeignObject({ gm }) {
     const canvas = document.createElement('canvas');
     [canvas.width, canvas.height] = [gm.pngRect.width, gm.pngRect.height];
     const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
-    ctxt.fillStyle = '#00f';
+    ctxt.fillStyle = '#c00';
     ctxt.translate(-gm.pngRect.x, -gm.pngRect.y);
     fillPolygon(ctxt, walls);
     return canvas.toDataURL();
@@ -67,7 +67,8 @@ function ForeignObject({ gm }) {
   );
 }
 
-let tempPoint = Vect.zero;
+const tempPoint = Vect.zero;
+const wallHeight = 100;
 
 const threeDeeCss = css`
   transform-style: preserve-3d;
@@ -76,14 +77,14 @@ const threeDeeCss = css`
   .wall {
     position: absolute;
     transform-origin: top left;
-    height: 100px;
-    background: #a00;
+    height: ${wallHeight}px;
+    background: #900;
     /* backface-visibility: hidden; */
   }
   .wall-tops {
     position: absolute;
     transform-origin: top left;
-    transform: translateZ(100px);
+    transform: translateZ(${wallHeight}px);
   }
 `;
 
