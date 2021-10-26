@@ -25,7 +25,7 @@ export default function ThreeDDemo(props) {
   );
 }
 
-/** @param {{ gm: Geomorph.GeomorphJson }} _ */
+/** @param {{ gm: Geomorph.GeomorphJson }} props */
 function ForeignObject({ gm }) {
 
   const rootEl = useUpdatePerspective();
@@ -107,7 +107,7 @@ const threeDeeCss = css`
     position: absolute;
     transform-origin: top left;
     height: ${obstacleHeight}px;
-    background: rgba(0, 200, 0, 0.6);
+    background: rgba(0, 200, 0, 1);
     backface-visibility: hidden;
   }
   .wall-tops {
@@ -145,7 +145,7 @@ function useDataUrls(gm) {
     ctxt.clearRect(0, 0, canvas.width, canvas.height);
     
     const obstacles = gm.obstacles.map(json => Poly.from(json));
-    ctxt.fillStyle = 'rgba(0, 255, 0, 0.6)';
+    ctxt.fillStyle = 'rgba(0, 255, 0, 1)';
     fillPolygon(ctxt, obstacles);
     const obstaclesDataUrl = canvas.toDataURL();
 
