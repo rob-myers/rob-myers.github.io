@@ -16,12 +16,13 @@ declare namespace Geomorph {
 
   /** Generated via `yarn render-layout` */
   export interface GeomorphJson {
-    key: string;
+    key: LayoutKey;
     id: number;
     pngRect: Geom.RectJson;
     doors: DoorJson[];
-    navPoly: Geom.GeoJsonPolygon[];
     walls: Geom.GeoJsonPolygon[];
+    obstacles: Geom.GeoJsonPolygon[];
+    navPoly: Geom.GeoJsonPolygon[];
   }
 
   /** Generated via `yarn svg-meta`. */
@@ -105,7 +106,7 @@ declare namespace Geomorph {
      * Corresponds to basename of original PNG,  e.g.
      * `g-301--bridge` where public/debug/g-301--bridge.png exists.
      */
-    key: string;
+    key: LayoutKey;
     id: number;
     items: LayoutDefItem[];
   }

@@ -7,9 +7,6 @@ import { Poly, Vect } from "../geom";
 import { fillPolygon } from "../service";
 import PanZoom from "../panzoom/PanZoom";
 
-// TODO
-// - transparent obstacles
-
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function ThreeDDemo(props) {
 
@@ -21,7 +18,7 @@ export default function ThreeDDemo(props) {
   return (
     <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}>
       {data && <>
-        <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`}/>
+        <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
         <ForeignObject gm={data} />
       </>}
     </PanZoom>
@@ -30,16 +27,20 @@ export default function ThreeDDemo(props) {
 
 /** @param {{ gm: Geomorph.GeomorphJson }} _ */
 function ForeignObject({ gm }) {
-  const { wallsDataUrl } = useDataUrls(gm);
-  const rootEl = useUpdatePerspective();
 
-  const { wallSegs, doorSegs } = React.useMemo(() => {
+  const rootEl = useUpdatePerspective();
+  const { wallsDataUrl, obstaclesDataUrl } = useDataUrls(gm);
+
+  const { wallSegs, doorSegs, obstacleSegs } = React.useMemo(() => {
     return {
       wallSegs: gm.walls.flatMap(json =>
         Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs
       ),
       doorSegs: gm.doors.map(({ seg: [u, v] }) =>
         [u, v].map(p => Vect.from(p).translate(-gm.pngRect.x, -gm.pngRect.y))
+      ),
+      obstacleSegs: gm.obstacles.flatMap(json =>
+        Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs
       ),
     };
   }, [gm.walls]);
@@ -51,6 +52,17 @@ function ForeignObject({ gm }) {
           tempPoint.copy(u).sub(v);
           return (
             <div key={`wall-${i}`} className="wall"
+              style={{
+                transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.angle}rad) rotateX(90deg)`,
+                width: tempPoint.length,
+              }}
+            />
+          );
+        })}
+        {obstacleSegs.map(([v, u], i) => { // [v, u] fixes backface culling
+          tempPoint.copy(u).sub(v);
+          return (
+            <div key={`obstacle-${i}`} className="obstacle"
               style={{
                 transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.angle}rad) rotateX(90deg)`,
                 width: tempPoint.length,
@@ -70,17 +82,19 @@ function ForeignObject({ gm }) {
           );
         })}
         <img src={wallsDataUrl} className="wall-tops" />
+        <img src={obstaclesDataUrl} className="obstacle-tops" />
       </div>
     </foreignObject>
   );
 }
 
 const tempPoint = Vect.zero;
-const wallHeight = 100;
+const wallHeight = 200;
+const obstacleHeight = 100;
 
 const threeDeeCss = css`
-  transform-style: preserve-3d;
   pointer-events: none;
+  transform-style: preserve-3d;
   
   .wall {
     position: absolute;
@@ -89,16 +103,28 @@ const threeDeeCss = css`
     background: #900;
     backface-visibility: hidden;
   }
+  .obstacle {
+    position: absolute;
+    transform-origin: top left;
+    height: ${obstacleHeight}px;
+    background: rgba(0, 200, 0, 0.6);
+    backface-visibility: hidden;
+  }
   .wall-tops {
     position: absolute;
     transform-origin: top left;
     transform: translateZ(${wallHeight}px);
   }
+  .obstacle-tops {
+    position: absolute;
+    transform-origin: top left;
+    transform: translateZ(${obstacleHeight}px);
+  }
   .door {
     position: absolute;
     transform-origin: top left;
     height: ${wallHeight}px;
-    background: #000;    
+    background: #500;
   }
 `;
 
@@ -118,14 +144,14 @@ function useDataUrls(gm) {
     const wallsDataUrl = canvas.toDataURL();
     ctxt.clearRect(0, 0, canvas.width, canvas.height);
     
-    // const doors = gm.doors.map(json => Poly.from(json.poly));
-    // ctxt.fillStyle = '#fff';
-    // fillPolygon(ctxt, doors);
-    // const doorsDataUrl = canvas.toDataURL();
+    const obstacles = gm.obstacles.map(json => Poly.from(json));
+    ctxt.fillStyle = 'rgba(0, 255, 0, 0.6)';
+    fillPolygon(ctxt, obstacles);
+    const obstaclesDataUrl = canvas.toDataURL();
 
     return {
       wallsDataUrl,
-      // doorsDataUrl,
+      obstaclesDataUrl,
     }
   }, [gm.walls]);
 }

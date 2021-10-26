@@ -35,8 +35,8 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.p
 
 /** @type {Geomorph.RenderOpts} */
 const renderOpts = {
-  scale: defaultScale, obsBounds: false, wallBounds: false,
-  ...debug && { obsBounds: true, wallBounds: true, doors: true, labels: true, navTris: true }
+  scale: defaultScale, obsBounds: true, wallBounds: true, navTris: true,
+  ...debug && { doors: true, labels: true }
 };
 
 /** @param {Geomorph.LayoutDef} def */
@@ -71,8 +71,9 @@ async function computeLayout(def) {
         const [u, v] = geom.getAngledRectSeg({ angle, rect });
         return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
       }),
-    navPoly: layout.navPoly.map(x => x.geoJson),
+    obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
     walls: layout.walls.map(x => x.geoJson),
+    navPoly: layout.navPoly.map(x => x.geoJson),
   };
 
   fs.writeFileSync(
