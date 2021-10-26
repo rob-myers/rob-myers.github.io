@@ -41,8 +41,8 @@ You can pan and zoom, drag the light around, and check out the 3D walls in the s
   name="light-demo"
   height="340"
   tabs="[
-    { key: 'component', filepath: 'example/ThreeDDemo#301' },
     { key: 'component', filepath: 'example/LightDemo#301' },
+    { key: 'component', filepath: 'example/ThreeDDemo#301' },
   ]"
 ></div>
 
