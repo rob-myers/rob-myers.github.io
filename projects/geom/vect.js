@@ -137,10 +137,13 @@
     return this;
   }
 
-  /** @param {number} amount */
-  scale(amount) {
-    this.x *= amount;
-    this.y *= amount;
+  /**
+   * @param {number} sx 
+   * @param {number} [sy] 
+   */
+  scale(sx, sy = sx) {
+    this.x *= sx;
+    this.y *= sy;
     return this;
   }
 
