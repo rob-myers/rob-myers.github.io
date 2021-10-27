@@ -89,8 +89,14 @@ function ForeignObject({ gm }) {
 }
 
 const tempPoint = Vect.zero;
-const wallHeight = 200;
-const obstacleHeight = 100;
+const wallHeight = 100;
+const obstacleHeight = 50;
+const color = {
+  obstacleTop: '#039803',
+  obstacleSide: '#004b00',
+  wallSide: '#900',
+  wallTop: '#c00',
+};
 
 const threeDeeCss = css`
   pointer-events: none;
@@ -100,14 +106,14 @@ const threeDeeCss = css`
     position: absolute;
     transform-origin: top left;
     height: ${wallHeight}px;
-    background: #900;
+    background: ${color.wallSide};
     backface-visibility: hidden;
   }
   .obstacle {
     position: absolute;
     transform-origin: top left;
     height: ${obstacleHeight}px;
-    background: rgba(0, 200, 0, 1);
+    background: ${color.obstacleSide};
     backface-visibility: hidden;
   }
   .wall-tops {
@@ -139,13 +145,13 @@ function useDataUrls(gm) {
     ctxt.translate(-gm.pngRect.x, -gm.pngRect.y);
 
     const walls = gm.walls.map(json => Poly.from(json));
-    ctxt.fillStyle = '#c00';
+    ctxt.fillStyle = color.wallTop;
     fillPolygon(ctxt, walls);
     const wallsDataUrl = canvas.toDataURL();
     ctxt.clearRect(0, 0, canvas.width, canvas.height);
     
     const obstacles = gm.obstacles.map(json => Poly.from(json));
-    ctxt.fillStyle = 'rgba(0, 255, 0, 1)';
+    ctxt.fillStyle = color.obstacleTop;
     fillPolygon(ctxt, obstacles);
     const obstaclesDataUrl = canvas.toDataURL();
 
