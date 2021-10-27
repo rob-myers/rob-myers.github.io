@@ -6,6 +6,7 @@ import { gridBounds, initViewBox } from "./defaults";
 import { Poly, Vect } from "../geom";
 import { fillPolygon } from "../service";
 import PanZoom from "../panzoom/PanZoom";
+import { labelMeta } from "projects/geomorph/geomorph.model";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function ThreeDDemo(props) {
@@ -29,7 +30,7 @@ export default function ThreeDDemo(props) {
 function ForeignObject({ gm }) {
 
   const rootEl = useUpdatePerspective();
-  const { wallsDataUrl, obstaclesDataUrl } = useDataUrls(gm);
+  const { wallsDataUrl, obstaclesDataUrl, labelsDataUrl } = useDataUrls(gm);
 
   const { wallSegs, doorSegs, obstacleSegs } = React.useMemo(() => {
     return {
@@ -83,6 +84,7 @@ function ForeignObject({ gm }) {
         })}
         <img src={wallsDataUrl} className="wall-tops" />
         <img src={obstaclesDataUrl} className="obstacle-tops" />
+        <img src={labelsDataUrl} className="labels" />
       </div>
     </foreignObject>
   );
@@ -102,12 +104,11 @@ const threeDeeCss = css`
   pointer-events: none;
   transform-style: preserve-3d;
   
-  .wall {
+  .door {
     position: absolute;
     transform-origin: top left;
     height: ${wallHeight}px;
-    background: ${color.wallSide};
-    backface-visibility: hidden;
+    background: #500;
   }
   .obstacle {
     position: absolute;
@@ -116,21 +117,22 @@ const threeDeeCss = css`
     background: ${color.obstacleSide};
     backface-visibility: hidden;
   }
-  .wall-tops {
+  .wall {
     position: absolute;
     transform-origin: top left;
-    transform: translateZ(${wallHeight}px);
+    height: ${wallHeight}px;
+    background: ${color.wallSide};
+    backface-visibility: hidden;
   }
   .obstacle-tops {
     position: absolute;
     transform-origin: top left;
     transform: translateZ(${obstacleHeight}px);
   }
-  .door {
+  .labels, .wall-tops {
     position: absolute;
     transform-origin: top left;
-    height: ${wallHeight}px;
-    background: #500;
+    transform: translateZ(${wallHeight}px);
   }
 `;
 
@@ -154,10 +156,22 @@ function useDataUrls(gm) {
     ctxt.fillStyle = color.obstacleTop;
     fillPolygon(ctxt, obstacles);
     const obstaclesDataUrl = canvas.toDataURL();
+    ctxt.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctxt.font = labelMeta.font;
+    ctxt.textBaseline = 'top';
+    for (const { text, rect, padded } of gm.labels) {
+      ctxt.fillStyle = 'black';
+      ctxt.fillRect(padded.x, padded.y, padded.width, padded.height);
+      ctxt.fillStyle = 'white';
+      ctxt.fillText(text, rect.x, rect.y)
+    }
+    const labelsDataUrl = canvas.toDataURL();
 
     return {
       wallsDataUrl,
       obstaclesDataUrl,
+      labelsDataUrl,
     }
   }, [gm.walls]);
 }

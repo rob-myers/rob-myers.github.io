@@ -20,9 +20,10 @@ declare namespace Geomorph {
     id: number;
     pngRect: Geom.RectJson;
     doors: DoorJson[];
-    walls: Geom.GeoJsonPolygon[];
-    obstacles: Geom.GeoJsonPolygon[];
+    labels: LayoutLabel[];
     navPoly: Geom.GeoJsonPolygon[];
+    obstacles: Geom.GeoJsonPolygon[];
+    walls: Geom.GeoJsonPolygon[];
   }
 
   /** Generated via `yarn svg-meta`. */

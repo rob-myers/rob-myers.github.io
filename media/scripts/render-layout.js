@@ -71,9 +71,10 @@ async function computeLayout(def) {
         const [u, v] = geom.getAngledRectSeg({ angle, rect });
         return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
       }),
+    labels: layout.labels,
+    navPoly: layout.navPoly.map(x => x.geoJson),
     obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
     walls: layout.walls.map(x => x.geoJson),
-    navPoly: layout.navPoly.map(x => x.geoJson),
   };
 
   fs.writeFileSync(
