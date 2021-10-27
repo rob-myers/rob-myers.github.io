@@ -150,7 +150,7 @@ const articleCss = css`
     }
   }
   h2 {
-    font-size: 2.3rem;
+    font-size: 2.4rem;
     @media(max-width: 800px) {
       font-size: 2.2rem;
     }
