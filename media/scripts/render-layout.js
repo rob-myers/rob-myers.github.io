@@ -14,7 +14,7 @@ import stringify from 'json-stringify-pretty-compact';
 import getOpts from 'getopts';
 
 import svgJson from '../../public/symbol/svg.json';
-import layoutDefs from '../../projects/geomorph/layout-defs';
+import layoutDefs from '../../projects/geomorph/layouts';
 import { createLayout, deserializeSvgJson } from '../../projects/geomorph/geomorph.model';
 import { renderGeomorph } from '../../projects/geomorph/geomorph.render';
 import { geom } from '../../projects/service';

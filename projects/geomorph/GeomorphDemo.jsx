@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { Rect } from "../geom";
 import { geom, loadImage } from "../service";
 import { createLayout, deserializeSvgJson, labelMeta, singlesToPolys } from "./geomorph.model";
-import layoutDefs from "./layout-defs";
+import layoutDefs from "./layouts";
 import { renderGeomorph } from "./geomorph.render";
 import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
 import PanZoom from '../panzoom/PanZoom';
@@ -18,7 +18,8 @@ export default function GeomorphDemo() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
-        <Geomorph def={layoutDefs["g-101--multipurpose"]} />
+        <Geomorph def={layoutDefs["g-303--passenger-deck"]} />
+        {/* <Geomorph def={layoutDefs["g-101--multipurpose"]} /> */}
         {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}
         {/* <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} /> */}
         {/* <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" /> */}
@@ -38,7 +39,7 @@ function Geomorph({ def, transform }) {
 
       <ForeignObject gm={gm} />
 
-      {/* <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/> */}
+      <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
     </g>
   ) : null;
 }

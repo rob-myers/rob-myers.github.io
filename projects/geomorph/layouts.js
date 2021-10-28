@@ -1,4 +1,7 @@
-/** @type {Record<Geomorph.LayoutKey, Geomorph.LayoutDef>} */
+/**
+ * Hull symbol must be first.
+ * @type {Record<Geomorph.LayoutKey, Geomorph.LayoutDef>}
+ */
 const layoutDefs = {
   'g-101--multipurpose': {
     key: 'g-101--multipurpose',
@@ -99,6 +102,17 @@ const layoutDefs = {
       { symbol: 'shop--028--0.8x1.6', transform: [0, 1, -1, 0, 660, 420] },
       { symbol: 'shop--027--0.4x1.6', transform: [-1, 0, 0, 1, 900, 480] },
       { symbol: 'sensors--003--1x1.4', transform: [...getAngleMatrix(45), 90 + 5, -60 + 1] },
+    ],
+  },
+  "g-303--passenger-deck": {
+    key: 'g-303--passenger-deck',
+    id: 303,
+    items: [
+      { symbol: '303--hull' },
+      { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 360, 600] },
+      { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 600, 600] },
+      { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 600, 600] },
+      { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 840, 600] },
     ],
   },
 };

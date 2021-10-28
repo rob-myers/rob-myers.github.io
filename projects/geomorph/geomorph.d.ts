@@ -113,7 +113,7 @@ declare namespace Geomorph {
   }
 
   export interface LayoutDefItem {
-    symbol: string;
+    symbol: SymbolKey;
     transform?: [number, number, number, number, number, number];
     /** Door tags */
     doors?: string[];
@@ -125,6 +125,53 @@ declare namespace Geomorph {
     | 'g-101--multipurpose'
     | 'g-301--bridge'
     | 'g-302--xboat-repair-bay'
+    | 'g-303--passenger-deck'
+  );
+
+  export type SymbolKey = (
+    | '101--hull'
+    | '301--hull'
+    | '302--hull'
+    | '303--hull'
+    | 'bridge--042--8x9'
+    | 'console--031--1x1.2'
+    | 'empty-room--006--2x2'
+    | 'empty-room--013--2x3'
+    | 'empty-room--020--2x4'
+    | 'empty-room--039--3x4'
+    | 'fresher--020--2x2'
+    | 'fresher--025--2x3'
+    | 'fuel--010--2x4'
+    | 'iris-valves--005--1x1'
+    | 'lifeboat--small-craft'
+    | 'lounge--009--2x3'
+    | 'lounge--015--2x4'
+    | 'machinery--091--1.6x1.8'
+    | 'machinery--155--1.8x3.6'
+    | 'machinery--156--1.8x3.6'
+    | 'machinery--158--1.8x3.6'
+    | 'machinery--357--2.2x4'
+    | 'medical--007--2x3'
+    | 'medical--008--2x3'
+    | 'misc-stellar-cartography--023--4x4'
+    | 'office--001--2x2'
+    | 'office--006--2x2'
+    | 'office--020--2x3'
+    | 'office--023--2x3'
+    | 'office--025--2x3'
+    | 'office--026--2x3'
+    | 'office--061--3x4'
+    | 'sensors--003--1x1.4'
+    | 'ships-locker--011--1x2'
+    | 'shop--027--0.4x1.6'
+    | 'shop--028--0.8x1.6'
+    | 'stateroom--014--2x2'
+    | 'stateroom--018--2x3'
+    | 'stateroom--019--2x3'
+    | 'stateroom--020--2x3'
+    | 'stateroom--036--2x4'
+    | 'weaponry--013--1x2'
+    | 'window--007--0x2.4'
   );
 
   interface DoorJson extends Geom.AngledRect<RectJson> {
