@@ -45,15 +45,21 @@ We'll now lay down some of our central beliefs.
 
 2. Although Game AI cannot be isolated from a setting, it need not be driven by narrative.
 
-3. We can develop meaningful generic Game AI by focusing on multi agent navigation with complete information.
+3. We can develop meaningful generic Game AI by focusing on multi-agent navigation with complete information.
 
 Our first point is negative.
-Game AI arises as a subsystem of a _Game_, the latter being subject to many other constraints.
+Game AI arises as a subsystem of _an individual Game_, the latter being subject to many other constraints.
 Perhaps Game AI has not steadily improved because it is not an end in itself.
 For example, players may expect repeatability when retrying missions, particularly in story-driven games.
+We haven't explained what we mean by "improved Game AI", but it's fair to say Game Characters do not seem intelligent, nor has this changed much in the last 10 years.
 
 Our second and third points are more hopeful.
-We are saying that although Game AI is usually tied to particular Games,
+We are claiming that, although Game AI is usually tied to a particular Game, it needn't be.
+A setting and respective graphical assets _are_ required,
+but the narrative need not be fixed.
+We further claim attention can be restricted to _multi-agent navigation_ i.e.
+
+> the scheduling of NPCs subject to desired destinations and behaviour types.
 
 
 <div
