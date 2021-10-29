@@ -5,7 +5,7 @@ We sketched the [technological constraints earlier](1#constraints--technology "@
 
 | Concept | Technology |
 | ------- | ---------- |
-| Component | [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components), and [Web Components](https://reactjs.org/docs/web-components.html). |
+| Component | [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
 | Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
@@ -16,5 +16,6 @@ We sketched the [technological constraints earlier](1#constraints--technology "@
 | Code viewing | [CodeMirror](https://codemirror.net/) to view JS. |
 | Code editing | External [CodeSandbox](https://codesandbox.io/) links, using React. |
 | Code sharing | Show [GitHub](https://github.com/) comments, provide GitHub [repo](https://github.com/rob-myers/rob-myers.github.io). |
+| Asset editor | [Boxy SVG](https://boxy-svg.com/).
 
 We'll explain the above over the next few articles.
