@@ -155,12 +155,12 @@ Instead we directly mutate the DOM via:
 As far as React is concerned, nothing has changed.
 Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (no change).
 Why not just use `setState`?
-Because it avoids needlessly recomputing `<Grid />` and `children` whenever the player pans or zooms.
+Because we avoid needlessly recomputing `<Grid />` and `children` whenever the player pans or zooms.
 Our game may contain many elements, and we'd rather not recompute their virtual DOM tens of times per second.
 
-The above situation is handled by a single DOM mutation.
+<!-- The above situation is handled by a single DOM mutation.
 In more complex situations we might integrate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
-More on that later.
+More on that later. -->
 
 <!-- ### CSS inside JS
 
