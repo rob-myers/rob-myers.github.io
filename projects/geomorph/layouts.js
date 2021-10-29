@@ -109,9 +109,14 @@ const layoutDefs = {
     id: 303,
     items: [
       { symbol: '303--hull' },
+      { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 240, 0] },
+      { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 360, 0] },
+      { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 480, 0] },
+      { symbol: 'stateroom--035--2x3', transform: [-1, 0, 0, 1, 720, 0] },
+
       { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 360, 600] },
-      { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 600, 600] },
-      { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 600, 600] },
+      { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 480, 600] },
+      { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 720, 600] },
       { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 840, 600] },
     ],
   },
