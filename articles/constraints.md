@@ -12,7 +12,7 @@ We begin with the tools we'll use.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
 - Use [Preact](https://www.npmjs.com/package/preact) (a React alternative) and [Goober](https://www.npmjs.com/package/goober).
-- Use [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components) to avoid React renders.
+- Use [Boxy SVG](https://boxy-svg.com/) to edit assets.
 - Support both mobile and desktop devices.
 
 <!-- NOTE italics inside link currently unsupported -->
