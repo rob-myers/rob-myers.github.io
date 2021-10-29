@@ -17,7 +17,7 @@ We begin with the tools we'll use.
 
 <!-- NOTE italics inside link currently unsupported -->
 
-The name _Rogue Markup_ refers to the video game _[Rogue](https://en.wikipedia.org/wiki/Rogue_(video_game))_, and the HyperText _Markup_ Language (HTML).
+The name _Rogue Markup_ refers to the prototypical procedural video game _[Rogue](https://en.wikipedia.org/wiki/Rogue_(video_game))_, and the HyperText _Markup_ Language (HTML).
 Since HTML may be used in many different ways,
 we've clarified our approach above.
 Generally speaking, we'll use standard website technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
@@ -41,17 +41,15 @@ More on that later.
 Next, gameplay related constraints.
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
+  > We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") in the previous article.
 - Use a realtime birdseye camera.
+  > Here we just mean a pannable and zoomable SVG.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
+  > The underlying technology of CSS animations.
 - Use navigation & raycasting algorithms.
+  > e.g. a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and compute ray/geometry collisions.
 - Use an in-browser terminal.
 - Do not use a Physics engine.
-
-Let's clarify the above.
-We already saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") of a Geomorph in the previous article.
-Next, by a realtime birdseye camera we just mean a pannable and zoomable SVG.
-The Web Animations API provides access to the underlying technology driving CSS animations.
-As for navigation and raycasting algorithms, we'll use a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and compute ray/geometry collisions.
 
 Importantly, in order to develop complex Game AI, we'll use a terminal.
 Try entering or copy-pasting the commands below

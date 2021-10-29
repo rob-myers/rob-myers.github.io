@@ -179,6 +179,13 @@ const articleCss = css`
     margin-top: 0px;
   }
 
+  li blockquote {
+    margin: 0;
+    p {
+      margin: 16px 0;
+    }
+  }
+
   p {
    margin: 40px 0;
    @media(max-width: 600px) {
