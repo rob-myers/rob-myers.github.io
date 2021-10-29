@@ -9,9 +9,10 @@ Each __TODO__ should either:
 ### _Objective_ i.e. intro
 
 - Include image of Geomorph with description ✅
-- Add lighting demo
-  > https://github.com/rob-myers/topdown-cli/blob/actors-component/frontend/src/service/geom.service.ts
-  > https://github.com/rob-myers/topdown-cli/blob/c5abf6487303e907af478aefddd8e5177c5d24b5/frontend/src/components/stage/stage.world.tsx
+- Add lighting demo ✅
+- Add 3d demo ✅
+- Improve lighting demo
+- Improve 3d demo
 
 ### _Constraints_
 
@@ -66,6 +67,9 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Add lighting demo
+  > https://github.com/rob-myers/topdown-cli/blob/actors-component/frontend/src/service/geom.service.ts
+  > https://github.com/rob-myers/topdown-cli/blob/c5abf6487303e907af478aefddd8e5177c5d24b5/frontend/src/components/stage/stage.world.tsx
 - ✅ Add 3d walls demo
   - repo archived-webs
 - ✅ tab metas support idSuffix
