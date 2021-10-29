@@ -31,13 +31,13 @@ In the rest of this article we'll discuss Navigation and Raycasting in detail.
 
 ### Navigation
 
-<!--
-__TODO__
-- Rodney Brooks layers.
-- Navigation based Game AI.
-- Corner-wrapped Pathfinding only provides part of the 
-- Geomorph 101
--->
+To move an NPC from A to B, we need some kind of path from, well, A to B.
+Sometimes this is just a straight line e.g. when an item is directly within grasp.
+But usually objects must be avoided e.g. walls and furniture (static), and other actors (dynamic).
+This is not about _[avoiding encountered obstacles]((https://en.wikibooks.org/wiki/Robotics/Navigation/Collision_Avoidance#cite_note-1))_ in the sense of robotics.
+We know exactly where each NPC is going, having previously set them in motion.
+This doesn't make the problem any less "important".
+After all, Turing's original [paper](https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence "Computing Machinery and Intelligence") was about the _appearance_ of intelligence.
 
 <div
   class="tabs"
