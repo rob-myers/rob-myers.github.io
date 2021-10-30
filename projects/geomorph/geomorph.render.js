@@ -23,6 +23,7 @@ export async function renderGeomorph(
     labels = false,
     floorColor = 'rgba(200, 200, 200, 1)',
     navColor = 'rgba(0, 0, 100, 0.3)',
+    obsColor = 'rgba(0, 100, 0, 0.3)',
   },
 ) {
   const hullSym = lookup[layout.items[0].key];
@@ -46,7 +47,7 @@ export async function renderGeomorph(
   ctxt.fillStyle = navColor;
   fillPolygon(ctxt, layout.navPoly);
   if (navTris) {
-    ctxt.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+    ctxt.strokeStyle = 'rgba(0, 0, 0, 0.1)';
     const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
     decomps.forEach(decomp => drawTriangulation(ctxt, decomp));
   }
@@ -86,7 +87,7 @@ export async function renderGeomorph(
   //#region overlay
   const { singles, obstacles, walls } = layout.groups;
 
-  ctxt.fillStyle = 'rgba(0, 100, 0, 0.3)';
+  ctxt.fillStyle = obsColor;
   obsBounds && fillPolygon(ctxt, obstacles);
   ctxt.fillStyle = 'rgba(100, 0, 0, 0.3)';
   wallBounds && fillPolygon(ctxt, walls);

@@ -12,6 +12,7 @@ declare namespace Geomorph {
     labels?: boolean;
     floorColor?: string;
     navColor?: string;
+    obsColor?: string;
   }
 
   /** Generated via `yarn render-layout` */
