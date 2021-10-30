@@ -98,7 +98,7 @@ const color = {
   obstacleSide: '#222',
   wallSide: '#222',
   wallTop: '#000',
-  door: '#fff',
+  door: '#444',
 };
 
 const threeDeeCss = css`
@@ -162,9 +162,9 @@ function useDataUrls(gm) {
     ctxt.font = labelMeta.font;
     ctxt.textBaseline = 'top';
     for (const { text, rect, padded } of gm.labels) {
-      ctxt.fillStyle = '#fff';
+      ctxt.fillStyle = '#555';
       ctxt.fillRect(padded.x, padded.y, padded.width, padded.height);
-      ctxt.fillStyle = '#000';
+      ctxt.fillStyle = '#fff';
       ctxt.fillText(text, rect.x, rect.y)
     }
     const labelsDataUrl = canvas.toDataURL();

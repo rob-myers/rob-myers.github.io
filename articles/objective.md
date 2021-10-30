@@ -36,7 +36,7 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 We finish with two basic graphical demos.
 You can pan and zoom, drag the light around, and view walls/doors/obstacles in 3D in the second tab.
 
-__TODO__ improve these two demos e.g. shade darkness.
+__TODO__ improve demos e.g. shade darkness.
 
 <div
   class="tabs"
