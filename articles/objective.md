@@ -33,17 +33,17 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 
 </aside>
 
-We finish our first article with two basic graphical demos.
-You can pan and zoom, drag the light around, and check out the 3D walls in the second tab.
+We finish with two basic graphical demos.
+You can pan and zoom, drag the light around, and view walls/doors/obstacles in 3D in the second tab.
+
+__TODO__ improve these two demos e.g. shade darkness.
 
 <div
   class="tabs"
   name="light-demo"
   height="340"
   tabs="[
-    { key: 'component', filepath: 'example/LightDemo#301' },
-    { key: 'component', filepath: 'example/ThreeDDemo#301' },
+    { key: 'component', filepath: 'example/Light#301' },
+    { key: 'component', filepath: 'example/Css3d#301' },
   ]"
 ></div>
-
-__TODO__ ☝️

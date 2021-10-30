@@ -9,7 +9,7 @@ import PanZoom from "../panzoom/PanZoom";
 import { labelMeta } from "projects/geomorph/geomorph.model";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
-export default function ThreeDDemo(props) {
+export default function Css3d(props) {
 
   const { data } = useQuery(`${props.layoutKey}-json`, async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */

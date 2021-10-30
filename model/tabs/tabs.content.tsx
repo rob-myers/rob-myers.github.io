@@ -14,11 +14,11 @@ const code = {
 } as const;
 
 const component = {
-  'example/Gm301Debug': () => import('projects/example/Gm301Debug')
+  'example/Gm301Debug': () => import('projects/example/Gm301')
     .then(x => x.default),
-  'example/LightDemo#301': () => import('projects/example/LightDemo')
+  'example/Light#301': () => import('projects/example/Light')
     .then(x => () => <x.default layoutKey='g-301--bridge' />),
-  'example/ThreeDDemo#301': () => import('projects/example/ThreeDDemo')
+  'example/Css3d#301': () => import('projects/example/Css3d')
     .then(x => () => <x.default layoutKey='g-301--bridge' />),
   'geomorph/GeomorphDemo': () => import('projects/geomorph/GeomorphDemo')
     .then(x => x.default),
