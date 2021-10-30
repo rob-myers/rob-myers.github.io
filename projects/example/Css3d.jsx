@@ -91,13 +91,14 @@ function ForeignObject({ gm }) {
 }
 
 const tempPoint = Vect.zero;
-const wallHeight = 100;
-const obstacleHeight = 50;
+const wallHeight = 150;
+const obstacleHeight = 75;
 const color = {
-  obstacleTop: '#039803',
-  obstacleSide: '#004b00',
-  wallSide: '#900',
-  wallTop: '#c00',
+  obstacleTop: '#000',
+  obstacleSide: '#222',
+  wallSide: '#222',
+  wallTop: '#000',
+  door: '#fff',
 };
 
 const threeDeeCss = css`
@@ -108,7 +109,7 @@ const threeDeeCss = css`
     position: absolute;
     transform-origin: top left;
     height: ${wallHeight}px;
-    background: #500;
+    background: ${color.door};
   }
   .obstacle {
     position: absolute;
@@ -161,9 +162,9 @@ function useDataUrls(gm) {
     ctxt.font = labelMeta.font;
     ctxt.textBaseline = 'top';
     for (const { text, rect, padded } of gm.labels) {
-      ctxt.fillStyle = 'black';
+      ctxt.fillStyle = '#fff';
       ctxt.fillRect(padded.x, padded.y, padded.width, padded.height);
-      ctxt.fillStyle = 'white';
+      ctxt.fillStyle = '#000';
       ctxt.fillText(text, rect.x, rect.y)
     }
     const labelsDataUrl = canvas.toDataURL();
@@ -187,7 +188,8 @@ function useUpdatePerspective() {
 
       const updatePerspective = () => {
         const { x, width, y, height } = svgEl.viewBox.baseVal;
-        rootDiv.style.perspective = `1000px`;
+        const zoom = initViewBox.height / height;
+        rootDiv.style.perspective = `${100 + (2000 / zoom)}px`;
         rootDiv.style.perspectiveOrigin = `${( x + 0.5 * width )}px ${( y + 0.5 * height)}px`;
       };
       updatePerspective();
