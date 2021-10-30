@@ -18,7 +18,7 @@ export default function Tabs(props: Props) {
   return (
     <figure
       ref={rootRef}
-      className={classNames("tabs", "scrollable", rootCss(props.height))}
+      className={classNames("tabs", "scrollable", rootCss)}
     >
       <span id={props.id} className="anchor" />
       <div className={overlayCss(props.height)}>
@@ -56,7 +56,7 @@ interface Props {
   tabs: TabMeta[];
 }
 
-const rootCss = (height: number) => css`
+const rootCss = css`
   background: var(--focus-bg);
 
   @keyframes fadein {
@@ -72,15 +72,12 @@ const rootCss = (height: number) => css`
     background: white;
   }
 
-  > .flexlayout__layout {
+  .flexlayout__layout {
     background: #444;
-    position: relative;
-    height: ${height}px;
   }
   .flexlayout__tab {
     border-top: 6px solid #444;
     position: relative;
-    /** Handle svg overflow */
     overflow: hidden;
 
     /** react-reverse-portal wraps things in a div  */
