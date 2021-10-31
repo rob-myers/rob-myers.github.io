@@ -240,9 +240,11 @@ export class Poly {
     );
   }
 
-  /** @param {Rect} rect  */
+  /** @param {Geom.RectJson} rect  */
   static fromRect(rect) {
-    return new Poly(rect.points);
+    return rect instanceof Rect
+      ? new Poly(rect.points)
+      : new Poly(Rect.fromJson(rect).points);
   }
 
   /** @param {Geom.AngledRect<Geom.RectJson>} angled */

@@ -10,6 +10,7 @@ import { gridBounds, initViewBox } from "./defaults";
 /**
  * TODO
  * - move draggable node into self-contained component
+ * - possibly permit two lights
  */
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
@@ -21,12 +22,7 @@ export default function LightDemo(props) {
   });
 
   return (
-    <PanZoom
-      gridBounds={gridBounds}
-      initViewBox={initViewBox}
-      maxZoom={6}
-      className={rootCss}
-    >
+    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6} className={rootCss}>
 
       {data && <>
         <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`} />
@@ -105,32 +101,23 @@ function Light({ gm }) {
   });
 
   const light = useMemo(() => {
-    const polys = gm.walls
-      .map(x => Poly.from(x));
+    const polys = gm.walls.map(x => Poly.from(x));
     const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
     const polygon = geom.lightPolygon(state.position, 1000, triangs);
+    const inverted = Poly.cutOut([polygon], [Poly.fromRect(gm.pngRect)]);
     const { rect: bounds } = polygon;
     const sourceRatios = state.position.clone().sub(bounds).scale(1 / bounds.width, 1 / bounds.height);
-    return { polygon, sourceRatios };
+    return { polygon: inverted, sourceRatios };
   }, [state.position.x, state.position.y]);
 
   return <>
-    <defs>
-      <radialGradient
-        id={`light-radial`}
-        cx={`${100 * light.sourceRatios.x}%`}
-        cy={`${100 * light.sourceRatios.y}%`}
-        r="50%"
-      >
-        <stop offset="0%" style={{ stopColor: 'rgba(255, 255, 225, 0.7)' }} />
-        <stop offset="40%" style={{ stopColor: 'rgba(200, 200, 200, 0.2)' }} />
-        <stop offset="100%" style={{ stopColor: 'rgba(255, 200, 255, 0)' }} />
-      </radialGradient>
-    </defs>
-    <path
-      fill={`url(#light-radial)`}
-      d={light.polygon.svgPath}
-    />
+    {light.polygon.map((x, i) => (
+      <path
+        key={i}
+        fill={`rgba(0, 0, 0, 0.5)`}
+        d={x.svgPath}
+      />
+    ))}
     <line
       ref={(el) => el && (state.lineEl = el)}
       className="drag-indicator"
