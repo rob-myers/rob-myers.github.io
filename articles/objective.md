@@ -33,10 +33,9 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 
 </aside>
 
-We finish with two basic graphical demos.
-You can pan and zoom, drag the light around, and view walls/doors/obstacles in 3D in the second tab.
-
-__TODO__ improve demos e.g. shade darkness.
+We end with two basic graphical demos:
+you can pan/zoom, drag the light, and view walls/doors/obstacles in 3D.
+They demonstrate underlying polygons endowing the Starship Geomorph with structure.
 
 <div
   class="tabs"
