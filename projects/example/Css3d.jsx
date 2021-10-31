@@ -94,10 +94,10 @@ const tempPoint = Vect.zero;
 const wallHeight = 150;
 const obstacleHeight = 75;
 const color = {
-  obstacleTop: '#000',
-  obstacleSide: '#222',
-  wallSide: '#222',
-  wallTop: '#000',
+  obstacleTop: '#070',
+  obstacleSide: '#494',
+  wallTop: '#600',
+  wallSide: '#822',
   door: '#444',
 };
 
@@ -162,7 +162,7 @@ function useDataUrls(gm) {
     ctxt.font = labelMeta.font;
     ctxt.textBaseline = 'top';
     for (const { text, rect, padded } of gm.labels) {
-      ctxt.fillStyle = '#555';
+      ctxt.fillStyle = '#000';
       ctxt.fillRect(padded.x, padded.y, padded.width, padded.height);
       ctxt.fillStyle = '#fff';
       ctxt.fillText(text, rect.x, rect.y)
