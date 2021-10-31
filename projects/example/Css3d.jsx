@@ -17,7 +17,7 @@ export default function Css3d(props) {
   });
 
   return (
-    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}>
+    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6} wheelDelta={0.0006}>
       {data && <>
         <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
         <ForeignObject gm={data} />
@@ -195,7 +195,10 @@ function useUpdatePerspective() {
       updatePerspective();
 
       const observer = new MutationObserver((ms) => ms.forEach(m =>
-        m.type === 'attributes' && m.attributeName === 'viewBox' && updatePerspective())
+        m.type === 'attributes' && m.attributeName === 'viewBox'
+          && updatePerspective()
+          // && requestAnimationFrame(updatePerspective)
+        )
       );
       observer.observe(svgEl, { attributes: true });
     }

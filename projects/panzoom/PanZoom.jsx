@@ -11,6 +11,7 @@ export default function PanZoom(props) {
     const viewBox = props.initViewBox.clone();
     const minZoom = props.minZoom || 0.5;
     const maxZoom = props.maxZoom || 2;
+    const wheelDelta = props.wheelDelta || 0.003;
     return {
       viewBox,
       /** @type {null | Vect} */
@@ -37,7 +38,7 @@ export default function PanZoom(props) {
         e.preventDefault();
         if ('ownerSVGElement' in (e.target || {})) {
           const point = getSvgPos(projectSvgEvt(e));
-          state.zoomTo(point, -0.003 * e.deltaY);
+          state.zoomTo(point, -wheelDelta * e.deltaY);
           state.root.setAttribute('viewBox', `${state.viewBox}`);
         }
       },
@@ -126,6 +127,7 @@ export default function PanZoom(props) {
  * @property {number} [maxZoom] Maximum zoom factor (default 2)
  * @property {number} [initZoom] Initial zoom factor (default 1)
  * @property {string} [className]
+ * @property {number} [wheelDelta]
  */
 
 /** @param {{ bounds: Geom.Rect }} props */
