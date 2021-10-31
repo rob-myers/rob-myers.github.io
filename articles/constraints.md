@@ -10,9 +10,9 @@ We begin with the tools we'll use.
 - Use standard web development, not [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
+- Use [Boxy SVG](https://boxy-svg.com/) to edit assets.
 - Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
 - Use [Preact](https://www.npmjs.com/package/preact) (a React alternative) and [Goober](https://www.npmjs.com/package/goober).
-- Use [Boxy SVG](https://boxy-svg.com/) to edit assets.
 - Support both mobile and desktop devices.
 
 <!-- NOTE italics inside link currently unsupported -->
@@ -43,15 +43,15 @@ Next, gameplay related constraints.
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
   > We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") in the previous article.
 - Use a realtime birdseye camera.
-  > Here we just mean a pannable and zoomable SVG.
+  > Basically a pannable and zoomable SVG.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
-  > The underlying technology of CSS animations.
+  > This API provides access to the technology underlying CSS animations.
 - Use navigation & raycasting algorithms.
-  > e.g. a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and compute ray/geometry collisions.
-- Use an in-browser terminal.
+  > This will involve a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and the computation of ray/geometry collisions.
 - Do not use a Physics engine.
+- Use an in-browser terminal.
 
-Importantly, in order to develop complex Game AI, we'll use a terminal.
+In order to develop complex Game AI, we'll use a terminal.
 Try entering or copy-pasting the commands below
 (mobile users may find copy-pasting easier).
 
@@ -81,9 +81,9 @@ We'll use terminals to monitor the current state of our Game AI, issue direct co
 It remains to constrain the setting.
 
 - Events take place in the [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3), onboard Space vehicles, stations and docks.
-- Events are inspired by the [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol),
+- [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) provides a source of inspiration,
   >  e.g. Ship AIs may recite it to dying [Low Berth](https://wiki.travellerrpg.com/Low_Berth_Rack "@new-tab") travellers.
-- Events are inspired by [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land),
+- [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land) provides a source of inspiration,
   > e.g. Earth is assumed lost after a Karmic Loop was created, letting in the Watchers and other manifestations from Buddhist hells.
 
 Traveller is a Futuristic pen-and-paper Role-playing Game, created in the late 70s.
