@@ -21,8 +21,8 @@ In particular, JavaScript has become the central web technology.
 ### React Function Components
 
 Although JS can perform arbitrary calculations, its central purpose is to mutate the DOM.
-Such JavaScript is usually broken down into "components", which _do one thing well_ and are reusable.
-Competing notions of component exist in the wild, a popular approach being _React function components_.
+Such JavaScript is often broken down into named _components_, instantiated via XML tags.
+Competing notions exist in the wild, a popular approach being _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
 
 - They have a single parameter, usually called _props_.
@@ -64,17 +64,17 @@ Behaviourally:
 
   </aside>
 
-### React and Preact
-
 The above two JS functions each have a single parameter `props`, and return something which looks like HTML (but isn't).
 For example, _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
 Then although React function components are functions, syntactically they are not invoked like functions (we don't write `Grid(props)`).
 Then what does this XML syntax mean?
-That is, what are React function components actually returning?
+What are React function components actually returning?
+
 Here's a whirlwind overview.
 
-- React devs use a grammatical extension [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript) "@new-tab") of JS by XML.
-- React applications are built by composing React function components, using the XML syntax for their return value.
+- React devs use a grammatical extension of JavaScript called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript) "@new-tab"), which permits XML syntax.
+- React applications are built by composing together React function components. A typical React function component will return XML syntax referencing one or more other components.
+
 - Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` (see [example below](#command "open-tab jsx-to-js")).
 - This website actually uses _Preact_, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js "@new-tab"),
@@ -85,7 +85,7 @@ Here's a whirlwind overview.
 
 - [`ReactDOM.render`](https://github.com/preactjs/preact/blob/master/src/render.js "@new-tab") initially converts `<App/>` into a DOM node mounted at _el_.
   A subcomponent may re-render, recursively recreating a virtual DOM node.
-  It is [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js "@new-tab") and only the difference is applied to the DOM.
+  It is [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js "@new-tab")  and only the difference is applied to the DOM.
 
 <div
   class="tabs"
