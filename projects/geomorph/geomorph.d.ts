@@ -10,9 +10,12 @@ declare namespace Geomorph {
     navTris?: boolean;
     doors?: boolean;
     labels?: boolean;
+
     floorColor?: string;
     navColor?: string;
+    navStroke?: string;
     obsColor?: string;
+    wallColor?: string;
   }
 
   /** Generated via `yarn render-layout` */
