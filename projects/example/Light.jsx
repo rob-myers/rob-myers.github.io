@@ -10,7 +10,10 @@ import { gridBounds, initViewBox } from "./defaults";
 /**
  * TODO
  * - move draggable node into self-contained component
- * - possibly permit two lights
+ * - permit two lights
+ * - larger light drag area for mobile
+ * - GeomorphJson needs hull polygon too
+ * - disable disables CSS animation
  */
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
@@ -103,21 +106,17 @@ function Light({ gm }) {
   const light = useMemo(() => {
     const polys = gm.walls.map(x => Poly.from(x));
     const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-    const polygon = geom.lightPolygon(state.position, 1000, triangs);
-    const inverted = Poly.cutOut([polygon], [Poly.fromRect(gm.pngRect)]);
+    const polygon = geom.lightPolygon(state.position, 2000, triangs);
     const { rect: bounds } = polygon;
     const sourceRatios = state.position.clone().sub(bounds).scale(1 / bounds.width, 1 / bounds.height);
-    return { polygon: inverted, sourceRatios };
+    return { polygon, sourceRatios };
   }, [state.position.x, state.position.y]);
 
   return <>
-    {light.polygon.map((x, i) => (
-      <path
-        key={i}
-        fill={`rgba(0, 0, 0, 0.5)`}
-        d={x.svgPath}
-      />
-    ))}
+    <path
+      className="light-polygon"
+      d={light.polygon.svgPath}
+    />
     <line
       ref={(el) => el && (state.lineEl = el)}
       className="drag-indicator"
@@ -146,5 +145,15 @@ const rootCss = css`
     display: none;
     stroke-width: 2.5;
     user-select: none;
+  }
+  .light-polygon {
+    fill: blue;
+    stroke: black;
+    animation: fadein 1s infinite alternate;
+    
+    @keyframes fadein {
+      from { opacity: 0; }
+      to   { opacity: 0.25; }
+    }
   }
 `;
