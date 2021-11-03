@@ -20,7 +20,7 @@ In particular, JavaScript has become the central web technology.
 
 ### React Function Components
 
-Although JS can perform arbitrary calculations, its central purpose is to mutate the DOM.
+Although JS can perform arbitrary computations, its central purpose is to mutate the DOM.
 Such JavaScript is often broken down into named _components_, instantiated via XML tags.
 Competing notions exist in the wild, a popular approach being _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
@@ -34,7 +34,7 @@ They are just JavaScript functions with constraints on their parameters and retu
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers use a grammatical extension of JavaScript called JSX.
-It freely combines JS with XML, so JavaScript values can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. The grammar is particularly suitable for building dynamic DOM trees.
+It freely combines JS with XML, so JavaScript values can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. Inductively closing these capabilities leads naturally to JSX, making this grammar particularly suitable for building dynamic DOM trees.
 Let's consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
 
 <div
@@ -61,6 +61,8 @@ Behaviourally:
   SVG user units become concrete via the `<svg>`'s viewBox attribute and its width/height in the DOM.
   We'll follow a convention based on the work of Robert Pearce and Eric B. Smith: 
   > 60 abstract user units (one large grid square) correspond to 1.5 meters.
+
+  In fact, 1.5m comes from a Traveller convention concerning [deck plans](https://wiki.travellerrpg.com/Deck_Plan).
 
   </aside>
 
