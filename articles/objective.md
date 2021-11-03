@@ -20,9 +20,9 @@ As for the environment, it will be driven by thousands of Traveller-based assets
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-Green indicates obstacles you can see over, whereas red indicates obstacles which are essentially walls. Together with the white doors and black walls (including the hull), they induce a navigable polygon shown in blue.
+Obstacles you can see over (e.g. chairs and beds) are shaded grey, whereas darker grey and black indicates walls and obstacles which cannot be seen over. Together with the white doors, they induce the white navigable polygon shown above.
 
-> A larger version is [available](/pics/g-301--bridge.debug.x2.png "@new-tab").
+> Check out this [larger version](/pics/g-301--bridge.debug.x2.png "@new-tab").
 
 <aside>
 
@@ -33,9 +33,8 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 
 </aside>
 
-We end with two basic graphical demos:
-you can pan/zoom, drag the light, and view walls/doors/obstacles in 3D.
-They demonstrate underlying polygons endowing the Starship Geomorph with structure.
+We end with two basic demos:
+you can pan and zoom, drag the light, and view the underlying polygons in 3D.
 
 <div
   class="tabs"
