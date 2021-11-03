@@ -17,7 +17,7 @@ export default function Css3d(props) {
   });
 
   return (
-    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6} wheelDelta={0.0006}>
+    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}>
       {data && <>
         <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
         <ForeignObject gm={data} />
@@ -94,10 +94,10 @@ const tempPoint = Vect.zero;
 const wallHeight = 150;
 const obstacleHeight = 75;
 const color = {
-  obstacleTop: '#070',
-  obstacleSide: '#494',
-  wallTop: '#600',
-  wallSide: '#822',
+  obstacleTop: '#666',
+  obstacleSide: '#444',
+  wallTop: '#222',
+  wallSide: '#000',
   door: '#444',
 };
 
@@ -177,6 +177,10 @@ function useDataUrls(gm) {
   }, [gm.walls]);
 }
 
+/**
+ * TODO try another approach without MutationObserver,
+ * e.g. can provide callback to PanZoom on panzoom
+ */
 function useUpdatePerspective() {
   /** @type {React.Ref<SVGForeignObjectElement>} */
   const rootRef = useRef(null);
