@@ -21,11 +21,11 @@ export async function renderGeomorph(
     navTris = false,
     doors = false,
     labels = false,
-    floorColor = 'rgba(255, 255, 255, 1)',
-    navColor = 'rgba(150, 150, 200, 0.2)',
-    navStroke = 'rgba(0, 0, 0, 0.2)',
-    obsColor = 'rgba(100, 100, 100, 0.3)',
-    wallColor = 'rgba(100, 0, 0, 0.3)',
+    floorColor = 'rgba(220, 220, 220, 1)',
+    navColor = 'rgba(255, 255, 255, 0.8)',
+    navStroke = 'rgba(0, 0, 0, 0.15)',
+    obsColor = 'rgba(100, 100, 100, 0.45)',
+    wallColor = 'rgba(50, 40, 40, 0.5)',
   },
 ) {
   const hullSym = lookup[layout.items[0].key];
@@ -50,6 +50,7 @@ export async function renderGeomorph(
   fillPolygon(ctxt, layout.navPoly);
   if (navTris) {
     ctxt.strokeStyle = navStroke;
+    ctxt.lineWidth = 0.5;
     const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
     decomps.forEach(decomp => drawTriangulation(ctxt, decomp));
   }

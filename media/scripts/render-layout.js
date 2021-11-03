@@ -28,14 +28,18 @@ if (!layoutDef) {
   process.exit(1);
 }
 
-const debug = !!getOpts(process.argv).debug;
+const opts = getOpts(process.argv);
+const debug = opts.debug;
+const scale = opts.scale;
+
 const publicDir = path.resolve(__dirname, '../../public');
 const outputDir = path.resolve(publicDir, 'geomorph');
 const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.png' : '.png'}`)
 
 /** @type {Geomorph.RenderOpts} */
 const renderOpts = {
-  scale: defaultScale, obsBounds: true, wallBounds: true, navTris: true,
+  scale: scale || defaultScale,
+  obsBounds: true, wallBounds: true, navTris: true,
   ...debug && { doors: true, labels: true }
 };
 
