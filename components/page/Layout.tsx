@@ -24,12 +24,13 @@ export default function Layout(props: Props) {
 
 interface Props {
   id: string;
-  rootRef: React.RefObject<HTMLElement>; // TODO ?
+  rootRef: React.RefObject<HTMLElement>;
   tabs: TabMeta[];
 }
 
 /**
- * Register Tabs with redux e.g. so can select tab programmatically.
+ * Register Tabs (collectively, not individual tabs)
+ * with redux e.g. so can select tab programmatically.
  */
 function useRegisterTabs(props: Props, model: Model) {
   React.useEffect(() => {
@@ -42,13 +43,19 @@ function useRegisterTabs(props: Props, model: Model) {
       tabs[props.id] = {
         key: props.id,
         def: props.tabs,
-        selectTab: (tabId: string) => model.doAction(Actions.selectTab(tabId)),
+        selectTab: (tabId: string) =>
+          model.doAction(Actions.selectTab(tabId)),
         scrollTo: async () => {
           const id = props.id;
           const { top } = document.getElementById(id)!.getBoundingClientRect();
           window.scrollBy({ top, behavior: 'smooth' });
           if (! await scrollFinished(window.pageYOffset + top)) return;
           Router.push(`#${id}`);
+        },
+        getTabNodes: () => {
+          const output = [] as TabNode[];
+          model.visitNodes(x => x instanceof TabNode && output.push(x));
+          return output;
         },
       };
     }

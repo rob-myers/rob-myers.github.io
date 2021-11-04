@@ -1,6 +1,7 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { HtmlPortalNode } from 'react-reverse-portal';
+import type { TabNode } from 'flexlayout-react';
 
 import { KeyedLookup, last } from 'model/generic.model';
 import type { TabMeta } from 'model/tabs/tabs.model';
@@ -63,6 +64,7 @@ interface TabsState {
   def: TabMeta[];
   selectTab: (tabId: string) => void;
   scrollTo: () => void;
+  getTabNodes: () => TabNode[];
 }
 
 const api = useStore.getState().api;

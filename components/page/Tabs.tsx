@@ -35,6 +35,11 @@ export default function Tabs(props: Props) {
             const next = !enabled;
             setEnabled(next);
             setColour(colour === 'clear' ? 'faded' : 'clear');
+
+            const tabs = useSiteStore.getState().tabs[props.id];
+            const tabKeys = (tabs?.getTabNodes() || []).map(x => x.getId());
+            console.log({ tabKeys });
+            // TODO invoke callbacks registered wrt latter i.e. onEnable/onDisable
           }}
           clickAnchor={() => {
             const tabs = useSiteStore.getState().tabs[props.id];
