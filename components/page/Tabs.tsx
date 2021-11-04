@@ -38,8 +38,10 @@ export default function Tabs(props: Props) {
 
             const tabs = useSiteStore.getState().tabs[props.id];
             const tabKeys = (tabs?.getTabNodes() || []).map(x => x.getId());
-            console.log({ tabKeys });
-            // TODO invoke callbacks registered wrt latter i.e. onEnable/onDisable
+            tabKeys.forEach(key => {
+              const portal = useSiteStore.getState().portal[key];
+              portal?.portal.setPortalProps({ disabled: !next });
+            });
           }}
           clickAnchor={() => {
             const tabs = useSiteStore.getState().tabs[props.id];

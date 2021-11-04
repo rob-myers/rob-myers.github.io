@@ -23,13 +23,14 @@ function useEnsurePortal(
   React.useEffect(() => {
     if (!portal) {
       const portalKey = getTabInternalId(meta);
+      const htmlPortalNode = portals.createHtmlPortalNode({
+        attributes: { class: 'portal' },
+      });
       useSiteStore.setState(({ portal }) => ({
         portal: { ...portal, [portalKey]: {
           key: portalKey,
           meta,
-          portal: portals.createHtmlPortalNode({
-            attributes: { class: 'portal' }
-          }),
+          portal: htmlPortalNode,
         }},
       }));
     } else if (JSON.stringify(portal.meta) !== JSON.stringify(meta)) {

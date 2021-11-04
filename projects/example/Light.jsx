@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
+import classNames from "classnames";
 
 import { Poly, Vect } from "../geom";
 import { geom } from "../service";
@@ -13,10 +14,9 @@ import DraggableNode from "../controls/DraggableNode";
  * - permit two lights
  * - larger light drag area for mobile
  * - GeomorphJson needs hull polygon too
- * - disable disables CSS animation
  */
 
-/** @param {{ layoutKey: Geomorph.LayoutKey }} props */
+/** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
 export default function LightDemo(props) {
 
   const { data } = useQuery(`${props.layoutKey}-json`, async () => {
@@ -25,24 +25,25 @@ export default function LightDemo(props) {
   });
 
   return (
-    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6} className={rootCss}>
-
-      {data && <>
+    <PanZoom
+      gridBounds={gridBounds}
+      initViewBox={initViewBox}
+      maxZoom={6}
+    >
+      {data && <g className={classNames(rootCss, props.disabled && 'disabled')}>
         <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`} />
-        <Light gm={data} />
-      </>}
-
+        <Light walls={data.walls} />
+      </g>}
     </PanZoom>
   );
 }
 
-/** @param {{ gm: Geomorph.GeomorphJson }} props */
-function Light({ gm }) {
-
+/** @param {{ walls: Geom.GeoJsonPolygon[] }} props */
+function Light({ walls }) {
   const [position, setPosition] = React.useState(() => new Vect(300, 300));
 
   const light = useMemo(() => {
-    const polys = gm.walls.map(x => Poly.from(x));
+    const polys = walls.map(x => Poly.from(x));
     const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
     const polygon = geom.lightPolygon(position, 2000, triangs);
     const { rect: bounds } = polygon;
@@ -52,7 +53,7 @@ function Light({ gm }) {
 
   return <>
     <path
-      className="light-polygon"
+      className="light"
       d={light.polygon.svgPath}
     />
     <DraggableNode
@@ -63,14 +64,17 @@ function Light({ gm }) {
 }
 
 const rootCss = css`
-  .light-polygon {
+  path.light {
     fill: blue;
     stroke: black;
-    animation: fadein 1s infinite alternate;
+    animation: fadein 1s infinite alternate ease;
     
     @keyframes fadein {
       from { opacity: 0; }
-      to   { opacity: 0.25; }
+      to { opacity: 0.35; }
     }
+  }
+  &.disabled path.light {
+    animation: fadein 1s forwards;
   }
 `;

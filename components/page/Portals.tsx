@@ -11,7 +11,8 @@ export default function Portals() {
   const items = React.useMemo(() => Object.values(lookup), [lookup]);
 
   return <>
-    {items.map(({ key, meta, portal }) => {
+    {items.map((state) => {
+      const { key, meta, portal } = state;
       switch (meta.key) {
         case 'code':
           return (

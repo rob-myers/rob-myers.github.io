@@ -17,17 +17,17 @@ const component = {
   'example/Gm301Debug': () => import('projects/example/Gm301')
     .then(x => x.default),
   'example/Light#301': () => import('projects/example/Light')
-    .then(x => () => <x.default layoutKey='g-301--bridge' />),
+    .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
   'example/Css3d#301': () => import('projects/example/Css3d')
-    .then(x => () => <x.default layoutKey='g-301--bridge' />),
+    .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
   'geomorph/GeomorphDemo': () => import('projects/geomorph/GeomorphDemo')
     .then(x => x.default),
   'panzoom/PanZoomDemo': () => import('projects/panzoom/PanZoomDemo')
     .then(x => x.default),
   'nav/DoorsDemo#101': () => import('projects/nav/DoorsDemo')
-    .then(x => () => <x.default layoutKey='g-101--multipurpose' />),
+    .then(x => (props: any) => <x.default {...props} layoutKey='g-101--multipurpose' />),
   'nav/DoorsDemo#301': () => import('projects/nav/DoorsDemo')
-    .then(x => () => <x.default layoutKey='g-301--bridge' />),
+    .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
   'nav/NavDemo': () => import('projects/nav/NavDemo')
     .then(x => x.default),
 };
