@@ -2,7 +2,7 @@
   --body-bg: rgba(100, 100, 100, 0.3);
   --focus-bg: #eee;
   --border-bg: #ccc;
-  --blog-border-width: 10px;
+  --blog-border-width: 4px;
 }
 
 * {

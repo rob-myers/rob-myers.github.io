@@ -237,7 +237,7 @@ const articleCss = css`
   position: relative;
   > time {
     position: absolute;
-    right: -10px;
+    right: calc(-1 * var(--blog-border-width));
     top: -52px;
     width: 136px;
 
