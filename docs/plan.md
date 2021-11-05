@@ -11,8 +11,8 @@ Each __TODO__ should either:
 - Include image of Geomorph with description ✅
 - Add lighting demo ✅
 - Add 3d demo ✅
-- Improve lighting demo
-- Improve 3d demo
+- Improve lighting demo 🚧
+- Improve 3d demo: smooth zooming 🚧
 
 ### _Constraints_
 

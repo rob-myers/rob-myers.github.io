@@ -82,10 +82,10 @@ Here's a whirlwind overview.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js "@new-tab"),
   and creates Preact virtual DOM nodes.
 - The root component is usually called _App_.
-  Running a React application means [invoking `ReactDOM.render`](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab")
-  with 2 arguments: `<App/>` and a DOM node _el_.
+  Running a React application means invoking `ReactDOM.render`
+  with 2 arguments: `<App/>` and a DOM node _el_. See how we bootstrap examples on [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab").
 
-- [`ReactDOM.render`](https://github.com/preactjs/preact/blob/master/src/render.js "@new-tab") initially converts `<App/>` into a DOM node mounted at _el_.
+- [ReactDOM.render](https://github.com/preactjs/preact/blob/master/src/render.js "@new-tab") initially converts `<App/>` into a DOM node mounted at _el_.
   A subcomponent may re-render, recursively recreating a virtual DOM node.
   It is [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js "@new-tab")  and only the difference is applied to the DOM.
 
