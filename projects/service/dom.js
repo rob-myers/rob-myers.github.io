@@ -2,6 +2,11 @@ import { parseSVG, makeAbsolute, MoveToCommand } from 'svg-path-parser';
 import { Vect } from '../geom/vect';
 import { Poly } from '../geom/poly';
 
+/** @param {WheelEvent | PointerEvent} e */
+export function isSvgEvent(e) {
+	return e.target && 'ownerSVGElement' in e.target;
+}
+
 /** @type {DOMPoint} */
 let svgPoint;
 

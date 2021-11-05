@@ -2,7 +2,7 @@ import * as React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
 import { Vect } from '../geom';
-import { getSvgPos, getSvgMid, canTouchDevice, projectSvgEvt } from '../service';
+import { getSvgPos, getSvgMid, canTouchDevice, projectSvgEvt, isSvgEvent } from '../service';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoom(props) {
@@ -11,7 +11,7 @@ export default function PanZoom(props) {
     const viewBox = props.initViewBox.clone();
     const minZoom = props.minZoom || 0.5;
     const maxZoom = props.maxZoom || 2;
-    const wheelDelta = props.wheelDelta || 0.003;
+    const wheelDelta = 0.003;
     return {
       viewBox,
       /** @type {null | Vect} */
@@ -36,7 +36,7 @@ export default function PanZoom(props) {
       /** @param {WheelEvent} e */
       onWheel: e => {
         e.preventDefault();
-        if ('ownerSVGElement' in (e.target || {})) {
+        if (isSvgEvent(e)) {
           const point = getSvgPos(projectSvgEvt(e));
           state.zoomTo(point, -wheelDelta * e.deltaY);
           state.root.setAttribute('viewBox', `${state.viewBox}`);
@@ -44,7 +44,7 @@ export default function PanZoom(props) {
       },
       /** @param {PointerEvent} e */
       onPointerDown: e => {
-        if ('ownerSVGElement' in (e.target ||{})) {
+        if (isSvgEvent(e) && state.ptrs.length < 2) {
           state.panFrom = (new Vect).copy(getSvgPos(projectSvgEvt(e)));
           state.ptrs.push(projectSvgEvt(e));
         }
@@ -73,6 +73,9 @@ export default function PanZoom(props) {
         state.ptrs = state.ptrs.filter(alt => e.pointerId !== alt.pointerId);
         if (state.ptrs.length < 2) {
           state.ptrDiff = null;
+        }
+        if (state.ptrs.length === 1) {
+          state.panFrom = (new Vect).copy(getSvgPos(state.ptrs[0]));
         }
       },
       /** @type {(el: null | SVGSVGElement) => void} */
@@ -127,7 +130,6 @@ export default function PanZoom(props) {
  * @property {number} [maxZoom] Maximum zoom factor (default 2)
  * @property {number} [initZoom] Initial zoom factor (default 1)
  * @property {string} [className]
- * @property {number} [wheelDelta]
  */
 
 /** @param {{ bounds: Geom.Rect }} props */
