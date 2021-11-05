@@ -24,6 +24,9 @@ declare namespace Geomorph {
     id: number;
     pngRect: Geom.RectJson;
     doors: DoorJson[];
+    hull: {
+      poly: Geom.GeoJsonPolygon[];
+    };
     labels: LayoutLabel[];
     navPoly: Geom.GeoJsonPolygon[];
     obstacles: Geom.GeoJsonPolygon[];
@@ -67,6 +70,10 @@ declare namespace Geomorph {
     walls: Poly[];
 
     labels: LayoutLabel[];
+
+    // TODO group hull
+
+    hullPoly: Geom.Poly[];
     /** Bounds of hull */
     hullRect: Geom.RectJson;
     /** Top of hull (sans windows/doors) */

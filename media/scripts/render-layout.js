@@ -75,6 +75,9 @@ async function computeLayout(def) {
         const [u, v] = geom.getAngledRectSeg({ angle, rect });
         return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
       }),
+    hull: {
+      poly: layout.hullPoly.map(x => x.geoJson),
+    },
     labels: layout.labels,
     navPoly: layout.navPoly.map(x => x.geoJson),
     obstacles: layout.groups.obstacles.map(poly => poly.geoJson),

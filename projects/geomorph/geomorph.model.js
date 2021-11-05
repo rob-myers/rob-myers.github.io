@@ -99,6 +99,7 @@ export function createLayout(def, lookup) {
     walls,
     labels,
     
+    hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
     hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
 
