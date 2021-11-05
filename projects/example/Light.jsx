@@ -11,7 +11,8 @@ import DraggableNode from "../controls/DraggableNode";
 
 /**
  * TODO
- * - permit two lights
+ * - fix when light outside hull
+ * - two lights with initial positions
  * - larger light drag area for mobile
  * - GeomorphJson needs hull polygon too
  */
@@ -29,32 +30,31 @@ export default function LightDemo(props) {
       gridBounds={gridBounds}
       initViewBox={initViewBox}
       maxZoom={6}
+      className={classNames(rootCss, props.disabled && 'disabled')}
     >
-      {data && <g className={classNames(rootCss, props.disabled && 'disabled')}>
+      {data && <>
         <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`} />
         <Light walls={data.walls} />
-      </g>}
+      </>}
     </PanZoom>
   );
 }
 
 /** @param {{ walls: Geom.GeoJsonPolygon[] }} props */
 function Light({ walls }) {
+
   const [position, setPosition] = React.useState(() => new Vect(300, 300));
 
   const light = useMemo(() => {
     const polys = walls.map(x => Poly.from(x));
     const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-    const polygon = geom.lightPolygon(position, 2000, triangs);
-    const { rect: bounds } = polygon;
-    const sourceRatios = position.clone().sub(bounds).scale(1 / bounds.width, 1 / bounds.height);
-    return { polygon, sourceRatios };
+    return geom.lightPolygon(position, 2000, triangs);
   }, [position.x, position.y]);
 
   return <>
     <path
       className="light"
-      d={light.polygon.svgPath}
+      d={light.svgPath}
     />
     <DraggableNode
       initial={position}
@@ -66,8 +66,7 @@ function Light({ walls }) {
 const rootCss = css`
   path.light {
     fill: blue;
-    stroke: black;
-    animation: fadein 1s infinite alternate ease;
+    animation: fadein 1s infinite alternate;
     
     @keyframes fadein {
       from { opacity: 0; }
@@ -75,6 +74,7 @@ const rootCss = css`
     }
   }
   &.disabled path.light {
-    animation: fadein 1s forwards;
+    animation: none;
+    opacity: 0.25;
   }
 `;

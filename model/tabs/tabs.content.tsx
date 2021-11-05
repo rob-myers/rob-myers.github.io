@@ -17,7 +17,7 @@ const component = {
   'example/Gm301Debug': () => import('projects/example/Gm301')
     .then(x => x.default),
   'example/Light#301': () => import('projects/example/Light')
-    .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
+    .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/Css3d#301': () => import('projects/example/Css3d')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
   'geomorph/GeomorphDemo': () => import('projects/geomorph/GeomorphDemo')
