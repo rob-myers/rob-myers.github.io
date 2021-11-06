@@ -11,10 +11,9 @@ import DraggableNode from "../controls/DraggableNode";
 
 /**
  * TODO
- * - fix when light outside hull
+ * - GeomorphJson needs hull polygon too
  * - two lights with initial positions
  * - larger light drag area for mobile
- * - GeomorphJson needs hull polygon too
  */
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
@@ -34,21 +33,24 @@ export default function LightDemo(props) {
     >
       {data && <>
         <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`} />
-        <Light walls={data.walls} />
+        <Light walls={data.walls} hull={data.hull.poly} />
       </>}
     </PanZoom>
   );
 }
 
-/** @param {{ walls: Geom.GeoJsonPolygon[] }} props */
-function Light({ walls }) {
+/** @param {{ walls: Geom.GeoJsonPolygon[]; hull: Geom.GeoJsonPolygon[] }} props */
+function Light({ walls, hull }) {
 
   const [position, setPosition] = React.useState(() => new Vect(300, 300));
 
   const light = useMemo(() => {
-    const polys = walls.map(x => Poly.from(x));
-    const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-    return geom.lightPolygon(position, 2000, triangs);
+    const hullOutline = Poly.from(hull[0]).removeHoles();
+    if (hullOutline.contains(position)) {
+      const polys = walls.map(x => Poly.from(x));
+      const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
+      return geom.lightPolygon(position, 2000, triangs);
+    } else return new Poly;
   }, [position.x, position.y]);
 
   return <>
