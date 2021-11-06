@@ -12,8 +12,9 @@ Each __TODO__ should either:
 - Add lighting demo ✅
 - Add 3d demo ✅
 - Improve lighting demo 🚧
-- Improve 3d demo: smooth zooming 🚧
-
+- Improve 3d demo 🚧
+  - try callback instead of MutationObserver
+  - try CSS transforms instead of viewBox
 ### _Constraints_
 
 - Link to a CodeSandbox ✅
@@ -69,8 +70,8 @@ Each __TODO__ should either:
 
 - ✅ Add lighting demo
   > https://github.com/rob-myers/topdown-cli/blob/actors-component/frontend/src/service/geom.service.ts
-  > https://github.com/rob-myers/topdown-cli/blob/c5abf6487303e907af478aefddd8e5177c5d24b5/frontend/src/components/stage/stage.world.tsx
 - ✅ Add 3d walls demo
+  > https://github.com/rob-myers/topdown-cli/blob/c5abf6487303e907af478aefddd8e5177c5d24b5/frontend/src/components/stage/stage.world.tsx
   - repo archived-webs
 - ✅ tab metas support idSuffix
 - ✅ restart using public/geomorphs i.e. precomputed geomorphs
