@@ -39,7 +39,9 @@ export default function Css3d(props) {
       onUpdate={onUpdate}
     >
       {data && (
-        <g ref={(el) => el && onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement))}>
+        <g ref={(el) => el && setTimeout(() => {
+          onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement));
+        })}>
           <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
           <ForeignObject gm={data} />
         </g>
