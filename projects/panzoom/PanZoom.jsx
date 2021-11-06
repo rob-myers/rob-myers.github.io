@@ -12,6 +12,7 @@ export default function PanZoom(props) {
     const minZoom = props.minZoom || 0.5;
     const maxZoom = props.maxZoom || 2;
     const wheelDelta = 0.003;
+
     return {
       viewBox,
       /** @type {null | Vect} */
@@ -40,6 +41,7 @@ export default function PanZoom(props) {
           const point = getSvgPos(projectSvgEvt(e));
           state.zoomTo(point, -wheelDelta * e.deltaY);
           state.root.setAttribute('viewBox', `${state.viewBox}`);
+          props.onUpdate?.(state.root);
         }
       },
       /** @param {PointerEvent} e */
@@ -59,12 +61,14 @@ export default function PanZoom(props) {
             const point = getSvgMid(state.ptrs);
             state.zoomTo(point, 0.02 * (ptrDiff - state.ptrDiff));
             state.root.setAttribute('viewBox', `${state.viewBox}`);
+            props.onUpdate?.(state.root);
           }          
           state.ptrDiff = ptrDiff;
         } else if (state.panFrom) {
           const mouse = getSvgPos(projectSvgEvt(e));
           viewBox.delta(state.panFrom.x - mouse.x, state.panFrom.y - mouse.y);
           state.root.setAttribute('viewBox', `${state.viewBox}`);
+          props.onUpdate?.(state.root);
         }
       },
       /** @param {PointerEvent} e */
@@ -130,6 +134,7 @@ export default function PanZoom(props) {
  * @property {number} [maxZoom] Maximum zoom factor (default 2)
  * @property {number} [initZoom] Initial zoom factor (default 1)
  * @property {string} [className]
+ * @property {(el: SVGSVGElement) => void} [onUpdate]
  */
 
 /** @param {{ bounds: Geom.Rect }} props */

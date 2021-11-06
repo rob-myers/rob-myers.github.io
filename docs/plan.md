@@ -13,8 +13,7 @@ Each __TODO__ should either:
 - Add 3d demo ✅
 - Improve lighting demo 🚧
 - Improve 3d demo 🚧
-  - try callback instead of MutationObserver
-  - try CSS transforms instead of viewBox
+
 ### _Constraints_
 
 - Link to a CodeSandbox ✅
@@ -68,6 +67,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ try callback instead of MutationObserve
 - ✅ Add lighting demo
   > https://github.com/rob-myers/topdown-cli/blob/actors-component/frontend/src/service/geom.service.ts
 - ✅ Add 3d walls demo

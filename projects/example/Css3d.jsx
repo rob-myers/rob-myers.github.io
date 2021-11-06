@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { useQuery } from "react-query";
 import { css } from "goober";
 
@@ -7,21 +7,43 @@ import { Poly, Vect } from "../geom";
 import { fillPolygon } from "../service";
 import PanZoom from "../panzoom/PanZoom";
 import { labelMeta } from "projects/geomorph/geomorph.model";
+import classNames from "classnames";
+
+/**
+ * TODO clean below a bit?
+ */
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function Css3d(props) {
+
+  /** @type {React.MutableRefObject<HTMLDivElement>} */
+  const root3dDiv = (React.useRef());
 
   const { data } = useQuery(`${props.layoutKey}-json`, async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
     return (fetch(`/geomorph/${props.layoutKey}.json`).then(x => x.json()));
   });
 
+  /** @param {SVGSVGElement} el */
+  const onUpdate = (el) => {
+    const { x, width, y, height } = el.viewBox.baseVal;
+    const zoom = initViewBox.height / height;
+    const rootDiv = root3dDiv.current || (root3dDiv.current = /** @type {*} */ (el.querySelector('.root-3d-div')));
+    rootDiv.style.perspective = `${100 + (2000 / zoom)}px`;
+    rootDiv.style.perspectiveOrigin = `${( x + 0.5 * width )}px ${( y + 0.5 * height)}px`;
+  };
+
   return (
-    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}>
-      {data && <>
-        <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
-        <ForeignObject gm={data} />
-      </>}
+    <PanZoom
+      gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}
+      onUpdate={onUpdate}
+    >
+      {data && (
+        <g ref={(el) => el && onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement))}>
+          <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
+          <ForeignObject gm={data} />
+        </g>
+      )}
     </PanZoom>
   );
 }
@@ -29,7 +51,6 @@ export default function Css3d(props) {
 /** @param {{ gm: Geomorph.GeomorphJson }} props */
 function ForeignObject({ gm }) {
 
-  const rootEl = useUpdatePerspective();
   const { wallsDataUrl, obstaclesDataUrl, labelsDataUrl } = useDataUrls(gm);
 
   const { wallSegs, doorSegs, obstacleSegs } = React.useMemo(() => {
@@ -47,8 +68,8 @@ function ForeignObject({ gm }) {
   }, [gm.walls]);
 
   return (
-    <foreignObject ref={rootEl} xmlns="http://www.w3.org/1999/xhtml" {...gm.pngRect}>
-      <div className={threeDeeCss}>
+    <foreignObject xmlns="http://www.w3.org/1999/xhtml" {...gm.pngRect}>
+      <div className={classNames("root-3d-div", threeDeeCss)}>
         {wallSegs.map(([v, u], i) => { // [v, u] fixes backface culling
           tempPoint.copy(u).sub(v);
           return (
@@ -175,38 +196,4 @@ function useDataUrls(gm) {
       labelsDataUrl,
     }
   }, [gm.walls]);
-}
-
-/**
- * TODO try another approach without MutationObserver,
- * e.g. can provide callback to PanZoom on panzoom
- */
-function useUpdatePerspective() {
-  /** @type {React.Ref<SVGForeignObjectElement>} */
-  const rootRef = useRef(null);
-
-  useEffect(() => {
-    if (rootRef.current?.ownerSVGElement) {
-      const svgEl = rootRef.current.ownerSVGElement;
-      const rootDiv = /** @type {HTMLDivElement} */ (Array.from(rootRef.current.children)[0]);
-
-      const updatePerspective = () => {
-        const { x, width, y, height } = svgEl.viewBox.baseVal;
-        const zoom = initViewBox.height / height;
-        rootDiv.style.perspective = `${100 + (2000 / zoom)}px`;
-        rootDiv.style.perspectiveOrigin = `${( x + 0.5 * width )}px ${( y + 0.5 * height)}px`;
-      };
-      updatePerspective();
-
-      const observer = new MutationObserver((ms) => ms.forEach(m =>
-        m.type === 'attributes' && m.attributeName === 'viewBox'
-          && updatePerspective()
-          // && requestAnimationFrame(updatePerspective)
-        )
-      );
-      observer.observe(svgEl, { attributes: true });
-    }
-  }, []);
-
-  return rootRef;
 }
