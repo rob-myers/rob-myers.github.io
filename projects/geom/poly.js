@@ -143,6 +143,18 @@ export class Poly {
   }
 
   /**
+   * @param {Geom.VectJson} point 
+   * @returns {boolean}
+   */
+   contains(point) {
+    if (!this.rect.contains(point)) {
+      return false;
+    }
+    const tr = this.fastTriangulate(); // TODO optionally use cache?
+    return tr.tris.some(t => Poly.pointInTriangle(point, tr.vs[t[0]], tr.vs[t[1]], tr.vs[t[2]]));
+  }
+
+  /**
    * Create a new inset or outset version of this polygon,
    * by cutting/unioning quads.
    * - assume outer points have anticlockwise orientation.
@@ -285,10 +297,10 @@ export class Poly {
   }
 
   /**
-   * @param {Vect} pt 
-   * @param {Vect} v1 
-   * @param {Vect} v2 
-   * @param {Vect} v3 
+   * @param {Geom.VectJson} pt 
+   * @param {Geom.VectJson} v1 
+   * @param {Geom.VectJson} v2 
+   * @param {Geom.VectJson} v3 
    */
   static pointInTriangle(pt, v1, v2, v3) {
     const d1 = Poly.sign(pt, v1, v2);
@@ -367,9 +379,9 @@ export class Poly {
   }
 
   /**
-   * @param {Vect} p1 
-   * @param {Vect} p2 
-   * @param {Vect} p3 
+   * @param {Geom.VectJson} p1 
+   * @param {Geom.VectJson} p2 
+   * @param {Geom.VectJson} p3 
    */
   static sign(p1, p2, p3) {
     return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
