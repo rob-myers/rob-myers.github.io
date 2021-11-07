@@ -6,26 +6,51 @@ import { isSvgEvent } from "../service";
 import { Grid } from './PanZoom';
 
 /**
- * TODO alternative pan zoom
+ * TODO
+ * - mutate DOM instead of render per scale/translate
+ * - get original panzoom controls working
  */
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoomAlt(props) {
 
-  /** @type {React.RefObject<SVGSVGElement>} */
-  const rootRef = (React.useRef());
-  const [bounds, setBounds] = React.useState(() => new Rect);
-  const [zoomFactor, setZoomFactor] = React.useState(100);
-  const scale = zoomFactor / 100;
+  const [state] = React.useState(() => {
+    const zoomFactor = 100;
+    return {
+      /** @type {React.RefCallback<SVGSVGElement>} */
+      rootRef: (el) => {
+        if (el) {
+          state.root = el;
+          state.gScale = /** @type {*} */ (el.children[0]);
+          state.gTranslate = /** @type {*} */ (state.gScale.children[0]);
+        }
+      },
+      bounds: new Rect,
+      zoomFactor,
+      scale: zoomFactor / 100,
+      /** @type {SVGSVGElement} */
+      root: ({}),
+      /** @type {SVGGElement} */
+      gScale: ({}),
+      /** @type {SVGGElement} */
+      gTranslate: ({}),
+    };
+  });
 
   useEffect(() => {
-    const parentEl = rootRef.current?.parentElement;
-    parentEl && setBounds(new Rect(0, 0, parentEl.offsetWidth, parentEl.offsetHeight));
+    const { width, height } = state.root.getBoundingClientRect();
+    // setBounds(new Rect(0, 0, width, height));
+    state.bounds.set(0, 0, width, height);
+    state.gTranslate.style.transform = `translate(${-0}px, ${-0}px)`;
+
+    // props.panZoomApi && (props.panZoomApi.current = {
+    //   update: () => props.onUpdate?.(scale);
+    // })
   }, []);
 
   return (
     <svg
-      ref={rootRef}
+      ref={state.rootRef}
       className={rootCss}
 
       // Initially, just try to get orig approach working
@@ -34,25 +59,30 @@ export default function PanZoomAlt(props) {
         e.preventDefault();
 
         if (e.shiftKey) {// Zoom
-          const nextZoom = zoomFactor - 0.5 * e.deltaY;
+          const nextZoom = state.zoomFactor - 0.5 * e.deltaY;
           if (Math.abs(e.deltaY) > 0.1 && nextZoom >= 25 && nextZoom <= 800) {
-            setZoomFactor(nextZoom);
+            // setZoomFactor(nextZoom);
+            state.zoomFactor = nextZoom;
+
             // Preserve world position of mouse
             const { x: svgPosX, y: svgPosY } = getRelativePos(e)
-            bounds.x += svgPosX * 100 * (1 / zoomFactor - 1 / nextZoom); // Mutate
-            bounds.y += svgPosY * 100 * (1 / zoomFactor - 1 / nextZoom);
-            props.onUpdate?.(scale, bounds);
+            state.bounds.x += svgPosX * 100 * (1 / state.zoomFactor - 1 / nextZoom); // Mutate
+            state.bounds.y += svgPosY * 100 * (1 / state.zoomFactor - 1 / nextZoom);
+            props.onUpdate?.(nextZoom/100, state.bounds);
+
+            state.gScale.style.transform = `scale(${nextZoom})`;
+            state.gTranslate.style.transform = `translate(${-state.bounds.x}px, ${-state.bounds.y}px)`;
           }
         } else {// Pan
           // Fresh render bounds triggers update
-          const nextBounds = bounds.clone().delta(0.5 * e.deltaX, 0.5 * e.deltaY);
-          setBounds(nextBounds);
-          props.onUpdate?.(scale, bounds);
+          state.bounds.delta(0.5 * e.deltaX, 0.5 * e.deltaY);
+          state.gTranslate.style.transform = `translate(${-state.bounds.x}px, ${-state.bounds.y}px)`;
+          props.onUpdate?.(state.scale, state.bounds);
         }
       }}
     >
-      <g transform={`scale(${scale})`}>
-        <g transform={`translate(${-bounds.x}, ${-bounds.y})`}>
+      <g transform={`scale(${state.scale})`}>
+        <g transform={`translate(${-state.bounds.x}, ${-state.bounds.y})`}>
           <Grid bounds={props.gridBounds} />
           {props.children}
         </g>
@@ -70,16 +100,14 @@ export default function PanZoomAlt(props) {
  * @property {number} [initZoom] Initial zoom factor (default 1)
  * @property {string} [className]
  * @property {(scale: number, bounds: Geom.Rect) => void} [onUpdate]
+ * @property {React.MutableRefObject<{ update: () => void }>} [panZoomApi]
  */
 
 
 const rootCss = css`
   width: 100%;
   height: 100%;
-  /* background: #000; */
-  /** Fixes Safari height issue. */
-  position: 'absolute';
-  // filter: 'invert(100%)',
+  /* filter: invert(100%); */
 `;
 
 /** @param {React.MouseEvent} e */
