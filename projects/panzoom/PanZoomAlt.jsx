@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { css } from "goober";
 
 import { Rect, Vect } from "../geom";
@@ -7,7 +7,6 @@ import { Grid } from './PanZoom';
 
 /**
  * TODO
- * - mutate DOM instead of render per scale/translate
  * - get original panzoom controls working
  */
 
@@ -37,16 +36,17 @@ export default function PanZoomAlt(props) {
     };
   });
 
-  useEffect(() => {
+  React.useEffect(() => {
     const { width, height } = state.root.getBoundingClientRect();
-    // setBounds(new Rect(0, 0, width, height));
     state.bounds.set(0, 0, width, height);
     state.gTranslate.style.transform = `translate(${-0}px, ${-0}px)`;
-
-    // props.panZoomApi && (props.panZoomApi.current = {
-    //   update: () => props.onUpdate?.(scale);
-    // })
   }, []);
+
+  React.useLayoutEffect(() => {
+    if (props.children && props.onUpdate) {
+      props.onUpdate(state.scale, state.bounds);
+    }
+  }, [!!props.children]);
 
   return (
     <svg
@@ -100,7 +100,6 @@ export default function PanZoomAlt(props) {
  * @property {number} [initZoom] Initial zoom factor (default 1)
  * @property {string} [className]
  * @property {(scale: number, bounds: Geom.Rect) => void} [onUpdate]
- * @property {React.MutableRefObject<{ update: () => void }>} [panZoomApi]
  */
 
 
