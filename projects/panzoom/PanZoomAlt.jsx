@@ -20,9 +20,7 @@ export default function PanZoomAlt(props) {
 
   useEffect(() => {
     const parentEl = rootRef.current?.parentElement;
-    if (parentEl) {
-      setBounds(new Rect(0, 0, parentEl.offsetWidth, parentEl.offsetHeight));
-    }
+    parentEl && setBounds(new Rect(0, 0, parentEl.offsetWidth, parentEl.offsetHeight));
   }, []);
 
   return (
@@ -37,20 +35,19 @@ export default function PanZoomAlt(props) {
 
         if (e.shiftKey) {// Zoom
           const nextZoom = zoomFactor - 0.5 * e.deltaY;
-          if (
-            Math.abs(e.deltaY) > 0.1 && nextZoom >= 25 && nextZoom <= 800
-          ) {
+          if (Math.abs(e.deltaY) > 0.1 && nextZoom >= 25 && nextZoom <= 800) {
             setZoomFactor(nextZoom);
-            
-            // Preserve world position of mouse.
+            // Preserve world position of mouse
             const { x: svgPosX, y: svgPosY } = getRelativePos(e)
             bounds.x += svgPosX * 100 * (1 / zoomFactor - 1 / nextZoom); // Mutate
             bounds.y += svgPosY * 100 * (1 / zoomFactor - 1 / nextZoom);
+            props.onUpdate?.(scale, bounds);
           }
-        } else {// Pan.
-          // Fresh render bounds triggers update.
+        } else {// Pan
+          // Fresh render bounds triggers update
           const nextBounds = bounds.clone().delta(0.5 * e.deltaX, 0.5 * e.deltaY);
           setBounds(nextBounds);
+          props.onUpdate?.(scale, bounds);
         }
       }}
     >
@@ -72,7 +69,7 @@ export default function PanZoomAlt(props) {
  * @property {number} [maxZoom] Maximum zoom factor (default 2)
  * @property {number} [initZoom] Initial zoom factor (default 1)
  * @property {string} [className]
- * @property {(el: SVGSVGElement) => void} [onUpdate]
+ * @property {(scale: number, bounds: Geom.Rect) => void} [onUpdate]
  */
 
 

@@ -138,7 +138,7 @@ export default function PanZoom(props) {
  */
 
 /** @param {{ bounds: Geom.Rect }} props */
-function Grid(props) {
+export function Grid(props) {
   const uid = React.useMemo(() => gridPatternCount++, []);
 
   return <>
