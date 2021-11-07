@@ -32,12 +32,17 @@ export function projectSvgEvt(e) {
 	};
 }
 
-/** @param {SvgPtr} ptr */
-export function getSvgPos(ptr) {
+/**
+ * @param {SvgPtr} ptr 
+ * @param {*} [el] 
+ * @returns 
+ */
+export function getSvgPos(ptr, el) {
   svgPoint = svgPoint || ptr.ownerSvg.createSVGPoint();
   svgPoint.x = ptr.clientX;
   svgPoint.y = ptr.clientY;
-  return svgPoint.matrixTransform(ptr.ownerSvg.getScreenCTM()?.inverse());
+  // return svgPoint.matrixTransform(ptr.ownerSvg.getScreenCTM()?.inverse());
+  return svgPoint.matrixTransform((el || ptr.ownerSvg).getScreenCTM()?.inverse());
 }
 
 /**

@@ -12,7 +12,6 @@ import classNames from "classnames";
 
 /**
  * TODO
- * - fix initial transform
  */
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
@@ -28,22 +27,21 @@ export default function Css3d(props) {
 
   return (
     <div className={viewportCss}>
-      <PanZoomAlt
-        gridBounds={gridBounds} // TODO
-        initViewBox={initViewBox} // TODO
-        maxZoom={6} // TODO
-        onUpdate={(scale, bounds) => {
-          if (data && root3d.current) {
-            root3d.current.style.transform = `scale(${scale}) translate(${data.pngRect.x - bounds.x}px, ${data.pngRect.y - bounds.y}px)`;
-            root3d.current.style.perspectiveOrigin = `${bounds.cx}px ${bounds.cy}px`;
-          }
-        }}
-      >
-        {data && (
+      {data && <>
+        <PanZoomAlt
+          gridBounds={gridBounds} // TODO
+          maxZoom={6} // TODO
+          onUpdate={(scale, bounds) => {
+            if (data && root3d.current) {
+              root3d.current.style.transform = `scale(${scale}) translate(${data.pngRect.x - bounds.x}px, ${data.pngRect.y - bounds.y}px)`;
+              root3d.current.style.perspectiveOrigin = `${bounds.cx}px ${bounds.cy}px`;
+            }
+          }}
+        >
           <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
-        )}
-      </PanZoomAlt>
-      {data && <ThreeDee ref={root3d} gm={data} />}
+        </PanZoomAlt>
+        <ThreeDee ref={root3d} gm={data} />
+      </>}
     </div>
   );
 }
