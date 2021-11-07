@@ -244,6 +244,20 @@ export class Rect {
     return this;
   }
 
+  /**
+   * @param {number} x 
+   * @param {number} y 
+   * @param {number} w 
+   * @param {number} h 
+   */
+  set(x, y, w, h) {
+    this.x = x;
+    this.y = y;
+    this.width = w;
+    this.height = h;
+    return this;
+  }
+
   /** @param {Geom.VectJson} position */
   setPosition(position) {
     this.x = position.x;

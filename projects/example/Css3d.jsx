@@ -9,10 +9,10 @@ import PanZoom from "../panzoom/PanZoom";
 import PanZoomAlt from "../panzoom/PanZoomAlt";
 import { labelMeta } from "projects/geomorph/geomorph.model";
 import classNames from "classnames";
-import useMeasure from "react-use-measure";
 
 /**
- * TODO get previous 3d approach working
+ * TODO
+ * - fix initial transform
  */
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
@@ -25,20 +25,17 @@ export default function Css3d(props) {
 
   /** @type {React.RefObject<HTMLDivElement>} */
   const root3d = (React.useRef());
-  const [measureRef, dimension] = useMeasure({ debounce: 30, scroll: false });
 
   return (
-    <div ref={measureRef} className={viewportCss}>
+    <div className={viewportCss}>
       <PanZoomAlt
-        gridBounds={gridBounds}
-        initViewBox={initViewBox}
-        maxZoom={6}
+        gridBounds={gridBounds} // TODO
+        initViewBox={initViewBox} // TODO
+        maxZoom={6} // TODO
         onUpdate={(scale, bounds) => {
           if (data && root3d.current) {
             root3d.current.style.transform = `scale(${scale}) translate(${data.pngRect.x - bounds.x}px, ${data.pngRect.y - bounds.y}px)`;
-            /** @type {HTMLDivElement} */
-            const child = (root3d.current.children[0]);
-            child.style.perspectiveOrigin = `${bounds.cx}px ${bounds.cy}px`;
+            root3d.current.style.perspectiveOrigin = `${bounds.cx}px ${bounds.cy}px`;
           }
         }}
       >
@@ -46,42 +43,14 @@ export default function Css3d(props) {
           <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
         )}
       </PanZoomAlt>
-      {data && <ThreeDee ref={root3d} gm={data} dimension={dimension} />}
+      {data && <ThreeDee ref={root3d} gm={data} />}
     </div>
   );
 }
 
-const viewportCss = css`
-  position: relative;
-  height: 100%;
-  
-  .three-dim-container {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0px;
-    pointer-events: none;
-    transform-origin: top left;
-  }
-
-  .three-dim-container > .three-dim-parent {
-    perspective: 500px;
-    transform-style: preserve-3d;
-    position: absolute;
-
-    .wall {
-      transform-origin: top left;
-      position: absolute;
-      height: 50px;
-      background: red;
-      /* backface-visibility: hidden; */
-    }
-  }
-`;
-
 const ThreeDee = React.forwardRef((
-  /** @type {{ gm: Geomorph.GeomorphJson; dimension: Geom.VectJson }} */
-  { gm, dimension },
+  /** @type {{ gm: Geomorph.GeomorphJson }} */
+  { gm },
   /** @type {React.ForwardedRef<HTMLDivElement>} */
   ref,
 ) => {
@@ -101,34 +70,47 @@ const ThreeDee = React.forwardRef((
   }, [gm.walls]);
 
   return (
-    <div
-      ref={ref}
-      className="three-dim-container"
-      // style={{ transform: `${scale} ${translate}` }}
-    >
-      <div
-        className="three-dim-parent"
-        // style={dimension && {
-        //   // perspectiveOrigin: `${100 * (mouseWorld.x / dimension.x)}% ${100 * (mouseWorld.y / dimension.y)}%`,
-        //   width: dimension.x,
-        //   height: dimension.y,
-        // }}
-      >
-        {wallSegs.map(([v, u], i) => { // [v, u] fixes backface culling
-          tempPoint.copy(u).sub(v);
-          return (
-            <div key={`wall-${i}`} className="wall"
-              style={{
-                transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.angle}rad) rotateX(90deg)`,
-                width: tempPoint.length,
-              }}
-            />
-          );
-        })}
-      </div>
+    <div ref={ref} className="three-dim-container">
+      {wallSegs.map(([v, u], i) => { // [v, u] fixes backface culling
+        tempPoint.copy(u).sub(v);
+        return (
+          <div key={`wall-${i}`} className="wall"
+            style={{
+              transform: `translate3d(${v.x}px, ${v.y}px, 0px) rotateZ(${tempPoint.angle}rad) rotateX(90deg)`,
+              width: tempPoint.length,
+            }}
+          />
+        );
+      })}
     </div>
   );
 });
+
+
+const viewportCss = css`
+  position: relative;
+  height: 100%;
+  
+  .three-dim-container {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    top: 0px;
+    pointer-events: none;
+    
+    perspective: 500px;
+    transform-origin: top left;
+    transform-style: preserve-3d;
+  
+    .wall {
+      transform-origin: top left;
+      position: absolute;
+      height: 50px;
+      background: red;
+      /* backface-visibility: hidden; */
+    }
+  }
+`;
 
 // /** @param {{ gm: Geomorph.GeomorphJson }} props */
 // function ForeignObject({ gm }) {
