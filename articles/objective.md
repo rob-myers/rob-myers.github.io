@@ -34,7 +34,8 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 </aside>
 
 We end with two basic demos:
-you can pan and zoom, drag the light, and view the underlying polygons in 3D.
+you can pan, zoom, drag the lights, and view the underlying polygons in 3D.
+Check out the respective CodeSandboxes [here](todo "light") and [here](todo "3d").
 
 <div
   class="tabs"

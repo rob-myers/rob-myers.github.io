@@ -9,13 +9,6 @@ import { gridBounds, initViewBox } from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../controls/DraggableNode";
 
-/**
- * TODO
- * - GeomorphJson needs hull polygon too
- * - two lights with initial positions
- * - larger light drag area for mobile
- */
-
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
 export default function LightDemo(props) {
 
@@ -23,6 +16,11 @@ export default function LightDemo(props) {
     /** @type {Promise<Geomorph.GeomorphJson>} */
     return (fetch(`/geomorph/${props.layoutKey}.json`).then(x => x.json()));
   });
+
+  const [init] = React.useState(() => ({
+    lightA: new Vect(205, 385),
+    lightB: new Vect(930, 385),
+  }));
 
   return (
     <PanZoom
@@ -33,16 +31,17 @@ export default function LightDemo(props) {
     >
       {data && <>
         <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`} />
-        <Light walls={data.walls} hull={data.hull.poly} />
+        <Light init={init.lightA} walls={data.walls} hull={data.hull.poly} />
+        <Light init={init.lightB} walls={data.walls} hull={data.hull.poly} />
       </>}
     </PanZoom>
   );
 }
 
-/** @param {{ walls: Geom.GeoJsonPolygon[]; hull: Geom.GeoJsonPolygon[] }} props */
-function Light({ walls, hull }) {
+/** @param {{ init: Geom.Vect; walls: Geom.GeoJsonPolygon[]; hull: Geom.GeoJsonPolygon[] }} props */
+function Light({ init, walls, hull }) {
 
-  const [position, setPosition] = React.useState(() => new Vect(300, 300));
+  const [position, setPosition] = React.useState(() => init);
 
   const light = useMemo(() => {
     const hullOutline = Poly.from(hull[0]).removeHoles();
@@ -61,6 +60,7 @@ function Light({ walls, hull }) {
     <DraggableNode
       initial={position}
       onChange={setPosition}
+      radius={14}
     />
   </>;
 }

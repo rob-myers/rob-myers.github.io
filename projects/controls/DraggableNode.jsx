@@ -3,7 +3,7 @@ import React from "react";
 import { Vect } from "../geom";
 import { getSvgPos } from "../service";
 
-/** @param {{ initial: Geom.VectJson; onChange: (position: Geom.Vect) => void }} props */
+/** @param {{ initial: Geom.VectJson; onChange: (position: Geom.Vect) => void; radius?: number }} props */
 export default function DraggableNode(props) {
 
   const [state, setState] = React.useState(() => {
@@ -70,6 +70,8 @@ export default function DraggableNode(props) {
     };
   });
 
+  const radius = props.radius || 10;
+
   return (
     <g className={rootCss}>
       <line
@@ -80,7 +82,7 @@ export default function DraggableNode(props) {
         className="node"
         cx={state.position.x}
         cy={state.position.y}
-        r={10}
+        r={radius}
         // TODO does PointerEvents polyfill work?
         onPointerDown={state.startDrag}
         onPointerUp={state.applyDrag}
@@ -91,7 +93,7 @@ export default function DraggableNode(props) {
 
 const rootCss = css`
   > .node {
-    fill: white;
+    fill: #0f0;
     stroke: black;
     cursor: pointer;
     stroke-width: 2;
