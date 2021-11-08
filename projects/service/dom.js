@@ -33,16 +33,16 @@ export function projectSvgEvt(e) {
 }
 
 /**
+ * Get SVG world position i.e. userspace.
  * @param {SvgPtr} ptr 
- * @param {*} [el] 
- * @returns 
+ * @param {SVGGraphicsElement} [targetEl] 
  */
-export function getSvgPos(ptr, el) {
+export function getSvgPos(ptr, targetEl) {
   svgPoint = svgPoint || ptr.ownerSvg.createSVGPoint();
   svgPoint.x = ptr.clientX;
   svgPoint.y = ptr.clientY;
+  return svgPoint.matrixTransform((targetEl || ptr.ownerSvg).getScreenCTM()?.inverse());
   // return svgPoint.matrixTransform(ptr.ownerSvg.getScreenCTM()?.inverse());
-  return svgPoint.matrixTransform((el || ptr.ownerSvg).getScreenCTM()?.inverse());
 }
 
 /**

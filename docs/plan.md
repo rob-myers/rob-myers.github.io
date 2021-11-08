@@ -12,7 +12,8 @@ Each __TODO__ should either:
 - Add lighting demo ✅
 - Add 3d demo ✅
 - Improve lighting demo 🚧
-- Improve 3d demo 🚧
+- Improve 3d demo ✅
+  > Tried CSS transform approach but ultimately did not perform better when on a blog page (with various other components)
 
 ### _Constraints_
 
