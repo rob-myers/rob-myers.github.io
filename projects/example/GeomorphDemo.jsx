@@ -5,12 +5,12 @@ import classNames from "classnames";
 
 import { Rect } from "../geom";
 import { geom, loadImage } from "../service";
-import { createLayout, deserializeSvgJson, labelMeta, singlesToPolys } from "./geomorph.model";
-import layoutDefs from "./layouts";
-import { renderGeomorph } from "./geomorph.render";
+import { createLayout, deserializeSvgJson, labelMeta, singlesToPolys } from "../geomorph/geomorph.model";
+import layoutDefs from "../geomorph/layouts";
+import { renderGeomorph } from "../geomorph/geomorph.render";
 import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
 import PanZoom from '../panzoom/PanZoom';
-import { gridBounds, initViewBox } from "../example/defaults";
+import { gridBounds, initViewBox } from "./defaults";
 
 const scale = 2;
 

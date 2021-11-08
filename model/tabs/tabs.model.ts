@@ -1,6 +1,6 @@
 import type { IJsonModel } from 'flexlayout-react';
 import { deepClone, testNever } from 'model/generic.model';
-import { CodeFilepathKey, ComponentFilepathKey } from './tabs.content';
+import { CodeFilepathKey, ComponentFilepathKey } from './tabs.lookup';
 
 /**
  * Internal tab uid used by npm module `flexlayout-react`,

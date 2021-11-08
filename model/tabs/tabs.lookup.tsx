@@ -20,7 +20,7 @@ const component = {
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/Css3d#301': () => import('projects/example/Css3d')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
-  'geomorph/GeomorphDemo': () => import('projects/geomorph/GeomorphDemo')
+  'geomorph/GeomorphDemo': () => import('projects/example/GeomorphDemo')
     .then(x => x.default),
   'panzoom/PanZoomDemo': () => import('projects/panzoom/PanZoomDemo')
     .then(x => x.default),
