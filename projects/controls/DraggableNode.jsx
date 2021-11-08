@@ -93,10 +93,10 @@ export default function DraggableNode(props) {
 
 const rootCss = css`
   > .node {
-    fill: #0f0;
+    fill: blue;
     stroke: black;
     cursor: pointer;
-    stroke-width: 2;
+    stroke-width: 0.5;
   }
   > .drag-indicator {
     stroke: black;

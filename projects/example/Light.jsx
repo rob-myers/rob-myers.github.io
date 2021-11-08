@@ -67,7 +67,7 @@ function Light({ init, walls, hull }) {
 
 const rootCss = css`
   path.light {
-    fill: blue;
+    fill: #00f;
     animation: fadein 1s infinite alternate;
     
     @keyframes fadein {
