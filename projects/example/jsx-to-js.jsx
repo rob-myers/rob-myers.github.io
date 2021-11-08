@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PanZoomDemo from '../panzoom/PanZoomDemo';
+import PanZoomDemo from './PanZoomDemo';
 
 const withJsx = <div title="message">Welcome!</div>;
 const withoutJsx = React.createElement(

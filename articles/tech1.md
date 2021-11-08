@@ -42,9 +42,9 @@ Let's consider an example, a pannable/zoomable grid (also [on CodeSandbox](https
   height="400"
   name="panzoom"
   tabs="[
-    { key: 'component', filepath: 'panzoom/PanZoomDemo' },
+    { key: 'component', filepath: 'example/PanZoomDemo' },
     { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
-    { key: 'code', filepath: 'panzoom/PanZoomDemo.jsx' },
+    { key: 'code', filepath: 'example/PanZoomDemo.jsx' },
   ]"
 ></div>
 

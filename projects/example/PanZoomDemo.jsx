@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { css } from 'goober';
-import PanZoom from './PanZoom';
+import PanZoom from '../panzoom/PanZoom';
 import { Rect } from '../geom';
-import { gridBounds, initViewBox } from '../example/defaults';
+import { gridBounds, initViewBox } from './defaults';
 
 export default function PanZoomDemo() {
   return (

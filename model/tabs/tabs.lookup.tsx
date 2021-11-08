@@ -3,8 +3,8 @@ import React from 'react';
 const code = {
   'panzoom/PanZoom.jsx': () =>
     import('!!raw-loader!projects/panzoom/PanZoom.jsx'),
-  'panzoom/PanZoomDemo.jsx': () =>
-    import('!!raw-loader!projects/panzoom/PanZoomDemo.jsx'),
+  'example/PanZoomDemo.jsx': () =>
+    import('!!raw-loader!projects/example/PanZoomDemo.jsx'),
   'example/NavDemo.jsx': () =>
     import('!!raw-loader!projects/example/NavDemo.jsx'),
   'example/jsx-to-js.jsx': () =>
@@ -22,7 +22,7 @@ const component = {
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
   'example/GeomorphDemo': () => import('projects/example/GeomorphDemo')
     .then(x => x.default),
-  'panzoom/PanZoomDemo': () => import('projects/panzoom/PanZoomDemo')
+  'example/PanZoomDemo': () => import('projects/example/PanZoomDemo')
     .then(x => x.default),
   'example/DoorsDemo#101': () => import('projects/example/DoorsDemo')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-101--multipurpose' />),
