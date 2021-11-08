@@ -39,6 +39,6 @@ public/svg
   enabled="false"
   height="400"
   tabs="[
-    { key: 'component', filepath: 'geomorph/GeomorphDemo' },
+    { key: 'component', filepath: 'example/GeomorphDemo' },
   ]"
 ></div>

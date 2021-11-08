@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 
-import { gridBounds, initViewBox } from "../example/defaults";
+import { gridBounds, initViewBox } from "./defaults";
 import { Poly, Vect } from "../geom";
 import { getSvgPos, geom, projectSvgEvt } from "../service";
 import { Pathfinding } from '../pathfinding/Pathfinding';

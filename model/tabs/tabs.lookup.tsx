@@ -5,8 +5,8 @@ const code = {
     import('!!raw-loader!projects/panzoom/PanZoom.jsx'),
   'panzoom/PanZoomDemo.jsx': () =>
     import('!!raw-loader!projects/panzoom/PanZoomDemo.jsx'),
-  'nav/NavDemo.jsx': () =>
-    import('!!raw-loader!projects/nav/NavDemo.jsx'),
+  'example/NavDemo.jsx': () =>
+    import('!!raw-loader!projects/example/NavDemo.jsx'),
   'example/jsx-to-js.jsx': () =>
     import('!!raw-loader!projects/example/jsx-to-js.jsx'),
   'geom/rect.js': () =>
@@ -20,15 +20,15 @@ const component = {
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/Css3d#301': () => import('projects/example/Css3d')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
-  'geomorph/GeomorphDemo': () => import('projects/example/GeomorphDemo')
+  'example/GeomorphDemo': () => import('projects/example/GeomorphDemo')
     .then(x => x.default),
   'panzoom/PanZoomDemo': () => import('projects/panzoom/PanZoomDemo')
     .then(x => x.default),
-  'nav/DoorsDemo#101': () => import('projects/nav/DoorsDemo')
+  'example/DoorsDemo#101': () => import('projects/example/DoorsDemo')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-101--multipurpose' />),
-  'nav/DoorsDemo#301': () => import('projects/nav/DoorsDemo')
+  'example/DoorsDemo#301': () => import('projects/example/DoorsDemo')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
-  'nav/NavDemo': () => import('projects/nav/NavDemo')
+  'example/NavDemo': () => import('projects/example/NavDemo')
     .then(x => x.default),
 };
 

@@ -55,8 +55,8 @@ We know exactly where each NPC is going because (a) we previously set them in mo
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'nav/DoorsDemo#101' },
-     { key: 'component', filepath: 'nav/DoorsDemo#301' },
+     { key: 'component', filepath: 'example/DoorsDemo#101' },
+     { key: 'component', filepath: 'example/DoorsDemo#301' },
    ]"
 ></div>
 
@@ -66,7 +66,7 @@ We know exactly where each NPC is going because (a) we previously set them in mo
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'nav/NavDemo' },
+     { key: 'component', filepath: 'example/NavDemo' },
    ]"
 ></div>
 
