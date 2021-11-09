@@ -34,8 +34,8 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 </aside>
 
 We end with two basic demos:
-you can pan, zoom, drag the lights, and view the underlying polygons in 3D.
-We also provide CodeSandboxes i.e. [light](https://codesandbox.io/s/rogue-markup-light-demo-k66zi?file=/src/example/Light.jsx "@new-tab") and [height](https://codesandbox.io/s/rogue-markup-3d-demo-forked-gyher?file=/src/index.js "@new-tab").
+you can pan, zoom, move the lights, and view the underlying polygons in 3D.
+There are respective CodeSandboxes i.e. [light](https://codesandbox.io/s/rogue-markup-light-demo-k66zi?file=/src/example/Light.jsx "@new-tab") and [height](https://codesandbox.io/s/rogue-markup-3d-demo-forked-gyher?file=/src/index.js "@new-tab").
 
 <div
   class="tabs"
