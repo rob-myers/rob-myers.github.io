@@ -49,27 +49,25 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- ids on roots and select `#{id} > span.anchor`
-- Fix hard refresh scrolling
-- Fix back/forward scrolling
-- Implement front page
-- preserve scroll inside tab pane
 - option to resume from last scroll
-
-- Finish geomorph 101
-- Add missing labels to 302
-
-- can anchor Tabs via icon
+- implement front page
+- add missing labels to 302
+- finish geomorph 101
 - can maximise Tabs into a modal
+- GitHub Comments
+
+- ids on roots and select `#{id} > span.anchor`
+- Fix back/forward scrolling
+- preserve scroll inside tab pane
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
-- Add GitHub Comments
 
 - `PanZoom` supports zoom to point via ref API
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ can anchor Tabs via icon
 - ✅ try callback instead of MutationObserve
 - ✅ Add lighting demo
   > https://github.com/rob-myers/topdown-cli/blob/actors-component/frontend/src/service/geom.service.ts
