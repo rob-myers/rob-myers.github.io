@@ -16,6 +16,10 @@ import { gridBounds, initViewBox } from "./defaults";
 
 const scale = 2;
 
+/**
+ * Used to actually build a geomorph step-by-step.
+ * We actually compute the layout (as opposed to loading JSON).
+ */
 export default function GeomorphDemo() {
   return (
     <div className={rootCss}>
@@ -32,6 +36,7 @@ export default function GeomorphDemo() {
 
 /** @param {{ def: Geomorph.LayoutDef; transform?: string }} _ */
 function Geomorph({ def, transform }) {
+
   const { data: gm } = useQuery(`layout-${def.key}`, () => computeLayout(def));
 
   return gm ? (
