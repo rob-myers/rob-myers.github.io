@@ -6,3 +6,8 @@ export const labelMeta = {
   padX: 4,
   padY: 2,
 };
+
+/** @param {Geomorph.LayoutKey} layoutKey */
+export function geomorphJsonPath(layoutKey) {
+  return `/geomorph/${layoutKey}.json`
+}

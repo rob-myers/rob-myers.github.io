@@ -7,7 +7,7 @@ import { gridBounds, initViewBox } from "./defaults";
 import { Poly, Vect } from "../geom";
 import { fillPolygon } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
-import { labelMeta } from "../geomorph/geomorph.model";
+import { geomorphJsonPath, labelMeta } from "../geomorph/geomorph.model";
 
 /**
  * TODO clean below a bit?
@@ -21,7 +21,7 @@ export default function Css3d(props) {
 
   const { data } = useQuery(`${props.layoutKey}-json`, async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
-    return (fetch(`/geomorph/${props.layoutKey}.json`).then(x => x.json()));
+    return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
   });
 
   /** @param {SVGSVGElement} el */
@@ -42,7 +42,7 @@ export default function Css3d(props) {
         <g ref={(el) => el && setTimeout(() => {
           onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement));
         })}>
-          <image {...data.pngRect} href={`/geomorph/${props.layoutKey}.png`} />
+          <image {...data.pngRect} href={geomorphJsonPath(props.layoutKey)} />
           <ForeignObject gm={data} />
         </g>
       )}

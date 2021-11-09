@@ -4,6 +4,7 @@ import { useQuery } from "react-query";
 import classNames from "classnames";
 
 import { Poly, Vect } from "../geom";
+import { geomorphJsonPath } from "../geomorph/geomorph.model";
 import { geom } from "../service/geom";
 import { gridBounds, initViewBox } from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
@@ -14,7 +15,7 @@ export default function LightDemo(props) {
 
   const { data } = useQuery(`${props.layoutKey}-json`, async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
-    return (fetch(`/geomorph/${props.layoutKey}.json`).then(x => x.json()));
+    return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
   });
 
   const [init] = React.useState(() => ({
@@ -30,7 +31,7 @@ export default function LightDemo(props) {
       className={classNames(rootCss, props.disabled && 'disabled')}
     >
       {data && <>
-        <image {...data.pngRect} className="geomorph" href={`/geomorph/${props.layoutKey}.png`} />
+        <image {...data.pngRect} className="geomorph" href={geomorphJsonPath(props.layoutKey)} />
         <Light init={init.lightA} walls={data.walls} hull={data.hull.poly} />
         <Light init={init.lightB} walls={data.walls} hull={data.hull.poly} />
       </>}

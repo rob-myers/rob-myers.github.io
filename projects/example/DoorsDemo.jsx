@@ -2,6 +2,7 @@ import React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 import { gridBounds, initViewBox } from "../example/defaults";
+import { geomorphJsonPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
@@ -9,7 +10,7 @@ export default function DoorsDemo(props) {
 
   const { data } = useQuery(`${props.layoutKey}-json`, async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
-    return (fetch(`/geomorph/${props.layoutKey}.json`).then(x => x.json()));
+    return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
   });
 
   return (
@@ -23,7 +24,7 @@ export default function DoorsDemo(props) {
         <image
           {...data.pngRect}
           className="geomorph"
-          href={`/geomorph/${props.layoutKey}.png`}
+          href={geomorphJsonPath(props.layoutKey)}
         />
         <ForeignObject json={data} />
       </>}

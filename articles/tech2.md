@@ -49,8 +49,7 @@ If there are no dynamic objects, a canonical approach exists. The navigable area
    ]"
 ></div>
 
-A and B lie in some  triangles i.e. some nodes, so applying [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) we can find a path connecting them.
-
+A and B lie in some triangles i.e. some nodes, so applying [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) we can find a path connecting them.
 
 <!-- 
 Importantly, we are not avoiding obstacles as we encounter them, in the sense of [robotics]((https://en.wikibooks.org/wiki/Robotics/Navigation/Collision_Avoidance#cite_note-1)).
