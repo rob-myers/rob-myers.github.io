@@ -39,8 +39,15 @@ If there are no dynamic objects, a canonical approach exists. The navigable area
 
 > its nodes are _the triangles of the triangulation_; two nodes are connected iff _their respective triangles share an edge._
 
-__TODO__ examples/NavGraph
-
+<div
+  class="tabs"
+  name="nav-graph-demo"
+  height="400"
+  enabled="false"
+  tabs="[
+     { key: 'component', filepath: 'example/NavGraph' },
+   ]"
+></div>
 
 A and B lie in some  triangles i.e. some nodes, so applying [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) we can find a path connecting them.
 
