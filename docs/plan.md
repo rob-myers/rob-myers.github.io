@@ -14,8 +14,8 @@ Each __TODO__ should either:
 - Improve lighting demo ✅
 - Improve 3d demo ✅
   > Tried CSS transform approach but ultimately did not perform better when on a blog page (with various other components)
-- Make Light CodeSandbox 🚧
-- Make 3D CodeSandbox 🚧
+- Make Light CodeSandbox ✅
+- Make 3D CodeSandbox ✅
 
 ### _Constraints_
 
@@ -32,7 +32,7 @@ Each __TODO__ should either:
 
 ### _Technology (Part 2)_ i.e. nav and raycast
 
-- Write text 🚧
+- Write text 🚧 👈
 - NavDemo: animate navigation 🚧
 - Raycasting
   > https://github.com/rob-myers/rob-myers.github.io/blob/dev/model/geom/geom.service.ts
