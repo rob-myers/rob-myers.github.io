@@ -1,6 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
+import { useBeforeunload } from 'react-beforeunload';
 
 import { getTabsId } from 'model/tabs/tabs.model';
 import { ArticleKey, articlesMeta } from 'articles/index';
@@ -17,6 +18,9 @@ export default function Article(props: React.PropsWithChildren<{
   articleKey: ArticleKey;
   children: string;
 }>) {
+
+  React.useEffect(() => () => rememberCurrentArticleScroll(props.articleKey), []);
+  useBeforeunload(() => rememberCurrentArticleScroll(props.articleKey));
 
   const dateText = React.useMemo(() => {
     const d = new Date(props.dateTime);
@@ -436,4 +440,13 @@ function getArticleLinkId(
   children: React.ReactChildren,
 ) {
   return `${articleKey}--link--${childrenToKebabText(children)}`;
+}
+
+function rememberCurrentArticleScroll(articleKey: string) {
+  const { articleKey: currentKey } = useSiteStore.getState();
+  if (currentKey === articleKey) {// Remember scroll position
+    const lookup = JSON.parse(localStorage.getItem('last-scroll') || '{}');
+    lookup[currentKey] = { scrollY: window.scrollY };
+    localStorage.setItem('last-scroll', JSON.stringify(lookup));
+  }
 }
