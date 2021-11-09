@@ -12,9 +12,7 @@ export default function Nav() {
     // Detect currently viewed article
     const onScroll = debounce(() => useSiteStore.api.updateArticleKey(), 5);
     window.addEventListener('scroll', onScroll);
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-    };
+    return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
   return (
@@ -69,12 +67,13 @@ const navCss = css`
   /** https://stackoverflow.com/questions/21003535/anyway-to-prevent-the-blue-highlighting-of-elements-in-chrome-when-clicking-quic  */
   -webkit-tap-highlight-color: transparent;
   
-  transition: left 500ms ease;
+  left: 0;
+  transition: transform 500ms ease;
   &.open {
-    left: 0;
+    transform: translateX(0px);
   }
   &.closed {
-    left: -${sidebarWidth}px;
+    transform: translateX(-${sidebarWidth}px);
   }
 
   > .article-overlay {
