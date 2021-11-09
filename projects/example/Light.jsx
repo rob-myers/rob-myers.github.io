@@ -4,10 +4,10 @@ import { useQuery } from "react-query";
 import classNames from "classnames";
 
 import { Poly, Vect } from "../geom";
-import { geom } from "../service";
+import { geom } from "../service/geom";
 import { gridBounds, initViewBox } from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
-import DraggableNode from "../controls/DraggableNode";
+import DraggableNode from "../ui/DraggableNode";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
 export default function LightDemo(props) {

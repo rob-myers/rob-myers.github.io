@@ -1,7 +1,7 @@
 import { css } from "goober";
 import React from "react";
 import { Vect } from "../geom";
-import { getSvgPos } from "../service";
+import { getSvgPos } from "../service/dom";
 
 /** @param {{ initial: Geom.VectJson; onChange: (position: Geom.Vect) => void; radius?: number }} props */
 export default function DraggableNode(props) {

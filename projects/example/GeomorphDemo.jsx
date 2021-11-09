@@ -4,8 +4,10 @@ import { useQuery } from "react-query";
 import classNames from "classnames";
 
 import { Rect } from "../geom";
-import { geom, loadImage } from "../service";
-import { createLayout, deserializeSvgJson, labelMeta, singlesToPolys } from "../geomorph/geomorph.model";
+import { loadImage } from "../service/dom";
+import { geom } from "../service/geom";
+import { labelMeta } from "../geomorph/geomorph.model";
+import { createLayout, deserializeSvgJson, singlesToPolys } from "../service/geomorph";
 import layoutDefs from "../geomorph/layouts";
 import { renderGeomorph } from "../geomorph/geomorph.render";
 import svgJson from 'public/symbol/svg.json'; // CodeSandbox?

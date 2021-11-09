@@ -9,7 +9,7 @@
 import fs from 'fs';
 import path from 'path';
 import stringify from 'json-stringify-pretty-compact';
-import { parseStarshipSymbol, serializeSymbol } from '../../projects/geomorph/geomorph.model';
+import { parseStarshipSymbol, serializeSymbol } from '../../projects/service/geomorph';
 
 const publicDir = path.resolve(__dirname, '../../public');
 const symbolsDir = path.resolve(publicDir, 'symbol');

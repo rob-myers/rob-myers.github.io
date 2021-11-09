@@ -1,6 +1,7 @@
 import { Vect } from "../geom";
-import { labelMeta, singlesToPolys } from './geomorph.model';
-import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service';
+import { labelMeta } from './geomorph.model';
+import { singlesToPolys } from '../service/geomorph';
+import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service/dom';
 
 /**
  * Render a single geomorph PNG,

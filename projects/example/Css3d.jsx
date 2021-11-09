@@ -1,13 +1,13 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { css } from "goober";
+import classNames from "classnames";
 
 import { gridBounds, initViewBox } from "./defaults";
 import { Poly, Vect } from "../geom";
-import { fillPolygon } from "../service";
+import { fillPolygon } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
-import { labelMeta } from "projects/geomorph/geomorph.model";
-import classNames from "classnames";
+import { labelMeta } from "../geomorph/geomorph.model";
 
 /**
  * TODO clean below a bit?

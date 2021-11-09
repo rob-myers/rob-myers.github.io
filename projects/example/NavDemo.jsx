@@ -4,7 +4,8 @@ import { useQuery } from "react-query";
 
 import { gridBounds, initViewBox } from "./defaults";
 import { Poly, Vect } from "../geom";
-import { getSvgPos, geom, projectSvgEvt } from "../service";
+import { getSvgPos, projectSvgEvt } from "../service/dom";
+import { geom } from "../service/geom";
 import { Pathfinding } from '../pathfinding/Pathfinding';
 import PanZoom from "../panzoom/PanZoom";
 

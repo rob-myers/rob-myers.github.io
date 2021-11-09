@@ -3,7 +3,7 @@
  */
 import '@prefresh/core';
 import { Poly } from '../geom';
-import { geom } from '../service';
+import { geom } from '../service/geom';
 
 const ctx = /** @type {Worker} */ (/** @type {any} */ (self));
 

@@ -15,9 +15,9 @@ import getOpts from 'getopts';
 
 import svgJson from '../../public/symbol/svg.json';
 import layoutDefs from '../../projects/geomorph/layouts';
-import { createLayout, deserializeSvgJson } from '../../projects/geomorph/geomorph.model';
+import { createLayout, deserializeSvgJson } from '../../projects/service/geomorph';
 import { renderGeomorph } from '../../projects/geomorph/geomorph.render';
-import { geom } from '../../projects/service';
+import { geom } from '../../projects/service/geom';
 
 const defaultScale = 2;
 const geomorphId = Number(process.argv[2]);

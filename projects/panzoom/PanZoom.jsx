@@ -2,7 +2,7 @@ import * as React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
 import { Vect } from '../geom';
-import { getSvgPos, getSvgMid, canTouchDevice, projectSvgEvt, isSvgEvent } from '../service';
+import { getSvgPos, getSvgMid, canTouchDevice, projectSvgEvt, isSvgEvent } from '../service/dom';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function PanZoom(props) {
@@ -18,7 +18,7 @@ export default function PanZoom(props) {
       /** @type {null | Vect} */
       panFrom: null,
       zoom: props.initZoom || 1,
-      /** @type {import('../service').SvgPtr[]} */
+      /** @type {import('../service/dom').SvgPtr[]} */
       ptrs: [],
       /** @type {null | number} */
       ptrDiff: null,

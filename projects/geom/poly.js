@@ -4,7 +4,7 @@ import earcut from 'earcut';
 import { Rect } from "./rect";
 import { Vect } from "./vect";
 import { Mat } from './mat';
-import { geom } from '../service';
+import { geom } from '../service/geom';
 
 export class Poly {
 
