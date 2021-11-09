@@ -16,7 +16,7 @@ export default function DoorsDemo(props) {
     <PanZoom
       gridBounds={gridBounds}
       initViewBox={initViewBox}
-      maxZoom={6}
+      maxZoom={8}
       className={rootCss}
     >
       {data && <>
@@ -38,13 +38,13 @@ function ForeignObject({ json }) {
   const onClick = (e) => {
     const div = /** @type {HTMLDivElement} */ (e.target);
     const [width, index] = [div.clientWidth, Number(div.getAttribute('data-index'))];
-    const nextWidth = width <= 5 ? json.doors[index].rect.width : 5; // Leq for borders
+    const nextWidth = width <= 10 ? json.doors[index].rect.width : 10; // Leq for borders
     div.style.width = `${nextWidth}px`;
   };
 
   return (
     <foreignObject {...json.pngRect} xmlns="http://www.w3.org/1999/xhtml">
-      <div onClick={onClick}>
+      <div onPointerUp={onClick}>
         {json.doors.map(({ rect, angle }, i) =>
           <div
             className="door"
