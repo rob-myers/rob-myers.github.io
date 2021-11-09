@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import React from 'react';
 import { styled } from 'goober';
 import { useBeforeunload } from 'react-beforeunload';
 import type { ITerminalOptions } from 'xterm';
@@ -9,9 +9,10 @@ import { XTerm } from 'components/dynamic';
 
 export default function Terminal({ sessionKey, env }: Props) {
   const session = useSession(({ session }) => sessionKey in session ? session[sessionKey] : null);
+
   useBeforeunload(() => useSession.api.persist(sessionKey));
 
-  useEffect(() => {
+  React.useEffect(() => {
     // useSession.api.ensureSession(sessionKey, env);
     useSession.api.createSession(sessionKey, env);
     return () => useSession.api.removeSession(sessionKey);

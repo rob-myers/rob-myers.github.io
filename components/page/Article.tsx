@@ -1,5 +1,4 @@
 import React from 'react';
-import { NextRouter, useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
 
@@ -19,15 +18,13 @@ export default function Article(props: React.PropsWithChildren<{
   children: string;
 }>) {
 
-  const router = useRouter();
-
   const dateText = React.useMemo(() => {
     const d = new Date(props.dateTime);
     return `${d.getDate()}${dayth(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }, [props.dateTime]);
 
   const components = React.useMemo(
-    () => articleComponents(props.articleKey, router),
+    () => articleComponents(props.articleKey),
     [props.articleKey],
   );
 
@@ -275,7 +272,7 @@ const articleCss = css`
 
 `;
 
-const articleComponents = (articleKey: ArticleKey, router: NextRouter) => ({
+const articleComponents = (articleKey: ArticleKey) => ({
 
   a({ node, href, title, children, ...props}: any) {
 

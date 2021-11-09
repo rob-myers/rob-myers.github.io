@@ -42,7 +42,7 @@ import 'components/code/codemirror/custom-theme.css';
 
 const queryClient = new QueryClient;
 
-const PagesRoot: React.FC<RootProps> = ({ Component, pageProps }) => {
+export default function PagesRoot({ Component, pageProps }: RootProps) {
   return <>
     <Head>
       <title>
@@ -61,5 +61,3 @@ interface RootProps extends AppInitialProps {
   Component: NextComponentType<NextPageContext, any, {}>;
   router: Router;
 }
-
-export default PagesRoot

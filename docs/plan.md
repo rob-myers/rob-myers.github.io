@@ -49,7 +49,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- option to resume from last scroll
+- option to resume from last scroll 🚧
 - implement front page
 - add missing labels to 302
 - finish geomorph 101
