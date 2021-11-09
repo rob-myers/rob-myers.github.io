@@ -1,13 +1,16 @@
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
+
 import Markdown from './Markdown';
 import NavMini from './NavMini';
+import Scroller from './Scroller';
 
 export default function Title() {
   return (
     <header className={classNames('title', titleCss)}>
       <NavMini/>
+      <Scroller />
       <Markdown components={titleComponents} children={`
 # Rogue Markup
 

@@ -32,7 +32,6 @@ setup(
 );
 
 import Nav from 'components/page/Nav';
-import Scroller from 'components/page/Scroller';
 import Portals from 'components/page/Portals';
 
 import 'components/globals.css';
@@ -52,7 +51,6 @@ export default function PagesRoot({ Component, pageProps }: RootProps) {
     </Head>
     <QueryClientProvider client={queryClient} >
       <Nav />
-      <Scroller />
       <Component {...pageProps} />
       <Portals />
     </QueryClientProvider>
