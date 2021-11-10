@@ -2,8 +2,11 @@ import React from "react";
 import { css } from "goober";
 import Link from "./Link";
 
+// TODO
+// - hide when not on <Articles>, onclick, no close-anchor-id
+
 export default function Continue() {
-  
+
   const href = React.useMemo(() => {
     if (typeof window === 'undefined') {
       return '';

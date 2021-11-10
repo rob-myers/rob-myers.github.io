@@ -49,12 +49,12 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- option to resume from last scroll 🚧
 - implement front page
 - add missing labels to 302
 - finish geomorph 101
 - can maximise Tabs into a modal
 - GitHub Comments
+- finish off Continue (hide appropriately)
 
 - ids on roots and select `#{id} > span.anchor`
 - Fix back/forward scrolling
@@ -67,6 +67,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ can continue from last scroll on hard refresh
 - ✅ can anchor Tabs via icon
 - ✅ try callback instead of MutationObserve
 - ✅ Add lighting demo
