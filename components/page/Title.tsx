@@ -4,13 +4,13 @@ import { css } from 'goober';
 
 import Markdown from './Markdown';
 import NavMini from './NavMini';
-import Scroller from './Scroller';
+import Continue from './Continue';
 
 export default function Title() {
   return (
     <header className={classNames('title', titleCss)}>
       <NavMini/>
-      <Scroller />
+      <Continue />
       <Markdown components={titleComponents} children={`
 # Rogue Markup
 

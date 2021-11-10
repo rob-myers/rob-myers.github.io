@@ -46,6 +46,8 @@ export default function Link(props: Props) {
         } else {
           Router.replace(hash);
         }
+
+        props.postPush?.();
       }}
     >
       {props.id && <span id={props.id} className="anchor" />}
@@ -68,6 +70,7 @@ type Props = React.PropsWithChildren<{
    * If false (forward) goto start of next page, then smooth scroll down.
    */
   backward?: boolean;
+  postPush?: () => void;
 }>
 
 async function navigateNatively(props: Props) {
