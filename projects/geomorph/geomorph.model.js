@@ -11,3 +11,8 @@ export const labelMeta = {
 export function geomorphJsonPath(layoutKey) {
   return `/geomorph/${layoutKey}.json`
 }
+
+/** @param {Geomorph.LayoutKey} layoutKey */
+export function geomorphPngPath(layoutKey) {
+  return `/geomorph/${layoutKey}.png`
+}

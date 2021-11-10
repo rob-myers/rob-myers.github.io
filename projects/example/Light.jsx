@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import classNames from "classnames";
 
 import { Poly, Vect } from "../geom";
-import { geomorphJsonPath } from "../geomorph/geomorph.model";
+import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 import { geom } from "../service/geom";
 import { gridBounds, initViewBox } from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
@@ -31,7 +31,7 @@ export default function LightDemo(props) {
       className={classNames(rootCss, props.disabled && 'disabled')}
     >
       {data && <>
-        <image {...data.pngRect} className="geomorph" href={geomorphJsonPath(props.layoutKey)} />
+        <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
         <Light init={init.lightA} walls={data.walls} hull={data.hull.poly} />
         <Light init={init.lightB} walls={data.walls} hull={data.hull.poly} />
       </>}

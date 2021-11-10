@@ -7,7 +7,7 @@ import { gridBounds, initViewBox } from "./defaults";
 import { Poly, Vect } from "../geom";
 import { fillPolygon } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
-import { geomorphJsonPath, labelMeta } from "../geomorph/geomorph.model";
+import { geomorphJsonPath, geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
 
 /**
  * TODO clean below a bit?
@@ -42,7 +42,7 @@ export default function Css3d(props) {
         <g ref={(el) => el && setTimeout(() => {
           onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement));
         })}>
-          <image {...data.pngRect} href={geomorphJsonPath(props.layoutKey)} />
+          <image {...data.pngRect} href={geomorphPngPath(props.layoutKey)} />
           <ForeignObject gm={data} />
         </g>
       )}

@@ -7,6 +7,7 @@ import { Poly, Vect } from "../geom";
 import { getSvgPos, projectSvgEvt } from "../service/dom";
 import { geom } from "../service/geom";
 import { Pathfinding } from '../pathfinding/Pathfinding';
+import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 
 /**
@@ -24,7 +25,7 @@ export default function NavDemo() {
 
   const { data } = useQuery('navpoly-demo', async () => {
     /** @type {Geomorph.GeomorphJson} */
-    const json = await fetch('/geomorph/g-301--bridge.json').then(x => x.json());
+    const json = await fetch(geomorphJsonPath('g-301--bridge')).then(x => x.json());
     const navPoly = json.navPoly.map(x => Poly.from(x));
     const decomp = geom.polysToTriangulation(navPoly);
     const zone = Pathfinding.createZone(decomp);
@@ -69,7 +70,7 @@ export default function NavDemo() {
           <image
             {...data.pngRect}
             className="geomorph"
-            href="/geomorph/g-301--bridge.debug.png"
+            href={geomorphPngPath('g-301--bridge')}
           />
 
           {data.navPoly.map(x => (
