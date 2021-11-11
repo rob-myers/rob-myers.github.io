@@ -56,6 +56,7 @@ Each __TODO__ should either:
 - GitHub Comments
 - finish off Continue (hide appropriately)
 
+- polygons e.g. light should have truncated precision
 - smooth back/forward scrolling
 - preserve scroll inside tab pane
 - Tabs don't load until scroll into view

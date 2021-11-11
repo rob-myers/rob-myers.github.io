@@ -10,9 +10,9 @@ import { labelMeta } from "../geomorph/geomorph.model";
 import { createLayout, deserializeSvgJson, singlesToPolys } from "../service/geomorph";
 import layoutDefs from "../geomorph/layouts";
 import { renderGeomorph } from "../geomorph/geomorph.render";
+import * as defaults from "./defaults";
 import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
 import PanZoom from '../panzoom/PanZoom';
-import { gridBounds, initViewBox } from "./defaults";
 
 const scale = 2;
 
@@ -23,7 +23,7 @@ const scale = 2;
 export default function GeomorphDemo() {
   return (
     <div className={rootCss}>
-      <PanZoom initViewBox={initViewBox} gridBounds={gridBounds} maxZoom={6}>
+      <PanZoom initViewBox={defaults.initViewBox} gridBounds={defaults.gridBounds} maxZoom={6}>
         <Geomorph def={layoutDefs["g-303--passenger-deck"]} />
         {/* <Geomorph def={layoutDefs["g-101--multipurpose"]} /> */}
         {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}

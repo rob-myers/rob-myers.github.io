@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 
-import { gridBounds, initViewBox } from "./defaults";
+import * as defaults from "./defaults";
 import { Poly, Vect } from "../geom";
 import { getSvgPos, projectSvgEvt } from "../service/dom";
 import { geom } from "../service/geom";
@@ -48,7 +48,7 @@ export default function NavDemo() {
   }, [dots]);
 
   return (
-    <PanZoom gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}>
+    <PanZoom gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}>
       <g
         className={rootCss}
         ref={(el) => {

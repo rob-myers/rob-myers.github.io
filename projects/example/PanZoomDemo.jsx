@@ -2,7 +2,7 @@ import * as React from 'react';
 import { css } from 'goober';
 import PanZoom from '../panzoom/PanZoom';
 import { Rect } from '../geom';
-import { gridBounds, initViewBox } from './defaults';
+import * as defaults from './defaults';
 
 export default function PanZoomDemo() {
   return (
@@ -12,7 +12,7 @@ export default function PanZoomDemo() {
       </p>
       <PanZoom
         initViewBox={biggerInitViewBox}
-        gridBounds={gridBounds}
+        gridBounds={defaults.gridBounds}
         maxZoom={5}
       >
         <image
@@ -28,7 +28,7 @@ export default function PanZoomDemo() {
 }
 
 const pngRect = new Rect(-6, -22, 1212, 628);
-const biggerInitViewBox = initViewBox.clone().outset(50);
+const biggerInitViewBox = defaults.initViewBox.clone().outset(50);
 
 const rootCss = css`
   display: flex;

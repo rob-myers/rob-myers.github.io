@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import { css } from "goober";
 import classNames from "classnames";
 
-import { gridBounds, initViewBox } from "./defaults";
+import * as defaults from "./defaults";
 import { Poly, Vect } from "../geom";
 import { fillPolygon } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
@@ -27,7 +27,7 @@ export default function Css3d(props) {
   /** @param {SVGSVGElement} el */
   const onUpdate = (el) => {
     const { x, width, y, height } = el.viewBox.baseVal;
-    const zoom = initViewBox.height / height;
+    const zoom = defaults.initViewBox.height / height;
     const rootDiv = root3dDiv.current || (root3dDiv.current = /** @type {*} */ (el.querySelector('.root-3d-div')));
     rootDiv.style.perspective = `${100 + (2000 / zoom)}px`;
     rootDiv.style.perspectiveOrigin = `${( x + 0.5 * width )}px ${( y + 0.5 * height)}px`;
@@ -35,7 +35,7 @@ export default function Css3d(props) {
 
   return (
     <PanZoom
-      gridBounds={gridBounds} initViewBox={initViewBox} maxZoom={6}
+      gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}
       onUpdate={onUpdate}
     >
       {data && (

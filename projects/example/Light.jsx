@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { Poly, Vect } from "../geom";
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 import { geom } from "../service/geom";
-import { gridBounds, initViewBox } from "./defaults";
+import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
 
@@ -25,8 +25,8 @@ export default function LightDemo(props) {
 
   return (
     <PanZoom
-      gridBounds={gridBounds}
-      initViewBox={initViewBox}
+      gridBounds={defaults.gridBounds}
+      initViewBox={defaults.initViewBox}
       maxZoom={6}
       className={classNames(rootCss, props.disabled && 'disabled')}
     >
