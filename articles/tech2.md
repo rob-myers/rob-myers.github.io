@@ -42,7 +42,7 @@ If there are no dynamic objects, a canonical approach exists. The navigable area
 <div
   class="tabs"
   name="nav-graph-demo"
-  height="400"
+  height="300"
   enabled="false"
   tabs="[
      { key: 'component', filepath: 'example/NavGraph#301' },
@@ -50,7 +50,8 @@ If there are no dynamic objects, a canonical approach exists. The navigable area
    ]"
 ></div>
 
-A and B lie in some triangles i.e. some nodes, so applying [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) we can find a path connecting them.
+In other words, navigable space is partitioned into triangles then collapsed to points; continuity is replaced by adjacency. If edges are assigned the distance between their respective triangle's centroids, the path's length may be defined as the sum of the edge's. This can be a bad approximation e.g. zig zags between centroids can make a short path long. This is usually "solved" by refining the original polygons and/or their triangulation.
+
 
 <!-- 
 Importantly, we are not avoiding obstacles as we encounter them, in the sense of [robotics]((https://en.wikibooks.org/wiki/Robotics/Navigation/Collision_Avoidance#cite_note-1)).
