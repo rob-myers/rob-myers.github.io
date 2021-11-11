@@ -115,7 +115,7 @@ export default function PanZoom(props) {
     <svg
       ref={state.rootRef}
       className={state.rootCss}
-      preserveAspectRatio="xMinYMin"
+      preserveAspectRatio="xMinYMin slice"
       viewBox={`${state.viewBox}`}
     >
       <g className={classNames("content", props.className)}>
