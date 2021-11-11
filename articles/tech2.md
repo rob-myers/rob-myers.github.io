@@ -50,12 +50,33 @@ If there are no dynamic objects, a canonical approach exists. The navigable area
    ]"
 ></div>
 
-In other words, navigable space is partitioned into triangles then collapsed to points; continuity is replaced by adjacency. If edges are assigned the distance between their respective triangle's centroids, the path's length may be defined as the sum of the edge's. This can be a bad approximation e.g. zig zags between centroids can make a short path long. This is usually "solved" by refining the original polygons and/or their triangulation.
+In other words: navigable space is partitioned into triangles then collapsed to points, node connectivity is determined by triangle adjacency. If edges are assigned the distance between their respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This is usually "solved" by refining the original polygons and their triangulation.
 
+But even after this refinement process, realistic NPCs would not follow these centroid-to-centroid paths. Given A and B we have two respective triangles (possibly indistinct), so two nodes, so can  apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights. Finally, the resulting path is made realistic via the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html) i.e. pulled tight along the original navigable polygon's extrema.
+
+__TODO__ string-pulling demo i.e. can choose destination via click
+
+<div
+  class="tabs"
+  name="nav-demo"
+  height="400"
+  enabled="false"
+  tabs="[
+     { key: 'component', filepath: 'example/NavStringPull' },
+   ]"
+></div>
 
 <!-- 
 Importantly, we are not avoiding obstacles as we encounter them, in the sense of [robotics]((https://en.wikibooks.org/wiki/Robotics/Navigation/Collision_Avoidance#cite_note-1)).
 We know exactly where each NPC is going because (a) we previously set them in motion, (b) we do not rely on unpredictable force-based simulations. Having complete information does not make the problem any less important: Turing's [original paper](https://en.wikipedia.org/wiki/Computing_Machinery_and_Intelligence "Computing Machinery and Intelligence") was about the _appearance_ of intelligence, not solving real-world sensory robotics. -->
+
+### Navigation (Dynamic)
+
+
+### Raycasting
+
+...
+
 
 <div
   class="tabs"
@@ -67,17 +88,3 @@ We know exactly where each NPC is going because (a) we previously set them in mo
      { key: 'component', filepath: 'example/DoorsDemo#301' },
    ]"
 ></div>
-
-<div
-  class="tabs"
-  name="nav-demo"
-  height="400"
-  enabled="false"
-  tabs="[
-     { key: 'component', filepath: 'example/NavDemo' },
-   ]"
-></div>
-
-### Raycasting
-
-...

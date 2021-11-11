@@ -5,8 +5,8 @@ const code = {
     import('!!raw-loader!projects/panzoom/PanZoom.jsx'),
   'example/PanZoomDemo.jsx': () =>
     import('!!raw-loader!projects/example/PanZoomDemo.jsx'),
-  'example/NavDemo.jsx': () =>
-    import('!!raw-loader!projects/example/NavDemo.jsx'),
+  'example/NavStringPull.jsx': () =>
+    import('!!raw-loader!projects/example/NavStringPull.jsx'),
   'example/jsx-to-js.jsx': () =>
     import('!!raw-loader!projects/example/jsx-to-js.jsx'),
   'geom/rect.js': () =>
@@ -28,7 +28,7 @@ const component = {
     .then(x => (props: any) => <x.default {...props} layoutKey='g-101--multipurpose' />),
   'example/DoorsDemo#301': () => import('projects/example/DoorsDemo')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
-  'example/NavDemo': () => import('projects/example/NavDemo')
+  'example/NavStringPull': () => import('projects/example/NavStringPull')
     .then(x => x.default),
   'example/NavGraph#301': () => import('projects/example/NavGraph')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),

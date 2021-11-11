@@ -15,7 +15,7 @@ import PanZoom from "../panzoom/PanZoom";
  * navpaths, and enable/disable navnodes
  */
 
-export default function NavDemo() {
+export default function NavStringPull() {
 
   const [dots, setDots] = useState(/** @type {Geom.VectJson[]} */ ([]));
   const [path, setPath] = useState(/** @type {Geom.Vect[]} */ ([]));
