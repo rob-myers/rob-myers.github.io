@@ -50,9 +50,10 @@ If there are no dynamic objects, a canonical approach exists. The navigable area
    ]"
 ></div>
 
-In other words: navigable space is partitioned into triangles then collapsed to points, node connectivity is determined by triangle adjacency. If edges are assigned the distance between their respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This is usually "solved" by refining the original polygons and their triangulation.
+In other words, navigable space is partitioned into triangles then collapsed to points. Node connectivity is determined by triangle adjacency. If edges are weighted by the distance between the respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This is usually "mostly solved" by refining the original polygons and their triangulation.
 
-But even after this refinement process, realistic NPCs would not follow these centroid-to-centroid paths. Given A and B we have two respective triangles (possibly indistinct), so two nodes, so can  apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights. Finally, the resulting path is made realistic via the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html) i.e. pulled tight along the original navigable polygon's extrema.
+Given A and B we have two respective triangles (possibly indistinct), so two nodes, so can  apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights. The result is insufficient because realistic NPCs would not follow centroid-to-centroid paths.
+For this reason, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html). That is, the zig-zag path  is pulled tight along the original navigable polygon's extrema.
 
 __TODO__ string-pulling demo i.e. can choose destination via click
 
