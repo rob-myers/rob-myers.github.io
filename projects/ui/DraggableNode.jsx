@@ -11,7 +11,12 @@ export default function DraggableNode(props) {
       position: Vect.from(props.initial),
       target: Vect.from(props.initial),
       dragging: false,
-      /** @param {React.PointerEvent} e */
+      /** @type {SVGLineElement} */
+      lineEl: ({}),
+      /** @type {SVGCircleElement} */
+      circleEl: ({}),
+
+      /** @param {PointerEvent} e */
       startDrag: (e) => {
         e.stopPropagation();
         state.dragging = true;
@@ -29,6 +34,7 @@ export default function DraggableNode(props) {
       },
       /** @param {PointerEvent}  e */
       onMove: (e) => {
+        e.stopPropagation();
         if (state.dragging) {
           const { x, y } = getSvgPos({
             clientX: e.clientX,
@@ -65,8 +71,6 @@ export default function DraggableNode(props) {
       },
       /** @param {KeyboardEvent} e */
       endDragOnEscape: (e) => void (e.key === 'Escape' && state.endDrag()),
-      /** @type {SVGLineElement} */
-      lineEl: ({}),
     };
   });
 
@@ -77,15 +81,19 @@ export default function DraggableNode(props) {
       <line
         ref={(el) => el && (state.lineEl = el)}
         className="drag-indicator"
-      />
+        />
       <circle
+        ref={(el) => {
+          if (el) {
+            state.circleEl = el;
+            el.addEventListener('pointerdown', state.startDrag);
+            el.addEventListener('pointerup', state.applyDrag);
+          }
+        }}
         className="node"
         cx={state.position.x}
         cy={state.position.y}
         r={radius}
-        // TODO does PointerEvents polyfill work?
-        onPointerDown={state.startDrag}
-        onPointerUp={state.applyDrag}
       />
     </g>
   );
