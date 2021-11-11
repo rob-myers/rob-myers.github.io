@@ -46,6 +46,7 @@ If there are no dynamic objects, a canonical approach exists. The navigable area
   enabled="false"
   tabs="[
      { key: 'component', filepath: 'example/NavGraph#301' },
+     { key: 'component', filepath: 'example/NavGraph#302' },
    ]"
 ></div>
 
