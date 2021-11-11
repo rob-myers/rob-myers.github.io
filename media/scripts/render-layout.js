@@ -19,7 +19,6 @@ import { createLayout, deserializeSvgJson } from '../../projects/service/geomorp
 import { renderGeomorph } from '../../projects/geomorph/geomorph.render';
 import { geom } from '../../projects/service/geom';
 
-const defaultScale = 2;
 const geomorphId = Number(process.argv[2]);
 const layoutDef = Object.values(layoutDefs).find(x => x.id === geomorphId);
 
@@ -29,8 +28,8 @@ if (!layoutDef) {
 }
 
 const opts = getOpts(process.argv);
-const debug = opts.debug;
-const scale = opts.scale;
+const [debug, scale] = [opts.debug, opts.scale];
+const defaultScale = 2;
 
 const publicDir = path.resolve(__dirname, '../../public');
 const outputDir = path.resolve(publicDir, 'geomorph');

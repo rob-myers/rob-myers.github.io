@@ -32,7 +32,7 @@ declare namespace Geom {
   }
 
   export interface Triangulation {
-    vs: import('./vect').Vect[]; 
+    vs: Vect[]; 
     tris: [number, number, number][];
   }
 
