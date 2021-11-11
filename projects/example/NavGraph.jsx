@@ -4,7 +4,7 @@ import { css } from "goober";
 
 import * as defaults from './defaults';
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
-import { Poly } from "../geom";
+import { Poly, Rect } from "../geom";
 import { geom } from "../service/geom";
 import PanZoom from "../panzoom/PanZoom";
 import { Pathfinding } from "../pathfinding/Pathfinding";
@@ -30,7 +30,7 @@ export default function NavGraphDemo(props) {
   return data ? (
     <PanZoom
       gridBounds={defaults.gridBounds}
-      initViewBox={defaults.initViewBox}
+      initViewBox={initViewBox}
       maxZoom={6}
       className={rootCss}
     >
@@ -69,3 +69,4 @@ const rootCss = css`
 `;
 
 const zoneKey = 'NavGraphDemoZone';
+const initViewBox = new Rect(0, 0, 600, 600);
