@@ -30,8 +30,8 @@ const component = {
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
   'example/NavDemo': () => import('projects/example/NavDemo')
     .then(x => x.default),
-  'example/NavGraph': () => import('projects/example/NavGraph')
-    .then(x => x.default),
+  'example/NavGraph#301': () => import('projects/example/NavGraph')
+    .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
 };
 
 export async function getCode(key: CodeFilepathKey) {

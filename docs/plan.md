@@ -56,8 +56,7 @@ Each __TODO__ should either:
 - GitHub Comments
 - finish off Continue (hide appropriately)
 
-- ids on roots and select `#{id} > span.anchor`
-- Fix back/forward scrolling
+- smooth back/forward scrolling
 - preserve scroll inside tab pane
 - Tabs don't load until scroll into view
 - Tabs disable on scroll out of view
