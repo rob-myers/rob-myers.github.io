@@ -40,10 +40,8 @@ The navigable area is represented by polygons (possibly with holes), where A and
 
 > its nodes are _the triangles of the triangulation_; two nodes are connected iff _their respective triangles share an edge._
 
-Take a look at the black triangles with grey borders below.
+Take a look at the triangles with grey borders below.
 Collectively they induce the red undirected graph.
-
-
 
 <div
   class="tabs"
@@ -57,12 +55,15 @@ Collectively they induce the red undirected graph.
 ></div>
 
 
-So navigable space has been partitioned into triangles and collapsed to points (nodes). Node connectivity is determined by triangle adjacency. If edges are weighted by the distance between the respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This is usually "solved" via a pre-processing step i.e. refine the original polygons and their triangulation.
+In summary, navigable space has been partitioned into triangles and collapsed to points (nodes). Node connectivity is determined by triangle adjacency.
+Next, if edges are weighted by the distance between the respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This can be "solved" via a pre-processing step i.e. refine the navigable polygons and their triangulation.
 
 So, how do we find a path from A to B?
 
-> Given A and B we have two respective triangles (possibly indistinct), so two nodes, so may apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights. The result is insufficient because realistic NPCs would not follow centroid-to-centroid paths.
-> For this reason, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html). That is, the zig-zag path  is pulled tight along the original navigable polygons' extremal points.
+> Given A and B we have two triangles (possibly indistinct), so two nodes, so may apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights.
+> This provides a solution i.e. a path.
+> However it is insufficient because realistic NPCs would not follow centroid-to-centroid paths.
+> So, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html): the zig-zag path is pulled tight along the navigable polygons' extremal points.
 
 
 __TODO__ string-pulling demo i.e. can choose destination via click

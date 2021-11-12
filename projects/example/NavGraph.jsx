@@ -39,12 +39,24 @@ export default function NavGraphDemo(props) {
       {zone.groups.map(nodes =>
         nodes.map(({ id, centroid, neighbours }) => <g key={id}>
           {neighbours.map(id => (
-            <line className="edge" x1={centroid.x} y1={centroid.y}
-            x2={nodes[id].centroid.x} y2={nodes[id].centroid.y}
+            <line
+              className="edge"
+              x1={centroid.x}
+              y1={centroid.y}
+              x2={nodes[id].centroid.x}
+              y2={nodes[id].centroid.y}
             />
           ))}
         </g>)
       )}
+
+      {zone.groups.map(nodes =>
+        nodes.map(({ vertexIds }) =>
+          <polygon
+            className="navtri"
+            points={`${vertexIds.map(id => zone.vertices[id])}`}
+          />
+      ))}
 
       {zone.groups.map(nodes =>
         nodes.map(({ id, centroid }) =>
@@ -61,11 +73,20 @@ const rootCss = css`
   }
   circle.node {
     fill: red;
+    pointer-events: none;
   }
   line.edge {
     stroke: #900;
     stroke-width: 3;
+    pointer-events: none;
   }
+
+  polygon.navtri {
+    fill: transparent;
+    &:hover {
+      fill: rgba(200, 200, 200, 0.2);
+    }
+  }  
 `;
 
 const zoneKey = 'NavGraphDemoZone';
