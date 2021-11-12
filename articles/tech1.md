@@ -1,6 +1,9 @@
 ## Tech (js)
 
-The early 90s brought three pillars: HTML, CSS and JavaScript (JS).
+The early 90s brought three pillars:
+- HTML
+- CSS
+- JavaScript (JS).
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
 Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity.
 
@@ -13,8 +16,8 @@ It amounts to parsed HTML decorated with matching CSS and bound JS, together wit
 </aside>
 
 Although HTML, CSS and JS are separate standards, 
-it is now common to generate the initial HTML using JS (Server-Side Rendering),
-and the initial CSS via JavaScript tagged template literals (CSS-in-JS).
+it is now common to generate the HTML using JS (Server-Side Rendering),
+and also the CSS using JS (CSS-in-JS).
 In particular, JavaScript has become the central web technology.
 
 
@@ -35,7 +38,7 @@ They are just JavaScript functions with constraints on their parameters and retu
 
 React developers use a grammatical extension of JavaScript called JSX.
 It freely combines JS with XML, so JavaScript values can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. Inductively closing these capabilities leads naturally to JSX, making this grammar particularly suitable for building dynamic DOM trees.
-Let's consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
+Consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
 
 <div
   class="tabs"
