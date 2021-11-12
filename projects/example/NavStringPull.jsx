@@ -14,9 +14,12 @@ export default function NavStringPull() {
 
   // const [dots, setDots] = useState(/** @type {Geom.VectJson[]} */ ([]));
   // const [path, setPath] = useState(/** @type {Geom.Vect[]} */ ([]));
+  const [state, setState] = React.useState(() => ({
+    bot: new Vect(300, 300),
+    target: new Vect(300, 300),
+  }));
+  
   const pathfinding = React.useMemo(() => new Pathfinding, []);
-  // const lastDownAt = useRef(0);
-
   const { data } = useQuery('navpoly-demo', async () => {
     /** @type {Geomorph.GeomorphJson} */
     const json = await fetch(geomorphJsonPath('g-301--bridge')).then(x => x.json());
@@ -47,15 +50,10 @@ export default function NavStringPull() {
         className={rootCss}
         ref={(el) => {
           if (el) {// Use native events so polyfill works
-            // el.addEventListener('pointerdown', () => {
-            //   lastDownAt.current = Date.now();
-            // });
-            // el.addEventListener('pointerup', (e) => {
-            //   if (Date.now() - lastDownAt.current < 200) {
-            //     const point = getSvgPos(projectSvgEvt(e));
-            //     setDots(dots.slice(0, 1).concat(point));
-            //   }
-            // });
+            el.addEventListener('pointerup', (e) => {
+              state.target.copy(Vect.from(getSvgPos(projectSvgEvt(e))));
+              setState({ ...state });
+            });
           }
         }}
       >
@@ -67,7 +65,7 @@ export default function NavStringPull() {
             href={geomorphPngPath('g-301--bridge')}
           />
 
-          {data.navPoly.map(x => (
+          {/* {data.navPoly.map(x => (
             <path
               className="navpoly"
               d={x.svgPath}
@@ -79,7 +77,7 @@ export default function NavStringPull() {
               //   }
               // }}
             />
-          ))}
+          ))} */}
 
           {data.zone.groups.map(nodes =>
             nodes.map(({ centroid, vertexIds}) =>
@@ -93,6 +91,15 @@ export default function NavStringPull() {
         </>}
 
         {/* <polyline className="navpath" points={`${path}`}/> */}
+
+        <g className="target" style={{ transform: `translate(${state.target.x}px, ${state.target.y}px)` }}>
+          <circle r={8}/>
+        </g>
+
+        <g className="bot" style={{ transform: `translate(${state.bot.x}px, ${state.bot.y}px)` }}>
+          <circle r={8}/>
+        </g>
+
 
         {/* <g className="dots">
           {dots.map((p, i) =>
@@ -115,7 +122,7 @@ const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
 
-  > path.navpoly {
+  /* > path.navpoly {
     fill: rgba(0, 0, 0, 0.01);
     stroke-width: 2;
   }
@@ -132,10 +139,18 @@ const rootCss = css`
     stroke: #00f;
     stroke-width: 4;
     stroke-dasharray: 20 10;
+  } */
+
+  .bot > circle {
+    fill: red;
+    cursor: pointer;
+  }
+  .target > circle {
+    fill: green;
   }
 
   polygon.navtri {
-    fill: rgba(0, 0, 0, 0);
+    fill: transparent;
     &:hover {
       fill: rgba(80, 0, 0, 0.2);
     }
