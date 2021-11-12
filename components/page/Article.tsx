@@ -76,13 +76,13 @@ const articleCss = css`
 
   aside {
     margin: 24px 0;
-    padding: 20px 40px;
+    padding: 20px 32px;
     border-radius: 8px;
-    background: rgba(230, 230, 255, 1);
+    background: rgba(230, 230, 230, 1);
     color: #225;
     font-size: 1rem;
     p {
-      margin: 16px 0 20px;
+      margin: 12px 0;
     }
 
     @media(max-width: 600px) {

@@ -137,7 +137,7 @@ const rootCss = css`
   polygon.navtri {
     fill: rgba(0, 0, 0, 0);
     &:hover {
-      fill: rgba(0, 0, 0, 0.2);
+      fill: rgba(80, 0, 0, 0.2);
     }
   }
 `;

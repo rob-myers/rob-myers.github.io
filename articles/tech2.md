@@ -55,8 +55,15 @@ Collectively they induce the red undirected graph.
 ></div>
 
 
-In summary, navigable space has been partitioned into triangles and collapsed to points (nodes). Node connectivity is determined by triangle adjacency.
-Next, if edges are weighted by the distance between the respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This can be "solved" via a pre-processing step i.e. refine the navigable polygons and their triangulation.
+Technically an undirected graph is just a symmetric binary relation.
+We have made it concrete by depicting each node as the centroid of its respective triangle.
+This provides a weight for each edge i.e. the distance between the centroids, so a path length may be defined as the sum of its edge weights.
+
+<aside>
+
+This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. In practice, this issue is "solved" via pre-processing i.e. refining the navigable polygons.
+
+</aside>
 
 So, how do we find a path from A to B?
 
