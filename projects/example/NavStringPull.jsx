@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo, useRef } from "react";
+import React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
 
@@ -10,18 +10,12 @@ import { Pathfinding } from '../pathfinding/Pathfinding';
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 
-/**
- * TODO find an interface permitting possibly many
- * navpaths, and enable/disable navnodes
- */
-
 export default function NavStringPull() {
 
-  const [dots, setDots] = useState(/** @type {Geom.VectJson[]} */ ([]));
-  const [path, setPath] = useState(/** @type {Geom.Vect[]} */ ([]));
-  const pathfinding = useMemo(() => new Pathfinding, []);
-  const zoneKey = 'myZone';
-  const lastDownAt = useRef(0);
+  // const [dots, setDots] = useState(/** @type {Geom.VectJson[]} */ ([]));
+  // const [path, setPath] = useState(/** @type {Geom.Vect[]} */ ([]));
+  const pathfinding = React.useMemo(() => new Pathfinding, []);
+  // const lastDownAt = useRef(0);
 
   const { data } = useQuery('navpoly-demo', async () => {
     /** @type {Geomorph.GeomorphJson} */
@@ -33,19 +27,19 @@ export default function NavStringPull() {
     return { pngRect: json.pngRect, navPoly, zone };
   });
 
-  useEffect(() => {
-    if (dots.length === 2) {
-      const groupId = pathfinding.getGroup(zoneKey, dots[0]);
-      if (groupId !== null) {
-        setPath(
-          [dots[0]].concat(pathfinding.findPath(dots[0], dots[1], zoneKey, groupId) || [])
-            .map(Vect.from)
-        );
-      }
-    } else {
-      setPath([]);
-    }
-  }, [dots]);
+  // useEffect(() => {
+  //   if (dots.length === 2) {
+  //     const groupId = pathfinding.getGroup(zoneKey, dots[0]);
+  //     if (groupId !== null) {
+  //       setPath(
+  //         [dots[0]].concat(pathfinding.findPath(dots[0], dots[1], zoneKey, groupId) || [])
+  //           .map(Vect.from)
+  //       );
+  //     }
+  //   } else {
+  //     setPath([]);
+  //   }
+  // }, [dots]);
 
   return (
     <PanZoom gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}>
@@ -53,15 +47,15 @@ export default function NavStringPull() {
         className={rootCss}
         ref={(el) => {
           if (el) {// Use native events so polyfill works
-            el.addEventListener('pointerdown', () => {
-              lastDownAt.current = Date.now();
-            });
-            el.addEventListener('pointerup', (e) => {
-              if (Date.now() - lastDownAt.current < 200) {
-                const point = getSvgPos(projectSvgEvt(e));
-                setDots(dots.slice(0, 1).concat(point));
-              }
-            });
+            // el.addEventListener('pointerdown', () => {
+            //   lastDownAt.current = Date.now();
+            // });
+            // el.addEventListener('pointerup', (e) => {
+            //   if (Date.now() - lastDownAt.current < 200) {
+            //     const point = getSvgPos(projectSvgEvt(e));
+            //     setDots(dots.slice(0, 1).concat(point));
+            //   }
+            // });
           }
         }}
       >
@@ -98,9 +92,9 @@ export default function NavStringPull() {
 
         </>}
 
-        <polyline className="navpath" points={`${path}`}/>
+        {/* <polyline className="navpath" points={`${path}`}/> */}
 
-        <g className="dots">
+        {/* <g className="dots">
           {dots.map((p, i) =>
             <circle
               key={i} cx={p.x} cy={p.y} r={8}
@@ -110,7 +104,7 @@ export default function NavStringPull() {
               }}
             />
           )}
-        </g>
+        </g> */}
       </g>
 
     </PanZoom>
@@ -147,3 +141,5 @@ const rootCss = css`
     }
   }
 `;
+
+const zoneKey = 'NavStringPullZone';

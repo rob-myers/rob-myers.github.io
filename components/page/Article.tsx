@@ -78,7 +78,8 @@ const articleCss = css`
     margin: 24px 0;
     padding: 20px 40px;
     border-radius: 8px;
-    background: #ddd;
+    background: rgba(230, 230, 255, 1);
+    color: #225;
     font-size: 1rem;
     @media(max-width: 600px) {
       margin: 8px 0;
@@ -129,7 +130,7 @@ const articleCss = css`
   figure.tabs {
     border: 10px solid #333;
     border-radius: 8px;
-    margin: 64px 0;
+    margin: 48px 0;
     @media(max-width: 600px) {
       margin: 32px 0;
     }

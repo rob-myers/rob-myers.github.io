@@ -33,13 +33,17 @@ The rest of this article explains our approach to Game AI and provides detail co
 
 To move an NPC from A to B, we need a respective path.
 This might be a straight line e.g. when an item is directly within grasp.
-But usually objects must be avoided: static ones like walls and items, dynamic ones like other NPCs.
+But usually objects must be avoided: static ones like walls, dynamic ones like other NPCs.
 
-If there are no dynamic objects, a canonical approach exists. The navigable area is represented by polygons (possibly with holes), where A and B lie in their interior. These polygons can be triangulated, inducing an undirected graph:
+If there are no dynamic objects, a canonical approach exists.
+The navigable area is represented by polygons (possibly with holes), where A and B lie in their interior. These polygons can be triangulated, inducing an undirected graph:
 
 > its nodes are _the triangles of the triangulation_; two nodes are connected iff _their respective triangles share an edge._
 
-Check out the black triangles with grey borders below. The associated undirected graph has red nodes and red edges.
+Take a look at the black triangles with grey borders below.
+Collectively they induce the red undirected graph.
+
+
 
 <div
   class="tabs"
@@ -53,10 +57,13 @@ Check out the black triangles with grey borders below. The associated undirected
 ></div>
 
 
-Then navigable space is partitioned into triangles and collapsed to points. Node connectivity is determined by triangle adjacency. If edges are weighted by the distance between the respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This is usually "solved" by refining the original polygons and their triangulation.
+So navigable space has been partitioned into triangles and collapsed to points (nodes). Node connectivity is determined by triangle adjacency. If edges are weighted by the distance between the respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This is usually "solved" via a pre-processing step i.e. refine the original polygons and their triangulation.
 
-Given A and B we have two respective triangles (possibly indistinct), so two nodes, so can  apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights. The result is insufficient because realistic NPCs would not follow centroid-to-centroid paths.
-For this reason, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html). That is, the zig-zag path  is pulled tight along the original navigable polygon's extremal points.
+So, how do we find a path from A to B?
+
+> Given A and B we have two respective triangles (possibly indistinct), so two nodes, so may apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights. The result is insufficient because realistic NPCs would not follow centroid-to-centroid paths.
+> For this reason, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html). That is, the zig-zag path  is pulled tight along the original navigable polygons' extremal points.
+
 
 __TODO__ string-pulling demo i.e. can choose destination via click
 
@@ -76,10 +83,11 @@ We know exactly where each NPC is going because (a) we previously set them in mo
 
 ### Navigation (Dynamic)
 
+__TODO__ mention other approaches; consider case of two agents, which stop and start in some manner
 
 ### Raycasting
 
-...
+__TODO__ illustrate line-seg vs line-seg intersection with initial space partitioning
 
 
 <div
