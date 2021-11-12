@@ -35,9 +35,11 @@ To move an NPC from A to B, we need a respective path.
 This might be a straight line e.g. when an item is directly within grasp.
 But usually objects must be avoided: static ones like walls and items, dynamic ones like other NPCs.
 
-If there are no dynamic objects, a canonical approach exists. The navigable area is represented by polygons (possibly with holes), where A and B lie in their interior. These polygons can be triangulated (admittedly non-canonically), inducing an undirected graph:
+If there are no dynamic objects, a canonical approach exists. The navigable area is represented by polygons (possibly with holes), where A and B lie in their interior. These polygons can be triangulated, inducing an undirected graph:
 
 > its nodes are _the triangles of the triangulation_; two nodes are connected iff _their respective triangles share an edge._
+
+Check out the black triangles with grey borders below. The associated undirected graph has red nodes and red edges.
 
 <div
   class="tabs"
@@ -50,10 +52,11 @@ If there are no dynamic objects, a canonical approach exists. The navigable area
    ]"
 ></div>
 
-In other words, navigable space is partitioned into triangles then collapsed to points. Node connectivity is determined by triangle adjacency. If edges are weighted by the distance between the respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This is usually "mostly solved" by refining the original polygons and their triangulation.
+
+Then navigable space is partitioned into triangles and collapsed to points. Node connectivity is determined by triangle adjacency. If edges are weighted by the distance between the respective triangle's _centroids_, a path length may be defined as the sum of its edge weights. This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. This is usually "solved" by refining the original polygons and their triangulation.
 
 Given A and B we have two respective triangles (possibly indistinct), so two nodes, so can  apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights. The result is insufficient because realistic NPCs would not follow centroid-to-centroid paths.
-For this reason, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html). That is, the zig-zag path  is pulled tight along the original navigable polygon's extrema.
+For this reason, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html). That is, the zig-zag path  is pulled tight along the original navigable polygon's extremal points.
 
 __TODO__ string-pulling demo i.e. can choose destination via click
 

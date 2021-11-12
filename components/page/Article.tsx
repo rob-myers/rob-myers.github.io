@@ -50,7 +50,7 @@ const articleCss = css`
   line-height: 1.8;
   background: var(--focus-bg);
   border: var(--blog-border-width) solid var(--border-bg);
-  font-size: 1.1rem;
+  font-size: 1rem;
   
   padding: 64px 128px 96px 128px;
   @media(max-width: 800px) {
@@ -86,14 +86,14 @@ const articleCss = css`
     }
 
     p {
-      margin: 20px 0;
+      margin: 16px 0 20px;
     }
-    > blockquote {
+    blockquote {
       margin: 0;
     }
-    > figure.tabs {
-      @media(max-width: 600px) {
-        padding: 8px 0 12px;
+    figure.tabs {
+      @media(min-width: 600px) {
+        margin: 40px 0;
       }
     }
   }

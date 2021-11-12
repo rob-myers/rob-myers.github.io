@@ -43,7 +43,8 @@ export default function NavGraphDemo(props) {
             x2={nodes[id].centroid.x} y2={nodes[id].centroid.y}
             />
           ))}
-      </g>))}
+        </g>)
+      )}
 
       {zone.groups.map(nodes =>
         nodes.map(({ id, centroid }) =>
@@ -55,16 +56,15 @@ export default function NavGraphDemo(props) {
 
 const rootCss = css`
   image.geomorph {
-    opacity: 0.8;
+    /* opacity: 0.8; */
     filter: invert();
   }
   circle.node {
     fill: red;
   }
   line.edge {
-    stroke: #080;
-    /* stroke: rgba(150, 0, 0); */
-    stroke-width: 1.5;
+    stroke: #900;
+    stroke-width: 3;
   }
 `;
 
