@@ -81,14 +81,18 @@ const articleCss = css`
     background: rgba(230, 230, 255, 1);
     color: #225;
     font-size: 1rem;
-    @media(max-width: 600px) {
-      margin: 8px 0;
-      padding: 0 16px;
-    }
-
     p {
       margin: 16px 0 20px;
     }
+
+    @media(max-width: 600px) {
+      margin: 8px 0;
+      padding: 16px 20px;
+      p {
+        margin: 8px 0;
+      }
+    }
+
     blockquote {
       margin: 0;
       border-left: 10px solid #ccc;
