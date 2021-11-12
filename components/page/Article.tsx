@@ -75,10 +75,10 @@ const articleCss = css`
   }
 
   aside {
-    margin: 32px 0;
-    padding: 8px 32px;
+    margin: 24px 0;
+    padding: 20px 40px;
     border-radius: 8px;
-    border: 2px dashed #ccc;
+    background: #ddd;
     font-size: 1rem;
     @media(max-width: 600px) {
       margin: 8px 0;
@@ -90,6 +90,7 @@ const articleCss = css`
     }
     blockquote {
       margin: 0;
+      border-left: 10px solid #ccc;
     }
     figure.tabs {
       @media(min-width: 600px) {
