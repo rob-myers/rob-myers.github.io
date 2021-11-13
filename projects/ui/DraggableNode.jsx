@@ -11,6 +11,9 @@ export default function DraggableNode(props) {
       position: Vect.from(props.initial),
       target: Vect.from(props.initial),
       dragging: false,
+
+      /** @type {SVGGElement} */
+      rootEl: ({}),
       /** @type {SVGLineElement} */
       lineEl: ({}),
       /** @type {SVGCircleElement} */
@@ -77,19 +80,20 @@ export default function DraggableNode(props) {
   const radius = props.radius || 10;
 
   return (
-    <g className={rootCss}>
-      <line
-        ref={(el) => el && (state.lineEl = el)}
-        className="drag-indicator"
-        />
+    <g
+      className={rootCss}
+      ref={(el) => {
+        if (el) {
+          state.rootEl = el;
+          state.lineEl = /** @type {SVGLineElement} */ (el.querySelector('line.drag-indicator'));
+          state.circleEl = /** @type {SVGCircleElement} */ (el.querySelector('circle.node'));
+          state.circleEl.addEventListener('pointerdown', state.startDrag);
+          state.circleEl.addEventListener('pointerup', state.applyDrag);
+        }
+      }}
+    >
+      <line className="drag-indicator" />
       <circle
-        ref={(el) => {
-          if (el) {
-            state.circleEl = el;
-            el.addEventListener('pointerdown', state.startDrag);
-            el.addEventListener('pointerup', state.applyDrag);
-          }
-        }}
         className="node"
         cx={state.position.x}
         cy={state.position.y}
@@ -100,17 +104,18 @@ export default function DraggableNode(props) {
 }
 
 const rootCss = css`
-  > .node {
+  > circle.node {
     fill: blue;
     stroke: black;
     cursor: pointer;
     stroke-width: 0.5;
   }
-  > .drag-indicator {
+  > line.drag-indicator {
     stroke: black;
     display: none;
     stroke-width: 2.5;
     user-select: none;
+    pointer-events: none;
   }
 `;
 
