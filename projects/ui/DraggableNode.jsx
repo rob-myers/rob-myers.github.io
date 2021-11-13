@@ -3,7 +3,7 @@ import React from "react";
 import { Vect } from "../geom";
 import { getSvgPos } from "../service/dom";
 
-/** @param {{ initial: Geom.VectJson; onChange: (position: Geom.Vect) => void; radius?: number }} props */
+/** @param {Props} props */
 export default function DraggableNode(props) {
 
   const [state, setState] = React.useState(() => {
@@ -31,6 +31,7 @@ export default function DraggableNode(props) {
         svg.addEventListener('pointerup', state.applyDrag);
         window.addEventListener('keydown', state.endDragOnEscape);
         svg.style.cursor = 'grabbing';
+        props.onStart?.();
       },
       /** @param {PointerEvent}  e */
       onMove: (e) => {
@@ -65,9 +66,8 @@ export default function DraggableNode(props) {
         state.position.copy(state.target);
         state.lineEl.setAttribute('x1', String(state.target.x));
         state.lineEl.setAttribute('y1', String(state.target.y));
-        // setRenderCount(x => ++x);
         setState({ ...state });
-        props.onChange(Vect.from(state.position));
+        props.onStop?.(Vect.from(state.position));
       },
       /** @param {KeyboardEvent} e */
       endDragOnEscape: (e) => void (e.key === 'Escape' && state.endDrag()),
@@ -113,3 +113,11 @@ const rootCss = css`
     user-select: none;
   }
 `;
+
+/**
+ * @typedef Props @type {object}
+ * @property {Geom.VectJson} initial
+ * @property {(position: Geom.Vect) => void} [onStop]
+ * @property {() => void} [onStart]
+ * @property {number} [radius]
+ */

@@ -8,7 +8,12 @@ import { getSvgPos, projectSvgEvt } from "../service/dom";
 import { geom } from "../service/geom";
 import { Pathfinding } from '../pathfinding/Pathfinding';
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
+
 import PanZoom from "../panzoom/PanZoom";
+import DraggableNode from "../ui/DraggableNode";
+
+// TODO
+// - circle follows path
 
 export default function NavStringPull() {
 
@@ -17,18 +22,24 @@ export default function NavStringPull() {
     targetEl: ({}),
     /** @type {SVGPolylineElement} */
     pathEl: ({}),
-    bot: new Vect(300, 300),
+
+    source: new Vect(300, 300),
     target: new Vect(300, 300),
     path: /** @type {Vect[]} */ ([]),
+    dragging: false,
+
     /** @param {PointerEvent} e */
     pointerup: (e) => {
-      state.target.copy(Vect.from(getSvgPos(projectSvgEvt(e))));
+      if (state.dragging) return;
+      const mouse = Vect.from(getSvgPos(projectSvgEvt(e)));
+      state.target.copy(mouse);
       state.targetEl.style.transform = `translate(${state.target.x}px, ${state.target.y}px)`;
-
-      const groupId = pathfinding.getGroup(zoneKey, state.bot);
+      state.updatePath();
+    },
+    updatePath: () => {
+      const groupId = pathfinding.getGroup(zoneKey, state.source);
       if (groupId !== null) {
-        state.path = [state.bot].concat(pathfinding.findPath(state.bot, state.target, zoneKey, groupId) || []);
-        console.log(state.path);
+        state.path = [state.source.clone()].concat(pathfinding.findPath(state.source, state.target, zoneKey, groupId) || []);
         state.pathEl.setAttribute('points', `${state.path}`);
       }
     },
@@ -51,7 +62,7 @@ export default function NavStringPull() {
         className={rootCss}
         ref={(el) => {
           if (el) {
-            state.targetEl = /** @type {SVGGElement} */ (el.querySelector('g.target'));
+            state.targetEl = /** @type {SVGGElement} */ (el.querySelector('circle.target'));
             state.pathEl = /** @type {SVGPolylineElement} */ (el.querySelector('polyline.navpath'));
             el.addEventListener('pointerup', state.pointerup);
           }
@@ -64,18 +75,24 @@ export default function NavStringPull() {
           {data.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
             <polygon className="navtri" points={`${vertexIds.map(id => data.zone.vertices[id])}`} />
           ))}
-
         </>}
 
         <polyline className="navpath" points={`${state.path}`}/>
 
-        <g className="target" style={{ transform: `translate(${state.target.x}px, ${state.target.y}px)` }}>
-          <circle r={8}/>
-        </g>
+        <circle className="target" r={8} style={{ transform: `translate(${state.target.x}px, ${state.target.y}px)` }}/>
 
-        <g className="bot" style={{ transform: `translate(${state.bot.x}px, ${state.bot.y}px)` }}>
-          <circle r={8}/>
-        </g>
+        <DraggableNode
+          initial={state.source}
+          radius={8}
+          onStart={() => {
+            state.dragging = true;
+          }}
+          onStop={(p) => {
+            state.source.copy(p);
+            state.updatePath();
+            state.dragging = false;
+          }}
+        />
 
       </g>
 
@@ -87,11 +104,11 @@ const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
 
-  .bot > circle {
+  circle.source {
     fill: red;
     cursor: pointer;
   }
-  .target > circle {
+  circle.target {
     fill: green;
   }
 
@@ -105,7 +122,7 @@ const rootCss = css`
   polygon.navtri {
     fill: transparent;
     &:hover {
-      fill: rgba(80, 0, 0, 0.2);
+      fill: rgba(0, 0, 80, 0.2);
     }
   }
 `;

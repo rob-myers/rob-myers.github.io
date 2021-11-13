@@ -60,7 +60,7 @@ function Light({ init, walls, hull }) {
     />
     <DraggableNode
       initial={position}
-      onChange={setPosition}
+      onStop={setPosition}
       radius={14}
     />
   </>;
