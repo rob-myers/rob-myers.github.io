@@ -12,11 +12,26 @@ import PanZoom from "../panzoom/PanZoom";
 
 export default function NavStringPull() {
 
-  // const [dots, setDots] = useState(/** @type {Geom.VectJson[]} */ ([]));
-  // const [path, setPath] = useState(/** @type {Geom.Vect[]} */ ([]));
-  const [state, setState] = React.useState(() => ({
+  const [state] = React.useState(() => ({
+    /** @type {SVGGElement} */
+    targetEl: ({}),
+    /** @type {SVGPolylineElement} */
+    pathEl: ({}),
     bot: new Vect(300, 300),
     target: new Vect(300, 300),
+    path: /** @type {Vect[]} */ ([]),
+    /** @param {PointerEvent} e */
+    pointerup: (e) => {
+      state.target.copy(Vect.from(getSvgPos(projectSvgEvt(e))));
+      state.targetEl.style.transform = `translate(${state.target.x}px, ${state.target.y}px)`;
+
+      const groupId = pathfinding.getGroup(zoneKey, state.bot);
+      if (groupId !== null) {
+        state.path = [state.bot].concat(pathfinding.findPath(state.bot, state.target, zoneKey, groupId) || []);
+        console.log(state.path);
+        state.pathEl.setAttribute('points', `${state.path}`);
+      }
+    },
   }));
   
   const pathfinding = React.useMemo(() => new Pathfinding, []);
@@ -30,67 +45,29 @@ export default function NavStringPull() {
     return { pngRect: json.pngRect, navPoly, zone };
   });
 
-  // useEffect(() => {
-  //   if (dots.length === 2) {
-  //     const groupId = pathfinding.getGroup(zoneKey, dots[0]);
-  //     if (groupId !== null) {
-  //       setPath(
-  //         [dots[0]].concat(pathfinding.findPath(dots[0], dots[1], zoneKey, groupId) || [])
-  //           .map(Vect.from)
-  //       );
-  //     }
-  //   } else {
-  //     setPath([]);
-  //   }
-  // }, [dots]);
-
   return (
     <PanZoom gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}>
       <g
         className={rootCss}
         ref={(el) => {
-          if (el) {// Use native events so polyfill works
-            el.addEventListener('pointerup', (e) => {
-              state.target.copy(Vect.from(getSvgPos(projectSvgEvt(e))));
-              setState({ ...state });
-            });
+          if (el) {
+            state.targetEl = /** @type {SVGGElement} */ (el.querySelector('g.target'));
+            state.pathEl = /** @type {SVGPolylineElement} */ (el.querySelector('polyline.navpath'));
+            el.addEventListener('pointerup', state.pointerup);
           }
         }}
       >
 
         {data && <>
-          <image
-            {...data.pngRect}
-            className="geomorph"
-            href={geomorphPngPath('g-301--bridge')}
-          />
+          <image {...data.pngRect} className="geomorph" href={geomorphPngPath('g-301--bridge')} />
 
-          {/* {data.navPoly.map(x => (
-            <path
-              className="navpoly"
-              d={x.svgPath}
-              // onPointerDown={_ => lastDownAt.current = Date.now()}
-              // onPointerUp={e => {
-              //   if (Date.now() - lastDownAt.current < 200) {
-              //     const point = Vect.from(getSvgPos(e));
-              //     setDots(dots.slice(0, 1).concat(point));
-              //   }
-              // }}
-            />
-          ))} */}
-
-          {data.zone.groups.map(nodes =>
-            nodes.map(({ centroid, vertexIds}) =>
-              // <circle fill="rgba(0, 0, 0, 0.2)" cx={centroid.x} cy={centroid.y} r={2.5} />
-              <polygon
-                className="navtri"
-                points={`${vertexIds.map(id => data.zone.vertices[id])}`}
-              />
+          {data.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
+            <polygon className="navtri" points={`${vertexIds.map(id => data.zone.vertices[id])}`} />
           ))}
 
         </>}
 
-        {/* <polyline className="navpath" points={`${path}`}/> */}
+        <polyline className="navpath" points={`${state.path}`}/>
 
         <g className="target" style={{ transform: `translate(${state.target.x}px, ${state.target.y}px)` }}>
           <circle r={8}/>
@@ -100,18 +77,6 @@ export default function NavStringPull() {
           <circle r={8}/>
         </g>
 
-
-        {/* <g className="dots">
-          {dots.map((p, i) =>
-            <circle
-              key={i} cx={p.x} cy={p.y} r={8}
-              onClick={(e) => {
-                setDots(dots.filter((_, j) => i !== j));
-                e.stopPropagation();
-              }}
-            />
-          )}
-        </g> */}
       </g>
 
     </PanZoom>
@@ -122,16 +87,12 @@ const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
 
-  /* > path.navpoly {
-    fill: rgba(0, 0, 0, 0.01);
-    stroke-width: 2;
-  }
-
-  > g.dots circle {
-    fill: white;
-    stroke: black;
-    stroke-width: 2;
+  .bot > circle {
+    fill: red;
     cursor: pointer;
+  }
+  .target > circle {
+    fill: green;
   }
 
   > polyline.navpath {
@@ -139,14 +100,6 @@ const rootCss = css`
     stroke: #00f;
     stroke-width: 4;
     stroke-dasharray: 20 10;
-  } */
-
-  .bot > circle {
-    fill: red;
-    cursor: pointer;
-  }
-  .target > circle {
-    fill: green;
   }
 
   polygon.navtri {
