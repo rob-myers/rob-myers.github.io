@@ -4,7 +4,6 @@ import { useQuery } from "react-query";
 
 import * as defaults from "./defaults";
 import { Poly, Vect } from "../geom";
-import { getSvgPos, projectSvgEvt } from "../service/dom";
 import { geom } from "../service/geom";
 import { Pathfinding } from '../pathfinding/Pathfinding';
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
@@ -13,29 +12,24 @@ import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
 
 // TODO
-// - circle follows path
+// - different colours for draggers
+// - circle animated along path
+// - also show zig-zag path
 
 export default function NavStringPull() {
 
   const [state] = React.useState(() => ({
     /** @type {SVGGElement} */
+    rootEl: ({}),
+    /** @type {SVGCircleElement} */
     targetEl: ({}),
     /** @type {SVGPolylineElement} */
     pathEl: ({}),
 
     source: new Vect(300, 300),
-    target: new Vect(300, 300),
+    target: new Vect(600, 300),
     path: /** @type {Vect[]} */ ([]),
-    dragging: false,
 
-    /** @param {PointerEvent} e */
-    pointerup: (e) => {
-      if (state.dragging) return;
-      const mouse = Vect.from(getSvgPos(projectSvgEvt(e)));
-      state.target.copy(mouse);
-      state.targetEl.style.transform = `translate(${state.target.x}px, ${state.target.y}px)`;
-      state.updatePath();
-    },
     updatePath: () => {
       const groupId = pathfinding.getGroup(zoneKey, state.source);
       if (groupId !== null) {
@@ -62,9 +56,9 @@ export default function NavStringPull() {
         className={rootCss}
         ref={(el) => {
           if (el) {
-            state.targetEl = /** @type {SVGGElement} */ (el.querySelector('circle.target'));
+            state.rootEl = el;
             state.pathEl = /** @type {SVGPolylineElement} */ (el.querySelector('polyline.navpath'));
-            el.addEventListener('pointerup', state.pointerup);
+            state.updatePath();
           }
         }}
       >
@@ -79,18 +73,21 @@ export default function NavStringPull() {
 
         <polyline className="navpath" points={`${state.path}`}/>
 
-        <circle className="target" r={8} style={{ transform: `translate(${state.target.x}px, ${state.target.y}px)` }}/>
-
         <DraggableNode
           initial={state.source}
           radius={8}
-          onStart={() => {
-            state.dragging = true;
-          }}
           onStop={(p) => {
             state.source.copy(p);
             state.updatePath();
-            state.dragging = false;
+          }}
+        />
+
+        <DraggableNode
+          initial={state.target}
+          radius={8}
+          onStop={(p) => {
+            state.target.copy(p);
+            state.updatePath();
           }}
         />
 
@@ -122,7 +119,7 @@ const rootCss = css`
   polygon.navtri {
     fill: transparent;
     &:hover {
-      fill: rgba(0, 0, 80, 0.2);
+      stroke: red;
     }
   }
 `;
