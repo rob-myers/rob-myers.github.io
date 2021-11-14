@@ -12,7 +12,6 @@ import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
 
 // TODO
-// - different colours for draggers
 // - circle animated along path
 // - also show zig-zag path
 
@@ -80,6 +79,7 @@ export default function NavStringPull() {
             state.source.copy(p);
             state.updatePath();
           }}
+          fill="red"
         />
 
         <DraggableNode
@@ -89,6 +89,7 @@ export default function NavStringPull() {
             state.target.copy(p);
             state.updatePath();
           }}
+          fill="green"
         />
 
       </g>
@@ -113,13 +114,13 @@ const rootCss = css`
     fill: none;
     stroke: #00f;
     stroke-width: 4;
-    stroke-dasharray: 20 10;
+    stroke-dasharray: 30 10;
   }
 
   polygon.navtri {
     fill: transparent;
     &:hover {
-      stroke: red;
+      stroke: #900;
     }
   }
 `;

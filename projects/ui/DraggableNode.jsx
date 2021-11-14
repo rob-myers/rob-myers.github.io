@@ -95,6 +95,7 @@ export default function DraggableNode(props) {
       <line className="drag-indicator" />
       <circle
         className="node"
+        fill={props.fill || 'blue'}
         cx={state.position.x}
         cy={state.position.y}
         r={radius}
@@ -105,7 +106,6 @@ export default function DraggableNode(props) {
 
 const rootCss = css`
   > circle.node {
-    fill: blue;
     stroke: black;
     cursor: pointer;
     stroke-width: 0.5;
@@ -125,4 +125,5 @@ const rootCss = css`
  * @property {(position: Geom.Vect) => void} [onStop]
  * @property {() => void} [onStart]
  * @property {number} [radius]
+ * @property {string} [fill]
  */
