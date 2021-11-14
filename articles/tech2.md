@@ -68,12 +68,12 @@ This can be a bad approximation e.g. zig-zags between centroids can make a short
 So, how do we find a path from A to B?
 
 > Given A and B we have two triangles (possibly indistinct), so two nodes, so may apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights.
-> This provides a solution i.e. a path.
+>
+> This quickly provides a solution i.e. a path.
 > However it is insufficient because realistic NPCs would not follow centroid-to-centroid paths.
 > So, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html): the zig-zag path is pulled tight along the navigable polygons' extremal points.
 
-
-__TODO__ string-pulling demo i.e. can choose destination via click
+Drag the red and blue nodes below to see string-pulling in action.
 
 <div
   class="tabs"
