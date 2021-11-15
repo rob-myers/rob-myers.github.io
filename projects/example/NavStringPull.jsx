@@ -12,7 +12,6 @@ import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
 
 // TODO
-// - circle animated along path
 // - also show zig-zag path
 
 export default function NavStringPull() {
@@ -89,7 +88,7 @@ export default function NavStringPull() {
             state.target.copy(p);
             state.updatePath();
           }}
-          fill="green"
+          fill="blue"
         />
 
       </g>
@@ -102,19 +101,18 @@ const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
 
-  circle.source {
-    fill: red;
-    cursor: pointer;
-  }
-  circle.target {
-    fill: green;
+  polyline.navpath {
+    fill: none;
+    stroke: #083;
+    stroke-width: 4;
+    stroke-dasharray: 8px;
+    stroke-dashoffset: 16px;
+    animation: 600ms flash infinite linear;
   }
 
-  > polyline.navpath {
-    fill: none;
-    stroke: #00f;
-    stroke-width: 4;
-    stroke-dasharray: 30 10;
+  @keyframes flash {
+    0% { stroke-dashoffset: 16px; }
+    100% { stroke-dashoffset: 0px; }
   }
 
   polygon.navtri {
