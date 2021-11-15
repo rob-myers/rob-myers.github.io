@@ -10,11 +10,13 @@ import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
+import classNames from "classnames";
 
 // TODO
 // - also show zig-zag path
 
-export default function NavStringPull() {
+/** @param {{ disabled?: boolean }} props */
+export default function NavStringPull(props) {
 
   const [state] = React.useState(() => ({
     /** @type {SVGGElement} */
@@ -51,7 +53,7 @@ export default function NavStringPull() {
   return (
     <PanZoom gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}>
       <g
-        className={rootCss}
+        className={classNames(rootCss, !props.disabled && animateNavpathCss)}
         ref={(el) => {
           if (el) {
             state.rootEl = el;
@@ -107,7 +109,6 @@ const rootCss = css`
     stroke-width: 4;
     stroke-dasharray: 8px;
     stroke-dashoffset: 16px;
-    animation: 600ms flash infinite linear;
   }
 
   @keyframes flash {
@@ -120,6 +121,12 @@ const rootCss = css`
     &:hover {
       stroke: #900;
     }
+  }
+`;
+
+const animateNavpathCss = css`
+  polyline.navpath {
+    animation: 600ms flash infinite linear;
   }
 `;
 
