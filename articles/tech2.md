@@ -40,7 +40,7 @@ The navigable area is represented by polygons (possibly with holes), where A and
 
 > its nodes are _the triangles of the triangulation_; two nodes are connected iff _their respective triangles share an edge._
 
-Take a look at the triangles with grey borders below.
+Hover below to highlight the triangles.
 Collectively they induce the red undirected graph.
 
 <div
@@ -57,23 +57,29 @@ Collectively they induce the red undirected graph.
 
 Technically an undirected graph is just a symmetric binary relation.
 We have made it concrete by depicting each node as the centroid of its respective triangle.
-This provides a weight for each edge i.e. the distance between the centroids, so a path length may be defined as the sum of its edge weights.
+This provides a weight for each edge i.e. the distance between the centroids.
+Then the length of a path through the undirected graph may be defined as the sum of its edge's weights.
 
 <aside>
 
-This can be a bad approximation e.g. zig-zags between centroids can make a short path _long_. In practice, this issue is "solved" via pre-processing i.e. refining the navigable polygons.
+Searching for paths through the embedded undirected graph is much easier than searching the original navigable polygons.
+For realism, NPCs won't actually follow these embedded paths,
+but an induced path instead.
+
+The length of each undirected path should approximate the _actual_ shortest path length.
+Zig-zags between centroids can make a relatively short path _long_. This problem is often mitigated by pre-processing the navigable polygons, ensuring small triangles.
 
 </aside>
 
-So, how do we find a path from A to B?
+So, how to find a path from A to B?
 
-> Given A and B we have two triangles (possibly indistinct), so two nodes, so may apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights.
+> Given A and B we have two triangles (maybe equal), so two nodes, hence may apply [A*](https://en.wikipedia.org/wiki/A*_search_algorithm) using our chosen edge weights (distance between centroids).
 >
 > This quickly provides a solution i.e. a path.
-> However it is insufficient because realistic NPCs would not follow centroid-to-centroid paths.
-> So, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html): the zig-zag path is pulled tight along the navigable polygons' extremal points.
+> However it is insufficient because realistic NPCs would not follow centroid to centroid paths.
+> So, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html), which pulls the zig-zag path tight along the navigable polygons' extremal points.
 
-Drag the red and blue nodes below to see string-pulling in action.
+Drag the nodes below to see string-pulling in action.
 
 <div
   class="tabs"
@@ -91,7 +97,27 @@ We know exactly where each NPC is going because (a) we previously set them in mo
 
 ### Navigation (Dynamic)
 
-__TODO__ mention other approaches; consider case of two agents, which stop and start in some manner
+<!-- __TODO__ mention other approaches; consider case of two agents, which stop and start in some manner -->
+
+Navigation around dynamic objects is harder.
+What was once a collision-free path may no longer be.
+One common approach is to combine static navigation (as above) with [steering behaviours](https://www.researchgate.net/publication/2495826_Steering_Behaviors_For_Autonomous_Characters).
+This involves a physics engine, or at least an approximation of one.
+Individual force-driven locomotion is influenced by the location of others.
+
+<aside>
+
+For example, **obstacle avoidance** works by driving close characters apart.
+One applies suitable forces along their relative position vector.
+
+</aside>
+
+
+
+__TODO__ describe DetourCrowd approach
+
+https://docs.unrealengine.com/4.27/en-US/PythonAPI/class/DetourCrowdAIController.html?highlight=detourcrowdaicontroller
+
 
 ### Raycasting
 

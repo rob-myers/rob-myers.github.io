@@ -29,7 +29,7 @@ const component = {
   'example/DoorsDemo#301': () => import('projects/example/DoorsDemo')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
   'example/NavStringPull': () => import('projects/example/NavStringPull')
-    .then(x => x.default),
+    .then(x => (props:any) => <x.default disabled {...props} />),
   'example/NavGraph#301': () => import('projects/example/NavGraph')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/NavGraph#302': () => import('projects/example/NavGraph')
