@@ -62,12 +62,15 @@ Then the length of a path through the undirected graph may be defined as the sum
 
 <aside>
 
-Searching for paths through the embedded undirected graph is much easier than searching the original navigable polygons.
-For realism, NPCs won't actually follow these embedded paths,
-but an induced path instead.
+Searching for paths through the embedded undirected graph is much easier than searching the navigable polygons.
+But for realism, NPCs won't actually follow these embedded paths, but an induced path instead (see below).
 
-The length of each undirected path should approximate the _actual_ shortest path length.
-Zig-zags between centroids can make a relatively short path _long_. This problem is often mitigated by pre-processing the navigable polygons, ensuring small triangles.
+</aside>
+
+<aside>
+
+The length of each path in the undirected graph should approximate the respective _real_ shortest path length.
+Zig-zags between centroids can make a relatively short path _long_. This is often mitigated by pre-processing the navigable polygons, ensuring small triangles.
 
 </aside>
 
@@ -77,7 +80,7 @@ So, how to find a path from A to B?
 >
 > This quickly provides a solution i.e. a path.
 > However it is insufficient because realistic NPCs would not follow centroid to centroid paths.
-> So, one finally applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html), which pulls the zig-zag path tight along the navigable polygons' extremal points.
+> So, one applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html), pulling the zig-zag path tight along the navigable polygons' extremal points.
 
 Drag the nodes below to see string-pulling in action.
 
@@ -103,15 +106,11 @@ Navigation around dynamic objects is harder.
 What was once a collision-free path may no longer be.
 One common approach is to combine static navigation (as above) with [steering behaviours](https://www.researchgate.net/publication/2495826_Steering_Behaviors_For_Autonomous_Characters).
 This involves a physics engine, or at least an approximation of one.
-Individual force-driven locomotion is influenced by the location of others.
-
-<aside>
+An NPC will be driven by its own force, plus other forces induced by the position and velocity of others.
 
 For example, **obstacle avoidance** works by driving close characters apart.
-One applies suitable forces along their relative position vector.
-
-</aside>
-
+A suitable force is applied along their relative position vector.
+Unsurprisingly, summing a number of obstacle avoidance forces can produce unrealistic behaviour.
 
 
 __TODO__ describe DetourCrowd approach
