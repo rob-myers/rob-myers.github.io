@@ -13,10 +13,11 @@ import DraggableNode from "../ui/DraggableNode";
 import classNames from "classnames";
 
 // TODO
-// - also show zig-zag path
+// - 2 paths
+// - tty integration
 
 /** @param {{ disabled?: boolean }} props */
-export default function NavStringPull(props) {
+export default function NavCollide(props) {
 
   const [state] = React.useState(() => ({
     /** @type {SVGGElement} */
@@ -40,7 +41,7 @@ export default function NavStringPull(props) {
   }));
   
   const pathfinding = React.useMemo(() => new Pathfinding, []);
-  const { data } = useQuery('navpoly-demo', async () => {
+  const { data } = useQuery('nav-collide-demo', async () => {
     /** @type {Geomorph.GeomorphJson} */
     const json = await fetch(geomorphJsonPath('g-301--bridge')).then(x => x.json());
     const navPoly = json.navPoly.map(x => Poly.from(x));
@@ -130,5 +131,5 @@ const animateNavpathCss = css`
   }
 `;
 
-const zoneKey = 'NavStringPullZone';
+const zoneKey = 'NavCollideZone';
 const initViewBox = new Rect(200, 0, 600, 600);

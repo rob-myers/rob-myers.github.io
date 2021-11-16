@@ -84,7 +84,7 @@ Drag the nodes below to see string-pulling in action.
 
 <div
   class="tabs"
-  name="nav-demo"
+  name="nav-string-pull-demo"
   height="400"
   enabled="false"
   tabs="[
@@ -132,9 +132,20 @@ We'll certainly have more to say about this interesting open source library.
 __TODO__ our approach does not use a physics engine. we will avoid trying to make a "full-proof general system". we are interested in easy to understand techniques, which can be composed together.
 
 __TODO__
+- DraggablePath component
 - two intersecting navpaths
 - circle moves along navpath
 - can stop/start with terminal
+
+<div
+  class="tabs"
+  name="nav-collide-demo"
+  height="400"
+  enabled="false"
+  tabs="[
+     { key: 'component', filepath: 'example/NavCollide' },
+   ]"
+></div>
 
 ### Raycasting
 
