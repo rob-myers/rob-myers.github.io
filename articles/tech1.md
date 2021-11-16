@@ -38,6 +38,7 @@ They are just JavaScript functions with constraints on their parameters and retu
 
 React developers use a grammatical extension of JavaScript called JSX.
 It freely combines JS with XML, so JavaScript values can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. Inductively closing these capabilities leads naturally to JSX, making this grammar particularly suitable for building dynamic DOM trees.
+
 Consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
 
 <div
@@ -158,10 +159,17 @@ Instead we directly mutate the DOM via:
 <!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again geom/rect.js"). -->
 
 As far as React is concerned, nothing has changed.
-Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (no change).
-Why not just use `setState`?
+Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (producing no change).
+Why not use `setState`?
 Because we avoid needlessly recomputing `<Grid />` and `children` whenever the player pans or zooms.
-Our game may contain many elements, and we'd rather not recompute their virtual DOM tens of times per second.
+Our game may contain many elements, and we'd rather not needlessly recompute their virtual DOM tens of times per second.
+
+Finally, should we really use `React.useState` as above?
+It seems a little strange to ignore the state setter.
+Direct DOM mutation provides performance benefits, that has been our justification so far.
+But there is actually another reason specific to `React.useState`.
+
+__TODO__ runtime vs devtime; in devtime can use fast refresh e.g. preserve state when changing a components return value. Can see benefits of fast refresh on CodeSandbox.
 
 <!-- The above situation is handled by a single DOM mutation.
 In more complex situations we might integrate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
