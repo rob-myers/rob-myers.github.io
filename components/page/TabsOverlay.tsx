@@ -85,7 +85,7 @@ export function LoadingOverlay({ colour }: {
 }) {
   return (
     <div
-      className={classNames(loadingCss, {
+      className={classNames(interactOverlayCss, {
         'clear': colour === 'clear',
         'faded': colour === 'faded',
       })}
@@ -93,13 +93,13 @@ export function LoadingOverlay({ colour }: {
   );
 }
 
-const loadingCss = css`
+const interactOverlayCss = css`
   &:not(.faded) {
     pointer-events: none;
   }
 
   position: absolute;
-  z-index: 4;
+  z-index: 0;
   width: inherit;
   height: inherit;
   background: #000;
