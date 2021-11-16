@@ -112,23 +112,28 @@ An NPC will be driven by its own force, plus other forces induced by the positio
 <aside>
 
 For example, **obstacle avoidance** works by driving close characters apart.
-A suitable force is applied along their relative position vector.
+A suitable force is applied orthogonal to the NPC's direction of travel.
 
 </aside>
 
-However, one cannot expect the vector sum of forces to adequately capture interactions between many characters.
-Reynolds introduced them as part of a pipeline: _action selection_ → _steering_ → _animation_. Practically speaking, one must rely heavily on action selection to avoid unrealistic behaviour such as oscillation and deadlock.
+However, one cannot expect the vector sum of forces to capture complex interactions between multiple characters.
+Reynolds introduced Steering Behaviours as part of a pipeline: _action selection_ → _steering_ → _animation_. In practice, one must rely heavily on action selection to avoid unrealistic behaviour such as oscillation and deadlock.
 
-__TODO__ describe DetourCrowd approach
+[Detour](https://github.com/recastnavigation/recastnavigation#detour) and particularly _DetourCrowd_ provide a more sophisticated approach to navigation.
+It has been [ported to JS](https://github.com/BabylonJS/Extensions/tree/master/recastjs) as part of the BabylonJS project,
+and also [integrated](https://docs.unrealengine.com/4.27/en-US/API/Runtime/Navmesh/DetourCrowd/dtCrowd/) into the Unreal Engine.
+A collection of NPCs is understood as a _Crowd_.
+One requests the Crowd to move NPCs to particular targets, and executes an updater function each frame.
+For each fixed NPC, its nearby neighbours are modelled as temporary geometry, influencing the NPC's velocity.
+We'll certainly have more to say about this interesting open source library.
 
-https://docs.unrealengine.com/4.27/en-US/PythonAPI/class/DetourCrowdAIController.html?highlight=detourcrowdaicontroller
-
+### Our Approach
 
 __TODO__ our approach does not use a physics engine. we will avoid trying to make a "full-proof general system". we are interested in easy to understand techniques, which can be composed together.
 
 __TODO__
-- circle moves along navpath
 - two intersecting navpaths
+- circle moves along navpath
 - can stop/start with terminal
 
 ### Raycasting
