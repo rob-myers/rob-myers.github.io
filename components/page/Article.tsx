@@ -154,17 +154,14 @@ const articleCss = css`
     }
   }
   h2 {
-    font-size: 2.4rem;
-    @media(max-width: 800px) {
-      font-size: 2.2rem;
-    }
+    font-size: 2rem;
     @media(max-width: 600px) {
       margin: 16px 0 24px;
       font-size: 1.9rem;
     }
   }
   h3 {
-    font-size: 1.7rem;
+    font-size: 1.4rem;
     @media(max-width: 600px) {
       font-size: 1.3em;
     }
@@ -230,9 +227,7 @@ const articleCss = css`
       padding: 6px;
       text-align: left;
       vertical-align: top;
-      font-size: 1.1rem;
       @media(max-width: 600px) {
-        font-size: 1rem;
         padding: 4px 2px;
       }
     }
