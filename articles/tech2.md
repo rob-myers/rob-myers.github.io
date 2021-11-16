@@ -104,8 +104,11 @@ We know exactly where each NPC is going because (a) we previously set them in mo
 
 Navigation around dynamic objects is harder.
 What was once a collision-free path may no longer be.
-One common approach is to combine static navigation (as above) with [steering behaviours](https://www.researchgate.net/publication/2495826_Steering_Behaviors_For_Autonomous_Characters).
-This involves a physics engine, or at least an approximation of one.
+Two bridge officers could be swapping shifts,
+or perhaps the player needs to rush through a moving crowd.
+
+One common approach is to combine static navigation (previous section) with [steering behaviours](https://www.researchgate.net/publication/2495826_Steering_Behaviors_For_Autonomous_Characters).
+They are usually implemented via a physics engine.
 An NPC will be driven by its own force, plus other forces induced by the position and velocity of others.
 
 For example, **obstacle avoidance** works by driving close characters apart.
@@ -117,6 +120,8 @@ __TODO__ describe DetourCrowd approach
 
 https://docs.unrealengine.com/4.27/en-US/PythonAPI/class/DetourCrowdAIController.html?highlight=detourcrowdaicontroller
 
+
+__TODO__ 
 
 ### Raycasting
 
