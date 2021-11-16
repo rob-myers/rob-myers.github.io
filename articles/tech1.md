@@ -164,13 +164,6 @@ Why not use `setState`?
 Because we avoid needlessly recomputing `<Grid />` and `children` whenever the player pans or zooms.
 Our game may contain many elements, and we'd rather not needlessly recompute their virtual DOM tens of times per second.
 
-Finally, should we really use `React.useState` as above?
-It seems a little strange to ignore the state setter.
-Direct DOM mutation provides performance benefits, that has been our justification so far.
-But there is actually another reason specific to `React.useState`.
-
-__TODO__ runtime vs devtime; in devtime can use fast refresh e.g. preserve state when changing a components return value. Can see benefits of fast refresh on CodeSandbox.
-
 <!-- The above situation is handled by a single DOM mutation.
 In more complex situations we might integrate [Web Components](https://developer.mozilla.org/en-US/docs/Web/Web_Components).
 More on that later. -->
@@ -182,3 +175,14 @@ linked in the `<head/>` and referenced by DOM elements via their space-separated
 Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us. -->
+
+### React Refresh
+
+But should we really use `React.useState` as we did above?
+It seems a little strange to ignore the state setter.
+
+We've justified things by claiming direct DOM mutation provides performance benefits.
+But there's also a reason specific to `React.useState`.
+Whilst working in a development environment, it is possible to textually edit React components [without losing their internal state](https://www.npmjs.com/package/react-refresh).
+See this in action by editing one of our CodeSandboxes.
+Importantly, we'll use this to develop and debug sophisticated Game AI.
