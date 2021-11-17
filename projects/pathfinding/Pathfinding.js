@@ -14,6 +14,12 @@ export class Pathfinding {
     /** @type {Record<string, Nav.Zone>} */
     this.zones = ({});
 
+    /**
+     * @readonly
+     * @type {number}
+     */
+    this.MAX_DIST_TO_SOME_CENTROID = 500;
+
     const temp = {
       point: new Vect(0, 0),
       triangle: new Triangle,
@@ -174,7 +180,7 @@ export class Pathfinding {
 
     /** @type {null | number} */
     let closestNodeGroup = null;
-    let distance = Math.pow(50, 2);
+    let distance = Math.pow(this.MAX_DIST_TO_SOME_CENTROID, 2);
     const zone = this.zones[zoneID];
 
     for (let i = 0; i < zone.groups.length; i++) {
