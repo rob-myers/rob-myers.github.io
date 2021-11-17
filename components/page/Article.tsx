@@ -103,6 +103,10 @@ const articleCss = css`
         margin: 40px 0;
       }
     }
+
+    &:hover, &:active {
+      background: #cce;
+    }
   }
 
   blockquote {
@@ -361,6 +365,16 @@ const articleComponents = (articleKey: ArticleKey) => ({
 
   },
 
+  aside({ node, children, label, ...props }: any) {
+    const id = getAsideId(articleKey, label);
+    return (
+      <aside {...props}>
+        <span {...label && { id }} className="anchor" />
+        {children}
+      </aside>
+    );
+  },
+
   div({ node, ...props }: any) {
     switch (props.class) {
       case 'tabs': {
@@ -437,6 +451,13 @@ function dayth(x: number) {
 function getArticleLinkId(
   articleKey: string,
   children: React.ReactChildren,
+  ) {
+    return `${articleKey}--link--${childrenToKebabText(children)}`;
+  }
+  
+function getAsideId(
+  articleKey: string,
+  asideName: string,
 ) {
-  return `${articleKey}--link--${childrenToKebabText(children)}`;
+  return `${articleKey}--aside--${asideName}`;
 }
