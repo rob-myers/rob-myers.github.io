@@ -83,7 +83,7 @@ const rootCss = css`
 
   polygon.navtri {
     fill: transparent;
-    &:hover {
+    &:hover, &:active, &:focus {
       fill: rgba(200, 200, 200, 0.4);
       stroke: blue;
     }

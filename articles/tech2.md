@@ -38,8 +38,7 @@ The navigable area is represented by polygons (possibly with holes), where A and
 
 > its nodes are _the triangles of the triangulation_; two nodes are connected iff _their respective triangles share an edge._
 
-Hover below to highlight the triangles.
-Collectively they induce the red undirected graph.
+The triangles below collectively induce the red undirected graph.
 
 <div
   class="tabs"
