@@ -80,6 +80,7 @@ const articleCss = css`
     padding: 20px 32px;
     border-radius: 8px;
     background: rgba(230, 230, 230, 1);
+    border: 1px solid transparent;
     color: #225;
     font-size: 1rem;
     p {
@@ -105,10 +106,7 @@ const articleCss = css`
     }
     
     &:hover, &:active {
-      background: #ccd;
-      blockquote {
-        border-color: #bbc;
-      }
+      border: 1px solid #ccd;
     }
 
     position: relative;

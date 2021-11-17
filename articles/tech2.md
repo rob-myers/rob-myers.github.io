@@ -52,7 +52,7 @@ The triangles below collectively induce the red undirected graph.
 ></div>
 
 
-Technically an undirected graph is just a symmetric binary relation.
+Technically, an undirected graph is just a symmetric binary relation.
 We have made it concrete by depicting each node as the centroid of its respective triangle.
 This provides a weight for each edge i.e. the distance between the centroids.
 Then the length of a path through the undirected graph may be defined as the sum of its edge's weights.
