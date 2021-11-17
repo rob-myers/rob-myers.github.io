@@ -92,20 +92,30 @@ export default function DraggableNode(props) {
         }
       }}
     >
-      <line className="drag-indicator" />
       <circle
         className="node"
+        cx={state.position.x}
+        cy={state.position.y}
+        r={radius + 20}
+      />
+      <circle
+        className="inner-node"
         fill={props.fill || 'blue'}
         cx={state.position.x}
         cy={state.position.y}
         r={radius}
       />
+      <line className="drag-indicator" />
     </g>
   );
 }
 
 const rootCss = css`
   > circle.node {
+    fill: rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+  }
+  > circle.inner-node {
     stroke: black;
     cursor: pointer;
     stroke-width: 0.5;

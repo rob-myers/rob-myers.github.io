@@ -33,8 +33,8 @@ Each __TODO__ should either:
 ### _Technology (Part 2)_ i.e. nav and raycast
 
 - Write text 🚧 👈
-- NavStringPull: animate goto navigation 🚧 👈
-  - improve mobile e.g. larger, fix initial
+- ✅ NavStringPull: animate goto navigation
+  - ✅ improve mobile e.g. larger, fix initial
 - Raycasting
   > https://github.com/rob-myers/rob-myers.github.io/blob/dev/model/geom/geom.service.ts
 
