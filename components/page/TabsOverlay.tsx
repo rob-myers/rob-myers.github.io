@@ -11,7 +11,7 @@ export function TabsOverlay({ enabled, toggleEnabled, clickAnchor }: {
     <div className={controlsCss}>
       <div className={classNames("top-right", enabled && 'enabled')}>
         <span
-          className={iconCss('anchor-icon-white', 'auto', 10)}
+          className={iconCss('anchor-icon-white', 'auto', 12)}
           onClick={clickAnchor}
         />
         <span
@@ -38,7 +38,7 @@ const controlsCss = css`
   > .top-right {
     position: absolute;
     right: -10px;
-    top: calc(-32px + 2px);
+    top: calc(-34px);
     z-index: 2;
     border-radius: 4px 4px 0 0;
     padding: 2px 16px;
@@ -46,7 +46,7 @@ const controlsCss = css`
     cursor: pointer;
     background: #333;
     color: #777;
-    font-size: 14px;
+    font-size: 1rem;
     font-weight: 300;
     
     &.enabled {
