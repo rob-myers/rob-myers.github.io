@@ -51,6 +51,7 @@ const articleCss = css`
   background: var(--focus-bg);
   border: var(--blog-border-width) solid var(--border-bg);
   font-size: 1rem;
+  overflow-wrap: break-word;
   
   padding: 64px 128px 96px 128px;
   @media(max-width: 800px) {
