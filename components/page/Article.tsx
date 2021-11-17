@@ -103,9 +103,18 @@ const articleCss = css`
         margin: 40px 0;
       }
     }
-
+    
     &:hover, &:active {
-      background: #cce;
+      background: #ccd;
+      blockquote {
+        border-color: #bbc;
+      }
+    }
+
+    position: relative;
+    .anchor {
+      position: absolute;
+      top: -48px;
     }
   }
 
@@ -365,11 +374,11 @@ const articleComponents = (articleKey: ArticleKey) => ({
 
   },
 
-  aside({ node, children, label, ...props }: any) {
-    const id = getAsideId(articleKey, label);
+  aside({ node, children, title, ...props }: any) {
+    const id = getAsideId(articleKey, title);
     return (
       <aside {...props}>
-        <span {...label && { id }} className="anchor" />
+        <span {...title && { id }} className="anchor" />
         {children}
       </aside>
     );

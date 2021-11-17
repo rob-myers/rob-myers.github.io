@@ -60,7 +60,7 @@ Behaviourally:
 - _Grid_ renders part of an SVG i.e. two grid patterns.
   They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
 
-  <aside>
+  <aside title="svg-user-units">
   
   SVG user units become concrete via the `<svg>`'s viewBox attribute and its width/height in the DOM.
   We'll follow a convention based on the work of Robert Pearce and Eric B. Smith: 
