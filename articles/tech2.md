@@ -60,7 +60,8 @@ Then the length of a path through the undirected graph may be defined as the sum
 <aside>
 
 Searching for paths through the embedded undirected graph is much easier than searching the navigable polygons.
-But for realism, NPCs won't actually follow these embedded paths, but an induced path instead (see below).
+However NPCs won't actually follow these embedded paths (for realism),
+but an induced path instead (see below).
 
 </aside>
 
@@ -77,9 +78,10 @@ So, how to find a path from A to B?
 >
 > This quickly provides a solution i.e. a path.
 > However it is insufficient because realistic NPCs would not follow centroid to centroid paths.
-> So, one applies the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html), pulling the zig-zag path tight along the navigable polygons' extremal points.
+> One can solve this by applying the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html).
+> It pulls the zig-zag path tight along the navigable polygons' extremal points.
 
-Drag the nodes below to see string-pulling in action.
+Drag the nodes below to see _string-pulling_ in action.
 
 <div
   class="tabs"
