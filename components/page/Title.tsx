@@ -21,7 +21,7 @@ $( game ai | roguelike | web dev )
 }
 
 const titleComponents = {
-  h1({ children, ...props }: any) {
+  h1({ children, node, ...props }: any) {
     const router = useRouter();
     return (
       <h1
