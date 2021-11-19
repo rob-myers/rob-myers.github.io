@@ -144,7 +144,6 @@ const rootCss = css`
     stroke-width: 0.5;
   }
   > line.drag-indicator {
-    stroke: blue;
     display: none;
     stroke-width: 2.5;
     user-select: none;

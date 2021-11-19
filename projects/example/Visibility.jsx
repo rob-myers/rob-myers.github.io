@@ -63,13 +63,14 @@ function Light({ init, walls, hull }) {
       onStop={setPosition}
       radius={14}
       stroke="white"
+      icon="eye"
     />
   </>;
 }
 
 const rootCss = css`
   image {
-    filter: invert();
+    filter: contrast(200%) invert();
   }
 
   path.light {
@@ -78,7 +79,7 @@ const rootCss = css`
     
     @keyframes fadein {
       from { opacity: 0; }
-      to { opacity: 0.25; }
+      to { opacity: 0.2; }
     }
   }
   &.disabled path.light {

@@ -1,9 +1,6 @@
 ## Tech (js)
 
-The early 90s brought three pillars:
-- HTML
-- CSS
-- JavaScript (JS).
+The early 90s brought three pillars: HTML, CSS, JavaScript (JS).
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
 Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity.
 
