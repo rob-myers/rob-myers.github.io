@@ -7,10 +7,8 @@ _Why?_
 > Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game.
 > An environment is needed to make it meaningful, fixed narratives/missions are not.
 
-We'll focus on combining navigation-based behaviours in a flexible manner. That is,
-> we are all about the [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh).
-
-In our opinion, Game AI should be compositional, not forced into a narrative straight-jacket.
+We'll focus on combining navigation-based behaviours in a flexible manner. That is, this website is all about [navmeshes](https://en.wikipedia.org/wiki/Navigation_mesh).
+We'll make compositional Game AI, avoiding a narrative straight-jacket.
 As for the environment, it will be driven by thousands of Traveller-based assets.
 
 <div
