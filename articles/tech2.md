@@ -118,7 +118,10 @@ A suitable force is applied orthogonal to the NPC's direction of travel.
 </aside>
 
 However, one cannot expect the vector sum of forces to capture complex interactions between multiple characters.
-Reynolds introduced Steering Behaviours as part of a pipeline: _action selection_ → _steering_ → _animation_. In practice, one must rely heavily on action selection to avoid unrealistic behaviour such as oscillation and deadlock.
+Reynolds introduced Steering Behaviours as part of a pipeline:
+> _action selection_ → _steering_ → _animation_.
+
+In practice, one must rely heavily on action selection to avoid unrealistic behaviour such as oscillation and deadlock.
 
 [Detour](https://github.com/recastnavigation/recastnavigation#detour) and particularly _DetourCrowd_ provide a more sophisticated approach to navigation.
 It has been [ported to JS](https://github.com/BabylonJS/Extensions/tree/master/recastjs) as part of the BabylonJS project,
