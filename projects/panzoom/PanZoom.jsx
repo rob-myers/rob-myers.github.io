@@ -100,7 +100,10 @@ export default function PanZoom(props) {
       rootCss: css`
         width: 100%;
         height: 100%;
+
         touch-action: pan-x pan-y pinch-zoom;
+        background-color: #333;
+
         > g.content {
           shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
         }
@@ -151,9 +154,11 @@ export function Grid(props) {
           patternUnits="userSpaceOnUse"
         >
           <path
+            className="foo"
             d={`M ${dim} 0 L 0 0 0 ${dim}`}
             fill="none"
-            stroke="rgba(0,0,0,0.5)"
+            // stroke="rgba(0,0,0,0.5)"
+            stroke="rgba(200,200,200,0.5)"
             strokeWidth="0.3"
           />
         </pattern>

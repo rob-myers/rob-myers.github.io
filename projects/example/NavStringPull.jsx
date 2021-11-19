@@ -80,7 +80,7 @@ export default function NavStringPull(props) {
             state.source.copy(p);
             state.updatePath();
           }}
-          fill="red"
+          icon="right"
         />
 
         <DraggableNode
@@ -90,7 +90,7 @@ export default function NavStringPull(props) {
             state.target.copy(p);
             state.updatePath();
           }}
-          fill="blue"
+          icon="down"
         />
 
       </g>

@@ -81,7 +81,6 @@ export default function NavCollide(props) {
             state.source.copy(p);
             state.updatePath();
           }}
-          fill="red"
         />
 
         <DraggableNode
@@ -91,7 +90,6 @@ export default function NavCollide(props) {
             state.target.copy(p);
             state.updatePath();
           }}
-          fill="blue"
         />
 
       </g>

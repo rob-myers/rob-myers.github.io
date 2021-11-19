@@ -11,7 +11,7 @@ import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
-export default function LightDemo(props) {
+export default function VisibilityDemo(props) {
 
   const { data } = useQuery(`${props.layoutKey}-json`, async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
@@ -62,18 +62,23 @@ function Light({ init, walls, hull }) {
       initial={position}
       onStop={setPosition}
       radius={14}
+      stroke="white"
     />
   </>;
 }
 
 const rootCss = css`
+  image {
+    filter: invert();
+  }
+
   path.light {
-    fill: #00f;
+    fill: red;
     animation: fadein 1s infinite alternate;
     
     @keyframes fadein {
       from { opacity: 0; }
-      to { opacity: 0.35; }
+      to { opacity: 0.25; }
     }
   }
   &.disabled path.light {

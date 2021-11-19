@@ -16,7 +16,7 @@ const code = {
 const component = {
   'example/Gm301Debug': () => import('projects/example/Gm301')
     .then(x => x.default),
-  'example/Light#301': () => import('projects/example/Light')
+  'example/Visibility#301': () => import('projects/example/Visibility')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/Css3d#301': () => import('projects/example/Css3d')
     .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),

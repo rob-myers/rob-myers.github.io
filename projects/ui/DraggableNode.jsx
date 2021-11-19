@@ -92,20 +92,43 @@ export default function DraggableNode(props) {
         }
       }}
     >
+      {props.icon && (
+        (props.icon === 'eye' &&
+          <image
+            href="/icon/Simple_Icon_Eye.svg"
+            width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+          />
+        )
+        ||
+        (props.icon === 'down' &&
+          <image
+            href="/icon/solid_arrow-circle-down.svg"
+            width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+          />)
+        ||
+        (props.icon === 'right' &&
+          <image
+            href="/icon/solid_arrow-circle-right.svg"
+            width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+          />)
+      ) || (
+        <circle
+          className="inner-node"
+          cx={state.position.x}
+          cy={state.position.y}
+          r={radius}
+        />
+      )}
       <circle
         className="node"
         cx={state.position.x}
         cy={state.position.y}
         r={radius + 20}
       />
-      <circle
-        className="inner-node"
-        fill={props.fill || 'blue'}
-        cx={state.position.x}
-        cy={state.position.y}
-        r={radius}
+      <line
+        className="drag-indicator"
+        stroke={props.stroke || 'blue'}
       />
-      <line className="drag-indicator" />
     </g>
   );
 }
@@ -121,7 +144,7 @@ const rootCss = css`
     stroke-width: 0.5;
   }
   > line.drag-indicator {
-    stroke: black;
+    stroke: blue;
     display: none;
     stroke-width: 2.5;
     user-select: none;
@@ -135,5 +158,6 @@ const rootCss = css`
  * @property {(position: Geom.Vect) => void} [onStop]
  * @property {() => void} [onStart]
  * @property {number} [radius]
- * @property {string} [fill]
+ * @property {'eye' | 'down' | 'right'} [icon]
+ * @property {string} [stroke]
  */
