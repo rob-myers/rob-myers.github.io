@@ -7,8 +7,10 @@ _Why?_
 > Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game.
 > An environment is needed to make it meaningful, fixed narratives/missions are not.
 
-We'll focus on combining navigation-based behaviours in a flexible manner.
-Game AI should be compositional, not forced into a narrative straight-jacket.
+We'll focus on combining navigation-based behaviours in a flexible manner. That is,
+> we are all about the [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh).
+
+In our opinion, Game AI should be compositional, not forced into a narrative straight-jacket.
 As for the environment, it will be driven by thousands of Traveller-based assets.
 
 <div
@@ -20,7 +22,8 @@ As for the environment, it will be driven by thousands of Traveller-based assets
 
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
-Obstacles you can see over (e.g. chairs and beds) are shaded grey, whereas darker grey and black indicates walls and obstacles which cannot be seen over. Together with the white doors, they induce the white navigable polygon shown above.
+Obstacles you can see over (e.g. chairs and beds) are shaded grey.
+Darker grey and black indicates walls and obstacles which cannot be seen over. Together with the white doors, they induce the _white triangulated navigable polygon_ shown above.
 
 > Check out this [larger version](/pics/g-301--bridge.debug.x2.png "@new-tab").
 
