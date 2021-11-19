@@ -9,6 +9,10 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 15px;
+}
+
 body {
   background: var(--body-bg);
   padding: 0;

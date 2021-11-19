@@ -82,7 +82,6 @@ const articleCss = css`
     background: rgba(230, 230, 230, 1);
     border: 1px solid transparent;
     color: #225;
-    font-size: 1rem;
     p {
       margin: 12px 0;
     }
@@ -249,15 +248,15 @@ const articleCss = css`
   > time {
     position: absolute;
     right: calc(-1 * var(--blog-border-width));
-    top: -56px;
+    top: -46px;
     width: 136px;
 
     background: var(--border-bg);
     text-align: center;
     color: #555;
     border-radius: 6px 6px 0 0;
-    padding: 12px;
-    font-size: 1rem;
+    padding: 8px;
+    font-size: 0.9rem;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
 
     @media(max-width: 600px) {
