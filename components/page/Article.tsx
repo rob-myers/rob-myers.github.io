@@ -249,7 +249,7 @@ const articleCss = css`
   > time {
     position: absolute;
     right: calc(-1 * var(--blog-border-width));
-    top: -52px;
+    top: -56px;
     width: 136px;
 
     background: var(--border-bg);
