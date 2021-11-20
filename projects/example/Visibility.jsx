@@ -29,6 +29,7 @@ export default function VisibilityDemo(props) {
       initViewBox={defaults.initViewBox}
       maxZoom={6}
       className={classNames(rootCss, props.disabled && 'disabled')}
+      dark
     >
       {data && <>
         <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />

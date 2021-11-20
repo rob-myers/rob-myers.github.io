@@ -33,6 +33,7 @@ export default function Css3d(props) {
     <PanZoom
       gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}
       onUpdate={onUpdate}
+      dark
     >
       {data && (
         <g ref={(el) => el && setTimeout(() => {

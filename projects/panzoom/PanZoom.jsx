@@ -102,7 +102,7 @@ export default function PanZoom(props) {
         height: 100%;
 
         touch-action: pan-x pan-y pinch-zoom;
-        background-color: #333;
+        background-color: ${props.dark ? '#333' : 'none'};
 
         > g.content {
           shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
@@ -124,7 +124,7 @@ export default function PanZoom(props) {
       <g className={classNames("content", props.className)}>
         {props.children}
       </g>
-      <Grid bounds={props.gridBounds} />
+      <Grid bounds={props.gridBounds} dark={props.dark} />
     </svg>
   );
 }
@@ -137,10 +137,11 @@ export default function PanZoom(props) {
  * @property {number} [maxZoom] Maximum zoom factor (default 2)
  * @property {number} [initZoom] Initial zoom factor (default 1)
  * @property {string} [className]
+ * @property {boolean} [dark]
  * @property {(el: SVGSVGElement) => void} [onUpdate]
  */
 
-/** @param {{ bounds: Geom.Rect }} props */
+/** @param {{ bounds: Geom.Rect; dark?: boolean }} props */
 export function Grid(props) {
   const uid = React.useMemo(() => gridPatternCount++, []);
 
@@ -154,11 +155,9 @@ export function Grid(props) {
           patternUnits="userSpaceOnUse"
         >
           <path
-            className="foo"
             d={`M ${dim} 0 L 0 0 0 ${dim}`}
             fill="none"
-            // stroke="rgba(0,0,0,0.5)"
-            stroke="rgba(200,200,200,0.5)"
+            stroke={props.dark ? "rgba(200,200,200,0.5)" : 'rgba(0,0,0,0.5)'}
             strokeWidth="0.3"
           />
         </pattern>
