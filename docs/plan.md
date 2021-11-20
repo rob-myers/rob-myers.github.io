@@ -51,11 +51,11 @@ Each __TODO__ should either:
 ## TODO (unsorted)
 
 - 🚧 avoid dup g-301--bridge.json calls
-- implement front page
-- finish geomorph 101
 - can maximise Tabs into a modal
-- GitHub Comments
 - finish off Continue (hide appropriately)
+- GitHub Comments
+- finish geomorph 101
+- implement front page
 
 - 🚧 visibility polygon should have truncated precision
 - smooth back/forward scrolling
