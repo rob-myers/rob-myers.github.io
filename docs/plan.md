@@ -53,13 +53,12 @@ Each __TODO__ should either:
 - copy-paste terminal x2 bug
 - avoid dup g-301--bridge.json calls
 - implement front page
-- add missing labels to 302
 - finish geomorph 101
 - can maximise Tabs into a modal
 - GitHub Comments
 - finish off Continue (hide appropriately)
 
-- polygons e.g. light should have truncated precision
+- visibility polygon should have truncated precision
 - smooth back/forward scrolling
 - preserve scroll inside tab pane
 - Tabs don't load until scroll into view
@@ -70,6 +69,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ add missing labels to 302
 - ✅ can continue from last scroll on hard refresh
 - ✅ can anchor Tabs via icon
 - ✅ try callback instead of MutationObserve

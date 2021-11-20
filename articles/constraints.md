@@ -41,8 +41,8 @@ More on that later.
 Next, gameplay related constraints.
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
-  > We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") in the previous article.
-  > Here's [another one](/pics/g-302--xboat-repair-bay.debug.x1.png  "@new-tab").
+  > We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") in the previous article; 
+  > here's [another](/pics/g-302--xboat-repair-bay.debug.png  "@new-tab").
 - Use a realtime birdseye camera.
   > Basically a pannable and zoomable SVG.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).

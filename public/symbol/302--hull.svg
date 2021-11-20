@@ -112,11 +112,17 @@
     <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="1118" y="109.1">
       <title>label eva</title>
     </rect>
-    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="977.5" y="435.6">
+    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="977.5" y="472">
       <title>label parts or cargo</title>
     </rect>
     <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="158" y="458" height="22" width="22">
       <title>label fuel</title>
+    </rect>
+    <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="500" y="470" height="22" width="22">
+      <title>label airlock</title>
+    </rect>
+    <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="728" y="472" height="22" width="22">
+      <title>label repair bay</title>
     </rect>
   </g>
   <g style="pointer-events: none;">

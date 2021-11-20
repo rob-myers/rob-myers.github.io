@@ -293,15 +293,51 @@
     },
     {
       "text": "parts or cargo",
-      "center": {"x": 988.5, "y": 446.6},
-      "rect": {"x": 954, "y": 441.1, "width": 69, "height": 11},
-      "padded": {"x": 950, "y": 439.1, "width": 77, "height": 15}
+      "center": {"x": 988.5, "y": 483},
+      "rect": {"x": 954, "y": 477.5, "width": 69, "height": 11},
+      "padded": {"x": 950, "y": 475.5, "width": 77, "height": 15}
     },
     {
       "text": "fuel",
       "center": {"x": 169, "y": 469},
       "rect": {"x": 160.5, "y": 464, "width": 17, "height": 10},
       "padded": {"x": 156.5, "y": 462, "width": 25, "height": 14}
+    },
+    {
+      "text": "airlock",
+      "center": {"x": 511, "y": 481},
+      "rect": {"x": 495, "y": 476, "width": 32, "height": 10},
+      "padded": {"x": 491, "y": 474, "width": 40, "height": 14}
+    },
+    {
+      "text": "repair bay",
+      "center": {"x": 739, "y": 483},
+      "rect": {"x": 714.5, "y": 477.5, "width": 49, "height": 11},
+      "padded": {"x": 710.5, "y": 475.5, "width": 57, "height": 15}
+    },
+    {
+      "text": "office",
+      "center": {"x": 35, "y": 180},
+      "rect": {"x": 21.5, "y": 175, "width": 27, "height": 10},
+      "padded": {"x": 17.5, "y": 173, "width": 35, "height": 14}
+    },
+    {
+      "text": "lounge",
+      "center": {"x": 300, "y": 480},
+      "rect": {"x": 284, "y": 474.5, "width": 32, "height": 11},
+      "padded": {"x": 280, "y": 472.5, "width": 40, "height": 15}
+    },
+    {
+      "text": "toilet",
+      "center": {"x": 447.6, "y": 522.9},
+      "rect": {"x": 436.6, "y": 517.9, "width": 22, "height": 10},
+      "padded": {"x": 432.6, "y": 515.9, "width": 30, "height": 14}
+    },
+    {
+      "text": "locker",
+      "center": {"x": 569, "y": 480},
+      "rect": {"x": 554, "y": 475, "width": 30, "height": 10},
+      "padded": {"x": 550, "y": 473, "width": 38, "height": 14}
     }
   ],
   "navPoly": [
