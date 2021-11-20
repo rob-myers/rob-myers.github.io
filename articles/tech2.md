@@ -123,13 +123,19 @@ Reynolds introduced Steering Behaviours as part of a pipeline:
 
 In practice, one must rely heavily on action selection to avoid unrealistic behaviour such as oscillation and deadlock.
 
-[Detour](https://github.com/recastnavigation/recastnavigation#detour) and particularly _DetourCrowd_ provide a more sophisticated approach to navigation.
-It has been [ported to JS](https://github.com/BabylonJS/Extensions/tree/master/recastjs) as part of the BabylonJS project,
+Alternatively, [Detour](https://github.com/recastnavigation/recastnavigation#detour) and particularly _DetourCrowd_ provide a sophisticated approach to navigation.
+
+<aside>
+
+Recast and Detour have been [ported to JS](https://github.com/BabylonJS/Extensions/tree/master/recastjs) as part of the BabylonJS project,
 and also [integrated](https://docs.unrealengine.com/4.27/en-US/API/Runtime/Navmesh/DetourCrowd/dtCrowd/) into the Unreal Engine.
-A collection of NPCs is understood as a _Crowd_.
+
+</aside>
+
+A collection of NPCs is conceptualised as a _Crowd_.
 One requests the Crowd to move NPCs to particular targets, and executes an updater function each frame.
 For each fixed NPC, its nearby neighbours are modelled as temporary geometry, influencing the NPC's velocity.
-We'll certainly have more to say about this interesting open source library.
+There's certainly more to say about this impressive open source library.
 
 ### Our Approach
 
