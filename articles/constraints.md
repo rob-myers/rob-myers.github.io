@@ -72,30 +72,29 @@ Try entering or copy-pasting the commands below. Mobile users may find copy-past
     ]"
   ></div>
 
-As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process" e.g. try terminating <span class="cmd">sleep 5</span>.
+As usual, [Ctrl+C](#command "sigkill test") terminates the "foreground process" e.g. try terminating <span class="cmd">sleep 5; echo rise and shine</span>.
 Pipelines and background processes are also supported.
 We'll use terminals to monitor the current state of our Game AI, issue direct commands, and develop long-running behaviour.
 
 ### Setting
 
-It remains to constrain the setting.
+Then it only remains to constrain the setting.
 
-- Events take place in the [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3), onboard Space vehicles, stations and docks.
+- Events take place in the [Traveller Universe](https://travellermap.com/?p=-1.329!-23.768!3), onboard star ships, space ships and space stations.
 - [Bardo Thodol](https://en.wikipedia.org/wiki/Bardo_Thodol) provides a source of inspiration,
   >  e.g. Ship AIs may recite it to dying [Low Berth](https://wiki.travellerrpg.com/Low_Berth_Rack "@new-tab") travellers.
 - [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land) provides a source of inspiration,
-  > e.g. Earth is assumed lost after a Karmic Loop was created, letting in the Watchers and other manifestations from Buddhist hells.
+  > e.g. Earth is generally assumed to be lost after a Karmic Loop was created, letting in the Watchers and other manifestations from Buddhist hells.
 
 Traveller is a Futuristic pen-and-paper Role-playing Game, created in the late 70s.
-It permits faster than light travel bounded by 6 parsecs per week.
+It permits faster than light travel bounded by 6 parsecs per week (but usually more like 2 parsecs per week).
 Learn more on the [wiki](https://wiki.travellerrpg.com/Jump_Drive), the [official site](https://www.farfuture.net/) or explore [Traveller Map](https://travellermap.com/).
 It directly motivated Robert Pearce's Starship Geomorphs, and provides considerable depth.
 
-<!-- <div style="font-size:smaller; padding-bottom: 6px"> -->
-<div class="small-print">
+<aside>
 
 _The Traveller game in all forms is owned by [Far Future Enterprises](https://www.farfuture.net/). Copyright © 1977 – 2021 Far Future Enterprises._
 
-</div>
+</aside>
 
 We'll leverage two additional sources of inspiration i.e. _Liberation Through Hearing in the Intermediate State_ (Bardo Thodol) and a famous Science Fiction story from 1912 (The Night Land).

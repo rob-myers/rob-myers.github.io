@@ -50,14 +50,14 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- avoid dup g-301--bridge.json calls
+- 🚧 avoid dup g-301--bridge.json calls
 - implement front page
 - finish geomorph 101
 - can maximise Tabs into a modal
 - GitHub Comments
 - finish off Continue (hide appropriately)
 
-- visibility polygon should have truncated precision
+- 🚧 visibility polygon should have truncated precision
 - smooth back/forward scrolling
 - preserve scroll inside tab pane
 - Tabs don't load until scroll into view

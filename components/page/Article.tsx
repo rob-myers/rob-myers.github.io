@@ -134,10 +134,6 @@ const articleCss = css`
     padding: 0 2px;
   }
 
-  div.small-print {
-    font-size: smaller;
-  }
-
   figure {
     margin: 0;
   }
