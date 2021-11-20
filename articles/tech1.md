@@ -13,8 +13,8 @@ It amounts to parsed HTML decorated with matching CSS and bound JS, together wit
 </aside>
 
 Although HTML, CSS and JS are separate standards, 
-it is now common to generate the HTML using JS (Server-Side Rendering),
-and also the CSS using JS (CSS-in-JS).
+it is now common to generate HTML using JS (Node.js Server-Side Rendering),
+and also CSS using JS (CSS-in-JS).
 In particular, JavaScript has become the central web technology.
 
 
@@ -22,7 +22,7 @@ In particular, JavaScript has become the central web technology.
 
 Although JS can perform arbitrary computations, its central purpose is to mutate the DOM.
 Such JavaScript is often broken down into named _components_, instantiated via XML tags.
-Competing notions exist in the wild, a popular approach being _React function components_.
+Competing notions of JavaScript component exist in the wild, a popular approach being _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
 
 - They have a single parameter, usually called _props_.
@@ -146,18 +146,19 @@ This propagation of internal state is possible because a component's hooks must 
 
 ### Avoiding React Renders
 
-In _panzoom/PanZoom.jsx_, `value` corresponds to `state` but there is no correspondent of `setValue`.
+In _panzoom/PanZoom.jsx_, the variable `state` is the value of a `React.useState` hook. Observe that we do not deconstruct the setter (`setValue` in the terminology of the previous section).
 Why?
-Because we never inform React we've changed `state`, despite mutating it on mouse and pointer events.
+Because we decided to never inform React we've changed `state`, despite mutating it on mouse and pointer events.
 Instead we directly mutate the DOM via:
 
 > ``state.root.setAttribute( 'viewBox', `${state.viewBox}` );``
 
 <!-- By the way, `` `${state.viewBox}` `` amounts to `state.viewBox.toString()` which is defined in [geom/rect.js](#command "open-tab panzoom-again geom/rect.js"). -->
 
-As far as React is concerned, nothing has changed.
+Then as far as React is concerned, nothing has changed.
 Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (producing no change).
-Why not use `setState`?
+> But why not just use a setter `setState`?
+
 Because we avoid needlessly recomputing `<Grid />` and `children` whenever the player pans or zooms.
 Our game may contain many elements, and we'd rather not needlessly recompute their virtual DOM tens of times per second.
 
@@ -175,11 +176,10 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
 
 ### React Refresh
 
-But should we really use `React.useState` as we did above?
-It seems a little strange to ignore the state setter.
+We finish by further justifying our (somewhat odd) usage of `React.useState` i.e. sans the state setter.
 
-We've justified things by claiming direct DOM mutation provides performance benefits.
+So far, we've justified things by claiming direct DOM mutation provides performance benefits.
 But there's also a reason specific to `React.useState`.
-Whilst working in a development environment, it is possible to textually edit React components [without losing their internal state](https://www.npmjs.com/package/react-refresh).
+Whilst working in a development environment, it is possible to textually edit React components [without losing their instances internal state](https://www.npmjs.com/package/react-refresh).
 See this in action by editing one of our CodeSandboxes.
-Importantly, we'll use this to develop and debug sophisticated Game AI.
+We'll use this important devtool to develop sophisticated Game AI.
