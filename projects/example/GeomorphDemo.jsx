@@ -24,10 +24,10 @@ export default function GeomorphDemo() {
   return (
     <div className={rootCss}>
       <PanZoom initViewBox={defaults.initViewBox} gridBounds={defaults.gridBounds} maxZoom={6}>
-        <Geomorph def={layoutDefs["g-303--passenger-deck"]} />
+        {/* <Geomorph def={layoutDefs["g-303--passenger-deck"]} /> */}
         {/* <Geomorph def={layoutDefs["g-101--multipurpose"]} /> */}
         {/* <Geomorph def={layoutDefs["g-301--bridge"]} /> */}
-        {/* <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} /> */}
+        <Geomorph def={layoutDefs["g-302--xboat-repair-bay"]} />
         {/* <Geomorph def={layoutDefs["g-301--bridge"]} transform="matrix(1,0,0,1,-1200,0)" /> */}
       </PanZoom>
     </div>
@@ -63,17 +63,6 @@ function ForeignObject({ gm }) {
   return (
     <foreignObject {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
       <div onClick={onClick}>
-        {gm.labels.map(({ text, padded }) => (
-          <div
-            className="label"
-            style={{
-              left: padded.x - gm.pngRect.x,
-              top: padded.y - gm.pngRect.y,
-            }}
-          >
-            {text}
-          </div>
-        ))}
         {gm.doors.map(({ rect, angle }) =>
           <div
             className="door"
@@ -86,6 +75,17 @@ function ForeignObject({ gm }) {
               transform: `rotate(${angle}rad)`,
             }} />
         )}
+        {gm.labels.map(({ text, padded }) => (
+          <div
+            className="label"
+            style={{
+              left: padded.x - gm.pngRect.x,
+              top: padded.y - gm.pngRect.y,
+            }}
+          >
+            {text}
+          </div>
+        ))}
       </div>
   </foreignObject>
   );
