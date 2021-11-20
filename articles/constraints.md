@@ -5,21 +5,21 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 ### Technology
 
-We begin with the tools we'll use.  
+Let us list our chosen tools.
 
-- Use standard web development, not [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API).
+- Use standard web development techniques (not [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API)).
 - Use [NextJS](https://nextjs.org/) as our development environment.
 - Use [CodeSandbox](https://codesandbox.io) to share editable code.
 - Use [Boxy SVG](https://boxy-svg.com/) to edit assets.
-- Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
-- Use [Preact](https://www.npmjs.com/package/preact) (a React alternative) and [Goober](https://www.npmjs.com/package/goober).
-- Support both mobile and desktop devices.
+- Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS. In particular, [Preact](https://www.npmjs.com/package/preact) (a [React](https://reactjs.org/) alternative) and [Goober](https://www.npmjs.com/package/goober).
+
+We shall also support both mobile and desktop devices.
 
 <!-- NOTE italics inside link currently unsupported -->
 
 The name _Rogue Markup_ refers to the prototypical procedural video game _[Rogue](https://en.wikipedia.org/wiki/Rogue_(video_game))_, and the HyperText _Markup_ Language (HTML).
 Since HTML may be used in many different ways,
-we've clarified our approach above.
+we've clarified our particular approach via the bullet points above.
 Generally speaking, we'll use standard website technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
 
 <aside>
@@ -32,7 +32,7 @@ We also want to avoid obsessing over graphics, seeking superior Game AI instead.
 </aside>
 
 If you're unfamiliar with CodeSandbox (or similar sites), check out  [this example](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
-If you peruse the files, you'll find the rectangle class _Rect_ and a Geomorph PNG.
+If you peruse the files, you'll find e.g. the rectangle class _Rect_ and a Geomorph PNG.
 Our CodeSandboxes use React, whereas this site uses _Preact_.
 More on that later.
 
@@ -42,6 +42,7 @@ Next, gameplay related constraints.
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
   > We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") in the previous article.
+  > Here's [another one](/pics/g-302--xboat-repair-bay.debug.x1.png  "@new-tab").
 - Use a realtime birdseye camera.
   > Basically a pannable and zoomable SVG.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
