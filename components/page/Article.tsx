@@ -209,7 +209,7 @@ const articleCss = css`
 
   span.cmd {
     color: #555;
-    background: #ddd;
+    background: #eee;
     font-family: monospace;
     letter-spacing: 1px;
     font-size: smaller;
@@ -260,6 +260,7 @@ const articleCss = css`
     @media(max-width: 600px) {
       top: 16px;
       right: 0;
+      color: #555;
       border-radius: 0 0 0 4px;
       background: none;
       font-size: 1.1rem;
