@@ -58,6 +58,9 @@ export async function renderGeomorph(
 
   ctxt.lineJoin = 'round';
   hullSym.singles.forEach(({ poly, tags }) => {
+    if (tags.includes('label')) {
+      return;
+    }
     if (tags.includes('machine-base')) {
       setStyle(ctxt, '#fff', '#000', 4);
       fillPolygon(ctxt, [poly]), ctxt.stroke();
