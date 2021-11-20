@@ -9,10 +9,6 @@ import { fillPolygon } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
 import { geomorphJsonPath, geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
 
-/**
- * TODO clean below a bit?
- */
-
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function Css3d(props) {
 

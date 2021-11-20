@@ -79,7 +79,7 @@ const rootCss = css`
     
     @keyframes fadein {
       from { opacity: 0; }
-      to { opacity: 0.2; }
+      to { opacity: 0.5; }
     }
   }
   &.disabled path.light {

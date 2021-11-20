@@ -7,8 +7,7 @@ _Why?_
 > Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game.
 > An environment is needed to make it meaningful, fixed narratives/missions are not.
 
-We'll focus on combining navigation-based behaviours in a flexible manner. That is, this website is all about [navmeshes](https://en.wikipedia.org/wiki/Navigation_mesh).
-We'll make compositional Game AI, avoiding a narrative straight-jacket.
+We'll focus on combining navigation-based behaviours in a flexible manner. This website is all about using [navmeshes](https://en.wikipedia.org/wiki/Navigation_mesh) to make compositional Game AI, avoiding a narrative straight-jacket.
 As for the environment, it will be driven by thousands of Traveller-based assets.
 
 <div
@@ -34,11 +33,9 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 
 </aside>
 
-__TODO__ update code sandboxes
-
 We end with two basic demos:
-you can pan, zoom, move the visibility roots, and view the underlying polygons in 3D.
-There are respective CodeSandboxes i.e. [light](https://codesandbox.io/s/rogue-markup-light-demo-k66zi?file=/src/example/Visibility.jsx "@new-tab") and [height](https://codesandbox.io/s/rogue-markup-3d-demo-forked-gyher?file=/src/index.js "@new-tab").
+you can pan, zoom, move the eyes, and view the underlying polygons in 3D.
+There are respective CodeSandboxes i.e. [visibility](https://codesandbox.io/s/rogue-markup-visibility-demo-k66zi?file=/src/example/Visibility.jsx "@new-tab") and [height](https://codesandbox.io/s/rogue-markup-3d-demo-forked-gyher?file=/src/example/Css3d.jsx "@new-tab").
 
 <div
   class="tabs"
