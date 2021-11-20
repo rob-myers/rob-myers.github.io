@@ -41,20 +41,19 @@ More on that later.
 Next, gameplay related constraints.
 
 - Use [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html) for graphics.
-  > We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") in the previous article; 
+  > We saw [an example](/pics/g-301--bridge.debug.x2.png "@new-tab") previously; 
   > here's [another](/pics/g-302--xboat-repair-bay.debug.png  "@new-tab").
 - Use a realtime birdseye camera.
   > Basically a pannable and zoomable SVG.
 - Use the [Web Animations API](https://developer.mozilla.org/en-US/docs/Web/API/Web_Animations_API/Using_the_Web_Animations_API).
   > This API provides access to the technology underlying CSS animations.
 - Use navigation & raycasting algorithms.
-  > This will involve a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and the computation of ray/geometry collisions.
+  > Involves a [navmesh](https://en.wikipedia.org/wiki/Navigation_mesh#:~:text=A%20navigation%20mesh%2C%20or%20navmesh,video%20game%20AI%20in%202000.) and computing ray/geometry collisions.
 - Do not use a Physics engine.
 - Use an in-browser terminal.
 
-In order to develop complex Game AI, we'll use a terminal.
-Try entering or copy-pasting the commands below
-(mobile users may find copy-pasting easier).
+We'll develop complex Game AI with the aid of a terminal.
+Try entering or copy-pasting the commands below. Mobile users may find copy-pasting easier.
 
   | Category | Examples  |
   | ------- | ---------- |
