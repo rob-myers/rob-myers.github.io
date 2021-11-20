@@ -78,6 +78,7 @@ const articleCss = css`
   aside {
     margin: 24px 0;
     padding: 20px 32px;
+    font-size: 0.94rem;
     border-radius: 8px;
     background: rgba(230, 230, 230, 1);
     border: 1px solid transparent;
