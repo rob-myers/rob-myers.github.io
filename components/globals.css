@@ -1,7 +1,7 @@
 :root {
-  --body-bg: rgba(100, 100, 100, 0.3);
-  --focus-bg: #eee;
-  --border-bg: #ccc;
+  --body-bg: #eee;
+  --focus-bg: #fff;
+  --border-bg: #000;
   --blog-border-width: 4px;
 }
 
@@ -28,7 +28,7 @@ body {
 #__next {
   display: flex;
   justify-content: center;
-  background: #ddd;
+  /* background: #ddd; */
 }
 
 a {

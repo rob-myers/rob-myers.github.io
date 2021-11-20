@@ -80,9 +80,9 @@ const articleCss = css`
     padding: 20px 32px;
     font-size: 0.94rem;
     border-radius: 8px;
-    background: rgba(230, 230, 230, 1);
+    background: #eee;
     border: 1px solid transparent;
-    color: #225;
+    color: #333;
     p {
       margin: 12px 0;
     }
@@ -158,8 +158,9 @@ const articleCss = css`
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 400;
     a {
-      color: #008;
+      color: #444;
     }
+    letter-spacing: 2px;
   }
   h2 {
     font-size: 2rem;
@@ -250,7 +251,7 @@ const articleCss = css`
 
     background: var(--border-bg);
     text-align: center;
-    color: #555;
+    color: #ddd;
     border-radius: 6px 6px 0 0;
     padding: 8px;
     font-size: 0.9rem;
