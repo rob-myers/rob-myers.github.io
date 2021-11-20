@@ -67,6 +67,11 @@ export class TtyXterm {
   }
 
   public initialise() {
+    /**
+     * xterm@4.14.1 onwards seems to fire onData twice when pasting text with spaces
+     * Pinning xterm@4.10.1 seems to solve the issue.
+     */
+    // this.xterm.onData((data) => document.body.append('DATA: ' + data));
     this.xterm.onData(this.handleXtermInput.bind(this));
     this.io.handleWriters(this.onMessage.bind(this));
 

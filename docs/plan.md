@@ -50,7 +50,6 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- copy-paste terminal x2 bug
 - avoid dup g-301--bridge.json calls
 - implement front page
 - finish geomorph 101
@@ -69,6 +68,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ copy-paste terminal x2 bug
 - ✅ add missing labels to 302
 - ✅ can continue from last scroll on hard refresh
 - ✅ can anchor Tabs via icon
