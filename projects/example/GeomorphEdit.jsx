@@ -9,7 +9,7 @@ import { geom } from "../service/geom";
 import { labelMeta } from "../geomorph/geomorph.model";
 import { createLayout, deserializeSvgJson, singlesToPolys } from "../service/geomorph";
 import layoutDefs from "../geomorph/layouts";
-import { renderGeomorph } from "../geomorph/geomorph.render";
+import { renderGeomorph } from "../geomorph/render";
 import * as defaults from "./defaults";
 import svgJson from 'public/symbol/svg.json'; // CodeSandbox?
 import PanZoom from '../panzoom/PanZoom';

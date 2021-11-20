@@ -50,6 +50,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- copy-paste terminal x2 bug
 - avoid dup g-301--bridge.json calls
 - implement front page
 - add missing labels to 302

@@ -1,6 +1,7 @@
 /**
  * Usage: `yarn render-layout 301`
  * Usage: `yarn render-layout 301 --debug`
+ * Usage: `yarn render-layout 101 --debug --scale=4`
  * - Outputs a PNG and JSON in public/geomorph.
  * - Debug option creates a .debug.png with all features.
  */
@@ -16,7 +17,7 @@ import getOpts from 'getopts';
 import svgJson from '../../public/symbol/svg.json';
 import layoutDefs from '../../projects/geomorph/layouts';
 import { createLayout, deserializeSvgJson } from '../../projects/service/geomorph';
-import { renderGeomorph } from '../../projects/geomorph/geomorph.render';
+import { renderGeomorph } from '../../projects/geomorph/render';
 import { geom } from '../../projects/service/geom';
 
 const geomorphId = Number(process.argv[2]);
