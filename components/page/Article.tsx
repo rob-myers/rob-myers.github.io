@@ -77,20 +77,20 @@ const articleCss = css`
 
   aside {
     margin: 24px 0;
-    padding: 36px 48px;
+    padding: 20px 36px;
     font-size: 0.94rem;
     border-radius: 16px;
-    background: #eee;
-    border: 1px solid transparent;
+    background: #fff;
+    border: 2px solid #aaa;
     color: #333;
     p {
       margin: 12px 0;
     }
     
     @media(max-width: 600px) {
-      margin: 8px 0;
-      padding: 24px;
-      border-radius: 16px;
+      margin: 16px 0;
+      padding: 16px;
+      border-radius: 8px;
       p {
         margin: 8px 0;
       }
@@ -107,7 +107,7 @@ const articleCss = css`
     }
     
     &:hover, &:active {
-      border: 1px solid #ccd;
+      background-color: #eee;
     }
 
     position: relative;
