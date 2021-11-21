@@ -22,8 +22,8 @@ Nevertheless we'll need visual cues to indicate NPC actions,
 and a _sense of flow_ via interdependent concurrent animations.
 As for a physics engine, we [mentioned](1#constraints--game-mechanics "@anchor") we won't be using one. In fact:
 
-- Collision detection will be handled at a higher level (navigation).
-- Force-based motion will be replaced by the Web Animations API.
+- Collision detection will be handled at the level of navigation.
+- Force-based motion will be handled by the Web Animations API.
 
 The rest of this article provides detail concerning Navigation and Raycasting.
 
@@ -34,7 +34,7 @@ This might be a straight line e.g. when an item is directly within grasp.
 But usually objects must be avoided: static ones like walls, dynamic ones like other NPCs.
 
 If there are no dynamic objects, a canonical approach exists.
-The navigable area is represented by polygons (possibly with holes), where A and B lie in their interior. These polygons can be triangulated, inducing an undirected graph:
+The navigable area is represented by polygons (possibly with holes), where A and B lie in their interior. These polygons can be triangulated (admittedly non-canonically), inducing an undirected graph:
 
 > its nodes are _the triangles of the triangulation_; two nodes are connected iff _their respective triangles share an edge._
 
@@ -81,7 +81,7 @@ So, how to find a path from A to B?
 > One can solve this by applying the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html).
 > It pulls the zig-zag path tight along the navigable polygons' extremal points.
 
-Drag the nodes below to see _string-pulling_ in action.
+Drag the nodes below (keeping them on the navigable polygon) to see _string-pulling_ in action.
 
 <div
   class="tabs"
@@ -108,7 +108,7 @@ or perhaps the player needs to rush through a moving crowd.
 
 One common approach is to combine static navigation (previous section) with [steering behaviours](https://www.researchgate.net/publication/2495826_Steering_Behaviors_For_Autonomous_Characters).
 They are usually implemented via a physics engine.
-An NPC will be driven by its own force, plus other forces induced by the position and velocity of other NPCs.
+An NPC will be driven by its own force, plus other forces induced by the position and velocity of nearby NPCs.
 
 <aside>
 
@@ -121,23 +121,27 @@ However, one cannot expect the vector sum of forces to capture complex interacti
 Reynolds introduced Steering Behaviours as part of a pipeline:
 > _action selection_ → _steering_ → _animation_.
 
-In practice, one must rely heavily on action selection to avoid unrealistic behaviour such as oscillation and deadlock.
-
-Alternatively, [Detour](https://github.com/recastnavigation/recastnavigation#detour) and particularly _DetourCrowd_ provide a sophisticated approach to navigation.
+In practice, one must rely _heavily_ on action selection to avoid unrealistic behaviour such as oscillation and deadlock.
+There is also another well-known solution i.e. [Detour](https://github.com/recastnavigation/recastnavigation#detour) and in particular _DetourCrowd_. This library provides a sophisticated solution to multiple character navigation.
 
 <aside>
 
-Recast and Detour have been [ported to JS](https://github.com/BabylonJS/Extensions/tree/master/recastjs) as part of the BabylonJS project,
-and also [integrated](https://docs.unrealengine.com/4.27/en-US/API/Runtime/Navmesh/DetourCrowd/dtCrowd/) into the Unreal Engine.
+Detour has been [ported to JS](https://github.com/BabylonJS/Extensions/tree/master/recastjs) as part of the BabylonJS project,
+and [integrated](https://docs.unrealengine.com/4.27/en-US/API/Runtime/Navmesh/DetourCrowd/dtCrowd/) into the Unreal Engine.
 
 </aside>
 
 A collection of NPCs is conceptualised as a _Crowd_.
 One requests the Crowd to move NPCs to particular targets, and executes an updater function each frame.
 For each fixed NPC, its nearby neighbours are modelled as temporary geometry, influencing the NPC's velocity.
-There's certainly more to say about this impressive open source library.
+We will have more to say about this impressive open source library.
 
 ### Our Approach
+
+Then what is our approach to this difficult problem?
+
+Well, we're not going to solve it generally. That is, we do not seek a black box magically producing collision-free concurrent navigation. No. We're happy to take things slow. Let's begin with two colliding NPCs, and an interface for stopping and starting them.
+
 
 __TODO__ our approach does not use a physics engine. we will avoid trying to make a "full-proof general system". we are interested in easy to understand techniques, which can be composed together.
 
