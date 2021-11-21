@@ -77,19 +77,20 @@ const articleCss = css`
 
   aside {
     margin: 24px 0;
-    padding: 20px 32px;
+    padding: 36px 48px;
     font-size: 0.94rem;
-    border-radius: 8px;
+    border-radius: 16px;
     background: #eee;
     border: 1px solid transparent;
     color: #333;
     p {
       margin: 12px 0;
     }
-
+    
     @media(max-width: 600px) {
       margin: 8px 0;
-      padding: 16px 20px;
+      padding: 24px;
+      border-radius: 16px;
       p {
         margin: 8px 0;
       }
