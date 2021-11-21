@@ -20,18 +20,8 @@ import classNames from "classnames";
 export default function NavCollide(props) {
 
   const [state] = React.useState(() => ({
-    source: new Vect(300, 300),
-    target: new Vect(600, 300),
-    path: /** @type {Vect[]} */ ([]),
-    pathApi: /** @type {UiTypes.DraggablePathApi} */ ({}),
-
-    updatePath: () => {
-      const groupId = pathfinding.getGroup(zoneKey, state.source);
-      if (groupId !== null) {
-        state.path = [state.source.clone()].concat(pathfinding.findPath(state.source, state.target, zoneKey, groupId) || []);
-        state.pathApi?.setPath(state.path);
-      }
-    },
+    botA: { initSrc: new Vect(300, 300), initDst: new Vect(600, 300) },
+    botB: { initSrc: new Vect(200, 200), initDst: new Vect(680, 200) },
   }));
   
   const pathfinding = React.useMemo(() => new Pathfinding, []);
@@ -42,7 +32,6 @@ export default function NavCollide(props) {
     const decomp = geom.polysToTriangulation(navPoly);
     const zone = Pathfinding.createZone(decomp);
     pathfinding.setZoneData(zoneKey, zone);
-    state.updatePath(); // Compute and show initial path
     return { pngRect: json.pngRect, navPoly, zone };
   });
 
@@ -56,22 +45,24 @@ export default function NavCollide(props) {
           {data.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
             <polygon className="navtri" points={`${vertexIds.map(id => data.zone.vertices[id])}`} />
           ))}
+
+          <DraggablePath
+            initial={{ src: state.botA.initSrc, dst: state.botA.initDst }}
+            pathfinding={pathfinding}
+            zoneKey={zoneKey}
+            radius={8}
+            srcIcon="run"
+          />
+
+          <DraggablePath
+            initial={{ src: state.botB.initSrc, dst: state.botB.initDst }}
+            pathfinding={pathfinding}
+            zoneKey={zoneKey}
+            radius={8}
+            srcIcon="run"
+          />
+
         </>}
-
-        {/* TODO more generic, so can do 2 easily */}
-
-        {/* e.g. provide Pathfinding only, no need for api? */}
-
-        <DraggablePath
-          api={(api) => state.pathApi = api}
-          initial={{ src: state.source, dst: state.target }}
-          srcIcon="run"
-          radius={8}
-          onStop={(p, type) => {
-            state[type === 'src' ? 'source' : 'target'].copy(p);
-            state.updatePath();
-          }}
-        />
         
       </g>
 

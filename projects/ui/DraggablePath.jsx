@@ -1,4 +1,6 @@
 import React from 'react';
+import { Vect } from '../geom';
+import { Pathfinding } from '../pathfinding/Pathfinding';
 import DraggableNode from './DraggableNode';
 
 /** @param {Props} props */
@@ -6,26 +8,31 @@ export default function DraggablePath(props) {
 
   const [state] = React.useState(() => ({
     /** @type {SVGPolylineElement} */
-    pathEl: ({}),
+    pathEl: ({}), // TODO maybe force render instead
     path: /** @type {Geom.Vect[]} */ ([]),
-  }));
+    src: Vect.from(props.initial.src),
+    dst: Vect.from(props.initial.dst),
 
-  React.useEffect(() => {
     /** @param {Geom.Vect[]} path */
-    function setPath(path) {
+    setPath: (path) => {
       state.path = path;
       state.pathEl.setAttribute('points', `${state.path}`);
-    };
-    props.api({
-      setPath,
-    });
-  }, []);
+    },
+    updatePath: () => {
+      const groupId = props.pathfinding.getGroup(props.zoneKey, state.src);
+      if (groupId !== null) {
+        state.path = [state.src.clone()].concat(props.pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId) || []);
+        state.setPath(state.path);
+      }
+    },
+  }));
 
   return (
     <g
       ref={(rootEl) => {
         if (rootEl) {
           state.pathEl = /** @type {SVGPolylineElement} */ (rootEl.querySelector('polyline.navpath'));
+          state.updatePath();
         }
       }}
     >
@@ -38,14 +45,20 @@ export default function DraggablePath(props) {
         radius={props.radius}
         icon={props.srcIcon}
         onStart={() => props.onStart?.('src')}
-        onStop={(p) => props.onStop?.(p, 'src')}
-      />
+        onStop={(p) => {
+          state.src.copy(p);
+          state.updatePath();
+        }}
+        />
       <DraggableNode
         initial={props.initial.dst}
         radius={props.radius}
         icon={props.dstIcon}
         onStart={() => props.onStart?.('dst')}
-        onStop={(p) => props.onStop?.(p, 'dst')}
+        onStop={(p) => {
+          state.dst.copy(p);
+          state.updatePath();
+        }}
       />
     </g>
   );
@@ -55,7 +68,8 @@ export default function DraggablePath(props) {
 /**
  * @typedef Props @type {object}
  * @property {{ src: Geom.VectJson; dst: Geom.VectJson }} initial
- * @property {(api: UiTypes.DraggablePathApi) => void} api
+ * @property {Pathfinding} pathfinding
+ * @property {string} zoneKey
  * @property {UiTypes.IconKey} [srcIcon]
  * @property {UiTypes.IconKey} [dstIcon]
  * @property {number} [radius]
