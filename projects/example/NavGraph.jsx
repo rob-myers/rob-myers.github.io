@@ -68,7 +68,6 @@ export default function NavGraphDemo(props) {
 
 const rootCss = css`
   image.geomorph {
-    /* opacity: 0.8; */
     filter: invert();
   }
   circle.node {
@@ -84,8 +83,8 @@ const rootCss = css`
   polygon.navtri {
     fill: transparent;
     &:hover, &:active, &:focus {
-      fill: rgba(200, 200, 200, 0.4);
-      stroke: blue;
+      stroke: green;
+      stroke-width: 4;
     }
   }  
 `;
