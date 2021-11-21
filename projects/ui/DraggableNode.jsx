@@ -93,24 +93,38 @@ export default function DraggableNode(props) {
       }}
     >
       {props.icon && (
-        (props.icon === 'eye' &&
-          <image
-            href="/icon/Simple_Icon_Eye.svg"
-            width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
-          />
-        )
-        ||
-        (props.icon === 'down' &&
-          <image
-            href="/icon/solid_arrow-circle-down.svg"
-            width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
-          />)
-        ||
-        (props.icon === 'right' &&
-          <image
-            href="/icon/solid_arrow-circle-right.svg"
-            width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
-          />)
+        {
+          eye: (
+            <image
+              href="/icon/Simple_Icon_Eye.svg"
+              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+            />
+          ),
+          down: (
+            <image
+              href="/icon/solid_arrow-circle-down.svg"
+              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+            />
+          ),
+          right: (
+            <image
+              href="/icon/solid_arrow-circle-right.svg"
+              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+            />
+          ),
+          run: (
+            <image
+              href="/icon/person-running-fa6.svg"
+              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+            />
+            ),
+          finish: (
+            <image
+              href="/icon/flag-checkered-fa6.svg"
+              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+            />
+          ),
+        }[props.icon]
       ) || (
         <circle
           className="inner-node"
@@ -134,16 +148,16 @@ export default function DraggableNode(props) {
 }
 
 const rootCss = css`
-  > circle.node {
+  circle.node {
     fill: rgba(0, 0, 0, 0.2);
     cursor: pointer;
   }
-  > circle.inner-node {
+  circle.inner-node {
     stroke: black;
     cursor: pointer;
     stroke-width: 0.5;
   }
-  > line.drag-indicator {
+  line.drag-indicator {
     display: none;
     stroke-width: 2.5;
     user-select: none;
@@ -157,6 +171,6 @@ const rootCss = css`
  * @property {(position: Geom.Vect) => void} [onStop]
  * @property {() => void} [onStart]
  * @property {number} [radius]
- * @property {'eye' | 'down' | 'right'} [icon]
+ * @property {'eye' | 'down' | 'right' | 'run' | 'finish'} [icon]
  * @property {string} [stroke]
  */
