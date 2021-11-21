@@ -146,7 +146,7 @@ This propagation of internal state is possible because a component's hooks must 
 
 ### Avoiding React Renders
 
-In _panzoom/PanZoom.jsx_, the variable `state` is the value of a `React.useState` hook. Observe that we do not deconstruct the setter (`setValue` in the terminology of the previous section).
+In _panzoom/PanZoom.jsx_, the variable `state` is the value of an internal state variable i.e. deconstructed from a `React.useState` hook. Observe that we do not deconstruct the setter (`setValue` in the terminology of the previous section).
 Why?
 Because we decided to never inform React we've changed `state`, despite mutating it on mouse and pointer events.
 Instead we directly mutate the DOM via:
