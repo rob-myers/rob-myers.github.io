@@ -138,18 +138,11 @@ We will have more to say about this impressive open source library.
 
 ### Our Approach
 
-Then what is our approach to this difficult problem?
+So what is our approach to this difficult problem?
 
-Well, we're not going to solve it generally. That is, we do not seek a black box magically producing collision-free concurrent navigation. No. We're happy to take things slow. Let's begin with two colliding NPCs, and an interface for stopping and starting them.
-
-
-__TODO__ our approach does not use a physics engine. we will avoid trying to make a "full-proof general system". we are interested in easy to understand techniques, which can be composed together.
-
-__TODO__
-- DraggablePath component
-- two intersecting navpaths
-- circle moves along navpath
-- can stop/start with terminal
+Well, we probably won't solve it generally. That is,
+_we do not seek a black box magically producing collision-free concurrent navigation_.
+No. We're happy to take things slow. Let's begin with two colliding NPCs, and an interface for stopping and starting them.
 
 <div
   class="tabs"
@@ -160,6 +153,13 @@ __TODO__
      { key: 'component', filepath: 'example/NavCollide' },
    ]"
 ></div>
+
+__TODO__
+- DraggablePath component
+- two intersecting navpaths
+- circle moves along navpath
+- can stop/start with terminal
+
 
 ### Raycasting
 

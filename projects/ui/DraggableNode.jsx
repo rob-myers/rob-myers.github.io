@@ -171,6 +171,6 @@ const rootCss = css`
  * @property {(position: Geom.Vect) => void} [onStop]
  * @property {() => void} [onStart]
  * @property {number} [radius]
- * @property {'eye' | 'down' | 'right' | 'run' | 'finish'} [icon]
+ * @property {Geomorph.IconKey} [icon]
  * @property {string} [stroke]
  */

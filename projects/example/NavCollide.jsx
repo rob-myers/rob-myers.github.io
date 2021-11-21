@@ -9,7 +9,7 @@ import { Pathfinding } from '../pathfinding/Pathfinding';
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
-import DraggableNode from "../ui/DraggableNode";
+import DraggablePath from "../ui/DraggablePath";
 import classNames from "classnames";
 
 // TODO
@@ -20,22 +20,16 @@ import classNames from "classnames";
 export default function NavCollide(props) {
 
   const [state] = React.useState(() => ({
-    /** @type {SVGGElement} */
-    rootEl: ({}),
-    /** @type {SVGCircleElement} */
-    targetEl: ({}),
-    /** @type {SVGPolylineElement} */
-    pathEl: ({}),
-
     source: new Vect(300, 300),
     target: new Vect(600, 300),
     path: /** @type {Vect[]} */ ([]),
+    pathApi: /** @type {UiTypes.DraggablePathApi} */ ({}),
 
     updatePath: () => {
       const groupId = pathfinding.getGroup(zoneKey, state.source);
       if (groupId !== null) {
         state.path = [state.source.clone()].concat(pathfinding.findPath(state.source, state.target, zoneKey, groupId) || []);
-        state.pathEl.setAttribute('points', `${state.path}`);
+        state.pathApi?.setPath(state.path);
       }
     },
   }));
@@ -48,21 +42,13 @@ export default function NavCollide(props) {
     const decomp = geom.polysToTriangulation(navPoly);
     const zone = Pathfinding.createZone(decomp);
     pathfinding.setZoneData(zoneKey, zone);
+    state.updatePath(); // Compute and show initial path
     return { pngRect: json.pngRect, navPoly, zone };
   });
 
   return (
     <PanZoom gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
-      <g
-        className={classNames(rootCss, !props.disabled && animateNavpathCss)}
-        ref={(el) => {
-          if (el) {
-            state.rootEl = el;
-            state.pathEl = /** @type {SVGPolylineElement} */ (el.querySelector('polyline.navpath'));
-            state.updatePath();
-          }
-        }}
-      >
+      <g className={classNames(rootCss, !props.disabled && animateNavpathCss)}>
 
         {data && <>
           <image {...data.pngRect} className="geomorph" href={geomorphPngPath('g-301--bridge')} />
@@ -72,26 +58,21 @@ export default function NavCollide(props) {
           ))}
         </>}
 
-        <polyline className="navpath" points={`${state.path}`}/>
+        {/* TODO more generic, so can do 2 easily */}
 
-        <DraggableNode
-          initial={state.source}
+        {/* e.g. provide Pathfinding only, no need for api? */}
+
+        <DraggablePath
+          api={(api) => state.pathApi = api}
+          initial={{ src: state.source, dst: state.target }}
+          srcIcon="run"
           radius={8}
-          onStop={(p) => {
-            state.source.copy(p);
+          onStop={(p, type) => {
+            state[type === 'src' ? 'source' : 'target'].copy(p);
             state.updatePath();
           }}
         />
-
-        <DraggableNode
-          initial={state.target}
-          radius={8}
-          onStop={(p) => {
-            state.target.copy(p);
-            state.updatePath();
-          }}
-        />
-
+        
       </g>
 
     </PanZoom>
