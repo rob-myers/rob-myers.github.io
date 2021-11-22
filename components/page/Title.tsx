@@ -37,8 +37,10 @@ const titleComponents = {
 const titleCss = css`
   font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   position: relative;
-
+  
   @media(max-width: 600px) {
+    background: #eee;
+    padding-bottom: 8px;
     padding-left: 8px;
     border-bottom: 2px solid #999;
     border: 0 solid #000;

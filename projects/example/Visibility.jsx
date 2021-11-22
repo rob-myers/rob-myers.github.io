@@ -29,7 +29,6 @@ export default function VisibilityDemo(props) {
       initViewBox={defaults.initViewBox}
       maxZoom={6}
       className={classNames(rootCss, props.disabled && 'disabled')}
-      dark
     >
       {data && <>
         <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
@@ -63,7 +62,7 @@ function Light({ init, walls, hull }) {
       initial={position}
       onStop={setPosition}
       radius={14}
-      stroke="white"
+      stroke="black"
       icon="eye"
     />
   </>;
@@ -71,7 +70,7 @@ function Light({ init, walls, hull }) {
 
 const rootCss = css`
   image {
-    filter: contrast(200%) invert();
+    filter: contrast(200%);
   }
 
   path.light {

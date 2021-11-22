@@ -38,19 +38,19 @@ const controlsCss = css`
   > .top-right {
     position: absolute;
     right: -10px;
-    top: -36px;
+    top: -39px;
     z-index: 2;
     border-radius: 4px 4px 0 0;
     padding: 2px 16px;
     
     cursor: pointer;
-    background: #333;
-    color: #777;
+    background: #444;
     font-size: 1rem;
     font-weight: 300;
     
+    color: #999;
     &.enabled {
-      color: #fff;
+      color: #ddd;
     }
 
     > span:not(:last-child) {

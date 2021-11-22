@@ -136,13 +136,16 @@ One requests the Crowd to move NPCs to particular targets, and executes an updat
 For each fixed NPC, its nearby neighbours are modelled as temporary geometry, influencing the NPC's velocity.
 We will have more to say about this impressive open source library.
 
-### Our Approach
+### Dynamic Navigation: Our Approach
 
-So what is our approach to this difficult problem?
+So what's our approach to this difficult problem?
+Well, we do not intend to solve it generally.
 
-Well, we probably won't solve it generally. That is,
+
+That is,
 _we do not seek a black box magically producing collision-free concurrent navigation_.
-No. We're happy to take things slow. Let's begin with two colliding NPCs, and an interface for stopping and starting them.
+We're happy to take things slow.
+Let's start with two colliding NPCs, and an appropriate interface for stopping and starting them.
 
 <div
   class="tabs"

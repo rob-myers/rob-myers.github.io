@@ -18,25 +18,19 @@ export default function Article(props: React.PropsWithChildren<{
   children: string;
 }>) {
 
-
   const dateText = React.useMemo(() => {
     const d = new Date(props.dateTime);
     return `${d.getDate()}${dayth(d.getDate())} ${months[d.getMonth()]} ${d.getFullYear()}`;
   }, [props.dateTime]);
 
   const components = React.useMemo(
-    () => articleComponents(props.articleKey),
+    () => articleComponents(props.articleKey, { dateTime: props.dateTime, dateText, tags: [] }),
     [props.articleKey],
   );
 
   return <>
-    <article
-      className={classNames(props.className, articleCss)}
-    >
+    <article className={classNames(props.className, articleCss)}>
       <span className="anchor" id={props.articleKey} />
-      <time dateTime={props.dateTime}>
-        {dateText}
-      </time>
       <Markdown
         children={props.children}
         components={components}
@@ -47,13 +41,13 @@ export default function Article(props: React.PropsWithChildren<{
 }
 
 const articleCss = css`
-  line-height: 2;
+  line-height: 2.2;
   background: var(--focus-bg);
   border: var(--blog-border-width) solid var(--border-bg);
   font-size: 1rem;
   overflow-wrap: break-word;
   
-  padding: 64px 128px 96px 128px;
+  padding: 64px 164px 96px 164px;
   @media(max-width: 800px) {
     padding: 32px 64px 48px 64px;
   }
@@ -78,11 +72,10 @@ const articleCss = css`
   aside {
     margin: 24px 0;
     padding: 20px 36px;
-    font-size: 0.94rem;
-    border-radius: 16px;
+    font-size: 0.96rem;
+    border-radius: 12px;
     background: #fff;
-    border: 2px solid #aaa;
-    color: #333;
+    border: 1px solid #aaa;
     p {
       margin: 12px 0;
     }
@@ -141,11 +134,10 @@ const articleCss = css`
   }
   
   figure.tabs {
-    border: 10px solid #333;
-    border-radius: 8px;
-    margin: 48px 0;
+    border: 10px solid #444;
+    margin:  64px 0;
     @media(max-width: 600px) {
-      margin: 32px 0;
+      margin: 40px 0 32px 0;
     }
 
     position: relative;
@@ -164,14 +156,26 @@ const articleCss = css`
     letter-spacing: 2px;
   }
   h2 {
-    font-size: 2rem;
+    font-size: 2.6rem;
     @media(max-width: 600px) {
       margin: 16px 0 24px;
       font-size: 1.9rem;
     }
   }
+  h2 + div.subtitle {
+    background: #eee;
+    padding: 16px;
+    font-size: smaller;
+    font-family: monospace;
+    color: #555555;
+    @media(max-width: 600px) {
+      background: none;
+      padding: 0 0 8px;
+      margin-top: -16px;
+    }
+  }
   h3 {
-    font-size: 1.4rem;
+    font-size: 1.6rem;
     @media(max-width: 600px) {
       font-size: 1.3em;
     }
@@ -243,33 +247,6 @@ const articleCss = css`
     }
   }
 
-  position: relative;
-  > time {
-    position: absolute;
-    right: calc(-1 * var(--blog-border-width));
-    top: -46px;
-    width: 136px;
-
-    background: var(--border-bg);
-    text-align: center;
-    color: #ddd;
-    border-radius: 6px 6px 0 0;
-    padding: 8px;
-    font-size: 0.9rem;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-
-    @media(max-width: 600px) {
-      top: 16px;
-      right: 0;
-      color: #555;
-      border-radius: 0 0 0 4px;
-      background: none;
-      font-size: 1.1rem;
-      width: unset;
-      margin-top: 8px;
-    }
-  }
-
   ul, ol {
     @media(max-width: 600px) {
       padding-left: 20px;
@@ -285,7 +262,14 @@ const articleCss = css`
 
 `;
 
-const articleComponents = (articleKey: ArticleKey) => ({
+const articleComponents = (
+  articleKey: ArticleKey,
+  meta: {
+    dateTime: string,
+    dateText: string,
+    tags: string[],
+  },
+) => ({
 
   a({ node, href, title, children, ...props}: any) {
 
@@ -401,14 +385,21 @@ const articleComponents = (articleKey: ArticleKey) => ({
     }
   },
 
+  // Occurs once in each article
   h2({ node, children, ...props }: any) {
-    return (
+    return <>
       <h2 {...props}>
         <Link href={`#${articleKey}`}>
           <a>{children}</a>
         </Link>
       </h2>
-    );
+      <div className="subtitle">
+        <time dateTime={meta.dateTime}>
+          {meta.dateText}
+        </time>
+        {meta.tags}
+      </div>
+    </>;
   },
 
   h3({ node, children, ...props }: any) {
