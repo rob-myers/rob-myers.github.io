@@ -40,10 +40,9 @@ const titleCss = css`
   
   @media(max-width: 600px) {
     background: #eee;
-    padding-bottom: 20px;
+    padding-bottom: 8px;
     padding-left: 8px;
-    border-bottom: 2px solid #999;
-    border: 0 solid #000;
+    border-bottom: 1px solid #aaa;
     padding-top: 64px;
   }
   padding-top: 40px;
@@ -60,7 +59,7 @@ const titleCss = css`
       font-size: 5rem;
     }
     @media(max-width: 600px) {
-      font-size: 3.2rem;
+      font-size: 3rem;
     }
   }
   
