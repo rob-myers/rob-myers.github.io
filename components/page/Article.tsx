@@ -164,12 +164,12 @@ const articleCss = css`
     }
   }
   h2 + div.subtitle {
-    background: #eee;
+    border: 1px solid #ddd;
     padding-left: 8px;
     font-size: smaller;
     font-family: monospace;
     color: #555555;
-    margin-top: -24px;
+    margin-top: -16px;
     @media(max-width: 600px) {
       background: none;
       padding: 0 0 8px;
