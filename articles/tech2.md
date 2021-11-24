@@ -40,6 +40,8 @@ The navigable area is represented by polygons (possibly with holes), where A and
 
 The triangles below collectively induce the red undirected graph.
 
+__TODO__ higher quality navmesh via Recast
+
 <div
   class="tabs"
   name="nav-graph-demo"
