@@ -13,15 +13,18 @@ import DraggablePath from "../ui/DraggablePath";
 import classNames from "classnames";
 
 // TODO
-// - 2 paths
+// - onChange animate circle moving along path
 // - tty integration
 
 /** @param {{ disabled?: boolean }} props */
 export default function NavCollide(props) {
 
   const [state] = React.useState(() => ({
-    botA: { initSrc: new Vect(300, 300), initDst: new Vect(600, 300) },
-    botB: { initSrc: new Vect(200, 200), initDst: new Vect(680, 200) },
+    pathA: { initSrc: new Vect(300, 300), initDst: new Vect(600, 300) },
+    pathB: { initSrc: new Vect(200, 200), initDst: new Vect(680, 200) },
+    botA: {
+      /** @type {SVGGElement} */ el: ({}),
+    },
   }));
   
   const pathfinding = React.useMemo(() => new Pathfinding, []);
@@ -37,7 +40,14 @@ export default function NavCollide(props) {
 
   return (
     <PanZoom gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
-      <g className={classNames(rootCss, !props.disabled && animateNavpathCss)}>
+      <g
+        className={classNames(rootCss, !props.disabled && animateNavpathCss)}
+        ref={(rootEl) => {
+          if (rootEl) {
+            state.botA.el = /** @type {*} */ (rootEl.querySelector('g.bot-a'));
+          }
+        }}
+      >
 
         {data && <>
           <image {...data.pngRect} className="geomorph" href={geomorphPngPath('g-301--bridge')} />
@@ -47,20 +57,33 @@ export default function NavCollide(props) {
           ))}
 
           <DraggablePath
-            initial={{ src: state.botA.initSrc, dst: state.botA.initDst }}
+            initial={{ src: state.pathA.initSrc, dst: state.pathA.initDst }}
             pathfinding={pathfinding}
             zoneKey={zoneKey}
-            radius={8}
-            srcIcon="run"
-          />
+            radius={4}
+            onChange={(path) => {
+              console.log('path A', path);
+              if (state.botA.el) {
+                state.botA.el.style.transform = `translate(${path[0].x}px, ${path[0].y}px)`;
+                // TODO commence Web Animation API anim
+              }
+            }}
+            />
 
           <DraggablePath
-            initial={{ src: state.botB.initSrc, dst: state.botB.initDst }}
+            initial={{ src: state.pathB.initSrc, dst: state.pathB.initDst }}
             pathfinding={pathfinding}
             zoneKey={zoneKey}
-            radius={8}
-            srcIcon="run"
+            radius={4}
+            onChange={(path) => {
+              console.log('path B', path);
+            }}
           />
+
+          <g className="bot-a">
+            <circle fill="red" stroke="black" strokeWidth={2} r="10" />
+            <line stroke="black" strokeWidth={2} x2="10" />
+          </g>
 
         </>}
         
@@ -76,8 +99,8 @@ const rootCss = css`
 
   polyline.navpath {
     fill: none;
-    stroke: #083;
-    stroke-width: 4;
+    stroke: #777;
+    stroke-width: 2;
     stroke-dasharray: 8px;
     stroke-dashoffset: 16px;
   }
@@ -92,6 +115,10 @@ const rootCss = css`
     &:hover {
       stroke: #900;
     }
+  }
+
+  g.bot-a {
+    pointer-events: none;
   }
 `;
 

@@ -23,6 +23,7 @@ export default function DraggablePath(props) {
       if (groupId !== null) {
         state.path = [state.src.clone()].concat(props.pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId) || []);
         state.setPath(state.path);
+        props.onChange?.(state.path);
       }
     },
   }));
@@ -73,7 +74,7 @@ export default function DraggablePath(props) {
  * @property {UiTypes.IconKey} [srcIcon]
  * @property {UiTypes.IconKey} [dstIcon]
  * @property {number} [radius]
- * @property {(position: Geom.Vect, type: 'src' | 'dst') => void} [onStop]
+ * @property {(path: Geom.Vect[]) => void} [onChange]
  * @property {(type: 'src' | 'dst') => void} [onStart]
  * @property {string} [stroke]
  */
