@@ -70,11 +70,9 @@ export default function NavCollide(props) {
             zoneKey={zoneKey}
             radius={4}
             onChange={(path) => {
-              console.log('path A', path);
               const bot = state.botA;
-              if (bot.el) {
-                // bot.el.style.transform = `translate(${path[0].x}px, ${path[0].y}px)`;
 
+              if (bot.el && path.length) {
                 // Move bot along path using Web Animations API
                 const edges = path.map((p, i) => ({ p, q: path[i + 1] })).slice(0, -1);
                 const elens = edges.map(({ p, q }) => p.distanceTo(q));
