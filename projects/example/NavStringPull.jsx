@@ -66,32 +66,32 @@ export default function NavStringPull(props) {
         {data && <>
           <image {...data.pngRect} className="geomorph" href={geomorphPngPath('g-301--bridge')} />
 
-          {data.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
+          {data.zone.groups.map(nodes => nodes.map(({ vertexIds }) =>
             <polygon className="navtri" points={`${vertexIds.map(id => data.zone.vertices[id])}`} />
           ))}
+
+          <polyline className="navpath" points={`${state.path}`}/>
+
+          <DraggableNode
+            initial={state.source}
+            icon="run"
+            onStop={(p) => {
+              if (!data.navPoly.some(x => x.contains(p))) return 'cancel';
+              state.source.copy(p);
+              state.updatePath();
+            }}
+          />
+
+          <DraggableNode
+            initial={state.target}
+            icon="finish"
+            onStop={(p) => {
+              if (!data.navPoly.some(x => x.contains(p))) return 'cancel';
+              state.target.copy(p);
+              state.updatePath();
+            }}
+          />
         </>}
-
-        <polyline className="navpath" points={`${state.path}`}/>
-
-        <DraggableNode
-          initial={state.source}
-          radius={8}
-          onStop={(p) => {
-            state.source.copy(p);
-            state.updatePath();
-          }}
-          icon="run"
-        />
-
-        <DraggableNode
-          initial={state.target}
-          radius={8}
-          onStop={(p) => {
-            state.target.copy(p);
-            state.updatePath();
-          }}
-          icon="finish"
-        />
 
       </g>
 

@@ -66,18 +66,20 @@ export default function DraggableNode(props) {
       },
       applyDrag: () => {
         state.endDrag();
-        state.position.copy(state.target);
-        state.lineEl.setAttribute('x1', String(state.target.x));
-        state.lineEl.setAttribute('y1', String(state.target.y));
-        setState({ ...state });
-        props.onStop?.(Vect.from(state.position));
+        const cancelled = props.onStop?.(Vect.from(state.target)) === 'cancel';
+        if (!cancelled) {
+          state.position.copy(state.target);
+          state.lineEl.setAttribute('x1', String(state.target.x));
+          state.lineEl.setAttribute('y1', String(state.target.y));
+          setState({ ...state });
+        }
       },
       /** @param {KeyboardEvent} e */
       endDragOnEscape: (e) => void (e.key === 'Escape' && state.endDrag()),
     };
   });
 
-  const radius = props.radius || 10;
+  const radius = props.radius || 8;
 
   return (
     <g
@@ -168,7 +170,7 @@ const rootCss = css`
 /**
  * @typedef Props @type {object}
  * @property {Geom.VectJson} initial
- * @property {(position: Geom.Vect) => void} [onStop]
+ * @property {(position: Geom.Vect) => void | 'cancel'} [onStop]
  * @property {() => void} [onStart]
  * @property {number} [radius]
  * @property {UiTypes.IconKey} [icon]
