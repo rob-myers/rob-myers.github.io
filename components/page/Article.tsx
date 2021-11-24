@@ -16,6 +16,7 @@ export default function Article(props: React.PropsWithChildren<{
   dateTime: string;
   articleKey: ArticleKey;
   children: string;
+  tags: string[];
 }>) {
 
   const dateText = React.useMemo(() => {
@@ -24,7 +25,7 @@ export default function Article(props: React.PropsWithChildren<{
   }, [props.dateTime]);
 
   const components = React.useMemo(
-    () => articleComponents(props.articleKey, { dateTime: props.dateTime, dateText, tags: [] }),
+    () => articleComponents(props.articleKey, { dateTime: props.dateTime, dateText, tags: props.tags }),
     [props.articleKey],
   );
 
@@ -164,12 +165,30 @@ const articleCss = css`
     }
   }
   h2 + div.subtitle {
-    border: 1px solid #ddd;
-    padding-left: 8px;
-    font-size: smaller;
-    font-family: monospace;
-    color: #555555;
     margin-top: -16px;
+    padding: 4px 8px;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    
+    time {
+      color: #533;
+    }
+    
+    ul.tags {
+      font-family: monospace;
+      display: inline-block;
+      padding: 0;
+      color: #777;
+    }
+    ul.tags li {
+      display: inline;
+      margin: 0;
+    }
+    ul.tags li:not(:last-child):after {
+      content: " | ";
+    }
+
     @media(max-width: 600px) {
       background: none;
       padding: 0 0 8px;
@@ -267,9 +286,9 @@ const articleCss = css`
 const articleComponents = (
   articleKey: ArticleKey,
   meta: {
-    dateTime: string,
-    dateText: string,
-    tags: string[],
+    dateTime: string;
+    dateText: string;
+    tags: string[];
   },
 ) => ({
 
@@ -396,10 +415,14 @@ const articleComponents = (
         </Link>
       </h2>
       <div className="subtitle">
-        <time dateTime={meta.dateTime}>
-          {meta.dateText}
-        </time>
-        {meta.tags}
+        <ul className="tags">
+          <li>
+            <time dateTime={meta.dateTime}>
+              {meta.dateText}
+            </time>
+          </li>
+          {meta.tags.map(tag => <li>{tag}</li>)}
+        </ul>
       </div>
     </>;
   },

@@ -11,6 +11,7 @@ export const articlesMeta = {
     index: '',
     prev: null,
     next: null,
+    tags: [],
   },
   test: {
     key: 'test',
@@ -21,6 +22,7 @@ export const articlesMeta = {
     index: '',
     prev: null,
     next: null,
+    tags: [],
   },
   /**
    * Part 1
@@ -34,6 +36,7 @@ export const articlesMeta = {
     index: '1a',
     prev: null,
     next: 'constraints',
+    tags: ['intent', 'game ai', 'traveller', 'npc','navmesh','geomorph','codesandbox'],
   },
   constraints: {
     key: 'constraints',
@@ -44,6 +47,7 @@ export const articlesMeta = {
     index: '1b',
     prev: 'objective',
     next: 'finishing',
+    tags: ['tech', 'mechanics', 'terminal', 'setting'],
   },
   finishing: {
     key: 'finishing',
@@ -54,6 +58,7 @@ export const articlesMeta = {
     index: '1c',
     prev: 'constraints',
     next: 'technology',
+    tags: ['finishing as a skill', 'better game ai', 'teleglitch'],
   },
   /**
    * Part 2
@@ -67,6 +72,7 @@ export const articlesMeta = {
     index: '2a',
     prev: 'finishing',
     next: 'tech1',
+    tags: ['lego bricks', 'specific tech'],
   },
   'tech1': {
     key: 'tech1',
@@ -77,6 +83,7 @@ export const articlesMeta = {
     index: '2b',
     prev: 'technology',
     next: 'tech2',
+    tags: ['javascript', 'react', 'preact', 'jsx', 'performance', 'hot reload'],
   },
   'tech2': {
     key: 'tech2',
@@ -87,6 +94,7 @@ export const articlesMeta = {
     index: '2c',
     prev: 'tech1',
     next: 'tech3',
+    tags: ['navigation', 'navgraph', 'navmesh', 'string pull',  'steering', 'detour', 'raycast'],
   },
   'tech3': {
     key: 'tech3',
@@ -97,6 +105,7 @@ export const articlesMeta = {
     index: '2d',
     prev: 'tech2',
     next: 'geomorphs',
+    tags: [],
   },
   /**
    * Part 3
@@ -110,6 +119,7 @@ export const articlesMeta = {
     index: '3a',
     prev: 'tech3',
     next: null,
+    tags: [],
   },
 } as const;
 

@@ -49,6 +49,7 @@ export default function Articles({ keys, markdown }: Props) {
             articleKey={key}
             dateTime={articlesMeta[key].timestamp}
             children={markdown[key] || ''}
+            tags={articlesMeta[key].tags as any}
           />
         </li>
       )}
