@@ -181,6 +181,11 @@ const articleCss = css`
       padding: 0;
       color: #777;
     }
+    @media(max-width: 600px) {
+      ul.tags {
+        font-size: 0.8rem;
+      }
+    }
     ul.tags li {
       display: inline;
       margin: 0;
