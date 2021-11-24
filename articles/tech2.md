@@ -81,7 +81,7 @@ So, how to find a path from A to B?
 > One can solve this by applying the [string-pulling algorithm](http://digestingduck.blogspot.com/2010/03/simple-stupid-funnel-algorithm.html).
 > It pulls the zig-zag path tight along the navigable polygons' extremal points.
 
-Drag the nodes below (keeping them on the navigable polygon) to see _string-pulling_ in action.
+Drag the nodes below to see _string-pulling_ in action.
 
 <div
   class="tabs"
@@ -122,30 +122,27 @@ Reynolds introduced Steering Behaviours as part of a pipeline:
 > _action selection_ → _steering_ → _animation_.
 
 In practice, one must rely _heavily_ on action selection to avoid unrealistic behaviour such as oscillation and deadlock.
-There is also another well-known solution i.e. [Detour](https://github.com/recastnavigation/recastnavigation#detour) and in particular _DetourCrowd_. This library provides a sophisticated solution to multiple character navigation.
 
-<aside>
+There is another well-known approach i.e. [Detour](https://github.com/recastnavigation/recastnavigation#detour) and in particular _DetourCrowd_, providing a sophisticated solution to multiple character navigation.
+It has been [ported to JS](https://github.com/BabylonJS/Extensions/tree/master/recastjs) in BabylonJS,
+and also [integrated](https://docs.unrealengine.com/4.27/en-US/API/Runtime/Navmesh/DetourCrowd/dtCrowd/) into the Unreal Engine.
 
-Detour has been [ported to JS](https://github.com/BabylonJS/Extensions/tree/master/recastjs) as part of the BabylonJS project,
-and [integrated](https://docs.unrealengine.com/4.27/en-US/API/Runtime/Navmesh/DetourCrowd/dtCrowd/) into the Unreal Engine.
-
-</aside>
-
-A collection of NPCs is conceptualised as a _Crowd_.
-One requests the Crowd to move NPCs to particular targets, and executes an updater function each frame.
+In Detour, a collection of NPCs is conceptualised as a _Crowd_.
+One requests the Crowd to move individual NPCs to particular targets.
+An updater function must be executed each frame.
 For each fixed NPC, its nearby neighbours are modelled as temporary geometry, influencing the NPC's velocity.
-We will have more to say about this impressive open source library.
+We'll have more to say about this impressive open source library.
 
 ### Dynamic Navigation: Our Approach
 
-So what's our approach to this difficult problem?
-Well, we do not intend to solve it generally.
-
-
+So how will we approach this difficult problem?
+Well, we won't solve it generally.
 That is,
-_we do not seek a black box magically producing collision-free concurrent navigation_.
+> _we don't seek a black box magically producing collision-free concurrent navigation_.
+
 We're happy to take things slow.
-Let's start with two colliding NPCs, and an appropriate interface for stopping and starting them.
+Let's start with two colliding NPCs.
+We'll detect their imminent collision, and then stop them both.
 
 <div
   class="tabs"
@@ -158,16 +155,17 @@ Let's start with two colliding NPCs, and an appropriate interface for stopping a
 ></div>
 
 __TODO__
-- DraggablePath component
-- two intersecting navpaths
+- DraggablePath component ✅
 - circle moves along navpath
-- can stop/start with terminal
-
+- at each point and midpoint, check if "current linear motions will intersect"
+- combine with terminal?
 
 ### Raycasting
 
-__TODO__ illustrate line-seg vs line-seg intersection with initial space partitioning
-
+__TODO__
+- illustrate line-seg vs line-seg intersection with initial space partitioning
+- navigation through auto-opening doors
+- combine with terminal?
 
 <div
   class="tabs"
