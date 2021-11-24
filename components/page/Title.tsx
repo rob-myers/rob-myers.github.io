@@ -40,7 +40,7 @@ const titleCss = css`
   
   @media(max-width: 600px) {
     background: #eee;
-    padding-bottom: 8px;
+    padding-bottom: 20px;
     padding-left: 8px;
     border-bottom: 2px solid #999;
     border: 0 solid #000;
@@ -60,7 +60,7 @@ const titleCss = css`
       font-size: 5rem;
     }
     @media(max-width: 600px) {
-      font-size: 3rem;
+      font-size: 3.2rem;
     }
   }
   
@@ -74,7 +74,7 @@ const titleCss = css`
     font-weight: 300;
     
     @media(max-width: 600px) {
-      font-size: 1rem;
+      font-size: 1.1rem;
       padding: 20px 0 20px 4px;
       color: #222;
     }
