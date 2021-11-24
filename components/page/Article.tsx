@@ -46,6 +46,7 @@ const articleCss = css`
   border: var(--blog-border-width) solid var(--border-bg);
   font-size: 1rem;
   overflow-wrap: break-word;
+  position: relative; /** For anchors */
   
   padding: 64px 164px 96px 164px;
   @media(max-width: 800px) {
@@ -164,10 +165,11 @@ const articleCss = css`
   }
   h2 + div.subtitle {
     background: #eee;
-    padding: 16px;
+    padding-left: 8px;
     font-size: smaller;
     font-family: monospace;
     color: #555555;
+    margin-top: -24px;
     @media(max-width: 600px) {
       background: none;
       padding: 0 0 8px;
