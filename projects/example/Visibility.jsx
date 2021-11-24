@@ -29,6 +29,7 @@ export default function VisibilityDemo(props) {
       initViewBox={defaults.initViewBox}
       maxZoom={6}
       className={classNames(rootCss, props.disabled && 'disabled')}
+      dark
     >
       {data && <>
         <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
@@ -61,7 +62,7 @@ function Light({ init, walls, hull }) {
     <DraggableNode
       initial={position}
       onStop={setPosition}
-      radius={14}
+      radius={20}
       stroke="black"
       icon="eye"
     />
@@ -70,7 +71,7 @@ function Light({ init, walls, hull }) {
 
 const rootCss = css`
   image {
-    filter: contrast(200%);
+    filter: contrast(400%);
   }
 
   path.light {
@@ -79,7 +80,7 @@ const rootCss = css`
     
     @keyframes fadein {
       from { opacity: 0; }
-      to { opacity: 0.5; }
+      to { opacity: 0.4; }
     }
   }
   &.disabled path.light {

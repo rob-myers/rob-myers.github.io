@@ -33,6 +33,7 @@ export default function NavGraphDemo(props) {
       initViewBox={initViewBox}
       maxZoom={6}
       className={rootCss}
+      dark
     >
       <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
 
@@ -68,7 +69,7 @@ export default function NavGraphDemo(props) {
 
 const rootCss = css`
   image.geomorph {
-    filter: invert();
+    filter: invert() brightness(200%);
   }
   circle.node {
     fill: red;
