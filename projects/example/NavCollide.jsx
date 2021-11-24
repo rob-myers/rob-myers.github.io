@@ -13,7 +13,6 @@ import DraggablePath from "../ui/DraggablePath";
 import classNames from "classnames";
 
 // TODO
-// - onChange animate circle moving along path
 // - tty integration
 
 /** @param {{ disabled?: boolean }} props */
@@ -23,7 +22,8 @@ export default function NavCollide(props) {
     pathA: { initSrc: new Vect(300, 300), initDst: new Vect(600, 300) },
     pathB: { initSrc: new Vect(200, 200), initDst: new Vect(680, 200) },
     botA: {
-      /** @type {SVGGElement} */ el: ({}),
+      el: /** @type {SVGGElement} */ ({}),
+      anim: /** @type {Animation} */ ({}),
     },
   }));
   
@@ -37,6 +37,14 @@ export default function NavCollide(props) {
     pathfinding.setZoneData(zoneKey, zone);
     return { pngRect: json.pngRect, navPoly, zone };
   });
+
+  React.useEffect(() => {
+    if (props.disabled) {
+      state.botA.anim.pause?.();
+    } else {
+      state.botA.anim.play?.();
+    }
+  }, [props.disabled]);
 
   return (
     <PanZoom gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
@@ -63,9 +71,23 @@ export default function NavCollide(props) {
             radius={4}
             onChange={(path) => {
               console.log('path A', path);
-              if (state.botA.el) {
-                state.botA.el.style.transform = `translate(${path[0].x}px, ${path[0].y}px)`;
-                // TODO commence Web Animation API anim
+              const bot = state.botA;
+              if (bot.el) {
+                // bot.el.style.transform = `translate(${path[0].x}px, ${path[0].y}px)`;
+
+                // Move bot along path using Web Animations API
+                const edges = path.map((p, i) => ({ p, q: path[i + 1] })).slice(0, -1);
+                const elens = edges.map(({ p, q }) => p.distanceTo(q));
+                const { sofars, total } = elens.reduce((agg, length) => {
+                  agg.total += length;
+                  agg.sofars.push(agg.sofars[agg.sofars.length - 1] + length);
+                  return agg;
+                }, { sofars: [0], total: 0 });
+
+                bot.anim = bot.el.animate(
+                  path.map((p, i) => ({ offset: sofars[i] / total, transform: `translate(${p.x}px, ${p.y}px)` })),
+                  { duration: 5000, iterations: Infinity, direction: 'alternate',  },
+                );
               }
             }}
             />

@@ -28,19 +28,17 @@ export default function DraggablePath(props) {
     },
   }));
 
+  React.useEffect(() => state.updatePath(), []);
+
   return (
     <g
       ref={(rootEl) => {
         if (rootEl) {
           state.pathEl = /** @type {SVGPolylineElement} */ (rootEl.querySelector('polyline.navpath'));
-          state.updatePath();
         }
       }}
     >
-      <polyline
-        className="navpath" 
-        // points={`${props.path}`}
-      />
+      <polyline className="navpath" />
       <DraggableNode
         initial={props.initial.src}
         radius={props.radius}

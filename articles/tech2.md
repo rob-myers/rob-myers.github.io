@@ -140,7 +140,7 @@ We'll have more to say about this impressive open source library.
 So how will we approach this difficult problem?
 Well, we won't solve it generally.
 That is,
-> _we don't seek a black box magically producing collision-free concurrent navigation_.
+> _we don't seek a black box, magically producing collision-free concurrent navigation_.
 
 We're happy to take things slow.
 Let's start with two colliding NPCs.
@@ -158,9 +158,10 @@ We'll detect their imminent collision, and then stop them both.
 
 __TODO__
 - DraggablePath component ✅
-- circle moves along navpath
-- at each point and midpoint, check if "current linear motions will intersect"
-- combine with terminal?
+- Circle moves along navpath ✅
+- Componentise and improve
+- Detect future collision for 2 paths
+- Combine with terminal?
 
 ### Raycasting
 
