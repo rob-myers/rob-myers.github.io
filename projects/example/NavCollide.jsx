@@ -25,6 +25,7 @@ export default function NavCollide(props) {
       el: /** @type {SVGGElement} */ ({}),
       anim: /** @type {Animation} */ ({}),
     },
+    disabled: props.disabled,
   }));
   
   const pathfinding = React.useMemo(() => new Pathfinding, []);
@@ -44,6 +45,7 @@ export default function NavCollide(props) {
     } else {
       state.botA.anim.play?.();
     }
+    state.disabled = props.disabled;
   }, [props.disabled]);
 
   return (
@@ -86,6 +88,8 @@ export default function NavCollide(props) {
                   path.map((p, i) => ({ offset: sofars[i] / total, transform: `translate(${p.x}px, ${p.y}px)` })),
                   { duration: 5000, iterations: Infinity, direction: 'alternate',  },
                 );
+
+                if (state.disabled) bot.anim.pause();
               }
             }}
             />
