@@ -1,8 +1,16 @@
 ## Objective
 
-We are going to create a _Game AI focused_ roguelike, set in the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
+We'll create a video game.
+Yes, yet another game.
+What's unusual is that we're going to describe the process in great detail.
 
-_Why?_
+Where will it take place?
+> The [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
+
+What kind of game is it?
+> A [Roguelike](https://en.wikipedia.org/wiki/Roguelike). Actually our focus will be on Game AI, as we shall explain. 
+
+Why?
 
 > Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game.
 > An environment is needed to make it meaningful, fixed narratives/missions are not.
@@ -24,10 +32,14 @@ Darker grey and black indicates walls and obstacles which cannot be seen over. T
 
 > Check out this [larger version](/pics/g-301--bridge.debug.x2.png "@new-tab").
 
+<aside>
+
 A _Starship Geomorph_ is a rectangular partial floorplan of a starship, designed to be cut out and possibly glued to others.
 They were created by Robert Pearce, and distributed as a PDF on his [blog](http://travellerrpgblog.blogspot.com/).
 A 2nd version was released in 2020, along with another PDF containing many individual symbols e.g. offices, fuel tanks and bedrooms. Soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/).
 The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
+
+</aside>
 
 We end with two basic demos.
 You can pan/zoom, move the eyes, and view the obstacle polygons in 3D.
