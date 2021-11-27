@@ -1,0 +1,33 @@
+// dot -Tsvg objective.dot >objective.svg
+
+digraph test {
+
+  rankdir=LR
+  compound=true
+  nodesep=0.1
+
+  node [
+    shape=rect
+    style="filled"
+    fillcolor="#000000"
+    fontname="Courier New"
+    fontsize=10
+    fontcolor="#dddddd"
+    radius=0.1
+  ]
+  edge [
+    arrowhead=open
+    arrowtail=open
+    arrowsize=0.5
+  ]
+
+  // date [label="19th July 2021"]
+
+  exposition -> traveller [lhead=clusterGame]
+  codesandbox -> traveller [lhead=clusterGame dir=back]
+
+  subgraph clusterGame {
+    traveller -> geomorph -> navmesh
+    "game ai" -> npc, navmesh
+  }
+}
