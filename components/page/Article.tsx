@@ -158,46 +158,35 @@ const articleCss = css`
     letter-spacing: 2px;
   }
   h2 {
-    font-size: 2.6rem;
+    font-size: 3rem;
     @media(max-width: 600px) {
       margin: 16px 0 24px;
-      font-size: 1.9rem;
+      font-size: 2rem;
     }
   }
-  h2 + div.subtitle {
-    margin-top: -16px;
-    padding: 4px 8px;
-    display: flex;
-    flex-wrap: wrap;
-    font-size: 0.75rem;
-    
-    time {
-      color: #533;
-    }
-    
-    ul.tags {
-      font-family: monospace;
-      display: inline-block;
-      padding: 0;
-      color: #777;
-    }
-    @media(max-width: 600px) {
-      ul.tags {
-        font-size: 0.8rem;
+  h2 + time {
+    display: block;
+    margin-top: -24px;
+    margin-bottom: 32px;
+    font-family: monospace;
+    font-size: 1rem;
+    > span {
+      margin-right: 16px;
+      > span {
+        padding: 4px 8px;
+        margin: 1px;
+        background: #aaa;
+        color: #fff;
       }
     }
-    ul.tags li {
-      display: inline;
-      margin: 0;
-    }
-    ul.tags li:not(:last-child):after {
-      content: " | ";
-    }
-
     @media(max-width: 600px) {
-      background: none;
-      padding: 0 0 8px;
-      margin-top: -16px;
+      margin-top: 0px;
+      font-size: 0.9rem;
+      > span {
+        > span {
+          padding: 3px 6px;
+        }
+      }
     }
   }
   h3 {
@@ -419,16 +408,19 @@ const articleComponents = (
           <a>{children}</a>
         </Link>
       </h2>
-      <div className="subtitle">
-        <ul className="tags">
-          <li>
-            <time dateTime={meta.dateTime}>
-              {meta.dateText}
-            </time>
-          </li>
-          {meta.tags.map(tag => <li>{tag}</li>)}
-        </ul>
-      </div>
+      <time dateTime={meta.dateTime}>
+        {meta.dateText.split(' ').map(
+          (word) => <span>
+            {Array.from(word).map(letter => <span>{letter}</span>)}
+          </span>
+        )}
+      </time>
+      <select className="tags" onChange={(e) => e.currentTarget.value = 'click-to-view' }>
+        <option value='click-to-view'>
+          tags
+        </option>
+        {meta.tags.map(tag => <option>{tag}</option>)}
+      </select>
     </>;
   },
 
