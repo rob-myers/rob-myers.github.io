@@ -174,18 +174,16 @@ const articleCss = css`
       margin-right: 16px;
       > span {
         padding: 4px 8px;
-        margin: 1px;
-        background: #aaa;
+        margin: 0 1px;
+        background: #889;
         color: #fff;
       }
     }
     @media(max-width: 600px) {
       margin-top: 0px;
       font-size: 0.9rem;
-      > span {
-        > span {
-          padding: 3px 6px;
-        }
+      > span > span {
+        padding: 3px 6px;
       }
     }
   }
