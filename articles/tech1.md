@@ -13,28 +13,40 @@ It amounts to parsed HTML decorated with matching CSS and bound JS, together wit
 </aside>
 
 Although HTML, CSS and JS are separate standards, 
-it is now common to generate HTML using JS (Node.js Server-Side Rendering),
-and also CSS using JS (CSS-in-JS).
-In particular, JavaScript has become the central web technology.
+it is now common to generate both HTML and CSS using JS.
+This is possible via Node.js Server-Side Rendering and CSS-in-JS, respectively.
+These approaches counter the fundamental asymmetry between the _initial_ state of the document (HTML and CSS) and _all subsequent states_ (achieved via JS).
+
 
 
 ### React Function Components
 
 Although JS can perform arbitrary computations, its central purpose is to mutate the DOM.
-Such JavaScript is often broken down into named _components_, instantiated via XML tags.
-Competing notions of JavaScript component exist in the wild, a popular approach being _React function components_.
+To this end, JS is commonly broken down into _JavaScript components_, instantiated via XML tags.
+If the JavaScript component is called `MyComponent`, the associated tag will be e.g. `<MyComponent />` or perhaps `<my-component />`.
+One should think of HTML as being extended by these custom tags, which ultimately unwind into plain old HTML.
+
+Competing notions of "JavaScript component" exist in the wild.
+One popular approach is _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
 
-- They have a single parameter, usually called _props_.
-  It is a JavaScript object defining the component's named inputs,
+- They have a single parameter, conventionally called _props_.
+  It is a JavaScript `Object` defining the component's named inputs,
   and possibly special properties like _children_, _key_ and _ref_.
 
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
   This returned value ultimately amounts to an HTML fragment to be rendered,
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
-React developers use a grammatical extension of JavaScript called JSX.
-It freely combines JS with XML, so JavaScript values can be passed to arbitrary attributes, and XML can be passed around as a JavaScript value. Inductively closing these capabilities leads naturally to JSX, making this grammar particularly suitable for building dynamic DOM trees.
+React developers use a grammatical extension of JavaScript called **JSX**.
+We already mentioned the idea of extending HTML with custom XML tags.
+JSX goes further by reinterpreting XML inside a grammatical extension of JavaScript.
+
+<aside>
+
+JSX freely combines JS with XML, so arbitrary JavaScript values can be passed to tag attributes, and XML can be passed around as a JavaScript value. Inductively closing these capabilities leads naturally to JSX, making this grammar particularly suitable for building dynamic DOM trees.
+
+</aside>
 
 Consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
 
@@ -52,7 +64,7 @@ Consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://cod
 The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
 Behaviourally:
 
-- _PanZoom_ renders an SVG consisting of its children (the Geomorph image provided in _PanZoomDemo_) and _Grid_. It adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
+- _PanZoom_ renders an SVG containing _children_ (an image provided in _PanZoomDemo_) and `<Grid />`. Over time it adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 - _Grid_ renders part of an SVG i.e. two grid patterns.
   They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
@@ -67,27 +79,28 @@ Behaviourally:
 
   </aside>
 
-The above two JS functions each have a single parameter `props`, and return something which looks like HTML (but isn't).
-For example, _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
-Then although React function components are functions, syntactically they are not invoked like functions (we don't write `Grid(props)`).
-Then what does this XML syntax mean?
+The above two JS functions both have a single parameter `props`.
+They also both return something which looks like HTML, but isn't.
+What does the XML-like value returned by `PanZoom` actually mean?
 What are React function components actually returning?
+<!-- For example, _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
+Notice that React function components are functions, but syntactically they are not invoked like functions i.e. we don't write `Grid(props)`. -->
 
 Here's a whirlwind overview.
 
-- React devs use a grammatical extension of JavaScript called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript) "@new-tab"), which permits XML syntax.
+- React devs use a grammatical extension of JavaScript called [JSX](https://en.wikipedia.org/wiki/JSX_(JavaScript) "@new-tab"), permitting XML syntax.
 - React applications are built by composing together React function components. A typical React function component will return XML syntax referencing one or more other components.
 
 - Dev tools convert JSX into JS by replacing XML tags with invocations of `React.createElement` (see [example below](#command "open-tab jsx-to-js")).
-- This website actually uses _Preact_, a React alternative with the same API.
+- **This website actually uses _Preact_**, a React alternative with the same API.
   Then `React.createElement` is [this function](https://github.com/preactjs/preact/blob/master/src/create-element.js "@new-tab"),
   and creates Preact virtual DOM nodes.
-- The root component is usually called _App_.
+- The root component of an application is usually called _App_.
   Running a React application means invoking `ReactDOM.render`
-  with 2 arguments: `<App/>` and a DOM node _el_. See how we bootstrap examples on [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab").
+  with two arguments: `<App/>` and a DOM node _el_. See how we bootstrap examples on [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab").
 
 - [ReactDOM.render](https://github.com/preactjs/preact/blob/master/src/render.js "@new-tab") initially converts `<App/>` into a DOM node mounted at _el_.
-  A subcomponent may re-render, recursively recreating a virtual DOM node.
+  Later a subcomponent may re-render, recursively recreating a virtual DOM node.
   It is [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js "@new-tab")  and only the difference is applied to the DOM.
 
 <div
@@ -96,6 +109,16 @@ Here's a whirlwind overview.
   height="340"
   tabs="[ { key: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
 ></div>
+
+<aside>
+
+Our whirlwind overview attempts to provide the gist.
+Actually, React is notoriously hard to understand. 
+The internet is awash with poor explanations and cargo cult mentalities.
+But it is probably the most popular JavaScript component framework.
+If you want to understand modern web development, it is arguably unavoidable.
+
+</aside>
 
 ### React Renders
 
@@ -106,14 +129,16 @@ For example, zooming a map can be done with a CSS transform and a pre-existing C
 As another example, showing additional search results amounts to a single mutation.
 -->
 
-When React renders a component, it computes a rooted subtree of the virtual DOM,
-compares the previous one, and patches the DOM.
+When React renders a component, it invokes the respective function.
+The return value of the function is a JavaScript representation of a DOM subtree.
+The latter subtree is usually referred to as "Virtual DOM".
+React compares this value to the previous one, and patches the DOM accordingly.
 If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221 "@new-tab") via the ancestral relationship.
-Developers can also avoid recreating an entire rooted subtree using [`React.memo`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js "@new-tab").
+Developers can also avoid recreating a particular rooted subtree using [`React.memo`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js "@new-tab").
 But for many websites, the virtual DOM manipulations are neither too large nor too frequent, and React developers may simply ignore their overhead.
 
 However, we are making a realtime video game.
-We want to control the rendering as much as possible, to ensure good performance and aid debugging e.g. when many objects are onscreen.
+We want to control the rendering as much as possible, to ensure good performance and aid debugging.
 If we allowed React (actually, Preact) to render in response to user interaction, we'd lose this control.
 Take another look at _panzoom/PanZoom.jsx_.
 
@@ -135,7 +160,7 @@ But how do we trigger a re-render?
 
 ### Internal state via `useState`
 
-A React function component is rendered whenever an ancestor is (modulo React.memo), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
+A React function component is rendered whenever an ancestor is (modulo `React.memo`), or if its internal state changes. Internal state is represented using the [React.useState hook](https://reactjs.org/docs/hooks-state.html) e.g.
 
 > `const [value, setValue] = React.useState(() => initialValue);`
 
@@ -159,7 +184,7 @@ Then as far as React is concerned, nothing has changed.
 Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (producing no change).
 > But why not just use a setter `setState`?
 
-Because we avoid needlessly recomputing `<Grid />` and `children` whenever the player pans or zooms.
+Because we avoid needlessly recomputing `children` and `<Grid />` whenever the player pans or zooms.
 Our game may contain many elements, and we'd rather not needlessly recompute their virtual DOM tens of times per second.
 
 <!-- The above situation is handled by a single DOM mutation.
@@ -176,10 +201,10 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
 
 ### React Refresh
 
-We finish by further justifying our (somewhat odd) usage of `React.useState` i.e. sans the state setter.
+We finish by further justifying our odd usage of `React.useState` i.e. sans the setter.
 
-So far, we've justified things by claiming direct DOM mutation provides performance benefits.
+So far we've claimed direct DOM mutation provides performance benefits.
 But there's also a reason specific to `React.useState`.
-Whilst working in a development environment, it is possible to textually edit React components [without losing their instances internal state](https://www.npmjs.com/package/react-refresh).
+Whilst working in a development environment, it is possible to textually edit React components [without losing the internal state of their instances](https://www.npmjs.com/package/react-refresh).
 See this in action by editing one of our CodeSandboxes.
-We'll use this important devtool to develop sophisticated Game AI.
+We'll use this important _devtool_ to develop sophisticated Game AI.
