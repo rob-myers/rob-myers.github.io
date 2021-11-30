@@ -169,19 +169,18 @@ const articleCss = css`
     margin-top: -24px;
     margin-bottom: 32px;
     font-family: monospace;
-    font-size: 1rem;
+    font-size: 0.9rem;
     > span {
       margin-right: 16px;
       > span {
-        padding: 4px 8px;
-        margin: 0 1px;
-        background: #889;
-        color: #fff;
+        padding: 4px 6px;
+        background: #eee;
+        border: 1px solid #ddd;
+        color: #777;
       }
     }
     @media(max-width: 600px) {
       margin-top: 0px;
-      font-size: 0.9rem;
       > span > span {
         padding: 3px 6px;
       }
