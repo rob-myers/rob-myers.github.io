@@ -181,9 +181,27 @@ const articleCss = css`
     }
     @media(max-width: 600px) {
       margin-top: 0px;
-      > span > span {
+      > span {
         padding: 3px 6px;
       }
+    }
+  }
+  h2 + time + div.tags {
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 0.7rem;
+    font-family: sans-serif;
+    letter-spacing: 1px;
+    color: #777;
+    > span {
+      padding: 0 8px;
+      margin: 4px;
+      background: #000;
+      border-radius: 5px;
+    }
+
+    > span:hover, span:focus, span:active {
+      color: #bbb;
     }
   }
   h3 {
@@ -412,12 +430,9 @@ const articleComponents = (
           </span>
         )}
       </time>
-      <select className="tags" onChange={(e) => e.currentTarget.value = 'click-to-view' }>
-        <option value='click-to-view'>
-          tags
-        </option>
-        {meta.tags.map(tag => <option>{tag}</option>)}
-      </select>
+      <div className="tags">
+        {meta.tags.map(tag => <span>{tag}</span>)}
+      </div>
     </>;
   },
 
