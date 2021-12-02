@@ -330,13 +330,15 @@ const defaultNavMeshParams = {
   walkableHeight: 10,
   walkableClimb: 10,
   walkableRadius: 0,
-  maxEdgeLen: 12,
-  maxSimplificationError: 0.1,
-  minRegionArea: 10,
-  mergeRegionArea: 20,
+  // maxEdgeLen: 20,
+  maxEdgeLen: 50,
+  maxSimplificationError: 0,
+  // minRegionArea: 10,
+  minRegionArea: 30,
+  mergeRegionArea: 2,
   maxVertsPerPoly: 6,
   detailSampleDist: 10,
-  detailSampleMaxError: 0.1,
+  detailSampleMaxError: 0,
 };
 
 /**

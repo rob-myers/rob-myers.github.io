@@ -1,13 +1,15 @@
 import { useQuery } from "react-query";
-import { geomorphJsonPath } from "../geomorph/geomorph.model";
-import { Poly } from '../geom/poly';
+import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
+import { Poly, Rect } from '../geom';
+import * as defaults from "./defaults";
 import { ai } from "../service/ai";
+import { geom } from "../service/geom";
 import { recast } from "../service/recast";
-
+import PanZoom from "../panzoom/PanZoom";
 
 export default function Recast() {
   
-  useQuery('recast-demo', async () => {
+  const { data } = useQuery('recast-demo', async () => {
     const navKey = 'test-nav-key';
 
     /** @type {Geomorph.GeomorphJson} */
@@ -15,19 +17,36 @@ export default function Recast() {
     const navPoly = json.navPoly.map(x => Poly.from(x));
 
     await ai.createNavMesh(navKey, navPoly, {  cs: 1, walkableRadius: 2, maxSimplificationError: 50 });
-    const { tris, vs } = recast.getDebugTriangulation(navKey);
-    console.log({
-      /**
-       * TODO
-       * - draw them over top of geomorph
-       * - experiment with params
-       */
-      tris, vs,
-    })
+    const decomp = recast.getDebugTriangulation(navKey);
+    const recastTris = geom.triangulationToPolys(decomp);
 
+    return {
+      pngRect: json.pngRect,
+      recastTris,
+    };
   }, {
     staleTime: Infinity,
   });
 
-  return null;
+  return (
+    <PanZoom gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
+
+      {data && <>
+        <image {...data.pngRect} className="geomorph" href={geomorphPngPath('g-301--bridge')} />
+
+        {data.recastTris.map(({ outline }) =>
+          <polygon
+            stroke="red"
+            fill="none"
+            strokeWidth={1}
+            className="navtri"
+            points={`${outline}`}
+          />
+        )}
+      </>}
+
+    </PanZoom>
+  );
 }
+
+const initViewBox = new Rect(200, 0, 600, 600);

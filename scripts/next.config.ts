@@ -27,6 +27,13 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
       return webpackMerge(
         config,
         {
+          resolve:{
+            fallback: {
+              fs: false, // Needed by `recast-detour`
+            },
+          },
+        },
+        {
           module: {
             rules: [
               { test: /\.md$/, use: 'raw-loader' },
