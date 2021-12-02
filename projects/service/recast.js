@@ -1,5 +1,6 @@
 /// <reference path="./recast-detour.d.ts" />
-import { Vect } from '../geom';
+import { Poly, Vect } from '../geom';
+import { geom } from './geom';
 
 /**
  * RecastJS navigation plugin
@@ -17,6 +18,38 @@ class RecastService {
     /** @type {((value?: any) => void)[]} */
     this.readyResolvers = [];
   }
+
+  /**
+   * @param {string} navKey
+   * @param {Poly[]} navPolys
+   * @param {Partial<import('../service/recast').INavMeshParameters>} [opts]
+   */
+  async create(navKey, navPolys, opts) {
+    await recast.ready();
+    if (navPolys.length) {
+      const triangulation = geom.polysToTriangulation(navPolys);
+      this.createNavMesh(navKey, triangulation, opts);
+    } else {
+      this.clearNavMesh(navKey);
+    }
+  }
+
+  /**
+   * @param {string} navKey 
+   * @param {Geom.VectJson} src
+   * @param {Geom.VectJson} dst 
+   * @returns {Vect[]}
+   */
+   requestNavPath(navKey, src, dst) {
+    try {
+      const navPath = this.computePath(navKey, src, dst);
+      return geom.removePathReps(navPath.map(x => x.precision(1)));
+    } catch (e) {
+      console.error('nav error', e);
+      return [];
+    }
+  }
+
 
   async ready() {
     if (!this.bjsRECAST.NavMesh) {
@@ -37,7 +70,10 @@ class RecastService {
     }
   }
 
-  /** @param {string} navKey */
+  /**
+   * @param {string} navKey
+   * @private
+   */
   clearNavMesh(navKey) {
     this.lookup[navKey]?.destroy();
     delete this.lookup[navKey];
@@ -45,6 +81,7 @@ class RecastService {
 
   /**
    * Creates a navigation mesh
+   * @private
    * @param {string} navKey
    * @param {Geom.Triangulation} navGeom array of all the geometry used to compute the navigatio mesh
    * @param {Partial<INavMeshParameters>} parameters bunch of parameters used to filter geometry

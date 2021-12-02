@@ -2,7 +2,6 @@ import { useQuery } from "react-query";
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Rect } from '../geom';
 import * as defaults from "./defaults";
-import { ai } from "../service/ai";
 import { geom } from "../service/geom";
 import { recast } from "../service/recast";
 import PanZoom from "../panzoom/PanZoom";
@@ -16,7 +15,7 @@ export default function Recast() {
     const json = await fetch(geomorphJsonPath('g-301--bridge')).then(x => x.json());
     const navPoly = json.navPoly.map(x => Poly.from(x));
 
-    await ai.createNavMesh(navKey, navPoly, {  cs: 1, walkableRadius: 2, maxSimplificationError: 50 });
+    await recast.create(navKey, navPoly, {  cs: 1, walkableRadius: 0, maxSimplificationError: 0 });
     const decomp = recast.getDebugTriangulation(navKey);
     const recastTris = geom.triangulationToPolys(decomp);
 
