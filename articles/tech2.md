@@ -1,7 +1,7 @@
 ## Tech (ai)
 
 We've described our objective, constrained our approach and listed the technologies we'll use.
-We now turn from [JS components](2#tech1--react-function-components "@anchor") to Game AI.
+We now turn to Game AI.
 
 ### Overview
 
@@ -18,29 +18,29 @@ Well, there are three standard systems:
 
 Navigation is of central importance to us and will be discussed shortly.
 As for animation, we're definitely not going to obsess over realism.
-Nevertheless we'll need visual cues to indicate NPC actions,
-and a _sense of flow_ via interdependent concurrent animations.
+Nevertheless we'll need visual cues to indicate NPC actions.
+We also want a _sense of flow_ via interdependent concurrent animations.
 As for a physics engine, we [mentioned](1#constraints--game-mechanics "@anchor") we won't be using one. In fact:
 
 - Collision detection will be handled at the level of navigation.
 - Force-based motion will be handled by the Web Animations API.
 
-The rest of this article provides detail concerning Navigation and Raycasting.
+In the rest of this article we'll discuss Navigation and Raycasting in detail.
 
 ### Static Navigation
 
-To move an NPC from A to B, we need a respective path.
-This might be a straight line e.g. when an item is directly within grasp.
-But usually objects must be avoided: static ones like walls, dynamic ones like other NPCs.
+To move an NPC from **A** to **B**, we need a respective path.
+This might simply be a straight line e.g. when an item is directly within grasp.
+However, usually there are objects to be avoided: static ones like walls, dynamic ones like NPCs.
 
-If there are no dynamic objects, a canonical approach exists.
-The navigable area is represented by polygons (possibly with holes), where A and B lie in their interior. These polygons can be triangulated (admittedly non-canonically), inducing an undirected graph:
+If there are no dynamic objects, there is a canonical approach.
+The navigable area is represented by polygons ([possibly with holes](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6)), and we may assume **A** and **B** lie in their interior. These polygons can be triangulated (admittedly non-canonically), inducing an undirected graph.
 
-> its nodes are _the triangles of the triangulation_; two nodes are connected iff _their respective triangles share an edge._
+> A **Navgraph** is an undirected graph whose 
+> nodes are _the triangles of the triangulation_.
+> Two nodes are connected iff _their respective triangles share exactly one edge._
 
-The triangles below collectively induce the red undirected graph.
-
-__TODO__ higher quality navmesh via Recast
+For example, the triangles below collectively induce the red navgraph below.
 
 <div
   class="tabs"
@@ -52,6 +52,16 @@ __TODO__ higher quality navmesh via Recast
      { key: 'component', filepath: 'example/NavGraph#302' },
    ]"
 ></div>
+
+<aside>
+
+__TODO__
+- Navgraph is usually more refined via detailed navigable polygon and Recast.
+- Make a test component to play with Recast
+- Integrate into ts-node script
+- Make a CodeSandbox
+
+</aside>
 
 
 Technically, an undirected graph is just a symmetric binary relation.
@@ -135,7 +145,7 @@ An updater function must be executed each frame.
 For each fixed NPC, its nearby neighbours are modelled as temporary geometry, influencing the NPC's velocity.
 We'll have more to say about this impressive open source library.
 
-### Dynamic Navigation: Our Approach
+### Navigation: Our Approach
 
 So how will we approach this difficult problem?
 Well, we won't solve it generally.
