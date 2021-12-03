@@ -79,24 +79,6 @@ export function createLayout(def, lookup) {
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
-  /**
-   * TODO verify what we pass thru is valid
-   */
-  // Detailed navigation polygon
-  const recastTris = /** @type {Poly[]} */ ([]);
-  if (typeof window === 'undefined') {
-    console.log('1');
-    const polysJson = require('child_process').execSync(`
-      cd node-recast &&
-        source ~/.nvm/nvm.sh 2>/dev/null &&
-        nvm use 1>/dev/null &&
-        yarn -s recast ${def.id}
-    `).toString();
-    const parsedJson = /** @type {Geom.GeoJsonPolygon[]} */ (JSON.parse(polysJson))
-    recastTris.push(...parsedJson.map(x => Poly.from(x)));
-    console.log('2');
-  }
-
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
   measurer.font = labelMeta.font;
@@ -116,7 +98,6 @@ export function createLayout(def, lookup) {
     def,
     groups,
     navPoly,
-    recastTris,
     walls,
     labels,
     

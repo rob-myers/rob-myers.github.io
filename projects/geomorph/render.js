@@ -52,14 +52,9 @@ export async function renderGeomorph(
   fillPolygon(ctxt, layout.navPoly);
   if (navTris) {
     ctxt.strokeStyle = navStroke;
-    ctxt.strokeStyle = '#f00';
     ctxt.lineWidth = 0.5;
-    ctxt.lineWidth = 1;
-    // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
-    // decomps.forEach(decomp => drawTriangulation(ctxt, decomp));
-    layout.recastTris.forEach(x => {
-      strokePolygon(ctxt, [x]);
-    });
+    const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
+    decomps.forEach(decomp => drawTriangulation(ctxt, decomp));
   }
 
   ctxt.lineJoin = 'round';
