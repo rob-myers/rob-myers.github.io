@@ -77,7 +77,7 @@ const rootCss = css`
   }
   line.edge {
     stroke: #900;
-    stroke-width: 3;
+    stroke-width: 1;
     pointer-events: none;
   }
 
