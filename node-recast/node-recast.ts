@@ -16,7 +16,7 @@ if (!layout || !fs.existsSync(`../public/${geomorphJsonPath(layout.key)}`)) {
 /**
  * Output JSON list of GeoJSON polygons.
  * We do this because node-recast uses node version 10 (to get it working),
- * which is incompatible with our version.
+ * which is incompatible with our version of node.
  */
 console.log(
   computeRecastNavmesh(layout.key)
@@ -27,10 +27,12 @@ export function computeRecastNavmesh(key: Geomorph.LayoutKey) {
   const gmContents = fs.readFileSync('../public/' + geomorphJsonPath(key)).toString();
   const json = JSON.parse(gmContents) as Geomorph.GeomorphJson;
   const navPoly = json.navPoly.map(x => Poly.from(x));
-  const decomp = geom.polysToTriangulation(navPoly);
+  // Restrict to 1st avoids merge issues...
+  const decomp = geom.polysToTriangulation(navPoly.slice(0, 1));
   
   const vs = new Float32Array(decomp.vs.reduce((agg, p) => agg.concat([p.x, 0, p.y]), [] as number[]));
-  const ids = new Int32Array(decomp.tris.reduce((agg, triple) => agg.concat(triple.map(x => x + 1)), [] as number[]));
+  // Seems to need a reverse
+  const ids = new Int32Array(decomp.tris.reduce((agg, triple) => agg.concat(triple.map(x => x + 1).reverse()), [] as number[]));
   recast.loadArray(vs, ids);
   
   const result = recast.build(
@@ -39,17 +41,17 @@ export function computeRecastNavmesh(key: Geomorph.LayoutKey) {
     // cellHeight,
     1,
     // agentHeight,
-    1,
+    0,
     // agentRadius,
-    1,
+    0,
     // agentMaxClimb,
     10,
     // agentMaxSlope,
-    0,
+    10,
     // regionMinSize
-    30,
+    10,
     // regionMergeSize
-    2,
+    0,
     // edgeMaxLen
     50,
     // edgeMaxError

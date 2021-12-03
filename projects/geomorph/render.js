@@ -2,6 +2,7 @@ import { Vect } from "../geom";
 import { labelMeta } from './geomorph.model';
 import { singlesToPolys } from '../service/geomorph';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service/dom';
+import { geom } from "projects/service/geom";
 
 /**
  * Render a single geomorph PNG,
@@ -51,9 +52,14 @@ export async function renderGeomorph(
   fillPolygon(ctxt, layout.navPoly);
   if (navTris) {
     ctxt.strokeStyle = navStroke;
+    ctxt.strokeStyle = '#f00';
     ctxt.lineWidth = 0.5;
-    const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
-    decomps.forEach(decomp => drawTriangulation(ctxt, decomp));
+    ctxt.lineWidth = 1;
+    // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
+    // decomps.forEach(decomp => drawTriangulation(ctxt, decomp));
+    layout.recastTris.forEach(x => {
+      strokePolygon(ctxt, [x]);
+    });
   }
 
   ctxt.lineJoin = 'round';
