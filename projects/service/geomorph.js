@@ -1,8 +1,10 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat } from '../geom';
-import { svgPathToPolygon } from './dom';
 import { labelMeta } from '../geomorph/geomorph.model';
+import { svgPathToPolygon } from './dom';
+
+import childProcess from 'child_process';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -14,6 +16,7 @@ import { labelMeta } from '../geomorph/geomorph.model';
 export function createLayout(def, lookup) {
 
   const m = new Mat;
+
   /** @type {Geomorph.Layout['groups']} */
   const groups = { singles: [], obstacles: [], walls: [] };
 
@@ -78,6 +81,22 @@ export function createLayout(def, lookup) {
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
+  /**
+   * TODO verify what we pass thru is valid
+   */
+  // Detailed navigation polygon
+  //
+  console.log('1');
+  const polysJson = childProcess.execSync(`
+    cd node-recast &&
+      source ~/.nvm/nvm.sh 2>- &&
+      nvm use 1>- &&
+      yarn -s recast ${def.id}
+  `).toString();
+  const parsedJson = /** @type {Geom.GeoJsonPolygon[]} */ (JSON.parse(polysJson))
+  const recastTris = parsedJson.map(x => Poly.from(x));
+  console.log('2');
+
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
   measurer.font = labelMeta.font;
@@ -97,6 +116,7 @@ export function createLayout(def, lookup) {
     def,
     groups,
     navPoly,
+    recastTris,
     walls,
     labels,
     

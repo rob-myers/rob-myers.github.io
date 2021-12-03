@@ -6,6 +6,10 @@ import { geom } from "../service/geom";
 import { recast } from "../service/recast";
 import PanZoom from "../panzoom/PanZoom";
 
+// TODO
+// - `yarn render-layout 301` includes detailed navmesh ✅
+// - extract and show it
+
 export default function Recast() {
   
   const { data } = useQuery('recast-demo', async () => {
@@ -15,16 +19,20 @@ export default function Recast() {
     const json = await fetch(geomorphJsonPath('g-301--bridge')).then(x => x.json());
     const navPoly = json.navPoly.map(x => Poly.from(x));
 
-    await recast.create(navKey, navPoly, {  cs: 1, walkableRadius: 0, maxSimplificationError: 0 });
+    await recast.create(navKey, navPoly, {  cs: 1.5, walkableRadius: 0, maxSimplificationError: 2 });
     const decomp = recast.getDebugTriangulation(navKey);
     const recastTris = geom.triangulationToPolys(decomp);
+
+    console.log({
+      recastTris: recastTris.length,
+    });
 
     return {
       pngRect: json.pngRect,
       recastTris,
     };
   }, {
-    staleTime: Infinity,
+    // staleTime: Infinity,
   });
 
   return (

@@ -67,6 +67,7 @@ declare namespace Geomorph {
      * Currently, the navigable area including doorways.
      */
     navPoly: Poly[];
+    recastTris: Poly[];
     walls: Poly[];
 
     labels: LayoutLabel[];

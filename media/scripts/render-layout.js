@@ -1,7 +1,8 @@
 /**
- * Usage: `yarn render-layout 301`
- * Usage: `yarn render-layout 301 --debug`
- * Usage: `yarn render-layout 101 --debug --scale=4`
+ * - Usage:
+ *   - `yarn render-layout 301`
+ *   - `yarn render-layout 301 --debug`
+ *   - `yarn render-layout 101 --debug --scale=4`
  * - Outputs a PNG and JSON in public/geomorph.
  * - Debug option creates a .debug.png with all features.
  */
@@ -43,9 +44,15 @@ const renderOpts = {
   ...debug && { doors: true, labels: true }
 };
 
-/** @param {Geomorph.LayoutDef} def */
-async function computeLayout(def) {
+/**
+ * Compute and render layout, given layout definition.
+ * @param {Geomorph.LayoutDef} def
+ */
+async function renderLayout(def) {
   const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
+  /**
+   * Create the layout, given layout definition.
+   */
   const layout = createLayout(def, symbolLookup);
   const canvas = createCanvas(0, 0);
 
@@ -61,7 +68,7 @@ async function computeLayout(def) {
 
 (async function run() {
   const pipeline = util.promisify(stream.pipeline);
-  const { layout, canvas } = await computeLayout(layoutDef);
+  const { layout, canvas } = await renderLayout(layoutDef);
 
   /** @type {Geomorph.GeomorphJson} */
   const json = {
