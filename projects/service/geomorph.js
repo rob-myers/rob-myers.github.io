@@ -4,8 +4,6 @@ import { Poly, Rect, Mat } from '../geom';
 import { labelMeta } from '../geomorph/geomorph.model';
 import { svgPathToPolygon } from './dom';
 
-import childProcess from 'child_process';
-
 /**
  * Create a layout, given a definition and all symbols.
  * Can run in browser or server.
@@ -85,17 +83,19 @@ export function createLayout(def, lookup) {
    * TODO verify what we pass thru is valid
    */
   // Detailed navigation polygon
-  //
-  console.log('1');
-  const polysJson = childProcess.execSync(`
-    cd node-recast &&
-      source ~/.nvm/nvm.sh 2>- &&
-      nvm use 1>- &&
-      yarn -s recast ${def.id}
-  `).toString();
-  const parsedJson = /** @type {Geom.GeoJsonPolygon[]} */ (JSON.parse(polysJson))
-  const recastTris = parsedJson.map(x => Poly.from(x));
-  console.log('2');
+  const recastTris = /** @type {Poly[]} */ ([]);
+  if (typeof window === 'undefined') {
+    console.log('1');
+    const polysJson = require('child_process').execSync(`
+      cd node-recast &&
+        source ~/.nvm/nvm.sh 2>/dev/null &&
+        nvm use 1>/dev/null &&
+        yarn -s recast ${def.id}
+    `).toString();
+    const parsedJson = /** @type {Geom.GeoJsonPolygon[]} */ (JSON.parse(polysJson))
+    recastTris.push(...parsedJson.map(x => Poly.from(x)));
+    console.log('2');
+  }
 
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
