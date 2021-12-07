@@ -6074,6 +6074,11 @@ tree-kill@^1.2.2:
   resolved "https://registry.npmjs.org/tree-kill/-/tree-kill-1.2.2.tgz"
   integrity sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==
 
+triangle-wasm@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/triangle-wasm/-/triangle-wasm-1.0.0.tgz#5bd2dd4195c4843adfb48840f1afbeb163445620"
+  integrity sha512-W5CRc6a7rtVBgpB2033H2FETOOPburRprXKuZOFbGel6lagV4+GwBGRJHX3IOX6SBGRus90AtbAZXlvsRLAj2w==
+
 trim-repeated@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/trim-repeated/-/trim-repeated-1.0.0.tgz"

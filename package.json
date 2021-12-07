@@ -19,6 +19,7 @@
     "svg-meta": "yarn ts-script media/scripts/svg-meta",
     "watch-svg-meta": "nodemon --delay 2s --config media/scripts/svg-meta.nodemon.json --exec 'yarn svg-meta'",
     "dot": "dotToSvg () { dot -Tsvg \"projects/graph/$1.dot\" >\"public/pics/$1.svg\"; } ; dotToSvg",
+    "nav": "yarn ts-script media/scripts/navmesh.ts",
     "https-proxy": "node_modules/local-ssl-proxy/bin/local-ssl-proxy --source 443 --target 3002",
     "local-deploy": "yarn build && yarn export",
     "deploy-from-local": "touch out/.nojekyll && cd scripts && ts-node gh-pages.ts",
@@ -63,6 +64,7 @@
     "safe-stable-stringify": "^1.1.1",
     "smoothscroll-polyfill": "^0.4.4",
     "svg-path-parser": "^1.1.0",
+    "triangle-wasm": "^1.0.0",
     "xterm": "4.10.0",
     "xterm-addon-fit": "^0.5.0",
     "zustand": "^3.4.1"
