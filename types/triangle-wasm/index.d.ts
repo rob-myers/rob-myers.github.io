@@ -1,6 +1,6 @@
 declare module 'triangle-wasm' {
 
-  interface Triangle {
+  export interface Triangle {
     init(
       /** Path to triangle.out.wasm, default is `/` */
       path?: string,
@@ -23,7 +23,7 @@ declare module 'triangle-wasm' {
     );
   }
 
-  interface Switches {
+  export interface Switches {
     /** Read input as a Planar Straight Line Graph. (default `true`) */
     pslg?: boolean;
     /**
@@ -89,7 +89,7 @@ declare module 'triangle-wasm' {
     quiet?: boolean;
   }
 
-  interface TriangulateIO {
+  export interface TriangulateIO {
     /** Flattened 2d coords */
     pointlist: number[];
     /** ? */
