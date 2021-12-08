@@ -11,23 +11,24 @@ class TriangleService {
 
   /**
    * @param {Geom.Poly[]} polys
-   * @returns {Promise<import("triangle-wasm").TriangulateIO>}
    */
   async triangulate(polys) {
-    // const d = this.polysToTriangulateIO(polys.slice(0, 1));
-    // console.log(d);
-    
     await Triangle.init();
-    const data = this.polysToTriangulateIO(polys.slice(0, 1));
+
+    const data = this.polysToTriangulateIO(polys);
     // const data = { pointlist: [-1, -1, 1, -1, 1, 1, -1, 1] };
     const input = Triangle.makeIO(data);
     const output = Triangle.makeIO();
-    console.log('triangulating');
+
+    // console.log('triangulating');
     Triangle.triangulate({ pslg: false, quality: true }, input, output);
-    return output;
-    // TODO
-    // Triangle.freeIO(input, true);
-    // Triangle.freeIO(output);
+    
+    const points = /** @type {[number, number][]} */ (this.unflat(output.pointlist));
+    const triangles = /** @type {[number, number, number][]} */ (this.unflat(/** @type {number[]} */ (output.trianglelist), 3));
+    Triangle.freeIO(input, true);
+    Triangle.freeIO(output);
+
+    return { points, triangles };
   }
 
   /**
@@ -73,6 +74,32 @@ class TriangleService {
     this.offset += length;
     return segs;
   }
+
+  /**
+   * The opposite of Array.prototype.flat() with depth = 1.
+   * Useful to convert one-dimensional arrays [x, y, z, x, y, z] into two-dimensional arrays [[x, y, z], [x, y, z]] i.e. for simplicial complex.
+   * https://github.com/brunoimbrizi/array-unflat/blob/main/index.js
+   * @private
+   * @param {any[]} arr 
+   * @param {number} size
+   * @returns 
+   */
+  unflat = (arr, size = 2) => {
+    if (!arr) return null;
+  
+    const newArr = [];
+    const newLen = arr.length / size;
+  
+    for (var i = 0; i < newLen; i++) {
+      const group = [];
+      for (let j = 0; j < size; j++) {
+        group.push(arr[i * size + j]);
+      }
+      newArr.push(group);
+    }
+    return newArr;
+  }
+
 }
 
 export const triangle = new TriangleService;
