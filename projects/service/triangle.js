@@ -69,10 +69,10 @@ class TriangleService {
    * @returns {[number, number][]}
    */
   getCyclicSegs(length) {
-    const segs = [...Array(length)].map((_, i) =>
+    if (length < 3) return []; // Ignore degenerate
+    const segs = [...Array(length - 1)].map((_, i) =>
       /** @type {[number, number]} */ ([this.offset + i, this.offset + i + 1])
     );
-    segs.pop();
     segs.push([this.offset + length - 1, this.offset]);
     this.offset += length;
     return segs;

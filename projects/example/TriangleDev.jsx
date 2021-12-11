@@ -8,7 +8,8 @@ import PanZoom from "../panzoom/PanZoom";
 // - try triangle-wasm on nodejs ✅
 // - get triangle-wasm working in DEV browser ✅
 // - fix triangulation errors ✅
-// - remove recast service etc
+// - remove recast service etc ✅
+// - ui controls to play with triangulation
 
 /**
  * @param {{ layoutKey: Geomorph.LayoutKey}} props 
