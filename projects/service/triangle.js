@@ -1,5 +1,4 @@
 import { Vect } from "projects/geom";
-import polyParse from 'poly-parse';
 import Triangle from 'triangle-wasm';
 
 class TriangleService {
@@ -11,24 +10,37 @@ class TriangleService {
 
   /**
    * @param {Geom.Poly[]} polys
+   * @returns {Promise<Geom.TriangulationJson>}
    */
   async triangulate(polys) {
     await Triangle.init();
 
-    const data = this.polysToTriangulateIO(polys);
     // const data = { pointlist: [-1, -1, 1, -1, 1, 1, -1, 1] };
+    const data = this.polysToTriangulateIO(polys);
     const input = Triangle.makeIO(data);
     const output = Triangle.makeIO();
 
     // console.log('triangulating');
-    Triangle.triangulate({ pslg: false, quality: true }, input, output);
+    Triangle.triangulate({
+      pslg: true,
+      quality: true,
+      holes: true,
+      // convexHull: true,
+      // jettison: true,
+      // ccdt: true,
+    }, input, output);
     
+    // triangle-wasm uses 0-based indices (unlike .poly file format)
     const points = /** @type {[number, number][]} */ (this.unflat(output.pointlist));
-    const triangles = /** @type {[number, number, number][]} */ (this.unflat(/** @type {number[]} */ (output.trianglelist), 3));
+    const vs = points.map(([x, y]) => ({ x, y }));
+    const tris = /** @type {[number, number, number][]} */ (
+      this.unflat(/** @type {number[]} */ (output.trianglelist), 3).map(triIds => triIds.map(y => y))
+    );
+
     Triangle.freeIO(input, true);
     Triangle.freeIO(output);
 
-    return { points, triangles };
+    return { vs, tris };
   }
 
   /**
@@ -36,14 +48,6 @@ class TriangleService {
    * @returns {import("triangle-wasm").TriangulateIO}
    */
   polysToTriangulateIO(polys) {
-    return polyParse(this.polysToDotPolyFormat(polys), { flat: true });
-  }
-
-  /**
-   * @param {Geom.Poly[]} polys
-   * @returns {string}
-   */
-  polysToDotPolyFormat(polys) {
     const verts = polys.flatMap(x => x.allPoints);
     this.offset = 0;
     const segs = polys.flatMap((poly) => [
@@ -51,15 +55,12 @@ class TriangleService {
       ...poly.holes.flatMap(hole => this.getCyclicSegs(hole.length)),
     ]);
     const holePnts = polys.flatMap(poly => poly.holes.map(hole => Vect.average(hole)));
-    return [
-      `${verts.length} 2 0 0`,
-      ...verts.map((p, i) => `${i + 1} ${p.x} ${p.y} 0`),
-      `${segs.length} 0`,
-      ...segs.map((seg, i) => `${i + 1} ${seg[0]} ${seg[1]}`),
-      `${holePnts.length}`,
-      ...holePnts.map((p, i) => `${i + 1} ${p.x} ${p.y}`),
-      '',
-    ].join('\n');
+
+    return {
+      pointlist: verts.flatMap(p => [p.x, p.y]),
+      segmentlist: segs.flatMap((seg) => seg),
+      holelist: holePnts.flatMap(p => [p.x, p.y]),
+    };
   }
 
   /**
@@ -69,8 +70,10 @@ class TriangleService {
    */
   getCyclicSegs(length) {
     const segs = [...Array(length)].map((_, i) =>
-      /** @type {[number, number]} */ ([this.offset + i + 1, this.offset + i + 2])
+      /** @type {[number, number]} */ ([this.offset + i, this.offset + i + 1])
     );
+    segs.pop();
+    segs.push([this.offset + length - 1, this.offset]);
     this.offset += length;
     return segs;
   }
@@ -80,13 +83,12 @@ class TriangleService {
    * Useful to convert one-dimensional arrays [x, y, z, x, y, z] into two-dimensional arrays [[x, y, z], [x, y, z]] i.e. for simplicial complex.
    * https://github.com/brunoimbrizi/array-unflat/blob/main/index.js
    * @private
-   * @param {any[]} arr 
+   * @template T
+   * @param {T[]} arr 
    * @param {number} size
-   * @returns 
+   * @returns {T[][]}
    */
   unflat = (arr, size = 2) => {
-    if (!arr) return null;
-  
     const newArr = [];
     const newLen = arr.length / size;
   

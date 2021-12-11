@@ -36,8 +36,10 @@ const component = {
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-302--xboat-repair-bay' />),
   'example/NavCollide': () => import('projects/example/NavCollide')
     .then(x => (props: any) => <x.default disabled {...props} />),
-  'example/Recast': () => import('projects/example/Recast')
-    .then(x => x.default),
+  'example/TriangleDev#301': () => import('projects/example/TriangleDev')
+    .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
+  'example/TriangleDev#101': () => import('projects/example/TriangleDev')
+    .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-101--multipurpose' />),
 };
 
 export async function getCode(key: CodeFilepathKey) {

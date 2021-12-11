@@ -36,6 +36,11 @@ declare namespace Geom {
     tris: [number, number, number][];
   }
 
+  export interface TriangulationJson {
+    vs: VectJson[]; 
+    tris: [number, number, number][];
+  }
+
   export interface AngledRect<T> {
     rect: T;
     /** Radians */
