@@ -1,7 +1,7 @@
 ## Tech (ai)
 
-We've described our objective, constrained our approach and listed the technologies we'll use.
-We now turn to Game AI.
+<!-- We've described our objective, constrained our approach and listed the technologies we'll use.
+We now turn to Game AI. -->
 
 ### Overview
 
@@ -14,16 +14,16 @@ Well, there are three standard systems:
 
 - **Navigation**: _planning e.g. route from A to B._
 - **Animation**: _realism (e.g. limbs) and visual cues._
-- **Physics**: collision detection, force-driven rigid bodies, raycasting.
+- **Physics**: _collision detection, force-driven rigid bodies, raycasting_.
 
-Navigation is of central importance to us and will be discussed shortly.
-As for animation, we're definitely not going to obsess over realism.
-Nevertheless we'll need visual cues to indicate NPC actions.
-We also want a _sense of flow_ via interdependent concurrent animations.
+Navigation is of central importance to us, and will be discussed shortly.
+As for animation, we won't obsess over realism,
+but we'll need visual cues to indicate NPC actions.
+We also want a _sense of flow_, achieved via interdependent concurrent animations.
 As for a physics engine, we [mentioned](1#constraints--game-mechanics "@anchor") we won't be using one. In fact:
 
 - Collision detection will be handled at the level of navigation.
-- Force-based motion will be handled by the Web Animations API.
+- Force-based motion will be simulated via the Web Animations API.
 
 In the rest of this article we'll discuss Navigation and Raycasting in detail.
 
