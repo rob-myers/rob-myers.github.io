@@ -26,13 +26,13 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
     webpack: (config: webpack.Configuration, options: WebpackCtxt) => {
       return webpackMerge(
         config,
-        // {
-        //   resolve:{
-        //     fallback: {
-        //       fs: false, // Needed by `recast-detour`
-        //     },
-        //   },
-        // },
+        {
+          resolve:{
+            fallback: {
+              fs: false, // Needed by `triangle-wasm` via renderGeomorph
+            },
+          },
+        },
         {
           module: {
             rules: [
