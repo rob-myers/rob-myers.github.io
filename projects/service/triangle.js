@@ -10,9 +10,10 @@ class TriangleService {
 
   /**
    * @param {Geom.Poly[]} polys
+   * @param {TriangulateOpts} [opts]
    * @returns {Promise<Geom.TriangulationJson>}
    */
-  async triangulate(polys) {
+  async triangulate(polys, opts) {
     await Triangle.init();
 
     // const data = { pointlist: [-1, -1, 1, -1, 1, 1, -1, 1] };
@@ -23,8 +24,9 @@ class TriangleService {
     // console.log('triangulating');
     Triangle.triangulate({
       pslg: true,
-      quality: true,
+      quality: opts?.minAngle || true,
       holes: true,
+      area: opts?.minArea || false,
       // convexHull: true,
       // jettison: true,
       // ccdt: true,
@@ -105,3 +107,9 @@ class TriangleService {
 }
 
 export const triangle = new TriangleService;
+
+/**
+ * @typedef TriangulateOpts @type {object}
+ * @property {boolean | number} [minArea]
+ * @property {boolean | number} [minAngle]
+ */
