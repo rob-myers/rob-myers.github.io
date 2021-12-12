@@ -27,9 +27,10 @@ class TriangleService {
       quality: opts?.minAngle || true,
       holes: true,
       area: opts?.minArea || false,
+      steiner: opts?.maxSteiner,
       // convexHull: true,
       // jettison: true,
-      // ccdt: true,
+      ccdt: true,
     }, input, output);
     
     // triangle-wasm uses 0-based indices (unlike .poly file format)
@@ -112,4 +113,5 @@ export const triangle = new TriangleService;
  * @typedef TriangulateOpts @type {object}
  * @property {boolean | number} [minArea]
  * @property {boolean | number} [minAngle]
+ * @property {number} [maxSteiner]
  */

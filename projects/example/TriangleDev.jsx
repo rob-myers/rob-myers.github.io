@@ -20,8 +20,9 @@ import PanZoom from "../panzoom/PanZoom";
 export default function TriangleDev(props) {
   
   const [state, setState] = React.useState(() => ({
-    minArea: { disabled: true, value: 4000/2 },
-    minAngle: { disabled: true, value: 14 },
+    minArea: { disabled: true, value: 4000/2, min: 10, max: 4000 },
+    minAngle: { disabled: true, value: 14, min: 0, max: 28 },
+    maxSteiner: { disabled: true, value: 300, min: 0, max: 1000 },
     /** @param {Event} e */
     onChangeMinArea: (e) => {
       const {value} = /** @type {HTMLInputElement} */ (e.target);
@@ -31,6 +32,11 @@ export default function TriangleDev(props) {
     onChangeMinAngle: (e) => {
       const {value} = /** @type {HTMLInputElement} */ (e.target);
       setState(x => { x.minAngle.value = Number(value); return { ...x }; });
+    },
+    /** @param {Event} e */
+    onChangeMaxSteiner: (e) => {
+      const {value} = /** @type {HTMLInputElement} */ (e.target);
+      setState(x => { x.maxSteiner.value = Number(value); return { ...x }; });
     },
   }));
 
@@ -51,6 +57,7 @@ export default function TriangleDev(props) {
         polys: assertDefined(gmAux).navPoly.map(x => x.geoJson),
         minArea: state.minArea.disabled ? null : state.minArea.value,
         minAngle: state.minAngle.disabled ? null : state.minAngle.value,
+        maxSteiner: state.maxSteiner.disabled ? null : state.maxSteiner.value,
       }),
     }).then(x => x.json()));
 
@@ -77,9 +84,12 @@ export default function TriangleDev(props) {
       )}
 
       <ForeignObject xmlns="http://www.w3.org/1999/xhtml">
+        <div>
+          #tri {triData?.tris.length}
+        </div>
         <div className="min-area">
           <input
-            type="range" id="min-area-range" min={10} max={4000} defaultValue={state.minArea.value}
+            type="range" id="min-area-range" min={state.minArea.min} max={state.minArea.max} defaultValue={state.minArea.value}
             disabled={state.minArea.disabled}
             ref={(el) => el?.addEventListener('change', state.onChangeMinArea)}
           />
@@ -89,12 +99,22 @@ export default function TriangleDev(props) {
         </div>
         <div className="min-angle">
           <input
-            type="range" id="min-angle-range" min={0} max={28} defaultValue={state.minAngle.value}
+            type="range" id="min-angle-range" min={state.minAngle.min} max={state.minAngle.max} defaultValue={state.minAngle.value}
             disabled={state.minAngle.disabled}
             ref={(el) => el?.addEventListener('change', state.onChangeMinAngle)}
           />
           <label htmlFor="min-angle-range" onClick={() => setState(x => { x.minAngle.disabled = !x.minAngle.disabled; return { ...x }; })}>
             min angle
+          </label>
+        </div>
+        <div className="max-steiner">
+          <input
+            type="range" id="max-steiner" min={state.maxSteiner.min} max={state.maxSteiner.max} defaultValue={state.maxSteiner.value}
+            disabled={state.maxSteiner.disabled}
+            ref={(el) => el?.addEventListener('change', state.onChangeMaxSteiner)}
+          />
+          <label htmlFor="max-steiner" onClick={() => setState(x => { x.maxSteiner.disabled = !x.maxSteiner.disabled; return { ...x }; })}>
+            max steiner
           </label>
         </div>
       </ForeignObject>
@@ -105,23 +125,25 @@ export default function TriangleDev(props) {
 
 const initViewBox = new Rect(200, 0, 600, 600);
 
+const uiHeightPx = 200;
+
 const ForeignObject = styled('foreignObject')`
   background: #eee;
   border: 1px solid #aaa;
   font-size: 1rem;
   padding: 8px;
   width: 220px;
-  height: 100px;
+  height: ${uiHeightPx}px;
   x: -6px;
-  y: -106px;
+  y: -${uiHeightPx + 6}px;
 
   div { display: flex; }
   label { cursor: pointer; user-select: none; }
+  input[type="range"] { width: 80px; margin-right: 8px; }
 
-  div.min-area {
-    input[type="range"] { width: 80px; margin-right: 8px; }
+  /* div.min-area {
   }
   div.min-angle {
     input[type="range"] { width: 80px; margin-right: 8px; }
-  }
+  } */
 `;

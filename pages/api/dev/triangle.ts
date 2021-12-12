@@ -14,6 +14,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       const decomp = await triangle.triangulate(polys, {
         minArea: req.body.minArea || false,
         minAngle: req.body.minAngle || false,
+        maxSteiner: req.body.maxSteiner == null ? undefined : req.body.maxSteiner,
       });
       res.json(decomp);
     } else {
