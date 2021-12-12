@@ -8,11 +8,8 @@ import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 
 // TODO
-// - try triangle-wasm on nodejs ✅
-// - get triangle-wasm working in DEV browser ✅
-// - fix triangulation errors ✅
-// - remove recast service etc ✅
-// - ui controls to play with triangulation ✅
+// - Generate via Node.js
+// - CodeSandbox
 
 /**
  * @param {{ layoutKey: Geomorph.LayoutKey}} props 
@@ -123,9 +120,9 @@ export default function TriangleDev(props) {
   );
 }
 
-const initViewBox = new Rect(200, 0, 600, 600);
+const uiHeightPx = 170;
 
-const uiHeightPx = 200;
+const initViewBox = new Rect(0, -uiHeightPx, 600, 600);
 
 const ForeignObject = styled('foreignObject')`
   background: #eee;
@@ -140,10 +137,4 @@ const ForeignObject = styled('foreignObject')`
   div { display: flex; }
   label { cursor: pointer; user-select: none; }
   input[type="range"] { width: 80px; margin-right: 8px; }
-
-  /* div.min-area {
-  }
-  div.min-angle {
-    input[type="range"] { width: 80px; margin-right: 8px; }
-  } */
 `;

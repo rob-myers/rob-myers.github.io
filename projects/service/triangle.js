@@ -1,4 +1,4 @@
-import { Vect } from "projects/geom";
+import { Vect } from "../geom/vect";
 import Triangle from 'triangle-wasm';
 
 class TriangleService {
@@ -29,7 +29,7 @@ class TriangleService {
       area: opts?.minArea || false,
       steiner: opts?.maxSteiner,
       // convexHull: true,
-      // jettison: true,
+      jettison: true,
       ccdt: true,
     }, input, output);
     

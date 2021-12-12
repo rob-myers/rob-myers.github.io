@@ -68,6 +68,12 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Triangle (triangle-wasm) in browser dev
+  - try triangle-wasm on nodejs 
+  - get triangle-wasm working in DEV browser 
+  - fix triangulation errors 
+  - remove recast service etc 
+  - ui controls to play with triangulation 
 - ✅ copy-paste terminal x2 bug
 - ✅ add missing labels to 302
 - ✅ can continue from last scroll on hard refresh
