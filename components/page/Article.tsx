@@ -249,6 +249,10 @@ const articleCss = css`
    }
   }
 
+  p + blockquote {
+    margin-top: -20px;
+  }
+
   span.cmd {
     color: #555;
     background: #eee;
