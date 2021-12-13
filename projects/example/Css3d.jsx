@@ -15,7 +15,7 @@ export default function Css3d(props) {
   /** @type {React.MutableRefObject<HTMLDivElement>} */
   const root3dDiv = (React.useRef());
 
-  const { data } = useQuery(`${props.layoutKey}-json`, async () => {
+  const { data } = useQuery(geomorphJsonPath(props.layoutKey), async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
     return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
   });
@@ -25,7 +25,7 @@ export default function Css3d(props) {
     const { x, width, y, height } = el.viewBox.baseVal;
     const zoom = defaults.initViewBox.height / height;
     const rootDiv = root3dDiv.current || (root3dDiv.current = /** @type {*} */ (el.querySelector('.root-3d-div')));
-    rootDiv.style.perspective = `${100 + (2000 / zoom)}px`;
+    rootDiv.style.perspective = `${100 + (500 / zoom)}px`;
     rootDiv.style.perspectiveOrigin = `${( x + 0.5 * width )}px ${( y + 0.5 * height)}px`;
   };
 

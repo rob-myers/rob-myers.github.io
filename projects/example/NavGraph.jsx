@@ -12,7 +12,7 @@ import { Pathfinding } from "../pathfinding/Pathfinding";
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function NavGraphDemo(props) {
 
-  const { data } = useQuery(`${props.layoutKey}-json`, async () => {
+  const { data } = useQuery(geomorphJsonPath(props.layoutKey), async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
     return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
   });

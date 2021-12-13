@@ -13,7 +13,7 @@ import DraggableNode from "../ui/DraggableNode";
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
 export default function VisibilityDemo(props) {
 
-  const { data } = useQuery(`${props.layoutKey}-json`, async () => {
+  const { data } = useQuery(geomorphJsonPath(props.layoutKey), async () => {
     /** @type {Promise<Geomorph.GeomorphJson>} */
     return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
   });
