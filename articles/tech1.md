@@ -2,31 +2,31 @@
 
 The early 90s brought three pillars: HTML, CSS, JavaScript (JS).
 Whenever we visit a website we receive an HTML response, referencing or embedding CSS and JS.
-Our web browser renders the HTML and CSS immediately, and runs the JS to provide interactivity.
+Our web browser renders the HTML and CSS immediately,
+and executes the JS to provide interactivity.
 
 <aside>
 
-More precisely, all [DOM](https://en.wikipedia.org/wiki/Document_Object_Model#JavaScript) _mutations_ are performed by JavaScript.
+More precisely, all _[DOM](https://en.wikipedia.org/wiki/Document_Object_Model#JavaScript) mutations_ are performed by JavaScript.
 The DOM is the programmatic interface to the current _document_ viewed in the browser.
 It amounts to parsed HTML decorated with matching CSS and bound JS, together with APIs for reading and modifying it.
 
 </aside>
 
 Although HTML, CSS and JS are separate standards, 
-it is now common to generate both HTML and CSS using JS.
-This is possible via Node.js Server-Side Rendering and CSS-in-JS, respectively.
-These approaches counter the fundamental asymmetry between the _initial_ state of the document (HTML and CSS) and _all subsequent states_ (achieved via JS).
-
+it is now common to generate _both_ HTML and CSS using JS.
+This is possible via _Node.js Server-Side Rendering_ and _CSS-in-JS_, respectively.
+They counter the fundamental asymmetry between the _initial state_ of the document (HTML and CSS) and _all subsequent states_ (orbit of JS executions).
 
 
 ### React Function Components
 
-Although JS can perform arbitrary computations, its central purpose is to mutate the DOM.
-To this end, JS is commonly broken down into _JavaScript components_, instantiated via XML tags.
-If the JavaScript component is called `MyComponent`, the associated tag will be e.g. `<MyComponent />` or perhaps `<my-component />`.
-One should think of HTML as being extended by these custom tags, which ultimately unwind into plain old HTML.
+JS can perform arbitrary computations, but its central purpose is DOM mutation.
+Then JS is commonly broken down into _JavaScript components_, instantiated via XML tags.
+If the JavaScript component is called `MyComponent`, the associated tag will be `<MyComponent />` or perhaps `<my-component />`.
+Intuitively, HTML is extended with these custom tags, which ultimately unwind into plain old HTML.
 
-Competing notions of "JavaScript component" exist in the wild.
+Now, competing notions of JavaScript component exist in the wild.
 One popular approach is _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
 
@@ -61,7 +61,9 @@ Consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://cod
   ]"
 ></div>
 
-The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom panzoom/PanZoom.jsx")) defines two React function components, _PanZoom_ and _Grid_.
+The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom panzoom/PanZoom.jsx")) defines two React function components.
+One called _PanZoom_.
+Another called _Grid_.
 Behaviourally:
 
 - _PanZoom_ renders an SVG containing _children_ (an image provided in _PanZoomDemo_) and `<Grid />`. Over time it adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
@@ -79,9 +81,9 @@ Behaviourally:
 
   </aside>
 
-The above two JS functions both have a single parameter `props`.
-They also both return something which looks like HTML, but isn't.
-What does the XML-like value returned by `PanZoom` actually mean?
+The above JS functions both have a single parameter `props`.
+Moreover, they both return something which looks like HTML but isn't.
+Then what does the XML-like value returned by `PanZoom` actually mean?
 What are React function components actually returning?
 <!-- For example, _PanZoom_ renders _Grid_ by using the XML tag `<Grid/>`.
 Notice that React function components are functions, but syntactically they are not invoked like functions i.e. we don't write `Grid(props)`. -->
@@ -100,7 +102,7 @@ Here's a whirlwind overview.
   with two arguments: `<App/>` and a DOM node _el_. See how we bootstrap examples on [CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/index.js "@new-tab").
 
 - [ReactDOM.render](https://github.com/preactjs/preact/blob/master/src/render.js "@new-tab") initially converts `<App/>` into a DOM node mounted at _el_.
-  Later a subcomponent may re-render, recursively recreating a virtual DOM node.
+  Later a subcomponent may "re-render", recursively recreating a virtual DOM node.
   It is [diffed](https://github.com/preactjs/preact/blob/master/src/diff/index.js "@new-tab")  and only the difference is applied to the DOM.
 
 <div
@@ -115,8 +117,8 @@ Here's a whirlwind overview.
 Our whirlwind overview attempts to provide the gist.
 Actually, React is notoriously hard to understand. 
 The internet is awash with poor explanations and cargo cult mentalities.
-But it is probably the most popular JavaScript component framework.
-If you want to understand modern web development, it is arguably unavoidable.
+However, React is probably the most popular JavaScript component framework;
+if you want to understand modern web development, it is arguably unavoidable.
 
 </aside>
 
@@ -131,8 +133,8 @@ As another example, showing additional search results amounts to a single mutati
 
 When React renders a component, it invokes the respective function.
 The return value of the function is a JavaScript representation of a DOM subtree.
-The latter subtree is usually referred to as "Virtual DOM".
-React compares this value to the previous one, and patches the DOM accordingly.
+This representation is usually referred to as "Virtual DOM".
+React compares this JavaScript value to the previous one, and patches the DOM accordingly.
 If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221 "@new-tab") via the ancestral relationship.
 Developers can also avoid recreating a particular rooted subtree using [`React.memo`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js "@new-tab").
 But for many websites, the virtual DOM manipulations are neither too large nor too frequent, and React developers may simply ignore their overhead.
@@ -201,10 +203,10 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
 
 ### React Refresh
 
-We finish by further justifying our odd usage of `React.useState` i.e. sans the setter.
+We finally further justify our odd usage of `React.useState` i.e. sans the setter.
+For example, one might think `React.useRef` is more suitable.
 
-So far we've claimed direct DOM mutation provides performance benefits.
-But there's also a reason specific to `React.useState`.
-Whilst working in a development environment, it is possible to textually edit React components [without losing the internal state of their instances](https://www.npmjs.com/package/react-refresh).
+There's something special about `React.useState`.
+Whilst working in a suitably tooled development environment, it is possible to textually edit React components [without losing the internal state of their instances](https://www.npmjs.com/package/react-refresh).
 See this in action by editing one of our CodeSandboxes.
 We'll use this important _devtool_ to develop sophisticated Game AI.
