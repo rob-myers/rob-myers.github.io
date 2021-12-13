@@ -102,7 +102,8 @@ const articleCss = css`
     }
     
     &:hover, &:active {
-      background-color: #eee;
+      background: #eee;
+      border-color: transparent;
     }
 
     position: relative;
