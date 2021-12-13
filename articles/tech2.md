@@ -33,12 +33,15 @@ To move an NPC from **A** to **B**, we need a respective path.
 This might simply be a straight line e.g. when an item is directly within grasp.
 However, usually there are objects to be avoided: static ones like walls, dynamic ones like NPCs.
 
-If there are no dynamic objects, there is a canonical approach.
-The navigable area is represented by polygons ([possibly with holes](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6)), and we may assume **A** and **B** lie in their interior. These polygons can be triangulated (admittedly non-canonically), inducing an undirected graph.
-
-> A **Navgraph** is an undirected graph whose 
-> nodes are _the triangles of the triangulation_.
-> Two nodes are connected iff _their respective triangles share exactly one edge._
+Sans dynamic objects, a canonical approach exists.
+- The navigable area is represented by _polygons_ ([possibly with holes](https://datatracker.ietf.org/doc/html/rfc7946#section-3.1.6)),
+  with **A** and **B** inside them.
+- These polygons can be _triangulated_ i.e. partitioned into triangles with disjoint interiors.
+  Thin or large triangles can be avoided via _[Steiner points](https://en.wikipedia.org/wiki/Steiner_point_(computational_geometry))_.
+- The triangulation induces an undirected graph.
+  > A **Navgraph** is an undirected graph whose 
+  > nodes are _the triangles of the provided triangulation_.
+  > Two nodes are connected if and only if _their respective triangles share exactly one edge._
 
 For example, the triangles below collectively induce the red navgraph below.
 
