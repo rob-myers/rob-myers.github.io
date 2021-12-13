@@ -99,7 +99,7 @@ const interactOverlayCss = css`
   }
 
   position: absolute;
-  z-index: 0;
+  z-index: 4;
   width: inherit;
   height: inherit;
   background: #000;
