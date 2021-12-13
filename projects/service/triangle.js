@@ -26,7 +26,7 @@ class TriangleService {
       pslg: true,
       quality: opts?.minAngle || true,
       holes: true,
-      area: opts?.minArea || false,
+      area: opts?.maxArea || false,
       steiner: opts?.maxSteiner,
       // convexHull: true,
       jettison: true,
@@ -111,7 +111,7 @@ export const triangle = new TriangleService;
 
 /**
  * @typedef TriangulateOpts @type {object}
- * @property {boolean | number} [minArea]
+ * @property {boolean | number} [maxArea]
  * @property {boolean | number} [minAngle]
  * @property {number} [maxSteiner]
  */

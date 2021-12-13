@@ -59,7 +59,7 @@ export async function renderGeomorph(
      * TODO params?
      */
     const decomp = await triangle.triangulate(layout.navPoly, {
-      // minArea: req.body.minArea || false,
+      // maxArea: req.body.minArea || false,
       // minAngle: req.body.minAngle || false,
       // maxSteiner: req.body.maxSteiner == null ? undefined : req.body.maxSteiner,
     });

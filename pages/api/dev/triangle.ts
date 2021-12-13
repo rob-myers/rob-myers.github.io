@@ -12,7 +12,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
     if ((req.body.polys?.[0] as Geom.GeoJsonPolygon)?.coordinates[0].length >= 3) {
       const polys = (req.body.polys as Geom.GeoJsonPolygon[]).map(Poly.from);
       const decomp = await triangle.triangulate(polys, {
-        minArea: req.body.minArea || false,
+        maxArea: req.body.maxArea || false,
         minAngle: req.body.minAngle || false,
         maxSteiner: req.body.maxSteiner == null ? undefined : req.body.maxSteiner,
       });

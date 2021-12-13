@@ -17,13 +17,13 @@ import PanZoom from "../panzoom/PanZoom";
 export default function TriangleDev(props) {
   
   const [state, setState] = React.useState(() => ({
-    minArea: { disabled: true, value: 4000/2, min: 10, max: 4000 },
+    maxArea: { disabled: true, value: 4000/2, min: 10, max: 4000 },
     minAngle: { disabled: true, value: 14, min: 0, max: 28 },
-    maxSteiner: { disabled: true, value: 300, min: 0, max: 1000 },
+    maxSteiner: { disabled: true, value: 300, min: 0, max: 600 },
     /** @param {Event} e */
-    onChangeMinArea: (e) => {
+    onChangeMaxArea: (e) => {
       const {value} = /** @type {HTMLInputElement} */ (e.target);
-      setState(x => { x.minArea.value = Number(value); return { ...x }; });
+      setState(x => { x.maxArea.value = Number(value); return { ...x }; });
     },
     /** @param {Event} e */
     onChangeMinAngle: (e) => {
@@ -52,7 +52,7 @@ export default function TriangleDev(props) {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         polys: assertDefined(gmAux).navPoly.map(x => x.geoJson),
-        minArea: state.minArea.disabled ? null : state.minArea.value,
+        minArea: state.maxArea.disabled ? null : state.maxArea.value,
         minAngle: state.minAngle.disabled ? null : state.minAngle.value,
         maxSteiner: state.maxSteiner.disabled ? null : state.maxSteiner.value,
       }),
@@ -84,14 +84,14 @@ export default function TriangleDev(props) {
         <div>
           #tri {triData?.tris.length}
         </div>
-        <div className="min-area">
+        <div className="max-area">
           <input
-            type="range" id="min-area-range" min={state.minArea.min} max={state.minArea.max} defaultValue={state.minArea.value}
-            disabled={state.minArea.disabled}
-            ref={(el) => el?.addEventListener('change', state.onChangeMinArea)}
+            type="range" id="max-area-range" min={state.maxArea.min} max={state.maxArea.max} defaultValue={state.maxArea.value}
+            disabled={state.maxArea.disabled}
+            ref={(el) => el?.addEventListener('change', state.onChangeMaxArea)}
           />
-          <label htmlFor="min-area-range" onClick={() => setState(x => { x.minArea.disabled = !x.minArea.disabled; return { ...x }; })}>
-            min area
+          <label htmlFor="max-area-range" onClick={() => setState(x => { x.maxArea.disabled = !x.maxArea.disabled; return { ...x }; })}>
+            max area
           </label>
         </div>
         <div className="min-angle">
