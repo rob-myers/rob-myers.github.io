@@ -6,7 +6,7 @@ Our web browser renders the HTML and CSS immediately, and runs the JS to provide
 
 <aside>
 
-More precisely, all subsequent [DOM](https://en.wikipedia.org/wiki/Document_Object_Model#JavaScript) mutations are performed by JavaScript.
+More precisely, all [DOM](https://en.wikipedia.org/wiki/Document_Object_Model#JavaScript) _mutations_ are performed by JavaScript.
 The DOM is the programmatic interface to the current _document_ viewed in the browser.
 It amounts to parsed HTML decorated with matching CSS and bound JS, together with APIs for reading and modifying it.
 
