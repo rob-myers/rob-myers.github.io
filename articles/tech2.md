@@ -48,7 +48,7 @@ For example, the triangles below collectively induce the red navgraph below.
 <div
   class="tabs"
   name="nav-graph-demo"
-  height="300"
+  height="400"
   enabled="false"
   tabs="[
      { key: 'component', filepath: 'example/NavGraph#301' },
@@ -59,23 +59,22 @@ For example, the triangles below collectively induce the red navgraph below.
 <aside>
 
 __TODO__
-- Navgraph is usually more refined via detailed navigable polygon and Recast.
-- Make a test component to play with Recast
-- Integrate into ts-node script
-- Make a CodeSandbox
+- Make a CodeSandbox for triangle-wasm
 
 </aside>
 
 
-Technically, an undirected graph is just a symmetric binary relation.
+Technically, an undirected graph is just a _symmetric binary relation_.
 We have made it concrete by depicting each node as the centroid of its respective triangle.
-This provides a weight for each edge i.e. the distance between the centroids.
+This is a standard convention, although triangles have more than one [notion of center](https://en.wikipedia.org/wiki/Triangle_center).
+It provides a weight for each edge i.e. the distance between the centroids.
 Then the length of a path through the undirected graph may be defined as the sum of its edge's weights.
 
 <aside title="why-we-abstract">
 
 Searching for paths through the embedded undirected graph is much easier than searching the navigable polygons.
-However NPCs won't actually follow these embedded paths (for realism),
+There are far fewer possibilities.
+However, NPCs won't actually follow these embedded paths (for realism),
 but an induced path instead (see below).
 
 </aside>
