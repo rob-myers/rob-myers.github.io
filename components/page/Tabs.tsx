@@ -40,8 +40,12 @@ export default function Tabs(props: Props) {
             const tabKeys = (tabs?.getTabNodes() || []).map(x => x.getId());
             tabKeys.forEach(key => {
               const portal = useSiteStore.getState().portal[key];
-              portal?.portal.setPortalProps({ disabled: !next });
+              if (portal) {
+                portal.portal.setPortalProps({ disabled: !next });
+              }
             });
+            // Other tab portals may not exist yet, so record in `tabs` too
+            tabs.disabled = !next;
           }}
           clickAnchor={() => {
             const tabs = useSiteStore.getState().tabs[props.id];

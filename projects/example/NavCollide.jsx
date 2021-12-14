@@ -100,7 +100,7 @@ export default function NavCollide(props) {
             zoneKey={zoneKey}
             radius={4}
             onChange={(path) => {
-              console.log('path B', path);
+              // console.log('path B', path);
             }}
           />
 

@@ -65,6 +65,9 @@ interface TabsState {
   selectTab: (tabId: string) => void;
   scrollTo: () => void;
   getTabNodes: () => TabNode[];
+  disabled: boolean;
+  /** e.g. `/part/1` */
+  pagePathname: string;
 }
 
 const api = useStore.getState().api;

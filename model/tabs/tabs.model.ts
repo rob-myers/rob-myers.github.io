@@ -16,7 +16,7 @@ function getTabName(meta: TabMeta) {
     case 'component':
       return meta.filepath;
     case 'terminal':
-      return `@${meta.session}`;
+      return `@${meta.filepath}`;
     default:
       throw testNever(meta);
   }
@@ -29,7 +29,7 @@ export function getTabsId(articleKey: string, tabsName: string) {
 export type TabMeta = { idSuffix?: string } & (
   | { key: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
   | { key: 'component'; filepath: ComponentFilepathKey; }
-  | { key: 'terminal'; session: string }
+  | { key: 'terminal'; /** Session identifier */ filepath: string }
 );
 
 export function computeJsonModel(tabs: TabMeta[]): IJsonModel {

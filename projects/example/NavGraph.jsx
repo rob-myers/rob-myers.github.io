@@ -22,9 +22,9 @@ export default function NavGraphDemo(props) {
     zone: /** @type {undefined | Nav.Zone} */ (undefined)
   }));
 
-  // TODO apply this more efficient pattern elsewhere
   React.useEffect(() => {
     if (data && !props.disabled && !state.zone) {
+      const zoneKey = `NavGraphDemo-${props.layoutKey}`;
       state.zone = Pathfinding.createZone(data.navDecomp);
       state.pathfinding.setZoneData(zoneKey, state.zone);
       setState({...state});
@@ -96,5 +96,4 @@ const rootCss = css`
   }  
 `;
 
-const zoneKey = 'NavGraphDemoZone';
 const initViewBox = new Rect(0, 0, 600, 600);

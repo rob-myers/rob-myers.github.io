@@ -57,6 +57,8 @@ function useRegisterTabs(props: Props, model: Model) {
           model.visitNodes(x => x instanceof TabNode && output.push(x));
           return output;
         },
+        disabled: true,
+        pagePathname: location.pathname,
       };
     }
     useSiteStore.setState({});
