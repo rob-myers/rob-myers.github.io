@@ -52,7 +52,7 @@ export default function TriangleDev(props) {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         polys: assertDefined(gmAux).navPoly.map(x => x.geoJson),
-        minArea: state.maxArea.disabled ? null : state.maxArea.value,
+        maxArea: state.maxArea.disabled ? null : state.maxArea.value,
         minAngle: state.minAngle.disabled ? null : state.minAngle.value,
         maxSteiner: state.maxSteiner.disabled ? null : state.maxSteiner.value,
       }),
@@ -89,6 +89,7 @@ export default function TriangleDev(props) {
             type="range" id="max-area-range" min={state.maxArea.min} max={state.maxArea.max} defaultValue={state.maxArea.value}
             disabled={state.maxArea.disabled}
             ref={(el) => el?.addEventListener('change', state.onChangeMaxArea)}
+            title={String(state.maxArea.value)}
           />
           <label htmlFor="max-area-range" onClick={() => setState(x => { x.maxArea.disabled = !x.maxArea.disabled; return { ...x }; })}>
             max area
@@ -99,6 +100,7 @@ export default function TriangleDev(props) {
             type="range" id="min-angle-range" min={state.minAngle.min} max={state.minAngle.max} defaultValue={state.minAngle.value}
             disabled={state.minAngle.disabled}
             ref={(el) => el?.addEventListener('change', state.onChangeMinAngle)}
+            title={String(state.minAngle.value)}
           />
           <label htmlFor="min-angle-range" onClick={() => setState(x => { x.minAngle.disabled = !x.minAngle.disabled; return { ...x }; })}>
             min angle
@@ -109,6 +111,7 @@ export default function TriangleDev(props) {
             type="range" id="max-steiner" min={state.maxSteiner.min} max={state.maxSteiner.max} defaultValue={state.maxSteiner.value}
             disabled={state.maxSteiner.disabled}
             ref={(el) => el?.addEventListener('change', state.onChangeMaxSteiner)}
+            title={String(state.maxSteiner.value)}
           />
           <label htmlFor="max-steiner" onClick={() => setState(x => { x.maxSteiner.disabled = !x.maxSteiner.disabled; return { ...x }; })}>
             max steiner

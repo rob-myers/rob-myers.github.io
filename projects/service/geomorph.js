@@ -9,10 +9,10 @@ import { svgPathToPolygon } from './dom';
  * Can run in browser or server.
  * @param {Geomorph.LayoutDef} def
  * @param {Geomorph.SymbolLookup} lookup
- * @returns {Geomorph.Layout}
+ * @param {import('./triangle').TriangleService} [triangleService]
+ * @returns {Promise<Geomorph.Layout>}
  */
-export function createLayout(def, lookup) {
-
+export async function createLayout(def, lookup, triangleService) {
   const m = new Mat;
 
   /** @type {Geomorph.Layout['groups']} */
@@ -24,7 +24,7 @@ export function createLayout(def, lookup) {
     if (i) {
       /**
        * Starship symbol PNGs are 5 times larger than Geomorph PNGs.
-       * Also, the geomorph PNGs correspond to the hull (1st item).
+       * We skipped 1st item i.e. the hull, which corresponds to a geomorph PNG.
        */
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
@@ -79,6 +79,15 @@ export function createLayout(def, lookup) {
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
+  // Currently triangle-wasm runs server-side only
+  const navDecomp = triangleService
+    ? await triangleService.triangulate(navPoly, {
+      // minAngle: 28,
+      maxSteiner: 120,
+      // maxArea: 800,
+    })
+    : { vs: [], tris: [] };
+
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
   measurer.font = labelMeta.font;
@@ -98,6 +107,7 @@ export function createLayout(def, lookup) {
     def,
     groups,
     navPoly,
+    navDecomp,
     walls,
     labels,
     

@@ -29,6 +29,7 @@ declare namespace Geomorph {
     };
     labels: LayoutLabel[];
     navPoly: Geom.GeoJsonPolygon[];
+    navDecomp: Geom.TriangulationJson;
     obstacles: Geom.GeoJsonPolygon[];
     walls: Geom.GeoJsonPolygon[];
   }
@@ -63,10 +64,10 @@ declare namespace Geomorph {
     def: LayoutDef;
     /** Transformed and filtered groups */
     groups: SvgGroups<Poly>;
-    /**
-     * Currently, the navigable area including doorways.
-     */
+    /** The navigable area including doorways. */
     navPoly: Poly[];
+    /** A rich triangulation involving Steiner points */
+    navDecomp: Geom.TriangulationJson;
     walls: Poly[];
 
     labels: LayoutLabel[];

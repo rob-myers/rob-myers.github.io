@@ -20,10 +20,10 @@ import layoutDefs from '../../projects/geomorph/layouts';
 import { createLayout, deserializeSvgJson } from '../../projects/service/geomorph';
 import { renderGeomorph } from '../../projects/geomorph/render';
 import { geom } from '../../projects/service/geom';
+import { triangle } from '../../projects/service/triangle';
 
 const geomorphId = Number(process.argv[2]);
 const layoutDef = Object.values(layoutDefs).find(x => x.id === geomorphId);
-
 if (!layoutDef) {
   console.error(`No geomorph found with id "${geomorphId}"`);
   process.exit(1);
@@ -35,36 +35,7 @@ const defaultScale = 2;
 
 const publicDir = path.resolve(__dirname, '../../public');
 const outputDir = path.resolve(publicDir, 'geomorph');
-const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.png' : '.png'}`)
-
-/** @type {Geomorph.RenderOpts} */
-const renderOpts = {
-  scale: scale || defaultScale,
-  obsBounds: true, wallBounds: true, navTris: true,
-  ...debug && { doors: true, labels: true }
-};
-
-/**
- * Compute and render layout, given layout definition.
- * @param {Geomorph.LayoutDef} def
- */
-async function renderLayout(def) {
-  const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
-  /**
-   * Create the layout, given layout definition.
-   */
-  const layout = createLayout(def, symbolLookup);
-  const canvas = createCanvas(0, 0);
-
-  await renderGeomorph(
-    layout,
-    symbolLookup,
-    canvas,
-    (pngHref) => loadImage(fs.readFileSync(path.resolve(publicDir + pngHref))),
-    renderOpts,
-  );
-  return { layout, canvas };
-}
+const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.png' : '.png'}`);
 
 (async function run() {
   const pipeline = util.promisify(stream.pipeline);
@@ -87,17 +58,42 @@ async function renderLayout(def) {
     },
     labels: layout.labels,
     navPoly: layout.navPoly.map(x => x.geoJson),
+    navDecomp: layout.navDecomp,
     obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
     walls: layout.walls.map(x => x.geoJson),
   };
 
-  fs.writeFileSync(
-    path.resolve(outputDir, `${layoutDef.key}.json`),
-    stringify(json)
-  );
+  fs.writeFileSync(path.resolve(outputDir, `${layoutDef.key}.json`), stringify(json));
 
-  pipeline(
-    canvas.createPNGStream(),
-    fs.createWriteStream(outputPath),
-  );
+  await pipeline(canvas.createPNGStream(),  fs.createWriteStream(outputPath));
 })();
+
+/** @type {Geomorph.RenderOpts} */
+const renderOpts = {
+  scale: scale || defaultScale,
+  obsBounds: true, wallBounds: true, navTris: true,
+  ...debug && { doors: true, labels: true }
+};
+
+/**
+ * Compute and render layout, given layout definition.
+ * @param {Geomorph.LayoutDef} def
+ */
+async function renderLayout(def) {
+
+  const canvas = createCanvas(0, 0);
+  const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
+  const layout = await createLayout(def, symbolLookup, triangle);
+
+  await renderGeomorph(
+    layout,
+    symbolLookup,
+    canvas,
+    (pngHref) => loadImage(fs.readFileSync(path.resolve(publicDir + pngHref))),
+    renderOpts,
+  );
+  return {
+    layout,
+    canvas,
+  };
+}

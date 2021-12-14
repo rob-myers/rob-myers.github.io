@@ -2,8 +2,6 @@ import { Vect } from "../geom";
 import { labelMeta } from './geomorph.model';
 import { singlesToPolys } from '../service/geomorph';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service/dom';
-import { triangle } from "../service/triangle";
-// import { geom } from "../service/geom";
 
 /**
  * Render a single geomorph PNG,
@@ -54,17 +52,7 @@ export async function renderGeomorph(
   if (navTris) {
     ctxt.strokeStyle = navStroke;
     ctxt.lineWidth = 0.5;
-
-    /**
-     * TODO params?
-     */
-    const decomp = await triangle.triangulate(layout.navPoly, {
-      // maxArea: req.body.minArea || false,
-      // minAngle: req.body.minAngle || false,
-      // maxSteiner: req.body.maxSteiner == null ? undefined : req.body.maxSteiner,
-    });
-    drawTriangulation(ctxt, decomp)
-
+    drawTriangulation(ctxt, layout.navDecomp)
     // Original approach
     // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
     // decomps.forEach(decomp => drawTriangulation(ctxt, decomp));

@@ -4,7 +4,6 @@ import { useQuery } from "react-query";
 
 import * as defaults from "./defaults";
 import { Poly, Rect, Vect } from "../geom";
-import { geom } from "../service/geom";
 import { Pathfinding } from '../pathfinding/Pathfinding';
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 
@@ -13,16 +12,19 @@ import DraggableNode from "../ui/DraggableNode";
 import classNames from "classnames";
 
 // TODO
-// - also show zig-zag path
+// - also show triangle path
 
 /** @param {{ disabled?: boolean }} props */
 export default function NavStringPull(props) {
 
-  const [state] = React.useState(() => ({
+  const { data } = useQuery(geomorphJsonPath('g-301--bridge'), async () => {
+    /** @type {Promise<Geomorph.GeomorphJson>} */
+    return (fetch(geomorphJsonPath('g-301--bridge')).then(x => x.json()));
+  });
+
+  const [state, setState] = React.useState(() => ({
     /** @type {SVGGElement} */
     rootEl: ({}),
-    /** @type {SVGCircleElement} */
-    targetEl: ({}),
     /** @type {SVGPolylineElement} */
     pathEl: ({}),
 
@@ -30,25 +32,28 @@ export default function NavStringPull(props) {
     target: new Vect(600, 300),
     path: /** @type {Vect[]} */ ([]),
 
+    pathfinding: new Pathfinding,
+    zone: /** @type {undefined | Nav.Zone} */ (undefined),
+    navPoly: /** @type {Poly[]} */ ([]),
+
     updatePath: () => {
-      const groupId = pathfinding.getGroup(zoneKey, state.source);
+      const groupId = state.pathfinding.getGroup(zoneKey, state.source);
       if (groupId !== null) {
-        state.path = [state.source.clone()].concat(pathfinding.findPath(state.source, state.target, zoneKey, groupId) || []);
-        state.pathEl.setAttribute('points', `${state.path}`);
+        state.path = [state.source.clone()].concat(state.pathfinding.findPath(state.source, state.target, zoneKey, groupId) || []);
+        state.pathEl = state.pathEl || state.rootEl.querySelector('polyline.navpath');
+        state.pathEl?.setAttribute('points', `${state.path}`);
       }
     },
   }));
-  
-  const pathfinding = React.useMemo(() => new Pathfinding, []);
-  const { data } = useQuery('navpoly-demo', async () => {
-    /** @type {Geomorph.GeomorphJson} */
-    const json = await fetch(geomorphJsonPath('g-301--bridge')).then(x => x.json());
-    const navPoly = json.navPoly.map(x => Poly.from(x));
-    const decomp = geom.polysToTriangulation(navPoly);
-    const zone = Pathfinding.createZone(decomp);
-    pathfinding.setZoneData(zoneKey, zone);
-    return { pngRect: json.pngRect, navPoly, zone };
-  });
+
+  React.useEffect(() => {
+    if (data && !props.disabled && !state.zone) {
+      state.zone = Pathfinding.createZone(data.navDecomp);
+      state.pathfinding.setZoneData(zoneKey, state.zone);
+      state.navPoly = data.navPoly.map(x => Poly.from(x));
+      setState({...state});
+    }
+  }, [data, props.disabled]);
 
   return (
     <PanZoom gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
@@ -57,42 +62,37 @@ export default function NavStringPull(props) {
         ref={(el) => {
           if (el) {
             state.rootEl = el;
-            state.pathEl = /** @type {SVGPolylineElement} */ (el.querySelector('polyline.navpath'));
             state.updatePath();
           }
         }}
       >
-
-        {data && <>
+        {data && (
           <image {...data.pngRect} className="geomorph" href={geomorphPngPath('g-301--bridge')} />
+        )}
 
-          {data.zone.groups.map(nodes => nodes.map(({ vertexIds }) =>
-            <polygon className="navtri" points={`${vertexIds.map(id => data.zone.vertices[id])}`} />
-          ))}
+        {state.zone?.groups.map(nodes => nodes.map(({ vertexIds }) =>
+          <polygon className="navtri" points={`${vertexIds.map(id => state.zone?.vertices[id])}`} />
+        ))}
 
-          <polyline className="navpath" points={`${state.path}`}/>
-
-          <DraggableNode
-            initial={state.source}
-            icon="run"
-            onStop={(p) => {
-              if (!data.navPoly.some(x => x.contains(p))) return 'cancel';
-              state.source.copy(p);
-              state.updatePath();
-            }}
-          />
-
-          <DraggableNode
-            initial={state.target}
-            icon="finish"
-            onStop={(p) => {
-              if (!data.navPoly.some(x => x.contains(p))) return 'cancel';
-              state.target.copy(p);
-              state.updatePath();
-            }}
-          />
-        </>}
-
+        <DraggableNode
+          initial={state.source}
+          icon="run"
+          onStop={(p) => {
+            if (!state.navPoly.some(x => x.contains(p))) return 'cancel';
+            state.source.copy(p);
+            state.updatePath();
+          }}
+        />
+        <polyline className="navpath" points={`${state.path}`}/>
+        <DraggableNode
+          initial={state.target}
+          icon="finish"
+          onStop={(p) => {
+            if (!state.navPoly.some(x => x.contains(p))) return 'cancel';
+            state.target.copy(p);
+            state.updatePath();
+          }}
+        />
       </g>
 
     </PanZoom>

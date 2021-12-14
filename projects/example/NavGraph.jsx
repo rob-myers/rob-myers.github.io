@@ -9,7 +9,7 @@ import { geom } from "../service/geom";
 import PanZoom from "../panzoom/PanZoom";
 import { Pathfinding } from "../pathfinding/Pathfinding";
 
-/** @param {{ layoutKey: Geomorph.LayoutKey }} props */
+/** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
 export default function NavGraphDemo(props) {
 
   const { data } = useQuery(geomorphJsonPath(props.layoutKey), async () => {
@@ -17,15 +17,19 @@ export default function NavGraphDemo(props) {
     return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
   });
 
-  const pathfinding = React.useMemo(() => new Pathfinding, []);
+  const [state, setState] = React.useState(() => ({
+    pathfinding: new Pathfinding,
+    zone: /** @type {undefined | Nav.Zone} */ (undefined)
+  }));
 
-  const { zone } = React.useMemo(() => {
-    const polys = (data?.navPoly || []).map(x => Poly.from(x));
-    const decomp = geom.polysToTriangulation(polys);
-    const zone = Pathfinding.createZone(decomp);
-    pathfinding.setZoneData(zoneKey, zone);
-    return { zone };
-  }, [data]);
+  // TODO apply this more efficient pattern elsewhere
+  React.useEffect(() => {
+    if (data && !props.disabled && !state.zone) {
+      state.zone = Pathfinding.createZone(data.navDecomp);
+      state.pathfinding.setZoneData(zoneKey, state.zone);
+      setState({...state});
+    }
+  }, [data, props.disabled]);
 
   return data ? (
     <PanZoom
@@ -37,32 +41,34 @@ export default function NavGraphDemo(props) {
     >
       <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
 
-      {zone.groups.map(nodes =>
-        nodes.map(({ id, centroid, neighbours }) => <g key={id}>
-          {neighbours.map(id => (
-            <line
-              className="edge"
-              x1={centroid.x}
-              y1={centroid.y}
-              x2={nodes[id].centroid.x}
-              y2={nodes[id].centroid.y}
+      {state.zone && <>
+        {state.zone.groups.map(nodes =>
+          nodes.map(({ id, centroid, neighbours }) => <g key={id}>
+            {neighbours.map(id => (
+              <line
+                className="edge"
+                x1={centroid.x}
+                y1={centroid.y}
+                x2={nodes[id].centroid.x}
+                y2={nodes[id].centroid.y}
+              />
+            ))}
+          </g>)
+        )}
+
+        {state.zone.groups.map(nodes =>
+          nodes.map(({ vertexIds }) =>
+            <polygon
+              className="navtri"
+              points={`${vertexIds.map(id => state.zone?.vertices[id])}`}
             />
-          ))}
-        </g>)
-      )}
+        ))}
 
-      {zone.groups.map(nodes =>
-        nodes.map(({ vertexIds }) =>
-          <polygon
-            className="navtri"
-            points={`${vertexIds.map(id => zone.vertices[id])}`}
-          />
-      ))}
-
-      {zone.groups.map(nodes =>
-        nodes.map(({ id, centroid }) =>
-          <circle key={id} className="node" cx={centroid.x} cy={centroid.y} r={2} />
-      ))}
+        {state.zone.groups.map(nodes =>
+          nodes.map(({ id, centroid }) =>
+            <circle key={id} className="node" cx={centroid.x} cy={centroid.y} r={2} />
+        ))}
+      </>}
     </PanZoom>
   ) : null;
 }

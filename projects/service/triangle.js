@@ -1,7 +1,7 @@
 import { Vect } from "../geom/vect";
 import Triangle from 'triangle-wasm';
 
-class TriangleService {
+export class TriangleService {
 
   constructor() {
     /** @type {number} */
@@ -26,6 +26,7 @@ class TriangleService {
       pslg: true,
       quality: opts?.minAngle || true,
       holes: true,
+      // holes: false,
       area: opts?.maxArea || false,
       steiner: opts?.maxSteiner,
       // convexHull: true,
@@ -52,12 +53,23 @@ class TriangleService {
    */
   polysToTriangulateIO(polys) {
     const verts = polys.flatMap(x => x.allPoints);
+
     this.offset = 0;
     const segs = polys.flatMap((poly) => [
       ...this.getCyclicSegs(poly.outline.length),
       ...poly.holes.flatMap(hole => this.getCyclicSegs(hole.length)),
     ]);
-    const holePnts = polys.flatMap(poly => poly.holes.map(hole => Vect.average(hole)));
+
+    /**
+     * Get points inside holes, using 0.01 delta
+     * and assuming appropriate clockwise convention.
+     */
+    const holePnts = polys.flatMap(poly =>
+      poly.holes.map(([p, q]) => new Vect(
+        (q.x + p.x)/2 + +0.01 * (q.y - p.y),
+        (q.y + p.y)/2 + -0.01 * (q.x - p.x),
+      )),
+    );
 
     return {
       pointlist: verts.flatMap(p => [p.x, p.y]),

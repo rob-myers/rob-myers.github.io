@@ -6,6 +6,7 @@
  * Examples:
  * - yarn minify-pngs public/png
  * - yarn minify-pngs media/geomorph-edge
+ * - yarn minify-pngs public/geomorph
  */
 import fs from 'fs';
 import path from 'path';

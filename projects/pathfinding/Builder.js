@@ -4,7 +4,7 @@ import { Vect } from '../geom';
 export class Builder {
   /**
    * Constructs groups from the given navigation mesh.
-   * @param  {Geom.Triangulation} tr
+   * @param  {Geom.TriangulationJson} tr
    */
   static buildZone (tr) {
     const navMesh = this._buildNavigationMesh(tr);
@@ -63,7 +63,7 @@ export class Builder {
 
   /**
    * Constructs a navigation mesh from the given geometry.
-   * @param {Geom.Triangulation} triangulation
+   * @param {Geom.TriangulationJson} triangulation
    */
   static _buildNavigationMesh (triangulation) {
     return this._buildPolygonsFromTriang(triangulation);
@@ -143,7 +143,7 @@ export class Builder {
     return neighbours;
   }
 
-  /** @param {Geom.Triangulation} tr */
+  /** @param {Geom.TriangulationJson} tr */
   static _buildPolygonsFromTriang (tr) {
 
     const polygons = /** @type {Nav.NavPoly[]} */ ([]);
@@ -161,7 +161,7 @@ export class Builder {
     const vertexPolygonMap = /** @type {Record<number, Nav.NavPoly[]>} */ ({});
 
     for (let i = 0; i < tr.vs.length; i++) {
-      vertices.push(tr.vs[i]);
+      vertices.push(Vect.from(tr.vs[i]));
       vertexPolygonMap[i] = [];
     }
 

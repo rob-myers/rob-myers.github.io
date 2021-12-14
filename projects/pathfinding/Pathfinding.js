@@ -34,7 +34,7 @@ export class Pathfinding {
 
   /**
    * (Static) Builds a zone/node set from navigation mesh geometry.
-   * @param  {Geom.Triangulation} tr
+   * @param  {Geom.TriangulationJson} tr
    * @return {Nav.Zone}
    */
   static createZone (tr) {

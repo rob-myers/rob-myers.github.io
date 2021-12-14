@@ -99,31 +99,31 @@ export default function DraggableNode(props) {
           eye: (
             <image
               href="/icon/Simple_Icon_Eye.svg"
-              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+              width="20" height="20" x={state.position.x - 10} y={state.position.y - 10} 
             />
           ),
           down: (
             <image
               href="/icon/solid_arrow-circle-down.svg"
-              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+              width="20" height="20" x={state.position.x - 10} y={state.position.y - 10} 
             />
           ),
           right: (
             <image
               href="/icon/solid_arrow-circle-right.svg"
-              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+              width="20" height="20" x={state.position.x - 10} y={state.position.y - 10} 
             />
           ),
           run: (
             <image
               href="/icon/person-running-fa6.svg"
-              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+              width="20" height="20" x={state.position.x - 10} y={state.position.y - 10} 
             />
             ),
           finish: (
             <image
               href="/icon/flag-checkered-fa6.svg"
-              width="30" height="30" x={state.position.x - 15} y={state.position.y - 15} 
+              width="20" height="20" x={state.position.x - 10} y={state.position.y - 10} 
             />
           ),
         }[props.icon]

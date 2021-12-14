@@ -36,16 +36,12 @@ export default function GeomorphDemo() {
 
 /** @param {{ def: Geomorph.LayoutDef; transform?: string }} _ */
 function Geomorph({ def, transform }) {
-
   const { data: gm } = useQuery(`layout: ${def.key}`, () => computeLayout(def));
 
   return gm ? (
     <g className={classNames("geomorph", def.key)} transform={transform}>
-
       <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
-
       <ForeignObject gm={gm} />
-
       <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
     </g>
   ) : null;
@@ -87,7 +83,7 @@ function ForeignObject({ gm }) {
           </div>
         ))}
       </div>
-  </foreignObject>
+    </foreignObject>
   );
 }
 
@@ -97,7 +93,7 @@ function ForeignObject({ gm }) {
  */
 async function computeLayout(def) {
   const symbolLookup = deserializeSvgJson(/** @type {*} */ (svgJson));
-  const layout = createLayout(def, symbolLookup);
+  const layout = await createLayout(def, symbolLookup);
   const canvas = document.createElement('canvas');
 
   await renderGeomorph(
