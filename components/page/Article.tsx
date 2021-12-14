@@ -81,6 +81,9 @@ const articleCss = css`
     p {
       margin: 12px 0;
     }
+    p + blockquote {
+      margin-top: 0px;
+    }
     
     @media(max-width: 600px) {
       margin: 16px 0;
