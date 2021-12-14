@@ -203,10 +203,11 @@ The npm module [Goober](https://www.npmjs.com/package/goober) handles this for u
 
 ### React Refresh
 
-We finally further justify our odd usage of `React.useState` i.e. sans the setter.
-For example, one might think `React.useRef` is more suitable.
+Finally, we further justify our somewhat strange usage of `React.useState` i.e. _sans the setter_.
+Since we only ever mutate the state, `React.useRef` may seem more suitable.
+However, there's something special about `React.useState`.
 
-There's something special about `React.useState`.
-Whilst working in a suitably tooled development environment, it is possible to textually edit React components [without losing the internal state of their instances](https://www.npmjs.com/package/react-refresh).
+Whilst working in a suitably tooled development environment, it is possible to textually edit React components [without losing the internal state of their instances](https://www.npmjs.com/package/react-refresh) (the deconstructed values of `React.useState` hooks).
 See this in action by editing one of our CodeSandboxes.
-We'll use this important _devtool_ to develop sophisticated Game AI.
+This important devtool is known as [react-refresh](https://www.npmjs.com/package/react-refresh) (see also [preact/prefresh](https://github.com/preactjs/prefresh)).
+It will help us develop sophisticated Game AI.
