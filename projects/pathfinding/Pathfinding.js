@@ -121,39 +121,26 @@ export class Pathfinding {
     const closestNode = this.getClosestNode(startPosition, zoneID, groupID, true);
     const farthestNode = this.getClosestNode(targetPosition, zoneID, groupID, true);
 
-    // If we can't find any node, just go straight to the target
+    // If we can't find any node, return null
     if (!closestNode || !farthestNode) {
       return null;
     }
 
-    const paths = AStar.search(
+    const nodePath = AStar.search(
       /** @type {Nav.Graph} */ (nodes),
       closestNode,
       farthestNode
     );
 
-    /**
-     * @param {Nav.GraphNode} a 
-     * @param {Nav.GraphNode} b
-     */
-    const getPortalFromTo = function (a, b) {
-      for (let i = 0; i < a.neighbours.length; i++) {
-        if (a.neighbours[i] === b.id) {
-          return a.portals[i];
-        }
-      }
-    };
-
-    // We have the corridor, now pull the rope.
+    // We have the corridor, now pull the rope
     const channel = new Channel;
     channel.push(startPosition);
-    for (let i = 0; i < paths.length; i++) {
-      const polygon = paths[i];
-      const nextPolygon = paths[i + 1];
+    for (let i = 0; i < nodePath.length; i++) {
+      const polygon = nodePath[i];
+      const nextPolygon = nodePath[i + 1];
 
       if (nextPolygon) {
-        /** @type {number[]} */
-        const portals = (getPortalFromTo(polygon, nextPolygon));
+        const portals = /** @type {number[]} */ (this.getPortalFromTo(polygon, nextPolygon));
         channel.push(
           vertices[portals[0]],
           vertices[portals[1]]
@@ -163,11 +150,29 @@ export class Pathfinding {
     channel.push(targetPosition);
     channel.stringPull();
 
-    // Return the path, omitting first position (which is already known).
-    const path = (/** @type {Vect[]} */ (channel.path))
-      .map((c) => new Vect(c.x, c.y));
+    // Return the path, omitting 1st position, which is already known
+    const path = (
+      /** @type {Geom.VectJson[]} */ (channel.path)
+    ).map((c) => new Vect(c.x, c.y));
     path.shift();
-    return path;
+
+    return {
+      path,
+      nodePath,
+    };
+  }
+
+  /**
+   * @private
+   * @param {Nav.GraphNode} a 
+   * @param {Nav.GraphNode} b
+   */
+  getPortalFromTo(a, b) {
+    for (let i = 0; i < a.neighbours.length; i++) {
+      if (a.neighbours[i] === b.id) {
+        return a.portals[i];
+      }
+    }
   }
 
   /**

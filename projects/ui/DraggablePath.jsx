@@ -28,7 +28,9 @@ export default function DraggablePath(props) {
       updatePath: () => {
         const groupId = props.pathfinding.getGroup(props.zoneKey, state.src);
         if (groupId !== null) {
-          state.path = [state.src.clone()].concat(props.pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId) || []);
+          state.path = [state.src.clone()].concat(
+            props.pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId)?.path || []
+          );
           state.setPath(state.path);
           props.onChange?.(state.path);
         }

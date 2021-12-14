@@ -37,7 +37,12 @@ export default function NavStringPull(props) {
     updatePath: () => {
       const groupId = state.pathfinding.getGroup(zoneKey, state.source);
       if (groupId !== null) {
-        state.path = [state.source.clone()].concat(state.pathfinding.findPath(state.source, state.target, zoneKey, groupId) || []);
+        /**
+         * TODO use returned `nodePath` and illustrate it
+         */
+        state.path = [state.source.clone()].concat(
+          state.pathfinding.findPath(state.source, state.target, zoneKey, groupId)?.path || []
+        );
         state.pathEl = state.pathEl || state.rootEl.querySelector('polyline.navpath');
         state.pathEl?.setAttribute('points', `${state.path}`);
       }
