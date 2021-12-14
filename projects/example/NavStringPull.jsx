@@ -23,10 +23,8 @@ export default function NavStringPull(props) {
   });
 
   const [state, setState] = React.useState(() => ({
-    /** @type {SVGGElement} */
-    rootEl: ({}),
-    /** @type {SVGPolylineElement} */
-    pathEl: ({}),
+    rootEl: /** @type {SVGGElement} */ ({}),
+    pathEl: /** @type {null | SVGPolylineElement} */ (null),
 
     source: new Vect(300, 300),
     target: new Vect(600, 300),
