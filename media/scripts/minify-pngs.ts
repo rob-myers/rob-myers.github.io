@@ -4,7 +4,7 @@
  * - {src_dir} must exist
  *
  * Examples:
- * - yarn minify-pngs public/png
+ * - yarn minify-pngs public/pics
  * - yarn minify-pngs media/geomorph-edge
  * - yarn minify-pngs public/geomorph
  */
