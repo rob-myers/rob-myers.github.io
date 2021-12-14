@@ -1,3 +1,7 @@
+/**
+ * Used to actually build a geomorph step-by-step.
+ * We actually compute the layout (as opposed to loading JSON).
+ */
 import * as React from "react";
 import { css } from "goober";
 import { useQuery } from "react-query";
@@ -16,10 +20,6 @@ import PanZoom from '../panzoom/PanZoom';
 
 const scale = 2;
 
-/**
- * Used to actually build a geomorph step-by-step.
- * We actually compute the layout (as opposed to loading JSON).
- */
 export default function GeomorphDemo() {
   return (
     <div className={rootCss}>

@@ -63,6 +63,7 @@ export class TriangleService {
     /**
      * Get points inside holes, using 0.01 delta
      * and assuming appropriate clockwise convention.
+     * Taking the average vector doesn't always work.
      */
     const holePnts = polys.flatMap(poly =>
       poly.holes.map(([p, q]) => new Vect(
