@@ -9,31 +9,29 @@ import { TabsOverlay, LoadingOverlay } from './TabsOverlay';
 
 export default function Tabs(props: Props) {
 
-  // TODO rethink this component
+  const [state, setState] = React.useState(() => ({
+    enabled: !!props.enabled,
+    /** Initially `'black'`; afterwards always in `['faded', 'clear']` */
+    colour: 'black' as 'black' | 'faded' | 'clear',
+  }));
 
-  const rootRef = React.useRef<HTMLElement>(null);
-  const [enabled, setEnabled] = React.useState(!!props.enabled);
-  // Initially 'black'; afterwards always in ['faded', 'clear']
-  const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
-  React.useEffect(() => void setColour(enabled ? 'clear' : 'faded'), []);
+  React.useEffect(() => {// Trigger CSS animation
+    setState(x =>  ({ ...x, colour: x.enabled ? 'clear' : 'faded'  }));
+  }, []);
 
   return (
-    <figure
-      ref={rootRef}
-      className={classNames("tabs", "scrollable", rootCss)}
-    >
+    <figure className={classNames("tabs", "scrollable", rootCss)}>
       <span id={props.id} className="anchor" />
 
       <div className={overlayCss(props.height)}>
-        {colour !== 'black' && (
+        {state.colour !== 'black' && (
           <Layout
             id={props.id}
             tabs={props.tabs}
-            rootRef={rootRef}
           />
         )}
         <TabsOverlay
-          enabled={enabled}
+          enabled={state.enabled}
           clickAnchor={() => {
             const tabs = useSiteStore.getState().tabs[props.id];
             tabs?.scrollTo();
@@ -44,9 +42,8 @@ export default function Tabs(props: Props) {
              */
           }}
           toggleEnabled={() => {
-            const next = !enabled;
-            setEnabled(next);
-            setColour(colour === 'clear' ? 'faded' : 'clear');
+            const next = !state.enabled;
+            setState({ ...state, enabled: next, colour: state.colour === 'clear' ? 'faded' : 'clear' });
 
             const tabs = useSiteStore.getState().tabs[props.id];
             if (tabs) {
@@ -56,11 +53,13 @@ export default function Tabs(props: Props) {
               // Other tab portals may not exist yet, so we record in `tabs` too
               tabs.disabled = !next;
             } else {
-              console.warn(`Tabs not found for id "${props.id}". Expected Markdown syntax <div class="tabs" name="foo" ...>.`);
+              console.warn(`Tabs not found for id "${props.id}". Expected Markdown syntax <div class="tabs" name="my-identifier" ...>.`);
             }
           }}
         />
-        <LoadingOverlay colour={colour} />
+        <LoadingOverlay
+          colour={state.colour}
+        />
       </div>
     </figure>
   );

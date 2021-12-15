@@ -24,7 +24,6 @@ export default function Layout(props: Props) {
 
 interface Props {
   id: string;
-  rootRef: React.RefObject<HTMLElement>;
   tabs: TabMeta[];
 }
 
