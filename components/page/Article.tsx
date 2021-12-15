@@ -134,24 +134,6 @@ const articleCss = css`
     padding: 0 2px;
   }
 
-  figure {
-    margin: 0;
-  }
-  
-  figure.tabs {
-    border: 10px solid #444;
-    margin:  64px 0;
-    @media(max-width: 600px) {
-      margin: 40px 0 32px 0;
-    }
-
-    position: relative;
-    > span.anchor {
-      position: absolute;
-      top: -96px;
-    }
-  }
-
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 400;

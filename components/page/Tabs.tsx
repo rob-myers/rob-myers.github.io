@@ -13,6 +13,7 @@ export default function Tabs(props: Props) {
     enabled: !!props.enabled,
     /** Initially `'black'`; afterwards always in `['faded', 'clear']` */
     colour: 'black' as 'black' | 'faded' | 'clear',
+    expanded: false,
   }));
 
   React.useEffect(() => {// Trigger CSS animation
@@ -23,7 +24,10 @@ export default function Tabs(props: Props) {
     <figure className={classNames("tabs", "scrollable", rootCss)}>
       <span id={props.id} className="anchor" />
 
-      <div className={overlayCss(props.height)}>
+      {/* height: props.height */}
+      <div className="modal-filler" />
+
+      <div className={state.expanded ? expandedCss : unexpandedCss(props.height)}>
         {state.colour !== 'black' && (
           <Layout
             id={props.id}
@@ -37,9 +41,7 @@ export default function Tabs(props: Props) {
             tabs?.scrollTo();
           }}
           toggleExpand={() => {
-            /**
-             * TODO change style
-             */
+            setState(x => ({ ...x, expanded: !x.expanded }))
           }}
           toggleEnabled={() => {
             const next = !state.enabled;
@@ -75,7 +77,17 @@ interface Props {
 }
 
 const rootCss = css`
+  margin: 64px 0;
+  @media(max-width: 600px) {
+    margin: 40px 0 32px 0;
+  }
   background: var(--focus-bg);
+
+  position: relative;
+  > span.anchor {
+    position: absolute;
+    top: -96px;
+  }
 
   @keyframes fadein {
     from { opacity: 0; }
@@ -127,8 +139,18 @@ const rootCss = css`
   }
 `;
 
-const overlayCss = (height: number) => css`
+const unexpandedCss = (height: number) => css`
   width: 100%;
   height: ${height}px;
   position: relative;
+  border: 10px solid #444;
+`;
+
+const expandedCss = css`
+  position: fixed;
+  top: 128px;
+  left: 5%;
+  width: 90%;
+  height: 80%;
+  border: 10px solid #444;
 `;
