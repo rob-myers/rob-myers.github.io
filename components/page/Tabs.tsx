@@ -148,6 +148,7 @@ const unexpandedCss = (height: number) => css`
 
 const expandedCss = css`
   position: fixed;
+  z-index: 1;
   top: 128px;
   left: 5%;
   width: 90%;

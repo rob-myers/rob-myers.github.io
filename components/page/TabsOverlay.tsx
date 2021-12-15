@@ -109,8 +109,8 @@ const interactOverlayCss = css`
 
   position: absolute;
   z-index: 4;
-  width: inherit;
-  height: inherit;
+  width: 100%;
+  height: 100%;
   background: #000;
   font-family: sans-serif;
 
