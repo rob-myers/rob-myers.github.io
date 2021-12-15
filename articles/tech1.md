@@ -26,16 +26,16 @@ Then JS is commonly broken down into _JavaScript components_, instantiated via X
 If the JavaScript component is called `MyComponent`, the associated tag will be `<MyComponent />` or perhaps `<my-component />`.
 Intuitively, HTML is extended with these custom tags, which ultimately unwind into plain old HTML.
 
-Now, competing notions of JavaScript component exist in the wild.
+Competing notions of JavaScript component exist in the wild.
 One popular approach is _React function components_.
 They are just JavaScript functions with constraints on their parameters and return value.
 
-- They have a single parameter, conventionally called _props_.
+- They have a single parameter conventionally called _props_.
   It is a JavaScript `Object` defining the component's named inputs,
   and possibly special properties like _children_, _key_ and _ref_.
 
 - They must return either null or a virtual [DOM node](https://developer.mozilla.org/en-US/docs/Web/API/Node).
-  This returned value ultimately amounts to an HTML fragment to be rendered,
+  This returned value ultimately unwinds to an HTML fragment,
   and may depend on the component's props and internal state (via [hooks](https://reactjs.org/docs/hooks-intro.html)).
 
 React developers use a grammatical extension of JavaScript called **JSX**.
