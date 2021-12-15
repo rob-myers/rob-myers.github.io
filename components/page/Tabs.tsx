@@ -8,10 +8,12 @@ import { Layout } from 'components/dynamic';
 import { TabsOverlay, LoadingOverlay } from './TabsOverlay';
 
 export default function Tabs(props: Props) {
+
+  // TODO rethink this component
+
   const rootRef = React.useRef<HTMLElement>(null);
   const [enabled, setEnabled] = React.useState(!!props.enabled);
-
-  // initially 'black', afterwards in {'faded', 'clear'}
+  // Initially 'black'; afterwards always in ['faded', 'clear']
   const [colour, setColour] = React.useState('black' as 'black' | 'faded' | 'clear');
   React.useEffect(() => void setColour(enabled ? 'clear' : 'faded'), []);
 
@@ -21,6 +23,7 @@ export default function Tabs(props: Props) {
       className={classNames("tabs", "scrollable", rootCss)}
     >
       <span id={props.id} className="anchor" />
+
       <div className={overlayCss(props.height)}>
         {colour !== 'black' && (
           <Layout
@@ -31,25 +34,30 @@ export default function Tabs(props: Props) {
         )}
         <TabsOverlay
           enabled={enabled}
+          clickAnchor={() => {
+            const tabs = useSiteStore.getState().tabs[props.id];
+            tabs?.scrollTo();
+          }}
+          toggleExpand={() => {
+            /**
+             * TODO change style
+             */
+          }}
           toggleEnabled={() => {
             const next = !enabled;
             setEnabled(next);
             setColour(colour === 'clear' ? 'faded' : 'clear');
 
             const tabs = useSiteStore.getState().tabs[props.id];
-            const tabKeys = (tabs?.getTabNodes() || []).map(x => x.getId());
-            tabKeys.forEach(key => {
-              const portal = useSiteStore.getState().portal[key];
-              if (portal) {
-                portal.portal.setPortalProps({ disabled: !next });
-              }
-            });
-            // Other tab portals may not exist yet, so record in `tabs` too
-            tabs.disabled = !next;
-          }}
-          clickAnchor={() => {
-            const tabs = useSiteStore.getState().tabs[props.id];
-            tabs?.scrollTo();
+            if (tabs) {
+              const portalLookup = useSiteStore.getState().portal;
+              const tabKeys = tabs.getTabNodes().map(x => x.getId()).filter(x => x in portalLookup);
+              tabKeys.forEach(key => portalLookup[key].portal.setPortalProps({ disabled: !next }));
+              // Other tab portals may not exist yet, so we record in `tabs` too
+              tabs.disabled = !next;
+            } else {
+              console.warn(`Tabs not found for id "${props.id}". Expected Markdown syntax <div class="tabs" name="foo" ...>.`);
+            }
           }}
         />
         <LoadingOverlay colour={colour} />

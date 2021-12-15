@@ -1,7 +1,8 @@
 ## Test page
 
 <div
-  className="tabs"
+  class="tabs"
+  name="test"
   enabled="true"
   height="600"
   tabs="[

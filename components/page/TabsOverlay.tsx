@@ -2,11 +2,12 @@ import { css } from 'goober';
 import classNames from 'classnames';
 import { iconCss } from './Icons';
 
-export function TabsOverlay({ enabled, toggleEnabled, clickAnchor }: {
-  enabled: boolean;
-  toggleEnabled: () => void;
-  clickAnchor: () => void;
-}) {
+export function TabsOverlay({
+  enabled,
+  clickAnchor,
+  toggleExpand,
+  toggleEnabled,
+}: Props) {
   return (
     <div className={controlsCss}>
       <div className={classNames("top-right", enabled && 'enabled')}>
@@ -14,9 +15,10 @@ export function TabsOverlay({ enabled, toggleEnabled, clickAnchor }: {
           className={iconCss('anchor-icon-white', 'auto', 12)}
           onClick={clickAnchor}
         />
-        <span
-          onClick={enabled ? toggleEnabled : undefined}
-        >
+        <span onClick={enabled ? toggleExpand : undefined}>
+          expand
+        </span>
+        <span onClick={enabled ? toggleEnabled : undefined}>
           disable
         </span>
       </div>
@@ -30,6 +32,13 @@ export function TabsOverlay({ enabled, toggleEnabled, clickAnchor }: {
       )}
     </div>
   );
+}
+
+interface Props {
+  enabled: boolean;
+  clickAnchor: () => void;
+  toggleExpand: () => void;
+  toggleEnabled: () => void;
 }
 
 const controlsCss = css`
