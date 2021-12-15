@@ -69,7 +69,7 @@ const controlsCss = css`
 
   > .central {
     position: absolute;
-    z-index: 5;
+    z-index: 6;
     left: calc(50% - (128px / 2));
     top: calc(50% - 20px);
     
