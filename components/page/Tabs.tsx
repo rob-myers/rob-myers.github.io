@@ -1,6 +1,7 @@
 import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
+import ScrollLock, { TouchScrollable } from 'react-scrolllock';
 
 import type { TabMeta } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
@@ -9,60 +10,75 @@ import { TabsOverlay, LoadingOverlay } from './TabsOverlay';
 
 export default function Tabs(props: Props) {
 
-  const [state, setState] = React.useState(() => ({
+  const [, setNow] = React.useState(Date.now());
+  const trigger = () => setNow(Date.now());
+
+  const [state] = React.useState(() => ({
     enabled: !!props.enabled,
     /** Initially `'black'`; afterwards always in `['faded', 'clear']` */
     colour: 'black' as 'black' | 'faded' | 'clear',
     expanded: false,
+    toggleEnabled: () =>  {
+      state.enabled = !state.enabled;
+      state.colour = state.colour === 'clear' ? 'faded' : 'clear';
+      trigger();
+
+      const tabs = useSiteStore.getState().tabs[props.id];
+      if (tabs) {
+        const portalLookup = useSiteStore.getState().portal;
+        const tabKeys = tabs.getTabNodes().map(x => x.getId()).filter(x => x in portalLookup);
+        tabKeys.forEach(key => portalLookup[key].portal.setPortalProps({ disabled: !state.enabled }));
+        // Other tab portals may not exist yet, so we record in `tabs` too
+        tabs.disabled = !state.enabled;
+      } else {
+        console.warn(`Tabs not found for id "${props.id}". Expected Markdown syntax <div class="tabs" name="my-identifier" ...>.`);
+      }
+    },
+    toggleExpand: () => {
+      state.expanded = !state.expanded;
+      if (state.expanded && !state.enabled) {
+        state.toggleEnabled()
+      } else {
+        trigger();
+      }
+    },
   }));
 
   React.useEffect(() => {// Trigger CSS animation
-    setState(x =>  ({ ...x, colour: x.enabled ? 'clear' : 'faded'  }));
+    state.colour = state.enabled ? 'clear' : 'faded';
+    trigger();
   }, []);
 
   return (
     <figure className={classNames("tabs", "scrollable", rootCss)}>
       <span id={props.id} className="anchor" />
 
-      {/* height: props.height */}
-      <div className="modal-filler" />
+      {state.expanded && <>
+        <div className="modal-backdrop"
+          onPointerUp={() => { state.expanded = false; trigger(); }}
+        />
+        <div className={modalFillerCss(props.height)} />
+      </>}
 
-      <div className={state.expanded ? expandedCss : unexpandedCss(props.height)}>
-        {state.colour !== 'black' && (
-          <Layout
-            id={props.id}
-            tabs={props.tabs}
+      <ScrollLock isActive={state.expanded}>
+        <div className={state.expanded ? expandedCss : unexpandedCss(props.height)}>
+          {state.colour !== 'black' && (
+            <Layout id={props.id} tabs={props.tabs} />
+          )}
+          <TabsOverlay
+            enabled={state.enabled}
+            clickAnchor={() => {
+              const tabs = useSiteStore.getState().tabs[props.id];
+              tabs?.scrollTo();
+            }}
+            toggleExpand={state.toggleExpand}
+            toggleEnabled={state.toggleEnabled}
           />
-        )}
-        <TabsOverlay
-          enabled={state.enabled}
-          clickAnchor={() => {
-            const tabs = useSiteStore.getState().tabs[props.id];
-            tabs?.scrollTo();
-          }}
-          toggleExpand={() => {
-            setState(x => ({ ...x, expanded: !x.expanded }))
-          }}
-          toggleEnabled={() => {
-            const next = !state.enabled;
-            setState({ ...state, enabled: next, colour: state.colour === 'clear' ? 'faded' : 'clear' });
-
-            const tabs = useSiteStore.getState().tabs[props.id];
-            if (tabs) {
-              const portalLookup = useSiteStore.getState().portal;
-              const tabKeys = tabs.getTabNodes().map(x => x.getId()).filter(x => x in portalLookup);
-              tabKeys.forEach(key => portalLookup[key].portal.setPortalProps({ disabled: !next }));
-              // Other tab portals may not exist yet, so we record in `tabs` too
-              tabs.disabled = !next;
-            } else {
-              console.warn(`Tabs not found for id "${props.id}". Expected Markdown syntax <div class="tabs" name="my-identifier" ...>.`);
-            }
-          }}
-        />
-        <LoadingOverlay
-          colour={state.colour}
-        />
-      </div>
+          <LoadingOverlay
+            colour={state.colour}
+          />
+        </div>
+      </ScrollLock>
     </figure>
   );
 }
@@ -81,12 +97,23 @@ const rootCss = css`
   @media(max-width: 600px) {
     margin: 40px 0 32px 0;
   }
+
   background: var(--focus-bg);
 
   position: relative;
   > span.anchor {
     position: absolute;
     top: -96px;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
   }
 
   @keyframes fadein {
@@ -146,12 +173,17 @@ const unexpandedCss = (height: number) => css`
   border: 10px solid #444;
 `;
 
+const modalFillerCss = (height: number) => css`
+  height: ${height}px;
+  background: #eee;
+`;
+
 const expandedCss = css`
   position: fixed;
   z-index: 1;
-  top: 128px;
-  left: 5%;
-  width: 90%;
-  height: 80%;
+  top: 120px;
+  left: 10%;
+  width: 80%;
+  height: calc(100% - 120px - 10%);
   border: 10px solid #444;
 `;

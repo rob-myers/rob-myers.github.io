@@ -2,30 +2,26 @@ import { css } from 'goober';
 import classNames from 'classnames';
 import { iconCss } from './Icons';
 
-export function TabsOverlay({
-  enabled,
-  clickAnchor,
-  toggleExpand,
-  toggleEnabled,
-}: Props) {
+export function TabsOverlay(props: Props) {
   return (
     <div className={controlsCss}>
-      <div className={classNames("top-right", enabled && 'enabled')}>
+      <div className={classNames("top-right", props.enabled && 'enabled')}>
         <span
           className={iconCss('anchor-icon-white', 'auto', 12)}
-          onClick={clickAnchor}
+          onClick={props.clickAnchor}
         />
-        <span onClick={enabled ? toggleExpand : undefined}>
-          expand
-        </span>
-        <span onClick={enabled ? toggleEnabled : undefined}>
+        <span
+          className={iconCss('expand-solid', 'auto', 12)}
+          onClick={props.toggleExpand}
+        />
+        <span onClick={props.enabled ? props.toggleEnabled : undefined}>
           disable
         </span>
       </div>
-      {!enabled && (
+      {!props.enabled && (
         <div
-          className={classNames("central", enabled && 'enabled')}
-          onClick={toggleEnabled}
+          className={classNames("central", props.enabled && 'enabled')}
+          onClick={props.toggleEnabled}
         >
           interact
         </div>
@@ -49,7 +45,7 @@ const controlsCss = css`
     right: -10px;
     top: -39px;
     z-index: 2;
-    border-radius: 4px 4px 0 0;
+    /* border-radius: 4px 4px 0 0; */
     padding: 2px 16px;
     
     cursor: pointer;

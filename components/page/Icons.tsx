@@ -5,6 +5,7 @@ export const iconCss = (
     | 'anchor-icon'
     | 'anchor-icon-white'
     | 'ext-link-icon'
+    | 'expand-solid'
   ),
   margin = 'auto',
   dimPx = 13
