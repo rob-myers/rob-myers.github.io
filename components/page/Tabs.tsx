@@ -118,7 +118,7 @@ const rootCss = css`
     top: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.6);
   }
 
   @keyframes fadein {
@@ -189,6 +189,10 @@ const expandedCss = css`
   top: 120px;
   left: 10%;
   width: 80%;
+  @media(max-width: 600px) {
+    left: 0;
+    width: 100%;
+   }
   height: calc(100% - 120px - 10%);
   border: 10px solid #444;
 `;
