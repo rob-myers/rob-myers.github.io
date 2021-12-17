@@ -235,6 +235,9 @@ const articleCss = css`
 
   p + blockquote {
     margin-top: -20px;
+    @media(max-width: 600px) {
+      margin-top: -4px;
+    }
   }
 
   span.cmd {
