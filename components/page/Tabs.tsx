@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
-import ScrollLock, { TouchScrollable } from 'react-scrolllock';
+import { enableBodyScroll, disableBodyScroll } from 'body-scroll-lock';
 
 import type { TabMeta } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
@@ -10,6 +10,7 @@ import { TabsOverlay, LoadingOverlay } from './TabsOverlay';
 
 export default function Tabs(props: Props) {
 
+  // TODO moveto custom hook
   const [, setNow] = React.useState(Date.now());
   const trigger = () => setNow(Date.now());
 
@@ -18,6 +19,8 @@ export default function Tabs(props: Props) {
     /** Initially `'black'`; afterwards always in `['faded', 'clear']` */
     colour: 'black' as 'black' | 'faded' | 'clear',
     expanded: false,
+    contentDiv: undefined as undefined | HTMLDivElement,
+
     toggleEnabled: () =>  {
       state.enabled = !state.enabled;
       state.colour = state.colour === 'clear' ? 'faded' : 'clear';
@@ -36,18 +39,19 @@ export default function Tabs(props: Props) {
     },
     toggleExpand: () => {
       state.expanded = !state.expanded;
-      if (state.expanded && !state.enabled) {
-        state.toggleEnabled()
-      } else {
-        trigger();
-      }
+      state.expanded && !state.enabled && state.toggleEnabled();
+      trigger();
     },
   }));
 
-  React.useEffect(() => {// Trigger CSS animation
+  React.useEffect(() => {// Initially trigger CSS animation
     state.colour = state.enabled ? 'clear' : 'faded';
     trigger();
   }, []);
+
+  React.useEffect(() => void (state.contentDiv &&
+    (state.expanded ? disableBodyScroll : enableBodyScroll)(state.contentDiv)
+  ), [state.expanded]);
 
   return (
     <figure className={classNames("tabs", "scrollable", rootCss)}>
@@ -60,25 +64,26 @@ export default function Tabs(props: Props) {
         <div className={modalFillerCss(props.height)} />
       </>}
 
-      <ScrollLock isActive={state.expanded}>
-        <div className={state.expanded ? expandedCss : unexpandedCss(props.height)}>
-          {state.colour !== 'black' && (
-            <Layout id={props.id} tabs={props.tabs} />
-          )}
-          <TabsOverlay
-            enabled={state.enabled}
-            clickAnchor={() => {
-              const tabs = useSiteStore.getState().tabs[props.id];
-              tabs?.scrollTo();
-            }}
-            toggleExpand={state.toggleExpand}
-            toggleEnabled={state.toggleEnabled}
-          />
-          <LoadingOverlay
-            colour={state.colour}
-          />
-        </div>
-      </ScrollLock>
+      <div
+        ref={(el) => el && (state.contentDiv = el)}
+        className={state.expanded ? expandedCss : unexpandedCss(props.height)}
+      >
+        {state.colour !== 'black' && (
+          <Layout id={props.id} tabs={props.tabs} />
+        )}
+        <TabsOverlay
+          enabled={state.enabled}
+          clickAnchor={() => {
+            const tabs = useSiteStore.getState().tabs[props.id];
+            tabs?.scrollTo();
+          }}
+          toggleExpand={state.toggleExpand}
+          toggleEnabled={state.toggleEnabled}
+        />
+        <LoadingOverlay
+          colour={state.colour}
+        />
+      </div>
     </figure>
   );
 }
@@ -180,7 +185,7 @@ const modalFillerCss = (height: number) => css`
 
 const expandedCss = css`
   position: fixed;
-  z-index: 1;
+  z-index: 7;
   top: 120px;
   left: 10%;
   width: 80%;

@@ -50,8 +50,9 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- 🚧 can maximise Tabs into a modal
-- finish off Continue (hide appropriately)
+- 🚧 NavGraph#302 still not initialising (with modal)
+- ✅ can maximise Tabs into a modal
+- finish off `Continue` (hide appropriately)
 - GitHub Comments
 
 - 🚧 avoid dup g-301--bridge.json calls
