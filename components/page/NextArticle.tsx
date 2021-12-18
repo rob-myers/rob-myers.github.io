@@ -3,11 +3,14 @@ import { ArticleMeta, getArticleHref } from "articles/index";
 import Link from "./Link";
 
 export default function NextArticle(props: Props) {
+  const id = `next-article--${props.article?.key}`;
   return props.article ? (
     <div className={nextArticleCss}>
       <Link
         href={getArticleHref(props.article)}
         title="Continue to next article"
+        id={id}
+        prePush={`#${id}`}
       >
         Next
       </Link>

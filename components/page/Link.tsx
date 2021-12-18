@@ -50,7 +50,9 @@ export default function Link(props: Props) {
         props.postPush?.();
       }}
     >
-      {props.id && <span id={props.id} className="anchor" />}
+      {props.id && (
+        <span id={props.id} className="anchor" />
+      )}
       {props.children}
     </a>
   );

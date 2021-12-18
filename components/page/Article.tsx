@@ -310,8 +310,8 @@ const articleComponents = (
           href={href}
           className={classNames("anchor-link", iconCss('anchor-icon', '0 2px 0 4px'))}
           id={id}
-          title={title}
           prePush={`#${id}`}
+          title={title}
           backward={!!part && (part < articlesMeta[articleKey].part)}
         >
           {children}
