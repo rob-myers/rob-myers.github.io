@@ -50,9 +50,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- 🚧 NavGraph#302 still not initialising (with modal)
-- ✅ can maximise Tabs into a modal
-- finish off `Continue` (hide appropriately)
+- 🚧 finish off `Continue` (hide appropriately)
 - GitHub Comments
 
 - 🚧 avoid dup g-301--bridge.json calls
@@ -70,6 +68,10 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ CodeSandbox for triangle-wasm
+- ✅ Next button auto-anchors
+- ✅ NavGraph#302 still not initialising (with modal)
+- ✅ can maximise Tabs into a modal
 - ✅ avoid computing Pathfinding until !props.disabled
 - ✅ Triangle (triangle-wasm) in browser dev
   - try triangle-wasm on nodejs 

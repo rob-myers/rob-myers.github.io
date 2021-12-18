@@ -8,7 +8,6 @@ import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 
 // TODO
-// - Generate via Node.js
 // - CodeSandbox
 
 /**
