@@ -76,7 +76,8 @@ const articleCss = css`
     padding: 12px 24px;
     font-size: 0.9rem;
     border: 0 solid #ddd;
-    border-left-width: 4px;
+    border-left-width: 2px;
+    border-radius: 0 16px 16px 0;
     background: #eee;
 
     p {
