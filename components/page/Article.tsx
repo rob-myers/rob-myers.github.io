@@ -73,10 +73,12 @@ const articleCss = css`
 
   aside {
     margin: 24px 0;
-    padding: 36px;
+    padding: 12px 24px;
     font-size: 0.9rem;
-    background: #fff;
-    border: 4px solid #ddd;
+    border: 0 solid #ddd;
+    border-left-width: 4px;
+    background: #eee;
+
     p {
       margin: 12px 0;
     }
@@ -95,7 +97,7 @@ const articleCss = css`
 
     blockquote {
       margin: 0;
-      border-left: 10px solid #ccc;
+      border-left: 8px solid #ccc;
     }
     figure.tabs {
       @media(min-width: 600px) {
