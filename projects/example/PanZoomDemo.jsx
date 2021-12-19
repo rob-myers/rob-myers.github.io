@@ -36,10 +36,11 @@ const rootCss = css`
   height: 100%;
 
   > p {
-    padding: 12px 8px;
+    padding: 12px 20px;
     margin: 0;
     font-family: monospace;
-    font-size: 16px;
-    background: var(--focus-bg);
+    font-size: 14px;
+    background: black;
+    color: white;
   }
 `;
