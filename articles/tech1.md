@@ -136,7 +136,7 @@ The return value of the function is a JavaScript representation of a DOM subtree
 This representation is usually referred to as "Virtual DOM".
 React compares this JavaScript value to the previous one, and patches the DOM accordingly.
 If many components change in a small amount of time, [some renders are automatically avoided](https://github.com/preactjs/preact/blob/ebd87f3005d9558bfd3c5f38e0496a5d19553441/src/component.js#L221 "@new-tab") via the ancestral relationship.
-Developers can also avoid recreating a particular rooted subtree using [`React.memo`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js "@new-tab").
+Developers can also avoid recreating a particular virtual DOM subtree using [`React.memo`](https://github.com/preactjs/preact/blob/master/compat/src/memo.js "@new-tab").
 But for many websites, the virtual DOM manipulations are neither too large nor too frequent, and React developers may simply ignore their overhead.
 
 However, we are making a realtime video game.
@@ -186,7 +186,7 @@ Then as far as React is concerned, nothing has changed.
 Furthermore if React renders the component for another reason, it'll use the mutated `state` to set the viewBox attribute (producing no change).
 > But why not just use a setter `setState`?
 
-Because we avoid needlessly recomputing `children` and `<Grid />` whenever the player pans or zooms.
+Because otherwise we'd recompute `children` and `<Grid />` whenever the player pans or zooms.
 Our game may contain many elements, and we'd rather not needlessly recompute their virtual DOM tens of times per second.
 
 <!-- The above situation is handled by a single DOM mutation.

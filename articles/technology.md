@@ -8,7 +8,7 @@ We sketched the [technological constraints earlier](1#constraints--technology "@
 | Component | [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components). |
 | Styles | CSS-in-JS via [Goober](https://www.npmjs.com/package/goober). |
 | Component framework | [Preact](https://preactjs.com/), a DOM-diffing alternative to React. |
-| Pathfinding | Based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
+| Pathfinding | Basic pathfinding based on [three-pathfinding](https://www.npmjs.com/package/three-pathfinding).  |
 | Raycasting | Basic geometry and spacial partitioning.  |
 | Static analysis | TypeScript via [JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html); also [ESLint](https://www.npmjs.com/package/eslint). |
 | Live analysis | In-browser terminal, via [xterm.js](https://www.npmjs.com/package/xterm) and [mvdan-sh](https://www.npmjs.com/package/mvdan-sh). |
