@@ -76,8 +76,6 @@ const articleCss = css`
     padding: 12px 24px;
     font-size: 0.9rem;
     border: 0 solid #ddd;
-    border-left-width: 2px;
-    border-radius: 0 16px 16px 0;
     background: #eee;
 
     p {
@@ -90,7 +88,6 @@ const articleCss = css`
     @media(max-width: 600px) {
       margin: 16px 0;
       padding: 20px;
-      border-width: 4px;
       p {
         margin: 8px 0;
       }
@@ -105,11 +102,6 @@ const articleCss = css`
         margin: 40px 0;
       }
     }
-    
-    &:hover, &:active {
-      background: #eee;
-      border-color: transparent;
-    }
 
     position: relative;
     .anchor {
@@ -120,12 +112,18 @@ const articleCss = css`
 
   blockquote {
     margin: 32px 0;
-    border-left: 10px solid #ddd;
+    border-left: 8px solid #ddd;
     padding-left: 30px;
     
     @media(max-width: 600px) {
       margin: 20px 0;
       padding-left: 20px;
+    }
+  }
+  blockquote + p {
+    margin-top: -12px;
+    @media(max-width: 600px) {
+      margin-top: 0;
     }
   }
   
