@@ -1,18 +1,33 @@
-import React from "react";
-import { css } from "goober";
-import Link from "./Link";
+import React from 'react';
+import { css } from 'goober';
+import { useBeforeunload } from 'react-beforeunload';
+import Link from './Link';
 
 // TODO
-// - hide when not on <Articles>, onclick, no close-anchor-id
+// - understand when it is should appear
+// - understand when it should vanish
+// - animate so emerges, then hides
+// - hide when on click, on scroll away
 
 export default function Continue() {
+
+  useBeforeunload(() => {
+    const anchors = Array.from(
+      document.querySelectorAll('.anchor')
+    ).filter(el => el.id && !el.id.includes('--link--'));
+    const anchorHeights = Array.from(anchors).map(el => el.getBoundingClientRect().y);
+    const index = anchorHeights.findIndex(height => height > 0) - 1;
+    if (index >= 0) {
+      localStorage.setItem(closeAnchorId, JSON.stringify(anchors[index].id));
+    }
+  });
 
   const href = React.useMemo(() => {
     if (typeof window === 'undefined') {
       return '';
-    } else if (localStorage.getItem('close-anchor-id')) {
-      const href = `#${JSON.parse(localStorage.getItem('close-anchor-id')!)}`;
-      localStorage.removeItem('close-anchor-id');
+    } else if (localStorage.getItem(closeAnchorId)) {
+      const href = `#${JSON.parse(localStorage.getItem(closeAnchorId)!)}`;
+      localStorage.removeItem(closeAnchorId);
       return href;
     } else if (location.hash) {
       return location.hash;
@@ -34,6 +49,7 @@ export default function Continue() {
   );
 }
 
+export const closeAnchorId = 'close-anchor-id';
 const width = 140;
 
 const rootCss = css`
@@ -51,7 +67,7 @@ const rootCss = css`
 
   .fixed {
     position: fixed;
-    border-radius: 0 0 64px 64px;
+    /* border-radius: 0 0 64px 64px; */
     width: ${width}px;
 
     text-align: center;

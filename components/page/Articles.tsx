@@ -1,7 +1,6 @@
 import React from "react";
 import useMeasure from "react-use-measure";
 import { css } from "goober";
-import { useBeforeunload } from 'react-beforeunload';
 
 import { lookupFromValues } from "model/generic.model";
 import { ArticleKey, articlesMeta } from "articles/index";
@@ -29,14 +28,7 @@ export default function Articles({ keys, markdown }: Props) {
     useSiteStore.setState({});
   }, []);
 
-  useBeforeunload(() => {
-    const anchors = Array.from(document.querySelectorAll('.anchor')).filter(el => el.id && !el.id.includes('--link--'));
-    const anchorHeights = Array.from(anchors).map(el => el.getBoundingClientRect().y);
-    const index = anchorHeights.findIndex(height => height > 0) - 1;
-    if (index >= 0) {
-      localStorage.setItem('close-anchor-id', JSON.stringify(anchors[index].id));
-    }
-  });
+
 
   return (
     <ol
