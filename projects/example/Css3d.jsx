@@ -1,5 +1,4 @@
 import React from "react";
-import { useQuery } from "react-query";
 import { css } from "goober";
 import classNames from "classnames";
 
@@ -7,7 +6,8 @@ import * as defaults from "./defaults";
 import { Poly, Vect } from "../geom";
 import { fillPolygon } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
-import { geomorphJsonPath, geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
+import { geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
+import { useGeomorphJson } from "../hooks";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function Css3d(props) {
@@ -15,10 +15,7 @@ export default function Css3d(props) {
   /** @type {React.MutableRefObject<HTMLDivElement>} */
   const root3dDiv = (React.useRef());
 
-  const { data } = useQuery(geomorphJsonPath(props.layoutKey), async () => {
-    /** @type {Promise<Geomorph.GeomorphJson>} */
-    return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
-  });
+  const { data } = useGeomorphJson(props.layoutKey);
 
   /** @param {SVGSVGElement} el */
   const onUpdate = (el) => {

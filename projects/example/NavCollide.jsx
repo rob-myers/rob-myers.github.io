@@ -1,23 +1,24 @@
 import React from "react";
 import { css } from "goober";
-import { useQuery } from "react-query";
+import classNames from "classnames";
 
 import * as defaults from "./defaults";
 import { Poly, Rect, Vect } from "../geom";
-import { geom } from "../service/geom";
-import { Pathfinding } from '../pathfinding/Pathfinding';
-import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
+import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
 import DraggablePath from "../ui/DraggablePath";
-import classNames from "classnames";
+import { useGeomorphJson, usePathfinding } from "../hooks";
 
 // TODO
+// - extract bot into SoloNPCWidget
+// - develop SoloNPCWidget
 // - tty integration
 
 /** @param {{ disabled?: boolean }} props */
 export default function NavCollide(props) {
 
+  const layoutKey = /** @type {Geomorph.LayoutKey} */ ('g-301--bridge');
   const [state] = React.useState(() => ({
     pathA: { initSrc: new Vect(300, 300), initDst: new Vect(600, 300) },
     pathB: { initSrc: new Vect(200, 200), initDst: new Vect(680, 200) },
@@ -27,17 +28,9 @@ export default function NavCollide(props) {
     },
     disabled: props.disabled,
   }));
-  
-  const pathfinding = React.useMemo(() => new Pathfinding, []);
-  const { data } = useQuery('nav-collide-demo', async () => {
-    /** @type {Geomorph.GeomorphJson} */
-    const json = await fetch(geomorphJsonPath('g-301--bridge')).then(x => x.json());
-    const navPoly = json.navPoly.map(x => Poly.from(x));
-    const decomp = geom.polysToTriangulation(navPoly);
-    const zone = Pathfinding.createZone(decomp);
-    pathfinding.setZoneData(zoneKey, zone);
-    return { pngRect: json.pngRect, navPoly, zone };
-  });
+
+  const { data: gm } = useGeomorphJson(layoutKey);
+  const { data: pf } = usePathfinding(layoutKey, gm?.navDecomp);
 
   React.useEffect(() => {
     if (props.disabled) {
@@ -59,17 +52,16 @@ export default function NavCollide(props) {
         }}
       >
 
-        {data && <>
-          <image {...data.pngRect} className="geomorph" href={geomorphPngPath('g-301--bridge')} />
+        {gm && pf && <>
+          <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />
 
-          {data.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
-            <polygon className="navtri" points={`${vertexIds.map(id => data.zone.vertices[id])}`} />
+          {pf.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
+            <polygon className="navtri" points={`${vertexIds.map(id => pf.zone.vertices[id])}`} />
           ))}
 
           <DraggablePath
             initial={{ src: state.pathA.initSrc, dst: state.pathA.initDst }}
-            pathfinding={pathfinding}
-            zoneKey={zoneKey}
+            zoneKey={layoutKey}
             radius={4}
             onChange={(path) => {
               const bot = state.botA;
@@ -93,16 +85,6 @@ export default function NavCollide(props) {
               }
             }}
             />
-
-          <DraggablePath
-            initial={{ src: state.pathB.initSrc, dst: state.pathB.initDst }}
-            pathfinding={pathfinding}
-            zoneKey={zoneKey}
-            radius={4}
-            onChange={(path) => {
-              // console.log('path B', path);
-            }}
-          />
 
           <g className="bot-a">
             <circle fill="red" stroke="black" strokeWidth={2} r="10" />
@@ -152,5 +134,4 @@ const animateNavpathCss = css`
   }
 `;
 
-const zoneKey = 'NavCollideZone';
 const initViewBox = new Rect(200, 0, 600, 600);

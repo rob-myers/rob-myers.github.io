@@ -2,10 +2,13 @@ import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 import type { HtmlPortalNode } from 'react-reverse-portal';
 import type { TabNode } from 'flexlayout-react';
+import { QueryClient } from 'react-query';
 
 import { KeyedLookup, last } from 'model/generic.model';
 import type { TabMeta } from 'model/tabs/tabs.model';
 import type { ArticleKey } from 'articles/index';
+
+export const queryClient = new QueryClient;
 
 export type State = {
   /** Key of currently viewed article */

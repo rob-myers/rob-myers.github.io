@@ -1,17 +1,14 @@
 import React from "react";
 import { css } from "goober";
-import { useQuery } from "react-query";
 import { gridBounds, initViewBox } from "../example/defaults";
-import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
+import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
+import { useGeomorphJson } from "../hooks";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey }} props */
 export default function DoorsDemo(props) {
 
-  const { data } = useQuery(geomorphJsonPath(props.layoutKey), async () => {
-    /** @type {Promise<Geomorph.GeomorphJson>} */
-    return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
-  });
+  const { data } = useGeomorphJson(props.layoutKey);
 
   return (
     <PanZoom

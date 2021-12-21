@@ -3,7 +3,8 @@ import Head from 'next/head';
 import { AppInitialProps } from 'next/app';
 import { Router } from 'next/router';
 import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
+import { queryClient } from 'store/site.store';
 
 import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
@@ -39,8 +40,6 @@ import 'xterm/css/xterm.css';
 import 'flexlayout-react/style/light.css'
 import 'codemirror/lib/codemirror.css';
 import 'components/code/codemirror/custom-theme.css';
-
-const queryClient = new QueryClient;
 
 export default function PagesRoot({ Component, pageProps }: RootProps) {
   return <>

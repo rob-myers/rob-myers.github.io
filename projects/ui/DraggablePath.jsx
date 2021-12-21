@@ -1,6 +1,6 @@
 import React from 'react';
 import { Poly, Vect } from '../geom';
-import { Pathfinding } from '../pathfinding/Pathfinding';
+import { pathfinding } from '../pathfinding/Pathfinding';
 import DraggableNode from './DraggableNode';
 
 /** @param {Props} props */
@@ -9,7 +9,7 @@ export default function DraggablePath(props) {
   const [state] = React.useState(() => {
 
     // We assume props.pathfinding never changes
-    const zone = props.pathfinding.zones[props.zoneKey];
+    const zone = pathfinding.zones[props.zoneKey];
     const nodes = zone.groups.flatMap(x => x);
     const tris = nodes.map(({ vertexIds }) => vertexIds.map(id => zone.vertices[id]));
 
@@ -26,10 +26,10 @@ export default function DraggablePath(props) {
         state.pathEl.setAttribute('points', `${state.path}`);
       },
       updatePath: () => {
-        const groupId = props.pathfinding.getGroup(props.zoneKey, state.src);
+        const groupId = pathfinding.getGroup(props.zoneKey, state.src);
         if (groupId !== null) {
           state.path = [state.src.clone()].concat(
-            props.pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId)?.path || []
+            pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId)?.path || []
           );
           state.setPath(state.path);
           props.onChange?.(state.path);
@@ -83,7 +83,6 @@ export default function DraggablePath(props) {
 /**
  * @typedef Props @type {object}
  * @property {{ src: Geom.VectJson; dst: Geom.VectJson }} initial
- * @property {Pathfinding} pathfinding
  * @property {string} zoneKey
  * @property {UiTypes.IconKey} [srcIcon]
  * @property {UiTypes.IconKey} [dstIcon]

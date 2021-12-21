@@ -4,19 +4,17 @@ import { useQuery } from "react-query";
 import classNames from "classnames";
 
 import { Poly, Vect } from "../geom";
-import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
+import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { geom } from "../service/geom";
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
+import { useGeomorphJson } from "../hooks";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
 export default function VisibilityDemo(props) {
 
-  const { data } = useQuery(geomorphJsonPath(props.layoutKey), async () => {
-    /** @type {Promise<Geomorph.GeomorphJson>} */
-    return (fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json()));
-  });
+  const { data } = useGeomorphJson(props.layoutKey);
 
   const [init] = React.useState(() => ({
     lightA: new Vect(205, 385),
