@@ -56,12 +56,7 @@ For example, the triangles below collectively induce the red navgraph below.
    ]"
 ></div>
 
-<aside>
-
-__TODO__
-- Make a CodeSandbox for triangle-wasm
-
-</aside>
+__TODO__ Mention triangle-wasm CodeSandbox
 
 
 Technically, an undirected graph is just a _symmetric binary relation_.
