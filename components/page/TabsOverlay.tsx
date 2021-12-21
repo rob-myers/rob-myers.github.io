@@ -71,11 +71,12 @@ const controlsCss = css`
     
     cursor: pointer;
     color: #ddd;
-    background: #000;
+    background: rgba(0, 0, 0, 0.7);
     padding: 12px 32px;
     border-radius: 4px;
     border: 1px solid #ddd;
     font-size: 1.2rem;
+    letter-spacing: 2px;
 
     opacity: 1;
     transition: 300ms opacity ease;
