@@ -72,9 +72,9 @@ const rootCss = css`
 
     text-align: center;
     font-size: 15px;
-    letter-spacing: 1px;
+    letter-spacing: 2px;
     padding: 6px 0 14px;
-    background: #444;
+    background: #000;
 
     a {
       color: #fff;
