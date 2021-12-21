@@ -50,8 +50,8 @@ const articleCss = css`
   position: relative; /** For anchors */
   
   padding: 64px 164px 96px 164px;
-  @media(max-width: 800px) {
-    padding: 32px 64px 48px 64px;
+  @media(max-width: 1024px) {
+    padding: 64px 128px 64px 128px;
   }
   @media(max-width: 600px) {
     padding: 8px 12px;
@@ -73,7 +73,7 @@ const articleCss = css`
 
   aside {
     margin: 24px 0;
-    padding: 12px 24px;
+    padding: 36px 48px;
     font-size: 0.9rem;
     border: 0 solid #ddd;
     background: #eee;
@@ -81,16 +81,13 @@ const articleCss = css`
     p {
       margin: 12px 0;
     }
-    p + blockquote {
+    p + blockquote, blockquote + p {
       margin-top: 0px;
     }
     
     @media(max-width: 600px) {
-      margin: 16px 0;
-      padding: 20px;
-      p {
-        margin: 8px 0;
-      }
+      line-height: 2;
+      padding: 24px;
     }
 
     blockquote {

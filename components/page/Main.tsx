@@ -18,7 +18,7 @@ export const rootCss = css`
 
   padding: 48px 64px;
   @media(max-width: 1024px) {
-    padding: 32px 64px;
+    padding: 32px 16px;
     margin: 0;
   }
   @media(max-width: 600px) {
