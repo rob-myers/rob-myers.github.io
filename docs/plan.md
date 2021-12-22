@@ -50,6 +50,8 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- fix: Css3d perspective center wrong on mobile
+- fix: example/NavGraph triangles should be visible
 - 🚧 finish off `Continue` (hide appropriately)
 - GitHub Comments
 

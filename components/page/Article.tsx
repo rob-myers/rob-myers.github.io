@@ -86,8 +86,8 @@ const articleCss = css`
     }
     
     @media(max-width: 600px) {
-      line-height: 2;
-      padding: 24px;
+      padding: 16px;
+      font-size: 0.95rem;
     }
 
     blockquote {
