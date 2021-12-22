@@ -1,22 +1,22 @@
 ## Objective
 
 We'll create a video game.
-Yes, yet another game.
+Yes, _yet another game_.
 What's unusual is that we're going to describe the process in great detail.
 
 Where will it take place?
 > The [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
 
 What kind of game is it?
-> A topdown [Roguelike](https://en.wikipedia.org/wiki/Roguelike). Actually our focus will be on Game AI, as we shall explain. 
+> A topdown [Roguelike](https://en.wikipedia.org/wiki/Roguelike), with a Game AI focus.
 
 Why?
 
 > Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game.
 > An environment is needed to make it meaningful, fixed narratives/missions are not.
 
-We'll focus on [navigation](https://en.wikipedia.org/wiki/Navigation_mesh) and compositional behaviour.
-On the other hand, the environment will be driven by thousands of Traveller-based assets.
+We'll focus on compositional [navigation](https://en.wikipedia.org/wiki/Navigation_mesh)-based behaviour.
+The environment will be driven by thousands of Traveller-based assets.
 
 <div
   class="tabs"
@@ -28,7 +28,7 @@ On the other hand, the environment will be driven by thousands of Traveller-base
 Above we've recreated Geomorph 301 (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 Obstacles you can see over are shaded grey e.g. chairs and beds.
-Walls and obstacles which cannot be seen over are indicated via darker grey and black. The obstacles and white rectangular doors collectively induce the _white triangulated navigable polygon_ shown above.
+Walls and obstacles which cannot be seen over are darker grey and black. Collectively, the obstacles and white rectangular doors induce the _white triangulated navigable polygon_ shown above.
 
 > Check out this [larger version](/pics/g-301--bridge.debug.x2.png "@new-tab").
 
@@ -41,7 +41,9 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 
 </aside>
 
-__TODO__ better demos
+__TODO__ replace Visibility with better demo
+
+__TODO__ pass prop "hidden" to tab when hidden
 
 We end with two basic demos.
 You can pan/zoom, move the eyes, and view the obstacle polygons in 3D.
