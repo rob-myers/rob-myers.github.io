@@ -106,7 +106,7 @@ const rootCss = css`
     stroke-dashoffset: 16px;
   }
 
-  @keyframes flash {
+  @keyframes stringPullFlash {
     0% { stroke-dashoffset: 16px; }
     100% { stroke-dashoffset: 0px; }
   }
@@ -121,7 +121,7 @@ const rootCss = css`
 
 const animateNavpathCss = css`
   polyline.navpath {
-    animation: 600ms flash infinite linear;
+    animation: 600ms stringPullFlash infinite linear;
   }
 `;
 

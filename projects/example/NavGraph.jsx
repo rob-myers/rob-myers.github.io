@@ -21,9 +21,8 @@ export default function NavGraphDemo(props) {
       className={rootCss}
       dark
     >
-      {gm && pf && <>
-        <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
-
+      {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />}
+      {pf && <>
         {pf.zone.groups.map(nodes =>
           nodes.map(({ id, centroid, neighbours }) => <g key={id}>
             {neighbours.map(id => (
@@ -58,7 +57,7 @@ export default function NavGraphDemo(props) {
 
 const rootCss = css`
   image.geomorph {
-    filter: invert() brightness(200%);
+    filter: invert();
   }
   circle.node {
     fill: red;

@@ -8,11 +8,6 @@ export default function DraggablePath(props) {
 
   const [state] = React.useState(() => {
 
-    // We assume props.pathfinding never changes
-    const zone = pathfinding.zones[props.zoneKey];
-    const nodes = zone.groups.flatMap(x => x);
-    const tris = nodes.map(({ vertexIds }) => vertexIds.map(id => zone.vertices[id]));
-
     return {
       /** @type {SVGPolylineElement} */
       pathEl: ({}), // TODO maybe force render instead
@@ -37,12 +32,25 @@ export default function DraggablePath(props) {
       },
       /** @param {Vect} p */
       pointInZone: (p) => {
+        /**
+         * TODO precompute below when zone available
+         */
+        const zone = pathfinding.zones[props.zoneKey];
+        const nodes = zone.groups.flatMap(x => x);
+        const tris = nodes.map(({ vertexIds }) => vertexIds.map(id => zone.vertices[id]));
         return tris.some(([u, v, w]) => Poly.pointInTriangle(p, u, v, w));
       },
     }
   });
 
-  React.useEffect(() => state.updatePath(), []);
+  /**
+   * TODO needed/clean?
+   */
+  React.useEffect(() => {
+    if (props.zoneKey in pathfinding.zones) {
+      state.updatePath();
+    }
+  }, [pathfinding.zones[props.zoneKey]]);
 
   return (
     <g
