@@ -162,7 +162,7 @@ const articleCss = css`
         padding: 4px 6px;
         background: #eee;
         border: 1px solid #ddd;
-        color: #777;
+        color: #666;
       }
     }
     @media(max-width: 600px) {
