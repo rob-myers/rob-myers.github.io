@@ -114,7 +114,7 @@ const rootCss = css`
 
   .modal-backdrop {
     position: fixed;
-    z-index: 1;
+    z-index: 19;
     left: 0;
     top: 0;
     width: 100vw;
@@ -186,7 +186,7 @@ const modalFillerCss = (height: number) => css`
 
 const expandedCss = css`
   position: fixed;
-  z-index: 7;
+  z-index: 20;
   top: 120px;
   left: 10%;
   width: 80%;

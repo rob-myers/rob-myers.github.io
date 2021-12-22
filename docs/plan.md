@@ -68,6 +68,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Bug: modal hidden behind menu in max viewport
 - ✅ CodeSandbox for triangle-wasm
 - ✅ Next button auto-anchors
 - ✅ NavGraph#302 still not initialising (with modal)
