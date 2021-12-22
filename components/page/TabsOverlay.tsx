@@ -6,17 +6,22 @@ export function TabsOverlay(props: Props) {
   return (
     <div className={controlsCss}>
       <div className={classNames("top-right", props.enabled && 'enabled')}>
-        <span
-          className={iconCss('anchor-icon-white', 'auto', 12)}
+        <div
+          className={iconCss('anchor-icon-white', 'auto', 13)}
           onClick={props.clickAnchor}
+          title="anchor"
         />
-        <span
-          className={iconCss('expand-solid', 'auto', 12)}
+        <div
+          className={iconCss(props.expanded ? 'compress' : 'expand-solid', 'auto', 13)}
           onClick={props.toggleExpand}
+          title={props.expanded ? 'minimise' : 'maximise'}
         />
-        <span onClick={props.enabled ? props.toggleEnabled : undefined}>
-          disable
-        </span>
+        <div
+          className={iconCss(props.enabled ?  'eye-slash' :  'eye', 'auto', 16)}
+          onClick={props.toggleEnabled}
+          title={props.enabled ? 'disable' : 'enable'}
+          style={{ paddingTop: 2 }}
+        />
       </div>
       {!props.enabled && (
         <div
@@ -32,6 +37,7 @@ export function TabsOverlay(props: Props) {
 
 interface Props {
   enabled: boolean;
+  expanded: boolean;
   clickAnchor: () => void;
   toggleExpand: () => void;
   toggleEnabled: () => void;
@@ -43,24 +49,21 @@ const controlsCss = css`
   > .top-right {
     position: absolute;
     right: -10px;
-    top: -39px;
+    top: -36px;
     z-index: 2;
-    /* border-radius: 4px 4px 0 0; */
-    padding: 2px 16px;
-    
-    cursor: pointer;
-    background: #444;
-    font-size: 1rem;
-    font-weight: 300;
-    
-    color: #999;
-    &.enabled {
-      color: #ddd;
+    border-radius: 4px 4px 0 0;
+    padding: 0 16px 0 16px;
+    @media(max-width: 600px) {
+      padding-top: 4px;
     }
 
-    > span:not(:last-child) {
-      margin-right: 8px;
+    display: flex;
+    > div:not(:last-child) {
+      margin-right: 16px;
     }
+
+    cursor: pointer;
+    background: #444;
   }
 
   > .central {

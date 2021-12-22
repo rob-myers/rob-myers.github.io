@@ -4,6 +4,9 @@ export const iconCss = (
   basename: (
     | 'anchor-icon'
     | 'anchor-icon-white'
+    | 'compress'
+    | 'eye'
+    | 'eye-slash'
     | 'ext-link-icon'
     | 'expand-solid'
   ),
