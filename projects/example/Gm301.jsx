@@ -19,6 +19,7 @@ export default function Gm301Debug() {
 }
 
 const rootCss = css`
+  text-align: center;
   overflow-x: scroll;
   overflow-y: scroll;
   height: 100%;
