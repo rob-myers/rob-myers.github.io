@@ -14,17 +14,18 @@ It amounts to parsed HTML decorated with matching CSS and bound JS, together wit
 </aside>
 
 Although HTML, CSS and JS are separate standards, 
-it is now common to generate _both_ HTML and CSS using JS.
+it is now common to generate both the HTML and the CSS using JS.
 This is possible via _Node.js Server-Side Rendering_ and _CSS-in-JS_, respectively.
-They counter the fundamental asymmetry between the _initial state_ of the document (HTML and CSS) and _all subsequent states_ (orbit of JS executions).
+They counter the fundamental asymmetry between the _initial state_ of the document (determined by HTML and CSS) and _all subsequent states_ (the orbit of JS executions).
 
 
 ### React Function Components
 
-JS can perform arbitrary computations, but its central purpose is DOM mutation.
-Then JS is commonly broken down into _JavaScript components_, instantiated via XML tags.
+JavaScript can perform arbitrary computation, but its central purpose is DOM mutation.
+However, directly applying JS leads to [spaghetti code](https://en.wikipedia.org/wiki/Spaghetti_code).
+To surmount this, developers invented the notion of _JavaScript component_, instantiated via XML tags.
 If the JavaScript component is called `MyComponent`, the associated tag will be `<MyComponent />` or perhaps `<my-component />`.
-Intuitively, HTML is extended with these custom tags, which ultimately unwind into plain old HTML.
+Intuitively, HTML is extended with these custom tags which ultimately unwind into plain old HTML.
 
 Competing notions of JavaScript component exist in the wild.
 One popular approach is _React function components_.
@@ -48,7 +49,7 @@ JSX freely combines JS with XML, so arbitrary JavaScript values can be passed to
 
 </aside>
 
-Consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
+Consider an example, a pan/zoomable grid (also [on CodeSandbox](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx "@new-tab")).
 
 <div
   class="tabs"
@@ -62,8 +63,7 @@ Consider an example, a pannable/zoomable grid (also [on CodeSandbox](https://cod
 ></div>
 
 The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom panzoom/PanZoom.jsx")) defines two React function components.
-One called _PanZoom_.
-Another called _Grid_.
+One called _PanZoom_, another called _Grid_.
 Behaviourally:
 
 - _PanZoom_ renders an SVG containing _children_ (an image provided in _PanZoomDemo_) and `<Grid />`. Over time it adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
