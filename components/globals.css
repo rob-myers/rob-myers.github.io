@@ -1,8 +1,8 @@
 :root {
   --body-bg: #eee;
   --focus-bg: #fff;
-  --border-bg: #000;
-  --blog-border-width: 1px;
+  --border-bg: #ccc;
+  --blog-border-width: 2px;
 }
 
 * {
