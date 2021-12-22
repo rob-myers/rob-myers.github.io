@@ -8,7 +8,7 @@ Where will it take place?
 > The [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
 
 What kind of game is it?
-> A topdown [Roguelike](https://en.wikipedia.org/wiki/Roguelike), with a Game AI focus.
+> A topdown [Roguelike](https://en.wikipedia.org/wiki/Roguelike) with a Game AI focus.
 
 Why?
 
@@ -17,6 +17,7 @@ Why?
 
 We'll focus on compositional [navigation](https://en.wikipedia.org/wiki/Navigation_mesh)-based behaviour.
 The environment will be driven by thousands of Traveller-based assets.
+Here's an example.
 
 <div
   class="tabs"
