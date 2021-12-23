@@ -57,7 +57,7 @@ export default function NavGraphDemo(props) {
 
 const rootCss = css`
   image.geomorph {
-    filter: invert();
+    /* filter: invert(); */
   }
   circle.node {
     fill: red;
@@ -71,9 +71,10 @@ const rootCss = css`
 
   polygon.navtri {
     fill: transparent;
+    transition: fill 2s;
     &:hover, &:active, &:focus {
-      stroke: green;
-      stroke-width: 4;
+      fill: #8080ff37;
+      stroke-width: 6;
     }
   }  
 `;

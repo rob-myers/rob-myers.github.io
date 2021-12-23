@@ -43,7 +43,7 @@ Sans dynamic objects, a canonical approach exists.
   > nodes are _the triangles of the provided triangulation_.
   > Two nodes are connected if and only if _their respective triangles share exactly one edge._
 
-For example, the triangles below collectively induce the red navgraph below.
+For example, the grey triangles below collectively induce the red navgraph.
 
 <div
   class="tabs"
