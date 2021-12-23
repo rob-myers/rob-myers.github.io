@@ -31,6 +31,7 @@ export default function Css3d(props) {
       gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}
       onUpdate={onUpdate}
       dark
+      fit // Fixes issue with perspectiveOrigin
     >
       {data && (
         <g ref={(el) => el && setTimeout(() => {
