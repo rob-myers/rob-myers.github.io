@@ -37,6 +37,7 @@ export function usePathfinding(zoneKey, decomp, disabled) {
   }, {
     enabled: !!decomp && !disabled,
     keepPreviousData: true,
+    staleTime: Infinity,
   });
 }
 
