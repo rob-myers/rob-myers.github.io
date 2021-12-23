@@ -1,5 +1,4 @@
 import React from "react";
-import classNames from "classnames";
 import { css } from "goober";
 import DraggablePath from "../ui/DraggablePath";
 
@@ -20,33 +19,35 @@ export default function SoloNPCWidget(props) {
   });
 
   return (
-    <g
-      className={classNames(rootCss)}
-    >
+    <g className={rootCss}>
       <DraggablePath
         initial={{ src: props.initSrc, dst: props.initDst }}
         zoneKey={props.zoneKey}
         radius={4}
         onChange={(path) => {
           const { bot, api } = state;
+          if (!bot || !path.length) return;
 
-          if (bot && path.length) {
-            // Move bot along path using Web Animations API
-            const edges = path.map((p, i) => ({ p, q: path[i + 1] })).slice(0, -1);
-            const elens = edges.map(({ p, q }) => p.distanceTo(q));
-            const { sofars, total } = elens.reduce((agg, length) => {
-              agg.total += length;
-              agg.sofars.push(agg.sofars[agg.sofars.length - 1] + length);
-              return agg;
-            }, { sofars: [0], total: 0 });
+          /**
+           * TODO expect path src -> npc -> dst
+           * TODO animate from current npc position
+           */
 
-            api.anim = bot.animate(
-              path.map((p, i) => ({ offset: sofars[i] / total, transform: `translate(${p.x}px, ${p.y}px)` })),
-              { duration: 5000, iterations: Infinity, direction: 'alternate' },
-            );
+          // Move bot along path using Web Animations API
+          const edges = path.map((p, i) => ({ p, q: path[i + 1] })).slice(0, -1);
+          const elens = edges.map(({ p, q }) => p.distanceTo(q));
+          const { sofars, total } = elens.reduce((agg, length) => {
+            agg.total += length;
+            agg.sofars.push(agg.sofars[agg.sofars.length - 1] + length);
+            return agg;
+          }, { sofars: [0], total: 0 });
 
-            if (!api.enabled) api.anim.pause();
-          }
+          api.anim = bot.animate(
+            path.map((p, i) => ({ offset: sofars[i] / total, transform: `translate(${p.x}px, ${p.y}px)` })),
+            { duration: 5000, iterations: Infinity, direction: 'alternate' },
+          );
+
+          if (!api.enabled) api.anim.pause();
         }}
       />
     

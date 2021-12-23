@@ -7,7 +7,6 @@ import DraggableNode from './DraggableNode';
 export default function DraggablePath(props) {
 
   const [state] = React.useState(() => {
-
     return {
       /** @type {SVGPolylineElement} */
       pathEl: ({}), // TODO maybe force render instead
@@ -23,6 +22,10 @@ export default function DraggablePath(props) {
       updatePath: () => {
         const groupId = pathfinding.getGroup(props.zoneKey, state.src);
         if (groupId !== null) {
+          /**
+           * TODO
+           * - state.src --> npc --> state.dst
+           */
           state.path = [state.src.clone()].concat(
             pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId)?.path || []
           );
@@ -44,7 +47,7 @@ export default function DraggablePath(props) {
   });
 
   /**
-   * TODO needed/clean?
+   * TODO optionally initially updatePath()
    */
   React.useEffect(() => {
     if (props.zoneKey in pathfinding.zones) {
