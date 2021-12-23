@@ -146,7 +146,7 @@ const articleCss = css`
       font-size: 2.8rem;
     }
     @media(max-width: 600px) {
-      margin: 16px 0 24px;
+      margin: 16px 0 16px;
       font-size: 2rem;
     }
   }
@@ -160,7 +160,6 @@ const articleCss = css`
       margin-right: 16px;
       > span {
         padding: 4px 6px;
-        background: #eee;
         border: 1px solid #ddd;
         color: #666;
       }
