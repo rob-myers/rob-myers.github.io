@@ -5,7 +5,7 @@ import { iconCss } from './Icons';
 export function TabsOverlay(props: Props) {
   return (
     <div className={controlsCss}>
-      <div className={classNames("top-right", props.enabled && 'enabled')}>
+      <div className="top-right">
         <div
           className={iconCss('anchor-icon-white', 'auto', 13)}
           onClick={props.clickAnchor}
@@ -17,17 +17,17 @@ export function TabsOverlay(props: Props) {
           title={props.expanded ? 'minimise' : 'maximise'}
         />
         <div
-          className={iconCss(props.enabled ?  'eye-slash' :  'eye', 'auto', 16)}
-          onClick={props.toggleEnabled}
-          title={props.enabled ? 'disable' : 'enable'}
-          style={{ paddingTop: 2 }}
+          className={classNames(
+            iconCss('circle-xmark', 'auto', 15),
+            props.enabled && 'enabled',
+          )}
+          onClick={props.enabled ? props.toggleEnabled : undefined}
+          title={props.enabled ? 'disable' : undefined}
+          style={{ position: 'relative', transform: 'translateY(1.5px)' }}
         />
       </div>
       {!props.enabled && (
-        <div
-          className={classNames("central", props.enabled && 'enabled')}
-          onClick={props.toggleEnabled}
-        >
+        <div className="central" onClick={props.toggleEnabled}>
           interact
         </div>
       )}
@@ -52,14 +52,17 @@ const controlsCss = css`
     top: -36px;
     z-index: 2;
     border-radius: 4px 4px 0 0;
-    padding: 0 16px 0 16px;
+    padding: 0 8px;
     @media(max-width: 600px) {
-      padding-top: 4px;
+      padding-top: 2px;
     }
 
     display: flex;
-    > div:not(:last-child) {
-      margin-right: 16px;
+    > div {
+      padding: 0 8px;
+    }
+    > div:last-child:not(.enabled) {
+      filter: brightness(70%);
     }
 
     cursor: pointer;
@@ -80,12 +83,6 @@ const controlsCss = css`
     border: 1px solid #ddd;
     font-size: 1.2rem;
     letter-spacing: 2px;
-
-    opacity: 1;
-    transition: 300ms opacity ease;
-    &.enabled {
-      opacity: 0;
-    }
   }
 `;
 

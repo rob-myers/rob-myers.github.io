@@ -4,6 +4,7 @@ export const iconCss = (
   basename: (
     | 'anchor-icon'
     | 'anchor-icon-white'
+    | 'circle-xmark'
     | 'compress'
     | 'eye'
     | 'eye-slash'
