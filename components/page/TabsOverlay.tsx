@@ -7,7 +7,7 @@ export function TabsOverlay(props: Props) {
     <div className={controlsCss}>
       <div className="top-right">
         <div
-          className={iconCss('anchor-icon-white', 'auto', 13)}
+          className={iconCss('anchor-icon', 'auto', 13)}
           onClick={props.clickAnchor}
           title="anchor"
         />
@@ -23,7 +23,7 @@ export function TabsOverlay(props: Props) {
           )}
           onClick={props.enabled ? props.toggleEnabled : undefined}
           title={props.enabled ? 'disable' : undefined}
-          style={{ position: 'relative', transform: 'translateY(1.5px)' }}
+          style={{ position: 'relative', top: 1 }}
         />
       </div>
       {!props.enabled && (
@@ -49,15 +49,22 @@ const controlsCss = css`
   > .top-right {
     position: absolute;
     right: -10px;
-    top: -36px;
+    top: -40px;
     z-index: 2;
+    height: 30px;
+
+    background: white;
     border-radius: 4px 4px 0 0;
+    border: 1px solid #888;
+    border-bottom-width: 0;
     padding: 0 8px;
     @media(max-width: 600px) {
       padding-top: 2px;
     }
 
     display: flex;
+    line-height: initial;
+    align-items: center;
     > div {
       padding: 0 8px;
     }
@@ -66,7 +73,6 @@ const controlsCss = css`
     }
 
     cursor: pointer;
-    background: #444;
   }
 
   > .central {
@@ -77,7 +83,7 @@ const controlsCss = css`
     
     cursor: pointer;
     color: #ddd;
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.9);
     padding: 12px 32px;
     border-radius: 4px;
     border: 1px solid #ddd;
