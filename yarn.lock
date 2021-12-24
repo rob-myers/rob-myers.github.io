@@ -2478,10 +2478,12 @@ flatted@^3.1.0:
   resolved "https://registry.npmjs.org/flatted/-/flatted-3.2.2.tgz"
   integrity sha512-JaTY/wtrcSyvXJl4IMFHPKyFur1sE9AUqc0QnhOaJ0CxHtAoIV8pYDzeEfAaNEtGkOfq4gr3LBFmdXW5mOQFnA==
 
-flexlayout-react@^0.5.12:
-  version "0.5.12"
-  resolved "https://registry.npmjs.org/flexlayout-react/-/flexlayout-react-0.5.12.tgz"
-  integrity sha512-HcW80fYrhvv+qB7qA2dln5djpqE3b2na2ad7FnQc7KsnzXfEuxeWh26DWj8zxuOEw6+qHs3sYplQdZpAig4ZPA==
+flexlayout-react@^0.6.5:
+  version "0.6.5"
+  resolved "https://registry.yarnpkg.com/flexlayout-react/-/flexlayout-react-0.6.5.tgz#6e8be41798d23f25dd4ac37bfca01905858dd7b2"
+  integrity sha512-1xV9eAg/GrUWFLaHitwC2EN+XsJQLDjEY5B/PaE7ZmF5DAcJKuwWw81iv4okaGo//9InoWULdZqiOcu79rxi6A==
+  dependencies:
+    uuid "^8.3.2"
 
 follow-redirects@^1.0.0:
   version "1.14.1"
@@ -6408,6 +6410,11 @@ util@^0.11.0:
   integrity sha512-HShAsny+zS2TZfaXxD9tYj4HQGlBezXZMZuM/S5PKLLoZkShZiGk9o5CzukI1LVHZvjdvZ2Sj1aW/Ndn2NB/HQ==
   dependencies:
     inherits "2.0.3"
+
+uuid@^8.3.2:
+  version "8.3.2"
+  resolved "https://registry.yarnpkg.com/uuid/-/uuid-8.3.2.tgz#80d5b5ced271bb9af6c445f21a1a04c606cefbe2"
+  integrity sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==
 
 v8-compile-cache@^2.0.3:
   version "2.3.0"

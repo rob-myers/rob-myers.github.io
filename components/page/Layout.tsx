@@ -18,6 +18,7 @@ export default function Layout(props: Props) {
     <FlexLayout
       model={model}
       factory={factory}
+      realtimeResize
     />
   );
 }
