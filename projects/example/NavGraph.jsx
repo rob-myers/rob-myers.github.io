@@ -22,7 +22,8 @@ export default function NavGraphDemo(props) {
       dark
     >
       {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />}
-      {pf && <>
+
+      {pf && !props.disabled && <>
         {pf.zone.groups.map(nodes =>
           nodes.map(({ id, centroid, neighbours }) => <g key={id}>
             {neighbours.map(id => (

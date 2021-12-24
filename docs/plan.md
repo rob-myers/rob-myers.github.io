@@ -50,9 +50,13 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- disabled prop unmounts large subtrees e.g. hoverable navtris, Css3d
+- hidden tabs get disabled prop
+
+- offscreen tabs get disabled prop
+- need tab width/height for Css3d perspective-origin
 - 🚧 finish off `Continue` (hide appropriately)
 - GitHub Comments
-
 - get interested in simulating starship crews
 - declare this interest in objective
 
