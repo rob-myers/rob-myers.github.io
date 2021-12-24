@@ -86,8 +86,9 @@ const articleCss = css`
     }
     
     @media(max-width: 600px) {
-      padding: 16px;
-      font-size: 0.95rem;
+      padding: 8px 20px;
+      font-size: 0.9rem;
+      border-radius: 12px;
     }
 
     blockquote {
@@ -147,7 +148,7 @@ const articleCss = css`
     }
     @media(max-width: 600px) {
       margin: 16px 0 16px;
-      font-size: 2rem;
+      font-size: 1.9rem;
     }
   }
   h2 + time {
