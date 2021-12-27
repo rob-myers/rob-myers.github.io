@@ -1,8 +1,17 @@
+import React from "react";
 import { useQuery } from "react-query";
 import { Poly } from "./geom/poly";
 import { geomorphJsonPath } from "./geomorph/geomorph.model";
 import { pathfinding, Pathfinding } from "./pathfinding/Pathfinding";
 import { assertDefined } from "./service/generic";
+
+/**
+ * Provides a function to trigger an update.
+ */
+export function useUpdate() {
+  const [, setNow] = React.useState(() => Date.now());
+  return () => setNow(Date.now());
+}
 
 /**
  * @param {Geomorph.LayoutKey} layoutKey 

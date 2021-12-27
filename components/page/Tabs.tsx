@@ -7,12 +7,11 @@ import type { TabMeta } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
 import { Layout } from 'components/dynamic';
 import { TabsOverlay, LoadingOverlay } from './TabsOverlay';
+import { useUpdate } from 'projects/hooks';
 
 export default function Tabs(props: Props) {
 
-  // TODO moveto custom hook
-  const [, setNow] = React.useState(Date.now());
-  const trigger = () => setNow(Date.now());
+  const trigger = useUpdate();
 
   const [state] = React.useState(() => ({
     enabled: !!props.enabled,
@@ -44,9 +43,12 @@ export default function Tabs(props: Props) {
     },
   }));
 
-  React.useEffect(() => {// Initially trigger CSS animation
+  React.useEffect(() => {
+    // Initially trigger CSS animation
     state.colour = state.enabled ? 'clear' : 'faded';
     trigger();
+
+    
   }, []);
 
   React.useEffect(() => void (state.contentDiv &&
