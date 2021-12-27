@@ -82,6 +82,10 @@ export default function PanZoom(props) {
           state.panFrom = (new Vect).copy(getSvgPos(state.ptrs[0]));
         }
       },
+      /** @param {TouchEvent} e */
+      onTouchStart: (e)  => {
+        e.preventDefault();
+      },
       /** @type {(el: null | SVGSVGElement) => void} */
       rootRef: el => {
         if (el) {
@@ -92,7 +96,7 @@ export default function PanZoom(props) {
           el.addEventListener('pointerup', state.onPointerUp, { passive: true });
           el.addEventListener('pointercancel', state.onPointerUp, { passive: true });
           el.addEventListener('pointerleave', state.onPointerUp, { passive: true });
-          el.addEventListener('touchstart', e => e.preventDefault(), { passive: false });
+          el.addEventListener('touchstart', state.onTouchStart, { passive: false });
         }
       },
       /** @type {SVGSVGElement} */

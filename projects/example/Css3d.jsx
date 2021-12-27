@@ -8,6 +8,7 @@ import { fillPolygon, getSvgPos } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
 import { geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
 import { useGeomorphJson } from "../hooks";
+import { debounce } from "debounce";
 
 /**
  * TODO
@@ -22,6 +23,7 @@ export default function Css3d(props) {
   const [state] = React.useState(() => ({
     root3d: /** @type {HTMLDivElement} */ ({}),
     eye: /** @type {HTMLDivElement} */ ({}),
+    svg: /** @type {SVGSVGElement} */ ({}),
     /** @param {SVGSVGElement} el */
     onUpdate: (el) => {
       const { height } = el.viewBox.baseVal;
@@ -33,8 +35,10 @@ export default function Css3d(props) {
         const svgPos = getSvgPos({ clientX: eyeRect.x, clientY: eyeRect.y, ownerSvg: el, pointerId: null });
         root3d.style.perspectiveOrigin = `${( svgPos.x )}px ${( svgPos.y )}px`;
       }
-
     },
+    onResize: debounce(() => {
+      state.svg && state.onUpdate(state.svg);
+    }, 30),
   }));
 
   return (
@@ -48,7 +52,11 @@ export default function Css3d(props) {
           <g ref={(el) => {
             if (el) {
               state.root3d = /** @type {*} */ (el.querySelector('.root-3d'));
+              state.svg = /** @type {*} */ (el.ownerSVGElement);
               setTimeout(() => state.onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement)));
+              window.addEventListener('resize', state.onResize);
+            } else {
+              window.removeEventListener('resize', state.onResize);
             }
           }}>
             <image {...gm.pngRect} href={geomorphPngPath(props.layoutKey)} />
@@ -68,10 +76,10 @@ const Root = styled('div')`
   height: 100%;
   > .eye {
     position: absolute;
-    /* width: 10px;
-    height: 10px; */
-    top: calc(50% - 0px);
-    left: calc(50% - 0px);
+    width: 10px;
+    height: 10px;
+    top: calc(50% - 5px);
+    left: calc(50% - 5px);
     background: red;
     pointer-events: none;
   }
