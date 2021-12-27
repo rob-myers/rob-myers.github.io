@@ -43,7 +43,7 @@ The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
 
 __TODO__ replace Visibility with better demo
 
-__TODO__ pass prop "hidden" to tab when hidden
+__TODO__ pass disabled prop to tab when hidden
 
 We end with two basic demos.
 You can pan/zoom, move the eyes, and view the obstacle polygons in 3D.
@@ -55,7 +55,7 @@ There are respective CodeSandboxes i.e. [visibility](https://codesandbox.io/s/ro
   name="light-demo"
   height="340"
   tabs="[
-    { key: 'component', filepath: 'example/Visibility#301' },
+    // { key: 'component', filepath: 'example/Visibility#301' },
     { key: 'component', filepath: 'example/Css3d#301' },
   ]"
 ></div>

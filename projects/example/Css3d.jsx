@@ -1,6 +1,7 @@
 import React from "react";
 import { css, styled } from "goober";
 import classNames from "classnames";
+import { debounce } from "debounce";
 
 import * as defaults from "./defaults";
 import { Poly, Vect, Rect } from "../geom";
@@ -8,12 +9,6 @@ import { fillPolygon, getSvgPos } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
 import { geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
 import { useGeomorphJson } from "../hooks";
-import { debounce } from "debounce";
-
-/**
- * TODO
- * - props.disabled unmounts DOM segs
- */
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
 export default function Css3d(props) {
@@ -48,7 +43,7 @@ export default function Css3d(props) {
         onUpdate={state.onUpdate}
         dark
       >
-        {gm && (
+        {gm && !props.disabled && (
           <g ref={(el) => {
             if (el) {
               state.root3d = /** @type {*} */ (el.querySelector('.root-3d'));
@@ -76,10 +71,10 @@ const Root = styled('div')`
   height: 100%;
   > .eye {
     position: absolute;
-    width: 10px;
-    height: 10px;
-    top: calc(50% - 5px);
-    left: calc(50% - 5px);
+    width: 2px;
+    height: 2px;
+    top: calc(50% - 1px);
+    left: calc(50% - 1px);
     background: red;
     pointer-events: none;
   }

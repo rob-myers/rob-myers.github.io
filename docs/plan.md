@@ -50,11 +50,9 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- disabled prop unmounts large subtrees e.g. hoverable navtris, Css3d
 - hidden tabs get disabled prop
-
 - offscreen tabs get disabled prop
-- need tab width/height for Css3d perspective-origin
+
 - 🚧 finish off `Continue` (hide appropriately)
 - GitHub Comments
 - get interested in simulating starship crews
@@ -74,6 +72,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ disabled prop unmounts large DOM e.g. hoverable navtris, Css3d
 - ✅ fix: Css3d perspective center wrong on mobile
 - ✅ fix: example/NavGraph triangles should be visible
 - ✅ avoid dup g-301--bridge.json calls

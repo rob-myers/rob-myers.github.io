@@ -19,7 +19,7 @@ const component = {
   'example/Visibility#301': () => import('projects/example/Visibility')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/Css3d#301': () => import('projects/example/Css3d')
-    .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
+    .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/GeomorphEdit': () => import('projects/example/GeomorphEdit')
     .then(x => x.default),
   'example/PanZoomDemo': () => import('projects/example/PanZoomDemo')
