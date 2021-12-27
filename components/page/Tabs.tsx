@@ -187,10 +187,10 @@ const modalFillerCss = (height: number) => css`
 const expandedCss = css`
   position: fixed;
   z-index: 20;
-  top: 40px;
+  top: 80px;
   left: 5%;
   width: 90%;
-  height: calc(100% - 40px - 10px);
+  height: calc(100% - 160px);
   border: 10px solid #444;
   @media(max-width: 600px) {
     left: 0;
