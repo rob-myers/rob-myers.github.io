@@ -196,8 +196,8 @@ const expandedCss = css`
   border: 10px solid #444;
   @media(max-width: 600px) {
     left: 0;
-    top: 60px;
+    top: 80px;
     width: 100%;
-    height: calc(100% - 60px);
+    height: calc(100% - 120px);
    }
 `;
