@@ -1,49 +1,82 @@
 import React from "react";
-import { css } from "goober";
+import { css, styled } from "goober";
 import classNames from "classnames";
 
 import * as defaults from "./defaults";
-import { Poly, Vect } from "../geom";
-import { fillPolygon } from "../service/dom";
+import { Poly, Vect, Rect } from "../geom";
+import { fillPolygon, getSvgPos } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
 import { geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
 import { useGeomorphJson } from "../hooks";
 
-/** @param {{ layoutKey: Geomorph.LayoutKey }} props */
+/**
+ * TODO
+ * - props.disabled unmounts DOM segs
+ */
+
+/** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
 export default function Css3d(props) {
 
-  /** @type {React.MutableRefObject<HTMLDivElement>} */
-  const root3dDiv = (React.useRef());
+  const { data: gm } = useGeomorphJson(props.layoutKey);
 
-  const { data } = useGeomorphJson(props.layoutKey);
+  const [state] = React.useState(() => ({
+    root3d: /** @type {HTMLDivElement} */ ({}),
+    eye: /** @type {HTMLDivElement} */ ({}),
+    /** @param {SVGSVGElement} el */
+    onUpdate: (el) => {
+      const { height } = el.viewBox.baseVal;
+      const zoom = defaults.initViewBox.height / height;
+      const { root3d, eye } = state;
+      if (root3d) {
+        root3d.style.perspective = `${100 + (500 / zoom)}px`;
+        const eyeRect = eye.getBoundingClientRect();
+        const svgPos = getSvgPos({ clientX: eyeRect.x, clientY: eyeRect.y, ownerSvg: el, pointerId: null });
+        root3d.style.perspectiveOrigin = `${( svgPos.x )}px ${( svgPos.y )}px`;
+      }
 
-  /** @param {SVGSVGElement} el */
-  const onUpdate = (el) => {
-    const { x, width, y, height } = el.viewBox.baseVal;
-    const zoom = defaults.initViewBox.height / height;
-    const rootDiv = root3dDiv.current || (root3dDiv.current = /** @type {*} */ (el.querySelector('.root-3d-div')));
-    rootDiv.style.perspective = `${100 + (500 / zoom)}px`;
-    rootDiv.style.perspectiveOrigin = `${( x + 0.5 * width )}px ${( y + 0.5 * height)}px`;
-  };
+    },
+  }));
 
   return (
-    <PanZoom
-      gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}
-      onUpdate={onUpdate}
-      dark
-      fit // Fixes issue with perspectiveOrigin
-    >
-      {data && (
-        <g ref={(el) => el && setTimeout(() => {
-          onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement));
-        })}>
-          <image {...data.pngRect} href={geomorphPngPath(props.layoutKey)} />
-          <ForeignObject gm={data} />
-        </g>
-      )}
-    </PanZoom>
+    <Root>
+      <PanZoom
+        gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}
+        onUpdate={state.onUpdate}
+        dark
+      >
+        {gm && (
+          <g ref={(el) => {
+            if (el) {
+              state.root3d = /** @type {*} */ (el.querySelector('.root-3d'));
+              setTimeout(() => state.onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement)));
+            }
+          }}>
+            <image {...gm.pngRect} href={geomorphPngPath(props.layoutKey)} />
+            <ForeignObject gm={gm} />
+          </g>
+        )}
+      </PanZoom>
+      <div
+        className="eye"
+        ref={(el) => el && (state.eye = el)}
+      />
+    </Root>
   );
 }
+
+const Root = styled('div')`
+  height: 100%;
+  > .eye {
+    position: absolute;
+    /* width: 10px;
+    height: 10px; */
+    top: calc(50% - 0px);
+    left: calc(50% - 0px);
+    background: red;
+    pointer-events: none;
+  }
+`;
+
 
 /** @param {{ gm: Geomorph.GeomorphJson }} props */
 function ForeignObject({ gm }) {
@@ -66,7 +99,7 @@ function ForeignObject({ gm }) {
 
   return (
     <foreignObject xmlns="http://www.w3.org/1999/xhtml" {...gm.pngRect}>
-      <div className={classNames("root-3d-div", threeDeeCss)}>
+      <div className={classNames("root-3d", threeDeeCss)}>
         {wallSegs.map(([v, u], i) => { // [v, u] fixes backface culling
           tempPoint.copy(u).sub(v);
           return (
