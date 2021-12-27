@@ -16,7 +16,7 @@ Why?
 > An environment is needed to make it meaningful, fixed narratives/missions are not.
 
 We'll focus on combining [navigation](https://en.wikipedia.org/wiki/Navigation_mesh)-based behaviour, using thousands of Traveller-based assets.
-Here's an example.
+Here's a composite asset.
 
 <div
   class="tabs"
@@ -28,7 +28,7 @@ Here's an example.
 Above we've recreated **Geomorph 301** (a.k.a. _Bridge_) from [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 assets from [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 Obstacles you can see over are shaded grey e.g. chairs and beds.
-Walls and obstacles which cannot be seen over are darker grey and black. Collectively, these obstacles and the white rectangular doors induce the _white triangulated navigable polygon_ shown above.
+Walls and obstacles which cannot be seen over are darker grey and black. The underlying polygons of these obstacles, together with the white rectangular doors, induce the _white triangulated navigable polygon_ shown above.
 
 > Check out this [larger version](/pics/g-301--bridge.debug.x2.png "@new-tab").
 
