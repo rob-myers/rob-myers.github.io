@@ -7,7 +7,7 @@ export function TabsOverlay(props: Props) {
     <div className={controlsCss}>
       <div className="top-right">
         <div
-          className={iconCss('anchor-icon', 'auto', 13)}
+          className={iconCss('anchor-icon-white', 'auto', 13)}
           onClick={props.clickAnchor}
           title="anchor"
         />
@@ -18,12 +18,12 @@ export function TabsOverlay(props: Props) {
         />
         <div
           className={classNames(
-            iconCss('circle-xmark', 'auto', 15),
+            'disable-icon',
+            iconCss('circle-xmark', 'auto', 16),
             props.enabled && 'enabled',
           )}
           onClick={props.enabled ? props.toggleEnabled : undefined}
           title={props.enabled ? 'disable' : undefined}
-          style={{ position: 'relative', top: 1 }}
         />
       </div>
       {!props.enabled && (
@@ -49,27 +49,30 @@ const controlsCss = css`
   > .top-right {
     position: absolute;
     right: -10px;
-    top: -40px;
+    top: -38px;
     z-index: 2;
     height: 30px;
 
-    background: white;
+    background: #444;
     border-radius: 4px 4px 0 0;
-    border: 1px solid #888;
     border-bottom-width: 0;
-    padding: 0 8px;
-    @media(max-width: 600px) {
-      padding-top: 2px;
-    }
-
+    padding: 4px 8px 0 8px;
+    
     display: flex;
     line-height: initial;
     align-items: center;
     > div {
       padding: 0 8px;
     }
-    > div:last-child:not(.enabled) {
-      filter: brightness(70%);
+    > div.disable-icon {
+      position: relative;
+      transform: translateY(1.25px);
+      @media(max-width: 600px) {
+        transform: translateY(2.25px);
+      }
+      &:not(.enabled) {
+        filter: brightness(70%);
+      }
     }
 
     cursor: pointer;
