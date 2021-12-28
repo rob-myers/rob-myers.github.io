@@ -1,10 +1,8 @@
-import { NextComponentType, NextPageContext } from 'next';
 import Head from 'next/head';
-import { AppInitialProps } from 'next/app';
-import { Router } from 'next/router';
+import type { NextComponentType, NextPageContext } from 'next';
+import type { AppInitialProps } from 'next/app';
+import type { Router } from 'next/router';
 import React from 'react';
-import { QueryClientProvider } from 'react-query';
-import { queryClient } from 'store/site.store';
 
 import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
@@ -31,6 +29,9 @@ setup(
   React.createElement, undefined, undefined,
   shouldForwardProp(prop => !prop.startsWith('__')),
 );
+
+import { QueryClient, QueryClientProvider } from 'react-query';
+const queryClient = new QueryClient;
 
 import Nav from 'components/page/Nav';
 import Portals from 'components/page/Portals';
