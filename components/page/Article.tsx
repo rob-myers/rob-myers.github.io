@@ -4,8 +4,8 @@ import { css } from 'goober';
 
 import { getTabsId } from 'model/tabs/tabs.model';
 import { ArticleKey, articlesMeta } from 'articles/index';
-import Markdown from './Markdown';
 import useSiteStore from 'store/site.store';
+import Markdown from './Markdown';
 import Link from './Link';
 import Sep from './Sep';
 import Tabs from './Tabs';
@@ -392,11 +392,10 @@ const articleComponents = (
   },
 
   div({ node, ...props }: any) {
-    switch (props.class) {
+    switch (props.className) {
       case 'tabs': {
         const height = Number(props.height || 100);
         const def = React.useMemo(() => Function(`return ${props.tabs || '[]'}`)(), [props.tabs]);
-
         return (
           <Tabs
             height={height}
