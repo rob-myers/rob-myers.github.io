@@ -1,8 +1,8 @@
 import dynamic from 'next/dynamic';
-import _Layout from './page/Layout';
-import _CodeEditor from './code/CodeEditor';
-import _Terminal from './sh/Terminal';
-import _XTerm from './sh/XTerm';
+import type _Layout from './page/Layout';
+import type _CodeEditor from './code/CodeEditor';
+import type _Terminal from './sh/Terminal';
+import type _XTerm from './sh/XTerm';
 
 export const CodeEditor = dynamic(
   () => import('./code/CodeEditor'),
