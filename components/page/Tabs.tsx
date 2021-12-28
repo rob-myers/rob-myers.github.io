@@ -58,10 +58,11 @@ export default function Tabs(props: Props) {
       <span id={props.id} className="anchor" />
 
       {state.expanded && <>
-        <div className="modal-backdrop"
+        <div
+          className="modal-backdrop"
           onPointerUp={() => { state.expanded = false; trigger(); }}
         />
-        <div className={modalFillerCss(props.height)} />
+        <div className={fillSmallModalCss(props.height)} />
       </>}
 
       <div
@@ -179,9 +180,10 @@ const unexpandedCss = (height: number) => css`
   border: 10px solid #444;
 `;
 
-const modalFillerCss = (height: number) => css`
+/** When expanded we need to fill original space */
+const fillSmallModalCss = (height: number) => css`
   height: ${height}px;
-  background: #eee;
+  background: #fff;
 `;
 
 const expandedCss = css`
