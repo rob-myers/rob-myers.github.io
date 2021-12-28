@@ -54,7 +54,7 @@ const controlsCss = css`
     height: 30px;
 
     background: #444;
-    border-radius: 4px 4px 0 0;
+    /* border-radius: 4px 4px 0 0; */
     border-bottom-width: 0;
     padding: 4px 8px 0 8px;
     
