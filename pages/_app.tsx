@@ -4,14 +4,17 @@ import type { AppInitialProps } from 'next/app';
 import type { Router } from 'next/router';
 import React from 'react';
 
-import { ResizeObserver } from '@juggle/resize-observer';
+// import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
   history.scrollRestoration = 'manual';
 
   //#region polyfill
-  if (!window.ResizeObserver) {
-    window.ResizeObserver = ResizeObserver;
-  }
+  import('@juggle/resize-observer').then(x => {
+    if (!window.ResizeObserver) {
+      window.ResizeObserver = x.ResizeObserver; // Too late?
+    }
+  });
+
   if (!('scrollBehavior' in document.documentElement.style)) {
     import('smoothscroll-polyfill')
       .then(x => x.default.polyfill())
@@ -33,8 +36,7 @@ setup(
 import { QueryClient, QueryClientProvider } from 'react-query';
 const queryClient = new QueryClient;
 
-import Nav from 'components/page/Nav';
-import Portals from 'components/page/Portals';
+import { Nav, Portals } from 'components/dynamic';
 
 import 'components/globals.css';
 import 'xterm/css/xterm.css';

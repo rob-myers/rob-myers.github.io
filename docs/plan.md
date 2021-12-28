@@ -50,6 +50,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- page builds too big again
 - hidden tabs get disabled prop
 - offscreen tabs get disabled prop
 

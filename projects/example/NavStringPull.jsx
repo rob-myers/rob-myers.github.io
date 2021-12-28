@@ -9,7 +9,8 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
-import { useGeomorphJson, usePathfinding } from "../hooks";
+import useGeomorphJson from "../hooks/use-geomorph-json";
+import usePathfinding from "../hooks/use-pathfinding";
 
 // TODO
 // - also show triangle path

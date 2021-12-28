@@ -6,7 +6,8 @@ import { Poly, Rect, Vect } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
-import { useGeomorphJson, usePathfinding } from "../hooks";
+import useGeomorphJson from "../hooks/use-geomorph-json";
+import usePathfinding from "../hooks/use-pathfinding";
 import SoloNPCWidget from "projects/npc/SoloNPCWidget";
 
 // TODO

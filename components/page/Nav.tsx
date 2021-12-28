@@ -113,6 +113,12 @@ const navCss = css`
       height: inherit;
       padding: 0 0 2px 0;
     }
+
+    animation: fadeInHandle ease-in 500ms forwards;
+    @keyframes fadeInHandle {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
   }
 `;
 
@@ -124,6 +130,12 @@ const topBarCss = css`
   width: calc(100vw + ${sidebarWidth}px);
   height: ${barHeight}px;
   background: black;
+
+  animation: fadeInTopBar ease-in 300ms forwards;
+  @keyframes fadeInTopBar {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
 `;
 
 function HorizontalFillBar({ navOpen } : { navOpen: boolean }) {

@@ -7,11 +7,11 @@ import type { TabMeta } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
 import { Layout } from 'components/dynamic';
 import { TabsOverlay, LoadingOverlay } from './TabsOverlay';
-import { useUpdate } from 'projects/hooks';
+import useUpdate from 'projects/hooks/use-update';
 
 export default function Tabs(props: Props) {
 
-  const trigger = useUpdate();
+  const update = useUpdate();
 
   const [state] = React.useState(() => ({
     enabled: !!props.enabled,
@@ -23,7 +23,7 @@ export default function Tabs(props: Props) {
     toggleEnabled: () =>  {
       state.enabled = !state.enabled;
       state.colour = state.colour === 'clear' ? 'faded' : 'clear';
-      trigger();
+      update();
 
       const tabs = useSiteStore.getState().tabs[props.id];
       if (tabs) {
@@ -39,11 +39,11 @@ export default function Tabs(props: Props) {
     toggleExpand: () => {
       state.expanded = !state.expanded;
       state.expanded && !state.enabled && state.toggleEnabled();
-      trigger();
+      update();
     },
     onModalBgPress: () => {
       state.expanded = false;
-      trigger();
+      update();
     },
     preventTouch: (e: React.TouchEvent) => e.preventDefault(),
   }));
@@ -51,7 +51,7 @@ export default function Tabs(props: Props) {
   React.useEffect(() => {
     // Initially trigger CSS animation
     state.colour = state.enabled ? 'clear' : 'faded';
-    trigger();
+    update();
   }, []);
 
   React.useEffect(() => void (state.contentDiv &&

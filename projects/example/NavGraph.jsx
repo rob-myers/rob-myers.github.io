@@ -5,10 +5,13 @@ import * as defaults from './defaults';
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Rect } from "../geom";
 import PanZoom from "../panzoom/PanZoom";
-import { useGeomorphJson, usePathfinding } from "../hooks";
+import useGeomorphJson from "../hooks/use-geomorph-json";
+import usePathfinding from "../hooks/use-pathfinding";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
 export default function NavGraphDemo(props) {
+
+  // console.log('render', props.layoutKey);
 
   const { data: gm } = useGeomorphJson(props.layoutKey);
   const { data: pf } = usePathfinding(props.layoutKey, gm?.navDecomp, props.disabled);

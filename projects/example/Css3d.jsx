@@ -8,7 +8,7 @@ import { Poly, Vect, Rect } from "../geom";
 import { fillPolygon, getSvgPos } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
 import { geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
-import { useGeomorphJson } from "../hooks";
+import useGeomorphJson from "../hooks/use-geomorph-json";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
 export default function Css3d(props) {

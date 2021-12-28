@@ -1,18 +1,19 @@
 import { css } from 'goober';
 import Main from 'components/page/Main';
-import Markdown from 'components/page/Markdown';
+import ReactMarkdown from 'react-markdown';
 
 export default function Page() {
   return (
     <Main>
-      <Markdown
+      <ReactMarkdown
         className={rootCss}
         children={`
 ## 404
 
 The requested path was not found:
 
-<div />
+~~~
+~~~
 `       }
         components={components} />
     </Main>
@@ -45,7 +46,7 @@ const rootCss = css`
 `;
 
 const components = {
-  div({ node, children, ...props }: any) {
+  code({ node, children, ...props }: any) {
     const path = typeof window === 'undefined'
       ? ''
       : location.pathname;

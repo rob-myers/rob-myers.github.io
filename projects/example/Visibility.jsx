@@ -9,7 +9,7 @@ import { geom } from "../service/geom";
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../ui/DraggableNode";
-import { useGeomorphJson } from "../hooks";
+import useGeomorphJson from "../hooks/use-geomorph-json";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
 export default function VisibilityDemo(props) {
