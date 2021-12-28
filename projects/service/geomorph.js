@@ -162,7 +162,7 @@ export function singlesToPolys(singles, tag) {
  * @param {{ tags: string[]; poly: Poly }[]} singles 
  * @param {string} tag Restrict to singles with this tags
  */
-export function filterSingles(singles, tag) {
+function filterSingles(singles, tag) {
   return singles.filter(x => x.tags.includes(tag));
 }
 
@@ -185,7 +185,7 @@ export function serializeSymbol(parsed) {
  * @param {Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>} json
  * @returns {Geomorph.ParsedSymbol<Poly>}
  */
-export function deserializeSymbol(json) {
+function deserializeSymbol(json) {
   return {
     key: json.key,
     hull: json.hull.map(Poly.from),
