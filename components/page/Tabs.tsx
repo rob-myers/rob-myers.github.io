@@ -41,6 +41,11 @@ export default function Tabs(props: Props) {
       state.expanded && !state.enabled && state.toggleEnabled();
       trigger();
     },
+    onModalBgPress: () => {
+      state.expanded = false;
+      trigger();
+    },
+    preventTouch: (e: React.TouchEvent) => e.preventDefault(),
   }));
 
   React.useEffect(() => {
@@ -60,9 +65,12 @@ export default function Tabs(props: Props) {
       {state.expanded && <>
         <div
           className="modal-backdrop"
-          onPointerUp={() => { state.expanded = false; trigger(); }}
+          onPointerUp={state.onModalBgPress}
+          onTouchStart={state.preventTouch}
         />
-        <div className={fillSmallModalCss(props.height)} />
+        <div
+          className={fillSmallModalCss(props.height)}
+        />
       </>}
 
       <div

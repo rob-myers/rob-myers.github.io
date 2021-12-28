@@ -50,7 +50,6 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- prevent modal overlay click propagating to nav
 - hidden tabs get disabled prop
 - offscreen tabs get disabled prop
 
@@ -74,6 +73,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ prevent modal overlay click propagating to nav
 - ✅ fix: mobile Tabs not initially disabled
 - ✅ disabled prop unmounts large DOM e.g. hoverable navtris, Css3d
 - ✅ fix: Css3d perspective center wrong on mobile
