@@ -4,16 +4,15 @@ import type { AppInitialProps } from 'next/app';
 import type { Router } from 'next/router';
 import React from 'react';
 
-// import { ResizeObserver } from '@juggle/resize-observer';
+// NOTE dynamic import does not work on e.g. Safari 12.1.2
+import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
   history.scrollRestoration = 'manual';
 
   //#region polyfill
-  import('@juggle/resize-observer').then(x => {
-    if (!window.ResizeObserver) {
-      window.ResizeObserver = x.ResizeObserver; // Too late?
-    }
-  });
+  if (!window.ResizeObserver) {
+    window.ResizeObserver = ResizeObserver;
+  }
 
   if (!('scrollBehavior' in document.documentElement.style)) {
     import('smoothscroll-polyfill')
