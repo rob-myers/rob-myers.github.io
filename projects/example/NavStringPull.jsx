@@ -57,11 +57,9 @@ export default function NavStringPull(props) {
           }
         }}
       >
-        {gm && (
-          <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />
-        )}
+        {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
-        {pf?.zone.groups.map(nodes => nodes.map(({ vertexIds }) =>
+        {!props.disabled && pf?.zone.groups.map(nodes => nodes.map(({ vertexIds }) =>
           <polygon className="navtri" points={`${vertexIds.map(id => pf?.zone.vertices[id])}`} />
         ))}
 

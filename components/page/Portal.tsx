@@ -38,7 +38,7 @@ function useEnsurePortal(
       // If parent <Tabs/> not disabled (e.g. this is 2nd tab), wake this portal up
       const currentTabs = Object.values(useSiteStore.getState().tabs).filter(tabs => tabs.pagePathname === location.pathname);
       const parentTabs = currentTabs.find(tabs => tabs.def.some(x => x.filepath === meta.filepath));
-      if (!parentTabs?.disabled) {
+      if (parentTabs && !parentTabs.disabled) {
         setTimeout(() =>  htmlPortalNode.setPortalProps({ disabled: false }), 300);
       }
 

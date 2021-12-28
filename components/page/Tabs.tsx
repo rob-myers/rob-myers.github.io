@@ -47,8 +47,6 @@ export default function Tabs(props: Props) {
     // Initially trigger CSS animation
     state.colour = state.enabled ? 'clear' : 'faded';
     trigger();
-
-    
   }, []);
 
   React.useEffect(() => void (state.contentDiv &&

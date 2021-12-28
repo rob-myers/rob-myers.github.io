@@ -50,6 +50,7 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
+- prevent modal overlay click propagating to nav
 - hidden tabs get disabled prop
 - offscreen tabs get disabled prop
 
@@ -58,6 +59,7 @@ Each __TODO__ should either:
 - get interested in simulating starship crews
 - declare this interest in objective
 
+- mention React "polyfill" of events, and we avoid
 - finish geomorph 101
 - implement front page
 
@@ -72,6 +74,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ fix: mobile Tabs not initially disabled
 - ✅ disabled prop unmounts large DOM e.g. hoverable navtris, Css3d
 - ✅ fix: Css3d perspective center wrong on mobile
 - ✅ fix: example/NavGraph triangles should be visible
