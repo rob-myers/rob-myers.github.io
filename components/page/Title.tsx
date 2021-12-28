@@ -2,7 +2,7 @@ import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
 
-import Markdown from './Markdown';
+import ReactMarkdown from 'react-markdown';
 import NavMini from './NavMini';
 import Continue from './Continue';
 
@@ -11,7 +11,7 @@ export default function Title() {
     <header className={classNames('title', titleCss)}>
       <NavMini/>
       <Continue />
-      <Markdown components={titleComponents} children={`
+      <ReactMarkdown components={titleComponents} children={`
 # Rogue Markup
 
 $( game ai | roguelike | web dev )
