@@ -41,9 +41,6 @@ const rootCss = css`
       margin: 8px 0 0;
       font-size: 1.8rem;
     }
-    code {
-      /* font-size: 1.5rem; */
-    }
   }
 `;
 

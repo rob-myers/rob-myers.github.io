@@ -2,7 +2,7 @@ import { last } from 'model/generic.model';
 import { ArticleKey, navGroups, articlesMeta } from 'articles/index';
 import Main from './Main';
 import Articles from './Articles';
-import NextArticle from "./NextArticle";
+import NextArticle from './NextArticle';
 
 export default function Part({ part, markdown }: {
   part: number;
