@@ -2,6 +2,7 @@ import React from 'react';
 import debounce from 'debounce';
 import classNames from 'classnames';
 import { css } from 'goober';
+
 import useSiteStore from 'store/site.store';
 import NavItems from './NavItems';
 

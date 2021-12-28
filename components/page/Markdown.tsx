@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 export default function Markdown(props: ReactMarkdown.ReactMarkdownOptions) {
   return (
     <ReactMarkdown
-      rehypePlugins={[rehypeRaw]} // Permit html
+      rehypePlugins={[rehypeRaw]} // Permits html; +60kb gzipped
       remarkPlugins={[remarkGfm]}
       {...props}
     />

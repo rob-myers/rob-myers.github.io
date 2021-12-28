@@ -28,8 +28,6 @@ export default function Articles({ keys, markdown }: Props) {
     useSiteStore.setState({});
   }, []);
 
-
-
   return (
     <ol
       className={rootCss}
@@ -47,7 +45,6 @@ export default function Articles({ keys, markdown }: Props) {
       )}
     </ol>
   );
-  
 }
 
 interface Props {

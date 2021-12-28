@@ -4,10 +4,10 @@ import { css } from 'goober';
 
 import { getTabsId } from 'model/tabs/tabs.model';
 import { ArticleKey, articlesMeta } from 'articles/index';
+import Markdown from './Markdown';
 import useSiteStore from 'store/site.store';
 import Link from './Link';
 import Sep from './Sep';
-import Markdown from './Markdown';
 import Tabs from './Tabs';
 import { iconCss } from './Icons';
 
