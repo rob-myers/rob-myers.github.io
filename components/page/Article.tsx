@@ -159,8 +159,9 @@ const articleCss = css`
     font-size: 0.9rem;
     > span {
       margin-right: 16px;
+      white-space: pre;
       > span {
-        padding: 4px 6px;
+        padding: 6px 10px;
         border: 1px solid #ddd;
         color: #666;
       }
@@ -169,7 +170,7 @@ const articleCss = css`
       font-size: 0.8rem;
       margin-top: 0px;
       > span {
-        padding: 3px 0px;
+        padding: 4px 0px;
       }
     }
   }
