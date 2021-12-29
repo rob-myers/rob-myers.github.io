@@ -1,71 +1,67 @@
 import React from "react";
 import { css, styled } from "goober";
 import classNames from "classnames";
-import { debounce } from "debounce";
+import { withSize } from "react-sizeme";
 
 import * as defaults from "./defaults";
-import { Poly, Vect, Rect } from "../geom";
+import { Poly, Vect } from "../geom";
 import { fillPolygon, getSvgPos } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
 import { geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 
-/** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
-export default function Css3d(props) {
+export default withSize({ refreshMode: 'debounce' })(
+  /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; size: { width?: number } }} props */
+  function Css3d(props) {
 
-  const { data: gm } = useGeomorphJson(props.layoutKey);
+    const { data: gm } = useGeomorphJson(props.layoutKey);
 
-  const [state] = React.useState(() => ({
-    root3d: /** @type {HTMLDivElement} */ ({}),
-    eye: /** @type {HTMLDivElement} */ ({}),
-    svg: /** @type {SVGSVGElement} */ ({}),
-    /** @param {SVGSVGElement} el */
-    onUpdate: (el) => {
-      const { height } = el.viewBox.baseVal;
-      const zoom = defaults.initViewBox.height / height;
-      const { root3d, eye } = state;
-      if (root3d) {
-        root3d.style.perspective = `${100 + (500 / zoom)}px`;
-        const eyeRect = eye.getBoundingClientRect();
-        const svgPos = getSvgPos({ clientX: eyeRect.x, clientY: eyeRect.y, ownerSvg: el, pointerId: null });
-        root3d.style.perspectiveOrigin = `${( svgPos.x )}px ${( svgPos.y )}px`;
-      }
-    },
-    onResize: debounce(() => {
-      state.svg && state.onUpdate(state.svg);
-    }, 30),
-  }));
+    const [state] = React.useState(() => ({
+      root3d: /** @type {HTMLDivElement} */ ({}),
+      eye: /** @type {HTMLDivElement} */ ({}),
+      svg: /** @type {SVGSVGElement} */ ({}),
+      /** @param {SVGSVGElement} el */
+      onUpdate: (el) => {
+        const { height } = el.viewBox.baseVal;
+        const zoom = defaults.initViewBox.height / height;
+        const { root3d, eye } = state;
+        if (root3d) {
+          root3d.style.perspective = `${100 + (500 / zoom)}px`;
+          const eyeRect = eye.getBoundingClientRect();
+          const svgPos = getSvgPos({ clientX: eyeRect.x, clientY: eyeRect.y, ownerSvg: el, pointerId: null });
+          root3d.style.perspectiveOrigin = `${( svgPos.x )}px ${( svgPos.y )}px`;
+        }
+      },
+    }));
 
-  return (
-    <Root>
-      <PanZoom
-        gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}
-        onUpdate={state.onUpdate}
-        dark
-      >
-        {gm && !props.disabled && (
-          <g ref={(el) => {
-            if (el) {
-              state.root3d = /** @type {*} */ (el.querySelector('.root-3d'));
-              state.svg = /** @type {*} */ (el.ownerSVGElement);
-              setTimeout(() => state.onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement)));
-              window.addEventListener('resize', state.onResize);
-            } else {
-              window.removeEventListener('resize', state.onResize);
-            }
-          }}>
-            <image {...gm.pngRect} href={geomorphPngPath(props.layoutKey)} />
-            <ForeignObject gm={gm} />
-          </g>
-        )}
-      </PanZoom>
-      <div
-        className="eye"
-        ref={(el) => el && (state.eye = el)}
-      />
-    </Root>
-  );
-}
+    return (
+      <Root>
+        <PanZoom
+          gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}
+          onUpdate={state.onUpdate}
+          dark
+        >
+          {gm && !props.disabled && (
+            <g ref={(el) => {
+              if (el) {
+                state.root3d = /** @type {*} */ (el.querySelector('.root-3d'));
+                state.svg = /** @type {*} */ (el.ownerSVGElement);
+                setTimeout(() => state.onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement)));
+              }
+            }}>
+              <image {...gm.pngRect} href={geomorphPngPath(props.layoutKey)} />
+              <ForeignObject gm={gm} />
+            </g>
+          )}
+        </PanZoom>
+        <div
+          className="eye"
+          ref={(el) => el && (state.eye = el)}
+        />
+      </Root>
+    );
+  }
+)
 
 const Root = styled('div')`
   height: 100%;

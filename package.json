@@ -55,8 +55,9 @@
     "react-markdown": "^6.0.2",
     "react-query": "^3.18.1",
     "react-reverse-portal": "^2.1.0",
+    "react-sizeme": "^3.0.2",
     "react-ssr-prepass": "npm:preact-ssr-prepass",
-    "react-use-measure": "^2.0.4",
+    "react-use-measure": "^2.1.1",
     "rehype-raw": "^5.1.0",
     "remark-gfm": "^1.0.0",
     "rxjs": "7.0.0-beta.10",
@@ -65,6 +66,7 @@
     "smoothscroll-polyfill": "^0.4.4",
     "svg-path-parser": "^1.1.0",
     "triangle-wasm": "^1.0.0",
+    "web-animations-js": "^2.3.2",
     "xterm": "4.10.0",
     "xterm-addon-fit": "^0.5.0",
     "zustand": "^3.4.1"

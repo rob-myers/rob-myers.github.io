@@ -4,26 +4,27 @@ import type { AppInitialProps } from 'next/app';
 import type { Router } from 'next/router';
 import React from 'react';
 
-// NOTE dynamic import does not work on e.g. Safari 12.1.2
+//#region polyfill
+// NOTE dynamic ResizeObserver import does not work e.g. Safari 12.1.2
 import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
   history.scrollRestoration = 'manual';
-
-  //#region polyfill
-  if (!window.ResizeObserver) {
+  if (('ResizeObserver' in window) === false) {
     window.ResizeObserver = ResizeObserver;
   }
 
-  if (!('scrollBehavior' in document.documentElement.style)) {
+  if (('scrollBehavior' in document.documentElement.style) === false) {
     import('smoothscroll-polyfill')
       .then(x => x.default.polyfill())
       // .then(() => import('smoothscroll-anchor-polyfill'));
   }
-  if (!('onpointerdown' in document.documentElement)) {
+  if (('onpointerdown' in document.documentElement) === false) {
     import('pepjs');
   }
-  //#endregion
+  //@ts-ignore
+  import('web-animations-js');
 }
+//#endregion
 
 import { setup } from 'goober';
 import { shouldForwardProp } from 'goober/should-forward-prop';
