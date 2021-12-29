@@ -1,6 +1,7 @@
 ## Objective
 
 We'll create a video game.
+
 Yes, _yet another game_.
 What's unusual is that we're going to describe the process in great detail.
 
