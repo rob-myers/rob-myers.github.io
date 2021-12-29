@@ -18,6 +18,7 @@ export default function useGeomorphJson(layoutKey) {
     };
   }, {
     keepPreviousData: true,
+    cacheTime: Infinity,
   });
 }
 
