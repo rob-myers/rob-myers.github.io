@@ -6,6 +6,9 @@ export function TabsOverlay(props: Props) {
   return (
     <div className={controlsCss}>
       <div className="top-right">
+        {/* 
+          TODO use Link here instead
+        */}
         <div
           className={iconCss('anchor-icon-white', 'auto', 13)}
           onClick={props.clickAnchor}
@@ -51,12 +54,12 @@ const controlsCss = css`
     right: -10px;
     top: -38px;
     z-index: 2;
-    height: 30px;
+    height: 38px;
 
     background: #444;
     /* border-radius: 4px 4px 0 0; */
     border-bottom-width: 0;
-    padding: 4px 8px 0 8px;
+    padding: 0px 8px;
     
     display: flex;
     line-height: initial;
