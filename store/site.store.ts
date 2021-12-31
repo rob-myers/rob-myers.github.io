@@ -62,12 +62,12 @@ export interface PortalState {
 interface TabsState {
   key: string;
   def: TabMeta[];
-  selectTab: (tabId: string) => void;
-  scrollTo: () => void;
-  getTabNodes: () => TabNode[];
   disabled: boolean;
   /** e.g. `/part/1` */
   pagePathname: string;
+  selectTab: (tabId: string) => void;
+  scrollTo: () => void;
+  getTabNodes: () => TabNode[];
 }
 
 const api = useStore.getState().api;

@@ -50,9 +50,9 @@ Each __TODO__ should either:
 
 ## TODO (unsorted)
 
-- page builds too big again
-- hidden tabs get disabled prop
-- offscreen tabs get disabled prop
+- ✅ use web animations polyfill
+  > https://www.npmjs.com/package/web-animations-js
+- offscreen tabs get disabled + rendered after 5 secs
 
 - 🚧 finish off `Continue` (hide appropriately)
 - GitHub Comments
@@ -74,6 +74,12 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ hidden tabs get disabled prop and are rendered
+- ✅ page builds too big again
+  - ~60kb from `rehype-raw` added to each page can be "ignored" via SSR
+  - ~2Kb from `@juggle/resize-observer` can be "ignored"
+  - saved ~4kb on /part/2 via dyn components 
+  - reduced shared js to ~40Kb
 - ✅ prevent modal overlay click propagating to nav
 - ✅ fix: mobile Tabs not initially disabled
 - ✅ disabled prop unmounts large DOM e.g. hoverable navtris, Css3d

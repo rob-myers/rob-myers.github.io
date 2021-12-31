@@ -28,7 +28,10 @@ export default function Tabs(props: Props) {
       const tabs = useSiteStore.getState().tabs[props.id];
       if (tabs) {
         const portalLookup = useSiteStore.getState().portal;
-        const tabKeys = tabs.getTabNodes().map(x => x.getId()).filter(x => x in portalLookup);
+        const tabKeys = tabs.getTabNodes()
+          .filter(x => x.isVisible())
+          .map(x => x.getId())
+          .filter(x => x in portalLookup);
         tabKeys.forEach(key => portalLookup[key].portal.setPortalProps({ disabled: !state.enabled }));
         // Other tab portals may not exist yet, so we record in `tabs` too
         tabs.disabled = !state.enabled;
