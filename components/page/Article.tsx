@@ -157,6 +157,7 @@ const articleCss = css`
     margin-bottom: 32px;
     font-family: monospace;
     font-size: 0.9rem;
+    line-height: 2.8;
     > span {
       margin-right: 16px;
       white-space: pre;
