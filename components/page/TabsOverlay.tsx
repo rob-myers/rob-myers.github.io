@@ -75,7 +75,7 @@ const controlsCss = css`
       position: relative;
       transform: translateY(1.25px);
       @media(max-width: 600px) {
-        transform: translateY(2.25px);
+        transform: translateY(2px);
       }
       &:not(.enabled) {
         filter: brightness(70%);
