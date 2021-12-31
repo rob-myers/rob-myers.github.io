@@ -23,10 +23,14 @@ export default function Tabs(props: Props) {
     toggleEnabled: () =>  {
       state.enabled = !state.enabled;
       state.colour = state.colour === 'clear' ? 'faded' : 'clear';
+      if (!state.enabled && state.expanded) {// Collapse
+        state.expanded = false;
+      }
       update();
 
       const tabs = useSiteStore.getState().tabs[props.id];
       if (tabs) {
+        // Set disabled `false` for all visible tabs
         const portalLookup = useSiteStore.getState().portal;
         const tabKeys = tabs.getTabNodes()
           .filter(x => x.isVisible())
@@ -41,7 +45,9 @@ export default function Tabs(props: Props) {
     },
     toggleExpand: () => {
       state.expanded = !state.expanded;
-      state.expanded && !state.enabled && state.toggleEnabled();
+      if (!state.enabled && state.expanded) {// Disable
+        state.toggleEnabled();
+      }
       update();
     },
     onModalBgPress: () => {
