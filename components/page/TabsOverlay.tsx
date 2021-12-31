@@ -1,6 +1,7 @@
 import { css } from 'goober';
 import classNames from 'classnames';
 import { iconCss } from './Icons';
+import Link from './Link';
 
 export function TabsOverlay(props: Props) {
   return (
@@ -9,9 +10,9 @@ export function TabsOverlay(props: Props) {
         {/* 
           TODO use Link here instead
         */}
-        <div
+        <Link
+          href={`#${props.parentTabsId}`}
           className={iconCss('anchor-icon-white', 'auto', 13)}
-          onClick={props.clickAnchor}
           title="anchor"
         />
         <div
@@ -41,6 +42,7 @@ export function TabsOverlay(props: Props) {
 interface Props {
   enabled: boolean;
   expanded: boolean;
+  parentTabsId: string;
   clickAnchor: () => void;
   toggleExpand: () => void;
   toggleEnabled: () => void;
@@ -57,14 +59,16 @@ const controlsCss = css`
     height: 38px;
 
     background: #444;
-    /* border-radius: 4px 4px 0 0; */
     border-bottom-width: 0;
     padding: 0px 8px;
+    @media(max-width: 600px) {
+      padding: 0 8px 2px 8px;
+    }
     
     display: flex;
     line-height: initial;
     align-items: center;
-    > div {
+    > * {
       padding: 0 8px;
     }
     > div.disable-icon {

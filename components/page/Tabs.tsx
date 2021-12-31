@@ -90,6 +90,7 @@ export default function Tabs(props: Props) {
             const tabs = useSiteStore.getState().tabs[props.id];
             tabs?.scrollTo();
           }}
+          parentTabsId={props.id}
           toggleExpand={state.toggleExpand}
           toggleEnabled={state.toggleEnabled}
         />
