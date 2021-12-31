@@ -7,9 +7,6 @@ export function TabsOverlay(props: Props) {
   return (
     <div className={controlsCss}>
       <div className="top-right">
-        {/* 
-          TODO use Link here instead
-        */}
         <Link
           href={`#${props.parentTabsId}`}
           className={iconCss('anchor-icon-white', 'auto', 13)}
@@ -43,7 +40,6 @@ interface Props {
   enabled: boolean;
   expanded: boolean;
   parentTabsId: string;
-  clickAnchor: () => void;
   toggleExpand: () => void;
   toggleEnabled: () => void;
 }

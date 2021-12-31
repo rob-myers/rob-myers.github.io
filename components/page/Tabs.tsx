@@ -86,10 +86,6 @@ export default function Tabs(props: Props) {
         <TabsOverlay
           enabled={state.enabled}
           expanded={state.expanded}
-          clickAnchor={() => {
-            const tabs = useSiteStore.getState().tabs[props.id];
-            tabs?.scrollTo();
-          }}
           parentTabsId={props.id}
           toggleExpand={state.toggleExpand}
           toggleEnabled={state.toggleEnabled}
