@@ -12,7 +12,7 @@ export default function Title() {
       <NavMini/>
       <Continue />
       <ReactMarkdown components={titleComponents} children={`
-# Rogue Markup
+# Starship Markup
 
 $( game ai | roguelike | web dev )
       `}/>

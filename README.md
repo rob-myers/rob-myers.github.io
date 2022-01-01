@@ -1,4 +1,4 @@
-# Rogue Markup
+# Starship Markup
 
 See the [plan](docs/plan.md).
 

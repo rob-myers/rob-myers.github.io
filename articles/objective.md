@@ -39,7 +39,7 @@ Walls and obstacles which cannot be seen over are darker grey and black. The und
 A _Starship Geomorph_ is a rectangular partial floorplan of a starship, designed to be cut out and possibly glued to others.
 They were created by Robert Pearce, and distributed as a PDF on his [blog](http://travellerrpgblog.blogspot.com/).
 A 2nd version was released in 2020, along with another PDF containing many individual symbols e.g. offices, fuel tanks and bedrooms. Soon afterwards Eric B. Smith transformed them into [transparent PNGs](http://gurpsland.no-ip.org/geomorphs/).
-The latter 2000+ symbols will form the underlying basis of _Rogue Markup_.
+The latter 2000+ symbols will form the underlying basis of _Starship Markup_.
 
 </aside>
 

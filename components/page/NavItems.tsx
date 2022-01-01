@@ -12,7 +12,7 @@ export default function NavItems() {
 
       <h3>
         <Link href="/">
-          Rogue Markup
+          Starship Markup
         </Link>
       </h3>
 

@@ -53,21 +53,21 @@ Each __TODO__ should either:
 - ✅ use web animations polyfill
   > https://www.npmjs.com/package/web-animations-js
 - offscreen tabs get disabled + rendered after 5 secs
+  - Tabs don't load until scroll into view
+  - Tabs disable on scroll out of view
 
-- 🚧 finish off `Continue` (hide appropriately)
+- show/hide `Continue` appropriately
 - GitHub Comments
 - get interested in simulating starship crews
 - declare this interest in objective
 
-- mention React "polyfill" of events, and we avoid
+- tech1; mention React "polyfill" of events, and why we avoid
 - finish geomorph 101
 - implement front page
 
 - 🚧 visibility polygon should have truncated precision
 - smooth back/forward scrolling
 - preserve scroll inside tab pane
-- Tabs don't load until scroll into view
-- Tabs disable on scroll out of view
 
 - `PanZoom` supports zoom to point via ref API
 - GitHub Pages TTL is 10mins; Could use CDN:

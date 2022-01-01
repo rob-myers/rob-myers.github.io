@@ -17,10 +17,8 @@ We'll also support both mobile and desktop devices.
 
 <!-- NOTE italics inside link currently unsupported -->
 
-The name _Rogue Markup_ refers to the prototypical procedural video game _[Rogue](https://en.wikipedia.org/wiki/Rogue_(video_game))_, and the HyperText _Markup_ Language (HTML).
-Since HTML may be used in many different ways,
-we've clarified our particular approach via the bullet points above.
-Generally speaking, we'll use standard website technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
+_Starship Markup_ refers to _Markup_, as in HyperText _Markup_ Language (HTML).
+We'll use standard web development technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
 
 <aside>
 

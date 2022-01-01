@@ -20,8 +20,8 @@ Monotony will be overcome via encountered NPC behaviours and e.g. ship building.
 Functionally, think [Teleglitch](https://www.youtube.com/results?search_query=Teleglitch) with richer NPCs and the ability to _place_ [room modules](https://steamcommunity.com/sharedfiles/filedetails/?id=175359117) when upgrading/docking.
 Graphically, see Starship Geomorphs 2.0.
 
-Rogue Markup will be easy to extend.
-We'll achieve this via compositional code, escape hatches to CodeSandbox, clear explanations, and [GitHub](https://github.com/) comments.
+_Starship Markup_ will be easily extendable.
+We'll provide compositional code, escape hatches to CodeSandbox, clear explanations, and [GitHub](https://github.com/) comments.
 
 ### 3. Experience
 

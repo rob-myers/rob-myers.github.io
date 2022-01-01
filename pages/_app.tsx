@@ -48,7 +48,7 @@ export default function PagesRoot({ Component, pageProps }: RootProps) {
   return <>
     <Head>
       <title>
-        Rogue Markup
+        Spaceship Markup
       </title>
     </Head>
     <QueryClientProvider client={queryClient} >
