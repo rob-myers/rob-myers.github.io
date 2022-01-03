@@ -35,7 +35,6 @@ const titleComponents = {
 };
 
 const titleCss = css`
-  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
   position: relative;
   
   @media(max-width: 600px) {
@@ -46,11 +45,12 @@ const titleCss = css`
     padding-top: 64px;
   }
   padding-top: 40px;
-
+  
   h1 {
     margin: 0;
     font-size: 5rem;
     font-weight: 300;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     cursor: pointer;
     color: #333;
     display: inline-block;
@@ -67,13 +67,13 @@ const titleCss = css`
   p {
     color: #444;
     letter-spacing: 2px;
-    font-size: 1.4rem;
+    font-size: 1rem;
+    font-family: 'Courier New', Courier, monospace;
     margin: 0;
     padding: 40px 0 48px;
     font-weight: 300;
     
     @media(max-width: 600px) {
-      font-size: 1.1rem;
       padding: 20px 0 20px 4px;
       color: #222;
     }
