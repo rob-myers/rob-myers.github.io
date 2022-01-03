@@ -1,3 +1,4 @@
+import { getSvgPos } from 'projects/service/dom';
 import React from 'react';
 import { Poly, Vect } from '../geom';
 import { pathfinding } from '../pathfinding/Pathfinding';
@@ -11,8 +12,9 @@ export default function DraggablePath(props) {
       /** @type {SVGPolylineElement} */
       pathEl: ({}), // TODO maybe force render instead
       path: /** @type {Geom.Vect[]} */ ([]),
-      src: Vect.from(props.initial.src),
-      dst: Vect.from(props.initial.dst),
+      src: Vect.from(props.initSrc),
+      dst: Vect.from(props.initDst),
+      tris: /** @type {Vect[][]} */ ([]),
 
       /** @param {Geom.Vect[]} path */
       setPath: (path) => {
@@ -21,39 +23,47 @@ export default function DraggablePath(props) {
       },
       updatePath: () => {
         const groupId = pathfinding.getGroup(props.zoneKey, state.src);
-        if (groupId !== null) {
-          /**
-           * TODO
-           * - state.src --> npc --> state.dst
-           */
+        if (groupId === null) {
+          return console.warn(`pathfinding.getGroup: ${state.src.x},${state.src.y}: no group found`);
+        }
+
+        if (props.npcApi) {
+          // src --> npc --> dst
+          const npcPos = props.npcApi.getPosition();
+          const pre = pathfinding.findPath(state.src, npcPos, props.zoneKey, groupId)?.path || [];
+          const post = pathfinding.findPath(npcPos, state.dst, props.zoneKey, groupId)?.path || [];
+          // console.log({
+          //   src: state.src,
+          //   npcPos,
+          //   dst: state.dst,
+          //   pre,
+          //   post
+          // })
+          state.path = [state.src.clone()].concat(pre, post);
+        } else {// src --> dst
           state.path = [state.src.clone()].concat(
             pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId)?.path || []
           );
-          state.setPath(state.path);
-          props.onChange?.(state.path);
         }
+
+        state.setPath(state.path);
+        props.onChange?.(state.path);
       },
       /** @param {Vect} p */
       pointInZone: (p) => {
-        /**
-         * TODO precompute below when zone available
-         */
-        const zone = pathfinding.zones[props.zoneKey];
-        const nodes = zone.groups.flatMap(x => x);
-        const tris = nodes.map(({ vertexIds }) => vertexIds.map(id => zone.vertices[id]));
-        return tris.some(([u, v, w]) => Poly.pointInTriangle(p, u, v, w));
+        return state.tris.some(([u, v, w]) => Poly.pointInTriangle(p, u, v, w));
       },
     }
   });
 
-  /**
-   * TODO optionally initially updatePath()
-   */
   React.useEffect(() => {
     if (props.zoneKey in pathfinding.zones) {
-      state.updatePath();
+      const zone = pathfinding.zones[props.zoneKey];
+      const nodes = zone?.groups.flatMap(x => x)??[];
+      state.tris = nodes.map(({ vertexIds }) => vertexIds.map(id => zone.vertices[id]));
+      state.updatePath(); // TODO optional
     }
-  }, [pathfinding.zones[props.zoneKey]]);
+  }, [props.zoneKey in pathfinding.zones]);
 
   return (
     <g
@@ -65,7 +75,7 @@ export default function DraggablePath(props) {
     >
       <polyline className="navpath" />
       <DraggableNode
-        initial={props.initial.src}
+        initial={props.initSrc}
         radius={props.radius}
         icon={props.srcIcon}
         onStart={() => props.onStart?.('src')}
@@ -76,7 +86,7 @@ export default function DraggablePath(props) {
         }}
         />
       <DraggableNode
-        initial={props.initial.dst}
+        initial={props.initDst}
         radius={props.radius}
         icon={props.dstIcon}
         onStart={() => props.onStart?.('dst')}
@@ -93,12 +103,14 @@ export default function DraggablePath(props) {
 
 /**
  * @typedef Props @type {object}
- * @property {{ src: Geom.VectJson; dst: Geom.VectJson }} initial
+ * @property {Geom.VectJson} initSrc
+ * @property {Geom.VectJson} initDst
  * @property {string} zoneKey
+ * @property {NPC.Api} [npcApi]
  * @property {UiTypes.IconKey} [srcIcon]
  * @property {UiTypes.IconKey} [dstIcon]
  * @property {number} [radius]
+ * @property {string} [stroke]
  * @property {(path: Geom.Vect[]) => void} [onChange]
  * @property {(type: 'src' | 'dst') => void} [onStart]
- * @property {string} [stroke]
  */

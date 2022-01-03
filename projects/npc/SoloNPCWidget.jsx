@@ -10,9 +10,15 @@ export default function SoloNPCWidget(props) {
     const output = {
       bot: /** @type {SVGGElement} */ ({}),
       api: {
+        key: 'solo',
         anim: /** @type {Animation} */ ({}),
-        isEnabled: () => state.api.anim.playState !== 'paused',
         initPaused: false,
+        getPosition: () => {
+          // https://stackoverflow.com/a/4976554/2917822
+          const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.bot).transform);
+          return { x: matrix.m41, y: matrix.m42 };
+        },
+        isEnabled: () => state.api.anim.playState !== 'paused',
       },
     };
     props.onLoad(output.api);
@@ -22,17 +28,25 @@ export default function SoloNPCWidget(props) {
   return (
     <g className={rootCss}>
       <DraggablePath
-        initial={{ src: props.initSrc, dst: props.initDst }}
+        initSrc={props.initSrc}
+        initDst={props.initDst}
         zoneKey={props.zoneKey}
+        npcApi={state.api}
         radius={4}
         onChange={(path) => {
           const { bot, api } = state;
-          if (!bot || !path.length) return;
-
+          if (!bot || !path.length) {
+            return;
+          }
           /**
-           * TODO expect path src -> npc -> dst
-           * TODO animate from current npc position
+           * TODO
+           * - stick to forwards fill
+           * - fix issue when change src after finished
+           * - rethink UI
            */
+          const npcPos = state.api.getPosition();
+          const npcPathIndex = path.findIndex(p => p.equals(npcPos));
+          (npcPathIndex !== -1) && (path = path.slice(npcPathIndex));
 
           // Move bot along path using Web Animations API
           const edges = path.map((p, i) => ({ p, q: path[i + 1] })).slice(0, -1);
@@ -43,11 +57,17 @@ export default function SoloNPCWidget(props) {
             return agg;
           }, { sofars: [0], total: 0 });
 
+          
           api.anim.cancel?.();
           api.anim = bot.animate(
-            path.map((p, i) => ({ offset: sofars[i] / total, transform: `translate(${p.x}px, ${p.y}px)` })),
-            { duration: 5000, iterations: Infinity, direction: 'alternate' },
+            path.map((p, i) => ({ offset: total ? sofars[i] / total : 0, transform: `translate(${p.x}px, ${p.y}px)` })),
+            // { duration: 5000, iterations: Infinity, direction: 'alternate' },
+            { duration: total * 10, direction: 'normal', fill: 'forwards' },
           );
+          // api.anim = bot.animate(
+          //   path.map((p, i) => ({ offset: sofars[i] / total, transform: `translate(${p.x}px, ${p.y}px)` })),
+          //   { duration: 5000, iterations: Infinity, direction: 'alternate' },
+          // )
 
           if (api.initPaused) {
             api.anim.pause();

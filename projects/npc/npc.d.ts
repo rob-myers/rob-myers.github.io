@@ -1,9 +1,15 @@
 declare namespace NPC {
 
-  export interface SoloApi {
+  export type Api = (
+    | SoloApi
+  );
+
+  export type SoloApi = {
+    readonly key: 'solo';
     anim: Animation;
-    isEnabled: () => boolean;
     readonly initPaused: boolean;
+    readonly getPosition: () => Geom.VectJson;
+    readonly isEnabled: () => boolean;
   }
 
 }
