@@ -39,17 +39,18 @@ export default function SoloNPCWidget(props) {
             return;
           }
           /**
-           * TODO
-           * - stick to forwards fill
-           * - fix issue when change src after finished
-           * - rethink UI
+           * TODO rethink UI, sticking with forward fill
            */
           const npcPos = state.api.getPosition();
           const npcPathIndex = path.findIndex(p => p.equals(npcPos));
-          (npcPathIndex !== -1) && (path = path.slice(npcPathIndex));
+          const rPath = npcPathIndex !== -1 ? path.slice(npcPathIndex) : path;
+
+          if (rPath.length === 1) {
+            return; // Keep still
+          }
 
           // Move bot along path using Web Animations API
-          const edges = path.map((p, i) => ({ p, q: path[i + 1] })).slice(0, -1);
+          const edges = rPath.map((p, i) => ({ p, q: rPath[i + 1] })).slice(0, -1);
           const elens = edges.map(({ p, q }) => p.distanceTo(q));
           const { sofars, total } = elens.reduce((agg, length) => {
             agg.total += length;
@@ -57,10 +58,9 @@ export default function SoloNPCWidget(props) {
             return agg;
           }, { sofars: [0], total: 0 });
 
-          
           api.anim.cancel?.();
           api.anim = bot.animate(
-            path.map((p, i) => ({ offset: total ? sofars[i] / total : 0, transform: `translate(${p.x}px, ${p.y}px)` })),
+            rPath.map((p, i) => ({ offset: total ? sofars[i] / total : 0, transform: `translate(${p.x}px, ${p.y}px)` })),
             // { duration: 5000, iterations: Infinity, direction: 'alternate' },
             { duration: total * 10, direction: 'normal', fill: 'forwards' },
           );

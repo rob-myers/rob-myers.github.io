@@ -32,13 +32,6 @@ export default function DraggablePath(props) {
           const npcPos = props.npcApi.getPosition();
           const pre = pathfinding.findPath(state.src, npcPos, props.zoneKey, groupId)?.path || [];
           const post = pathfinding.findPath(npcPos, state.dst, props.zoneKey, groupId)?.path || [];
-          // console.log({
-          //   src: state.src,
-          //   npcPos,
-          //   dst: state.dst,
-          //   pre,
-          //   post
-          // })
           state.path = [state.src.clone()].concat(pre, post);
         } else {// src --> dst
           state.path = [state.src.clone()].concat(
