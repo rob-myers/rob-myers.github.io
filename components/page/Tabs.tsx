@@ -14,7 +14,7 @@ export default function Tabs(props: Props) {
   const update = useUpdate();
 
   const [state] = React.useState(() => ({
-    enabled: !!props.enabled,
+    enabled: !!props.initEnabled,
     /** Initially `'black'`; afterwards always in `['faded', 'clear']` */
     colour: 'black' as 'black' | 'faded' | 'clear',
     expanded: false,
@@ -90,7 +90,7 @@ export default function Tabs(props: Props) {
           <Layout
             id={props.id}
             tabs={props.tabs}
-            enabled={!!props.enabled}
+            initEnabled={!!props.initEnabled}
           />
         )}
         <TabsOverlay
@@ -109,8 +109,7 @@ export default function Tabs(props: Props) {
 }
 
 interface Props {
-  /** Initially enabled? */
-  enabled?: boolean;
+  initEnabled?: boolean;
   height: number;
   /** Required */
   id: string;

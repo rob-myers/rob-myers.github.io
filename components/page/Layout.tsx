@@ -50,8 +50,7 @@ export default function Layout(props: Props) {
 interface Props {
   id: string;
   tabs: TabMeta[];
-  /** Initially enabled? */
-  enabled: boolean;
+  readonly initEnabled: boolean;
 }
 
 /**
@@ -83,7 +82,7 @@ function useRegisterTabs(props: Props, model: Model) {
           model.visitNodes(x => x instanceof TabNode && output.push(x));
           return output;
         },
-        disabled: !props.enabled,
+        disabled: !props.initEnabled,
         pagePathname: location.pathname,
       };
     }

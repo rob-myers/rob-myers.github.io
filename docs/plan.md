@@ -47,7 +47,7 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - Work on Solo NPC component
-  - onchange src/dst does not interrupt
+  - 🚧 onchange src/dst does not interrupt
 
 - ✅ use web animations polyfill
   > https://www.npmjs.com/package/web-animations-js

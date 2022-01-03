@@ -52,9 +52,7 @@ export default function NavCollide(props) {
           initSrc={state.initSrc}
           initDst={state.initDst}
           zoneKey={layoutKey}
-          onLoad={(api) => {
-            state.npcApi = api;
-          }}
+          onLoad={(api) => state.npcApi = api}
         />
       </g>
     </PanZoom>

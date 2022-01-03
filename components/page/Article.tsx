@@ -402,7 +402,7 @@ const articleComponents = (
           <Tabs
             height={height}
             tabs={def}
-            enabled={props.enabled === 'true'}
+            initEnabled={props.enabled === 'true'}
             id={props.name ? getTabsId(articleKey, props.name) : ''}
           />
         );
