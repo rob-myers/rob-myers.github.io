@@ -1,6 +1,6 @@
 ## Objective
 
-We are going to create a video game.
+We are going to create a **video game**.
 That's right, yet another game. 
 What's **unusual** is that
 (a) we're going to describe the process in great detail,
@@ -15,10 +15,12 @@ What kind of game is it?
 Why Game AI?
 
 > Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game.
-> An environment is needed to make it meaningful, fixed narratives/missions are not.
+<!-- > An environment is needed to make behaviour meaningful, fixed narratives/missions are not. -->
 
-We'll focus on combining [navigation](https://en.wikipedia.org/wiki/Navigation_mesh)-based behaviour, using thousands of Traveller-based assets.
-For clarity, here's a composite asset.
+We'll use [navigation meshes](https://en.wikipedia.org/wiki/Navigation_mesh) to simulate starship inhabitants,
+following the rules of [Traveller](https://en.wikipedia.org/wiki/Traveller_%28role-playing_game%29).
+Here's a Traveller-based asset called a _geomorph_;
+typically a starship is composed of many geomorphs.
 
 <div
   class="tabs"
@@ -43,13 +45,11 @@ The latter 2000+ symbols will form the underlying basis of _Starship Markup_.
 
 </aside>
 
-__TODO__ replace Visibility with better demo
+__TODO__ remove Visibility and Css3d demo, replacing with NPC demo combined with terminal in some way.
 
-__TODO__ pass disabled prop to tab when hidden
-
-We end with two basic demos.
+<!-- We end with two basic demos.
 You can pan/zoom, move the eyes, and view the obstacle polygons in 3D.
-There are respective CodeSandboxes i.e. [visibility](https://codesandbox.io/s/rogue-markup-visibility-demo-k66zi?file=/src/example/Visibility.jsx "@new-tab") and [height](https://codesandbox.io/s/rogue-markup-3d-demo-forked-gyher?file=/src/example/Css3d.jsx "@new-tab").
+There are respective CodeSandboxes i.e. [visibility](https://codesandbox.io/s/rogue-markup-visibility-demo-k66zi?file=/src/example/Visibility.jsx "@new-tab") and [height](https://codesandbox.io/s/rogue-markup-3d-demo-forked-gyher?file=/src/example/Css3d.jsx "@new-tab"). -->
 
 
 <div
