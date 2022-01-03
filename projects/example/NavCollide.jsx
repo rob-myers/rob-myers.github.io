@@ -36,7 +36,6 @@ export default function NavCollide(props) {
     } else {
       state.npcApi?.anim.play?.();
     }
-    state.npcApi.enabled = !props.disabled;
   }, [props.disabled]);
 
   return (

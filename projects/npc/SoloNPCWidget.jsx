@@ -6,12 +6,13 @@ import DraggablePath from "../ui/DraggablePath";
 export default function SoloNPCWidget(props) {
 
   const [state] = React.useState(() => {
+    /** @type {{ bot: SVGGElement; api: NPC.SoloApi }} */
     const output = {
       bot: /** @type {SVGGElement} */ ({}),
-      /** @type {NPC.SoloApi} */
       api: {
         anim: /** @type {Animation} */ ({}),
-        enabled: props.enabled,
+        isEnabled: () => state.api.anim.playState !== 'paused',
+        initPaused: false,
       },
     };
     props.onLoad(output.api);
@@ -42,12 +43,15 @@ export default function SoloNPCWidget(props) {
             return agg;
           }, { sofars: [0], total: 0 });
 
+          api.anim.cancel?.();
           api.anim = bot.animate(
             path.map((p, i) => ({ offset: sofars[i] / total, transform: `translate(${p.x}px, ${p.y}px)` })),
             { duration: 5000, iterations: Infinity, direction: 'alternate' },
           );
 
-          if (!api.enabled) api.anim.pause();
+          if (api.initPaused) {
+            api.anim.pause();
+          }
         }}
       />
     
