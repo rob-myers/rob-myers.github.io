@@ -50,6 +50,8 @@ export default function Layout(props: Props) {
 interface Props {
   id: string;
   tabs: TabMeta[];
+  /** Initially enabled? */
+  enabled: boolean;
 }
 
 /**
@@ -81,7 +83,7 @@ function useRegisterTabs(props: Props, model: Model) {
           model.visitNodes(x => x instanceof TabNode && output.push(x));
           return output;
         },
-        disabled: true,
+        disabled: !props.enabled,
         pagePathname: location.pathname,
       };
     }

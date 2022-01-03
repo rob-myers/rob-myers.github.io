@@ -87,7 +87,11 @@ export default function Tabs(props: Props) {
         className={state.expanded ? expandedCss : unexpandedCss(props.height)}
       >
         {state.colour !== 'black' && (
-          <Layout id={props.id} tabs={props.tabs} />
+          <Layout
+            id={props.id}
+            tabs={props.tabs}
+            enabled={!!props.enabled}
+          />
         )}
         <TabsOverlay
           enabled={state.enabled}

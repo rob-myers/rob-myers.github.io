@@ -2,10 +2,6 @@
 
 __Aim towards website release__.
 
-Each __TODO__ should either:
-(a) contribute to one of the initial articles
-(b) have a clear general nature which cannot be avoided
-
 ### _Objective_ i.e. intro
 
 - Include image of Geomorph with description ✅
@@ -30,7 +26,7 @@ Each __TODO__ should either:
 - CodeSandbox link more prominent ✅
 - Finish "React Renders and Web Components" ✅
 
-### _Technology (Part 2)_ i.e. nav and raycast
+### 🚧 _Technology (Part 2)_ i.e. nav and raycast
 
 - Write text 🚧 👈
 - ✅ NavStringPull: animate goto navigation
@@ -38,17 +34,20 @@ Each __TODO__ should either:
 - Raycasting
   > https://github.com/rob-myers/rob-myers.github.io/blob/dev/model/geom/geom.service.ts
 
-### _Technology (Part 3)_ i.e. static and runtime analysis
+### 🚧 _Technology (Part 3)_ i.e. static and runtime analysis
 
 - Write text 🚧
 
-### _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
+### 🚧 _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
 
 - Write text
 
 ---
 
 ## TODO (unsorted)
+
+- Work on Solo NPC component
+  - onchange src/dst does not interrupt
 
 - ✅ use web animations polyfill
   > https://www.npmjs.com/package/web-animations-js
@@ -61,7 +60,7 @@ Each __TODO__ should either:
 - get interested in simulating starship crews
 - declare this interest in objective
 
-- tech1; mention React "polyfill" of events, and why we avoid
+- tech1: mention React "polyfill" of events, and why we avoid
 - finish geomorph 101
 - implement front page
 
@@ -74,6 +73,7 @@ Each __TODO__ should either:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ fix initially enabled Tabs
 - ✅ hidden tabs get disabled prop and are rendered
 - ✅ page builds too big again
   - ~60kb from `rehype-raw` added to each page can be "ignored" via SSR

@@ -34,14 +34,17 @@ function useEnsurePortal(
         }},
       }));
 
-      // If parent <Tabs/> not disabled, wake this portal up
-      // - e.g. wake 2nd tab on 1st show
-      // - e.g. don't wake 1st tab when initially disabled
-      const currentTabs = Object.values(useSiteStore.getState().tabs).filter(tabs => tabs.pagePathname === location.pathname);
-      const parentTabs = currentTabs.find(tabs => tabs.def.some(x => x.filepath === meta.filepath));
-      if (parentTabs && !parentTabs.disabled) {
-        setTimeout(() =>  htmlPortalNode.setPortalProps({ disabled: false }), 300);
-      }
+      setTimeout(() => {
+        // If parent <Tabs/> not disabled, wake this portal up, e.g.
+        // - wake 1st tab if tabs initially enabled
+        // - wake 2nd tab on 1st show
+        // - don't wake 1st tab when initially disabled
+        const currentTabs = Object.values(useSiteStore.getState().tabs).filter(tabs => tabs.pagePathname === location.pathname);
+        const parentTabs = currentTabs.find(tabs => tabs.def.some(x => x.filepath === meta.filepath));
+        if (parentTabs && !parentTabs.disabled) {
+          setTimeout(() =>  htmlPortalNode.setPortalProps({ disabled: false }), 300);
+        }
+      });
 
     } else if (JSON.stringify(portal.meta) !== JSON.stringify(meta)) {
       console.warn('Detected different TabMetas with same portalKey', portal.meta, meta);
