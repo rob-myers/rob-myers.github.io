@@ -109,9 +109,8 @@ export class Pathfinding {
     const closestNode = this.getClosestNode(startPosition, zoneID, groupID, true);
     const farthestNode = this.getClosestNode(targetPosition, zoneID, groupID, true);
 
-    // If we can't find any node, return null
     if (!closestNode || !farthestNode) {
-      return null;
+      return null; // We can't find any node
     }
 
     const nodePath = AStar.search(
@@ -138,16 +137,16 @@ export class Pathfinding {
     channel.push(targetPosition);
     channel.stringPull();
 
-    // Return the path, omitting 1st position, which is already known
-    const path = (
-      /** @type {Geom.VectJson[]} */ (channel.path)
-    ).map((c) => new Vect(c.x, c.y));
-    path.shift();
+    const path = (/** @type {Geom.VectJson[]} */ (channel.path)).map(Vect.from);
+    
+    // Omit 1st point and discard adjacent repetitions
+    const normalised = path.slice(1).reduce((agg, p) => {
+      return agg.length && p.equals(agg[agg.length - 1])
+        ? agg
+        : agg.concat(p)
+    }, /** @type {Geom.Vect[]} */ ([]));
 
-    return {
-      path,
-      nodePath,
-    };
+    return { path: normalised, nodePath };
   }
 
   /**
