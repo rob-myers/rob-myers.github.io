@@ -62,7 +62,7 @@ export function getSvgMid(ptrs) {
  * - Only supports straight lines i.e. M, L, H, V, Z.
  * - Expects a __single polygon__ with ≥ 0 holes.
  * @param {string} svgPathString
- * @returns {null | Poly}
+ * @returns {null | Geom.Poly}
  */
 export function svgPathToPolygon(svgPathString) {
 	const rings = /** @type {Vect[][]} */ ([]);

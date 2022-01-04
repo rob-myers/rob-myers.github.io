@@ -146,7 +146,7 @@ export class Poly {
    * @param {Geom.VectJson} point 
    * @returns {boolean}
    */
-   contains(point) {
+  contains(point) {
     if (!this.rect.contains(point)) {
       return false;
     }

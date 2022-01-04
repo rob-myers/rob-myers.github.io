@@ -38,13 +38,13 @@ export default function SoloNPCWidget(props) {
           if (!bot || !path.length) {
             return;
           }
+
           /**
            * TODO rethink UI, sticking with forward fill
            */
           const npcPos = state.api.getPosition();
           const npcPathIndex = path.findIndex(p => p.equals(npcPos));
           const rPath = npcPathIndex !== -1 ? path.slice(npcPathIndex) : path;
-
           if (rPath.length === 1) {
             return; // Keep still
           }

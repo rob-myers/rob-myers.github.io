@@ -1,4 +1,3 @@
-import { getSvgPos } from 'projects/service/dom';
 import React from 'react';
 import { Poly, Vect } from '../geom';
 import { pathfinding } from '../pathfinding/Pathfinding';
@@ -10,7 +9,7 @@ export default function DraggablePath(props) {
   const [state] = React.useState(() => {
     return {
       /** @type {SVGPolylineElement} */
-      pathEl: ({}), // TODO maybe force render instead
+      pathEl: ({}),
       path: /** @type {Geom.Vect[]} */ ([]),
       src: Vect.from(props.initSrc),
       dst: Vect.from(props.initDst),
@@ -21,18 +20,27 @@ export default function DraggablePath(props) {
         state.path = path;
         state.pathEl.setAttribute('points', `${state.path}`);
       },
-      updatePath: () => {
+      /** @param {'src' | 'dst'} [changed] */
+      updatePath: (changed) => {
         const groupId = pathfinding.getGroup(props.zoneKey, state.src);
         if (groupId === null) {
-          return console.warn(`pathfinding.getGroup: ${state.src.x},${state.src.y}: no group found`);
+          return console.warn(`pathfinding: ${state.src.x}, ${state.src.y}: no group found`);
         }
 
         if (props.npcApi) {
-          // src --> npc --> dst
           const npcPos = props.npcApi.getPosition();
-          const pre = pathfinding.findPath(state.src, npcPos, props.zoneKey, groupId)?.path || [];
           const post = pathfinding.findPath(npcPos, state.dst, props.zoneKey, groupId)?.path || [];
-          state.path = [state.src.clone()].concat(pre, post);
+          if (changed === 'dst') {
+            // npc --> dst
+            state.path = [Vect.from(npcPos)].concat(post);
+            /**
+             * TODO change draggable src-node too
+             */
+          } else {
+            // src --> npc --> dst
+            const pre = pathfinding.findPath(state.src, npcPos, props.zoneKey, groupId)?.path || [];
+            state.path = [state.src.clone()].concat(pre, post);
+          }
         } else {// src --> dst
           state.path = [state.src.clone()].concat(
             pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId)?.path || []
@@ -62,7 +70,7 @@ export default function DraggablePath(props) {
     <g
       ref={(rootEl) => {
         if (rootEl) {
-          state.pathEl = /** @type {SVGPolylineElement} */ (rootEl.querySelector('polyline.navpath'));
+          state.pathEl = /** @type {*} */ (rootEl.querySelector('polyline.navpath'));
         }
       }}
     >
@@ -75,7 +83,7 @@ export default function DraggablePath(props) {
         onStop={(p) => {
           if (!state.pointInZone(p)) return 'cancel';
           state.src.copy(p);
-          state.updatePath();
+          state.updatePath('src');
         }}
         />
       <DraggableNode
@@ -86,7 +94,7 @@ export default function DraggablePath(props) {
         onStop={(p) => {
           if (!state.pointInZone(p)) return 'cancel';
           state.dst.copy(p);
-          state.updatePath();
+          state.updatePath('dst');
         }}
       />
     </g>

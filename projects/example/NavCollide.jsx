@@ -22,8 +22,8 @@ export default function NavCollide(props) {
   /** @type {Geomorph.LayoutKey} */
   const layoutKey = 'g-301--bridge';
   const [state] = React.useState(() => ({
-    initSrc: new Vect(300, 300),
-    initDst: new Vect(600, 300),
+    initSrc: new Vect(250, 100),
+    initDst: new Vect(600, 500),
     npcApi: /** @type {NPC.SoloApi} */ ({}),
   }));
 
