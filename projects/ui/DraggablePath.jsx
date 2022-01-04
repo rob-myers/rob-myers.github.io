@@ -30,14 +30,13 @@ export default function DraggablePath(props) {
 
         if (props.npcApi) {
           const npcPos = props.npcApi.getPosition();
-          const post = pathfinding.findPath(npcPos, state.dst, props.zoneKey, groupId)?.path || [];
-          if (changed === 'dst') {// npc --> dst
-            state.path = [Vect.from(npcPos)].concat(post);
+          const dst = state[changed || 'dst'];
+          const nextPath = pathfinding.findPath(npcPos, dst, props.zoneKey, groupId)?.path || [];
+          state.path = [Vect.from(npcPos)].concat(nextPath);
+          setTimeout(() => {
             state.srcApi.moveTo(npcPos);
-          } else {// src --> npc --> dst
-            const pre = pathfinding.findPath(state.src, npcPos, props.zoneKey, groupId)?.path || [];
-            state.path = [state.src.clone()].concat(pre, post);
-          }
+            state.dstApi.moveTo(dst);
+          });
         } else {// src --> dst
           state.path = [state.src.clone()].concat(
             pathfinding.findPath(state.src, state.dst, props.zoneKey, groupId)?.path || []

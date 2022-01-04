@@ -2,9 +2,7 @@ import React from "react";
 import { css } from "goober";
 import DraggablePath from "../ui/DraggablePath";
 
-// TODO
-// - changing src should reverse direction instead
-// - intermittent bug when redrag early
+// TODO sometimes path doesn't update
 
 /** @param {Props} props */
 export default function SoloNPCWidget(props) {
@@ -50,7 +48,7 @@ export default function SoloNPCWidget(props) {
           const npcPathIndex = path.findIndex(p => p.equals(npcPos));
           const rPath = npcPathIndex !== -1 ? path.slice(npcPathIndex) : path;
           if (rPath.length === 1) {
-            return; // Keep still
+            return; // Do not move
           }
 
           // Move bot along path using Web Animations API
@@ -63,6 +61,7 @@ export default function SoloNPCWidget(props) {
           }, { sofars: [0], total: 0 });
 
           api.anim.cancel?.();
+          // TODO 1 frame animations breaks polyfill
           api.anim = bot.animate(
             rPath.map((p, i) => ({ offset: total ? sofars[i] / total : 0, transform: `translate(${p.x}px, ${p.y}px)` })),
             // { duration: 5000, iterations: Infinity, direction: 'alternate' },

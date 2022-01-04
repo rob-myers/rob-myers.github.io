@@ -162,7 +162,7 @@ export default function DraggableNode(props) {
 
 const rootCss = css`
   circle.node {
-    fill: rgba(0, 0, 0, 0.2);
+    fill: rgba(0, 0, 100, 0.2);
     cursor: pointer;
   }
   circle.inner-node {
