@@ -8,11 +8,12 @@ export default function DraggablePath(props) {
 
   const [state] = React.useState(() => {
     return {
-      /** @type {SVGPolylineElement} */
-      pathEl: ({}),
+      pathEl: /** @type {SVGPolylineElement} */ ({}),
       path: /** @type {Geom.Vect[]} */ ([]),
       src: Vect.from(props.initSrc),
       dst: Vect.from(props.initDst),
+      srcApi: /** @type {NPC.DraggableNodeApi} */ ({}),
+      dstApi: /** @type {NPC.DraggableNodeApi} */ ({}),
       tris: /** @type {Vect[][]} */ ([]),
 
       /** @param {Geom.Vect[]} path */
@@ -30,14 +31,10 @@ export default function DraggablePath(props) {
         if (props.npcApi) {
           const npcPos = props.npcApi.getPosition();
           const post = pathfinding.findPath(npcPos, state.dst, props.zoneKey, groupId)?.path || [];
-          if (changed === 'dst') {
-            // npc --> dst
+          if (changed === 'dst') {// npc --> dst
             state.path = [Vect.from(npcPos)].concat(post);
-            /**
-             * TODO change draggable src-node too
-             */
-          } else {
-            // src --> npc --> dst
+            state.srcApi.moveTo(npcPos);
+          } else {// src --> npc --> dst
             const pre = pathfinding.findPath(state.src, npcPos, props.zoneKey, groupId)?.path || [];
             state.path = [state.src.clone()].concat(pre, post);
           }
@@ -85,7 +82,8 @@ export default function DraggablePath(props) {
           state.src.copy(p);
           state.updatePath('src');
         }}
-        />
+        onLoad={(api) => state.srcApi = api}
+      />
       <DraggableNode
         initial={props.initDst}
         radius={props.radius}
@@ -96,6 +94,7 @@ export default function DraggablePath(props) {
           state.dst.copy(p);
           state.updatePath('dst');
         }}
+        onLoad={(api) => state.dstApi = api}
       />
     </g>
   );

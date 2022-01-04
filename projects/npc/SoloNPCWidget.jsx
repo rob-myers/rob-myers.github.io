@@ -2,6 +2,10 @@ import React from "react";
 import { css } from "goober";
 import DraggablePath from "../ui/DraggablePath";
 
+// TODO
+// - changing src should reverse direction instead
+// - intermittent bug when redrag early
+
 /** @param {Props} props */
 export default function SoloNPCWidget(props) {
 

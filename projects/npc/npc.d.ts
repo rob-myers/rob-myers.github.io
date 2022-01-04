@@ -12,4 +12,8 @@ declare namespace NPC {
     readonly isEnabled: () => boolean;
   }
 
+  export interface DraggableNodeApi {
+    moveTo: (p: Geom.VectJson) => void;
+  }
+
 }

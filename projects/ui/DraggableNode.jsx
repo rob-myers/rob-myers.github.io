@@ -2,11 +2,14 @@ import { css } from "goober";
 import React from "react";
 import { Vect } from "../geom";
 import { getSvgPos } from "../service/dom";
+import useUpdate from '../hooks/use-update';
 
 /** @param {Props} props */
 export default function DraggableNode(props) {
 
-  const [state, setState] = React.useState(() => {
+  const update = useUpdate();
+
+  const [state] = React.useState(() => {
     return {
       position: Vect.from(props.initial),
       target: Vect.from(props.initial),
@@ -68,16 +71,24 @@ export default function DraggableNode(props) {
         state.endDrag();
         const cancelled = props.onStop?.(Vect.from(state.target)) === 'cancel';
         if (!cancelled) {
-          state.position.copy(state.target);
-          state.lineEl.setAttribute('x1', String(state.target.x));
-          state.lineEl.setAttribute('y1', String(state.target.y));
-          setState({ ...state });
+          state.moveTo(state.target);
         }
       },
       /** @param {KeyboardEvent} e */
       endDragOnEscape: (e) => void (e.key === 'Escape' && state.endDrag()),
+      /** @param {Geom.VectJson} p */
+      moveTo: (p) => {
+        state.position.copy(p);
+        state.lineEl.setAttribute('x1', String(state.target.x));
+        state.lineEl.setAttribute('y1', String(state.target.y));
+        update();
+      },
     };
   });
+
+  React.useEffect(() => {
+    props.onLoad?.({ moveTo: state.moveTo });
+  }, []);
 
   const radius = props.radius || 8;
 
@@ -170,9 +181,10 @@ const rootCss = css`
 /**
  * @typedef Props @type {object}
  * @property {Geom.VectJson} initial
- * @property {(position: Geom.Vect) => void | 'cancel'} [onStop]
- * @property {() => void} [onStart]
  * @property {number} [radius]
  * @property {UiTypes.IconKey} [icon]
  * @property {string} [stroke]
+ * @property {(api: NPC.DraggableNodeApi) => void} [onLoad]
+ * @property {() => void} [onStart]
+ * @property {(position: Geom.Vect) => void | 'cancel'} [onStop]
  */
