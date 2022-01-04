@@ -155,7 +155,7 @@ const articleCss = css`
     display: block;
     margin-top: -24px;
     margin-bottom: 32px;
-    font-family: monospace;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 0.9rem;
     line-height: 2.8;
     > span {
@@ -163,8 +163,9 @@ const articleCss = css`
       white-space: pre;
       > span {
         padding: 6px 10px;
-        border: 1px solid #ddd;
-        color: #666;
+        border: 1px solid #999;
+        background: #000;
+        color: #fff;
       }
     }
     @media(max-width: 600px) {
