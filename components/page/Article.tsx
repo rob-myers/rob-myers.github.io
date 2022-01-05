@@ -183,12 +183,10 @@ const articleCss = css`
     font-size: 0.7rem;
     font-family: sans-serif;
     letter-spacing: 2px;
-    color: #fff;
     span {
       padding: 4px 8px;
       margin-right: 4px;
       margin-bottom: 4px;
-      background: #99a;
       border-radius: 3px;
       border: 2px solid rgba(0, 0, 0, 0.1);
     }
