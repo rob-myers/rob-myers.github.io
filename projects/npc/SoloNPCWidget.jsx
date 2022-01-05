@@ -41,9 +41,6 @@ export default function SoloNPCWidget(props) {
             return;
           }
 
-          /**
-           * TODO rethink UI, sticking with forward fill
-           */
           const npcPos = state.api.getPosition();
           const npcPathIndex = path.findIndex(p => p.equals(npcPos));
           const rPath = npcPathIndex !== -1 ? path.slice(npcPathIndex) : path;
@@ -64,13 +61,9 @@ export default function SoloNPCWidget(props) {
           // TODO 1 frame animations breaks polyfill
           api.anim = bot.animate(
             rPath.map((p, i) => ({ offset: total ? sofars[i] / total : 0, transform: `translate(${p.x}px, ${p.y}px)` })),
-            // { duration: 5000, iterations: Infinity, direction: 'alternate' },
-            { duration: total * 10, direction: 'normal', fill: 'forwards' },
+            { duration: total * 15, direction: 'normal', fill: 'forwards' },
+            // { duration: total * 10, direction: 'normal', fill: 'forwards' },
           );
-          // api.anim = bot.animate(
-          //   path.map((p, i) => ({ offset: sofars[i] / total, transform: `translate(${p.x}px, ${p.y}px)` })),
-          //   { duration: 5000, iterations: Infinity, direction: 'alternate' },
-          // )
 
           if (api.initPaused) {
             api.anim.pause();
@@ -84,12 +77,23 @@ export default function SoloNPCWidget(props) {
           if (el && (state.bot !== el)) {
             state.bot = el;
             state.bot.animate([
+              { transform: `translate(0px, 0px)` },
               { transform: `translate(${props.initSrc.x}px, ${props.initSrc.y}px)` },
             ], { fill: 'forwards' });
           }
         }}
       >
-        <circle fill="red" stroke="black" strokeWidth={2} r={10} />
+        <circle
+          onClick={() => {
+            /**
+             * TODO pause onclick (not drag) either draggable node instead
+             */
+            const { anim } = state.api;
+            if (anim.playState === 'paused') anim.play();
+            else if (anim.playState === 'running') anim.pause();
+          }}
+          fill="red" stroke="black" strokeWidth={2} r={10}
+        />
         <line stroke="black" strokeWidth={2} x2={10} />
       </g>
     </g>
@@ -115,7 +119,7 @@ const rootCss = css`
   }
 
   g.bot {
-    pointer-events: none;
+    /* pointer-events: none; */
   }
 `;
 

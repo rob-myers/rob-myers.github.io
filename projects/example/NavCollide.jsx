@@ -66,7 +66,8 @@ const rootCss = css`
   polygon.navtri {
     fill: transparent;
     &:hover {
-      stroke: #900;
+      fill: rgba(0, 0, 0, 0.03);
+      stroke: black;
     }
   }
 `;
