@@ -9,7 +9,9 @@ declare namespace NPC {
     anim: Animation;
     readonly initPaused: boolean;
     readonly getPosition: () => Geom.VectJson;
-    readonly isEnabled: () => boolean;
+    readonly isPaused: () => boolean;
+    readonly isFinished: () => boolean;
+    readonly togglePaused: () => void;
   }
 
   export interface DraggableNodeApi {

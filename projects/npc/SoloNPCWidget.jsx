@@ -20,7 +20,9 @@ export default function SoloNPCWidget(props) {
           const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.bot).transform);
           return { x: matrix.m41, y: matrix.m42 };
         },
-        isEnabled: () => state.api.anim.playState !== 'paused',
+        isPaused: () => state.api.anim.playState === 'paused',
+        isFinished: () => state.api.anim.playState === 'finished',
+        togglePaused: () => state.api.isPaused() ? state.api.anim.play() : state.api.anim.pause(),
       },
     };
     props.onLoad(output.api);
@@ -62,7 +64,6 @@ export default function SoloNPCWidget(props) {
           api.anim = bot.animate(
             rPath.map((p, i) => ({ offset: total ? sofars[i] / total : 0, transform: `translate(${p.x}px, ${p.y}px)` })),
             { duration: total * 15, direction: 'normal', fill: 'forwards' },
-            // { duration: total * 10, direction: 'normal', fill: 'forwards' },
           );
 
           if (api.initPaused) {
@@ -77,23 +78,13 @@ export default function SoloNPCWidget(props) {
           if (el && (state.bot !== el)) {
             state.bot = el;
             state.bot.animate([
-              { transform: `translate(0px, 0px)` },
+              { transform: `translate(0px, 0px)` }, // Extra frame For polyfill
               { transform: `translate(${props.initSrc.x}px, ${props.initSrc.y}px)` },
             ], { fill: 'forwards' });
           }
         }}
       >
-        <circle
-          onClick={() => {
-            /**
-             * TODO pause onclick (not drag) either draggable node instead
-             */
-            const { anim } = state.api;
-            if (anim.playState === 'paused') anim.play();
-            else if (anim.playState === 'running') anim.pause();
-          }}
-          fill="red" stroke="black" strokeWidth={2} r={10}
-        />
+        <circle fill="red" stroke="black" strokeWidth={2} r={10} />
         <line stroke="black" strokeWidth={2} x2={10} />
       </g>
     </g>
@@ -119,7 +110,7 @@ const rootCss = css`
   }
 
   g.bot {
-    /* pointer-events: none; */
+    pointer-events: none;
   }
 `;
 

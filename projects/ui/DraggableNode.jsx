@@ -69,9 +69,13 @@ export default function DraggableNode(props) {
       },
       applyDrag: () => {
         state.endDrag();
-        const cancelled = props.onStop?.(Vect.from(state.target)) === 'cancel';
-        if (!cancelled) {
-          state.moveTo(state.target);
+        if (state.target.distanceTo(state.position) < 10) {// Click 
+          props.onClick?.(state.position.clone());
+        } else {// Drag
+          const cancelled = props.onStop?.(state.target.clone()) === 'cancel';
+          if (!cancelled) {
+            state.moveTo(state.target);
+          }
         }
       },
       /** @param {KeyboardEvent} e */
@@ -188,4 +192,5 @@ const rootCss = css`
  * @property {(api: NPC.DraggableNodeApi) => void} [onLoad]
  * @property {() => void} [onStart]
  * @property {(position: Geom.Vect) => void | 'cancel'} [onStop]
+ * @property {(position: Geom.Vect) => void} [onClick]
  */
