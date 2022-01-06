@@ -2,7 +2,8 @@ import React from "react";
 import { css } from "goober";
 import DraggablePath from "../ui/DraggablePath";
 
-// TODO sometimes path doesn't update
+// TODO
+// - isolate bug with backwards onclick
 
 /** @param {Props} props */
 export default function SoloNPCWidget(props) {
@@ -58,11 +59,18 @@ export default function SoloNPCWidget(props) {
             agg.sofars.push(agg.sofars[agg.sofars.length - 1] + length);
             return agg;
           }, { sofars: [0], total: 0 });
+          const angs = edges.map(e => Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2));
 
           api.anim.cancel?.();
           // TODO 1 frame animations breaks polyfill
           api.anim = bot.animate(
-            rPath.map((p, i) => ({ offset: total ? sofars[i] / total : 0, transform: `translate(${p.x}px, ${p.y}px)` })),
+            rPath.flatMap((p, i) => [{
+              offset: total ? sofars[i] / total : 0,
+              transform: `translate(${p.x}px, ${p.y}px) rotateZ(${angs[i - 1] || 0}rad)`,
+            }, {
+              offset: total ? sofars[i] / total : 0,
+              transform: `translate(${p.x}px, ${p.y}px) rotateZ(${angs[i]}rad)`,
+            }]),
             { duration: total * 15, direction: 'normal', fill: 'forwards' },
           );
 
