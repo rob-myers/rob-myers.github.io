@@ -58,7 +58,7 @@ export default function TriangleDev(props) {
     }).then(x => x.json()));
 
     const vs = vsJson.map(Vect.from);
-    const tris = triIds.map(triple => /** @type {Triple<Geom.Vect>} */ (triple.map(id => vs[id])));
+    const tris = triIds.map(triple => /** @type {[Geom.Vect, Geom.Vect, Geom.Vect]} */ (triple.map(id => vs[id])));
     return {
       tris,
     };
