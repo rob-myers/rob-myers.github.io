@@ -19,8 +19,8 @@ Why Game AI?
 
 We'll use [navigation meshes](https://en.wikipedia.org/wiki/Navigation_mesh) to simulate starship inhabitants,
 following the rules of [Traveller](https://en.wikipedia.org/wiki/Traveller_%28role-playing_game%29).
-Here's a Traveller-based asset called a _geomorph_;
-typically a starship is composed of many geomorphs.
+To makes things less abstract, here's a Traveller-based asset called a _geomorph_.
+
 
 <div
   class="tabs"
@@ -29,7 +29,7 @@ typically a starship is composed of many geomorphs.
   tabs="[{ key: 'component', filepath: 'example/Gm301Debug' }]"
 ></div>
 
-Above we've recreated **Geomorph 301** (a.k.a. _Bridge_) from Robert Pearce's [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
+We've recreated **Geomorph 301** (a.k.a. _Bridge_) from Robert Pearce's [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
 using 8 of his [Starship Symbols](http://travellerrpgblog.blogspot.com/2020/08/starship-symbols-book.html).
 Obstacles you can see over are shaded grey e.g. chairs and beds.
 Walls and obstacles which cannot be seen over are darker grey and black. The underlying polygons of these obstacles, together with the white rectangular doors, induce the _white triangulated navigable polygon_ shown above.
