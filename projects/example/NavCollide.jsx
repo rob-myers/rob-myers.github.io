@@ -11,9 +11,8 @@ import usePathfinding from "../hooks/use-pathfinding";
 import SoloNPCWidget from "projects/npc/SoloNPCWidget";
 
 // TODO
-// - extract bot into SoloNPCWidget
-// - SoloNPCWidget supports initial position sans pf
-// - develop SoloNPCWidget
+// - prevent target being too close to NPC
+// - how to change speed?
 // - tty integration
 
 /** @param {{ disabled?: boolean }} props */
@@ -22,9 +21,16 @@ export default function NavCollide(props) {
   /** @type {Geomorph.LayoutKey} */
   const layoutKey = 'g-301--bridge';
   const [state] = React.useState(() => ({
-    initSrc: new Vect(250, 100),
-    initDst: new Vect(600, 500),
-    npcApi: /** @type {NPC.SoloApi} */ ({}),
+    a: {
+      src: new Vect(250, 100),
+      dst: new Vect(600, 500),
+      api: /** @type {NPC.SoloApi} */ ({}),
+    },
+    b: {
+      src: new Vect(260, 200),
+      dst: new Vect(600, 340),
+      api: /** @type {NPC.SoloApi} */ ({}),
+    },
   }));
 
   const { data: gm } = useGeomorphJson(layoutKey);
@@ -32,14 +38,16 @@ export default function NavCollide(props) {
 
   React.useEffect(() => {
     if (props.disabled) {
-      state.npcApi?.anim.pause?.();
+      state.a.api?.anim.pause?.();
+      state.b.api?.anim.pause?.();
     } else {
-      state.npcApi?.anim.play?.();
+      state.a.api?.anim.play?.();
+      state.b.api?.anim.play?.();
     }
   }, [props.disabled]);
 
   return (
-    <PanZoom gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
+    <PanZoom dark gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
       <g className={rootCss}>
         {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
@@ -49,10 +57,18 @@ export default function NavCollide(props) {
 
         <SoloNPCWidget
           enabled={!!pf}
-          initSrc={state.initSrc}
-          initDst={state.initDst}
+          initSrc={state.a.src}
+          initDst={state.a.dst}
           zoneKey={layoutKey}
-          onLoad={(api) => state.npcApi = api}
+          onLoad={(api) => state.a.api = api}
+        />
+
+        <SoloNPCWidget
+          enabled={!!pf}
+          initSrc={state.b.src}
+          initDst={state.b.dst}
+          zoneKey={layoutKey}
+          onLoad={(api) => state.b.api = api}
         />
       </g>
     </PanZoom>
