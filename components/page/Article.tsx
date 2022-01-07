@@ -156,20 +156,19 @@ const articleCss = css`
     margin-top: -24px;
     margin-bottom: 32px;
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-size: 0.9rem;
-    line-height: 2.8;
+    font-size: 0.8rem;
+    line-height: 3;
     > span {
       margin-right: 16px;
       white-space: pre;
       > span {
         padding: 6px 10px;
         border: 1px solid #999;
-        background: #000;
+        background: #222;
         color: #fff;
       }
     }
     @media(max-width: 600px) {
-      font-size: 0.8rem;
       margin-top: 0px;
       > span {
         padding: 4px 0px;
