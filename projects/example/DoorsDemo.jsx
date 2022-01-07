@@ -6,7 +6,7 @@ import PanZoom from "../panzoom/PanZoom";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 
 
-/** @param {{ layoutKey: Geomorph.LayoutKey }} props */
+/** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
 export default function DoorsDemo(props) {
 
   const { data } = useGeomorphJson(props.layoutKey);
@@ -24,7 +24,7 @@ export default function DoorsDemo(props) {
           className="geomorph"
           href={geomorphPngPath(props.layoutKey)}
         />
-        <ForeignObject json={data} />
+        {!props.disabled && <ForeignObject json={data} />}
       </>}
     </PanZoom>
   );

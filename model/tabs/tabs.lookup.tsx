@@ -25,9 +25,9 @@ const component = {
   'example/PanZoomDemo': () => import('projects/example/PanZoomDemo')
     .then(x => x.default),
   'example/DoorsDemo#101': () => import('projects/example/DoorsDemo')
-    .then(x => (props: any) => <x.default {...props} layoutKey='g-101--multipurpose' />),
+    .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-101--multipurpose' />),
   'example/DoorsDemo#301': () => import('projects/example/DoorsDemo')
-    .then(x => (props: any) => <x.default {...props} layoutKey='g-301--bridge' />),
+    .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/NavStringPull': () => import('projects/example/NavStringPull')
     .then(x => (props:any) => <x.default disabled {...props} />),
   'example/NavGraph#301': () => import('projects/example/NavGraph')
