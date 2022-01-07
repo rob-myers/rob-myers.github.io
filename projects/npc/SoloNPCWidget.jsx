@@ -15,6 +15,7 @@ export default function SoloNPCWidget(props) {
       api: {
         key: 'solo',
         anim: /** @type {Animation} */ ({}),
+        animCount: 0,
         initPaused: false,
         getPosition: () => {
           // https://stackoverflow.com/a/4976554/2917822
@@ -61,7 +62,9 @@ export default function SoloNPCWidget(props) {
           }, { sofars: [0], total: 0 });
           const angs = edges.map(e => Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2));
 
+          const wasPaused = api.anim.playState === 'paused';
           api.anim.cancel?.();
+
           // TODO careful about breaking polyfill
           api.anim = bot.animate(
             rPath.flatMap((p, i) => [{
@@ -74,9 +77,11 @@ export default function SoloNPCWidget(props) {
             { duration: total * 15, direction: 'normal', fill: 'forwards' },
           );
 
-          if (api.initPaused) {
+          if (wasPaused || (api.animCount === 0 && api.initPaused)) {
             api.anim.pause();
           }
+
+          api.animCount++;
         }}
       />
     
