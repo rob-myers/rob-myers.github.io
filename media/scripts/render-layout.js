@@ -65,7 +65,10 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.p
 
   fs.writeFileSync(path.resolve(outputDir, `${layoutDef.key}.json`), stringify(json));
 
-  await pipeline(canvas.createPNGStream(),  fs.createWriteStream(outputPath));
+  await pipeline(
+    canvas.createPNGStream(), 
+    fs.createWriteStream(outputPath),
+  );
 })();
 
 /** @type {Geomorph.RenderOpts} */

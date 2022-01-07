@@ -62,7 +62,7 @@ export default function SoloNPCWidget(props) {
           const angs = edges.map(e => Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2));
 
           api.anim.cancel?.();
-          // TODO 1 frame animations breaks polyfill
+          // TODO careful about breaking polyfill
           api.anim = bot.animate(
             rPath.flatMap((p, i) => [{
               offset: total ? sofars[i] / total : 0,
