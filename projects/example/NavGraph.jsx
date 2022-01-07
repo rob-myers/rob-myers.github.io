@@ -51,7 +51,13 @@ export default function NavGraphDemo(props) {
 
         {pf.zone.groups.map(nodes =>
           nodes.map(({ id, centroid }) =>
-            <circle key={id} className="node" cx={centroid.x} cy={centroid.y} r={2} />
+            <circle
+              key={id}
+              className="node"
+              cx={centroid.x}
+              cy={centroid.y}
+              r={2}
+            />
         ))}
       </>
       }
@@ -64,7 +70,7 @@ const rootCss = css`
     /* filter: invert(); */
   }
   circle.node {
-    fill: red;
+    fill: #ff000068;
     pointer-events: none;
   }
   line.edge {
@@ -75,10 +81,10 @@ const rootCss = css`
 
   polygon.navtri {
     fill: transparent;
-    transition: fill 2s;
+    transition: fill 0.3s;
     &:hover, &:active, &:focus {
       fill: #8080ff37;
-      stroke-width: 6;
+      stroke: rgba(0, 0, 255, 0.3);
     }
   }  
 `;
