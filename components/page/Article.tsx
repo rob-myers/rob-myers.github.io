@@ -189,6 +189,8 @@ const articleCss = css`
       margin-bottom: 4px;
       border-radius: 3px;
       border: 2px solid rgba(0, 0, 0, 0.1);
+      background: #555;
+      color: #fff;
     }
     @media(max-width: 600px) {
       font-size: 0.65rem;
