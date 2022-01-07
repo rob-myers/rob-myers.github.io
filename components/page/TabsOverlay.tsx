@@ -49,7 +49,7 @@ const controlsCss = css`
 
   > .top-right {
     position: absolute;
-    right: -10px;
+    right: calc(-1 * var(--tabs-border-width));
     top: -38px;
     z-index: 2;
     height: 38px;

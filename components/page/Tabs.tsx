@@ -194,7 +194,7 @@ const unexpandedCss = (height: number) => css`
   width: 100%;
   height: ${height}px;
   position: relative;
-  border: 10px solid #444;
+  border: var(--tabs-border-width) solid #444;
 `;
 
 /** When expanded we need to fill original space */
@@ -210,7 +210,7 @@ const expandedCss = css`
   left: 5%;
   width: 90%;
   height: calc(100% - 160px);
-  border: 10px solid #444;
+  border: var(--tabs-border-width) solid #444;
   @media(max-width: 600px) {
     left: 0;
     top: 80px;
