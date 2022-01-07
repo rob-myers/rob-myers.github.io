@@ -170,6 +170,7 @@ const articleCss = css`
     }
     @media(max-width: 600px) {
       margin-top: 0px;
+      font-size: 0.7rem;
       > span {
         padding: 4px 0px;
       }
