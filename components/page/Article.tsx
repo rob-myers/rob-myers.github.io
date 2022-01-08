@@ -155,7 +155,6 @@ const articleCss = css`
     display: block;
     margin-top: -24px;
     margin-bottom: 32px;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 0.8rem;
     line-height: 3;
     > span {
@@ -164,8 +163,6 @@ const articleCss = css`
       > span {
         padding: 6px 10px;
         border: 1px solid #999;
-        background: #222;
-        color: #fff;
       }
     }
     @media(max-width: 600px) {
