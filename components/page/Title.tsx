@@ -1,10 +1,11 @@
 import { useRouter } from 'next/router';
 import classNames from 'classnames';
 import { css } from 'goober';
-
 import ReactMarkdown from 'react-markdown';
+
 import NavMini from './NavMini';
-import Continue from './Continue';
+// Continue reads from localStorage, so avoid SSR
+import { Continue } from '../dynamic';
 
 export default function Title() {
   return (

@@ -5,6 +5,7 @@ import type _Terminal from './sh/Terminal';
 import type _XTerm from './sh/XTerm';
 import type _Nav from './page/Nav';
 import type _Portals from './page/Portals';
+import type _Continue from './page/Continue';
 
 export const CodeEditor = dynamic(
   () => import('./code/CodeEditor'),
@@ -35,3 +36,8 @@ export const Portals = dynamic(
   () => import('./page/Portals'),
   { ssr: false },
 ) as typeof _Portals;
+
+export const Continue = dynamic(
+  () => import('./page/Continue'),
+  { ssr: false },
+) as typeof _Continue;
