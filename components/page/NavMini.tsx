@@ -45,6 +45,7 @@ const rootCss = css`
   font-size: 1rem;
 
   > ul {
+    background: #000;
     position: fixed;
     width: ${width}px;
     height: ${barHeight}px;

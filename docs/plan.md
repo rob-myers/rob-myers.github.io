@@ -55,7 +55,7 @@ __Aim towards website release__.
   - Tabs don't load until scroll into view
   - Tabs disable on scroll out of view
 
-- show/hide `Continue` appropriately
+- ✅ show/hide `Continue` appropriately
 - GitHub Comments
 - get interested in simulating starship crews
 - declare this interest in objective

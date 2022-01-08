@@ -41,7 +41,7 @@ export default function Link(props: Props) {
 
         if (props.prePush && !changePage) {
           // Push hash into history if we didn't change page,
-          // otherwise we'll overwrite the prePrush
+          // otherwise we'll overwrite the prePush
           Router.push(hash);
         } else {
           Router.replace(hash);
