@@ -39,7 +39,8 @@ export default function DraggablePath(props) {
       },
       /** @param {'src' | 'dst'} [changed] */
       updatePath: (changed) => {
-        const groupId = pathfinding.getGroup(props.zoneKey, state.src);
+        const groupId = pathfinding.getGroup(props.zoneKey, state[changed || 'dst']);
+
         if (groupId === null) {
           return console.warn(`pathfinding: ${state.src.x}, ${state.src.y}: no group found`);
         }
