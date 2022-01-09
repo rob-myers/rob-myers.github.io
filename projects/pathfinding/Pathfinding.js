@@ -106,9 +106,8 @@ export class Pathfinding {
     const nodes = this.zones[zoneID].groups[groupID];
     const vertices = this.zones[zoneID].vertices;
 
-    // checkPolygon `false` because points along path may fail to lie inside navpoly
-    const closestNode = this.getClosestNode(startPosition, zoneID, groupID, false);
-    const farthestNode = this.getClosestNode(targetPosition, zoneID, groupID, false);
+    const closestNode = this.getClosestNode(startPosition, zoneID, groupID);
+    const farthestNode = this.getClosestNode(targetPosition, zoneID, groupID);
 
     if (!closestNode || !farthestNode) {
       return null; // We can't find any node
@@ -194,9 +193,8 @@ export class Pathfinding {
    * @param  {Geom.VectJson} position
    * @param  {string}  zoneID
    * @param  {number}  groupID
-   * @param  {boolean} checkPolygon
    */
-  getClosestNode (position, zoneID, groupID, checkPolygon = false) {
+  getClosestNode (position, zoneID, groupID) {
     const nodes = this.zones[zoneID].groups[groupID];
     const vertices = this.zones[zoneID].vertices;
     let closestNode = /** @type {null | Nav.GraphNode} */ (null);
@@ -204,12 +202,22 @@ export class Pathfinding {
 
     nodes.forEach((node) => {
       const distance = Utils.distanceToSquared(node.centroid, position);
-      if (distance < closestDistance
-          && (!checkPolygon || Utils.isVectorInPolygon(position, node, vertices))) {
+      if (distance < closestDistance && Utils.isVectorInPolygon(position, node, vertices)) {
         closestNode = node;
         closestDistance = distance;
       }
     });
+
+    if (!closestNode) {// Fallback to centroids (possibly initial zig-zag)
+      nodes.forEach((node) => {
+        const distance = Utils.distanceToSquared(node.centroid, position);
+        if (distance < closestDistance) {
+          closestNode = node;
+          closestDistance = distance;
+        }
+      });
+    }
+
 
     return /** @type {Nav.GraphNode} */ (closestNode);
   }
@@ -228,38 +236,27 @@ export class Pathfinding {
   }
 
   /**
-   * Returns closest node group ID for given position.
+   * Returns node group ID containing given position, or null.
    * @param  {string} zoneID
    * @param  {Geom.VectJson} position
    */
-  getGroup(zoneID, position, checkPolygon = false) {
+  getGroup(zoneID, position) {
     if (!this.zones[zoneID]) return null;
-
-    /** @type {null | number} */
-    let closestNodeGroup = null;
-    let distance = Math.pow(this.MAX_DIST_TO_SOME_CENTROID, 2);
     const zone = this.zones[zoneID];
 
     for (let i = 0; i < zone.groups.length; i++) {
       const group = zone.groups[i];
       for (const node of group) {
-        if (checkPolygon) {
-          const poly = [
-            zone.vertices[node.vertexIds[0]],
-            zone.vertices[node.vertexIds[1]],
-            zone.vertices[node.vertexIds[2]],
-          ];
-          if(Utils.isPointInPoly(poly, position)) return i;
-        }
-        const measuredDistance = Utils.distanceToSquared(node.centroid, position);
-        if (measuredDistance < distance) {
-          closestNodeGroup = i;
-          distance = measuredDistance;
-        }
+        const poly = [
+          zone.vertices[node.vertexIds[0]],
+          zone.vertices[node.vertexIds[1]],
+          zone.vertices[node.vertexIds[2]],
+        ];
+
+        if (Utils.isPointInPoly(poly, position)) return i;
       }
     }
-
-    return closestNodeGroup;
+    return null;
   }
 
   /**
