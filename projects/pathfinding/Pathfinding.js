@@ -106,8 +106,9 @@ export class Pathfinding {
     const nodes = this.zones[zoneID].groups[groupID];
     const vertices = this.zones[zoneID].vertices;
 
-    const closestNode = this.getClosestNode(startPosition, zoneID, groupID, true);
-    const farthestNode = this.getClosestNode(targetPosition, zoneID, groupID, true);
+    // checkPolygon `false` because points along path may fail to lie inside navpoly
+    const closestNode = this.getClosestNode(startPosition, zoneID, groupID, false);
+    const farthestNode = this.getClosestNode(targetPosition, zoneID, groupID, false);
 
     if (!closestNode || !farthestNode) {
       return null; // We can't find any node

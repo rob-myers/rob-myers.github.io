@@ -24,7 +24,15 @@ export default function SoloNPCWidget(props) {
         },
         isPaused: () => state.api.anim.playState === 'paused',
         isFinished: () => state.api.anim.playState === 'finished',
-        togglePaused: () => state.api.isPaused() ? state.api.anim.play() : state.api.anim.pause(),
+        togglePaused: () => {
+          if (state.api.isFinished()) {
+            return;
+          } else if (state.api.isPaused()) {
+            state.api.anim.play();
+          } else {
+            state.api.anim.pause();
+          }
+        },
       },
     };
     props.onLoad(output.api);
@@ -38,7 +46,7 @@ export default function SoloNPCWidget(props) {
         initDst={props.initDst}
         zoneKey={props.zoneKey}
         npcApi={state.api}
-        radius={4}
+        radius={24}
         onChange={(path) => {
           const { bot, api } = state;
           if (!bot || !path.length) {

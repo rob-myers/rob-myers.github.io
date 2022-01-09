@@ -55,6 +55,7 @@ export default function DraggableNode(props) {
         }
       },
       endDrag: () => {
+        if (!state.dragging) return;
         state.dragging = false; // Mutate
         state.lineEl.style.display = 'none';
         state.lineEl.setAttribute('x2', /** @type {*} */ (state.lineEl.getAttribute('x1')));
@@ -68,14 +69,19 @@ export default function DraggableNode(props) {
         svg.style.cursor = 'auto';
       },
       applyDrag: () => {
+        if (!state.dragging) return;
         state.endDrag();
+        if (props.shouldCancel?.(state.position.clone(), state.target.clone())) {
+          // console.log('drag cancelled');
+          return;
+        }
         if (state.target.distanceTo(state.position) < 10) {// Click 
+          // console.log('click')
           props.onClick?.(state.position.clone());
         } else {// Drag
-          const cancelled = props.onStop?.(state.target.clone()) === 'cancel';
-          if (!cancelled) {
-            state.moveTo(state.target);
-          }
+          // console.log('drag')
+          props.onStop?.(state.target.clone());
+          // state.moveTo(state.target); // Moved in super component
         }
       },
       /** @param {KeyboardEvent} e */
@@ -147,14 +153,14 @@ export default function DraggableNode(props) {
           className="inner-node"
           cx={state.position.x}
           cy={state.position.y}
-          r={radius}
+          r={4}
         />
       )}
       <circle
         className="node"
         cx={state.position.x}
         cy={state.position.y}
-        r={radius + 20}
+        r={radius}
       />
       <line
         className="drag-indicator"
@@ -193,4 +199,5 @@ const rootCss = css`
  * @property {() => void} [onStart]
  * @property {(position: Geom.Vect) => void | 'cancel'} [onStop]
  * @property {(position: Geom.Vect) => void} [onClick]
+ * @property {(current: Geom.Vect, next: Geom.Vect) => void} [shouldCancel]
  */

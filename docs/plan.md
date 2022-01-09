@@ -49,13 +49,10 @@ __Aim towards website release__.
 - Work on Solo NPC component
   - 🚧 onchange src/dst does not interrupt
 
-- ✅ use web animations polyfill
-  > https://www.npmjs.com/package/web-animations-js
 - offscreen tabs get disabled + rendered after 5 secs
   - Tabs don't load until scroll into view
   - Tabs disable on scroll out of view
 
-- ✅ show/hide `Continue` appropriately
 - GitHub Comments
 - get interested in simulating starship crews
 - declare this interest in objective
@@ -73,6 +70,10 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ show/hide `Continue` appropriately
+- ✅ use web animations polyfill
+  - https://www.npmjs.com/package/web-animations-js
+  - ISSUES PERSIST e.g. fill not properly implemented?
 - ✅ fix initially enabled Tabs
 - ✅ hidden tabs get disabled prop and are rendered
 - ✅ page builds too big again
