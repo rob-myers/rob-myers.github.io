@@ -72,7 +72,7 @@ export default function SoloNPCWidget(props) {
               transform: `translate(${p.x}px, ${p.y}px) rotateZ(${angs[i - 1] || 0}rad)`,
             }, {
               offset: total ? sofars[i] / total : 0,
-              transform: `translate(${p.x}px, ${p.y}px) rotateZ(${angs[i]}rad)`,
+              transform: `translate(${p.x}px, ${p.y}px) rotateZ(${angs[i] || 0}rad)`,
             }]),
             { duration: total * 15, direction: 'normal', fill: 'forwards' },
           );
