@@ -5,7 +5,7 @@ We now turn to Game AI. -->
 
 ### Overview
 
-_Spaceship Markup_ will present a birdseye viewpoint of the interior of starships.
+_Starship Markup_ will present a birdseye viewpoint of the interior of starships.
 The [crew](https://wiki.travellerrpg.com/Crew "@new-tab") will have tasks, such as manning the bridge, patrolling the decks, monitoring [low berths](https://wiki.travellerrpg.com/Low_Passage "@new-tab").
 These behaviours will be constrained by e.g. sleep patterns, the behaviour of others, and hardware failures.
 
