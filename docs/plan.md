@@ -36,7 +36,7 @@ __Aim towards website release__.
 
 ### 🚧 _Technology (Part 3)_ i.e. static and runtime analysis
 
-- Write text 🚧
+- 🚧 Write text
 
 ### 🚧 _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
 
@@ -46,8 +46,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- Work on Solo NPC component
-  - 🚧 onchange src/dst does not interrupt
+
+- geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
+- NPCs can connect to meta points
 
 - offscreen tabs get disabled + rendered after 5 secs
   - Tabs don't load until scroll into view
@@ -70,6 +71,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ resize terminal on resize tab (drag or move slider)
+- ✅ Improve Solo NPC component
 - ✅ show/hide `Continue` appropriately
 - ✅ use web animations polyfill
   - https://www.npmjs.com/package/web-animations-js

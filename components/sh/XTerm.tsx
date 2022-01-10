@@ -5,7 +5,7 @@ import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { withSize } from 'react-sizeme';
 
-export default withSize()(
+export default withSize({ monitorHeight: true })(
   function XTermComponent(props: Props) {
     const containerRef = useRef<HTMLDivElement>(null);
     const xtermRef = useRef<Terminal>();
