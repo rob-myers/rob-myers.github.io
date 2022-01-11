@@ -14,6 +14,7 @@ declare namespace NPC {
     readonly getPosition: () => Geom.VectJson;
     readonly isPaused: () => boolean;
     readonly isFinished: () => boolean;
+    readonly isPlaying: () => boolean;
     readonly togglePaused: () => void;
   }
 

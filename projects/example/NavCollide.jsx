@@ -21,16 +21,12 @@ export default function NavCollide(props) {
   /** @type {Geomorph.LayoutKey} */
   const layoutKey = 'g-301--bridge';
   const [state] = React.useState(() => ({
-    a: {
-      src: new Vect(250, 100),
-      dst: new Vect(600, 500),
-      api: /** @type {NPC.SoloApi} */ ({}),
-    },
-    b: {
-      src: new Vect(260, 200),
-      dst: new Vect(600, 340),
-      api: /** @type {NPC.SoloApi} */ ({}),
-    },
+    bots: [0, 1].map(i => ({
+      src: new Vect(...[[250, 100], [260, 200]][i]),
+      dst: new Vect(...[[600, 500], [600, 340]][i]),
+      api: /** @type {NPC.SoloApi} */ ({}),  // TODO better way?
+      wasPlaying: false,
+    })),
   }));
 
   const { data: gm } = useGeomorphJson(layoutKey);
@@ -38,16 +34,28 @@ export default function NavCollide(props) {
 
   React.useEffect(() => {
     if (props.disabled) {
-      state.a.api?.anim.pause?.();
-      state.b.api?.anim.pause?.();
+      state.bots.forEach(bot => {
+        if (bot.api.anim) {
+          bot.wasPlaying = bot.api.isPlaying();
+          bot.api?.anim.pause?.();
+        }
+      });
     } else {
-      state.a.api?.anim.play?.();
-      state.b.api?.anim.play?.();
+      state.bots.forEach(bot => {
+        if (bot.wasPlaying) {
+          bot.api?.anim.play?.();
+        }
+      });
     }
   }, [props.disabled]);
 
   return (
-    <PanZoom dark gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
+    <PanZoom
+      dark
+      gridBounds={defaults.gridBounds}
+      initViewBox={initViewBox}
+      maxZoom={6}
+    >
       <g className={rootCss}>
         {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
@@ -55,21 +63,16 @@ export default function NavCollide(props) {
           <polygon className="navtri" points={`${vertexIds.map(id => pf.zone.vertices[id])}`} />
         ))}
 
-        <SoloNPCWidget
-          enabled={!!pf}
-          initSrc={state.a.src}
-          initDst={state.a.dst}
-          zoneKey={layoutKey}
-          onLoad={(api) => state.a.api = api}
-        />
+        {state.bots.map(bot => (
+          <SoloNPCWidget
+            enabled={!!pf}
+            initSrc={bot.src}
+            initDst={bot.dst}
+            zoneKey={layoutKey}
+            onLoad={(api) => bot.api = api}
+          />
+        ))}
 
-        <SoloNPCWidget
-          enabled={!!pf}
-          initSrc={state.b.src}
-          initDst={state.b.dst}
-          zoneKey={layoutKey}
-          onLoad={(api) => state.b.api = api}
-        />
       </g>
     </PanZoom>
   );
@@ -78,6 +81,10 @@ export default function NavCollide(props) {
 const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
+
+  /* image {
+    filter: invert(100%) sepia(50%);
+  } */
 
   polygon.navtri {
     fill: transparent;
@@ -88,4 +95,4 @@ const rootCss = css`
   }
 `;
 
-const initViewBox = new Rect(200, 0, 600, 600);
+const initViewBox = new Rect(200, 0, 800, 800);

@@ -46,6 +46,10 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- on resume NPC via src node click, path preserved and animation shortened
+- ✅ NavCollide: on hide/show only resume previously playing
+- can turn NPC
+- can change NPC speed
 
 - geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
 - NPCs can connect to meta points

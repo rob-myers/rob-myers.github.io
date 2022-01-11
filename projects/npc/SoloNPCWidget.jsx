@@ -23,6 +23,7 @@ export default function SoloNPCWidget(props) {
           return { x: matrix.m41, y: matrix.m42 };
         },
         isPaused: () => state.api.anim.playState === 'paused',
+        isPlaying: () => state.api.anim.playState === 'running',
         isFinished: () => state.api.anim.playState === 'finished',
         togglePaused: () => {
           if (state.api.isFinished()) {
