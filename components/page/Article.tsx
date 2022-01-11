@@ -155,19 +155,21 @@ const articleCss = css`
     display: block;
     margin-top: -24px;
     margin-bottom: 32px;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     line-height: 3;
     > span {
       margin-right: 16px;
       white-space: pre;
       > span {
-        padding: 6px 10px;
-        border: 1px solid #999;
+        padding: 6px 8px;
+        margin: 0 1px;
+        background: #222;
+        border-radius: 2px;
+        color: #ffffff;
       }
     }
     @media(max-width: 600px) {
-      margin-top: 0px;
-      font-size: 0.7rem;
+      margin-top: 0;
       > span {
         padding: 4px 0px;
       }
@@ -181,7 +183,7 @@ const articleCss = css`
     font-family: sans-serif;
     letter-spacing: 2px;
     span {
-      padding: 4px 8px;
+      padding: 2px 8px;
       margin-right: 4px;
       margin-bottom: 4px;
       border-radius: 3px;
@@ -190,10 +192,9 @@ const articleCss = css`
       color: #fff;
     }
     @media(max-width: 600px) {
-      font-size: 0.65rem;
-      span {
-        padding: 3px 8px;
-      }
+      margin-top: -16px;
+      margin-bottom: 24px;
+      /* font-size: 0.65rem; */
     }
   }
   h3 {
