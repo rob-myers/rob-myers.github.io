@@ -10,8 +10,6 @@ export default function DraggablePath(props) {
     return {
       pathEl: /** @type {SVGPolylineElement} */ ({}),
       path: /** @type {Geom.Vect[]} */ ([]),
-      src: Vect.from(props.initSrc),
-      dst: Vect.from(props.initDst),
       srcApi: /** @type {NPC.DraggableNodeApi} */ ({}),
       dstApi: /** @type {NPC.DraggableNodeApi} */ ({}),
       tris: /** @type {Vect[][]} */ ([]),
@@ -27,8 +25,6 @@ export default function DraggablePath(props) {
           setTimeout(() => {
             state.srcApi.moveTo(npcPos);
             state.dstApi.moveTo(dst);
-            state.src.copy(npcPos);
-            state.dst.copy(dst);
           });
         }
       },
@@ -39,14 +35,14 @@ export default function DraggablePath(props) {
       },
       /** @param {'src' | 'dst'} [changed] */
       updatePath: (changed) => {
-        const groupId = pathfinding.getGroup(props.zoneKey, state[changed || 'dst']);
+        const dst = (changed || 'dst') === 'dst' ? state.dstApi.getPosition() : state.srcApi.getPosition();
+        const groupId = pathfinding.getGroup(props.zoneKey, dst);
 
         if (groupId === null) {
-          return console.warn(`pathfinding: ${state.src.x}, ${state.src.y}: no group found`);
+          return console.warn(`pathfinding: ${dst.x}, ${dst.y}: no group found`);
         }
 
         state.lastGroupId = groupId;
-        const dst = state[changed || 'dst'];
         state.moveNpcTo(dst);
         state.setPath(state.path);
         props.onChange?.(state.path);
@@ -97,11 +93,13 @@ export default function DraggablePath(props) {
         radius={props.radius}
         icon={props.srcIcon}
         onStart={() => props.onStart?.('src')}
-        onStop={(p) => {
-          state.src.copy(p);
+        onStop={() => {
           state.updatePath('src');
         }}
-        onLoad={(api) => state.srcApi = api}
+        onLoad={(api) => {
+          state.srcApi = api;
+          api.moveTo(props.initSrc);
+        }}
         onClick={() => {
           if (props.npcApi.isFinished()) {
             state.path.reverse();
@@ -117,7 +115,7 @@ export default function DraggablePath(props) {
           }
         }}
         shouldCancel={(current, next) => {
-          return state.shouldCancel(current, next, state.dst);
+          return state.shouldCancel(current, next, state.dstApi.getPosition());
         }}
       />
       <DraggableNode
@@ -125,16 +123,18 @@ export default function DraggablePath(props) {
         radius={props.radius}
         icon={props.dstIcon}
         onStart={() => props.onStart?.('dst')}
-        onStop={(p) => {
-          state.dst.copy(p);
+        onStop={() => {
           state.updatePath('dst');
         }}
-        onLoad={(api) => state.dstApi = api}
+        onLoad={(api) => {
+          state.dstApi = api;
+          api.moveTo(props.initDst);
+        }}
         onClick={() => {
           props.npcApi?.togglePaused();
         }}
         shouldCancel={(current, next) => {
-          return state.shouldCancel(current, next, state.src);
+          return state.shouldCancel(current, next, state.srcApi.getPosition());
         }}
       />
     </g>

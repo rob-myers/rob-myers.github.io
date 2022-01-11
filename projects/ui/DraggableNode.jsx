@@ -86,8 +86,8 @@ export default function DraggableNode(props) {
           props.onClick?.(state.position.clone());
         } else {// Drag
           // console.log('drag')
+          state.moveTo(state.target);
           props.onStop?.(state.target.clone());
-          // state.moveTo(state.target); // Moved in super component
         }
       },
       /** @param {KeyboardEvent} e */
@@ -103,7 +103,10 @@ export default function DraggableNode(props) {
   });
 
   React.useEffect(() => {
-    props.onLoad?.({ moveTo: state.moveTo });
+    props.onLoad?.({
+      moveTo: state.moveTo,
+      getPosition: () => state.position.clone(),
+    });
   }, []);
 
   const radius = props.radius || 8;

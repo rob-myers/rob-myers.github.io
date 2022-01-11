@@ -19,7 +19,8 @@ declare namespace NPC {
   }
 
   export interface DraggableNodeApi {
-    moveTo: (p: Geom.VectJson) => void;
+    readonly moveTo: (p: Geom.VectJson) => void;
+    readonly getPosition: () => Geom.Vect;
   }
 
 }
