@@ -49,9 +49,12 @@ export default function DraggableNode(props) {
             ownerSvg: /** @type {SVGSVGElement} */ (state.lineEl.ownerSVGElement),
             pointerId: null,
           });
-          state.target.set(x, y);
-          state.lineEl.setAttribute('x2', String(x));
-          state.lineEl.setAttribute('y2', String(y));
+          const target = new Vect(x, y);
+          if (state.position.distanceTo(target) >= 20) {
+            state.target.set(x, y);
+            state.lineEl.setAttribute('x2', String(x));
+            state.lineEl.setAttribute('y2', String(y));
+          }
         }
       },
       endDrag: () => {
@@ -69,13 +72,16 @@ export default function DraggableNode(props) {
         svg.style.cursor = 'auto';
       },
       applyDrag: () => {
-        if (!state.dragging) return;
+        if (!state.dragging) {
+          return;
+        }
         state.endDrag();
+
         if (props.shouldCancel?.(state.position.clone(), state.target.clone())) {
           // console.log('drag cancelled');
           return;
         }
-        if (state.target.distanceTo(state.position) < 10) {// Click 
+        if (state.target.distanceTo(state.position) < 20) {// Click 
           // console.log('click')
           props.onClick?.(state.position.clone());
         } else {// Drag
