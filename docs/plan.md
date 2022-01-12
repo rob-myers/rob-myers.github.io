@@ -46,6 +46,8 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- ✅ fix: can drag outside navmesh
+
 - on resume NPC via src node click, path preserved and animation shortened
 - ✅ NavCollide: on hide/show only resume previously playing
 - can turn NPC
