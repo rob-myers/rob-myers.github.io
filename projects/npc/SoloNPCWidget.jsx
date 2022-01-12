@@ -16,15 +16,24 @@ export default function SoloNPCWidget(props) {
         key: 'solo',
         anim: /** @type {Animation} */ ({}),
         animCount: 0,
+        animPath: [], // TODO
         initPaused: false,
+        getPath: () => state.api.animPath.slice(),
         getPosition: () => {
           // https://stackoverflow.com/a/4976554/2917822
           const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.bot).transform);
           return { x: matrix.m41, y: matrix.m42 };
         },
+        getVisited: () => {
+          /**
+           * TODO compute visited vectors
+           */
+          return [];
+        },
         isPaused: () => state.api.anim.playState === 'paused',
         isPlaying: () => state.api.anim.playState === 'running',
         isFinished: () => state.api.anim.playState === 'finished',
+        setPath: (path) => state.api.animPath = path,
         togglePaused: () => {
           if (state.api.isFinished()) {
             return;
@@ -48,8 +57,9 @@ export default function SoloNPCWidget(props) {
         zoneKey={props.zoneKey}
         npcApi={state.api}
         radius={24}
-        onChange={(path) => {
+        onChange={() => {
           const { bot, api } = state;
+          const path = api.animPath;
           if (!bot || !path.length) {
             return;
           }

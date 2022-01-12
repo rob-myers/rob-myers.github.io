@@ -15,8 +15,8 @@ export default function DraggablePath(props) {
       pathEl: /** @type {SVGPolylineElement} */ ({}),
       redsEl: /** @type {SVGGElement} */ ({}),
 
-      /** Path used to generate animation (subpath of `fullPath`) */
-      animPath: /** @type {Geom.Vect[]} */ ([]),
+      // /** Path used to generate animation (subpath of `fullPath`) */
+      // animPath: /** @type {Geom.Vect[]} */ ([]),
       /** Visual path with draggable nodes either end */
       fullPath: /** @type {Geom.Vect[]} */ ([]),
       srcApi: /** @type {NPC.DraggableNodeApi} */ ({}),
@@ -26,10 +26,10 @@ export default function DraggablePath(props) {
 
       /** @param {Vect} dst */
       updateAnimPath: (dst) => {
-        if (props.npcApi && state.lastGroupId !== null) {
+        if (state.lastGroupId !== null) {
           const npcPos = props.npcApi.getPosition();
           const nextPath = pathfinding.findPath(npcPos, dst, props.zoneKey, state.lastGroupId)?.path || [];
-          state.animPath = [Vect.from(npcPos)].concat(nextPath);
+          props.npcApi.setPath([Vect.from(npcPos)].concat(nextPath));
           // TODO remove
           state.srcApi.moveTo(npcPos);
           state.dstApi.moveTo(dst);
@@ -38,7 +38,14 @@ export default function DraggablePath(props) {
       /** @param {Geom.Vect[]} path */
       renderFullPath: () => {
         state.pathEl.setAttribute('points', `${state.fullPath}`);
-        // TODO test: render reds
+        // TODO remove test below
+        state.redsEl.childNodes.forEach(x => x.remove());
+        state.fullPath.forEach(p => {
+          const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+          circle.setAttribute('r', '4'), circle.setAttribute('fill', 'red');
+          circle.setAttribute('cx', `${p.x}`), circle.setAttribute('cy', `${p.y}`);
+          state.redsEl.appendChild(circle);
+        });
       },
       /**
        * Update on change endpoint (and initially).
@@ -53,10 +60,10 @@ export default function DraggablePath(props) {
 
         state.lastGroupId = groupId;
         state.updateAnimPath(dst);
-        state.fullPath = state.animPath.slice();
+        state.fullPath = props.npcApi.getPath();
         state.renderFullPath();
-        // Provide the path to animate to parent NPC
-        props.onChange?.(state.animPath);
+        // Tell parent NPC to update
+        props.onChange?.();
       },
       /** @param {Geom.Vect} p */
       pointInZone: (p) => {
@@ -122,23 +129,24 @@ export default function DraggablePath(props) {
           /**
            * IN PROGRESS
            */
-          if (props.npcApi.isFinished()) {
+          const { npcApi } = props;
+          const animPath = npcApi.getPath();
+          if (npcApi.isFinished()) {
             // Reverse fullPath and follow it 
             state.fullPath.reverse();
             state.renderFullPath();
             state.srcApi.moveTo(state.fullPath[0]);
             state.dstApi.moveTo(state.fullPath[0]);
             // state.updateAnimPath(state.animPath[state.animPath.length - 1]);
-            state.animPath = state.fullPath.slice();
-            props.onChange?.(state.animPath);
-          } else if (props.npcApi.isPaused() && state.animPath.length) {
+            npcApi.setPath(state.fullPath.slice());
+            props.onChange?.();
+          } else if (npcApi.isPaused() && animPath.length) {
             // TODO set animPath as path back to start
-            // state.animPath = state.getPathBack();
 
             // OLD approach
-            state.updateAnimPath(state.animPath[0].clone());
-            state.pathEl.setAttribute('points', `${state.animPath}`);
-            props.onChange?.(state.animPath);
+            state.updateAnimPath(animPath[0].clone());
+            state.pathEl.setAttribute('points', `${npcApi.animPath}`);
+            props.onChange?.();
           } else {
             props.npcApi.togglePaused();
           }
@@ -181,6 +189,6 @@ export default function DraggablePath(props) {
  * @property {UiTypes.IconKey} [srcIcon]
  * @property {UiTypes.IconKey} [dstIcon]
  * @property {string} [stroke]
- * @property {(animPath: Geom.Vect[]) => void} [onChange]
+ * @property {() => void} [onChange]
  * @property {(type: 'src' | 'dst') => void} [onStart]
  */

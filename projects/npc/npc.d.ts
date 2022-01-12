@@ -7,14 +7,19 @@ declare namespace NPC {
   export type SoloApi = {
     readonly key: 'solo';
     anim: Animation;
+    /** The path which induces the animation */
+    animPath: Geom.Vect[];
     /** How many times has a new animation been created? */
-    animCount: nummber;
+    animCount: number;
     /** Should the first animation be initially paused? */
     readonly initPaused: boolean;
+    readonly getPath: () => Geom.Vect[];
     readonly getPosition: () => Geom.VectJson;
+    readonly getVisited: () => Geom.VectJson[];
     readonly isPaused: () => boolean;
     readonly isFinished: () => boolean;
     readonly isPlaying: () => boolean;
+    readonly setPath: (path: Geom.Vect[]) => void;
     readonly togglePaused: () => void;
   }
 
