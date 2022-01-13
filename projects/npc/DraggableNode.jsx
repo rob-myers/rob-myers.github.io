@@ -206,7 +206,7 @@ const rootCss = css`
  * @property {string} [stroke]
  * @property {(api: NPC.DraggableNodeApi) => void} [onLoad]
  * @property {() => void} [onStart]
- * @property {(position: Geom.Vect) => void | 'cancel'} [onStop]
+ * @property {(position?: Geom.Vect) => void} [onStop]
  * @property {(position: Geom.Vect) => void} [onClick]
  * @property {(current: Geom.Vect, next: Geom.Vect) => void} [shouldCancel]
  */

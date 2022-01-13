@@ -1,7 +1,7 @@
 import React from 'react';
 import { Poly, Vect } from '../geom';
 import { pathfinding } from '../pathfinding/Pathfinding';
-import DraggableNode from './DraggableNode';
+import DraggableNode from '../npc/DraggableNode';
 
 /**
  * TODO make a fresh NPC component where
@@ -209,7 +209,7 @@ export default function DraggablePath(props) {
  * @property {Geom.VectJson} initDst
  * @property {string} zoneKey
  * @property {number} radius
- * @property {NPC.Api} npcApi
+ * @property {NPC.SoloApi} npcApi
  * @property {UiTypes.IconKey} [srcIcon]
  * @property {UiTypes.IconKey} [dstIcon]
  * @property {string} [stroke]

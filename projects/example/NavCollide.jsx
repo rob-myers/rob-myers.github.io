@@ -8,7 +8,8 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
-import SoloNPCWidget from "projects/npc/SoloNPCWidget";
+import SoloNPCWidget from "../npc/SoloNPCWidget";
+import NPC from "../npc/NPC";
 
 // TODO
 // - prevent target being too close to NPC
@@ -21,6 +22,18 @@ export default function NavCollide(props) {
   /** @type {Geomorph.LayoutKey} */
   const layoutKey = 'g-301--bridge';
   const [state] = React.useState(() => ({
+
+    npcs: [0].map(i => ({
+      init: {
+        src: new Vect(...[[500, 200], [460, 200]][i]),
+        dst: new Vect(...[[500, 300], [460, 200]][i]),
+        zoneKey: layoutKey,
+      },
+      api: /** @type {NPC.Api} */ ({}),
+      wasPlaying: false,
+    })),
+
+    // OLD
     bots: [0, 1].map(i => ({
       src: new Vect(...[[250, 100], [260, 200]][i]),
       dst: new Vect(...[[600, 500], [600, 340]][i]),
@@ -72,6 +85,13 @@ export default function NavCollide(props) {
             onLoad={(api) => bot.api = api}
           />
         ))}
+
+        {state.npcs.map(npc =>
+          <NPC
+            init={npc.init}
+            onLoad={(api) => npc.api = api}
+          />
+        )}
 
       </g>
     </PanZoom>
