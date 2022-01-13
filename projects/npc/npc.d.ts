@@ -8,14 +8,20 @@ declare namespace NPC {
     readonly key: 'solo';
     anim: Animation;
     /** The path which induces the animation */
-    animPath: Geom.Vect[];
-    /** How many times has a new animation been created? */
-    animCount: number;
+    path: Geom.Vect[];
+    data: {
+      /** How many times has a new animation been created? */
+      count: number;
+      edges: ({ p: Geom.Vect; q: Geom.Vect })[];
+      elens: number[];
+      sofars: number[];
+      total: number;
+    };
     /** Should the first animation be initially paused? */
     readonly initPaused: boolean;
     readonly getPath: () => Geom.Vect[];
-    readonly getPosition: () => Geom.VectJson;
-    readonly getVisited: () => Geom.VectJson[];
+    readonly getPosition: () => Geom.Vect;
+    readonly getVisited: () => Geom.Vect[];
     readonly isPaused: () => boolean;
     readonly isFinished: () => boolean;
     readonly isPlaying: () => boolean;

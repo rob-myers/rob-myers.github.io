@@ -4,7 +4,10 @@ import { pathfinding } from '../pathfinding/Pathfinding';
 import DraggableNode from './DraggableNode';
 
 /**
- * TODO distinguish fullPath and animPath
+ * TODO make a fresh NPC component where
+ * - DraggablePath absorbed into it
+ * - fullPath, animPath, polyPath
+ * - Can reverse without moving src to npcPos
  */
 
 /** @param {Props} props */
@@ -15,8 +18,6 @@ export default function DraggablePath(props) {
       pathEl: /** @type {SVGPolylineElement} */ ({}),
       redsEl: /** @type {SVGGElement} */ ({}),
 
-      // /** Path used to generate animation (subpath of `fullPath`) */
-      // animPath: /** @type {Geom.Vect[]} */ ([]),
       /** Visual path with draggable nodes either end */
       fullPath: /** @type {Geom.Vect[]} */ ([]),
       srcApi: /** @type {NPC.DraggableNodeApi} */ ({}),
@@ -24,6 +25,23 @@ export default function DraggablePath(props) {
       tris: /** @type {Vect[][]} */ ([]),
       lastGroupId: /** @type {null | number} */ (null),
 
+      /** Full path segs represented as 4-gons, for hit test */
+      pathPolys: /** @type {Geom.Poly[]} */ ([]),
+
+      getAllVisited: () => {
+        const visited = props.npcApi.getVisited();
+        /**
+         * TODO precompute 4gons for path, and do hit test to determine where npc is on path
+         */
+        if (visited.length) {
+          // TODO visited[0] might be npcPos
+          const found = state.fullPath.findIndex(p => p.equals(visited[0]));
+          if (found > 0) {
+            visited.unshift(...state.fullPath.slice(0, found));
+          }
+        }
+        return visited;
+      },
       /** @param {Vect} dst */
       updateAnimPath: (dst) => {
         if (state.lastGroupId !== null) {
@@ -135,17 +153,23 @@ export default function DraggablePath(props) {
             // Reverse fullPath and follow it 
             state.fullPath.reverse();
             state.renderFullPath();
+            state.dstApi.moveTo(state.srcApi.getPosition());
             state.srcApi.moveTo(state.fullPath[0]);
-            state.dstApi.moveTo(state.fullPath[0]);
-            // state.updateAnimPath(state.animPath[state.animPath.length - 1]);
             npcApi.setPath(state.fullPath.slice());
             props.onChange?.();
           } else if (npcApi.isPaused() && animPath.length) {
             // TODO set animPath as path back to start
+            // TODO prepend to `visited` any missing initials
+            // const visited = state.getAllVisited();
+            // npcApi.setPath([npcApi.getPosition()].concat(visited.reverse()));
+            // state.srcApi.moveTo(state.dstApi.getPosition());
+            // state.dstApi.moveTo(state.fullPath[0]);
+            // state.fullPath.reverse();
+            // props.onChange?.();
 
             // OLD approach
             state.updateAnimPath(animPath[0].clone());
-            state.pathEl.setAttribute('points', `${npcApi.animPath}`);
+            state.pathEl.setAttribute('points', `${npcApi.path}`);
             props.onChange?.();
           } else {
             props.npcApi.togglePaused();

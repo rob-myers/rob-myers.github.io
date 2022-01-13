@@ -1,5 +1,6 @@
 import React from "react";
 import { css } from "goober";
+import { Vect } from "../geom/vect";
 import DraggablePath from "../ui/DraggablePath";
 
 // TODO
@@ -15,25 +16,30 @@ export default function SoloNPCWidget(props) {
       api: {
         key: 'solo',
         anim: /** @type {Animation} */ ({}),
-        animCount: 0,
-        animPath: [], // TODO
+        path: [],
         initPaused: false,
-        getPath: () => state.api.animPath.slice(),
+        data: { count: 0, edges: [], elens: [], sofars: [], total: 0 },
+        getPath: () => state.api.path.slice(),
         getPosition: () => {
           // https://stackoverflow.com/a/4976554/2917822
           const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.bot).transform);
-          return { x: matrix.m41, y: matrix.m42 };
+          return new Vect(matrix.m41, matrix.m42);
         },
+        /**
+         * Compute visited vectors
+         */
         getVisited: () => {
-          /**
-           * TODO compute visited vectors
-           */
-          return [];
+          const { anim: { currentTime }, data, path } = state.api;
+          if (currentTime === null) return [];
+          const found = data.sofars.findIndex(l => l >= currentTime / 15 );
+          if (found === -1) return [];
+          // NOTE 1st item might be the NPC position, rather than start of path
+          return path.slice(0, found);
         },
         isPaused: () => state.api.anim.playState === 'paused',
         isPlaying: () => state.api.anim.playState === 'running',
         isFinished: () => state.api.anim.playState === 'finished',
-        setPath: (path) => state.api.animPath = path,
+        setPath: (path) => state.api.path = path,
         togglePaused: () => {
           if (state.api.isFinished()) {
             return;
@@ -58,9 +64,8 @@ export default function SoloNPCWidget(props) {
         npcApi={state.api}
         radius={24}
         onChange={() => {
-          const { bot, api } = state;
-          const path = api.animPath;
-          if (!bot || !path.length) {
+          const { api, api: { path } } = state;
+          if (!path.length) {
             return;
           }
 
@@ -85,7 +90,7 @@ export default function SoloNPCWidget(props) {
           api.anim.cancel?.();
 
           // TODO careful about breaking polyfill
-          api.anim = bot.animate(
+          api.anim = state.bot.animate(
             rPath.flatMap((p, i) => [{
               offset: total ? sofars[i] / total : 0,
               transform: `translate(${p.x}px, ${p.y}px) rotateZ(${angs[i - 1] || 0}rad)`,
@@ -96,11 +101,11 @@ export default function SoloNPCWidget(props) {
             { duration: total * 15, direction: 'normal', fill: 'forwards' },
           );
 
-          if (wasPaused || (api.animCount === 0 && api.initPaused)) {
+          if (wasPaused || (api.data.count === 0 && api.initPaused)) {
             api.anim.pause();
           }
 
-          api.animCount++;
+          api.data = { count: api.data.count + 1, edges, elens, sofars, total };
         }}
       />
     
