@@ -24,6 +24,10 @@ export default function DraggableNode(props) {
 
       /** @param {PointerEvent} e */
       startDrag: (e) => {
+        /**
+         * TODO prevent drag if PanZoom has pointerids
+         * TODO lock/unlock PanZoom on drag begin/end
+         */
         e.stopPropagation();
         state.dragging = true;
         state.lineEl.style.display = 'inline';
