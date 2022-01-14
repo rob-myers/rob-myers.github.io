@@ -22,28 +22,22 @@ export default function PanZoom(props) {
       ptrs: [],
       /** @type {null | number} */
       ptrDiff: null,
-      /**
-       * @param {DOMPoint} point 
-       * @param {number} delta 
-       */
-      zoomTo: (point, delta) => {
-        const zoom = Math.min(Math.max(state.zoom + delta, minZoom), maxZoom);
-        viewBox.x = (state.zoom / zoom) * (viewBox.x - point.x) + point.x;
-        viewBox.y = (state.zoom / zoom) * (viewBox.y - point.y) + point.y;
-        viewBox.width = (1 / zoom) * props.initViewBox.width;
-        viewBox.height = (1 / zoom) * props.initViewBox.height;
-        state.zoom = zoom;
-      },
-      /** @param {WheelEvent} e */
-      onWheel: e => {
-        e.preventDefault();
-        if (isSvgEvent(e)) {
-          const point = getSvgPos(projectSvgEvt(e));
-          state.zoomTo(point, -wheelDelta * e.deltaY);
-          state.root.setAttribute('viewBox', `${state.viewBox}`);
-          props.onUpdate?.(state.root);
+      /** @type {SVGSVGElement} */
+      root: ({}),
+      rootCss: css`
+        width: 100%;
+        height: 100%;
+
+        touch-action: pan-x pan-y pinch-zoom;
+        background-color: ${props.dark ? '#222' : 'none'};
+
+        > g.content {
+          shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
         }
-      },
+        > .grid {
+          pointer-events: none;
+        }
+      `,
       /** @param {PointerEvent} e */
       onPointerDown: e => {
         if (isSvgEvent(e) && state.ptrs.length < 2) {
@@ -86,6 +80,16 @@ export default function PanZoom(props) {
       onTouchStart: (e)  => {
         e.preventDefault();
       },
+      /** @param {WheelEvent} e */
+      onWheel: e => {
+        e.preventDefault();
+        if (isSvgEvent(e)) {
+          const point = getSvgPos(projectSvgEvt(e));
+          state.zoomTo(point, -wheelDelta * e.deltaY);
+          state.root.setAttribute('viewBox', `${state.viewBox}`);
+          props.onUpdate?.(state.root);
+        }
+      },
       /** @type {(el: null | SVGSVGElement) => void} */
       rootRef: el => {
         if (el) {
@@ -99,22 +103,18 @@ export default function PanZoom(props) {
           el.addEventListener('touchstart', state.onTouchStart, { passive: false });
         }
       },
-      /** @type {SVGSVGElement} */
-      root: ({}),
-      rootCss: css`
-        width: 100%;
-        height: 100%;
-
-        touch-action: pan-x pan-y pinch-zoom;
-        background-color: ${props.dark ? '#222' : 'none'};
-
-        > g.content {
-          shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
-        }
-        > .grid {
-          pointer-events: none;
-        }
-      `,
+      /**
+       * @param {DOMPoint} point 
+       * @param {number} delta 
+       */
+       zoomTo: (point, delta) => {
+        const zoom = Math.min(Math.max(state.zoom + delta, minZoom), maxZoom);
+        viewBox.x = (state.zoom / zoom) * (viewBox.x - point.x) + point.x;
+        viewBox.y = (state.zoom / zoom) * (viewBox.y - point.y) + point.y;
+        viewBox.width = (1 / zoom) * props.initViewBox.width;
+        viewBox.height = (1 / zoom) * props.initViewBox.height;
+        state.zoom = zoom;
+      },
     };
   });
 
