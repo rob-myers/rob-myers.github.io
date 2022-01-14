@@ -102,7 +102,7 @@ export default function DraggableNode(props) {
     };
   });
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     props.onLoad?.({
       moveTo: state.moveTo,
       getPosition: () => state.position.clone(),

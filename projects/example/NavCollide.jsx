@@ -86,7 +86,7 @@ export default function NavCollide(props) {
           />
         ))}
 
-        {state.npcs.map(npc =>
+        {pf && state.npcs.map(npc =>
           <NPC
             init={npc.init}
             onLoad={(api) => npc.api = api}

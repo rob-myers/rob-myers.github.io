@@ -11,7 +11,7 @@ declare namespace NPC {
 
   export interface Api {
     anim: Animation;
-    geom: {
+    readonly geom: {
       /** Full navigation path */
       navPath: Geom.Vect[];
       /**
@@ -20,15 +20,19 @@ declare namespace NPC {
        */
       animPath: Geom.Vect[];
     };
-    aux: {
+    readonly aux: {
+      /** Group id of navpath  */
+      readonly groupId: null | number;
       /** How many times has a new animation been created? */
       count: number;
       edges: ({ p: Geom.Vect; q: Geom.Vect })[];
       elens: number[];
       sofars: number[];
       total: number;
+      angs: number[];
     };
     readonly getPosition: () => Geom.Vect;
+    readonly is: (ps: AnimationPlayState) => boolean;
   }
 
 
