@@ -79,7 +79,7 @@ export default function NPC(props) {
           { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
         );
 
-        if (wasPaused || aux.count === 0) {
+        if (wasPaused || (aux.count === 0 && props.init.paused)) {
           api.anim.pause();
         }
         api.aux.count++;
@@ -188,8 +188,10 @@ export default function NPC(props) {
   });
 
   React.useLayoutEffect(() => {
-    state.updateNavPath(Vect.from(props.init.dst));
-    state.followNavPath(); // Will initially be paused
+    if (state.api.aux.count === 0) {// Guarded to prevent HMR reset
+      state.updateNavPath(Vect.from(props.init.dst));
+      state.followNavPath();
+    }
   }, []);
 
   return (
@@ -216,8 +218,8 @@ export default function NPC(props) {
       </g>
 
       <g className="npc">
-        <circle fill="#f99" stroke="black" strokeWidth={2} r={8} />
-        <line stroke="black" strokeWidth={2} x2={8} />
+        <circle fill="#f99" stroke="black" strokeWidth={2} r={9} />
+        <line stroke="black" strokeWidth={2} x2={9} />
       </g>
 
     </g>
@@ -229,10 +231,10 @@ const nodeRadius = 24;
 const rootCss = css`
   polyline.navpath {
     fill: none;
-    stroke: #777;
+    stroke: #304075;
     stroke-width: 2;
-    stroke-dasharray: 8px;
-    stroke-dashoffset: 16px;
+    stroke-dasharray: 2px 4px;
+    stroke-dashoffset: 0px;
   }
 
   g.npc {

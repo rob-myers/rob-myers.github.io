@@ -5,6 +5,7 @@ declare namespace NPC {
       src: Geom.VectJson;
       dst: Geom.VectJson;
       zoneKey: string;
+      paused: boolean;
     };
     onLoad: (api: NPC.Api) => void;
   }

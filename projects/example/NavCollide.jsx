@@ -21,14 +21,16 @@ export default function NavCollide(props) {
   const layoutKey = 'g-301--bridge';
   const [state] = React.useState(() => ({
 
-    npcs: [0, 1].map(i => ({
+    npcs: [0, 1, 2].map(i => ({
+      /** @type {NPC.Props['init']} */
       init: {
-        src: new Vect(...[[250, 100], [260, 200]][i]),
-        dst: new Vect(...[[600, 500], [600, 340]][i]),
+        src: new Vect(...[[250, 100], [260, 200], [40, 550]][i]),
+        dst: new Vect(...[[600, 500], [600, 340], [1100, 50]][i]),
         zoneKey: layoutKey,
+        paused: false, // Initially playing
       },
       api: /** @type {NPC.Api} */ ({}),
-      wasPlaying: true,
+      wasPlaying: false,
     })),
 
   }));
