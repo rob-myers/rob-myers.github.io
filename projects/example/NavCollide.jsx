@@ -46,7 +46,15 @@ export default function NavCollide(props) {
   const { data: pf } = usePathfinding(layoutKey, gm?.navDecomp, props.disabled);
 
   React.useEffect(() => {
+    if (!state.npcs.every(x => x.api.anim)) {
+      return;
+    }
     if (props.disabled) {
+      state.npcs.forEach(npc => {
+        npc.wasPlaying = npc.api.is('running');
+        npc.api.anim.pause();
+      });
+      // OLD
       state.bots.forEach(bot => {
         if (bot.api.anim) {
           bot.wasPlaying = bot.api.isPlaying();
@@ -54,6 +62,8 @@ export default function NavCollide(props) {
         }
       });
     } else {
+      state.npcs.forEach(npc => npc.wasPlaying && npc.api.anim.play());
+      // OLD
       state.bots.forEach(bot => {
         if (bot.wasPlaying) {
           bot.api?.anim.play?.();
