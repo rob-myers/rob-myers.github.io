@@ -49,7 +49,7 @@ const titleCss = css`
   
   h1 {
     margin: 0;
-    font-size: 6rem;
+    font-size: 5.5rem;
     font-weight: 300;
     font-family: Georgia, 'Times New Roman', Times, serif;
     cursor: pointer;
