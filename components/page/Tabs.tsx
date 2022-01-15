@@ -23,9 +23,6 @@ export default function Tabs(props: Props) {
     toggleEnabled: () =>  {
       state.enabled = !state.enabled;
       state.colour = state.colour === 'clear' ? 'faded' : 'clear';
-      if (!state.enabled && state.expanded) {// Collapse
-        state.expanded = false;
-      }
       update();
 
       const tabs = useSiteStore.getState().tabs[props.id];
