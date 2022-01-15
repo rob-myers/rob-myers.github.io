@@ -2,9 +2,9 @@
 
 We are going to create a **video game**.
 That's right, yet another game. 
-What's **unusual** is that
-(a) we're going to describe the process in great detail,
-(b) we're going to use standard web development techniques.
+What's **unusual** is that we're going to
+(a) describe the process in great detail,
+(b) use standard web development techniques.
 
 Where will it take place?
 > The [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3).
