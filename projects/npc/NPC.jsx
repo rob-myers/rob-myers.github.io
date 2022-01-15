@@ -216,8 +216,8 @@ export default function NPC(props) {
       </g>
 
       <g className="npc">
-        <circle fill="yellow" stroke="black" strokeWidth={2} r={10} />
-        <line stroke="black" strokeWidth={2} x2={10} />
+        <circle fill="#f99" stroke="black" strokeWidth={2} r={8} />
+        <line stroke="black" strokeWidth={2} x2={8} />
       </g>
 
     </g>
