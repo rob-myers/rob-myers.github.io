@@ -206,11 +206,11 @@ const rootCss = css`
  * @typedef Props @type {object}
  * @property {Geom.VectJson} initial
  * @property {number} [radius]
- * @property {UiTypes.IconKey} [icon]
+ * @property {NPC.IconKey} [icon]
  * @property {string} [stroke]
  * @property {(api: NPC.DraggableNodeApi) => void} [onLoad]
  * @property {() => void} [onStart]
- * @property {(position?: Geom.Vect) => void} [onStop]
+ * @property {(position: Geom.Vect) => void} [onStop]
  * @property {(position: Geom.Vect) => void} [onClick]
  * @property {(current: Geom.Vect, next: Geom.Vect) => void} [shouldCancel]
  */

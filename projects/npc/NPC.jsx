@@ -3,13 +3,14 @@ import { css } from "goober";
 import { Vect } from "../geom/vect";
 import { pathfinding } from '../pathfinding/Pathfinding';
 import DraggableNode from "./DraggableNode";
+import { Poly } from "projects/geom";
 
 /** @param {NPC.Props} props */
 export default function NPC(props) {
 
   const [state] = React.useState(() => {
 
-    // Assume nav zone already exists
+    // Assume zone already exists
     const groupId = pathfinding.getGroup(props.init.zoneKey, props.init.src);
     if (groupId === null) {
       console.warn(`NPC: init.src: ${props.init.src.x}, ${props.init.src.y}: no group found`);
@@ -18,7 +19,7 @@ export default function NPC(props) {
     /** @type {NPC.Api} */
     const api = {
       anim: /** @type {Animation} */ ({}),
-      geom: { animPath: [], navPath: [], },
+      geom: { animPath: [], navPath: [], navPathPolys: [] },
       aux: { groupId, count: 0, edges: [], elens: [], sofars: [], total: 0, angs: [] },
       getPosition() {
         // https://stackoverflow.com/a/4976554/2917822
@@ -28,6 +29,8 @@ export default function NPC(props) {
       /** @param {AnimationPlayState} ps */
       is: (ps) => state.api.anim.playState === ps,
     };
+
+    props.onLoad(api);
 
     return {
       el: {
@@ -45,7 +48,7 @@ export default function NPC(props) {
        * @param {Geom.Vect} next 
        * @param {'src' | 'dst'} type 
        */
-      cancelDrag(curr, next, type) {
+      shouldCancelDrag(curr, next, type) {
         if (pathfinding.getGroup(props.init.zoneKey, next) === null) {
           return true; // NOTE currently permit ends to lie in distinct groups
         }
@@ -59,19 +62,19 @@ export default function NPC(props) {
         );
       },
       followNavPath() {
-        const { geom: {animPath}, aux } = api;
+        const { geom: { animPath }, aux } = api;
         if (animPath.length <= 1) return;
-        state.updateAnimAux();
-        const wasPaused = api.is('paused');
 
+        const wasPaused = api.is('paused');
         api.anim.cancel();
-        api.anim = state.el.npc.animate(// TODO ensure > 1 frame for polyfill
+        api.anim = state.el.npc.animate(
+          // NOTE need ≥ 2 frames for polyfill
           animPath.flatMap((p, i) => [{
             offset: aux.total ? aux.sofars[i] / aux.total : 0,
             transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || 0}rad)`,
           }, {
             offset: aux.total ? aux.sofars[i] / aux.total : 0,
-            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || 0}rad)`,
+            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
           }]),
           { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
         );
@@ -81,31 +84,42 @@ export default function NPC(props) {
         }
         api.aux.count++;
       },
-      // TODO explain this function
       onDraggedSrcNode() {
-        const animPath = api.geom.animPath;
+        state.updateNavPath(state.srcApi.getPosition());
+        state.followNavPath();
+      },
+      onClickedSrcNode() {
         if (api.is('finished')) {
-          // TODO test this first
-          api.geom.navPath.reverse();
-          state.el.path.setAttribute('points', `${api.geom.navPath}`);
-          state.swapNodes();
+          state.reverseNavPath();
+          api.geom.animPath = api.geom.navPath.slice();
+          state.updateAnimAux(); // Or could reverse {edges, elens, sofars, angs}
           state.followNavPath();
-        } else if (api.is('paused') && animPath.length) {
-          /**
-           * TODO
-           */
+        } else if (api.is('paused')) {
+          const npcPos = api.getPosition();
+          const found = api.geom.navPathPolys.findIndex(p => p.contains(npcPos));
+          if (found === -1) {
+            return console.warn(`onClickedSrcNode: failed to find npc on its navPath`);
+          }
+          api.geom.animPath = (api.geom.navPath.slice(0, found + 1).concat(npcPos)).reverse();
+          state.reverseNavPath();
+          state.updateAnimAux(); // Or could reverse {edges, elens, sofars, angs}
+          state.followNavPath();
         } else {
           state.togglePaused();
         }
       },
-      onClickedSrcNode() {
-
-      },
       onDraggedDstNode() {
-        
+        state.updateNavPath(state.dstApi.getPosition());
+        state.followNavPath();
       },
       onClickedDstNode() {
-
+        state.togglePaused();
+      },
+      reverseNavPath() {
+        api.geom.navPath.reverse();
+        api.geom.navPathPolys.reverse();
+        state.el.path.setAttribute('points', `${api.geom.navPath}`);
+        state.swapNodes();
       },
       /** @param {SVGGElement} el */
       rootRef(el) {
@@ -145,15 +159,15 @@ export default function NPC(props) {
         aux.angs = aux.edges.map(e => Number(Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2)));
       },
       /**
-       * Update navpath i.e. from NPC's current position to `dst`.
+       * Compute navpath from NPC's current position to `dst`.
        * @param {Geom.Vect} dst
        */
-       updateNavPath(dst) {
+      updateNavPath(dst) {
         const dstGroupId = pathfinding.getGroup(props.init.zoneKey, dst);
         if (dstGroupId === null) {
           return console.warn(`computeNavPath: dst: ${dst.x}, ${dst.y}: no group found`);
         } else if (dstGroupId !== api.aux.groupId) {
-          // NOTE currently navpath has a fixed groupId
+          // NOTE props.init.groupId never changes
           return console.warn(`computeNavPath: (src, dst) have different groupIds: (${api.aux.groupId}, ${dstGroupId})`);
         }
 
@@ -164,13 +178,18 @@ export default function NPC(props) {
         // Move src node to current NPC position
         state.srcApi.moveTo(npcPos), state.dstApi.moveTo(dst);
         state.el.path.setAttribute('points', `${api.geom.navPath}`);
+        state.updateAnimAux();
+        api.geom.navPathPolys = api.aux.edges.map(e => {
+          const normal = e.q.clone().sub(e.p).rotate(Math.PI/2).normalize(0.01);
+          return new Poly([e.p.clone().add(normal), e.q.clone().add(normal), e.q.clone().sub(normal), e.p.clone().sub(normal)]);
+        })
       },
     };
   });
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     state.updateNavPath(Vect.from(props.init.dst));
-    state.followNavPath();
+    state.followNavPath(); // Will initially be paused
   }, []);
 
   return (
@@ -183,7 +202,7 @@ export default function NPC(props) {
           radius={nodeRadius}
           onLoad={api => state.srcApi = api}
           onStop={state.onDraggedSrcNode}
-          shouldCancel={(curr, next) => state.cancelDrag(curr, next, 'src')}
+          shouldCancel={(curr, next) => state.shouldCancelDrag(curr, next, 'src')}
           onClick={state.onClickedSrcNode}
         />
         <DraggableNode
@@ -191,7 +210,7 @@ export default function NPC(props) {
           radius={nodeRadius}
           onLoad={api => state.dstApi = api}
           onStop={state.onDraggedDstNode}
-          shouldCancel={(curr, next) => state.cancelDrag(curr, next, 'dst')}
+          shouldCancel={(curr, next) => state.shouldCancelDrag(curr, next, 'dst')}
           onClick={state.onClickedDstNode}
         />
       </g>

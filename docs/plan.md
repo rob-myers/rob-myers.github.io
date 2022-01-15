@@ -46,15 +46,15 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ fix: can drag outside navmesh
-
-- on resume NPC via src node click, path preserved and animation shortened
-- ✅ NavCollide: on hide/show only resume previously playing
-- can turn NPC
-- can change NPC speed
+- ✅ on resume NPC via src node click, path preserved and animation shortened
+- ✅ `NPC` component replaces `SoloNPCWidget`
+- can turn NPC along path via dots (parallel animation)
+- can change NPC speed via +/- (playback rate)
+- NPC has name/info/speech (?)
 
 - geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
 - NPCs can connect to meta points
+- bug: mobile: while drag DraggableNode can pan-zoom
 
 - offscreen tabs get disabled + rendered after 5 secs
   - Tabs don't load until scroll into view
@@ -77,6 +77,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ NavCollide: on hide/show only resume previously playing
+- ✅ bug: can drag outside navmesh
 - ✅ resize terminal on resize tab (drag or move slider)
 - ✅ Improve Solo NPC component
 - ✅ show/hide `Continue` appropriately

@@ -2,17 +2,15 @@ import React from "react";
 import { css } from "goober";
 
 import * as defaults from "./defaults";
-import { Poly, Rect, Vect } from "../geom";
+import { Rect, Vect } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
-import SoloNPCWidget from "../npc/SoloNPCWidget";
 import NPC from "../npc/NPC";
 
 // TODO
-// - prevent target being too close to NPC
 // - how to change speed?
 // - tty integration
 
@@ -23,30 +21,23 @@ export default function NavCollide(props) {
   const layoutKey = 'g-301--bridge';
   const [state] = React.useState(() => ({
 
-    npcs: [0].map(i => ({
+    npcs: [0, 1].map(i => ({
       init: {
-        src: new Vect(...[[500, 200], [460, 200]][i]),
-        dst: new Vect(...[[500, 300], [460, 200]][i]),
+        src: new Vect(...[[250, 100], [260, 200]][i]),
+        dst: new Vect(...[[600, 500], [600, 340]][i]),
         zoneKey: layoutKey,
       },
       api: /** @type {NPC.Api} */ ({}),
-      wasPlaying: false,
+      wasPlaying: true,
     })),
 
-    // OLD
-    bots: [0, 1].map(i => ({
-      src: new Vect(...[[250, 100], [260, 200]][i]),
-      dst: new Vect(...[[600, 500], [600, 340]][i]),
-      api: /** @type {NPC.SoloApi} */ ({}),  // TODO better way?
-      wasPlaying: false,
-    })),
   }));
 
   const { data: gm } = useGeomorphJson(layoutKey);
   const { data: pf } = usePathfinding(layoutKey, gm?.navDecomp, props.disabled);
 
   React.useEffect(() => {
-    if (!state.npcs.every(x => x.api.anim)) {
+    if (!pf) {
       return;
     }
     if (props.disabled) {
@@ -54,23 +45,10 @@ export default function NavCollide(props) {
         npc.wasPlaying = npc.api.is('running');
         npc.api.anim.pause();
       });
-      // OLD
-      state.bots.forEach(bot => {
-        if (bot.api.anim) {
-          bot.wasPlaying = bot.api.isPlaying();
-          bot.api?.anim.pause?.();
-        }
-      });
     } else {
       state.npcs.forEach(npc => npc.wasPlaying && npc.api.anim.play());
-      // OLD
-      state.bots.forEach(bot => {
-        if (bot.wasPlaying) {
-          bot.api?.anim.play?.();
-        }
-      });
     }
-  }, [props.disabled]);
+  }, [props.disabled, pf]);
 
   return (
     <PanZoom
@@ -84,16 +62,6 @@ export default function NavCollide(props) {
 
         {pf?.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
           <polygon className="navtri" points={`${vertexIds.map(id => pf.zone.vertices[id])}`} />
-        ))}
-
-        {state.bots.map(bot => (
-          <SoloNPCWidget
-            enabled={!!pf}
-            initSrc={bot.src}
-            initDst={bot.dst}
-            zoneKey={layoutKey}
-            onLoad={(api) => bot.api = api}
-          />
         ))}
 
         {pf && state.npcs.map(npc =>
