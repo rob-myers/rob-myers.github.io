@@ -11,7 +11,8 @@ import usePathfinding from "../hooks/use-pathfinding";
 import NPC from "../npc/NPC";
 
 // TODO
-// - how to change speed?
+// - can turn when stationary
+// - can change speed
 // - tty integration
 
 /** @param {{ disabled?: boolean }} props */
@@ -28,6 +29,7 @@ export default function NavCollide(props) {
         dst: new Vect(...[[600, 500], [600, 340], [1100, 50]][i]),
         zoneKey: layoutKey,
         paused: false, // Initially playing
+        angle: 0,
       },
       api: /** @type {NPC.Api} */ ({}),
       wasPlaying: false,
@@ -45,10 +47,10 @@ export default function NavCollide(props) {
     if (props.disabled) {
       state.npcs.forEach(npc => {
         npc.wasPlaying = npc.api.is('running');
-        npc.api.anim.pause();
+        npc.api.pause();
       });
     } else {
-      state.npcs.forEach(npc => npc.wasPlaying && npc.api.anim.play());
+      state.npcs.forEach(npc => npc.wasPlaying && npc.api.play());
     }
   }, [props.disabled, pf]);
 
@@ -82,9 +84,10 @@ const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
 
-  /* image {
-    filter: invert(100%) sepia(50%);
-  } */
+  image {
+    /* filter: invert(100%) sepia(50%); */
+    /* filter: invert(100%); */
+  }
 
   polygon.navtri {
     fill: transparent;

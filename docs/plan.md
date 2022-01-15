@@ -49,6 +49,7 @@ __Aim towards website release__.
 - ✅ on resume NPC via src node click, path preserved and animation shortened
 - ✅ `NPC` component replaces `SoloNPCWidget`
 - stationary NPC can be turned via target dot
+  - rotation independent
 - can change NPC speed via +/- (playback rate)
 - NPC has name/info/speech (?)
 

@@ -18,7 +18,8 @@ export default function NPC(props) {
 
     /** @type {NPC.Api} */
     const api = {
-      anim: /** @type {Animation} */ ({}),
+      move: /** @type {Animation} */ ({}),
+      look: /** @type {Animation} */ ({}),
       geom: { animPath: [], navPath: [], navPathPolys: [] },
       aux: { groupId, count: 0, edges: [], elens: [], sofars: [], total: 0, angs: [] },
       getPosition() {
@@ -27,7 +28,9 @@ export default function NPC(props) {
         return new Vect(matrix.m41, matrix.m42);
       },
       /** @param {AnimationPlayState} ps */
-      is: (ps) => state.api.anim.playState === ps,
+      is: (ps) => state.api.move.playState === ps,
+      pause: () => { api.move.pause(); api.look.pause(); },
+      play: () => { api.move.play(); api.look.play(); },
     };
 
     props.onLoad(api);
@@ -35,6 +38,7 @@ export default function NPC(props) {
     return {
       el: {
         npc: /** @type {SVGGElement} */ ({}),
+        dir: /** @type {SVGLineElement} */ ({}),
         path: /** @type {SVGPolylineElement} */ ({}),
       },
       mounted: false,
@@ -64,23 +68,32 @@ export default function NPC(props) {
       followNavPath() {
         const { geom: { animPath }, aux } = api;
         if (animPath.length <= 1) return;
-
         const wasPaused = api.is('paused');
-        api.anim.cancel();
-        api.anim = state.el.npc.animate(
+
+        api.move.cancel();
+        api.move = state.el.npc.animate(
           // NOTE need ≥ 2 frames for polyfill
+          animPath.map((p, i) => ({
+            offset: aux.total ? aux.sofars[i] / aux.total : 0,
+            transform: `translate(${p.x}px, ${p.y}px)`,
+          })),
+          { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
+        );
+
+        api.look.cancel();
+        api.look = state.el.dir.animate(
           animPath.flatMap((p, i) => [{
             offset: aux.total ? aux.sofars[i] / aux.total : 0,
-            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || 0}rad)`,
+            transform: `rotateZ(${aux.angs[i - 1] || 0}rad)`,
           }, {
             offset: aux.total ? aux.sofars[i] / aux.total : 0,
-            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
+            transform: `rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
           }]),
           { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
         );
 
         if (wasPaused || (aux.count === 0 && props.init.paused)) {
-          api.anim.pause();
+          api.pause();
         }
         api.aux.count++;
       },
@@ -125,10 +138,15 @@ export default function NPC(props) {
       rootRef(el) {
         if (el && !state.mounted) {
           state.el.npc = /** @type {*} */ (el.querySelector('g.npc'));
+          state.el.dir = /** @type {*} */ (el.querySelector('g.npc > line'));
           state.el.path = /** @type {*} */ (el.querySelector('polyline.navpath'));
-          api.anim = state.el.npc.animate([
+          api.move = state.el.npc.animate([
             { transform: `translate(0px, 0px)` }, // Extra frame for polyfill
             { transform: `translate(${props.init.src.x}px, ${props.init.src.y}px)` },
+          ], { fill: 'forwards' });
+          api.look = state.el.dir.animate([
+            { transform: `rotateZ(0rad)` }, // Extra frame for polyfill
+            { transform: `rotateZ(${props.init.angle}rad)` },
           ], { fill: 'forwards' });
           state.mounted = true;
         }
@@ -141,9 +159,9 @@ export default function NPC(props) {
         if (api.is('finished')) {
           return;
         } else if (api.is('paused')) {
-          state.api.anim.play();
+          state.api.play();
         } else {
-          state.api.anim.pause();
+          state.api.pause();
         }
       },
       updateAnimAux() {
@@ -232,8 +250,8 @@ const rootCss = css`
   polyline.navpath {
     fill: none;
     stroke: #304075;
-    stroke-width: 2;
-    stroke-dasharray: 2px 4px;
+    stroke-width: 1;
+    stroke-dasharray: 6px 6px;
     stroke-dashoffset: 0px;
   }
 

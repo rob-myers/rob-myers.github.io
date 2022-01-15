@@ -4,6 +4,7 @@ declare namespace NPC {
     init: {
       src: Geom.VectJson;
       dst: Geom.VectJson;
+      angle: number;
       zoneKey: string;
       paused: boolean;
     };
@@ -11,7 +12,8 @@ declare namespace NPC {
   }
 
   export interface Api {
-    anim: Animation;
+    move: Animation;
+    look: Animation;
     readonly geom: {
       /** Full navigation path */
       navPath: Geom.Vect[];
@@ -33,6 +35,8 @@ declare namespace NPC {
     };
     readonly getPosition: () => Geom.Vect;
     readonly is: (ps: AnimationPlayState) => boolean;
+    readonly pause: () => void;
+    readonly play: () => void;
   }
 
   export interface DraggableNodeApi {
