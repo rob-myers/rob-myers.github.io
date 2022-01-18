@@ -29,7 +29,7 @@ export default function PanZoom(props) {
         height: 100%;
 
         touch-action: pan-x pan-y pinch-zoom;
-        background-color: ${props.dark ? '#222' : 'none'};
+        background-color: ${props.dark ? '#343434' : 'none'};
 
         > g.content {
           shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
