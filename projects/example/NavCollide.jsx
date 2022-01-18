@@ -11,6 +11,9 @@ import usePathfinding from "../hooks/use-pathfinding";
 import NPC from "../npc/NPC";
 
 // TODO
+// - sort out layering: npcs above lines/nodes, speech/info above npcs
+//   - ISSUE with preact createPortal for svg subelements
+//   - IDEA create single component NPCS handling layering there
 // - can turn when stationary
 // - can change speed
 // - tty integration
@@ -35,11 +38,6 @@ export default function NavCollide(props) {
       api: /** @type {NPC.Api} */ ({}),
       wasPlaying: false,
     })),
-    npcDeps: {
-      lines: /** @type {SVGGElement} */ ({}),
-      // TODO info/speech container
-    },
-
   }));
 
   const { data: gm } = useGeomorphJson(layoutKey);
@@ -75,11 +73,8 @@ export default function NavCollide(props) {
           ))}
         </g>
 
-        <g className="navlines" ref={el => el && (state.npcDeps.lines = el)} />
-
         {pf && state.npcs.map(npc =>
           <NPC
-            deps={state.npcDeps}
             init={npc.init}
             onLoad={(api) => npc.api = api}
           />
@@ -97,14 +92,6 @@ const rootCss = css`
   image {
     /* filter: invert(100%) sepia(50%); */
     /* filter: invert(100%); */
-  }
-
-  polyline.navline {
-    fill: none;
-    stroke: black;
-    stroke-width: 1;
-    stroke-dasharray: 6px 6px;
-    stroke-dashoffset: 0px;
   }
 
   polygon.navtri {
