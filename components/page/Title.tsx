@@ -13,9 +13,9 @@ export default function Title() {
       <NavMini/>
       <Continue />
       <ReactMarkdown components={titleComponents} children={`
-# Starship Markup
+# The Last Redoubt
 
-$( game ai | roguelike | web dev )
+$( video game | web dev | terminal )
       `}/>
     </header>
   );
@@ -51,7 +51,6 @@ const titleCss = css`
     margin: 0;
     font-size: 5.5rem;
     font-weight: 300;
-    font-family: Georgia, 'Times New Roman', Times, serif;
     cursor: pointer;
     color: #333;
     display: inline-block;
@@ -69,7 +68,6 @@ const titleCss = css`
     color: #444;
     letter-spacing: 3px;
     font-size: 0.8rem;
-    font-family: sans-serif;
     margin: 0;
     padding: 40px 0 48px;
     font-weight: 300;

@@ -48,7 +48,7 @@ export default function PagesRoot({ Component, pageProps }: RootProps) {
   return <>
     <Head>
       <title>
-        Starship Markup
+        The Last Redoubt
       </title>
     </Head>
     <QueryClientProvider client={queryClient} >

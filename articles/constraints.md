@@ -18,7 +18,7 @@ We'll also support both mobile and desktop devices.
 
 <!-- NOTE italics inside link currently unsupported -->
 
-_Starship Markup_ refers to _Markup_, as in HyperText _Markup_ Language (HTML).
+_The Last Redoubt_ refers to _Markup_, as in HyperText _Markup_ Language (HTML).
 We'll use standard web development technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
 
 <aside>
