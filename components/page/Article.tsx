@@ -161,7 +161,7 @@ const articleCss = css`
       margin-right: 16px;
       white-space: pre;
       > span {
-        padding: 6px 8px;
+        padding: 6px 10px;
         margin: 0 1px;
         background: #222;
         border-radius: 2px;
