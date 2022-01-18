@@ -1,7 +1,11 @@
 declare namespace NPC {
 
   export interface Props {
+    deps: {
+      lines: SVGGElement;
+    };
     init: {
+      key: string;
       src: Geom.VectJson;
       dst: Geom.VectJson;
       angle: number;

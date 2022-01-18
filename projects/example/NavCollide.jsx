@@ -25,6 +25,7 @@ export default function NavCollide(props) {
     npcs: [0, 1, 2].map(i => ({
       /** @type {NPC.Props['init']} */
       init: {
+        key: `npc-${i}`,
         src: new Vect(...[[250, 100], [260, 200], [40, 550]][i]),
         dst: new Vect(...[[600, 500], [600, 340], [1100, 50]][i]),
         zoneKey: layoutKey,
@@ -34,6 +35,10 @@ export default function NavCollide(props) {
       api: /** @type {NPC.Api} */ ({}),
       wasPlaying: false,
     })),
+    npcDeps: {
+      lines: /** @type {SVGGElement} */ ({}),
+      // TODO info/speech container
+    },
 
   }));
 
@@ -64,12 +69,17 @@ export default function NavCollide(props) {
       <g className={rootCss}>
         {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
-        {pf?.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
-          <polygon className="navtri" points={`${vertexIds.map(id => pf.zone.vertices[id])}`} />
-        ))}
+        <g className="navtris">
+          {pf?.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
+            <polygon className="navtri" points={`${vertexIds.map(id => pf.zone.vertices[id])}`} />
+          ))}
+        </g>
+
+        <g className="navlines" ref={el => el && (state.npcDeps.lines = el)} />
 
         {pf && state.npcs.map(npc =>
           <NPC
+            deps={state.npcDeps}
             init={npc.init}
             onLoad={(api) => npc.api = api}
           />
@@ -87,6 +97,14 @@ const rootCss = css`
   image {
     /* filter: invert(100%) sepia(50%); */
     /* filter: invert(100%); */
+  }
+
+  polyline.navline {
+    fill: none;
+    stroke: black;
+    stroke-width: 1;
+    stroke-dasharray: 6px 6px;
+    stroke-dashoffset: 0px;
   }
 
   polygon.navtri {

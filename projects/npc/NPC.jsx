@@ -39,7 +39,9 @@ export default function NPC(props) {
       el: {
         npc: /** @type {SVGGElement} */ ({}),
         dir: /** @type {SVGLineElement} */ ({}),
-        path: /** @type {SVGPolylineElement} */ ({}),
+        // ReactDOM.createPortal <polyline /> didn't work -- lacked SVG namespace?
+        // However, Preact portals don't bubble events through portals anyway
+        path: document.createElementNS('http://www.w3.org/2000/svg', 'polyline'),
       },
       mounted: false,
       srcApi: /** @type {NPC.DraggableNodeApi} */ ({}),
@@ -139,7 +141,9 @@ export default function NPC(props) {
         if (el && !state.mounted) {
           state.el.npc = /** @type {*} */ (el.querySelector('g.npc'));
           state.el.dir = /** @type {*} */ (el.querySelector('g.npc > line'));
-          state.el.path = /** @type {*} */ (el.querySelector('polyline.navpath'));
+          state.el.path.setAttribute('class', `navline ${props.init.key}`);
+          props.deps.lines.appendChild(state.el.path);
+
           api.move = state.el.npc.animate([
             { transform: `translate(0px, 0px)` }, // Extra frame for polyfill
             { transform: `translate(${props.init.src.x}px, ${props.init.src.y}px)` },
@@ -149,6 +153,9 @@ export default function NPC(props) {
             { transform: `rotateZ(${props.init.angle}rad)` },
           ], { fill: 'forwards' });
           state.mounted = true;
+        }
+        if (state.mounted && !el) {
+          props.deps.lines.removeChild(state.el.path);
         }
       },
       swapNodes() {
@@ -216,7 +223,6 @@ export default function NPC(props) {
     <g className={rootCss} ref={state.rootRef}>
 
       <g>
-        <polyline className="navpath" />
         <DraggableNode
           initial={props.init.src}
           radius={nodeRadius}
@@ -247,14 +253,6 @@ export default function NPC(props) {
 const nodeRadius = 24;
 
 const rootCss = css`
-  polyline.navpath {
-    fill: none;
-    stroke: #304075;
-    stroke-width: 1;
-    stroke-dasharray: 6px 6px;
-    stroke-dashoffset: 0px;
-  }
-
   g.npc {
     pointer-events: none;
   }
