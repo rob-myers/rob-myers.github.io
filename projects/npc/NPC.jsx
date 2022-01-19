@@ -5,7 +5,7 @@ import { pathfinding } from '../pathfinding/Pathfinding';
 import DraggableNode from "./DraggableNode";
 import { Poly } from "projects/geom";
 
-/** @param {NPC.Props} props */
+/** @param {NPC.NPCProps} props */
 export default function NPC(props) {
 
   const [state] = React.useState(() => {
@@ -16,8 +16,9 @@ export default function NPC(props) {
       console.warn(`NPC: init.src: ${props.init.src.x}, ${props.init.src.y}: no group found`);
     }
 
-    /** @type {NPC.Api} */
+    /** @type {NPC.NPCApi} */
     const api = {
+      key: props.init.key,
       move: /** @type {Animation} */ ({}),
       look: /** @type {Animation} */ ({}),
       geom: { animPath: [], navPath: [], navPathPolys: [] },

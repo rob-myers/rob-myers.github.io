@@ -9,6 +9,7 @@ import PanZoom from "../panzoom/PanZoom";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
 import NPC from "../npc/NPC";
+import NPCs from "projects/npc/NPCs";
 
 // TODO
 // - sort out layering: npcs above lines/nodes, speech/info above npcs
@@ -25,8 +26,21 @@ export default function NavCollide(props) {
   const layoutKey = 'g-301--bridge';
   const [state] = React.useState(() => ({
 
+    /** @type {NPC.NPCDef[]} */
+    defs: [0, 1, 2].map(i => ({
+      key: `npc-${i}`,
+      src: new Vect(...[[250, 100], [260, 200], [40, 550]][i]),
+      dst: new Vect(...[[600, 500], [600, 340], [1100, 50]][i]),
+      zoneKey: layoutKey,
+      paused: false, // Initially playing
+      angle: 0,
+    })),
+    api: /** @type {NPC.NPCsApi} */ ({}),
+
+
+    // OLD
     npcs: [0, 1, 2].map(i => ({
-      /** @type {NPC.Props['init']} */
+      /** @type {NPC.NPCProps['init']} */
       init: {
         key: `npc-${i}`,
         src: new Vect(...[[250, 100], [260, 200], [40, 550]][i]),
@@ -35,7 +49,7 @@ export default function NavCollide(props) {
         paused: false, // Initially playing
         angle: 0,
       },
-      api: /** @type {NPC.Api} */ ({}),
+      api: /** @type {NPC.NPCApi} */ ({}),
       wasPlaying: false,
     })),
   }));
@@ -73,12 +87,18 @@ export default function NavCollide(props) {
           ))}
         </g>
 
-        {pf && state.npcs.map(npc =>
-          <NPC
-            init={npc.init}
-            onLoad={(api) => npc.api = api}
+        {pf && <>
+          {state.npcs.map(npc =>
+            <NPC
+              init={npc.init}
+              onLoad={(api) => npc.api = api}
+            />
+          )}
+          <NPCs
+            defs={state.defs}
+            onLoad={api => state.api = api}
           />
-        )}
+        </>}
 
       </g>
     </PanZoom>

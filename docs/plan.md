@@ -46,8 +46,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ on resume NPC via src node click, path preserved and animation shortened
-- ✅ `NPC` component replaces `SoloNPCWidget`
+- `NPC` -> `NPCs` e.g. to solve draw order
+- "Come, Let's Play" as a motivator
+
 - stationary NPC can be turned via target dot
   - rotation independent
 - can change NPC speed via +/- (playback rate)
@@ -78,6 +79,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ on resume NPC via src node click, path preserved and animation shortened
+- ✅ `NPC` component replaces `SoloNPCWidget`
 - ✅ NavCollide: on hide/show only resume previously playing
 - ✅ bug: can drag outside navmesh
 - ✅ resize terminal on resize tab (drag or move slider)
