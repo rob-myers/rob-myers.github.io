@@ -47,7 +47,7 @@
     "pepjs": "^0.5.3",
     "poly2tri": "^1.5.0",
     "polygon-clipping": "^0.15.3",
-    "preact": "^10.5.13",
+    "preact": "^10.6.4",
     "preact-render-to-string": "^5.1.19",
     "react": "npm:@preact/compat@0.0.4",
     "react-beforeunload": "^2.4.0",

@@ -18,50 +18,15 @@ declare namespace NPC {
     angle: number;
   }
 
-  // OLD
-  export interface NPCProps {
-    init: NPCDef;
-    onLoad: (api: NPC.NPCApi) => void;
-  }
-
   export interface NPCsApi {
     apis: NPCApi[];
     for: Record<string, NPCApi>;
     // ...
   }
 
-  export interface NPCApiNew extends NPCApi {
-    el: {
-      npc: SVGGElement;
-      dir: SVGLineElement;
-      path: SVGPolylineElement;
-    };
-    srcApi: NPC.DraggableNodeApi;
-    dstApi: NPC.DraggableNodeApi;
-    /** Internal apis */
-    _: {
-      /** Should cancel drag of node? */
-      shouldCancelDrag(curr: Geom.Vect, next: Geom.Vect, type: 'src' | 'dst'): boolean,
-      followNavPath(): void;
-      /**
-       * TODO previously rootRef
-       */
-      initialize(el: SVGGElement): void;
-      onDraggedSrcNode(): void;
-      onClickedSrcNode(): void;
-      onDraggedDstNode(): void;
-      onClickedDstNode(): void;
-      reverseNavPath(): void;
-      swapNodes(): void;
-      togglePaused(): void;
-      updateAnimAux(): void;
-      /** Compute navpath from NPC's current position to `dst`. */
-      updateNavPath(dst: Geom.Vect): void;
-    };
-  }
-
-  // OLD
   export interface NPCApi {
+    def: NPCDef;
+
     key: string;
     move: Animation;
     look: Animation;
@@ -88,8 +53,37 @@ declare namespace NPC {
     readonly is: (ps: AnimationPlayState) => boolean;
     readonly pause: () => void;
     readonly play: () => void;
-  }
 
+    el: {
+      npc: SVGGElement;
+      dir: SVGLineElement;
+      path: SVGPolylineElement;
+    };
+    srcApi: NPC.DraggableNodeApi;
+    dstApi: NPC.DraggableNodeApi;
+
+    /** Internal apis */
+    _: {
+      /** Should cancel drag of node? */
+      shouldCancelDrag(curr: Geom.Vect, next: Geom.Vect, type: 'src' | 'dst'): boolean,
+      followNavPath(): void;
+      /**
+       * TODO previously rootRef
+       */
+      initialize(el: SVGGElement): void;
+      onDraggedSrcNode(): void;
+      onClickedSrcNode(): void;
+      onDraggedDstNode(): void;
+      onClickedDstNode(): void;
+      reverseNavPath(): void;
+      swapNodes(): void;
+      togglePaused(): void;
+      updateAnimAux(): void;
+      /** Compute navpath from NPC's current position to `dst`. */
+      updateNavPath(dst: Geom.Vect): void;
+    };
+  }
+  
   export interface DraggableNodeApi {
     readonly moveTo: (p: Geom.VectJson) => void;
     readonly getPosition: () => Geom.Vect;

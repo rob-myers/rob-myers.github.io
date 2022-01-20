@@ -50,7 +50,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- `NPC` -> `NPCs` e.g. to solve draw order
+- ✅ `NPC` -> `NPCs` e.g. to solve draw order
 
 - stationary NPC can be turned via target dot
   - rotation independent

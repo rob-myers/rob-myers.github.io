@@ -1,6 +1,8 @@
 import React from "react";
+import { css } from "goober";
 import { Poly, Vect } from "../geom";
 import { pathfinding } from '../pathfinding/Pathfinding';
+import DraggableNode from "./DraggableNode";
 
 // TODO ensure exactly one group in each zone
 // TODO listen for changes to props.npcs
@@ -15,9 +17,10 @@ export default function NPCs(props) {
     groupIds.forEach((x, i) => x === null && console.warn(`NPC: ${defs[i].key}: init.src: ${defs[i].src.x}, ${defs[i].src.y}: no group found`));
 
     const apis = defs.map((def, i) => {
-      /** @type {NPC.NPCApiNew} */
+      /** @type {NPC.NPCApi} */
       const api = {
         key: def.key,
+        def,
         el: {
           npc: /** @type {SVGGElement} */ ({}),
           dir: /** @type {SVGLineElement} */ ({}),
@@ -87,11 +90,12 @@ export default function NPCs(props) {
             }
             api.aux.count++;
           },
-          /** @param {SVGGElement} el */
-          initialize(el) {
-            api.el.npc = /** @type {*} */ (el.querySelector('g.npc'));
-            api.el.dir = /** @type {*} */ (el.querySelector('g.npc > line'));
-            api.el.path = /** @type {*} */ (el.querySelector('polyline.navpath'));
+          /** @param {SVGGElement} rootGrp */
+          initialize(rootGrp) {
+            api.el.npc = /** @type {*} */ (rootGrp.querySelector(`g.npc.${def.key}`));
+            api.el.dir = /** @type {*} */ (api.el.npc.querySelector('line'));
+            api.el.path = /** @type {*} */ (rootGrp.querySelector(`polyline.navpath.${def.key}`));
+
             api.move = api.el.npc.animate([
               { transform: `translate(0px, 0px)` }, // Extra frame for polyfill
               { transform: `translate(${def.src.x}px, ${def.src.y}px)` },
@@ -201,11 +205,71 @@ export default function NPCs(props) {
     return {
       apis,
       api,
+      /** @type {React.RefCallback<SVGGElement>} */
+      rootRef(el) {
+        if (el) {
+          state.apis.forEach(api => {
+            api._.initialize(el);
+            api._.updateNavPath(Vect.from(api.def.dst));
+            api._.followNavPath();
+          });
+        }
+      },
     };
   });
 
+  return (
+    <g
+      className={rootCss}
+      ref={state.rootRef}
+    >
 
-  return null;
+      <g className="navpaths">
+        {state.apis.map(api => 
+          <g key={api.key}>
+            <polyline className={`navpath ${api.key}`} />
+            <DraggableNode
+              initial={api.def.src}
+              radius={nodeRadius}
+              onLoad={nodeApi => api.srcApi = nodeApi}
+              onStop={api._.onDraggedSrcNode}
+              shouldCancel={(curr, next) => api._.shouldCancelDrag(curr, next, 'src')}
+              onClick={api._.onClickedSrcNode}
+            />
+            <DraggableNode
+              initial={api.def.dst}
+              radius={nodeRadius}
+              onLoad={nodeApi => api.dstApi = nodeApi}
+              onStop={api._.onDraggedDstNode}
+              shouldCancel={(curr, next) => api._.shouldCancelDrag(curr, next, 'dst')}
+              onClick={api._.onClickedDstNode}
+            />
+          </g>
+        )}
+      </g>
+
+      {state.apis.map(api => 
+        <g key={api.key} className={`npc ${api.key}`}>
+          <circle fill="#f99" stroke="black" strokeWidth={2} r={9} />
+          <line stroke="black" strokeWidth={2} x2={9} />
+        </g>
+      )}
+
+    </g>
+  );
 }
 
 const nodeRadius = 24;
+
+const rootCss = css`
+  g.npc {
+    pointer-events: none;
+  }
+  polyline.navpath {
+    fill: none;
+    stroke: black;
+    stroke-width: 1;
+    stroke-dasharray: 6px 6px;
+    stroke-dashoffset: 0px;
+  }
+`;

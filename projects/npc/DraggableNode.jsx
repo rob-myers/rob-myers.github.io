@@ -10,7 +10,7 @@ export default function DraggableNode(props) {
   const update = useUpdate();
 
   const [state] = React.useState(() => {
-    return {
+    const output = {
       position: Vect.from(props.initial),
       target: Vect.from(props.initial),
       dragging: false,
@@ -104,14 +104,13 @@ export default function DraggableNode(props) {
         update();
       },
     };
-  });
-
-  React.useLayoutEffect(() => {
+    // NOTE useLayoutEffect was too slow
     props.onLoad?.({
-      moveTo: state.moveTo,
+      moveTo: output.moveTo,
       getPosition: () => state.position.clone(),
     });
-  }, []);
+    return output;
+  });
 
   const radius = props.radius || 8;
 

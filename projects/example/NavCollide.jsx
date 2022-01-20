@@ -8,13 +8,9 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
-import NPC from "../npc/NPC";
 import NPCs from "projects/npc/NPCs";
 
 // TODO
-// - sort out layering: npcs above lines/nodes, speech/info above npcs
-//   - ISSUE with preact createPortal for svg subelements
-//   - IDEA create single component NPCS handling layering there
 // - can turn when stationary
 // - can change speed
 // - tty integration
@@ -36,22 +32,8 @@ export default function NavCollide(props) {
       angle: 0,
     })),
     api: /** @type {NPC.NPCsApi} */ ({}),
+    metas: [0, 1, 2].map(i => ({ wasPlaying: false })),
 
-
-    // OLD
-    npcs: [0, 1, 2].map(i => ({
-      /** @type {NPC.NPCProps['init']} */
-      init: {
-        key: `npc-${i}`,
-        src: new Vect(...[[250, 100], [260, 200], [40, 550]][i]),
-        dst: new Vect(...[[600, 500], [600, 340], [1100, 50]][i]),
-        zoneKey: layoutKey,
-        paused: false, // Initially playing
-        angle: 0,
-      },
-      api: /** @type {NPC.NPCApi} */ ({}),
-      wasPlaying: false,
-    })),
   }));
 
   const { data: gm } = useGeomorphJson(layoutKey);
@@ -62,12 +44,14 @@ export default function NavCollide(props) {
       return;
     }
     if (props.disabled) {
-      state.npcs.forEach(npc => {
-        npc.wasPlaying = npc.api.is('running');
-        npc.api.pause();
+      state.api.apis.forEach((api, i) => {
+        state.metas[i].wasPlaying = api.is('running');
+        api.pause();
       });
     } else {
-      state.npcs.forEach(npc => npc.wasPlaying && npc.api.play());
+      state.api.apis.forEach((api, i) =>
+        state.metas[i].wasPlaying && api.play()
+      );
     }
   }, [props.disabled, pf]);
 
@@ -82,23 +66,17 @@ export default function NavCollide(props) {
         {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
         <g className="navtris">
-          {pf?.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
+          {!props.disabled && pf?.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
             <polygon className="navtri" points={`${vertexIds.map(id => pf.zone.vertices[id])}`} />
           ))}
         </g>
 
-        {pf && <>
-          {state.npcs.map(npc =>
-            <NPC
-              init={npc.init}
-              onLoad={(api) => npc.api = api}
-            />
-          )}
+        {pf && (
           <NPCs
             defs={state.defs}
             onLoad={api => state.api = api}
           />
-        </>}
+        )}
 
       </g>
     </PanZoom>
