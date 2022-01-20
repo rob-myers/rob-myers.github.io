@@ -41,8 +41,14 @@ export default function NPCs(props) {
         },
         /** @param {AnimationPlayState} ps */
         is: (ps) => api.move.playState === ps,
-        pause: () => { api.move.pause(); api.look.pause(); },
-        play: () => { api.move.play(); api.look.play(); },
+        pause: () => {
+          if (api.is('running')) {
+            api.move.pause(), api.look.pause();
+          }
+        },
+        play: () => {
+          api.move.play(); api.look.play();
+        },
 
         _:  {
           shouldCancelDrag(curr, next, type) {

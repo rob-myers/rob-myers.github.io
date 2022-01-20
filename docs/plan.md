@@ -50,12 +50,14 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ `NPC` -> `NPCs` e.g. to solve draw order
 
-- stationary NPC can be turned via target dot
+- 🚧 stationary NPC can be turned via target dot
   - rotation independent
 - can change NPC speed via +/- (playback rate)
 - NPC has name/info/speech (?)
+
+- start blog rewrite in terms of The Last Redoubt
+- clarify what needs to change
 
 - geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
 - NPCs can connect to meta points
@@ -82,6 +84,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ bug: /test -> /part/1 -> /test then click on finished actor dst causes jump?
+- ✅ `NPC` -> `NPCs` e.g. to solve draw order
 - ✅ on resume NPC via src node click, path preserved and animation shortened
 - ✅ `NPC` component replaces `SoloNPCWidget`
 - ✅ NavCollide: on hide/show only resume previously playing
