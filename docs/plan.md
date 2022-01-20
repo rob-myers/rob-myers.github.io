@@ -42,12 +42,15 @@ __Aim towards website release__.
 
 - Write text
 
----
+## "Come Let's Play" as motivator
+  - play in: create specification via user interaction
+  - play out: run system by non-trivially conforming to all specifications
+  - but **we do not wish to introduce graphical formalism** for live sequence charts
+  - instead, we'll keep it in the background as a motivation for how we'll use the shell
 
 ## TODO (unsorted)
 
 - `NPC` -> `NPCs` e.g. to solve draw order
-- "Come, Let's Play" as a motivator
 
 - stationary NPC can be turned via target dot
   - rotation independent
