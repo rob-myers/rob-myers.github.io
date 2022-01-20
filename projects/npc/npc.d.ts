@@ -56,34 +56,35 @@ declare namespace NPC {
 
     el: {
       npc: SVGGElement;
-      dir: SVGLineElement;
+      look: SVGLineElement;
       path: SVGPolylineElement;
     };
     srcApi: NPC.DraggableNodeApi;
     dstApi: NPC.DraggableNodeApi;
 
-    /** Internal apis */
-    _: {
-      /** Should cancel drag of node? */
-      shouldCancelDrag(curr: Geom.Vect, next: Geom.Vect, type: 'src' | 'dst'): boolean,
-      followNavPath(): void;
-      /**
-       * TODO previously rootRef
-       */
-      initialize(el: SVGGElement): void;
-      onDraggedSrcNode(): void;
-      onClickedSrcNode(): void;
-      onDraggedDstNode(): void;
-      onClickedDstNode(): void;
-      reverseNavPath(): void;
-      swapNodes(): void;
-      togglePaused(): void;
-      updateAnimAux(): void;
-      /** Compute navpath from NPC's current position to `dst`. */
-      updateNavPath(dst: Geom.Vect): void;
-    };
+    _: InternalNpcApi;
   }
-  
+
+  export interface InternalNpcApi {
+    /** Should cancel drag of node? */
+    shouldCancelDrag(curr: Geom.Vect, next: Geom.Vect, type: 'src' | 'dst'): boolean,
+    followNavPath(): void;
+    /**
+    * TODO previously rootRef
+    */
+    initialize(el: SVGGElement): void;
+    onDraggedSrcNode(): void;
+    onClickedSrcNode(): void;
+    onDraggedDstNode(): void;
+    onClickedDstNode(): void;
+    reverseNavPath(): void;
+    swapNodes(): void;
+    togglePaused(): void;
+    updateAnimAux(): void;
+    /** Compute navpath from NPC's current position to `dst`. */
+    updateNavPath(dst: Geom.Vect): void;
+  }
+
   export interface DraggableNodeApi {
     readonly moveTo: (p: Geom.VectJson) => void;
     readonly getPosition: () => Geom.Vect;

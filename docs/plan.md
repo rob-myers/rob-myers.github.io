@@ -50,8 +50,8 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-
 - 🚧 stationary NPC can be turned via target dot
+  - DraggableRay
   - rotation independent
 - can change NPC speed via +/- (playback rate)
 - NPC has name/info/speech (?)
