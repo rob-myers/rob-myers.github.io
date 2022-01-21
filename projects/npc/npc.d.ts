@@ -61,13 +61,14 @@ declare namespace NPC {
     };
     srcApi: NPC.DraggableNodeApi;
     dstApi: NPC.DraggableNodeApi;
+    rayApi: NPC.DraggableRayApi;
 
-    _: InternalNpcApi;
+    internal: InternalNpcApi;
   }
 
   export interface InternalNpcApi {
     /** Should cancel drag of node? */
-    shouldCancelDrag(curr: Geom.Vect, next: Geom.Vect, type: 'src' | 'dst'): boolean,
+    shouldCancelNavDrag(curr: Geom.Vect, next: Geom.Vect, type: 'src' | 'dst'): boolean,
     followNavPath(): void;
     /**
     * TODO previously rootRef
@@ -78,7 +79,7 @@ declare namespace NPC {
     onDraggedDstNode(): void;
     onClickedDstNode(): void;
     reverseNavPath(): void;
-    swapNodes(): void;
+    swapNavNodes(): void;
     togglePaused(): void;
     updateAnimAux(): void;
     /** Compute navpath from NPC's current position to `dst`. */
@@ -90,6 +91,11 @@ declare namespace NPC {
     readonly getPosition: () => Geom.Vect;
   }
 
+  export interface DraggableRayApi {
+    readonly disable: () => void;
+    readonly enable: (source: Geom.VectJson) => void;
+  }
+  
   export type IconKey = (
     | 'eye'
     | 'down'

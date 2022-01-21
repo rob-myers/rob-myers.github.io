@@ -1,5 +1,5 @@
-import { css } from "goober";
 import React from "react";
+import { css } from "goober";
 import { Vect } from "../geom";
 import { getSvgPos } from "../service/dom";
 import useUpdate from '../hooks/use-update';
@@ -22,6 +22,16 @@ export default function DraggableNode(props) {
       /** @type {SVGCircleElement} */
       circleEl: ({}),
 
+      /** @type {React.RefCallback<SVGGElement>} */
+      rootRef: (el) => {
+        if (el) {
+          state.rootEl = el;
+          state.lineEl = /** @type {SVGLineElement} */ (el.querySelector('line.drag-indicator'));
+          state.circleEl = /** @type {SVGCircleElement} */ (el.querySelector('circle.node'));
+          state.circleEl.addEventListener('pointerdown', state.startDrag);
+          state.circleEl.addEventListener('pointerup', state.applyDrag);
+        }
+      },
       /** @param {PointerEvent} e */
       startDrag: (e) => {
         /**
@@ -76,9 +86,7 @@ export default function DraggableNode(props) {
         svg.style.cursor = 'auto';
       },
       applyDrag: () => {
-        if (!state.dragging) {
-          return;
-        }
+        if (!state.dragging) return;
         state.endDrag();
 
         if (props.shouldCancel?.(state.position.clone(), state.target.clone())) {
@@ -115,18 +123,7 @@ export default function DraggableNode(props) {
   const radius = props.radius || 8;
 
   return (
-    <g
-      className={rootCss}
-      ref={(el) => {
-        if (el) {
-          state.rootEl = el;
-          state.lineEl = /** @type {SVGLineElement} */ (el.querySelector('line.drag-indicator'));
-          state.circleEl = /** @type {SVGCircleElement} */ (el.querySelector('circle.node'));
-          state.circleEl.addEventListener('pointerdown', state.startDrag);
-          state.circleEl.addEventListener('pointerup', state.applyDrag);
-        }
-      }}
-    >
+    <g className={rootCss} ref={state.rootRef}>
       {props.icon && (
         {
           eye: (
@@ -186,6 +183,7 @@ const rootCss = css`
   circle.node {
     fill: rgba(0, 0, 100, 0.1);
     stroke: rgba(0, 0, 100, 0.2);
+    stroke-dasharray: 4px 4px;
     cursor: pointer;
   }
   circle.inner-node {

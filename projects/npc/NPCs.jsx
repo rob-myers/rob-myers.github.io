@@ -4,10 +4,12 @@ import { Vect } from "../geom";
 import { pathfinding } from '../pathfinding/Pathfinding';
 import DraggableNode from "./DraggableNode";
 import { getInternalNpcApi, navNodeRadius } from "./internals";
+import DraggableRay from "./DraggableRay";
 
 // TODO
 // - implement look drag here (not in own component)
 // - listen for changes to props.npcs
+// - navpaths have clickable dots
 // - generally speaking, ensure exactly one group in each zone
 
 /** @param {NPC.NPCsProps} props */
@@ -19,6 +21,7 @@ export default function NPCs(props) {
     const groupIds = defs.map(def => pathfinding.getGroup(def.zoneKey, def.src)); // Assume zones exist
     groupIds.forEach((x, i) => x === null && console.warn(`NPC: ${defs[i].key}: init.src: ${defs[i].src.x}, ${defs[i].src.y}: no group found`));
 
+    // Each NPC has an API
     const apis = defs.map((def, i) => {
       /** @type {NPC.NPCApi} */
       const api = {
@@ -31,6 +34,7 @@ export default function NPCs(props) {
         },
         srcApi: /** @type {NPC.DraggableNodeApi} */ ({}),
         dstApi: /** @type {NPC.DraggableNodeApi} */ ({}),
+        rayApi: /** @type {NPC.DraggableRayApi} */ ({}),
 
         move: /** @type {Animation} */ ({}),
         look: /** @type {Animation} */ ({}),
@@ -53,9 +57,9 @@ export default function NPCs(props) {
           api.move.play(); api.look.play();
         },
 
-        _:  /** @type {*} */ (null),
+        internal: /** @type {*} */ (null),
       };
-      api._ = getInternalNpcApi(api)
+      api.internal = getInternalNpcApi(api)
       return api;
     });
 
@@ -70,14 +74,17 @@ export default function NPCs(props) {
     return {
       apis,
       api,
+      /** Avoids reset on HMR */
+      mounted: false,
       /** @type {React.RefCallback<SVGGElement>} */
       rootRef(el) {
-        if (el) {
+        if (el && !state.mounted) {
           state.apis.forEach(api => {
-            api._.initialize(el);
-            api._.updateNavPath(Vect.from(api.def.dst));
-            api._.followNavPath();
+            api.internal.initialize(el);
+            api.internal.updateNavPath(Vect.from(api.def.dst));
+            api.internal.followNavPath();
           });
+          state.mounted = true;
         }
       },
     };
@@ -94,20 +101,22 @@ export default function NPCs(props) {
           <g key={api.key}>
             <polyline className={`navpath ${api.key}`} />
             <DraggableNode
+              key="src"
               initial={api.def.src}
               radius={navNodeRadius}
               onLoad={nodeApi => api.srcApi = nodeApi}
-              onStop={api._.onDraggedSrcNode}
-              shouldCancel={(curr, next) => api._.shouldCancelDrag(curr, next, 'src')}
-              onClick={api._.onClickedSrcNode}
+              onStop={api.internal.onDraggedSrcNode}
+              shouldCancel={(curr, next) => api.internal.shouldCancelNavDrag(curr, next, 'src')}
+              onClick={api.internal.onClickedSrcNode}
             />
             <DraggableNode
+              key="dst"
               initial={api.def.dst}
               radius={navNodeRadius}
               onLoad={nodeApi => api.dstApi = nodeApi}
-              onStop={api._.onDraggedDstNode}
-              shouldCancel={(curr, next) => api._.shouldCancelDrag(curr, next, 'dst')}
-              onClick={api._.onClickedDstNode}
+              onStop={api.internal.onDraggedDstNode}
+              shouldCancel={(curr, next) => api.internal.shouldCancelNavDrag(curr, next, 'dst')}
+              onClick={api.internal.onClickedDstNode}
             />
           </g>
         )}
@@ -118,11 +127,12 @@ export default function NPCs(props) {
           <circle className="body" fill="#f99" stroke="black" strokeWidth={2} r={9} />
           <g className="look">
             <line className="body" stroke="black" strokeWidth={2} x2={9} />
-            <circle
-              className="source"
-              cx={10} cy={6} r={4} fill="white" stroke="black" strokeWidth={2}
-            />
           </g>
+          {/* TODO can look by dragging temp line from npc while not moving */}
+          <DraggableRay
+            radius={9}
+            onLoad={rayApi => api.rayApi = rayApi}
+          />
         </g>
       )}
 
@@ -131,18 +141,10 @@ export default function NPCs(props) {
 }
 
 const rootCss = css`
-  g.npc > .body {
-    pointer-events: none;
-  }
-  g.npc circle.source {
-    cursor: crosshair;
-  }
-
   polyline.navpath {
     fill: none;
-    stroke: black;
+    stroke: #222;
     stroke-width: 1;
-    stroke-dasharray: 6px 6px;
-    stroke-dashoffset: 0px;
+    stroke-dasharray: 1px;
   }
 `;

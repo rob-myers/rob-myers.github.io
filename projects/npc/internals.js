@@ -3,27 +3,14 @@ import { pathfinding } from '../pathfinding/Pathfinding';
 
 /**
  * @param {NPC.NPCApi} api
- * @returns {NPC.InternalNpcApi}
  */
 export function getInternalNpcApi(api) {
   const { def } = api;
-  return {
-    shouldCancelDrag(curr, next, type) {
-      if (pathfinding.getGroup(def.zoneKey, next) === null) {
-        return true; // NOTE currently permit ends to lie in distinct groups
-      }
-      const dragging = curr.distanceTo(next) >= 20;
-      const npcPos = api.getPosition();
-      const other = type === 'src' ? api.dstApi.getPosition() : api.srcApi.getPosition();
-
-      return dragging && (
-        next.distanceTo(npcPos) <= 2 * navNodeRadius // Near NPC
-        || next.distanceTo(other) <= 2 * navNodeRadius // Near other end
-      );
-    },
+  /** @type {NPC.InternalNpcApi} */
+  const internal = {
     followNavPath() {
       const { geom: { animPath }, aux } = api;
-      if (animPath.length <= 1) return;
+      if (animPath.length <= 1) return;  // api.rayApi.enable ?
       const wasPaused = api.is('paused');
 
       api.move.cancel();
@@ -38,7 +25,7 @@ export function getInternalNpcApi(api) {
 
       api.look.cancel();
       api.look = api.el.look.animate(
-        animPath.flatMap((p, i) => [{
+        animPath.flatMap((_, i) => [{
           offset: aux.total ? aux.sofars[i] / aux.total : 0,
           transform: `rotateZ(${aux.angs[i - 1] || 0}rad)`,
         }, {
@@ -48,8 +35,11 @@ export function getInternalNpcApi(api) {
         { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
       );
 
+      api.rayApi.disable();
+
       if (wasPaused || (aux.count === 0 && def.paused)) {
         api.pause();
+        api.rayApi.enable(api.getPosition());
       }
       api.aux.count++;
     },
@@ -69,15 +59,15 @@ export function getInternalNpcApi(api) {
       ], { fill: 'forwards' });
     },
     onDraggedSrcNode() {
-      api._.updateNavPath(api.srcApi.getPosition());
-      api._.followNavPath();
+      internal.updateNavPath(api.srcApi.getPosition());
+      internal.followNavPath();
     },
     onClickedSrcNode() {
       if (api.is('finished')) {
-        api._.reverseNavPath();
+        internal.reverseNavPath();
         api.geom.animPath = api.geom.navPath.slice();
-        api._.updateAnimAux(); // Or could reverse {edges, elens, sofars, angs}
-        api._.followNavPath();
+        internal.updateAnimAux(); // Or could reverse {edges, elens, sofars, angs}
+        internal.followNavPath();
       } else if (api.is('paused')) {
         const npcPos = api.getPosition();
         const found = api.geom.navPathPolys.findIndex(p => p.contains(npcPos));
@@ -85,27 +75,40 @@ export function getInternalNpcApi(api) {
           return console.warn(`onClickedSrcNode: failed to find npc on its navPath`);
         }
         api.geom.animPath = (api.geom.navPath.slice(0, found + 1).concat(npcPos)).reverse();
-        api._.reverseNavPath();
-        api._.updateAnimAux(); // Or could reverse {edges, elens, sofars, angs}
-        api._.followNavPath();
+        internal.reverseNavPath();
+        internal.updateAnimAux(); // Or could reverse {edges, elens, sofars, angs}
+        internal.followNavPath();
       } else {
-        api._.togglePaused();
+        internal.togglePaused();
       }
     },          
     onDraggedDstNode() {
-      api._.updateNavPath(api.dstApi.getPosition());
-      api._.followNavPath();
+      internal.updateNavPath(api.dstApi.getPosition());
+      internal.followNavPath();
     },
     onClickedDstNode() {
-      api._.togglePaused();
+      internal.togglePaused();
     },
     reverseNavPath() {
       api.geom.navPath.reverse();
       api.geom.navPathPolys.reverse();
       api.el.path.setAttribute('points', `${api.geom.navPath}`);
-      api._.swapNodes();
+      internal.swapNavNodes();
     },
-    swapNodes() {
+    shouldCancelNavDrag(curr, next, type) {
+      if (pathfinding.getGroup(def.zoneKey, next) === null) {
+        return true; // NOTE currently permit ends to lie in distinct groups
+      }
+      const dragging = curr.distanceTo(next) >= 20;
+      const npcPos = api.getPosition();
+      const other = type === 'src' ? api.dstApi.getPosition() : api.srcApi.getPosition();
+
+      return dragging && (
+        next.distanceTo(npcPos) <= 2 * navNodeRadius // Near NPC
+        || next.distanceTo(other) <= 2 * navNodeRadius // Near other end
+      );
+    },
+    swapNavNodes() {
       const [src, dst] = [api.srcApi.getPosition(), api.dstApi.getPosition()];
       api.srcApi.moveTo(dst), api.dstApi.moveTo(src);
     },
@@ -114,8 +117,10 @@ export function getInternalNpcApi(api) {
         return;
       } else if (api.is('paused')) {
         api.play();
+        api.rayApi.disable();
       } else {
         api.pause();
+        api.rayApi.enable(api.getPosition());
       }
     },
     updateAnimAux() {
@@ -146,13 +151,14 @@ export function getInternalNpcApi(api) {
       // Move src node to current NPC position
       api.srcApi.moveTo(npcPos), api.dstApi.moveTo(dst);
       api.el.path.setAttribute('points', `${api.geom.navPath}`);
-      api._.updateAnimAux();
+      internal.updateAnimAux();
       api.geom.navPathPolys = api.aux.edges.map(e => {
         const normal = e.q.clone().sub(e.p).rotate(Math.PI/2).normalize(0.01);
         return new Poly([e.p.clone().add(normal), e.q.clone().add(normal), e.q.clone().sub(normal), e.p.clone().sub(normal)]);
       })
     },
   };
+  return internal;
 }
 
 export const navNodeRadius = 24
