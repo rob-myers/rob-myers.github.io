@@ -28,14 +28,18 @@ export function getInternalNpcApi(api) {
       api.move.addEventListener('finish', internal.onFinishMove);
 
       api.look.cancel();
+      // api.el.look.style.transform = `rotateZ(${aux.angs[0]}rad) !important`;
       api.look = api.el.look.animate(
-        animPath.flatMap((_, i) => [{
+        animPath.flatMap((_, i) => [
+        {
           offset: aux.total ? aux.sofars[i] / aux.total : 0,
           transform: `rotateZ(${aux.angs[i - 1] || 0}rad)`,
-        }, {
+        },
+        {
           offset: aux.total ? aux.sofars[i] / aux.total : 0,
           transform: `rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
-        }]),
+        }
+      ]),
         { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
       );
 

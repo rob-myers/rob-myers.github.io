@@ -3,10 +3,6 @@ import { css } from "goober";
 import { getSvgPos } from "../service/dom";
 import { Vect } from "../geom/vect";
 
-// TODO onStop provides target
-// TODO onClick provides target
-// TODO NPC turns towards drag point onStop
-
 /** @param {Props} props */
 export default function DraggableRay(props) {
 

@@ -49,6 +49,8 @@ declare namespace NPC {
       total: number;
       angs: number[];
     };
+    /** Get angle in radians */
+    readonly getAngle: () => number;
     readonly getPosition: () => Geom.Vect;
     readonly is: (ps: AnimationPlayState) => boolean;
     readonly pause: () => void;

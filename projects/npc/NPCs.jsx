@@ -46,15 +46,23 @@ export default function NPCs(props) {
           const matrix = new DOMMatrixReadOnly(window.getComputedStyle(api.el.npc).transform);
           return new Vect(matrix.m41, matrix.m42);
         },
+        getAngle() {
+          const matrix = new DOMMatrixReadOnly(window.getComputedStyle(api.el.look).transform);
+          return Math.atan2(matrix.m12, matrix.m11);
+        },
         /** @param {AnimationPlayState} ps */
-        is: (ps) => api.move.playState === ps,
-        pause: () => {
+        is: (ps) => {
+          return api.move.playState === ps;
+        },
+        pause() {
           if (api.is('running')) {
-            api.move.pause(), api.look.pause();
+            api.move.pause();
+            api.look.pause();
           }
         },
-        play: () => {
-          api.move.play(); api.look.play();
+        play() {
+          api.move.play();
+          api.look.play();
         },
 
         internal: /** @type {*} */ (null),
@@ -128,10 +136,26 @@ export default function NPCs(props) {
           <g className="look">
             <line className="body" stroke="black" strokeWidth={2} x2={9} />
           </g>
-          {/* TODO can look by dragging temp line from npc while not moving */}
           <DraggableRay
             radius={9}
             onLoad={rayApi => api.rayApi = rayApi}
+            /**
+             * IN PROGRESS
+             */
+            onStop={target => {
+              console.log('stop')
+              const srcAngle = api.getAngle();
+              const delta = target.clone().sub(api.getPosition());
+              const dstAngle = Math.atan2(delta.y, delta.x);
+              api.look.cancel();
+              api.look = api.el.look.animate(
+                [
+                  { transform: `rotateZ(${srcAngle}rad)` },
+                  { transform: `rotateZ(${dstAngle}rad)` },
+                ],
+                { duration: 150, direction: 'normal', fill: 'forwards' },
+              );
+            }}
           />
         </g>
       )}
