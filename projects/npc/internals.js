@@ -6,8 +6,10 @@ import { pathfinding } from '../pathfinding/Pathfinding';
  */
 export function getInternalNpcApi(api) {
   const { def } = api;
+
   /** @type {NPC.InternalNpcApi} */
   const internal = {
+
     followNavPath() {
       const { geom: { animPath }, aux } = api;
       if (animPath.length <= 1) return;  // api.rayApi.enable ?
@@ -22,6 +24,8 @@ export function getInternalNpcApi(api) {
         })),
         { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
       );
+
+      api.move.addEventListener('finish', internal.onFinishMove);
 
       api.look.cancel();
       api.look = api.el.look.animate(
@@ -43,6 +47,7 @@ export function getInternalNpcApi(api) {
       }
       api.aux.count++;
     },
+
     /** @param {SVGGElement} rootGrp */
     initialize(rootGrp) {
       api.el.npc = /** @type {*} */ (rootGrp.querySelector(`g.npc.${def.key}`));
@@ -58,10 +63,12 @@ export function getInternalNpcApi(api) {
         { transform: `rotateZ(${def.angle}rad)` },
       ], { fill: 'forwards' });
     },
+
     onDraggedSrcNode() {
       internal.updateNavPath(api.srcApi.getPosition());
       internal.followNavPath();
     },
+
     onClickedSrcNode() {
       if (api.is('finished')) {
         internal.reverseNavPath();
@@ -81,20 +88,28 @@ export function getInternalNpcApi(api) {
       } else {
         internal.togglePaused();
       }
-    },          
+    },
+      
     onDraggedDstNode() {
       internal.updateNavPath(api.dstApi.getPosition());
       internal.followNavPath();
     },
+
     onClickedDstNode() {
       internal.togglePaused();
     },
+
+    onFinishMove() {
+      api.rayApi.enable(api.getPosition());
+    },
+
     reverseNavPath() {
       api.geom.navPath.reverse();
       api.geom.navPathPolys.reverse();
       api.el.path.setAttribute('points', `${api.geom.navPath}`);
       internal.swapNavNodes();
     },
+
     shouldCancelNavDrag(curr, next, type) {
       if (pathfinding.getGroup(def.zoneKey, next) === null) {
         return true; // NOTE currently permit ends to lie in distinct groups
@@ -108,10 +123,12 @@ export function getInternalNpcApi(api) {
         || next.distanceTo(other) <= 2 * navNodeRadius // Near other end
       );
     },
+
     swapNavNodes() {
       const [src, dst] = [api.srcApi.getPosition(), api.dstApi.getPosition()];
       api.srcApi.moveTo(dst), api.dstApi.moveTo(src);
     },
+
     togglePaused: () => {
       if (api.is('finished')) {
         return;
@@ -123,6 +140,7 @@ export function getInternalNpcApi(api) {
         api.rayApi.enable(api.getPosition());
       }
     },
+
     updateAnimAux() {
       const { geom: { animPath }, aux } = api;
       aux.edges = animPath.map((p, i) => ({ p, q: animPath[i + 1] })).slice(0, -1);
@@ -135,6 +153,7 @@ export function getInternalNpcApi(api) {
       [aux.sofars, aux.total] = [reduced.sofars, reduced.total];
       aux.angs = aux.edges.map(e => Number(Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2)));
     },
+
     updateNavPath(dst) {
       const dstGroupId = pathfinding.getGroup(def.zoneKey, dst);
       if (dstGroupId === null) {

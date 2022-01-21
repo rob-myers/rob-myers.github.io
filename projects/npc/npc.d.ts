@@ -70,14 +70,12 @@ declare namespace NPC {
     /** Should cancel drag of node? */
     shouldCancelNavDrag(curr: Geom.Vect, next: Geom.Vect, type: 'src' | 'dst'): boolean,
     followNavPath(): void;
-    /**
-    * TODO previously rootRef
-    */
     initialize(el: SVGGElement): void;
     onDraggedSrcNode(): void;
     onClickedSrcNode(): void;
     onDraggedDstNode(): void;
     onClickedDstNode(): void;
+    onFinishMove(): void;
     reverseNavPath(): void;
     swapNavNodes(): void;
     togglePaused(): void;
