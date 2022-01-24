@@ -20,7 +20,6 @@ declare namespace NPC {
 
   export interface NPCsApi {
     apis: NPCApi[];
-    for: Record<string, NPCApi>;
     // ...
   }
 
@@ -49,16 +48,21 @@ declare namespace NPC {
       total: number;
       angs: number[];
     };
-    /** Get angle in radians */
-    readonly getAngle: () => number;
+    /** Radians */
+    readonly getNPCAngle: () => number;
+    /** Radians */
+    readonly getLookAngle: () => number;
     readonly getPosition: () => Geom.Vect;
+    /**
+     * TODO clarify this only refers to the api.move Animation
+     */
     readonly is: (ps: AnimationPlayState) => boolean;
     readonly pause: () => void;
     readonly play: () => void;
 
     el: {
       npc: SVGGElement;
-      look: SVGLineElement;
+      look: SVGGElement;
       path: SVGPolylineElement;
     };
     srcApi: NPC.DraggableNodeApi;
@@ -93,7 +97,8 @@ declare namespace NPC {
 
   export interface DraggableRayApi {
     readonly disable: () => void;
-    readonly enable: (source: Geom.VectJson) => void;
+    readonly enable: (source: Geom.VectJson, angle: number) => void;
+    readonly setAngle: (angle: number) => void;
   }
   
   export type IconKey = (

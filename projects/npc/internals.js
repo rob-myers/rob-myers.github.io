@@ -18,36 +18,26 @@ export function getInternalNpcApi(api) {
       api.move.cancel();
       api.move = api.el.npc.animate(
         // NOTE need ≥ 2 frames for polyfill
-        animPath.map((p, i) => ({
-          offset: aux.total ? aux.sofars[i] / aux.total : 0,
-          transform: `translate(${p.x}px, ${p.y}px)`,
-        })),
+        animPath.flatMap((p, i) => [
+          {
+            offset: aux.total ? aux.sofars[i] / aux.total : 0,
+            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || 0}rad)`,
+          },
+          {
+            offset: aux.total ? aux.sofars[i] / aux.total : 0,
+            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
+          },
+        ]),
         { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
       );
 
       api.move.addEventListener('finish', internal.onFinishMove);
 
-      api.look.cancel();
-      // api.el.look.style.transform = `rotateZ(${aux.angs[0]}rad) !important`;
-      api.look = api.el.look.animate(
-        animPath.flatMap((_, i) => [
-        {
-          offset: aux.total ? aux.sofars[i] / aux.total : 0,
-          transform: `rotateZ(${aux.angs[i - 1] || 0}rad)`,
-        },
-        {
-          offset: aux.total ? aux.sofars[i] / aux.total : 0,
-          transform: `rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
-        }
-      ]),
-        { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
-      );
-
       api.rayApi.disable();
 
       if (wasPaused || (aux.count === 0 && def.paused)) {
         api.pause();
-        api.rayApi.enable(api.getPosition());
+        api.rayApi.enable(api.getPosition(), api.getNPCAngle()); // ?
       }
       api.aux.count++;
     },
@@ -104,7 +94,7 @@ export function getInternalNpcApi(api) {
     },
 
     onFinishMove() {
-      api.rayApi.enable(api.getPosition());
+      api.rayApi.enable(api.getPosition(), api.getNPCAngle());
     },
 
     reverseNavPath() {
@@ -112,6 +102,7 @@ export function getInternalNpcApi(api) {
       api.geom.navPathPolys.reverse();
       api.el.path.setAttribute('points', `${api.geom.navPath}`);
       internal.swapNavNodes();
+      api.el.look.style.transform = `rotateZ(0rad)`;
     },
 
     shouldCancelNavDrag(curr, next, type) {
@@ -140,8 +131,8 @@ export function getInternalNpcApi(api) {
         api.play();
         api.rayApi.disable();
       } else {
+        api.rayApi.enable(api.getPosition(), api.getNPCAngle());
         api.pause();
-        api.rayApi.enable(api.getPosition());
       }
     },
 

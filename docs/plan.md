@@ -50,6 +50,10 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- fix look issue when drag node
+- initial move turn sometimes too slow
+- ✅ on reverse path, fix look angle
+
 - 🚧 stationary NPC can be turned via target dot
   - DraggableRay
   - rotation independent

@@ -9,8 +9,11 @@ export default function DraggableRay(props) {
   const [state] = React.useState(() => {
 
     const output = {
-      /** Expected to be constant during ray drag */
+      /** Assumed constant during ray drag */
       source: new Vect,
+      /** Assumed constant during ray drag */
+      angle: 0,
+
       target: new Vect,
       dragging: false,
       disabled: true,
@@ -54,7 +57,8 @@ export default function DraggableRay(props) {
             pointerId: null,
           });
           state.target.copy(target);
-          const delta = Vect.from(target).sub(state.source);
+          /** Must account for NPC offset and angle (???) */
+          const delta = Vect.from(target).sub(state.source).rotate(-state.angle);
           if (delta.length >= 20) {
             state.lineEl.setAttribute('x2', String(delta.x));
             state.lineEl.setAttribute('y2', String(delta.y));
@@ -97,9 +101,13 @@ export default function DraggableRay(props) {
       disable: () => {
         state.disabled = true;
       },
-      enable: (source) => {
+      enable: (source, angle) => {
         state.source.copy(source);
+        state.angle = angle;
         state.disabled = false;
+      },
+      setAngle: (angle) => {
+        state.angle = angle;
       },
     });
 

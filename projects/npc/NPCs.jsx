@@ -7,7 +7,6 @@ import { getInternalNpcApi, navNodeRadius } from "./internals";
 import DraggableRay from "./DraggableRay";
 
 // TODO
-// - implement look drag here (not in own component)
 // - listen for changes to props.npcs
 // - navpaths have clickable dots
 // - generally speaking, ensure exactly one group in each zone
@@ -46,8 +45,12 @@ export default function NPCs(props) {
           const matrix = new DOMMatrixReadOnly(window.getComputedStyle(api.el.npc).transform);
           return new Vect(matrix.m41, matrix.m42);
         },
-        getAngle() {
+        getLookAngle() {
           const matrix = new DOMMatrixReadOnly(window.getComputedStyle(api.el.look).transform);
+          return Math.atan2(matrix.m12, matrix.m11);
+        },
+        getNPCAngle() {
+          const matrix = new DOMMatrixReadOnly(window.getComputedStyle(api.el.npc).transform);
           return Math.atan2(matrix.m12, matrix.m11);
         },
         /** @param {AnimationPlayState} ps */
@@ -57,12 +60,11 @@ export default function NPCs(props) {
         pause() {
           if (api.is('running')) {
             api.move.pause();
-            api.look.pause();
           }
         },
         play() {
+          api.el.look.style.transform = `rotateZ(0rad)`;
           api.move.play();
-          api.look.play();
         },
 
         internal: /** @type {*} */ (null),
@@ -74,8 +76,7 @@ export default function NPCs(props) {
     /** @type {NPC.NPCsApi} */
     const api = {
       apis,
-      for: apis.reduce((agg, api) => ({ ...agg, [api.key]: api }), {}),
-      // TODO ...
+      // ...
     };
     props.onLoad(api);
 
@@ -139,21 +140,26 @@ export default function NPCs(props) {
           <DraggableRay
             radius={9}
             onLoad={rayApi => api.rayApi = rayApi}
-            /**
-             * IN PROGRESS
-             */
             onStop={target => {
-              console.log('stop')
-              const srcAngle = api.getAngle();
+              const srcAngle = api.getLookAngle();
               const delta = target.clone().sub(api.getPosition());
-              const dstAngle = Math.atan2(delta.y, delta.x);
+              // Must take NPC angle into account
+              let dstAngle = Math.atan2(delta.y, delta.x) - api.getNPCAngle();
+              // Ensure shortest turn is taken
+              if (dstAngle - srcAngle > Math.PI) {
+                dstAngle -= 2 * Math.PI;
+              } else if (dstAngle - srcAngle < -Math.PI) {
+                dstAngle += 2 * Math.PI;
+              }
+              
               api.look.cancel();
+              api.el.look.style.transform = `rotateZ(${dstAngle}rad)`;
               api.look = api.el.look.animate(
                 [
-                  { transform: `rotateZ(${srcAngle}rad)` },
-                  { transform: `rotateZ(${dstAngle}rad)` },
+                  { transform: `rotateZ(${srcAngle.toFixed(2)}rad)` },
+                  { transform: `rotateZ(${dstAngle.toFixed(2)}rad)` },
                 ],
-                { duration: 150, direction: 'normal', fill: 'forwards' },
+                { duration: 150, direction: 'normal' },
               );
             }}
           />
