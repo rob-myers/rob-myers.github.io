@@ -59,6 +59,7 @@ export function getInternalNpcApi(api) {
     },
 
     onDraggedSrcNode() {
+      internal.resetLook();
       internal.updateNavPath(api.srcApi.getPosition());
       internal.followNavPath();
     },
@@ -85,6 +86,7 @@ export function getInternalNpcApi(api) {
     },
       
     onDraggedDstNode() {
+      internal.resetLook();
       internal.updateNavPath(api.dstApi.getPosition());
       internal.followNavPath();
     },
@@ -97,12 +99,16 @@ export function getInternalNpcApi(api) {
       api.rayApi.enable(api.getPosition(), api.getNPCAngle());
     },
 
+    resetLook() {
+      api.el.look.style.transform = `rotateZ(0rad)`;
+    },
+
     reverseNavPath() {
       api.geom.navPath.reverse();
       api.geom.navPathPolys.reverse();
       api.el.path.setAttribute('points', `${api.geom.navPath}`);
       internal.swapNavNodes();
-      api.el.look.style.transform = `rotateZ(0rad)`;
+      internal.resetLook();
     },
 
     shouldCancelNavDrag(curr, next, type) {

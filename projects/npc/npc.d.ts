@@ -82,6 +82,7 @@ declare namespace NPC {
     onDraggedDstNode(): void;
     onClickedDstNode(): void;
     onFinishMove(): void;
+    resetLook(): void;
     reverseNavPath(): void;
     swapNavNodes(): void;
     togglePaused(): void;

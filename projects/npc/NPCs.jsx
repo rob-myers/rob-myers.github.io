@@ -63,7 +63,7 @@ export default function NPCs(props) {
           }
         },
         play() {
-          api.el.look.style.transform = `rotateZ(0rad)`;
+          api.internal.resetLook();
           api.move.play();
         },
 

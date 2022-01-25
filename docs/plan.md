@@ -50,13 +50,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- fix look issue when drag node
 - initial move turn sometimes too slow
-- ✅ on reverse path, fix look angle
-
-- 🚧 stationary NPC can be turned via target dot
-  - DraggableRay
-  - rotation independent
 - can change NPC speed via +/- (playback rate)
 - NPC has name/info/speech (?)
 
@@ -88,6 +82,11 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ fix look issue when drag node
+- ✅ on reverse path, fix look angle
+- ✅ stationary NPC can be turned via target dot
+  - DraggableRay
+  - rotation independent
 - ✅ bug: /test -> /part/1 -> /test then click on finished actor dst causes jump?
 - ✅ `NPC` -> `NPCs` e.g. to solve draw order
 - ✅ on resume NPC via src node click, path preserved and animation shortened
