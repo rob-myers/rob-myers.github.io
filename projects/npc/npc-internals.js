@@ -124,7 +124,7 @@ export function getInternalNpcApi(api) {
 
     renderNavPath() {
       api.el.path.setAttribute('points', `${api.geom.navPath}`);
-      api.el.dots.childNodes.forEach(node => node.remove());
+      Array.from(api.el.dots.childNodes).forEach(node => node.remove());
       api.geom.navPath.forEach(p => {
         const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
         dot.setAttribute('cx', `${p.x}`), dot.setAttribute('cy', `${p.y}`);
