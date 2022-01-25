@@ -50,7 +50,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- initial move turn sometimes too slow
+- jerkiness on reverse npc
+- npc sometimes vanishes
+- sometimes seems to turn slowly while moving
 - can change NPC speed via +/- (playback rate)
 - NPC has name/info/speech (?)
 

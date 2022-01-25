@@ -12,12 +12,14 @@ export function getInternalNpcApi(api) {
 
     followNavPath() {
       const { geom: { animPath }, aux } = api;
-      if (animPath.length <= 1) return;  // api.rayApi.enable ?
-      const wasPaused = api.is('paused');
-
+      if (animPath.length <= 1) {// Already finished
+        api.rayApi.enable(api.getPosition(), api.getNPCAngle());
+        return;
+      }
+      
+      const wasPaused = api.move.playState === 'paused';
       api.move.cancel();
-      api.move = api.el.npc.animate(
-        // NOTE need ≥ 2 frames for polyfill
+      api.move = api.el.npc.animate(// NOTE need ≥ 2 frames for polyfill
         animPath.flatMap((p, i) => [
           {
             offset: aux.total ? aux.sofars[i] / aux.total : 0,
@@ -30,14 +32,12 @@ export function getInternalNpcApi(api) {
         ]),
         { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
       );
-
       api.move.addEventListener('finish', internal.onFinishMove);
 
       api.rayApi.disable();
-
       if (wasPaused || (aux.count === 0 && def.paused)) {
         api.pause();
-        api.rayApi.enable(api.getPosition(), api.getNPCAngle()); // ?
+        api.rayApi.enable(api.getPosition(), api.getNPCAngle());
       }
       api.aux.count++;
     },
@@ -65,18 +65,18 @@ export function getInternalNpcApi(api) {
     },
 
     onClickedSrcNode() {
-      if (api.is('finished')) {
+      if (api.move.playState === 'finished') {
         internal.reverseNavPath();
         api.geom.animPath = api.geom.navPath.slice();
         internal.updateAnimAux(); // Or could reverse {edges, elens, sofars, angs}
         internal.followNavPath();
-      } else if (api.is('paused')) {
-        const npcPos = api.getPosition();
-        const found = api.geom.navPathPolys.findIndex(p => p.contains(npcPos));
+      } else if (api.move.playState === 'paused') {
+        const position = api.getPosition();
+        const found = api.geom.navPathPolys.findIndex(p => p.contains(position));
         if (found === -1) {
           return console.warn(`onClickedSrcNode: failed to find npc on its navPath`);
         }
-        api.geom.animPath = (api.geom.navPath.slice(0, found + 1).concat(npcPos)).reverse();
+        api.geom.animPath = (api.geom.navPath.slice(0, found + 1).concat(position)).reverse();
         internal.reverseNavPath();
         internal.updateAnimAux(); // Or could reverse {edges, elens, sofars, angs}
         internal.followNavPath();
@@ -93,6 +93,29 @@ export function getInternalNpcApi(api) {
 
     onClickedDstNode() {
       internal.togglePaused();
+    },
+
+    onDragLookRay(target) {
+      const srcAngle = api.getLookAngle();
+      const delta = target.clone().sub(api.getPosition());
+      // Must take NPC angle into account
+      let dstAngle = Math.atan2(delta.y, delta.x) - api.getNPCAngle();
+      // Ensure shortest turn is taken
+      if (dstAngle - srcAngle > Math.PI) {
+        dstAngle -= 2 * Math.PI;
+      } else if (dstAngle - srcAngle < -Math.PI) {
+        dstAngle += 2 * Math.PI;
+      }
+      
+      api.look.cancel();
+      api.el.look.style.transform = `rotateZ(${dstAngle}rad)`;
+      api.look = api.el.look.animate(
+        [
+          { transform: `rotateZ(${srcAngle.toFixed(2)}rad)` },
+          { transform: `rotateZ(${dstAngle.toFixed(2)}rad)` },
+        ],
+        { duration: 150, direction: 'normal' },
+      );
     },
 
     onFinishMove() {
@@ -131,11 +154,11 @@ export function getInternalNpcApi(api) {
     },
 
     togglePaused: () => {
-      if (api.is('finished')) {
+      if (api.move.playState === 'finished') {
         return;
-      } else if (api.is('paused')) {
-        api.play();
+      } else if (api.move.playState === 'paused') {
         api.rayApi.disable();
+        api.play();
       } else {
         api.rayApi.enable(api.getPosition(), api.getNPCAngle());
         api.pause();
@@ -172,6 +195,7 @@ export function getInternalNpcApi(api) {
       api.srcApi.moveTo(npcPos), api.dstApi.moveTo(dst);
       api.el.path.setAttribute('points', `${api.geom.navPath}`);
       internal.updateAnimAux();
+      // Approximate navpath using a bunch of thin rects
       api.geom.navPathPolys = api.aux.edges.map(e => {
         const normal = e.q.clone().sub(e.p).rotate(Math.PI/2).normalize(0.01);
         return new Poly([e.p.clone().add(normal), e.q.clone().add(normal), e.q.clone().sub(normal), e.p.clone().sub(normal)]);

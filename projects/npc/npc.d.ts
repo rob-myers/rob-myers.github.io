@@ -53,10 +53,6 @@ declare namespace NPC {
     /** Radians */
     readonly getLookAngle: () => number;
     readonly getPosition: () => Geom.Vect;
-    /**
-     * TODO clarify this only refers to the api.move Animation
-     */
-    readonly is: (ps: AnimationPlayState) => boolean;
     readonly pause: () => void;
     readonly play: () => void;
 
@@ -80,6 +76,7 @@ declare namespace NPC {
     onDraggedSrcNode(): void;
     onClickedSrcNode(): void;
     onDraggedDstNode(): void;
+    onDragLookRay(target: Geom.Vect): void;
     onClickedDstNode(): void;
     onFinishMove(): void;
     resetLook(): void;

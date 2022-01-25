@@ -53,12 +53,8 @@ export default function NPCs(props) {
           const matrix = new DOMMatrixReadOnly(window.getComputedStyle(api.el.npc).transform);
           return Math.atan2(matrix.m12, matrix.m11);
         },
-        /** @param {AnimationPlayState} ps */
-        is: (ps) => {
-          return api.move.playState === ps;
-        },
         pause() {
-          if (api.is('running')) {
+          if (api.move.playState === 'running') {
             api.move.pause();
           }
         },
@@ -140,28 +136,7 @@ export default function NPCs(props) {
           <DraggableRay
             radius={9}
             onLoad={rayApi => api.rayApi = rayApi}
-            onStop={target => {
-              const srcAngle = api.getLookAngle();
-              const delta = target.clone().sub(api.getPosition());
-              // Must take NPC angle into account
-              let dstAngle = Math.atan2(delta.y, delta.x) - api.getNPCAngle();
-              // Ensure shortest turn is taken
-              if (dstAngle - srcAngle > Math.PI) {
-                dstAngle -= 2 * Math.PI;
-              } else if (dstAngle - srcAngle < -Math.PI) {
-                dstAngle += 2 * Math.PI;
-              }
-              
-              api.look.cancel();
-              api.el.look.style.transform = `rotateZ(${dstAngle}rad)`;
-              api.look = api.el.look.animate(
-                [
-                  { transform: `rotateZ(${srcAngle.toFixed(2)}rad)` },
-                  { transform: `rotateZ(${dstAngle.toFixed(2)}rad)` },
-                ],
-                { duration: 150, direction: 'normal' },
-              );
-            }}
+            onStop={api.internal.onDragLookRay}
           />
         </g>
       )}

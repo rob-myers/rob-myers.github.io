@@ -45,7 +45,7 @@ export default function NavCollide(props) {
     }
     if (props.disabled) {
       state.api.apis.forEach((api, i) => {
-        state.metas[i].wasPlaying = api.is('running');
+        state.metas[i].wasPlaying = api.move.playState === 'running';
         api.pause();
       });
     } else {
