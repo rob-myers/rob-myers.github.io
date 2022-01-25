@@ -3,7 +3,7 @@ import { css } from "goober";
 import { Vect } from "../geom";
 import { pathfinding } from '../pathfinding/Pathfinding';
 import DraggableNode from "./DraggableNode";
-import { getInternalNpcApi, navNodeRadius } from "./internals";
+import { getInternalNpcApi, navNodeRadius } from "./npc-internals";
 import DraggableRay from "./DraggableRay";
 
 // TODO
@@ -59,8 +59,8 @@ export default function NPCs(props) {
           }
         },
         play() {
-          api.internal.resetLook();
           api.move.play();
+          api.internal.resetLook();
         },
 
         internal: /** @type {*} */ (null),

@@ -12,21 +12,20 @@ export function getInternalNpcApi(api) {
 
     followNavPath() {
       const { geom: { animPath }, aux } = api;
-      if (animPath.length <= 1) {// Already finished
+      if (animPath.length <= 1 || aux.total === 0) {// Already finished
         api.rayApi.enable(api.getPosition(), api.getNPCAngle());
         return;
       }
       
       const wasPaused = api.move.playState === 'paused';
-      api.move.cancel();
       api.move = api.el.npc.animate(// NOTE need ≥ 2 frames for polyfill
         animPath.flatMap((p, i) => [
           {
-            offset: aux.total ? aux.sofars[i] / aux.total : 0,
-            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || 0}rad)`,
+            offset: aux.sofars[i] / aux.total,
+            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || aux.angs[i] || 0}rad)`,
           },
           {
-            offset: aux.total ? aux.sofars[i] / aux.total : 0,
+            offset: aux.sofars[i] / aux.total,
             transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
           },
         ]),
@@ -48,14 +47,10 @@ export function getInternalNpcApi(api) {
       api.el.look = /** @type {*} */ (api.el.npc.querySelector('g.look'));
       api.el.path = /** @type {*} */ (rootGrp.querySelector(`polyline.navpath.${def.key}`));
 
-      api.move = api.el.npc.animate([
-        { transform: `translate(0px, 0px)` }, // Extra frame for polyfill
-        { transform: `translate(${def.src.x}px, ${def.src.y}px)` },
-      ], { fill: 'forwards' });
-      api.look = api.el.look.animate([
-        { transform: `rotateZ(0rad)` }, // Extra frame for polyfill
-        { transform: `rotateZ(${def.angle}rad)` },
-      ], { fill: 'forwards' });
+      api.move = new Animation;
+      api.el.npc.style.transform = `translate(${def.src.x}px, ${def.src.y}px)`;
+      api.look = new Animation;
+      api.el.look.style.transform = `rotateZ(${def.angle}rad)`;
     },
 
     onDraggedSrcNode() {
@@ -131,7 +126,7 @@ export function getInternalNpcApi(api) {
       api.geom.navPathPolys.reverse();
       api.el.path.setAttribute('points', `${api.geom.navPath}`);
       internal.swapNavNodes();
-      internal.resetLook();
+      internal.resetLook(); // Possibly don't reset?
     },
 
     shouldCancelNavDrag(curr, next, type) {

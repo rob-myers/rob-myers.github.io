@@ -50,7 +50,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- jerkiness on reverse npc
+- ✅ jerkiness on reverse npc
 - npc sometimes vanishes at src/dst when clicked
 - sometimes seems to turn slowly while moving
 - 🚧 npc decorations
