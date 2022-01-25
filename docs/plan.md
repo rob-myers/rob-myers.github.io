@@ -51,10 +51,11 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - jerkiness on reverse npc
-- npc sometimes vanishes
+- npc sometimes vanishes at src/dst when clicked
 - sometimes seems to turn slowly while moving
-- can change NPC speed via +/- (playback rate)
-- NPC has name/info/speech (?)
+- 🚧 npc decorations
+  - NPC has name/info/speech <--- harder, start here
+  - can change NPC speed via +/- (playback rate)
 
 - start blog rewrite in terms of The Last Redoubt
 - clarify what needs to change
