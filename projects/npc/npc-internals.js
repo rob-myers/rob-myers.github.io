@@ -46,6 +46,7 @@ export function getInternalNpcApi(api) {
       api.el.npc = /** @type {*} */ (rootGrp.querySelector(`g.npc.${def.key}`));
       api.el.look = /** @type {*} */ (api.el.npc.querySelector('g.look'));
       api.el.path = /** @type {*} */ (rootGrp.querySelector(`polyline.navpath.${def.key}`));
+      api.el.dots = /** @type {*} */ (rootGrp.querySelector(`g.navdots.${def.key}`));
 
       api.move = new Animation;
       api.el.npc.style.transform = `translate(${def.src.x}px, ${def.src.y}px)`;
@@ -121,10 +122,21 @@ export function getInternalNpcApi(api) {
       api.el.look.style.transform = `rotateZ(0rad)`;
     },
 
+    renderNavPath() {
+      api.el.path.setAttribute('points', `${api.geom.navPath}`);
+      api.el.dots.childNodes.forEach(node => node.remove());
+      api.geom.navPath.forEach(p => {
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('cx', `${p.x}`), dot.setAttribute('cy', `${p.y}`);
+        dot.setAttribute('r', `2`);
+        api.el.dots.appendChild(dot);
+      })
+    },
+
     reverseNavPath() {
       api.geom.navPath.reverse();
       api.geom.navPathPolys.reverse();
-      api.el.path.setAttribute('points', `${api.geom.navPath}`);
+      internal.renderNavPath();
       internal.swapNavNodes();
       internal.resetLook(); // Possibly don't reset?
     },
@@ -189,7 +201,7 @@ export function getInternalNpcApi(api) {
       api.geom.animPath = api.geom.navPath.slice(); // Same initially
       // Move src node to current NPC position
       api.srcApi.moveTo(npcPos), api.dstApi.moveTo(dst);
-      api.el.path.setAttribute('points', `${api.geom.navPath}`);
+      internal.renderNavPath();
       internal.updateAnimAux();
       // Approximate navpath using a bunch of thin rects
       api.geom.navPathPolys = api.aux.edges.map(e => {

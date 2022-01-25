@@ -30,6 +30,7 @@ export default function NPCs(props) {
           npc: /** @type {SVGGElement} */ ({}),
           look: /** @type {SVGLineElement} */ ({}),
           path: /** @type {SVGPolylineElement} */ ({}),
+          dots: /** @type {SVGGElement} */ ({}),
         },
         srcApi: /** @type {NPC.DraggableNodeApi} */ ({}),
         dstApi: /** @type {NPC.DraggableNodeApi} */ ({}),
@@ -104,7 +105,8 @@ export default function NPCs(props) {
       <g className="navpaths">
         {state.apis.map(api => 
           <g key={api.key}>
-            <polyline className={`navpath ${api.key}`} />
+            <polyline className={`navpath ${api.key}`}/>
+            <g className={`navdots ${api.key}`}/>
             <DraggableNode
               key="src"
               initial={api.def.src}

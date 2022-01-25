@@ -60,6 +60,7 @@ declare namespace NPC {
       npc: SVGGElement;
       look: SVGGElement;
       path: SVGPolylineElement;
+      dots: SVGGElement;
     };
     srcApi: NPC.DraggableNodeApi;
     dstApi: NPC.DraggableNodeApi;
@@ -79,6 +80,7 @@ declare namespace NPC {
     onDragLookRay(target: Geom.Vect): void;
     onClickedDstNode(): void;
     onFinishMove(): void;
+    renderNavPath(): void;
     resetLook(): void;
     reverseNavPath(): void;
     swapNavNodes(): void;
