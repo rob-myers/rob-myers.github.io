@@ -163,7 +163,7 @@ export function getInternalNpcApi(api) {
     updateAnimAux() {
       const { geom: { animPath }, aux } = api;
       aux.edges = animPath.map((p, i) => ({ p, q: animPath[i + 1] })).slice(0, -1);
-      aux.elens = aux.edges.map(({ p, q }) => p.distanceTo(q));
+      aux.elens = aux.edges.map(({ p, q }) => Number(p.distanceTo(q).toFixed(2)));
       const reduced = aux.elens.reduce((agg, length) => {
         agg.total += length;
         agg.sofars.push(agg.sofars[agg.sofars.length - 1] + length);
@@ -183,7 +183,8 @@ export function getInternalNpcApi(api) {
       }
 
       const npcPos = api.getPosition();
-      const computedPath = pathfinding.findPath(npcPos, dst, def.zoneKey, api.aux.groupId)?.path || [];
+      const computedPath = (pathfinding.findPath(npcPos, dst, def.zoneKey, api.aux.groupId)?.path || []);
+      computedPath.forEach(p => p.precision(2));
       api.geom.navPath = ([Vect.from(npcPos)].concat(computedPath));
       api.geom.animPath = api.geom.navPath.slice(); // Same initially
       // Move src node to current NPC position
