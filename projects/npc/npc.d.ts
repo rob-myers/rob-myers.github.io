@@ -127,7 +127,7 @@ declare namespace NPC {
   }
   
   export interface MessagesApi {
-    create(key: string, text: string): void;
+    create(key: string, text: string, position: Geom.VectJson): void;
     remove(key: string): boolean;
   }
   export interface MessagesProps {

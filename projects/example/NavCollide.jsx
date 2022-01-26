@@ -74,7 +74,11 @@ export default function NavCollide(props) {
 
         {pf && <NPCs defs={state.defs} onLoad={api => state.api = api} />}
 
-        <Messages  />
+        <Messages
+          onLoad={api => {
+            api.create('test', 'Hello, world!', new Vect(100, 100));
+          }}
+        />
 
       </g>
     </PanZoom>
