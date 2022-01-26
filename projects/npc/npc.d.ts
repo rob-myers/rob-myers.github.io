@@ -94,13 +94,17 @@ declare namespace NPC {
     readonly moveTo: (p: Geom.VectJson) => void;
     readonly getPosition: () => Geom.Vect;
   }
-
-  export interface DraggableRayApi {
-    readonly disable: () => void;
-    readonly enable: (source: Geom.VectJson, angle: number) => void;
-    readonly setAngle: (angle: number) => void;
+  export interface DraggableNodeProps {
+    initial: Geom.VectJson;
+    radius?: number;
+    icon?: IconKey;
+    stroke?: string;
+    onLoad?: (api: DraggableNodeApi) => void;
+    onStart?: () => void;
+    onStop?: (position: Geom.Vect) => void;
+    onClick?: (position: Geom.Vect) => void;
+    shouldCancel?: (current: Geom.Vect, next: Geom.Vect) => void;
   }
-  
   export type IconKey = (
     | 'eye'
     | 'down'
@@ -108,5 +112,27 @@ declare namespace NPC {
     | 'run'
     | 'finish'
   );
+
+  export interface DraggableRayApi {
+    readonly disable: () => void;
+    readonly enable: (source: Geom.VectJson, angle: number) => void;
+    readonly setAngle: (angle: number) => void;
+  }
+  export interface DraggableRayProps {
+    radius: number;
+    onLoad?: (api: DraggableRayApi) => void;
+    onStart?: () => void;
+    onStop?: (target: Geom.Vect) => void;
+    onClick?: (target: Geom.Vect) => void;
+  }
+  
+  export interface MessagesApi {
+    create(key: string, text: string): void;
+    remove(key: string): boolean;
+  }
+  export interface MessagesProps {
+    onLoad?: (api: MessagesApi) => void;
+  }
+
 
 }

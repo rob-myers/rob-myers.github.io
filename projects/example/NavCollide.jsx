@@ -8,10 +8,10 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
-import NPCs from "projects/npc/NPCs";
+import NPCs from "../npc/NPCs";
+import Messages from "../npc/Messages";
 
 // TODO
-// - can turn when stationary
 // - can change speed
 // - tty integration
 
@@ -63,6 +63,7 @@ export default function NavCollide(props) {
       maxZoom={6}
     >
       <g className={rootCss}>
+
         {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
         <g className="navtris">
@@ -71,12 +72,9 @@ export default function NavCollide(props) {
           ))}
         </g>
 
-        {pf && (
-          <NPCs
-            defs={state.defs}
-            onLoad={api => state.api = api}
-          />
-        )}
+        {pf && <NPCs defs={state.defs} onLoad={api => state.api = api} />}
+
+        <Messages  />
 
       </g>
     </PanZoom>

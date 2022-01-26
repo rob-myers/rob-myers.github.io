@@ -8,7 +8,6 @@ import DraggableRay from "./DraggableRay";
 
 // TODO
 // - listen for changes to props.npcs
-// - navpaths have clickable dots
 // - generally speaking, ensure exactly one group in each zone
 
 /** @param {NPC.NPCsProps} props */
@@ -80,7 +79,7 @@ export default function NPCs(props) {
     return {
       apis,
       api,
-      /** Avoids reset on HMR */
+      /** Used to avoid reset on HMR */
       mounted: false,
       /** @type {React.RefCallback<SVGGElement>} */
       rootRef(el) {

@@ -3,7 +3,7 @@ import { css } from "goober";
 import { getSvgPos } from "../service/dom";
 import { Vect } from "../geom/vect";
 
-/** @param {Props} props */
+/** @param {NPC.DraggableRayProps} props */
 export default function DraggableRay(props) {
 
   const [state] = React.useState(() => {
@@ -130,7 +130,6 @@ export default function DraggableRay(props) {
   );
 }
 
-
 const rootCss = css`
   circle {
     cursor: crosshair;
@@ -139,12 +138,3 @@ const rootCss = css`
     pointer-events: none;
   }
 `;
-
-/**
- * @typedef Props @type {object}
- * @property {number} radius
- * @property {(api: NPC.DraggableRayApi) => void} [onLoad]
- * @property {() => void} [onStart]
- * @property {(target: Geom.Vect) => void} [onStop]
- * @property {(target: Geom.Vect) => void} [onClick]
- */

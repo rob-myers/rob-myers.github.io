@@ -4,7 +4,7 @@ import { Vect } from "../geom";
 import { getSvgPos } from "../service/dom";
 import useUpdate from '../hooks/use-update';
 
-/** @param {Props} props */
+/** @param {NPC.DraggableNodeProps} props */
 export default function DraggableNode(props) {
 
   const update = useUpdate();
@@ -198,16 +198,3 @@ const rootCss = css`
     pointer-events: none;
   }
 `;
-
-/**
- * @typedef Props @type {object}
- * @property {Geom.VectJson} initial
- * @property {number} [radius]
- * @property {NPC.IconKey} [icon]
- * @property {string} [stroke]
- * @property {(api: NPC.DraggableNodeApi) => void} [onLoad]
- * @property {() => void} [onStart]
- * @property {(position: Geom.Vect) => void} [onStop]
- * @property {(position: Geom.Vect) => void} [onClick]
- * @property {(current: Geom.Vect, next: Geom.Vect) => void} [shouldCancel]
- */

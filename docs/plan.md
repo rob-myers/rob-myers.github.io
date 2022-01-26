@@ -50,12 +50,13 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ jerkiness on reverse npc
-- npc sometimes vanishes at src/dst when clicked
-- sometimes seems to turn slowly while moving
-- 🚧 npc decorations
-  - NPC has name/info/speech <--- harder, start here
-  - can change NPC speed via +/- (playback rate)
+- 🚧 NPC foreignObject messages we can create/drag/closer
+  - e.g. name/info/speech
+  - e.g. controls to change speed via +/- (playback rate)
+
+- bug: npc sometimes vanishes at src/dst when clicked
+- bug: sometimes turns slowly while moving
+- PanZoom has blue blob indicating touches
 
 - start blog rewrite in terms of The Last Redoubt
 - clarify what needs to change
@@ -63,6 +64,7 @@ __Aim towards website release__.
 - geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
 - NPCs can connect to meta points
 - bug: mobile: while drag DraggableNode can pan-zoom
+  - e.g. PanZoom provides context, so we can temp disable it
 
 - offscreen tabs get disabled + rendered after 5 secs
   - Tabs don't load until scroll into view
@@ -85,6 +87,7 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ jerkiness on reverse npc
 - ✅ fix look issue when drag node
 - ✅ on reverse path, fix look angle
 - ✅ stationary NPC can be turned via target dot
