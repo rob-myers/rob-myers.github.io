@@ -59,17 +59,18 @@ __Aim towards website release__.
   - can change speed via +/- (playback rate)
   - toggle for `pointer-events: none`
 
-- bug: npc sometimes vanishes at src/dst when clicked
-- bug: sometimes turns slowly while moving
-- PanZoom has blue blob indicating touches
-
-- start blog rewrite in terms of The Last Redoubt
-- clarify what needs to change
+- 🚧 start blog rewrite in terms of The Last Redoubt
+- 🚧 clarify what needs to change
 
 - geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
 - NPCs can connect to meta points
+- PanZoom has blue blob indicating touches
+
+- bug: npc sometimes vanishes at src/dst when clicked
+- bug: sometimes turns slowly while moving
 - bug: mobile: while drag DraggableNode can pan-zoom
   - e.g. PanZoom provides context, so we can temp disable it
+
 
 - offscreen tabs get disabled + rendered after 5 secs
   - Tabs don't load until scroll into view
