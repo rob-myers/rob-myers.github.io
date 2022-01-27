@@ -76,7 +76,7 @@ export default function NavCollide(props) {
 
         <Messages
           onLoad={api => {
-            api.create('test', 'Hello, world!', new Vect(100, 100));
+            api.create('test', 'Hello, world!', new Vect(260, 300));
           }}
         />
 
