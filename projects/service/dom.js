@@ -46,6 +46,14 @@ export function getSvgPos(ptr, targetEl) {
 }
 
 /**
+ * Assuming we only translate and scale.
+ * @param {SVGSVGElement} svg
+ */
+export function getSvgScale(svg) {
+	return svg.getScreenCTM()?.inverse().a || 1;
+}
+
+/**
  * The pointer `ptrs[0]` must exist.
  * @param {SvgPtr[]} ptrs
  */

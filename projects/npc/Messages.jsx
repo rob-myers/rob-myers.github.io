@@ -1,7 +1,15 @@
 import React from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
-import { Rect } from '../geom';
+import { getSvgScale } from 'projects/service/dom';
+
+/**
+ * Generic approach to foreignObject width/height:
+ * - Bunch of vertically stacked divs
+ * - initially 100% then fits
+ *
+ * TODO make some meaningful messages
+ */
 
 /** @param {NPC.MessagesProps} props */
 export default function Messages(props) {
@@ -18,26 +26,28 @@ export default function Messages(props) {
   });
 
   React.useEffect(() => {
-    const measurer = /** @type {CanvasRenderingContext2D} */ (document.createElement('canvas').getContext('2d'));
-    measurer.font = `${meta.fontSize}px ${meta.fontFamily}`;
-
     props.onLoad?.({
       create: (key, text, { x, y }) => {
-        const { width } = measurer.measureText(text);
-        const rect = (new Rect(
-          x,
-          y,
-          width + 2 * (meta.pad[1] + meta.borderRadius),
-          meta.fontSize + 2 * (meta.pad[0] + meta.borderRadius)
-        )).json;
-
         const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
         fo.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
         fo.setAttribute('class', `message ${key}`);
-        Object.entries(rect).forEach((([k, v]) => fo.setAttribute(k ,`${v}`)));
+        // Object.entries(rect).forEach((([k, v]) => fo.setAttribute(k ,`${v}`)));
+        Object.entries({ x, y, width: '100%', height: '100%' }).forEach((([k, v]) => fo.setAttribute(k ,`${v}`)));
 
-        fo.appendChild(document.createElement('div')).textContent = text;
+        // TEST
+        const root = fo.appendChild(document.createElement('div'));
+        root.appendChild(document.createElement('div')).textContent = 'Once upon a time.';
+        root.appendChild(document.createElement('div')).textContent = 'Foo bar baz qux!';
+
         state.root.appendChild(fo);
+        setTimeout(() => {
+          const scale = getSvgScale(/** @type {SVGSVGElement} */ (fo.ownerSVGElement));
+          const rects = Array.from(root.children).map(x => x.getBoundingClientRect());
+          const width = Math.max(...rects.map(r => r.width)) * scale;
+          const height = rects.reduce((sum, rect) => sum + rect.height, 0) * scale;
+          fo.setAttribute('width', `${width}`);
+          fo.setAttribute('height', `${height}`);
+        }, 100);
       },
       remove: (key) => {
         const results = state.root.querySelectorAll(`.${key}`);
@@ -45,6 +55,8 @@ export default function Messages(props) {
         return results.length > 0;
       },
     });
+
+
   }, []);
 
 
@@ -68,13 +80,19 @@ const meta = {
 
 const rootCss = css`
   foreignObject > div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+
     font-size: ${meta.fontSize}px;
     font-family: ${meta.fontFamily};
-    padding: ${meta.pad[0]}px ${meta.pad[1]}px;
     line-height: 1;
-
-    background: rgba(0, 0, 0, 0.4);
+    
     color: white;
-    border-radius: ${meta.borderRadius}px;
+    > div {
+      padding: ${meta.pad[0]}px ${meta.pad[1]}px;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: ${meta.borderRadius}px;
+    }
   }
 `;
