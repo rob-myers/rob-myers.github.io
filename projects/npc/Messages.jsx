@@ -27,20 +27,17 @@ export default function Messages(props) {
 
   React.useEffect(() => {
     props.onLoad?.({
-      create: (key, text, { x, y }) => {
+      createText: (key, texts, { x, y }) => {
         const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
         fo.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
         fo.setAttribute('class', `message ${key}`);
-        // Object.entries(rect).forEach((([k, v]) => fo.setAttribute(k ,`${v}`)));
         Object.entries({ x, y, width: '100%', height: '100%' }).forEach((([k, v]) => fo.setAttribute(k ,`${v}`)));
 
-        // TEST
         const root = fo.appendChild(document.createElement('div'));
-        root.appendChild(document.createElement('div')).textContent = 'Once upon a time.';
-        root.appendChild(document.createElement('div')).textContent = 'Foo bar baz qux!';
-
+        texts.forEach(text => root.appendChild(document.createElement('div')).textContent = text);
         state.root.appendChild(fo);
-        setTimeout(() => {
+
+        setTimeout(() => {// Resize to fit
           const scale = getSvgScale(/** @type {SVGSVGElement} */ (fo.ownerSVGElement));
           const rects = Array.from(root.children).map(x => x.getBoundingClientRect());
           const width = Math.max(...rects.map(r => r.width)) * scale;
@@ -49,14 +46,18 @@ export default function Messages(props) {
           fo.setAttribute('height', `${height}`);
         }, 100);
       },
+      get: (key) => {
+        const results = state.root.querySelectorAll(`message .${key}`);
+        return results.length
+          ? /** @type {SVGForeignObjectElement} */ (results[0])
+          : undefined;
+      },
       remove: (key) => {
         const results = state.root.querySelectorAll(`.${key}`);
         results.forEach(node => node.remove());
         return results.length > 0;
       },
     });
-
-
   }, []);
 
 

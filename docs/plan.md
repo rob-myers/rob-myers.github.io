@@ -50,9 +50,14 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- 🚧 NPC foreignObject messages we can create/drag/closer
-  - e.g. name/info/speech
-  - e.g. controls to change speed via +/- (playback rate)
+- 🚧 NPC foreignObject messages
+  - ✅ can fit multiline text and other stuff
+  - can drag
+  - can close
+  - examples: name/info/speech
+  - can animate along move track
+  - can change speed via +/- (playback rate)
+  - toggle for `pointer-events: none`
 
 - bug: npc sometimes vanishes at src/dst when clicked
 - bug: sometimes turns slowly while moving

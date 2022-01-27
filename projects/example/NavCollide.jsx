@@ -76,7 +76,10 @@ export default function NavCollide(props) {
 
         <Messages
           onLoad={api => {
-            api.create('test', 'Hello, world!', new Vect(260, 300));
+            api.createText('test', ['Once upon a time.', 'Foo bar baz qux!', 'Awooga!'], new Vect(260, 300));
+            state.defs.forEach(def => {
+              api.createText(def.key, [`${def.key}`], def.src);
+            });
           }}
         />
 
