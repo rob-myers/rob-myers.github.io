@@ -50,7 +50,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- build `CssPanZoom`
+- ✅ build `CssPanZoom`
 - build `Css3d2` using latter
 
 - 🚧 NPC foreignObject messages

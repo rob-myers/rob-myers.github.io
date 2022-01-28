@@ -5,7 +5,7 @@ import { Rect, Vect } from '../geom';
 import useUpdate from '../hooks/use-update';
 import { getSvgMid, getSvgPos, isSvgEvent, projectSvgEvt } from '../service/dom';
 
-/** @param {Props} props */
+/** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
 
   const [measureRef, bounds] = useMeasure({ debounce: 30, scroll: false });
@@ -163,8 +163,8 @@ export default function CssPanZoom(props) {
         <g transform={`translate(${-min.x}, ${-min.y})`}>
           <state.Context.Provider value={state.ctxt}>
 
-            <rect fill="red" x="10" y="10" width="100" height="50" />
-
+            
+            {props.children}
             {/** Content here */}
 
           </state.Context.Provider>
