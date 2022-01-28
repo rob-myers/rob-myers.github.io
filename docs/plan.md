@@ -52,14 +52,14 @@ __Aim towards website release__.
 
 - 🚧 NPC foreignObject messages
   - ✅ can fit multiline text and other stuff
-  - can drag
-  - can close
+  - controls: drag, close
   - examples: name/info/speech
   - can animate along move track
   - can change speed via +/- (playback rate)
   - toggle for `pointer-events: none`
 
 - 🚧 start blog rewrite in terms of The Last Redoubt
+  - https://www.poetryfoundation.org/poems/43825/darkness-56d222aeeee1b
 - 🚧 clarify what needs to change
 
 - geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...

@@ -101,7 +101,7 @@ const rootCss = css`
     fill: transparent;
     &:hover {
       fill: rgba(0, 0, 0, 0.03);
-      stroke: black;
+      stroke: #888;
     }
   }
 `;
