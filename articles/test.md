@@ -7,7 +7,8 @@
   height="600"
   tabs="[
     // { key: 'component', filepath: 'example/GeomorphEdit' },
-    { key: 'component', filepath: 'example/NavCollide' },
+    // { key: 'component', filepath: 'example/NavCollide' },
+    { key: 'component', filepath: 'example/CssPanZoom' },
     // { key: 'component', filepath: 'example/NavStringPull' },
     // { key: 'component', filepath: 'example/TriangleDev#301' },
     // { key: 'component', filepath: 'example/Css3d#301' },
