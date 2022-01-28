@@ -51,7 +51,7 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - ✅ build `CssPanZoom`
-- build `Css3d2` using latter
+- build `CssPanZoomDemo` i.e. 3D demo
 
 - 🚧 NPC foreignObject messages
   - ✅ can fit multiline text and other stuff

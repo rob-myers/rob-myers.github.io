@@ -42,7 +42,6 @@ export function getSvgPos(ptr, targetEl) {
   svgPoint.x = ptr.clientX;
   svgPoint.y = ptr.clientY;
   return svgPoint.matrixTransform((targetEl || ptr.ownerSvg).getScreenCTM()?.inverse());
-  // return svgPoint.matrixTransform(ptr.ownerSvg.getScreenCTM()?.inverse());
 }
 
 /**

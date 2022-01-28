@@ -15,7 +15,7 @@ export default function CssPanZoom(props) {
     /** @type {Context} */
     const initialCtxt = {
       renderBounds: new Rect,
-      zoomFactor: 100,
+      zoom: 1,
     };
 
     return {
@@ -54,9 +54,10 @@ export default function CssPanZoom(props) {
           state.ptrDiff = ptrDiff;
         } else if (state.panFrom) {
           const mouse = getSvgPos(projectSvgEvt(e));
+          const ratio = 1 / state.ctxt.zoom;
           state.ctxt.renderBounds.delta(
-            state.prevMouse.x - mouse.x,
-            state.prevMouse.y - mouse.y,
+            ratio * (state.prevMouse.x - mouse.x),
+            ratio * (state.prevMouse.y - mouse.y),
           );
           state.updateCtxt();
           // props.onUpdate?.(state.root);
@@ -79,10 +80,10 @@ export default function CssPanZoom(props) {
         e.preventDefault();
         if (isSvgEvent(e)) {
           const point = getSvgPos(projectSvgEvt(e));
-          const nextZoom = state.ctxt.zoomFactor - wheelDelta * e.deltaY;
-          if (Math.abs(e.deltaY) > 0.1 && nextZoom >= 25 && nextZoom <= 800) { 
+          const nextZoom = state.ctxt.zoom - wheelDelta * e.deltaY;
+          if (Math.abs(e.deltaY) > 0.1 && nextZoom >= 0.25 && nextZoom <= 8) { 
             state.zoomTo(point, nextZoom);
-            state.updateCtxt({ zoomFactor: nextZoom });
+            state.updateCtxt({ zoom: nextZoom });
           }
         }
       },
@@ -109,8 +110,8 @@ export default function CssPanZoom(props) {
        */
       zoomTo(point, nextZoom) {
         const { x: svgPosX, y: svgPosY } = point;
-        state.ctxt.renderBounds.x += svgPosX * 100 * (1 / state.ctxt.zoomFactor - 1 / nextZoom);
-        state.ctxt.renderBounds.y += svgPosY * 100 * (1 / state.ctxt.zoomFactor - 1 / nextZoom);
+        state.ctxt.renderBounds.x += svgPosX * (1 / state.ctxt.zoom - 1 / nextZoom);
+        state.ctxt.renderBounds.y += svgPosY * (1 / state.ctxt.zoom - 1 / nextZoom);
       },
     };
   });
@@ -123,7 +124,7 @@ export default function CssPanZoom(props) {
   }, [bounds.width, bounds.height]);
 
 
-  const scale = state.ctxt.zoomFactor / 100;
+  const scale = state.ctxt.zoom;
   // Compute grid pattern offset
   const min = state.ctxt.renderBounds;
   const dx = -(min.x > 0 ? min.x % 10 : (min.x % 10) + 10);
@@ -147,7 +148,7 @@ export default function CssPanZoom(props) {
           <path
             d={`M ${gridDim * 2} 0 L 0 0 0 ${gridDim * 2}`}
             fill="none"
-            stroke="rgba(255,255,255,0.9)"
+            stroke="rgba(0, 0, 0, 0.9)"
             strokeWidth="0.2"
           />
         </pattern>
@@ -162,11 +163,7 @@ export default function CssPanZoom(props) {
         />
         <g transform={`translate(${-min.x}, ${-min.y})`}>
           <state.Context.Provider value={state.ctxt}>
-
-            
             {props.children}
-            {/** Content here */}
-
           </state.Context.Provider>
         </g>
       </g>
@@ -177,7 +174,7 @@ export default function CssPanZoom(props) {
 const rootCss = css`
   width: 100%;
   height: 100%;
-  background: #888;
+  background: white;
 
   rect.grid {
     pointer-events: none;
@@ -191,9 +188,9 @@ const rootCss = css`
 /**
  * @typedef Context @type {object}
  * @property {Geom.Rect} renderBounds
- * @property {number} zoomFactor
+ * @property {number} zoom
  */
 
-const wheelDelta = 0.3;
+const wheelDelta = 0.003;
 const gridDim = 5;
 let gridIdCount = 0;
