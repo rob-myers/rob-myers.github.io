@@ -15,7 +15,7 @@ export default function Title() {
       <ReactMarkdown components={titleComponents} children={`
 # The Last Redoubt
 
-$( video game | web dev | terminal )
+$( video game | web dev | game ai )
       `}/>
     </header>
   );
