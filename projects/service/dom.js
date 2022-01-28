@@ -214,3 +214,12 @@ export function loadImage(src) {
 		img.src = src;
 	});
 }
+
+/**
+ * _TODO_ properly.
+ * @param {MouseEvent | WheelEvent} e
+ */
+export function getRelativePos(e) {
+	const { left, top } = (/** @type {HTMLElement} */ (e.currentTarget)).getBoundingClientRect();
+	return new Vect(e.clientX - left, e.clientY - top);
+}
