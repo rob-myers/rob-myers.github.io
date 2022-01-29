@@ -1,14 +1,14 @@
 ## Objective
 
 We are going to create a **video game**.
-That's right, yet more escapism. 
+That's right... yet more escapism.
 **Unusually**, we will
 (a) describe the process in detail,
 (b) use standard web dev techniques, and
 (c) develop rich Game AI.
 
 Where will it take place?
-> In the [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land) (our interpretation of it).
+> In the [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land) (our interpretation).
 
 <!-- reinterpreted in terms of the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3) and [Buddhism](). -->
 
@@ -17,17 +17,19 @@ What kind of game is it?
 
 What are _standard_ web development techniques?
 > Those technologies used on an everyday basis by web developers.
-> For example, we exclude WebGL, physics engines,
-> character walk-cycles, and animations beyond the skill of a standard Frontend dev.
+> Then we exclude WebGL, physics engines and
+> character walk-cycles.
 
 Why Game AI?
-> Sticking to standard web dev techniques limits the graphics.
-> But the world is awash with beautifully-crafted games, which are ultimately rather shallow.
+> Standard techniques limit the graphics.
+> On the other hand, the world is awash with games which are beautifully-crafted, yet ultimately rather shallow.
 
 <!-- Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game. -->
 <!-- > An environment is needed to make behaviour meaningful, fixed narratives/missions are not. -->
 
-__FROM HERE__
+__FROM HERE__ would like
+- _TODO_ __ideas about characters and storylines__ e.g. 64 floors, floor layout; protagonist; other characters; natural mental states are unskillful; watchers represent fetters e.g. worry, ill-will etc.
+- _TODO_ __clearer ideas about gameplay__ e.g. exploration; procedural generation; time-limited navpath motion; mental weaponry related to mental training; travel within the Night Land; ultimate goal e.g. deathless
 
 We'll use [navigation meshes](https://en.wikipedia.org/wiki/Navigation_mesh) to simulate starship inhabitants,
 following the rules of [Traveller](https://en.wikipedia.org/wiki/Traveller_%28role-playing_game%29).
@@ -56,8 +58,6 @@ A 2nd version was released in 2020, along with another PDF containing many indiv
 The latter 2000+ symbols will form the underlying basis of _The Last Redoubt_.
 
 </aside>
-
-__TODO__ try 3d demo again, using CSS zoom
 
 __TODO__ remove Visibility and Css3d demo, replacing with NPC demo combined with terminal in some way.
 
