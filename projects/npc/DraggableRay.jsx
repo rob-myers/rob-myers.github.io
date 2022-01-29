@@ -31,7 +31,10 @@ export default function DraggableRay(props) {
       },
       /** @param {PointerEvent} e */
       startDrag: (e) => {
-        if (state.disabled) return;
+        if (state.disabled) {
+          props.onClick?.();
+          return;
+        };
         e.stopPropagation();
         state.dragging = true;
         state.lineEl.style.display = 'inline';
@@ -85,7 +88,7 @@ export default function DraggableRay(props) {
 
         if (distance < 8) {// Click 
           // console.log('click')
-          props.onClick?.(state.target.clone());
+          props.onClick?.();
         } else if (distance > 20) {// Drag
           // console.log('drag')
           props.onStop?.(state.target.clone());

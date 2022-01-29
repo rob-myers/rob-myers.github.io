@@ -50,8 +50,6 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ build `CssPanZoom`
-- build `CssPanZoomDemo` i.e. 3D demo
 
 - 🚧 NPC foreignObject messages
   - ✅ can fit multiline text and other stuff
@@ -96,6 +94,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ build `CssPanZoom`
+  > SVG-based panzoom using CSS transforms instead of viewBox
 - ✅ jerkiness on reverse npc
 - ✅ fix look issue when drag node
 - ✅ on reverse path, fix look angle

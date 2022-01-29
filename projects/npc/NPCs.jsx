@@ -72,6 +72,12 @@ export default function NPCs(props) {
     /** @type {NPC.NPCsApi} */
     const api = {
       apis,
+      highlightPath(key) {
+        state.apis.forEach(api => {
+          if (api.key === key) api.el.path.classList.add('active');
+          else api.el.path.classList.remove('active');
+        });
+      },
       // ...
     };
     props.onLoad(api);
@@ -138,6 +144,7 @@ export default function NPCs(props) {
             radius={9}
             onLoad={rayApi => api.rayApi = rayApi}
             onStop={api.internal.onDragLookRay}
+            onClick={() => state.api.highlightPath(api.key)}
           />
         </g>
       )}
@@ -152,5 +159,9 @@ const rootCss = css`
     stroke: #222;
     stroke-width: 1;
     stroke-dasharray: 1px;
+  }
+  polyline.navpath.active {
+    stroke-width: 2;
+    stroke: blue;
   }
 `;

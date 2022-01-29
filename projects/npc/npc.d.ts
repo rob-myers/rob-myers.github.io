@@ -20,6 +20,7 @@ declare namespace NPC {
 
   export interface NPCsApi {
     apis: NPCApi[];
+    readonly highlightPath: (key: string) => void;
     // ...
   }
 
@@ -123,7 +124,7 @@ declare namespace NPC {
     onLoad?: (api: DraggableRayApi) => void;
     onStart?: () => void;
     onStop?: (target: Geom.Vect) => void;
-    onClick?: (target: Geom.Vect) => void;
+    onClick?: () => void;
   }
   
   export interface MessagesApi {
