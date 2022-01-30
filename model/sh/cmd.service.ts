@@ -41,7 +41,7 @@ const commandKeys = {
   run: true,
   /** Echo session key */
   session: true,
-  /** Set something in stageAndVars */
+  /** Set something */
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,
