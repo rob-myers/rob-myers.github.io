@@ -118,6 +118,10 @@ const layoutDefs = {
       { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 480, 600] },
       { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 720, 600] },
       { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 840, 600] },
+
+      { symbol: 'machinery--077--1.6x1.8', transform: [0, 1, -1, 0, 160, 380] },
+      { symbol: 'machinery--077--1.6x1.8', transform: [-1, 0, 0, 1, 220, 440] },
+      { symbol: 'console--018--1x1', transform: [-1, 0, 0, 1, 120, 480] },
     ],
   },
 };
