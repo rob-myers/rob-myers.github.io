@@ -204,7 +204,7 @@
     ],
     "singles": [
       {
-        "tags": ["machine-base"],
+        "tags": ["poly", "#fff-#000-4"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -223,7 +223,7 @@
         }
       },
       {
-        "tags": ["machine"],
+        "tags": ["poly", "#ccc-#000-4"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -255,7 +255,7 @@
         }
       },
       {
-        "tags": ["machine-base"],
+        "tags": ["poly", "#fff-#000-4"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -274,7 +274,7 @@
         }
       },
       {
-        "tags": ["machine"],
+        "tags": ["poly", "#ccc-#000-4"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -445,7 +445,7 @@
     ],
     "singles": [
       {
-        "tags": ["machine"],
+        "tags": ["poly", "#fff-#000-4"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -2002,7 +2002,7 @@
         }
       },
       {
-        "tags": ["machine-base"],
+        "tags": ["poly", "#fff-#000-4"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -2213,6 +2213,19 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 620}
+  },
+  "machinery--020--1x1.6": {
+    "key": "machinery--020--1x1.6",
+    "hull": [],
+    "obstacles": [
+      {
+        "type": "Polygon",
+        "coordinates": [[[0, 290], [500, 0], [500, 290], [0, 290]]]
+      }
+    ],
+    "walls": [],
+    "singles": [],
+    "pngRect": {"x": -1.5, "y": 0, "width": 503, "height": 290}
   },
   "machinery--077--1.6x1.8": {
     "key": "machinery--077--1.6x1.8",
@@ -2505,6 +2518,58 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 920, "height": 620}
+  },
+  "medical-bed--005--0.6x1.2": {
+    "key": "medical-bed--005--0.6x1.2",
+    "hull": [],
+    "obstacles": [
+      {
+        "type": "Polygon",
+        "coordinates": [[[0, 0], [380, 0], [380, 200], [0, 200], [0, 0]]]
+      }
+    ],
+    "walls": [],
+    "singles": [],
+    "pngRect": {"x": -1, "y": -1, "width": 382, "height": 202}
+  },
+  "medical-bed--006--1.6x3.6": {
+    "key": "medical-bed--006--1.6x3.6",
+    "hull": [],
+    "obstacles": [
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[0, 314.8], [450, 314.8], [450, 369.5], [0, 369.5], [0, 314.8]]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[0, 760], [450, 760], [450, 814.7], [0, 814.7], [0, 760]]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[35.4, 0], [421, 0], [421, 202], [35.4, 202], [35.4, 0]]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[35.4, 446], [421, 446], [421, 648], [35.4, 648], [35.4, 446]]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[35.4, 892], [421, 892], [421, 1094], [35.4, 1094], [35.4, 892]]
+        ]
+      }
+    ],
+    "walls": [],
+    "singles": [],
+    "pngRect": {"x": 0, "y": -1, "width": 450, "height": 1094}
   },
   "misc-stellar-cartography--023--4x4": {
     "key": "misc-stellar-cartography--023--4x4",

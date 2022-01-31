@@ -63,13 +63,15 @@ export async function renderGeomorph(
     if (tags.includes('label')) {
       return;
     }
-    if (tags.includes('machine-base')) {
-      setStyle(ctxt, '#fff', '#000', 4);
-      fillPolygon(ctxt, [poly]), ctxt.stroke();
-    }
-    if (tags.includes('machine')) {
-      setStyle(ctxt, '#ccc', '#000', 4);
-      fillPolygon(ctxt, [poly]), ctxt.stroke();
+    if (tags.includes('poly')) {
+      const matched = (tags[1] || '').match(/^([^-]*)-([^-]*)-([^-]*)$/);
+      if (matched) {
+        const [, fill, stroke, strokeWidth] = matched;
+        setStyle(ctxt, fill || 'transparent', stroke || 'transparent', Number(strokeWidth) || 0);
+        fillPolygon(ctxt, [poly]), ctxt.stroke();
+      } else {
+        console.warn('render: saw tag "poly" where other tag had unexpected format');
+      }
     }
     if (tags.includes('fuel')) {
       setStyle(ctxt, '#aaa', '#000', 2);

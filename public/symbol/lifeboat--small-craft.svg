@@ -27,11 +27,11 @@
     <rect y="300" width="20" height="600" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="590">
       <title>wall</title>
     </rect>
-    <rect x="255.7" y="1016.1" width="90.9" height="90.9" style="fill: rgb(216, 216, 216); pointer-events: auto;">
+    <rect x="255.7" y="1016.1" width="90.9" height="90.9" style="fill: rgb(216, 216, 216);">
       <title>label escape pod</title>
     </rect>
     <path d="M 0 300 L 78.1 99.3 L 520.9 96.6 L 600 300 L 600 900 L 0 900 L 0 300 Z" style="stroke: rgb(0, 0, 0); stroke-width: 3px; stroke-linecap: round; stroke-linejoin: round; fill-opacity: 0.2;">
-      <title>machine-base</title>
+      <title>poly #fff-#000-4</title>
     </path>
   </g>
 </svg>
