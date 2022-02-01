@@ -37,6 +37,18 @@
   </g>
   <g style="pointer-events: none;">
     <title>singles</title>
+    <rect x="377.9" y="240" width="24" height="120" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>poly #fff-#000-2 table</title>
+    </rect>
+    <rect x="410" y="253" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>poly #fff-#000-2 chair</title>
+    </rect>
+    <rect x="410" y="293" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>poly #fff-#000-2 chair</title>
+    </rect>
+    <rect x="410" y="333" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>poly #fff-#000-2 chair</title>
+    </rect>
     <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door door-w</title>
     </rect>
@@ -48,6 +60,21 @@
     </rect>
     <rect x="850" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door door-s-w</title>
+    </rect>
+  </g>
+  <g style="pointer-events: none;">
+    <title>obstacles</title>
+    <rect x="377.9" y="240" width="24" height="120" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>table</title>
+    </rect>
+    <rect x="410" y="253" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>chair</title>
+    </rect>
+    <rect x="410" y="293" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>chair</title>
+    </rect>
+    <rect x="410" y="333" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>chair</title>
     </rect>
   </g>
   <g style="pointer-events: none;">
