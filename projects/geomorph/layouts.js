@@ -110,22 +110,27 @@ const layoutDefs = {
     items: [
       { symbol: '303--hull' },
       { symbol: 'medical-bed--006--1.6x3.6', transform: [1, 0, 0, 1, 4, 10] },
+      { symbol: 'low-berth--003--1x1', transform: [0, 1, -1, 0, 240, 0] },
+      { symbol: 'console--022--1x2', transform: [-1, 0, 0, 1, 240, 60] },
       { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 240, 0] },
       { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 360, 0] },
       { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 480, 0] },
       { symbol: 'stateroom--035--2x3', transform: [-1, 0, 0, 1, 720, 0] },
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
 
+      { symbol: 'fresher--002--0.4x0.6', transform: [1, 0, 0, -1, 200, 300] },
+
       { symbol: 'machinery--077--1.6x1.8', transform: [0, 1, -1, 0, 160, 380] },
       { symbol: 'machinery--077--1.6x1.8', transform: [-1, 0, 0, 1, 220, 440] },
       { symbol: 'console--018--1x1', transform: [-1, 0, 0, 1, 120, 480] },
       { symbol: 'machinery--020--1x1.6', transform: [0, -1, 1, 0, 290, 470] },
       { symbol: 'iris-valves--005--1x1', transform: [-1, 0, 0, 1, 360, 540] },
-
       { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 360, 600] },
       { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 480, 600] },
       { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 720, 600] },
       { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 840, 600] },
+      { symbol: 'machinery--020--1x1.6', transform: [0, -1, -1, 0, 910, 470] },
+      { symbol: 'office--089--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     ],
   },
 };

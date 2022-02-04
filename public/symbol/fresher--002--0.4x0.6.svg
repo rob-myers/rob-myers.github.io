@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 106 180" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="106" height="180" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGoAAAC0CAQAAADWHHFDAAAABGdBTUEAALGPC/xhBQAAAAJiS0dEAP+Hj8y/AAAAB3RJTUUH5QkMFCkOdUpEGAAAA95JREFUeNrtnduWqyAQRAPr/P8ve54yMQp9o5GuDvWU8QK1p4igUSyvno7T5/KCUt/uoSglmPf2ivhApP/rQhwcguL7T0ykG8f5D1ykC8nnIzbSF01JA3Ti+cdtFY+X7zRLz3c8GCFc6SQVH+jtsg1W7gQYSB+A+6KKjdT2W9WlxNdxgULLqe05Y1I5oK5ZpYC6akNF1bWvSgF1VUaokhHqmhTYtbCO56RJIYZDqaRN6g4KpZbftEmhhUOpvKHSqQGFFFzba+KkkMKhVM5QydSEQg8OOqnCLr9cvYh/sax0F1TxLsFE+au23VaL9laF28VX8+fR1+uF8gtIYRaxtxzEw+KQBIf0aK1S4ue+TSOaOGmJbnBpJBUtGgOn8N6kGFlJ/fdyCfaLve6GMdXYb1XLVN4Dp7/f7/m0tEj0P/9Qr3gOiFxFNb/lx0EbkuDepH6JM/Ma+39yex9Dq2cBleESOO+eYKwdkV95zpMz83Rr+k716rOCeR+R3KDu5g7xlt5yhXrSOKXQl8hmNWdisDQziXe16sGdYDU7UJoBJnpyhqxYdeqhrHgQSFC2Kki2MR/Cguw4wlLFJ4kGJAui5DBgGzKJLrxY7NyrsRzLbOMM9aNGgU4Su5sIO9+VF14+dUu/t+yjRjGuI/UstxeTScUDeruS/uqBrlMCtbWwsyCQaG/Vttt6Uf7yND8eKnpOtMdfSgpbbyiE9sbpjwE6qV4SVbMxiqCT2lDoygV1nKHQjwwXNZJCImx7zdX8NhSYNhSAjoxQr4xQP/WoEb42FIo2FIo2FIo2FIo2FIo2FIo2FIo2FIoSz0eBxCFQrub3c/NRoAt6ko2ez9RJoYRDiZ9kA1m/BIXQGvsekyeFEA6lk//kSSXSr82bhKszVPRwKH15T59UGiWfiyyRmMf3Yt77xz2EWJW7BxDvqar3iCfBtF3BKSV+Us5FJjj6RaKUeanmPWPIPhdZFEqpjzq092qNTrC2vhtmn/v/k3iYhBIeDRWMQp6TakC7klJXd+ip8KzesKeXNEFFzYrxpTxJXEGpr5ODipgV64lPinz/dAACE5RLNc9SSqAWUmi6XB3UMkprPTKoKIcLoQ/jdb8nKO11SKEiZCX2YL5CO5typHw51OqsFPVrklrcDc+BelC2/sm08TNvkrDNaHrWcFLejXAcyaX5eWL5lKUtZeqbCWyzzo5DTQPzArJCTcDyRLI3YlcsX6SRb6YbljfS6OFmGMwfaBxq6IUm1rd2zIcyvHDB540Qc6EEYE/78RoOTO5910B5YLl58R2PTuh9lxdmBHP3MOf01aGjigfF4U2u9T8SdXijfcaH4gAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyMS0wOS0xMlQyMDo0MToxMCswMDowMLcurUAAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjEtMDktMTJUMjA6NDE6MTArMDA6MDDGcxX8AAAAAElFTkSuQmCC"/>
+  </g>
+  <g style="pointer-events: none;" transform="matrix(0.916705, 0, 0, 1.010668, -0.042512, 0)">
+    <title>obstacles</title>
+    <rect width="115" height="178.1" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" transform="matrix(1, 0, 0.006672, 1, -0.510383, 0)"/>
+  </g>
+</svg>

@@ -36,6 +36,21 @@
     </rect>
   </g>
   <g style="pointer-events: none;">
+    <title>obstacles</title>
+    <rect x="377.9" y="240" width="24" height="120" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>table</title>
+    </rect>
+    <rect x="410" y="253" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>chair</title>
+    </rect>
+    <rect x="410" y="293" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>chair</title>
+    </rect>
+    <rect x="410" y="333" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+      <title>chair</title>
+    </rect>
+  </g>
+  <g style="pointer-events: none;">
     <title>singles</title>
     <rect x="377.9" y="240" width="24" height="120" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
       <title>poly #fff-#000-2 table</title>
@@ -61,23 +76,17 @@
     <rect x="850" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door door-s-w</title>
     </rect>
-  </g>
-  <g style="pointer-events: none;">
-    <title>obstacles</title>
-    <rect x="377.9" y="240" width="24" height="120" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
-      <title>table</title>
+    <path d="M 271 362 L 312.6 422.8 L 349.8 501.1 L 357.6 547.8 L 358 570 L 344.1 501.8 L 307.2 424 L 307 424 L 266 362 L 266 358 L 358.3 358 L 358.3 362 L 271 362 Z" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;">
+      <title>wall</title>
+    </path>
+    <path d="M 845 566 L 886.6 505.2 L 923.8 426.9 L 931.6 380.2 L 932 358 L 918.1 426.2 L 881.2 504 L 881 504 L 840 566 L 840 570 L 932.3 570 L 932.3 566 L 845 566 Z" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;" transform="matrix(-1, 0, 0, -1, 1772.299988, 928)">
+      <title>wall</title>
+    </path>
+    <path d="M 5 243 L 0 243 L 0 239 L 180 239 L 180 243 L 54.4 243 L 72.2 246.5 L 120 259.1 L 180 286.6 L 180 290.9 L 120 263.4 L 80.7 251.9 L 55.8 246.8 L 35.3 244.2 L 5 243 Z" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;">
+      <title>wall</title>
+    </path>
+    <rect x="127.5" y="236" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); pointer-events: auto;">
+      <title>door</title>
     </rect>
-    <rect x="410" y="253" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
-      <title>chair</title>
-    </rect>
-    <rect x="410" y="293" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
-      <title>chair</title>
-    </rect>
-    <rect x="410" y="333" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
-      <title>chair</title>
-    </rect>
-  </g>
-  <g style="pointer-events: none;">
-    <title>walls</title>
   </g>
 </svg>

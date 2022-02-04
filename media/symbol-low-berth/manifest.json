@@ -1,0 +1,168 @@
+{
+  "parentFolder": "Low Berth",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Low Berth 001 [5x40].png",
+      "dstName": "low-berth--001--1x8.png",
+      "id": 1,
+      "gridDim": [1, 8],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Low Berth 002 [5x20].png",
+      "dstName": "low-berth--002--1x4.png",
+      "id": 2,
+      "gridDim": [1, 4],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Low Berth 003 [5x5].png",
+      "dstName": "low-berth--003--1x1.png",
+      "id": 3,
+      "gridDim": [1, 1],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Low Berth 004 [5x10].png",
+      "dstName": "low-berth--004--1x2.png",
+      "id": 4,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Low Berth 005 [5x10].png",
+      "dstName": "low-berth--005--1x2.png",
+      "id": 5,
+      "gridDim": [1, 2],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Low Berth 006 [10x40].png",
+      "dstName": "low-berth--006--2x8.png",
+      "id": 6,
+      "gridDim": [2, 8],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Low Berth 007 [10x20].png",
+      "dstName": "low-berth--007--2x4.png",
+      "id": 7,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Low Berth 008 [20x20].png",
+      "dstName": "low-berth--008--4x4.png",
+      "id": 8,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Low Berth 009 [20x40].png",
+      "dstName": "low-berth--009--4x8.png",
+      "id": 9,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Low Berth 010 [20x20].png",
+      "dstName": "low-berth--010--4x4.png",
+      "id": 10,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Low Berth 011 [20x20].png",
+      "dstName": "low-berth--011--4x4.png",
+      "id": 11,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Low Berth 012 [30x40].png",
+      "dstName": "low-berth--012--6x8.png",
+      "id": 12,
+      "gridDim": [6, 8],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Low Berth 013 [15x20].png",
+      "dstName": "low-berth--013--3x4.png",
+      "id": 13,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Low Berth 014 [15x20].png",
+      "dstName": "low-berth--014--3x4.png",
+      "id": 14,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Low Berth 015 [10x20].png",
+      "dstName": "low-berth--015--2x4.png",
+      "id": 15,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Low Berth 016 [40x40].png",
+      "dstName": "low-berth--016--8x8.png",
+      "id": 16,
+      "gridDim": [8, 8],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Low Berth 017 [25x35].png",
+      "dstName": "low-berth--017--5x7.png",
+      "id": 17,
+      "gridDim": [5, 7],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Low Berth 018 [25x25].png",
+      "dstName": "low-berth--018--5x5.png",
+      "id": 18,
+      "gridDim": [5, 5],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    }
+  ]
+}
