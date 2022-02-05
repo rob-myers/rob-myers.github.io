@@ -52,3 +52,8 @@ ifconfig | grep "inet " | grep -v 127.0.0.1
 
 Fix Gimp fill colour:
 > Image → Mode → RGB (rather than Indexed)
+
+```sh
+# fixed point precision
+echo '2/3' | bc -l
+```

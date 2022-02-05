@@ -50,6 +50,16 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- finish passenger-deck 303
+- ✅ `poly` tag needs separate wall or obstacle
+
+- 1320 `one thousand, three hundred and twenty cities of the Pyramid`
+- Split into 1000 (i.e. 8 * 125) + 320 (i.e. 5 * 64)
+  - 64 floors of ascendence 
+  - 125 floors of worldly matters
+
+- geomorphs article can be "coming soon" with preview
+- intend to redo site using Gatsby JamStack approach, but not until ready for first release
 
 - 🚧 NPC foreignObject messages
   - ✅ can fit multiline text and other stuff

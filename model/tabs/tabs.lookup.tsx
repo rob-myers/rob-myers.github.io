@@ -26,6 +26,8 @@ const component = {
     .then(x => x.default),
   'example/CssPanZoomDemo': () => import('projects/example/CssPanZoomDemo')
     .then(x => x.default),
+  'example/RedoubtDemo3D': () => import('projects/example/RedoubtDemo3D')
+    .then(x => x.default),
   'example/DoorsDemo#101': () => import('projects/example/DoorsDemo')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-101--multipurpose' />),
   'example/DoorsDemo#301': () => import('projects/example/DoorsDemo')
