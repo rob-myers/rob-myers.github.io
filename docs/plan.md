@@ -50,6 +50,8 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- play with lighting w.r.t SVG stuff
+
 - finish passenger-deck 303
 - ✅ `poly` tag needs separate wall or obstacle
 

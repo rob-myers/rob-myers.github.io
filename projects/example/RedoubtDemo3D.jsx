@@ -1,11 +1,12 @@
 import React from 'react';
 import { css } from "goober";
-import { Vect } from '../geom';
+import { Rect, Vect } from '../geom';
 
 /**
  * TODO
  * - 3d pyramid with base 9km * 9km and height 9 km
- * - movable camera e.g. mouse movement changes rotation transform?
+ * - movable camera
+ *   - show green dot when dragging
  * - 125 layered squares
  *   - but only show ≤ 10 at a time, fading out?
  * - can select layer and it comes out
@@ -18,46 +19,56 @@ export default function RedoubtDemo3D() {
 
     return {
       dragging: false,
-      dragPoint: new Vect,
+      dragFrom: new Vect,
+      bounds: new Rect,
       el: {
         root: /** @type {HTMLDivElement} */ ({}),
-        outer: /** @type {HTMLDivElement} */ ({}),
-        inner: /** @type {HTMLDivElement} */ ({}),
+        camera: /** @type {HTMLDivElement} */ ({}),
+        redDot: /** @type {HTMLDivElement} */ ({}),
+        greenDot: /** @type {HTMLDivElement} */ ({}),
       },
 
       /** @param {PointerEvent} e */
       onDragStart: (e) => {
         state.dragging = true;
-        state.dragPoint.set(e.clientX, e.clientY);
+        state.el.root.style.cursor = 'none';
+        state.dragFrom.set(e.clientX, e.clientY);
       },
       /** @param {PointerEvent} e */
       onDragMove: (e) => {
         if (!state.dragging) return;
-        const deltaY = e.clientY - state.dragPoint.y;
-        // console.log(deltaY);
-        // state.el.root.style.perspective = `${perspectivePx + 1000 * deltaY}px`;
-        state.el.inner.style.transform = `translateZ(${deltaY}px)`;
-        // state.el.inner.style.transform = `rotateX(${(deltaY / 534) * Math.PI})`;
+        // const deltaY = e.clientY - state.dragFrom.y;
+        // // console.log(deltaY);
+        // // state.el.root.style.perspective = `${perspectivePx + 1000 * deltaY}px`;
+        // state.el.inner.style.transform = `translateZ(${deltaY}px)`;
+        // // state.el.inner.style.transform = `rotateX(${(deltaY / 534) * Math.PI})`;
+
+        state.bounds.copy(state.el.root.getBoundingClientRect());
+        const deltaX = e.clientX - state.bounds.cx;
+        const deltaY = e.clientY - state.bounds.cy;
+        state.el.greenDot.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
       },
       onDragEnd: () => {
         state.dragging = false;
+        state.el.root.style.cursor = 'default';
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       rootRef: (el) => {
         if (el) {
-          // state.el.root = el;
-          // state.el.inner = /** @type {*} */ (el.querySelector('div.inner'));
-          // state.el.outer = /** @type {*} */ (el.querySelector('div.outer'));
-          // el.addEventListener('pointerdown', state.onDragStart);
-          // el.addEventListener('pointermove', state.onDragMove);
-          // el.addEventListener('pointerup', state.onDragEnd);
+          state.el.root = el;
+          state.el.camera = /** @type {*} */ (el.querySelector('div.camera'));
+          state.el.redDot = /** @type {*} */ (el.querySelector('div.dot.red'));
+          state.el.greenDot = /** @type {*} */ (el.querySelector('div.dot.green'));
+          el.addEventListener('pointerdown', state.onDragStart);
+          el.addEventListener('pointermove', state.onDragMove);
+          el.addEventListener('pointerup', state.onDragEnd);
         }
       },
     };
   });
 
   return <>
-    <div className={rootCss}>
+    <div className={rootCss} ref={state.rootRef}>
       <div className={pyramidCss}>
         <div className="camera">
           <div className="base" />
@@ -66,11 +77,17 @@ export default function RedoubtDemo3D() {
           <div className="side south"></div>
           <div className="side west"></div>
         </div>
-        <div className="dot"></div>
+        <div className="dot red"></div>
+        <div className="dot green"></div>
       </div>
     </div>
   </>;
 }
+
+const rootCss = css`
+  background: #000000;
+  height: 100%;
+`;
 
 const scale = 0.02;
 const pyBaseDim = 9000 * scale;
@@ -95,11 +112,16 @@ const pyramidCss = css`
 
   .dot {
     position: absolute;
-    width: 5px;
-    height: 5px;
-    left: -2.5px;
-    top: -2.5px;
+    width: 10px;
+    height: 10px;
+    left: -5px;
+    top: -5px;
+  }
+  .dot.red {
     background: red;
+  }
+  .dot.green {
+    background: green;
   }
 
   .base {
@@ -154,9 +176,4 @@ const pyramidCss = css`
     transform: rotateY(-60deg);
   }
 
-`;
-
-const rootCss = css`
-  background: #000000;
-  height: 100%;
 `;
