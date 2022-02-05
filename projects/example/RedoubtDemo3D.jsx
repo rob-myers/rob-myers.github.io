@@ -57,14 +57,17 @@ export default function RedoubtDemo3D() {
   });
 
   return <>
-    <div className={pyramidCss}>
-      <div className="camera">
-        <div className="side north"></div>
-        <div className="side east"></div>
-        <div className="side south"></div>
-        <div className="side west"></div>
+    <div className={rootCss}>
+      <div className={pyramidCss}>
+        <div className="camera">
+          <div className="base" />
+          <div className="side north"></div>
+          <div className="side east"></div>
+          <div className="side south"></div>
+          <div className="side west"></div>
+        </div>
+        <div className="dot"></div>
       </div>
-      <div className="dot"></div>
     </div>
   </>;
 }
@@ -86,7 +89,7 @@ const pyramidCss = css`
   
   .camera {
     transform-style: preserve-3d;
-    transform: translate3d(0, -50px, 0) rotateX(10deg);
+    transform: translate3d(0, -50px, 300px) rotateX(10deg);
     height: 100%; /** ? */
   }
 
@@ -98,6 +101,16 @@ const pyramidCss = css`
     top: -2.5px;
     background: red;
   }
+
+  .base {
+    position: absolute;
+    width: ${pyBaseDim}px;
+    height: ${pyBaseDim}px;
+    background: rgba(255, 0, 0, 0.1);
+    left: ${-pyBaseDim / 2}px;
+    top: ${-pyBaseDim}px;
+  }
+
   .side {
     position: absolute;
     width: 0;
@@ -108,7 +121,7 @@ const pyramidCss = css`
     top: ${-pyBaseHeight}px;
     border-left: ${pyBaseDim / 2}px solid transparent;
     border-right: ${pyBaseDim / 2}px solid transparent;
-    border-top: ${pyBaseHeight}px solid rgba(0, 0, 255, 0.4);
+    border-top: ${pyBaseHeight}px solid rgba(255, 255, 255, 0.1);
     transform-origin: top;
     transform: rotateX(60deg);
   }
@@ -117,7 +130,7 @@ const pyramidCss = css`
     top: ${-pyBaseDim}px;
     border-bottom: ${pyBaseDim / 2}px solid transparent;
     border-top: ${pyBaseDim / 2}px solid transparent;
-    border-right: ${pyBaseHeight}px solid rgba(255, 255, 0, 0.4);
+    border-right: ${pyBaseHeight}px solid rgba(255, 255, 255, 0.2);
     transform-origin: right;
     transform: rotateY(60deg);
   }
@@ -127,7 +140,7 @@ const pyramidCss = css`
     top: ${-pyBaseHeight}px;
     border-left: ${pyBaseDim / 2}px solid transparent;
     border-right: ${pyBaseDim / 2}px solid transparent;
-    border-bottom: ${pyBaseHeight}px solid rgba(255, 0, 0, 0.4);
+    border-bottom: ${pyBaseHeight}px solid rgba(255, 255, 255, 0.3);
     transform-origin: bottom;
     transform: rotateX(-60deg);
   }
@@ -136,9 +149,14 @@ const pyramidCss = css`
     top: ${-pyBaseDim}px;
     border-bottom: ${pyBaseDim / 2}px solid transparent;
     border-top: ${pyBaseDim / 2}px solid transparent;
-    border-left: ${pyBaseHeight}px solid #869e84;
+    border-left: ${pyBaseHeight}px solid rgba(255, 255, 255, 0.4);
     transform-origin: left;
     transform: rotateY(-60deg);
   }
 
+`;
+
+const rootCss = css`
+  background: #000000;
+  height: 100%;
 `;
