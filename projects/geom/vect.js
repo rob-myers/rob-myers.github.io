@@ -52,6 +52,11 @@
 		return this;
 	}
 
+  /** @param {Geom.VectJson} p */
+  angleTo(p) {
+    return Math.atan2(p.y - this.y, p.x - this.x);
+  }  
+
   /** @param {Vect[]} vectors */
   static average(vectors) {
     return vectors.length
@@ -69,7 +74,7 @@
   copy(p) {
     return this.set(p.x, p.y);
   }
-
+  
   /** @param {Geom.VectJson} p */
   distanceTo(p) {
     return Math.hypot(p.x - this.x, p.y - this.y);
