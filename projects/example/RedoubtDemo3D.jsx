@@ -11,6 +11,7 @@ import useMuState from '../hooks/use-mu-state';
  *   - show drag line when dragging
  *   - go through css-camera and understand a demo
  *   - look at pyramid base center whilst rotX or rotZ
+ * - can scale via mousewheel or pinch
  * - 125 layered squares
  *   - but only show ≤ 10 at a time, fading out?
  * - can select layer and it comes out
@@ -103,6 +104,7 @@ const pyBaseDim = 9000 * scale;
 /** Length along the face from base to pinacle */
 const pyFaceLength = 9000 * scale;
 // const pyHeight = 9000 * (Math.sqrt(3) / 2) * scale;
+const cameraHeight = 80000 * scale; 
 
 const pyramidCss = css`
   width: 100%;
@@ -111,14 +113,16 @@ const pyramidCss = css`
   transform-origin: center;
   position: relative;
   
-  perspective: 10000px;
-  perspective-origin: 50% 50%;
+  perspective: ${cameraHeight}px;
+  perspective-origin: 0 0;
   transform-style: preserve-3d;
   
   .camera {
     transform-style: preserve-3d;
-    transform: translate3d(0, -50px, 300px) rotateX(10deg);
-    height: 100%; /** ? */
+    transform: rotateX(10deg) translate3d(0, -${100}px, 0);
+    /* transform: rotateX(70deg) translate3d(0, -${cameraHeight}px, 0); */
+    /** ? */
+    height: 100%;
   }
 
   .drag-line {
@@ -136,6 +140,7 @@ const pyramidCss = css`
     height: 10px;
     left: -5px;
     top: -5px;
+    pointer-events: none;
   }
   .dot.red {
     background: red;
@@ -148,9 +153,9 @@ const pyramidCss = css`
     position: absolute;
     width: ${pyBaseDim}px;
     height: ${pyBaseDim}px;
-    background: rgba(255, 0, 0, 0.1);
     left: ${-pyBaseDim / 2}px;
     top: ${-pyBaseDim}px;
+    background: rgba(255, 0, 0, 0.1);
   }
 
   .side {
