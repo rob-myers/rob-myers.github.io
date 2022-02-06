@@ -1,12 +1,16 @@
 import React from 'react';
 import { css } from "goober";
 import { Rect, Vect } from '../geom';
+import useMuState from '../hooks/use-mu-state';
 
 /**
  * TODO
- * - 3d pyramid with base 9km * 9km and height 9 km
+ * - 3d pyramid with 9km * 9km base and slope height 9 km
  * - movable camera
  *   - show green dot when dragging
+ *   - show drag line when dragging
+ *   - go through css-camera and understand a demo
+ *   - look at pyramid base center whilst rotX or rotZ
  * - 125 layered squares
  *   - but only show ≤ 10 at a time, fading out?
  * - can select layer and it comes out
@@ -15,42 +19,45 @@ import { Rect, Vect } from '../geom';
 
 export default function RedoubtDemo3D() {
 
-  const [state] = React.useState(() => {
+  const state = useMuState(() => {
 
     return {
       dragging: false,
       dragFrom: new Vect,
+      dragTo: new Vect,
       bounds: new Rect,
       el: {
         root: /** @type {HTMLDivElement} */ ({}),
         camera: /** @type {HTMLDivElement} */ ({}),
         redDot: /** @type {HTMLDivElement} */ ({}),
         greenDot: /** @type {HTMLDivElement} */ ({}),
+        dragLine: /** @type {HTMLDivElement} */ ({}),
       },
 
       /** @param {PointerEvent} e */
       onDragStart: (e) => {
         state.dragging = true;
         state.el.root.style.cursor = 'none';
-        state.dragFrom.set(e.clientX, e.clientY);
+        state.bounds.copy(state.el.root.getBoundingClientRect());
+        state.dragFrom.set(e.clientX - state.bounds.cx, e.clientY - state.bounds.cy);
+        state.el.redDot.style.transform = `translate(${state.dragFrom.x}px, ${state.dragFrom.y}px)`;
       },
       /** @param {PointerEvent} e */
       onDragMove: (e) => {
         if (!state.dragging) return;
-        // const deltaY = e.clientY - state.dragFrom.y;
-        // // console.log(deltaY);
-        // // state.el.root.style.perspective = `${perspectivePx + 1000 * deltaY}px`;
-        // state.el.inner.style.transform = `translateZ(${deltaY}px)`;
-        // // state.el.inner.style.transform = `rotateX(${(deltaY / 534) * Math.PI})`;
-
         state.bounds.copy(state.el.root.getBoundingClientRect());
-        const deltaX = e.clientX - state.bounds.cx;
-        const deltaY = e.clientY - state.bounds.cy;
-        state.el.greenDot.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+        state.dragTo.set(e.clientX - state.bounds.cx, e.clientY - state.bounds.cy);
+        state.el.greenDot.style.transform = `translate(${state.dragTo.x}px, ${state.dragTo.y}px)`;
+        // state.el.greenDot.style.transform = `translateY(${state.dragTo.y}px)`;
+        state.el.dragLine.style.transform = `${state.el.redDot.style.transform} rotateZ(${state.dragFrom.angleTo(state.dragTo)}rad)`;
+        state.el.dragLine.style.width = `${state.dragFrom.distanceTo(state.dragTo)}px`;
       },
-      onDragEnd: () => {
+      /** @param {PointerEvent} e */
+      onDragEnd: (e) => {
         state.dragging = false;
         state.el.root.style.cursor = 'default';
+        state.el.redDot.style.transform = state.el.greenDot.style.transform
+        state.el.dragLine.style.width = `0px`;
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       rootRef: (el) => {
@@ -59,9 +66,11 @@ export default function RedoubtDemo3D() {
           state.el.camera = /** @type {*} */ (el.querySelector('div.camera'));
           state.el.redDot = /** @type {*} */ (el.querySelector('div.dot.red'));
           state.el.greenDot = /** @type {*} */ (el.querySelector('div.dot.green'));
-          el.addEventListener('pointerdown', state.onDragStart);
-          el.addEventListener('pointermove', state.onDragMove);
-          el.addEventListener('pointerup', state.onDragEnd);
+          state.el.dragLine = /** @type {*} */ (el.querySelector('div.drag-line'));
+          // Pattern (e) => state.foo(e) supports HMR
+          el.addEventListener('pointerdown', (e) => state.onDragStart(e));
+          el.addEventListener('pointermove', (e) => state.onDragMove(e));
+          el.addEventListener('pointerup', (e) => state.onDragEnd(e));
         }
       },
     };
@@ -77,6 +86,7 @@ export default function RedoubtDemo3D() {
           <div className="side south"></div>
           <div className="side west"></div>
         </div>
+        <div className="drag-line"></div>
         <div className="dot red"></div>
         <div className="dot green"></div>
       </div>
@@ -91,7 +101,9 @@ const rootCss = css`
 
 const scale = 0.02;
 const pyBaseDim = 9000 * scale;
-const pyBaseHeight = Number((9000 * scale).toFixed(2));
+/** Length along the face from base to pinacle */
+const pyFaceLength = 9000 * scale;
+// const pyHeight = 9000 * (Math.sqrt(3) / 2) * scale;
 
 const pyramidCss = css`
   width: 100%;
@@ -110,6 +122,15 @@ const pyramidCss = css`
     height: 100%; /** ? */
   }
 
+  .drag-line {
+    position: absolute;
+    height: 2px;
+    width: 0px;
+    left: 0;
+    top: 0;
+    background: white;
+    transform-origin: left center;
+  }
   .dot {
     position: absolute;
     width: 10px;
@@ -140,29 +161,29 @@ const pyramidCss = css`
   }
   .north {
     left: ${-pyBaseDim / 2}px;
-    top: ${-pyBaseHeight}px;
+    top: ${-pyFaceLength}px;
     border-left: ${pyBaseDim / 2}px solid transparent;
     border-right: ${pyBaseDim / 2}px solid transparent;
-    border-top: ${pyBaseHeight}px solid rgba(255, 255, 255, 0.1);
+    border-top: ${pyFaceLength}px solid rgba(255, 255, 255, 0.1);
     transform-origin: top;
     transform: rotateX(60deg);
   }
   .east {
-    left: ${-pyBaseHeight + pyBaseDim/2}px;
+    left: ${-pyFaceLength + pyBaseDim/2}px;
     top: ${-pyBaseDim}px;
     border-bottom: ${pyBaseDim / 2}px solid transparent;
     border-top: ${pyBaseDim / 2}px solid transparent;
-    border-right: ${pyBaseHeight}px solid rgba(255, 255, 255, 0.2);
+    border-right: ${pyFaceLength}px solid rgba(255, 255, 255, 0.2);
     transform-origin: right;
     transform: rotateY(60deg);
   }
   /** We raise south-facing side pi/3, looking down from above */
   .south {
     left: ${-pyBaseDim / 2}px;
-    top: ${-pyBaseHeight}px;
+    top: ${-pyFaceLength}px;
     border-left: ${pyBaseDim / 2}px solid transparent;
     border-right: ${pyBaseDim / 2}px solid transparent;
-    border-bottom: ${pyBaseHeight}px solid rgba(255, 255, 255, 0.3);
+    border-bottom: ${pyFaceLength}px solid rgba(255, 255, 255, 0.3);
     transform-origin: bottom;
     transform: rotateX(-60deg);
   }
@@ -171,7 +192,7 @@ const pyramidCss = css`
     top: ${-pyBaseDim}px;
     border-bottom: ${pyBaseDim / 2}px solid transparent;
     border-top: ${pyBaseDim / 2}px solid transparent;
-    border-left: ${pyBaseHeight}px solid rgba(255, 255, 255, 0.4);
+    border-left: ${pyFaceLength}px solid rgba(255, 255, 255, 0.4);
     transform-origin: left;
     transform: rotateY(-60deg);
   }
