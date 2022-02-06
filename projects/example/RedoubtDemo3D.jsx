@@ -40,16 +40,15 @@ export default function RedoubtDemo3D() {
         state.el.root.style.cursor = 'none';
         state.bounds.copy(state.el.root.getBoundingClientRect());
         state.dragFrom.set(e.clientX - state.bounds.cx, e.clientY - state.bounds.cy);
-        state.el.redDot.style.transform = `translate(${state.dragFrom.x}px, ${state.dragFrom.y}px)`;
+        state.el.redDot.style.transform = state.el.greenDot.style.transform = `translate(${state.dragFrom.x}px, ${state.dragFrom.y}px)`;
       },
       /** @param {PointerEvent} e */
       onDragMove: (e) => {
         if (!state.dragging) return;
         state.bounds.copy(state.el.root.getBoundingClientRect());
         state.dragTo.set(e.clientX - state.bounds.cx, e.clientY - state.bounds.cy);
-        state.el.greenDot.style.transform = `translate(${state.dragTo.x}px, ${state.dragTo.y}px)`;
-        // state.el.greenDot.style.transform = `translateY(${state.dragTo.y}px)`;
-        state.el.dragLine.style.transform = `${state.el.redDot.style.transform} rotateZ(${state.dragFrom.angleTo(state.dragTo)}rad)`;
+        state.el.greenDot.style.transform = `translate(${state.dragFrom.x}px, ${state.dragTo.y}px)`;
+        state.el.dragLine.style.transform = `${state.el.redDot.style.transform} rotateZ(90deg)`;
         state.el.dragLine.style.width = `${state.dragFrom.distanceTo(state.dragTo)}px`;
       },
       /** @param {PointerEvent} e */
