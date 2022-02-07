@@ -5,12 +5,11 @@ import useMuState from '../hooks/use-mu-state';
 
 /**
  * TODO
- * - 3d pyramid with 9km * 9km base and slope height 9 km
+ * - 3d pyramid with 9km * 9km base and slope height 9 km ✅
  * - movable camera
- *   - show green dot when dragging
- *   - show drag line when dragging
- *   - go through css-camera and understand a demo
- *   - look at pyramid base center whilst rotX or rotZ
+ *   - show green dot when dragging ✅
+ *   - show drag line when dragging ✅
+ *   - look at pyramid base center whilst rotX on specific circle ✅
  * - can scale via mousewheel or pinch
  * - 125 layered squares
  *   - but only show ≤ 10 at a time, fading out?
@@ -27,6 +26,15 @@ export default function RedoubtDemo3D() {
       dragFrom: new Vect,
       dragTo: new Vect,
       bounds: new Rect,
+      /** (y, z) */
+      camPos: new Vect(-camMaxH, camMaxH),
+      /**
+       * Assume camera lies on specific circle in plane x=0, with
+       * topmost point (0, -camMaxH, -camMaxH) and rightmost (0, 0, 0).
+       * This angle parameterises it, going anticlockwise from rightmost.
+       * We'll constrain it to [pi/4, pi/2]
+       */
+      camAngle: Math.PI/2,
       el: {
         root: /** @type {HTMLDivElement} */ ({}),
         camera: /** @type {HTMLDivElement} */ ({}),
@@ -38,7 +46,6 @@ export default function RedoubtDemo3D() {
       /** @param {PointerEvent} e */
       onDragStart: (e) => {
         state.dragging = true;
-        state.el.root.style.cursor = 'none';
         state.bounds.copy(state.el.root.getBoundingClientRect());
         state.dragFrom.set(e.clientX - state.bounds.cx, e.clientY - state.bounds.cy);
         state.el.redDot.style.transform = state.el.greenDot.style.transform = `translate(${state.dragFrom.x}px, ${state.dragFrom.y}px)`;
@@ -49,13 +56,22 @@ export default function RedoubtDemo3D() {
         state.bounds.copy(state.el.root.getBoundingClientRect());
         state.dragTo.set(e.clientX - state.bounds.cx, e.clientY - state.bounds.cy);
         state.el.greenDot.style.transform = `translate(${state.dragFrom.x}px, ${state.dragTo.y}px)`;
-        state.el.dragLine.style.transform = `${state.el.redDot.style.transform} rotateZ(90deg)`;
-        state.el.dragLine.style.width = `${state.dragFrom.distanceTo(state.dragTo)}px`;
+
+        state.el.dragLine.style.transform = `${state.el.redDot.style.transform} rotateZ(${state.dragTo.y > state.dragFrom.y ? 90 : -90}deg)`;
+        const delta = state.dragTo.y - state.dragFrom.y;
+        state.el.dragLine.style.width = `${Math.abs(delta)}px`;
+
+        state.camAngle = Math.max(Math.min(state.camAngle + delta * 0.0001, Math.PI/2), Math.PI/4);
+        const [cy, cz, tilt] = [
+          camMaxH * (1 - Math.cos(state.camAngle)),
+          camMaxH * Math.sin(state.camAngle),
+          Math.atan((1 - Math.cos(state.camAngle)) / (Math.sin(state.camAngle) - pyHeight/(2 * camMaxH))),
+        ];
+        state.el.camera.style.transform = `rotateX(${tilt}rad) translate3d(0, ${-cy}px, ${-cz}px)`;
       },
       /** @param {PointerEvent} e */
       onDragEnd: (e) => {
         state.dragging = false;
-        state.el.root.style.cursor = 'default';
         state.el.redDot.style.transform = state.el.greenDot.style.transform
         state.el.dragLine.style.width = `0px`;
       },
@@ -71,6 +87,7 @@ export default function RedoubtDemo3D() {
           el.addEventListener('pointerdown', (e) => state.onDragStart(e));
           el.addEventListener('pointermove', (e) => state.onDragMove(e));
           el.addEventListener('pointerup', (e) => state.onDragEnd(e));
+          el.addEventListener('pointerleave', (e) => state.onDragEnd(e));
         }
       },
     };
@@ -99,28 +116,30 @@ const rootCss = css`
   height: 100%;
 `;
 
-const scale = 0.02;
+const dotDim = 4;
+const scale = 0.04;
 const pyBaseDim = 9000 * scale;
 /** Length along the face from base to pinacle */
 const pyFaceLength = 9000 * scale;
-// const pyHeight = 9000 * (Math.sqrt(3) / 2) * scale;
-const cameraHeight = 80000 * scale; 
+const pyHeight = 9000 * (Math.sqrt(3) / 2) * scale;
+/** Maximum camera height */
+const camMaxH = 120000 * scale; 
 
 const pyramidCss = css`
   width: 100%;
   height: 100%;
   transform: translate(50%, 50%);
+  /* transform: scale(1.5) translate(50%, 50%); */
   transform-origin: center;
   position: relative;
   
-  perspective: ${cameraHeight}px;
+  perspective: ${camMaxH}px;
   perspective-origin: 0 0;
   transform-style: preserve-3d;
   
   .camera {
     transform-style: preserve-3d;
-    transform: rotateX(10deg) translate3d(0, -${100}px, 0);
-    /* transform: rotateX(70deg) translate3d(0, -${cameraHeight}px, 0); */
+    transform: rotateX(45deg) translate3d(0, ${-camMaxH}px, ${-camMaxH}px);
     /** ? */
     height: 100%;
   }
@@ -136,10 +155,10 @@ const pyramidCss = css`
   }
   .dot {
     position: absolute;
-    width: 10px;
-    height: 10px;
-    left: -5px;
-    top: -5px;
+    width: ${dotDim}px;
+    height: ${dotDim}px;
+    left: ${-dotDim/2}px;
+    top: ${-dotDim/2}px;
     pointer-events: none;
   }
   .dot.red {
