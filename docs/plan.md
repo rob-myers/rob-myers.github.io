@@ -50,7 +50,10 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- play with lighting w.r.t SVG stuff
+- instead of CSS 3d demo, we'll create blender models and render/screenshots
+  - create last redoubt in blender
+  - screenshot to go inside objective
+  - leave RedoubtDemo3D as is, but do not use
 
 - finish passenger-deck 303
 - ✅ `poly` tag needs separate wall or obstacle

@@ -48,6 +48,7 @@ media/*.dwg
 media/*.ctb
 media/*.url
 media/**/*.png
+media/3d/*.blend1
 !media/used-symbols/*.png
 !media/used-geomorphs/*.png
 !media/hull-sides/*.png
