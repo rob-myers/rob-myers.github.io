@@ -10,7 +10,9 @@ import useMuState from '../hooks/use-mu-state';
  *   - show green dot when dragging ✅
  *   - show drag line when dragging ✅
  *   - look at pyramid base center whilst rotX on specific circle ✅
- * - can scale via mousewheel or pinch
+ * - use mousewheel/pinch instead of drag indicator
+ * - can rotate around its axis
+ * - can scale (maybe incremental buttons)
  * - 125 layered squares
  *   - but only show ≤ 10 at a time, fading out?
  * - can select layer and it comes out
@@ -57,17 +59,13 @@ export default function RedoubtDemo3D() {
         state.dragTo.set(e.clientX - state.bounds.cx, e.clientY - state.bounds.cy);
         state.el.greenDot.style.transform = `translate(${state.dragFrom.x}px, ${state.dragTo.y}px)`;
 
-        state.el.dragLine.style.transform = `${state.el.redDot.style.transform} rotateZ(${state.dragTo.y > state.dragFrom.y ? 90 : -90}deg)`;
+        // state.el.dragLine.style.transform = `${state.el.redDot.style.transform} rotateZ(${state.dragTo.y > state.dragFrom.y ? 90 : -90}deg)`;
         const delta = state.dragTo.y - state.dragFrom.y;
-        state.el.dragLine.style.width = `${Math.abs(delta)}px`;
+        // state.el.dragLine.style.width = `${Math.abs(delta)}px`;
 
-        state.camAngle = Math.max(Math.min(state.camAngle + delta * 0.0001, Math.PI/2), Math.PI/4);
-        const [cy, cz, tilt] = [
-          camMaxH * (1 - Math.cos(state.camAngle)),
-          camMaxH * Math.sin(state.camAngle),
-          Math.atan((1 - Math.cos(state.camAngle)) / (Math.sin(state.camAngle) - pyHeight/(2 * camMaxH))),
-        ];
-        state.el.camera.style.transform = `rotateX(${tilt}rad) translate3d(0, ${-cy}px, ${-cz}px)`;
+        // TODO pivot about fixed intiial camAngle
+        state.camAngle = Math.max(Math.min(state.camAngle + delta * 0.0001, Math.PI/2 + Math.PI/4), Math.PI/50);
+        state.updateCamera();
       },
       /** @param {PointerEvent} e */
       onDragEnd: (e) => {
@@ -88,8 +86,17 @@ export default function RedoubtDemo3D() {
           el.addEventListener('pointermove', (e) => state.onDragMove(e));
           el.addEventListener('pointerup', (e) => state.onDragEnd(e));
           el.addEventListener('pointerleave', (e) => state.onDragEnd(e));
+          state.updateCamera();
         }
       },
+      updateCamera() {
+        const [cy, cz, tilt] = [
+          camMaxH * (1 - Math.cos(state.camAngle)),
+          camMaxH * Math.sin(state.camAngle),
+          Math.atan((1 - Math.cos(state.camAngle)) / (Math.sin(state.camAngle) - pyHeight/(2 * camMaxH))),
+        ];
+        state.el.camera.style.transform = `rotateX(${tilt}rad) translate3d(0, ${-cy}px, ${-cz}px)`;
+      }
     };
   });
 
@@ -97,11 +104,13 @@ export default function RedoubtDemo3D() {
     <div className={rootCss} ref={state.rootRef}>
       <div className={pyramidCss}>
         <div className="camera">
-          <div className="base" />
-          <div className="side north"></div>
-          <div className="side east"></div>
-          <div className="side south"></div>
-          <div className="side west"></div>
+          <div className="pyramid">
+            <div className="base" />
+            <div className="side north"></div>
+            <div className="side east"></div>
+            <div className="side south"></div>
+            <div className="side west"></div>
+          </div>
         </div>
         <div className="drag-line"></div>
         <div className="dot red"></div>
@@ -168,6 +177,11 @@ const pyramidCss = css`
     background: green;
   }
 
+  .pyramid {
+    transform-style: preserve-3d;
+    transform-origin: 0 ${-pyBaseDim/2}px;
+    transform: rotateZ(45deg); /** TODO can adjust */
+  }
   .base {
     position: absolute;
     width: ${pyBaseDim}px;
@@ -175,12 +189,14 @@ const pyramidCss = css`
     left: ${-pyBaseDim / 2}px;
     top: ${-pyBaseDim}px;
     background: rgba(255, 0, 0, 0.1);
+    backface-visibility: hidden;
   }
 
   .side {
     position: absolute;
     width: 0;
     height: 0;
+    backface-visibility: hidden;
   }
   .north {
     left: ${-pyBaseDim / 2}px;
