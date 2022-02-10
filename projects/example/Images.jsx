@@ -3,10 +3,8 @@ import { css } from 'goober';
 
 /**
  * @param {{ srcKey: 'geomorph-301' | 'redoubt-sketches' }} props 
- * @returns 
  */
 export default function Images(props) {
-  
   if (props.srcKey === 'geomorph-301') {
     return (
       <div className={classNames('scrollable', rootCss)}>
@@ -23,18 +21,36 @@ export default function Images(props) {
   if (props.srcKey === 'redoubt-sketches') {
     return (
       <div
-        className={classNames(rootCss, centeredCss)}
-        style={{ background: 'rgb(58, 58, 58)', filter: 'brightness(130%)' }}
+        className={classNames(rootCss, css`
+          background: rgb(58, 58, 58);
+          filter: brightness(130%);
+          padding: 16px;
+          figure {
+            max-width: 800px;
+          }
+        `)}
       >
         <figure>
+          <figcaption>
+            1st 1000 Cities (External)
+          </figcaption>
           <img
             draggable={false}
             src="/pics/redoubt-sketch-1.png"
-            style={{ height: '90%', width: 'unset' }}
+            width="1800" // width/height to avoid vertical reflow
+            height="1436"
           />
+        </figure>
+        <figure>
           <figcaption>
-            Container of 1st 1000 Cities
+            1000 Cities on 125 floors
           </figcaption>
+          <img
+            draggable={false}
+            src="/pics/redoubt-sketch-2.png"
+            width="1978"
+            height="1508"
+          />
         </figure>
       </div>
     );
@@ -44,28 +60,21 @@ export default function Images(props) {
 }
 
 const rootCss = css`
-  text-align: center;
   height: 100%;
+  overflow-y: auto;
   figure {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-  }
-  img {
-    animation: fadein 2s;
-    width: 100%;
+    margin: 0 auto;
+    figcaption, img {
+      width: 100%;
+    }
+    img {
+      animation: fadein 3s;
+      height: auto;
+      max-width: 100%;
+    }
   }
   @keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
-  }
-`;
-
-const centeredCss = css`
-  display: flex;
-  justify-content: center;
-  picture {
-    display: flex;
-    align-items: center;
   }
 `;
