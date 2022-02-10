@@ -133,6 +133,18 @@ const articleCss = css`
     padding: 0 2px;
   }
 
+  figcaption {
+    font-size: 0.8rem;
+    background: #444;
+    color: #a3a3a3;
+    border-radius: 4px;
+    padding: 4px 0;
+
+    a {
+      color: #99f;
+    }
+  }
+
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-weight: 400;

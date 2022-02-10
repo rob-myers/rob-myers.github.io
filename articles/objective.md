@@ -1,16 +1,35 @@
 ## Objective
 
 We are going to create a **video game**.
-That's right... yet more escapism.
-**Unusually**, we will
+Yes... yet more escapism.
+
+**Unusually**, we'll
 (a) describe the process in detail,
-(b) use standard web dev techniques, and
+(b) use standard web dev techniques,
 (c) develop rich Game AI.
 
-Where will it take place?
-> In the [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land) (our interpretation).
+_Let's explain ourselves with a bunch of Q and A._
 
-<!-- reinterpreted in terms of the [Traveller universe](https://travellermap.com/?p=-1.329!-23.768!3) and [Buddhism](). -->
+Where will it take place?
+> In the [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") (reinterpreted).
+
+> The Night Land contains the _The Last Redoubt_,
+> a gigantic pyramid protecting the last of humanity.
+> It encloses 1320 cities in total,
+> the first 1000 forming an inner ziggurat (see below).
+
+<div
+  class="tabs"
+  name="redoubt-sketch-1"
+  height="450"
+  enabled="true"
+  tabs="[
+    { key: 'component', filepath: 'example/Images#redoubt-sketches' },
+  ]"
+></div>
+
+__TODO__ 2 more screenshots above: 125 floors, the upper pyramid
+
 
 What kind of game is it?
 > A top-down adventure game.
@@ -27,6 +46,38 @@ Why Game AI?
 <!-- Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game. -->
 <!-- > An environment is needed to make behaviour meaningful, fixed narratives/missions are not. -->
 
+We'l build Game AI _interactively_ using a browser-based terminal. For example, try copy-pasting the following script below:
+
+__TODO__ a meaningful example 🚧
+
+~~~
+myFunc() {
+  call '() => Array.from(Math.PI.toString())' |
+  split |
+  map 'x => `Digit: ${x}`'
+}
+~~~
+
+
+  <div
+    class="tabs"
+    name="terminal-demo"
+    height="300"
+    tabs="[
+      { key: 'terminal', filepath: 'test' },
+    ]"
+  ></div>
+
+  | Category | Examples  |
+  | ------- | ---------- |
+  | Nav | <span class="cmd">ls</span>, <span class="cmd">pwd</span>, <span class="cmd">cd /home/test</span>, <span class="cmd">cd ..</span> |
+  | [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete "@new-tab") | <span class="cmd">echo foo >/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">cd; rm bar</span> |
+  | Out | <span class="cmd">seq 10</span>, <span class="cmd">echo foo{1..5}</span>, <span class="cmd">expr '2**10'</span> |
+  | Meta | <span class="cmd">history</span>, <span class="cmd"> declare</span>, <span class="cmd">help</span
+
+
+Let's spend some time providing the backdrop
+
 __FROM HERE__ would like
 - _TODO_ __ideas about characters and storylines__ e.g. 64 floors, floor layout; protagonist; other characters; natural mental states are unskillful; watchers represent fetters e.g. worry, ill-will etc.
 - _TODO_ __clearer ideas about gameplay__ e.g. exploration; procedural generation; time-limited navpath motion; mental weaponry related to mental training; travel within the Night Land; ultimate goal e.g. deathless
@@ -39,8 +90,8 @@ To makes things less abstract, here's a Traveller-based asset called a _geomorph
 <div
   class="tabs"
   name="geomorph-301-debug"
-  height="340"
-  tabs="[{ key: 'component', filepath: 'example/Gm301Debug' }]"
+  height="400"
+  tabs="[{ key: 'component', filepath: 'example/Images#geomorph-301' }]"
 ></div>
 
 We've recreated **Geomorph 301** (a.k.a. _Bridge_) from Robert Pearce's [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),

@@ -14,8 +14,10 @@ const code = {
 } as const;
 
 const component = {
-  'example/Gm301Debug': () => import('projects/example/Gm301')
-    .then(x => x.default),
+  'example/Images#geomorph-301': () => import('projects/example/Images')
+    .then(x => (props: any) => <x.default {...props} srcKey='geomorph-301' />),
+  'example/Images#redoubt-sketches': () => import('projects/example/Images')
+    .then(x => (props: any) => <x.default {...props} srcKey='redoubt-sketches' />),
   'example/Visibility#301': () => import('projects/example/Visibility')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/Css3d#301': () => import('projects/example/Css3d')
