@@ -59,7 +59,7 @@ const titleCss = css`
       font-size: 5rem;
     }
     @media(max-width: 600px) {
-      font-size: 3.5rem;
+      font-size: 3rem;
     }
   }
   
