@@ -5,6 +5,7 @@ import { css } from 'goober';
  * @param {{ srcKey: 'geomorph-301' | 'redoubt-sketches' }} props 
  */
 export default function Images(props) {
+
   if (props.srcKey === 'geomorph-301') {
     return (
       <div className={classNames('scrollable', rootCss)}>

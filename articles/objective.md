@@ -8,15 +8,15 @@ Yes... yet more escapism.
 (b) use standard web dev techniques,
 (c) develop rich Game AI.
 
-_Let's explain ourselves with a bunch of Q and A._
+_Let's explain ourselves with a bunch of self-imposed Q and A._
 
 Where will it take place?
-> In the [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") (reinterpreted).
+> [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") (reinterpreted).
 
 > The Night Land contains the _The Last Redoubt_,
 > a gigantic pyramid protecting the last of humanity.
 > It encloses 1320 cities in total,
-> the first 1000 forming an inner ziggurat (see below).
+> the first 1000 forming the ziggurat in the concept art below.
 
 <div
   class="tabs"
@@ -34,19 +34,16 @@ __TODO__ 2 more screenshots above: 125 floors, the upper pyramid
 What kind of game is it?
 > A top-down adventure game.
 
-What are _standard_ web development techniques?
-> Those technologies used on an everyday basis by web developers.
-> Then we exclude WebGL, physics engines and
-> character walk-cycles.
+Web development?
+> This game is made using everyday web development techniques.
+> Then we exclude WebGL, physics engines, walk-cycles etc.
 
-Why Game AI?
-> Standard techniques limit the graphics.
-> On the other hand, the world is awash with games which are beautifully-crafted, yet ultimately rather shallow.
+Rich Game AI?
+> The world is awash with beautifully-crafted games which are ultimately shallow.
+> Failing the former we can strive to overcome the latter.
 
-<!-- Because [NPC](https://tvtropes.org/pmwiki/pmwiki.php/Main/NonPlayerCharacter) behaviour is more interesting than any particular game. -->
-<!-- > An environment is needed to make behaviour meaningful, fixed narratives/missions are not. -->
-
-We'l build Game AI _interactively_ using a browser-based terminal. For example, try copy-pasting the following script below:
+> We'll avoid _clunky behaviour editors_ and _rigid task-based programming patterns_.
+> Instead we'll build Game AI **interactively** using a browser-based terminal. Try copy-pasting the following script below:
 
 __TODO__ a meaningful example 🚧
 
