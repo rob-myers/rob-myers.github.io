@@ -3,24 +3,24 @@
 We are going to create a **video game**.
 Yes... yet more escapism.
 
-**Unusually**, we will
-(a) describe the process in detail,
-(b) use standard web dev techniques,
-(c) develop rich Game AI.
+**_Unusually_**, we will
+(**a**) describe the process in detail,
+(**b**) use standard web dev techniques,
+(**c**) develop rich Game AI.
 
-_Let's explain via some Q and A._
+Let's explain what we mean via some <span title="questions">Q</span> and <span title="answers">A</span>.
 
-What kind of game is it?
+What kind of game?
 > A top-down adventure game.
 
-Where will it take place?
+Where does it take place?
 > [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") - a futuristic Earth where the Sun has died.
 > The last of humanity live in a gigantic pyramid called _The Last Redoubt_,
-> see the concept art below.
+> see concept art below.
 
 <div
   class="tabs"
-  name="redoubt-sketch-1"
+  name="redoubt-sketch"
   height="450"
   enabled="true"
   tabs="[
@@ -32,7 +32,7 @@ __TODO__ 1 more screenshot: the upper pyramid 🚧
 
 
 What's this about **web development**?
-> This particular video game is made using everyday web development techniques.
+> This particular video game will be made using everyday web development techniques.
 > In particular, we won't be using WebGL, physics engines, walk-cycles etc.
 
 What's this about **Game AI**?
@@ -44,30 +44,30 @@ What's this about **Game AI**?
 
 __TODO__ a meaningful example 🚧
 
-~~~
+<!-- ~~~
 myFunc() {
   call '() => Array.from(Math.PI.toString())' |
   split |
   map 'x => `Digit: ${x}`'
 }
-~~~
+~~~ -->
 
 
-  <div
-    class="tabs"
-    name="terminal-demo"
-    height="300"
-    tabs="[
-      { key: 'terminal', filepath: 'test' },
-    ]"
-  ></div>
+<div
+  class="tabs"
+  name="terminal-demo-1"
+  height="300"
+  tabs="[
+    { key: 'terminal', filepath: 'test-1' },
+  ]"
+></div>
 
-  | Category | Examples  |
-  | ------- | ---------- |
-  | Nav | <span class="cmd">ls</span>, <span class="cmd">pwd</span>, <span class="cmd">cd /home/test</span>, <span class="cmd">cd ..</span> |
-  | [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete "@new-tab") | <span class="cmd">echo foo >/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">cd; rm bar</span> |
-  | Out | <span class="cmd">seq 10</span>, <span class="cmd">echo foo{1..5}</span>, <span class="cmd">expr '2**10'</span> |
-  | Meta | <span class="cmd">history</span>, <span class="cmd"> declare</span>, <span class="cmd">help</span
+| Category | Examples  |
+| ------- | ---------- |
+| Nav | <span class="cmd">ls</span>, <span class="cmd">pwd</span>, <span class="cmd">cd /home/test</span>, <span class="cmd">cd ..</span> |
+| [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete "@new-tab") | <span class="cmd">echo foo >/home/bar</span>, <span class="cmd">/home/bar</span>, <span class="cmd">cd; rm bar</span> |
+| Out | <span class="cmd">seq 10</span>, <span class="cmd">echo foo{1..5}</span>, <span class="cmd">expr '2**10'</span> |
+| Meta | <span class="cmd">history</span>, <span class="cmd"> declare</span>, <span class="cmd">help</span
 
 
 Let's spend some time providing the backdrop
