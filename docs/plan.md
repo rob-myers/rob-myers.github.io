@@ -56,9 +56,9 @@ __Aim towards website release__.
 - nav demo + tty with `look`
   - ✅ move `NavCollide` into objective
   - 🚧 clean up look of `NavCollide`
-    - 1
-    - 2
-    - 3
+    - ✅ cleaner obstacles
+    - 🚧 dynamic lighting again
+    - ?
   - user manually moves bots
   - can write script manually or continually `look`ing
   - can see: npcs, meta points
