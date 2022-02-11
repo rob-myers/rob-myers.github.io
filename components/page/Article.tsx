@@ -177,9 +177,9 @@ const articleCss = css`
       > span {
         padding: 6px 10px;
         margin: 0 1px;
-        background: #222;
+        border: 1px solid #aaa;
         border-radius: 2px;
-        color: #ffffff;
+        color: #444;
       }
     }
     @media(max-width: 600px) {
