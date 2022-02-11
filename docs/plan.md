@@ -50,6 +50,17 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+nav demo + tty with `look`
+- move `NavCollide` into objective
+- clean up look
+  - 1
+  - 2
+  - 3
+- user manually moves bots, and can write script manually or continually looking
+- can see: npcs, meta points
+
+- can pause `NavDemo` individually (not just at `Tabs` level)
+
 - finish passenger-deck 303
 - ✅ `poly` tag needs separate wall or obstacle
 

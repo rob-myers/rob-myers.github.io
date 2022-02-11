@@ -43,9 +43,6 @@ What's this about **Game AI**?
 > Instead we'll build Game AI **interactively** using a browser-based terminal. Try copy-pasting the following script below:
 
 __TODO__ a meaningful example 🚧
-- nav demo + tty with `look`
-- user manually moves bots, and can write script manually or continually looking
-- can see: npcs, meta points
 
 <!-- ~~~
 myFunc() {
@@ -55,15 +52,14 @@ myFunc() {
 }
 ~~~ -->
 
-
 <div
   class="tabs"
   name="nav-tty-1"
-  height="400"
+  height="500"
   show="2"
   tabs="[
-    { key: 'terminal', filepath: 'nav-demo-1' },
-    { key: 'terminal', filepath: 'nav-demo-2' },
+    { key: 'terminal', filepath: 'nav-demo-1', weight: 30 },
+    { key: 'component', filepath: 'example/NavCollide', weight: 70 },
   ]"
 ></div>
 
