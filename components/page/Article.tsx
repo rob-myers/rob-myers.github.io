@@ -137,7 +137,7 @@ const articleCss = css`
     font-size: 0.8rem;
     background: #444;
     color: #a3a3a3;
-    border-radius: 4px;
+    /* border-radius: 4px; */
     padding: 4px 0;
     text-align: center;
 

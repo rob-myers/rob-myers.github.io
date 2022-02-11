@@ -3,20 +3,20 @@
 We are going to create a **video game**.
 Yes... yet more escapism.
 
-**Unusually**, we'll
+**Unusually**, we will
 (a) describe the process in detail,
 (b) use standard web dev techniques,
 (c) develop rich Game AI.
 
-_Let's explain ourselves with a bunch of self-imposed Q and A._
+_Let's explain via some Q and A._
+
+What kind of game is it?
+> A top-down adventure game.
 
 Where will it take place?
-> [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") (reinterpreted).
-
-> The Night Land contains the _The Last Redoubt_,
-> a gigantic pyramid protecting the last of humanity.
-> It encloses 1320 cities in total,
-> the first 1000 forming the ziggurat in the concept art below.
+> [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") - a futuristic Earth where the Sun has died.
+> The last of humanity live in a gigantic pyramid called _The Last Redoubt_,
+> see the concept art below.
 
 <div
   class="tabs"
@@ -28,19 +28,16 @@ Where will it take place?
   ]"
 ></div>
 
-__TODO__ 2 more screenshots above: 125 floors, the upper pyramid
+__TODO__ 1 more screenshot: the upper pyramid 🚧
 
 
-What kind of game is it?
-> A top-down adventure game.
+What's this about **web development**?
+> This particular video game is made using everyday web development techniques.
+> In particular, we won't be using WebGL, physics engines, walk-cycles etc.
 
-Web development?
-> This game is made using everyday web development techniques.
-> Then we exclude WebGL, physics engines, walk-cycles etc.
-
-Rich Game AI?
+What's this about **Game AI**?
 > The world is awash with beautifully-crafted games which are ultimately shallow.
-> Failing the former we can strive to overcome the latter.
+> Failing the former we can strive to overcome the latter i.e. produce richer Game AI than is commonly experienced.
 
 > We'll avoid _clunky behaviour editors_ and _rigid task-based programming patterns_.
 > Instead we'll build Game AI **interactively** using a browser-based terminal. Try copy-pasting the following script below:

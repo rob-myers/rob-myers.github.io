@@ -23,7 +23,7 @@ export default function Images(props) {
     return (
       <div
         className={classNames(rootCss, css`
-          background: rgb(58, 58, 58);
+          background: #000;
           filter: brightness(130%);
           padding: 16px;
           figure {
