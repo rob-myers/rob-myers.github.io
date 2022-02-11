@@ -5,6 +5,7 @@ import { Actions, Layout as FlexLayout, Model, TabNode } from 'flexlayout-react'
 import { TabMeta, computeJsonModel } from 'model/tabs/tabs.model';
 import { scrollFinished } from 'model/dom.model';
 import useSiteStore from 'store/site.store';
+import type { Props as TabsProps } from './Tabs';
 import Portal from './Portal';
 
 export default function Layout(props: Props) {
@@ -47,9 +48,8 @@ export default function Layout(props: Props) {
   );
 }
 
-interface Props {
+interface Props extends Pick<TabsProps, 'tabs'> {
   id: string;
-  tabs: TabMeta[];
   readonly initEnabled: boolean;
 }
 
@@ -67,7 +67,7 @@ function useRegisterTabs(props: Props, model: Model) {
     if (!tabs[props.id]) {
       tabs[props.id] = {
         key: props.id,
-        def: props.tabs,
+        def: props.tabs[0].concat(props.tabs[1]),
         selectTab: (tabId: string) =>
           model.doAction(Actions.selectTab(tabId)),
         scrollTo: async () => {

@@ -32,36 +32,54 @@ export type TabMeta = { idSuffix?: string } & (
   | { key: 'terminal'; /** Session identifier */ filepath: string }
 );
 
-export function computeJsonModel(tabs: TabMeta[]): IJsonModel {
+export function computeJsonModel(tabs: [TabMeta[], TabMeta[]]): IJsonModel {
   return {
     global: {
       tabEnableRename: false,
+      rootOrientationVertical: true,
+      tabEnableClose: false,
     },
     layout: {
       type: 'row',
-      weight: 100,
-
-      children: [{
-        type: 'tabset',
-        weight: 50,
-        selected: 0,
-
-        children: tabs.map((meta) => {
-          // console.log('json model', meta);
-          return {
-            type: 'tab',
-            /**
-             * Tabs must not be duplicated within same `Tabs`,
-             * for otherwise this internal `id` will conflict.
-             */
-            id: getTabInternalId(meta),
-            name: getTabName(meta),
-            config: deepClone(meta),
-            // component: meta.key === 'terminal' ? 'terminal' : meta.filepath,
-            enableClose: false,
-          };
-        }),
-      }],
+      /**
+       * One row for each `meta` in tabs[0].
+       * The 1st such row additionally contains `tabs[1]`.
+       */
+      children: tabs[0].map((meta, i) => ({
+        type: 'row',
+        children: i === 0
+          ? ([
+              {
+                type: 'tabset',
+                children: [meta, ...tabs[1]].map(innerMeta => ({
+                  type: 'tab',
+                  /**
+                   * Tabs must not be duplicated within same `Tabs`,
+                   * for otherwise this internal `id` will conflict.
+                   */
+                  id: getTabInternalId(innerMeta),
+                  name: getTabName(innerMeta),
+                  config: deepClone(innerMeta),
+                  // component: meta.key === 'terminal' ? 'terminal' : meta.filepath,
+                }))
+              },
+            ])
+          : ([
+            {
+              type: 'tabset',
+              children: [{
+                type: 'tab',
+                /**
+                 * Tabs must not be duplicated within same `Tabs`,
+                 * for otherwise this internal `id` will conflict.
+                 */
+                id: getTabInternalId(meta),
+                name: getTabName(meta),
+                config: deepClone(meta),
+              }]
+            },
+          ]),
+      })),
     }
   };
 }

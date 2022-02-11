@@ -2,7 +2,7 @@ import React from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
 
-import { getTabsId } from 'model/tabs/tabs.model';
+import { getTabsId, TabMeta } from 'model/tabs/tabs.model';
 import { ArticleKey, articlesMeta } from 'articles/index';
 import useSiteStore from 'store/site.store';
 import Markdown from './Markdown';
@@ -409,7 +409,10 @@ const articleComponents = (
     switch (props.className) {
       case 'tabs': {
         const height = Number(props.height || 100);
-        const def = React.useMemo(() => Function(`return ${props.tabs || '[]'}`)(), [props.tabs]);
+        const tabs = React.useMemo<TabMeta[]>(() => Function(`return ${props.tabs || '[]'}`)(), [props.tabs]);
+        /** Number of tabs shown initially */
+        const show = Number(props.show) || 1;
+        const def: [TabMeta[], TabMeta[]] = [tabs.slice(0, show), tabs.slice(show)];
         return (
           <Tabs
             height={height}

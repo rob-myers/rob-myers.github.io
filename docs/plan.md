@@ -50,11 +50,6 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- instead of CSS 3d demo, we'll create blender models and render/screenshots
-  - create last redoubt in blender
-  - screenshot to go inside objective
-  - leave RedoubtDemo3D as is, but do not use
-
 - finish passenger-deck 303
 - ✅ `poly` tag needs separate wall or obstacle
 
@@ -108,6 +103,12 @@ __Aim towards website release__.
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+
+- ✅ `Tabs` can start with > 1 tab visible
+- instead of CSS 3d demo, we'll create blender models and render/screenshots
+  - ✅ start creating last redoubt in blender
+  - ✅ screenshot to go inside objective
+  - ✅ leave RedoubtDemo3D as is, but do not use
 
 - ✅ build `CssPanZoom`
   > SVG-based panzoom using CSS transforms instead of viewBox
