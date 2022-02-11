@@ -112,6 +112,7 @@ const articleCss = css`
     margin: 32px 0;
     border-left: 8px solid #ddd;
     padding-left: 30px;
+    font-weight: 300;
     
     @media(max-width: 600px) {
       margin: 20px 0;
@@ -206,8 +207,7 @@ const articleCss = css`
     }
     @media(max-width: 600px) {
       margin-top: -16px;
-      margin-bottom: 24px;
-      /* font-size: 0.65rem; */
+      margin-bottom: 32px;
     }
   }
   h3 {
@@ -474,13 +474,14 @@ const months = [
 ];
 
 function dayth(x: number) {
-  if (x > 3) {
+  const last = Number(x.toString().slice(-1));
+  if (last > 3) {
     return 'th';
-  } else if (x === 1) {
+  } else if (last === 1) {
     return 'st'
-  } else if (x === 2) {
+  } else if (last === 2) {
     return 'nd';
-  } else if (x === 3) {
+  } else if (last === 3) {
     return 'rd';
   }
 }
