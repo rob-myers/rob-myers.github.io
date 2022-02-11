@@ -16,7 +16,7 @@ function getTabName(meta: TabMeta) {
     case 'component':
       return meta.filepath;
     case 'terminal':
-      return `≫ ${meta.filepath}`;
+      return `${meta.filepath} ⚡︎`;
     default:
       throw testNever(meta);
   }
@@ -26,7 +26,7 @@ export function getTabsId(articleKey: string, tabsName: string) {
   return `${articleKey}--tabs--${tabsName}`;
 }
 
-export type TabMeta = { idSuffix?: string } & (
+export type TabMeta = { idSuffix?: string; weight?: number; } & (
   | { key: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
   | { key: 'component'; filepath: ComponentFilepathKey; }
   | { key: 'terminal'; /** Session identifier */ filepath: string }
@@ -47,6 +47,7 @@ export function computeJsonModel(tabs: [TabMeta[], TabMeta[]]): IJsonModel {
        */
       children: tabs[0].map((meta, i) => ({
         type: 'row',
+        weight: meta.weight,
         children: i === 0
           ? ([
               {

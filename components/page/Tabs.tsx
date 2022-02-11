@@ -106,12 +106,12 @@ export default function Tabs(props: Props) {
 }
 
 export interface Props {
-  initEnabled?: boolean;
-  height: number;
   /** Required */
   id: string;
   /** First tabs are shown initially, rest are background */
   tabs: [TabMeta[], TabMeta[]];
+  initEnabled?: boolean;
+  height: number;
 }
 
 const rootCss = css`
