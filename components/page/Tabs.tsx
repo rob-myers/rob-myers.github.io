@@ -154,7 +154,7 @@ const rootCss = css`
     background: #444;
   }
   .flexlayout__tab {
-    border-top: 6px solid #444;
+    border-top: 4px solid #444;
     position: relative;
     overflow: hidden;
 
