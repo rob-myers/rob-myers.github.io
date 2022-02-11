@@ -174,7 +174,8 @@ const rootCss = css`
   }
   .flexlayout__tab_button_content {
     user-select: none;
-    font-size: 13px;
+    font-size: 0.8rem;
+    font-family: 'Courier New', Courier, monospace;
     color: #aaa;
   }
   .flexlayout__tab_button--selected .flexlayout__tab_button_content {
