@@ -13,11 +13,11 @@
     <rect y="1190" width="1220" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" x="-10"/>
     <path d="M 1210 295 L 1210 1195 L 1190 1195 L 1190 302.9 L 897.2 10 L 0 10 L 0 -10 L 905.3 -10 L 1210 295 Z" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;"/>
   </g>
-  <g style="pointer-events: none;">
+  <g style="">
     <title>obstacles</title>
     <rect x="537.2" y="557.5" width="156.2" height="137" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" transform="matrix(0.970296, -0.241922, 0.241922, 0.970296, -99.560837, 330.546326)"/>
     <rect x="537.2" y="560" width="156.2" height="137.6" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" transform="matrix(0.241922, -0.970296, 0.970296, 0.241922, -345.072266, 995.120789)"/>
-    <path d="M 521 444 L 375 465 L 258 556 L 197 683 L 195 809 L 266 943 L 376 1026 L 517 1047 L 658 998 L 739 915 L 791 781 L 790 739 L 1105 552 L 1141 614 L 692 1176 L 210 1215 L -23 847 L 20 482 L 927 236 L 949 297 L 633 485 L 521 444 Z" style="fill: rgb(0, 0, 255); fill-opacity: 0.5; pointer-events: auto;" transform="matrix(0.970296, -0.241922, 0.241922, 0.970296, -56.114559, -4.860646)"/>
+    <path d="M 521 444 L 375 465 L 258 556 L 197 683 L 195 809 L 266 943 L 376 1026 L 517 1047 L 658 998 L 739 915 L 791 781 L 790 739 L 1105 552 L 1141 614 L 927.3 1473 L -237 1182.6 L 53.3 18.3 L 927 236 L 949 297 L 633 485 L 521 444 Z" style="fill: rgb(0, 0, 255); fill-opacity: 0.5;" transform="matrix(0.970296, -0.241922, 0.241922, 0.970296, -56.114559, -4.860646)"/>
   </g>
   <g transform="matrix(1, 0, 0, 1, 0, 0.000001)" style="pointer-events: none;">
     <title>singles</title>
