@@ -30,15 +30,12 @@ if (!layoutDef) {
 }
 
 const opts = getOpts(process.argv);
-const [debug, scale] = [opts.debug, opts.scale];
-const defaultScale = 2;
-
+const [debug, scale, defaultScale] = [opts.debug, opts.scale, 2];
 const publicDir = path.resolve(__dirname, '../../public');
 const outputDir = path.resolve(publicDir, 'geomorph');
 const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.png' : '.png'}`);
 
 (async function run() {
-  const pipeline = util.promisify(stream.pipeline);
   const { layout, canvas } = await renderLayout(layoutDef);
 
   /** @type {Geomorph.GeomorphJson} */
@@ -65,18 +62,11 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.p
 
   fs.writeFileSync(path.resolve(outputDir, `${layoutDef.key}.json`), stringify(json));
 
-  await pipeline(
+  await util.promisify(stream.pipeline)(
     canvas.createPNGStream(), 
     fs.createWriteStream(outputPath),
   );
 })();
-
-/** @type {Geomorph.RenderOpts} */
-const renderOpts = {
-  scale: scale || defaultScale,
-  obsBounds: true, wallBounds: true, navTris: true,
-  ...debug && { doors: true, labels: true }
-};
 
 /**
  * Compute and render layout, given layout definition.
@@ -93,7 +83,11 @@ async function renderLayout(def) {
     symbolLookup,
     canvas,
     (pngHref) => loadImage(fs.readFileSync(path.resolve(publicDir + pngHref))),
-    renderOpts,
+    {
+      scale: scale || defaultScale,
+      obsBounds: true, wallBounds: true, navTris: true,
+      ...debug && { doors: true, labels: true }
+    },
   );
   return {
     layout,
