@@ -59,7 +59,7 @@ const titleCss = css`
       font-size: 5rem;
     }
     @media(max-width: 600px) {
-      font-size: 3rem;
+      font-size: 2.9rem;
     }
   }
   
@@ -75,6 +75,7 @@ const titleCss = css`
     @media(max-width: 600px) {
       padding: 20px 0 20px 4px;
       color: #222;
+      font-size: 0.9rem;
     }
   }
 
