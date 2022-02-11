@@ -50,6 +50,8 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- tty mobile no capitalization
+- tty mobile no autocomplete?
 
 - nav demo + tty with `look`
   - ✅ move `NavCollide` into objective
