@@ -408,7 +408,7 @@ const articleComponents = (
   div({ node, ...props }: any) {
     switch (props.className) {
       case 'tabs': {
-        const height = Number(props.height || 100);
+        const height = React.useMemo<number | number[]>(() => Function(`return ${props.height}`)(), [props.height]);
         /** Flat list of tab metas */
         const flatTabs = React.useMemo<TabMeta[]>(() => Function(`return ${props.tabs || '[]'}`)(), [props.tabs]);
         /** Number of tabs shown initially */

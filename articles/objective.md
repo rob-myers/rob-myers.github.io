@@ -21,8 +21,7 @@ Where does it take place?
 <div
   class="tabs"
   name="redoubt-sketch"
-  height="450"
-  enabled="true"
+  height="[400, 550]"
   tabs="[
     { key: 'component', filepath: 'example/Images#redoubt-sketches' },
   ]"

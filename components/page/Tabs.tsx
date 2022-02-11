@@ -111,7 +111,7 @@ export interface Props {
   /** First tabs are shown initially, rest are background */
   tabs: [TabMeta[], TabMeta[]];
   initEnabled?: boolean;
-  height: number;
+  height: number | number[];
 }
 
 const rootCss = css`
@@ -188,16 +188,22 @@ const rootCss = css`
   }
 `;
 
-const unexpandedCss = (height: number) => css`
+const unexpandedCss = (height: number | number[]) => css`
   width: 100%;
-  height: ${height}px;
+  height: ${Array.isArray(height) ? height[1] : height}px;
+  @media(max-width: 600px) {
+    height: ${Array.isArray(height) ? height[0] : height}px;
+  }
   position: relative;
   border: var(--tabs-border-width) solid #444;
 `;
 
 /** When expanded we need to fill original space */
-const fillSmallModalCss = (height: number) => css`
-  height: ${height}px;
+const fillSmallModalCss = (height: number | number[]) => css`
+  height: ${Array.isArray(height) ? height[1] : height}px;
+  @media(max-width: 600px) {
+    height: ${Array.isArray(height) ? height[0] : height}px;
+  }
   background: #fff;
 `;
 

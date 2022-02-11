@@ -50,14 +50,16 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-nav demo + tty with `look`
-- move `NavCollide` into objective
-- clean up look
-  - 1
-  - 2
-  - 3
-- user manually moves bots, and can write script manually or continually looking
-- can see: npcs, meta points
+
+- nav demo + tty with `look`
+  - ✅ move `NavCollide` into objective
+  - 🚧 clean up look of `NavCollide`
+    - 1
+    - 2
+    - 3
+  - user manually moves bots
+  - can write script manually or continually `look`ing
+  - can see: npcs, meta points
 
 - can pause `NavDemo` individually (not just at `Tabs` level)
 
@@ -115,6 +117,7 @@ nav demo + tty with `look`
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Tabs can have different height in mobile viewport
 - ✅ `Tabs` can start with > 1 tab visible
 - instead of CSS 3d demo, we'll create blender models and render/screenshots
   - ✅ start creating last redoubt in blender
