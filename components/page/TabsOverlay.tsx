@@ -56,6 +56,7 @@ const controlsCss = css`
 
     background: #444;
     border-bottom-width: 0;
+
     padding: 0px 8px;
     @media(max-width: 600px) {
       padding: 0 8px 2px 8px;
@@ -66,10 +67,18 @@ const controlsCss = css`
     align-items: center;
     > * {
       padding: 0 8px;
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
+    
     > div.disable-icon {
       position: relative;
-      transform: translateY(0.75px) scale(0.9);
+      transform: translateY(0.25px) scale(0.88);
+      @media(max-width: 600px) {
+        transform: translateY(1px) scale(0.88);
+      }
+      
       &:not(.enabled) {
         filter: brightness(70%);
       }
