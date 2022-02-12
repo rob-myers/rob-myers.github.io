@@ -1,10 +1,10 @@
 ## Objective
 
 We are going to create a **video game**.
-_Unusually_, we will
+_Unusually_, we'll 
 (a) describe the process in detail,
 (b) use standard web development techniques,
-(c) develop rich Game AI.
+and (c) develop rich Game AI.
 
 What kind of game?
 > A top-down adventure.
@@ -50,7 +50,7 @@ myFunc() {
   show="2"
   tabs="[
     { key: 'terminal', filepath: 'nav-demo-1', weight: 30 },
-    { key: 'component', filepath: 'example/NavCollide', weight: 70 },
+    { key: 'component', filepath: 'example/NavUiTest', weight: 70 },
   ]"
 ></div>
 

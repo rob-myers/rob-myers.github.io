@@ -159,7 +159,7 @@ We'll detect their imminent collision, and then stop them both.
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'example/NavCollide' },
+     { key: 'component', filepath: 'example/NavUiTest' },
    ]"
 ></div>
 
