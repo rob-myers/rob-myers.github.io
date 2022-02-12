@@ -136,7 +136,7 @@ export default function NPCs(props) {
 
       {state.apis.map(api => 
         <g key={api.key} className={`npc ${api.key}`}>
-          <circle className="body" fill="#f99" stroke="black" strokeWidth={2} r={9} />
+          <circle className="body" fill="#fff" stroke="black" strokeWidth={2} r={9} />
           <g className="look">
             <line className="body" stroke="black" strokeWidth={2} x2={9} />
           </g>

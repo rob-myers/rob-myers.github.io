@@ -116,10 +116,11 @@ const rootCss = css`
     /* TODO flicker on/off */
     /* TODO blur ourside light */
     fill: #ffffff34;
+    pointer-events: none;
   }
 `;
 
-const initViewBox = new Rect(200, 0, 800, 800);
+const initViewBox = new Rect(0, 0, 800, 800);
 
 /** @param {{ init: Geom.Vect; walls: Geom.GeoJsonPolygon[]; hull: Geom.GeoJsonPolygon[] }} props */
 function Light({ init, walls, hull }) {
