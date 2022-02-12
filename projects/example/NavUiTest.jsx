@@ -8,7 +8,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
-import NPCs from "../npc/NPCs";
+import NPCs from "../npc/NPCWithUis";
 import Messages from "../npc/Messages";
 import { geom } from "../service/geom";
 import DraggableNode from "../npc/DraggableNode";

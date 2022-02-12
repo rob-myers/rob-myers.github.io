@@ -6,10 +6,6 @@ import DraggableNode from "./DraggableNode";
 import { getInternalNpcApi, navNodeRadius } from "./npc-internals";
 import DraggableRay from "./DraggableRay";
 
-// TODO
-// - listen for changes to props.npcs
-// - generally speaking, ensure exactly one group in each zone
-
 /** @param {NPC.NPCsProps} props */
 export default function NPCs(props) {
 
