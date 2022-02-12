@@ -36,7 +36,7 @@ export const articlesMeta = {
     index: '1a',
     prev: null,
     next: 'constraints',
-    tags: ['intent', 'game ai', 'traveller', 'npc','navmesh','geomorph','codesandbox'],
+    tags: ['game ai', 'traveller', 'npc','navmesh','geomorph'],
   },
   constraints: {
     key: 'constraints',
