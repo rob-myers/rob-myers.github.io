@@ -136,15 +136,7 @@ const articleCss = css`
 
   figcaption {
     font-size: 0.8rem;
-    background: #444;
-    color: #a3a3a3;
-    /* border-radius: 4px; */
-    padding: 4px 0;
     text-align: center;
-
-    a {
-      color: #99f;
-    }
   }
 
   h1, h2, h3, h4 {
@@ -179,13 +171,17 @@ const articleCss = css`
         margin: 0 1px;
         border: 1px solid #aaa;
         border-radius: 2px;
-        color: #444;
+        color: #333;
       }
     }
     @media(max-width: 600px) {
       margin-top: 0;
       > span {
         padding: 4px 0px;
+        margin-right: 12px;
+        > span {
+          padding: 6px 8px;
+        }
       }
     }
   }
