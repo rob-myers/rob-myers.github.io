@@ -50,14 +50,19 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- tty mobile no capitalization
-- tty mobile no autocomplete?
+- PanZoom
+  - should have blue blob indicating touches
+  - should have inertia
+  - should provide context, so can disable whilst dragging nodes etc
+
+- ✅ tty mobile issue with deleting
 
 - nav demo + tty with `look`
   - ✅ move `NavCollide` into objective
   - 🚧 clean up look of `NavCollide`
     - ✅ cleaner obstacles
     - 🚧 dynamic lighting again
+      - may need efficient version with precomputed shaded areas 
     - ?
   - user manually moves bots
   - can write script manually or continually `look`ing
@@ -90,7 +95,6 @@ __Aim towards website release__.
 
 - geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
 - NPCs can connect to meta points
-- PanZoom has blue blob indicating touches
 
 - bug: npc sometimes vanishes at src/dst when clicked
 - bug: sometimes turns slowly while moving

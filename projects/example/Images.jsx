@@ -28,6 +28,7 @@ export default function Images(props) {
           figure {
             filter: grayscale(100%) brightness(150%);
             max-width: 800px;
+            margin-bottom: 8px;
           }
           figcaption {
             padding: 8px 0;

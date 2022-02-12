@@ -16,7 +16,7 @@ Where does it take place?
 <div
   class="tabs"
   name="redoubt-sketch"
-  height="[400, 550]"
+  height="[400, 580]"
   enabled="true"
   tabs="[
     { key: 'component', filepath: 'example/Images#redoubt-sketches' },
@@ -24,15 +24,14 @@ Where does it take place?
 ></div>
 
 What's this about **web development**?
-> This particular video game will be made using everyday web development techniques.
-> In particular, we won't be using WebGL, physics engines, walk-cycles etc.
+> The game will be made using everyday web development techniques.
+> Then we won't use WebGL, physics, walk-cycles etc.
 
 You mentioned **Game AI**?
-> The world is awash with beautifully-crafted games which are ultimately shallow.
+> The world is awash with beautifully-crafted games which are rather shallow.
 > Failing the former we can strive to overcome the latter i.e. produce richer Game AI than is commonly experienced.
-
 > We'll avoid _clunky behaviour editors_ and _rigid task-based programming patterns_.
-> Instead we'll build Game AI **interactively** using a browser-based terminal. Try copy-pasting the following script below:
+> Instead we'll build Game AI **interactively** using a browser-based terminal.
 
 __TODO__ a meaningful example 🚧
 
