@@ -20,7 +20,7 @@ export default function Tabs(props: Props) {
     expanded: false,
     contentDiv: undefined as undefined | HTMLDivElement,
 
-    toggleEnabled: () =>  {
+    toggleEnabled() {
       state.enabled = !state.enabled;
       state.colour = state.colour === 'clear' ? 'faded' : 'clear';
       update();
@@ -40,18 +40,26 @@ export default function Tabs(props: Props) {
         console.warn(`Tabs not found for id "${props.id}". Expected Markdown syntax <div class="tabs" name="my-identifier" ...>.`);
       }
     },
-    toggleExpand: () => {
+    toggleExpand() {
       state.expanded = !state.expanded;
       if (!state.enabled && state.expanded) {// Disable
         state.toggleEnabled();
       }
       update();
     },
-    onModalBgPress: () => {
+    // TODO doesn't fire if click on Tabs
+    onKeyUp(e: React.KeyboardEvent) {
+      if (state.expanded && e.key === 'Escape') {
+        state.toggleExpand();
+      }
+    },
+    onModalBgPress() {
       state.expanded = false;
       update();
     },
-    preventTouch: (e: React.TouchEvent) => e.preventDefault(),
+    preventTouch(e: React.TouchEvent) {
+      e.preventDefault();
+    }
   }));
 
   React.useEffect(() => {
@@ -65,7 +73,11 @@ export default function Tabs(props: Props) {
   ), [state.expanded]);
 
   return (
-    <figure className={classNames("tabs", "scrollable", rootCss)}>
+    <figure
+      className={classNames("tabs", "scrollable", rootCss)}
+      onKeyUp={state.onKeyUp}
+      tabIndex={0}
+    >
       <span id={props.id} className="anchor" />
 
       {state.expanded && <>

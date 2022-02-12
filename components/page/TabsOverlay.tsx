@@ -75,9 +75,6 @@ const controlsCss = css`
     > div.disable-icon {
       position: relative;
       transform: translateY(0.25px) scale(0.88);
-      @media(max-width: 600px) {
-        transform: translateY(1px) scale(0.88);
-      }
       
       &:not(.enabled) {
         filter: brightness(70%);
