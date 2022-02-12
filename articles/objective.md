@@ -1,40 +1,33 @@
 ## Objective
 
 We are going to create a **video game**.
-Yes... yet more escapism.
-
-**_Unusually_**, we will
-(**a**) describe the process in detail,
-(**b**) use standard web dev techniques,
-(**c**) develop rich Game AI.
-
-Let's explain what we mean via some <span title="questions">Q</span> and <span title="answers">A</span>.
+_Unusually_, we will
+(a) describe the process in detail,
+(b) use standard web development techniques,
+(c) develop rich Game AI.
 
 What kind of game?
-> A top-down adventure game.
+> A top-down adventure.
 
 Where does it take place?
-> [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") - a futuristic Earth where the Sun has died.
-> The last of humanity live in a gigantic pyramid called _The Last Redoubt_,
-> see concept art below.
+> [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") - a futuristic Earth whose Sun has died.
+> Humanity resides in a gigantic pyramid called _The Last Redoubt_.
 
 <div
   class="tabs"
   name="redoubt-sketch"
   height="[400, 550]"
+  enabled="true"
   tabs="[
     { key: 'component', filepath: 'example/Images#redoubt-sketches' },
   ]"
 ></div>
 
-__TODO__ 1 more screenshot: the upper pyramid 🚧
-
-
 What's this about **web development**?
 > This particular video game will be made using everyday web development techniques.
 > In particular, we won't be using WebGL, physics engines, walk-cycles etc.
 
-What's this about **Game AI**?
+You mentioned **Game AI**?
 > The world is awash with beautifully-crafted games which are ultimately shallow.
 > Failing the former we can strive to overcome the latter i.e. produce richer Game AI than is commonly experienced.
 

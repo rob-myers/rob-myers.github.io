@@ -23,34 +23,57 @@ export default function Images(props) {
     return (
       <div
         className={classNames(rootCss, css`
-          background: #000;
-          filter: brightness(130%);
+          background: black;
           padding: 16px;
           figure {
+            filter: grayscale(100%) brightness(150%);
             max-width: 800px;
+          }
+          figcaption {
+            padding: 8px 0;
+            border: 4px solid #444;
+            color: #a3a3a3;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
           }
         `)}
       >
         <figure>
           <figcaption>
-            1st 1000 Cities (External)
+            The 1st 1000 Cities (Superstructure)
           </figcaption>
           <img
             draggable={false}
             src="/pics/redoubt-sketch-1.png"
-            width="1800" // width/height to avoid vertical reflow
+            // Providing true width and height attribs avoids vertical reflow
+            width="1800"
             height="1436"
           />
         </figure>
         <figure>
-          <figcaption>
-            1000 Cities on 125 floors
+          <figcaption
+            title="1000 = 125 ﹡ 8"
+          >
+            The 125 floors of the 1st 1000 Cities
           </figcaption>
           <img
             draggable={false}
             src="/pics/redoubt-sketch-2.png"
             width="1978"
             height="1508"
+          />
+        </figure>
+        <figure>
+          <figcaption
+            title="320 = 64 ﹡ 5"
+          >
+            The 64 floors of the 320 Wild Cities
+          </figcaption>
+          <img
+            draggable={false}
+            src="/pics/redoubt-sketch-3.png"
+            width="2250"
+            height="1646"
           />
         </figure>
       </div>
