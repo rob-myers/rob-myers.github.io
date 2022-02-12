@@ -270,6 +270,12 @@ export class TtyXterm {
     const ord = data.charCodeAt(0);
     let cursor: number;
 
+    if (data && data === this.input.slice(0, -1)) {
+      // Assume is a mobile delete
+      // TODO could actualy be a paste?
+      return this.handleCursorErase(true);
+    }
+
     if (ord == 0x1b) { // ANSI escape sequences
       switch (data.slice(1)) {
         case '[A': {// Up arrow.
