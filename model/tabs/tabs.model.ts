@@ -16,7 +16,7 @@ function getTabName(meta: TabMeta) {
     case 'component':
       return meta.filepath;
     case 'terminal':
-      return `${meta.filepath} ⚡︎`;
+      return `@${meta.filepath}`;
     default:
       throw testNever(meta);
   }
