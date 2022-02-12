@@ -24,7 +24,7 @@ Where does it take place?
 ></div>
 
 What's this about **web development**?
-> The game will be made using everyday web development techniques.
+> Importantly, this game will be made using everyday web development techniques.
 > Then we won't use WebGL, physics, walk-cycles etc.
 
 You mentioned **Game AI**?
@@ -46,11 +46,11 @@ myFunc() {
 <div
   class="tabs"
   name="nav-tty-1"
-  height="500"
+  height="[500, 600]"
   show="2"
   tabs="[
     { key: 'terminal', filepath: 'nav-demo-1', weight: 30 },
-    { key: 'component', filepath: 'example/NavUiTest', weight: 70 },
+    { key: 'component', filepath: 'example/NavTest', weight: 70 },
   ]"
 ></div>
 

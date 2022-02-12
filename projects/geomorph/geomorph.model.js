@@ -13,6 +13,6 @@ export function geomorphJsonPath(layoutKey) {
 }
 
 /** @param {Geomorph.LayoutKey} layoutKey */
-export function geomorphPngPath(layoutKey) {
-  return `/geomorph/${layoutKey}.png`
+export function geomorphPngPath(layoutKey, debug = false) {
+  return `/geomorph/${layoutKey}${debug ? '.debug' : ''}.png`
 }
