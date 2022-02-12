@@ -52,7 +52,7 @@ const rootCss = css`
 
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     padding: 0;
     margin: 0;
 
@@ -63,6 +63,9 @@ const rootCss = css`
     }
     a {
       color: #ccc;
+      height: 100%;
+      display: flex;
+      align-items: center;
     }
     a.primary {
       color: #fff;
