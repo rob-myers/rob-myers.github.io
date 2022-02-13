@@ -3,7 +3,7 @@ import { css } from "goober";
 import { getSvgPos } from "../service/dom";
 import { Vect } from "../geom/vect";
 
-/** @param {NPC.DraggableRayProps} props */
+/** @param {NPCTest.DraggableRayProps} props */
 export default function DraggableRay(props) {
 
   const [state] = React.useState(() => {

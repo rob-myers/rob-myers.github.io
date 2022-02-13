@@ -8,7 +8,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
-import NPCs from "../npc/NPCWithUis";
+import NPCsTest from "../npc/NPCWithUis";
 import Messages from "../npc/Messages";
 import { geom } from "../service/geom";
 import DraggableNode from "../npc/DraggableNode";
@@ -24,7 +24,7 @@ export default function NavCollide(props) {
   const layoutKey = 'g-301--bridge';
   const [state] = React.useState(() => ({
 
-    /** @type {NPC.NPCDef[]} */
+    /** @type {NPCTest.NPCDef[]} */
     defs: [0, 1, 2].map(i => ({
       key: `npc-${i}`,
       src: new Vect(...[[250, 100], [260, 200], [40, 550]][i]),
@@ -33,7 +33,7 @@ export default function NavCollide(props) {
       paused: false, // Initially playing
       angle: 0,
     })),
-    api: /** @type {NPC.NPCsApi} */ ({}),
+    api: /** @type {NPCTest.NPCsApi} */ ({}),
     metas: [0, 1, 2].map(i => ({ wasPlaying: false })),
     testLight: new Vect(205, 385),
   }));
@@ -74,7 +74,7 @@ export default function NavCollide(props) {
           ))}
         </g>
 
-        {pf && <NPCs defs={state.defs} onLoad={api => state.api = api} />}
+        {pf && <NPCsTest defs={state.defs} onLoad={api => state.api = api} />}
 
         {/* TESTING */}
         {gm && <Light init={state.testLight} walls={gm.walls} hull={gm.hull.poly} />}

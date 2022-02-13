@@ -11,7 +11,7 @@ import { getSvgScale } from 'projects/service/dom';
  * TODO make some meaningful messages
  */
 
-/** @param {NPC.MessagesProps} props */
+/** @param {NPCTest.MessagesProps} props */
 export default function Messages(props) {
 
   const [state] = React.useState(() => {

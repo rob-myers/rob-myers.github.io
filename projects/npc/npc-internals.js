@@ -2,12 +2,12 @@ import { Poly, Vect } from "../geom";
 import { pathfinding } from '../pathfinding/Pathfinding';
 
 /**
- * @param {NPC.NPCApi} api
+ * @param {NPCTest.NPCApi} api
  */
 export function getInternalNpcApi(api) {
   const { def } = api;
 
-  /** @type {NPC.InternalNpcApi} */
+  /** @type {NPCTest.InternalNpcApi} */
   const internal = {
 
     followNavPath() {

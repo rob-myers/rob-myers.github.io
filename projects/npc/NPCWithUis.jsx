@@ -6,8 +6,8 @@ import DraggableNode from "./DraggableNode";
 import { getInternalNpcApi, navNodeRadius } from "./npc-internals";
 import DraggableRay from "./DraggableRay";
 
-/** @param {NPC.NPCsProps} props */
-export default function NPCs(props) {
+/** @param {NPCTest.NPCsProps} props */
+export default function NPCsTest(props) {
 
   const [state] = React.useState(() => {
     
@@ -17,7 +17,7 @@ export default function NPCs(props) {
 
     // Each NPC has an API
     const apis = defs.map((def, i) => {
-      /** @type {NPC.NPCApi} */
+      /** @type {NPCTest.NPCApi} */
       const api = {
         key: def.key,
         def,
@@ -27,9 +27,9 @@ export default function NPCs(props) {
           path: /** @type {SVGPolylineElement} */ ({}),
           dots: /** @type {SVGGElement} */ ({}),
         },
-        srcApi: /** @type {NPC.DraggableNodeApi} */ ({}),
-        dstApi: /** @type {NPC.DraggableNodeApi} */ ({}),
-        rayApi: /** @type {NPC.DraggableRayApi} */ ({}),
+        srcApi: /** @type {NPCTest.DraggableNodeApi} */ ({}),
+        dstApi: /** @type {NPCTest.DraggableNodeApi} */ ({}),
+        rayApi: /** @type {NPCTest.DraggableRayApi} */ ({}),
 
         move: /** @type {Animation} */ ({}),
         look: /** @type {Animation} */ ({}),
@@ -65,7 +65,7 @@ export default function NPCs(props) {
       return api;
     });
 
-    /** @type {NPC.NPCsApi} */
+    /** @type {NPCTest.NPCsApi} */
     const api = {
       apis,
       highlightPath(key) {

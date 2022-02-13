@@ -4,7 +4,7 @@ import { Vect } from "../geom";
 import { getSvgPos } from "../service/dom";
 import useUpdate from '../hooks/use-update';
 
-/** @param {NPC.DraggableNodeProps} props */
+/** @param {NPCTest.DraggableNodeProps} props */
 export default function DraggableNode(props) {
 
   const update = useUpdate();

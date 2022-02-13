@@ -1,8 +1,8 @@
-declare namespace NPC {
+declare namespace NPCTest {
 
   export interface NPCsProps {
     defs: NPCDef[];
-    onLoad: (api: NPC.NPCsApi) => void;
+    onLoad: (api: NPCTest.NPCsApi) => void;
   }
 
   interface NPCDef {
@@ -63,9 +63,9 @@ declare namespace NPC {
       path: SVGPolylineElement;
       dots: SVGGElement;
     };
-    srcApi: NPC.DraggableNodeApi;
-    dstApi: NPC.DraggableNodeApi;
-    rayApi: NPC.DraggableRayApi;
+    srcApi: NPCTest.DraggableNodeApi;
+    dstApi: NPCTest.DraggableNodeApi;
+    rayApi: NPCTest.DraggableRayApi;
 
     internal: InternalNpcApi;
   }
