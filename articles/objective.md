@@ -37,8 +37,8 @@ Web development?
 > Then we won't use WebGL, physics, walk-cycles etc.
 
 Game AI?
-> The world is awash with beautifully-crafted yet _shallow_ games.
-> Failing the former we can strive to overcome the latter i.e. produce rich Game AI.
+> The world is awash with beautifully-crafted yet shallow games.
+> Failing the former we strive to overcome the latter i.e. produce rich Game AI.
 > We'll avoid _clunky behaviour editors_ and _rigid task-based programming patterns_.
 > Instead we'll build Game AI **interactively** using a browser-based terminal.
 
