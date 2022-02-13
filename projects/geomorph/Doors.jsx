@@ -8,7 +8,7 @@ import { css } from "goober";
  * Doors for a specific geomorph.
  * @param {{ json: Geomorph.GeomorphJson }} props
  */
-export function Doors(props) {
+export default function Doors(props) {
   const { json } = props;
 
   /** @param {React.MouseEvent} e */
