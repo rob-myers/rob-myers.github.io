@@ -13,6 +13,15 @@ Where does it take place?
 > [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") - a futuristic Earth whose Sun has died.
 > Humanity resides in a gigantic pyramid called _The Last Redoubt_.
 
+<aside>
+
+  The Night Land was written by William Hope Hodgson and published in 1912.
+  The Last Redoubt was said to have 1,320 cities and the same number of floors.
+  Keeping the number of cities the same, we reinterpreted the architecture somewhat.
+  There are 189 floors, each built from interconnected spaceships.
+
+</aside>
+
 <div
   class="tabs"
   name="redoubt-sketch"
@@ -23,13 +32,13 @@ Where does it take place?
   ]"
 ></div>
 
-What's this about **web development**?
+Web development?
 > Importantly, this game will be made using everyday web development techniques.
 > Then we won't use WebGL, physics, walk-cycles etc.
 
-You mentioned **Game AI**?
-> The world is awash with beautifully-crafted games which are rather shallow.
-> Failing the former we can strive to overcome the latter i.e. produce richer Game AI than is commonly experienced.
+Game AI?
+> The world is awash with beautifully-crafted yet _shallow_ games.
+> Failing the former we can strive to overcome the latter i.e. produce rich Game AI.
 > We'll avoid _clunky behaviour editors_ and _rigid task-based programming patterns_.
 > Instead we'll build Game AI **interactively** using a browser-based terminal.
 

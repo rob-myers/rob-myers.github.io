@@ -41,7 +41,7 @@ export default function Images(props) {
       >
         <figure>
           <figcaption>
-            The 1st 1000 Cities (Superstructure)
+            The 1st 1000 cities form a Ziggurat
           </figcaption>
           <img
             draggable={false}
@@ -55,7 +55,7 @@ export default function Images(props) {
           <figcaption
             title="1000 = 125 ﹡ 8"
           >
-            The 125 floors of the 1st 1000 Cities
+            The 1st 1000 cities span 125 floors
           </figcaption>
           <img
             draggable={false}
@@ -68,7 +68,7 @@ export default function Images(props) {
           <figcaption
             title="320 = 64 ﹡ 5"
           >
-            The 64 floors of the 320 Wild Cities
+            The final 320 cities span the 64 floor Upper Pyramid
           </figcaption>
           <img
             draggable={false}
