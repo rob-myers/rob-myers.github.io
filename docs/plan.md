@@ -50,33 +50,23 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- PanZoom
-  - should have blue blob indicating touches
-  - should have inertia
-  - should provide context, so can disable whilst dragging nodes etc
-
-- ✅ tty mobile issue with deleting
-
 - nav demo + tty with `look`
   - ✅ move `NavCollide` into objective
-  - 🚧 clean up look of `NavCollide`
+  - ✅ `NavCollide` -> `NavTestUi`
     - ✅ cleaner obstacles
-    - 🚧 dynamic lighting again
+    - ✅ dynamic lighting test
       - may need efficient version with precomputed shaded areas 
-    - ?
-  - user manually moves bots
+  - Create new `NavTest`
+    - probably with new `NPCs`
+    - user can only moves npcs via terminal e.g. `click`...
+    - maybe consider shadows and door shadows (doors can fade)
+    - can pause it
   - can write script manually or continually `look`ing
   - can see: npcs, meta points
 
-- can pause `NavDemo` individually (not just at `Tabs` level)
-
 - finish passenger-deck 303
-- ✅ `poly` tag needs separate wall or obstacle
-
-- 1320 `one thousand, three hundred and twenty cities of the Pyramid`
-- Split into 1000 (i.e. 8 * 125) + 320 (i.e. 5 * 64)
-  - 64 floors of ascendence 
-  - 125 floors of worldly matters
+- PanZoom should have blue blob indicating touches
+- PanZoom should have inertia
 
 - geomorphs article can be "coming soon" with preview
 - intend to redo site using Gatsby JamStack approach, but not until ready for first release
@@ -123,6 +113,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ `poly` tag needs separate wall or obstacle
+- ✅ fix tty mobile issue with deleting
 - ✅ Tabs can have different height in mobile viewport
 - ✅ `Tabs` can start with > 1 tab visible
 - instead of CSS 3d demo, we'll create blender models and render/screenshots
