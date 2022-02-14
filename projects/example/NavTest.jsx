@@ -22,7 +22,10 @@ export default function NavTest(props) {
 
   const state = useMuState(() => {
     return {
-      lights: [new Vect(205, 385), new Vect(650, 215)],
+      lights: [
+        new Vect(205, 385),
+        new Vect(620, 315),
+      ],
     };
   }, {
     lights: (curr, next) => curr.every((p, i) => p.equals(next[i])),
@@ -37,7 +40,11 @@ export default function NavTest(props) {
       className={rootCss}
     >
         {gm && <>
-          <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />
+          <image 
+            {...gm.pngRect}
+            href={geomorphPngPath(layoutKey)}
+            mask="url(#my-funky-mask)"
+          />
           <Doors json={gm} />
           <Lights json={gm} positions={state.lights} />
         </>}

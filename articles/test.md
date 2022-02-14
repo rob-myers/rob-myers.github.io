@@ -6,8 +6,9 @@
   enabled="true"
   height="600"
   tabs="[
-    { key: 'component', filepath: 'example/NavUiTest' },
-    { key: 'component', filepath: 'example/GeomorphEdit' },
+    // { key: 'component', filepath: 'example/GeomorphEdit' },
+    { key: 'component', filepath: 'example/NavTest' },
+    // { key: 'component', filepath: 'example/NavUiTest' },
     // { key: 'component', filepath: 'example/RedoubtDemo3D' },
     // { key: 'component', filepath: 'example/CssPanZoomDemo' },
     // { key: 'component', filepath: 'example/NavStringPull' },

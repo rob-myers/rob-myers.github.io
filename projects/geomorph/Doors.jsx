@@ -1,4 +1,5 @@
 import { css } from "goober";
+import { baseGrey } from "./Lights";
 
 /**
  * TODO optionally fade door, or very quickly open
@@ -49,7 +50,7 @@ const rootCss = css`
   div.door {
     position: absolute;
     cursor: pointer;
-    background: white;
+    background: ${baseGrey};
     border: 1px solid black;
 
     transition: width 100ms ease-in;
