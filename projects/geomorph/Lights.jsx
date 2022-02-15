@@ -1,7 +1,9 @@
 /**
  * TODO
- * - try <mask> with radial filled polys, instead of <path>
  * - take open doors into account
+ *   - ✅ Doors communicate with Lights
+ *   - light changes when door opens/closes
+ * - ✅ try <mask> with radial filled polys, instead of <path>
  */
 
 import React from "react";
@@ -10,7 +12,7 @@ import { geom } from "../service/geom";
 import useMuState from "../hooks/use-mu-state";
 import { geomorphPngPath } from "./geomorph.model";
 
-/** @param {{ json: Geomorph.GeomorphJson, lights: Geom.LightDef[] }} props */
+/** @param {NPC.LightsProps} props */
 export default function Lights(props) {
 
   const state = useMuState(() => {
@@ -24,8 +26,8 @@ export default function Lights(props) {
       computeLights(defs) {
         const hullOutline = Poly.from(json.hull.poly[0]).removeHoles();
         // NOTE now includes doors
-        // const polys = json.walls.concat(json.doors.map(x => x.poly)).map(x => Poly.from(x));
-        const polys = json.walls.map(x => Poly.from(x));
+        const polys = json.walls.concat(json.doors.map(x => x.poly)).map(x => Poly.from(x));
+        // const polys = json.walls.map(x => Poly.from(x));
         const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
         const inners = defs.filter(def => hullOutline.contains(def.p));
 
@@ -35,11 +37,12 @@ export default function Lights(props) {
           const bounds = poly.rect;
           const ratio = new Vect(
             (position.x - bounds.x) / bounds.width,
-            (position.y - bounds.y) / bounds.height, // or...
+            (position.y - bounds.y) / bounds.height,
           );
           return { position, poly, ratio };
         });
 
+        // TODO remove
         state.dark = Poly.cutOut(state.lights.map(({ poly }) => poly), [hullOutline])[0];
       },
     };
@@ -48,6 +51,12 @@ export default function Lights(props) {
   React.useEffect(() => {
     state.computeLights(props.lights);
   }, [props.lights]);
+
+  React.useEffect(() => {
+    return props.wire.subscribe(msg => {
+      console.log(msg);
+    }).unsubscribe;
+  }, []);
 
   return <>
     {/* <path
@@ -82,7 +91,7 @@ export default function Lights(props) {
     </defs>
     <image 
       {...props.json.pngRect}
-      // className="geomorph"
+      className="geomorph-light"
       href={geomorphPngPath(props.json.key)}
       mask="url(#my-funky-mask)"
     />

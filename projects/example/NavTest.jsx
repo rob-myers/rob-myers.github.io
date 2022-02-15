@@ -1,4 +1,5 @@
 import { css } from "goober";
+import { Subject } from "rxjs";
 
 import * as defaults from "./defaults";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
@@ -21,19 +22,24 @@ export default function NavTest(props) {
   const { data: gm } = useGeomorphJson(layoutKey);
 
   const state = useMuState(() => {
-    return {
+    // NOTE Failed to infer type when directly returned (why?)
+    const output = {
       lights: [
         { p: new Vect(205, 385), d: 150 },
         { p: new Vect(620, 315), d: 250 },
       ],
+      wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
     };
+    return output;
   }, {
-    lights: (curr, next) => curr.every((({ p, d }, i) => p.equals(next[i].p) && d === next[i].d)),
+    lights: (curr, next) => curr.every((({ p, d }, i) =>
+      p.equals(next[i].p) && d === next[i].d)
+    ),
   });
 
   return (
     <PanZoom
-      // dark
+      dark
       gridBounds={defaults.gridBounds}
       initViewBox={defaults.initViewBox}
       maxZoom={6}
@@ -44,10 +50,9 @@ export default function NavTest(props) {
             {...gm.pngRect}
             className="geomorph"
             href={geomorphPngPath(layoutKey)}
-            // mask="url(#my-funky-mask)"
           />
-          <Lights json={gm} lights={state.lights} />
-          <Doors json={gm} />
+          <Lights json={gm} lights={state.lights} wire={state.wire} />
+          <Doors json={gm} wire={state.wire} />
         </>}
     </PanZoom>
   );

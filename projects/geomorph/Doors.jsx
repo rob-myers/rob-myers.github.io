@@ -1,24 +1,34 @@
+import React from "react";
 import { css } from "goober";
+import { Subject } from "rxjs";
+import useMuState from "../hooks/use-mu-state";
 import { baseGrey } from "./Lights";
 
 /**
- * TODO optionally fade door, or very quickly open
- */
-
-/**
  * Doors for a specific geomorph.
- * @param {{ json: Geomorph.GeomorphJson }} props
+ * @param {NPC.DoorsProps} props
  */
 export default function Doors(props) {
   const { json } = props;
 
-  /** @param {React.MouseEvent} e */
-  const onClick = (e) => {
-    const div = /** @type {HTMLDivElement} */ (e.target);
-    const [width, index] = [div.clientWidth, Number(div.getAttribute('data-index'))];
-    const nextWidth = width <= 10 ? json.doors[index].rect.width : 10; // Leq for borders
-    div.style.width = `${nextWidth}px`;
-  };
+  const state = useMuState(() => {
+    const api = {
+      evt: /** @type {Subject<NPC.DoorMessage>} */ (new Subject),
+    };
+
+    return {
+      api,
+      /** @param {React.MouseEvent} e */
+      onClick(e) {
+        const div = /** @type {HTMLDivElement} */ (e.target);
+        const nowOpen = div.classList.toggle('open');
+        props.wire.next({
+          key: nowOpen ? 'opened' : 'closed',
+          index: Number(div.getAttribute('data-index')),
+        });
+      },
+    };
+  });
 
   return (
     <foreignObject
@@ -26,7 +36,7 @@ export default function Doors(props) {
       xmlns="http://www.w3.org/1999/xhtml"
       className={rootCss}
     >
-      <div onPointerUp={onClick}>
+      <div onPointerUp={state.onClick}>
         {json.doors.map(({ rect, angle }, i) =>
           <div
             className="door"
@@ -48,14 +58,14 @@ export default function Doors(props) {
 
 const rootCss = css`
   div.door {
-    position: absolute;
     cursor: pointer;
+    position: absolute;
     background: ${baseGrey};
     border: 1px solid black;
-
-    transition: width 100ms ease-in;
+    opacity: 1;
+    transition: opacity 300ms ease-in;
     &.open {
-      width: 0;
+      opacity: 0;
     }
   }
 `;
