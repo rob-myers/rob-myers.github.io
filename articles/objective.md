@@ -33,11 +33,11 @@ Where does it take place?
   ]"
 ></div>
 
-How's it made?
+How will you make it?
 > Importantly, this game will be made using everyday web development techniques.
 > Then we won't use WebGL, physics, walk-cycles etc.
 
-What's special?
+What distinguishes it?
 > The world is awash with beautifully-crafted yet shallow games.
 > Failing the former we strive to overcome the latter i.e. produce rich Game AI.
 > We'll avoid _clunky behaviour editors_ and _rigid task-based programming patterns_.
