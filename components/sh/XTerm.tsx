@@ -5,7 +5,7 @@ import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
 import { withSize } from 'react-sizeme';
 
-export default withSize({ monitorHeight: true })(
+export default withSize({ monitorHeight: true, monitorWidth: true })(
   function XTermComponent(props: Props) {
     const containerRef = useRef<HTMLDivElement>(null);
     const xtermRef = useRef<Terminal>();
@@ -31,7 +31,10 @@ export default withSize({ monitorHeight: true })(
       };
     }, []);
 
-    useEffect(() => void resizeRef.current?.(), [props.size]);
+    useEffect(
+      () => void resizeRef.current?.(),
+      [props.size?.height, props.size?.width],
+    );
 
     return (
       <div
@@ -46,7 +49,7 @@ export default withSize({ monitorHeight: true })(
 interface Props {
   onMount: (xterm: Terminal) => void;
   options?: ITerminalOptions;
-  size: { width?: number; };
+  size: { width?: number; height?: number; };
 }
 
 const rootCss = css`
