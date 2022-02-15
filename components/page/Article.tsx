@@ -75,9 +75,10 @@ const articleCss = css`
     margin: 24px 0;
     padding: 36px 48px;
     font-size: 0.9rem;
+    font-weight: 300;
     border: 0 solid #ddd;
     background: #eee;
-
+    
     p {
       margin: 12px 0;
     }
@@ -89,6 +90,7 @@ const articleCss = css`
       padding: 8px 20px;
       font-size: 0.9rem;
       border-radius: 12px;
+      border-width: 0 2px 2px 0;
     }
 
     blockquote {
