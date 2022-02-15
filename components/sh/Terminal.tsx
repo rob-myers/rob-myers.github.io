@@ -61,6 +61,8 @@ const options: ITerminalOptions = {
   fontSize: 16,
   cursorBlink: true,
   rendererType: 'canvas',
+  // mobile: can select single word via long press
+  // rightClickSelectsWord: true,
   theme: {
     background: 'black',
     foreground: '#41FF00',
