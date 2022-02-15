@@ -15,10 +15,11 @@ Where does it take place?
 
 <aside>
 
-  The Night Land was written by William Hope Hodgson and published in 1912.
-  The Last Redoubt was said to have 1,320 cities and the same number of floors.
-  Keeping the number of cities the same, we reinterpreted the architecture somewhat.
-  There are 189 floors, each built from interconnected spaceships.
+  _The Night Land_ (1912) was written by William Hope Hodgson,
+  who died in World War I.
+  His _Last Redoubt_ had 1,320 cities and the same number of floors.
+  Keeping the number of cities the same, we reinterpret its architecture.
+  There are 125 + 64 = 189 floors, built from interconnected space vehicles.
 
 </aside>
 
@@ -32,11 +33,11 @@ Where does it take place?
   ]"
 ></div>
 
-Web development?
+How's it made?
 > Importantly, this game will be made using everyday web development techniques.
 > Then we won't use WebGL, physics, walk-cycles etc.
 
-Game AI?
+What's special?
 > The world is awash with beautifully-crafted yet shallow games.
 > Failing the former we strive to overcome the latter i.e. produce rich Game AI.
 > We'll avoid _clunky behaviour editors_ and _rigid task-based programming patterns_.
