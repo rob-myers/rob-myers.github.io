@@ -2,7 +2,6 @@ import React from "react";
 import { css } from "goober";
 import { Subject } from "rxjs";
 import useMuState from "../hooks/use-mu-state";
-import { baseGrey } from "./Lights";
 
 /**
  * Doors for a specific geomorph.
@@ -23,7 +22,7 @@ export default function Doors(props) {
         const div = /** @type {HTMLDivElement} */ (e.target);
         const nowOpen = div.classList.toggle('open');
         props.wire.next({
-          key: nowOpen ? 'opened' : 'closed',
+          key: nowOpen ? 'opened-door' : 'closed-door',
           index: Number(div.getAttribute('data-index')),
         });
       },
@@ -60,10 +59,10 @@ const rootCss = css`
   div.door {
     cursor: pointer;
     position: absolute;
-    background: ${baseGrey};
+    background: #000; /** ? */
     border: 1px solid black;
     opacity: 1;
-    transition: opacity 300ms ease-in;
+    transition: opacity 100ms linear;
     &.open {
       opacity: 0;
     }

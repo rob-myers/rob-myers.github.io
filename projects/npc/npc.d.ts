@@ -17,9 +17,9 @@ declare namespace NPC {
     wire: NavWire;
   }
 
-  /** Fired when doors is opened/closed */
+  /** Fired when doors is opened-door/closed */
   export interface DoorMessage {
-    key: 'opened' | 'closed';
+    key: 'opened-door' | 'closed-door';
     index: number;
   }
 

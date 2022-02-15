@@ -2,7 +2,8 @@
  * TODO
  * - take open doors into account
  *   - ✅ Doors communicate with Lights
- *   - light changes when door opens/closes
+ *   - ✅ light changes when door opens/closes
+ *   - cleanup e.g. ids
  * - ✅ try <mask> with radial filled polys, instead of <path>
  */
 
@@ -10,24 +11,26 @@ import React from "react";
 import { Poly, Vect } from "../geom";
 import { geom } from "../service/geom";
 import useMuState from "../hooks/use-mu-state";
+import useUpdate from "../hooks/use-update";
 import { geomorphPngPath } from "./geomorph.model";
 
 /** @param {NPC.LightsProps} props */
 export default function Lights(props) {
 
+  const update = useUpdate();
+
   const state = useMuState(() => {
     const { json } = props;
     return {
-      dark: new Poly,
       lights: /** @type {{ position: Vect; poly: Poly; ratio: Vect }[]} */ ([]),
-      /**
-       * @param {Geom.LightDef[]} defs 
-       */
-      computeLights(defs) {
+      doors: /** @type {Record<number, 'open' | 'closed'>} */ ({}),
+      computeLights() {
+        const defs = props.lights;
         const hullOutline = Poly.from(json.hull.poly[0]).removeHoles();
-        // NOTE now includes doors
-        const polys = json.walls.concat(json.doors.map(x => x.poly)).map(x => Poly.from(x));
-        // const polys = json.walls.map(x => Poly.from(x));
+        const polys = json.walls.concat(
+          // Include doors which are not explicitly open
+          json.doors.filter((_, i) => state.doors[i] !== 'open').map(x => x.poly)
+        ).map(x => Poly.from(x));
         const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
         const inners = defs.filter(def => hullOutline.contains(def.p));
 
@@ -42,27 +45,35 @@ export default function Lights(props) {
           return { position, poly, ratio };
         });
 
-        // TODO remove
-        state.dark = Poly.cutOut(state.lights.map(({ poly }) => poly), [hullOutline])[0];
       },
     };
   });
   
-  React.useEffect(() => {
-    state.computeLights(props.lights);
+  React.useLayoutEffect(() => {
+    state.computeLights();
   }, [props.lights]);
 
   React.useEffect(() => {
-    return props.wire.subscribe(msg => {
-      console.log(msg);
-    }).unsubscribe;
+    const subs = props.wire.subscribe(msg => {
+      switch (msg.key) {
+        case 'opened-door': {
+          state.doors[msg.index] = 'open';
+          state.computeLights();
+          update();
+          break;
+        }
+        case 'closed-door': {
+          state.doors[msg.index] = 'closed';
+          state.computeLights();
+          update();
+          break;
+        }
+      }
+    })
+    return () => subs.unsubscribe();
   }, []);
 
   return <>
-    {/* <path
-      className="shadow"
-      d={state.dark.svgPath}
-    /> */}
     <defs>
       {state.lights.map((light, i) => (
         <radialGradient
@@ -76,32 +87,30 @@ export default function Lights(props) {
           <stop offset="100%" stop-color="#000" />
         </radialGradient>
       ))}
-      <mask id="my-funky-mask">
-        {/* <rect {...props.json.pngRect} fill={baseGrey} /> */}
+      <mask id="lights-mask">
         <rect {...props.json.pngRect} fill="#000" />
         {state.lights.map(({ poly }, i) => (
           <path
             d={poly.svgPath}
-            // fill="white"
             fill={`url(#my-radial-${i})`}
           />
         ))}
         <circle cx="50" cy="50" r="50" fill="url(#my-radial)" />
       </mask>
     </defs>
+
     <image 
       {...props.json.pngRect}
       className="geomorph-light"
       href={geomorphPngPath(props.json.key)}
-      mask="url(#my-funky-mask)"
+      mask="url(#lights-mask)"
     />
-    {props.lights.map(({p}) => (
+
+    {state.lights.map(({ position, poly }) => <>
       <image
         href="/icon/Simple_Icon_Eye.svg"
-        width="20" height="20" x={p.x - 10} y={p.y - 10} 
+        width="20" height="20" x={position.x - 10} y={position.y - 10} 
       />
-    ))}
+    </>)}
   </>;
 }
-
-export const baseGrey = '#000';
