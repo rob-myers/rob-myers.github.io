@@ -47,4 +47,9 @@ declare namespace Geom {
     angle: number;
   }
 
+  export interface LightDef {
+    p: Geom.Vect;
+    d: number;
+  }
+
 }

@@ -8,8 +8,9 @@ import React from "react";
 import { Poly, Vect } from "../geom";
 import { geom } from "../service/geom";
 import useMuState from "../hooks/use-mu-state";
+import { geomorphPngPath } from "./geomorph.model";
 
-/** @param {{ json: Geomorph.GeomorphJson, positions: Geom.VectJson[] }} props */
+/** @param {{ json: Geomorph.GeomorphJson, lights: Geom.LightDef[] }} props */
 export default function Lights(props) {
 
   const state = useMuState(() => {
@@ -18,17 +19,19 @@ export default function Lights(props) {
       dark: new Poly,
       lights: /** @type {{ position: Vect; poly: Poly; ratio: Vect }[]} */ ([]),
       /**
-       * @param {Geom.Vect[]} positions 
+       * @param {Geom.LightDef[]} defs 
        */
-      computeLights(positions) {
+      computeLights(defs) {
         const hullOutline = Poly.from(json.hull.poly[0]).removeHoles();
         // NOTE now includes doors
-        const polys = json.walls.concat(json.doors.map(x => x.poly)).map(x => Poly.from(x));
+        // const polys = json.walls.concat(json.doors.map(x => x.poly)).map(x => Poly.from(x));
+        const polys = json.walls.map(x => Poly.from(x));
         const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-        const inners = positions.filter(p => hullOutline.contains(p));
+        const inners = defs.filter(def => hullOutline.contains(def.p));
 
-        state.lights = inners.map(position => {
-          const poly = geom.lightPolygon(position, 2000, triangs);
+        state.lights = inners.map(def => {
+          const position = def.p.clone();
+          const poly = geom.lightPolygon(position, def.d, triangs);
           const bounds = poly.rect;
           const ratio = new Vect(
             (position.x - bounds.x) / bounds.width,
@@ -43,8 +46,8 @@ export default function Lights(props) {
   });
   
   React.useEffect(() => {
-    state.computeLights(props.positions.map(Vect.from));
-  }, [props.positions]);
+    state.computeLights(props.lights);
+  }, [props.lights]);
 
   return <>
     {/* <path
@@ -57,14 +60,16 @@ export default function Lights(props) {
           id={`my-radial-${i}`}
           fx={light.ratio.x}
           fy={light.ratio.y}
+          r="100%"
         >
-          <stop offset="0%" stop-color="white"/>
-          <stop offset="98%" stop-color={baseGrey} />
-          <stop offset="100%" stop-color={baseGrey} />
+          <stop offset="0%" stop-color="#bbb"/>
+          <stop offset="60%" stop-color="#000" />
+          <stop offset="100%" stop-color="#000" />
         </radialGradient>
       ))}
       <mask id="my-funky-mask">
-        <rect {...props.json.pngRect} fill={baseGrey} />
+        {/* <rect {...props.json.pngRect} fill={baseGrey} /> */}
+        <rect {...props.json.pngRect} fill="#000" />
         {state.lights.map(({ poly }, i) => (
           <path
             d={poly.svgPath}
@@ -75,7 +80,13 @@ export default function Lights(props) {
         <circle cx="50" cy="50" r="50" fill="url(#my-radial)" />
       </mask>
     </defs>
-    {props.positions.map(p => (
+    <image 
+      {...props.json.pngRect}
+      // className="geomorph"
+      href={geomorphPngPath(props.json.key)}
+      mask="url(#my-funky-mask)"
+    />
+    {props.lights.map(({p}) => (
       <image
         href="/icon/Simple_Icon_Eye.svg"
         width="20" height="20" x={p.x - 10} y={p.y - 10} 
@@ -84,4 +95,4 @@ export default function Lights(props) {
   </>;
 }
 
-export const baseGrey = '#8a8a8a';
+export const baseGrey = '#000';

@@ -23,17 +23,17 @@ export default function NavTest(props) {
   const state = useMuState(() => {
     return {
       lights: [
-        new Vect(205, 385),
-        new Vect(620, 315),
+        { p: new Vect(205, 385), d: 150 },
+        { p: new Vect(620, 315), d: 250 },
       ],
     };
   }, {
-    lights: (curr, next) => curr.every((p, i) => p.equals(next[i])),
+    lights: (curr, next) => curr.every((({ p, d }, i) => p.equals(next[i].p) && d === next[i].d)),
   });
 
   return (
     <PanZoom
-      dark
+      // dark
       gridBounds={defaults.gridBounds}
       initViewBox={defaults.initViewBox}
       maxZoom={6}
@@ -42,11 +42,12 @@ export default function NavTest(props) {
         {gm && <>
           <image 
             {...gm.pngRect}
+            className="geomorph"
             href={geomorphPngPath(layoutKey)}
-            mask="url(#my-funky-mask)"
+            // mask="url(#my-funky-mask)"
           />
+          <Lights json={gm} lights={state.lights} />
           <Doors json={gm} />
-          <Lights json={gm} positions={state.lights} />
         </>}
     </PanZoom>
   );
@@ -56,6 +57,9 @@ export default function NavTest(props) {
 const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
+  image.geomorph {
+    filter: brightness(20%) contrast(100%);
+  }
   path.shadow {
     fill: #00000066;
     pointer-events: none;
