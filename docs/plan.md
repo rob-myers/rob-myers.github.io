@@ -50,6 +50,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- mobile: provide alt UI e.g. force lowercase + arrow keys
+- mobile: issue with keyboard resizing screen and Xterm not resizing
+
 - nav demo + tty with `look`
   - ✅ move `NavCollide` into objective
   - ✅ `NavCollide` -> `NavTestUi`
