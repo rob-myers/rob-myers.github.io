@@ -3,6 +3,9 @@ import { css } from "goober";
 import { Subject } from "rxjs";
 import useMuState from "../hooks/use-mu-state";
 
+// NOTE tried <foreignObject> with divs, but Safari/IOS issue
+// https://bugs.webkit.org/show_bug.cgi?id=23113
+
 /**
  * Doors for a specific geomorph.
  * @param {NPC.DoorsProps} props
@@ -19,48 +22,45 @@ export default function Doors(props) {
       api,
       /** @param {React.MouseEvent} e */
       onClick(e) {
-        const div = /** @type {HTMLDivElement} */ (e.target);
-        const nowOpen = div.classList.toggle('open');
+        const rect = /** @type {SVGRectElement} */ (e.target);
+        const nowOpen = rect.classList.toggle('open');
         props.wire.next({
           key: nowOpen ? 'opened-door' : 'closed-door',
-          index: Number(div.getAttribute('data-index')),
+          index: Number(rect.getAttribute('data-index')),
         });
       },
     };
   });
 
   return (
-    <foreignObject
-      {...json.pngRect}
-      xmlns="http://www.w3.org/1999/xhtml"
+    <g
       className={rootCss}
+      onPointerUp={state.onClick}
     >
-      <div onPointerUp={state.onClick}>
-        {json.doors.map(({ rect, angle }, i) =>
-          <div
-            className="door"
-            data-index={i}
-            style={{
-              left: rect.x - json.pngRect.x,
-              top: rect.y - json.pngRect.y,
-              width: rect.width,
-              height: rect.height,
-              transformOrigin: 'top left',
-              transform: `rotate(${angle}rad)`,
-            }}
-          />
-        )}
-      </div>
-    </foreignObject>
+      {json.doors.map(({ rect, angle }, i) =>
+        <rect
+          key={i}
+          data-index={i}
+          className="door"
+          x={rect.x}
+          y={rect.y}
+          width={rect.width}
+          height={rect.height}
+          style={{
+            transform: `rotate(${angle}rad)`,
+            transformOrigin: `${rect.x}px ${rect.y}px`,
+          }}
+        />
+      )}
+    </g>
   );
 }
 
 const rootCss = css`
-  div.door {
+  rect.door {
     cursor: pointer;
-    position: absolute;
-    background: #000; /** ? */
-    border: 1px solid black;
+    fill: #000;
+    stroke: black;
     opacity: 1;
     transition: opacity 100ms linear;
     &.open {
