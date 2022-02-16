@@ -50,6 +50,10 @@ export default function NavTest(props) {
             {...gm.pngRect}
             className="geomorph"
             href={geomorphPngPath(layoutKey)}
+            style={{
+              // Works in safari, but slow!
+              filter: 'url(#brightness-test)'
+            }}
           />
           <Lights json={gm} lights={state.lights} wire={state.wire} />
           <Doors json={gm} wire={state.wire} />
@@ -62,9 +66,6 @@ export default function NavTest(props) {
 const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
-  image.geomorph {
-    filter: brightness(20%) contrast(100%);
-  }
   path.shadow {
     fill: #00000066;
     pointer-events: none;

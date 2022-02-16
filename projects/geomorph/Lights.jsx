@@ -97,6 +97,13 @@ export default function Lights(props) {
         ))}
         <circle cx="50" cy="50" r="50" fill="url(#my-radial)" />
       </mask>
+      <filter id="brightness-test">
+        <feComponentTransfer>
+          <feFuncR type="linear" slope="0.02"/>
+          <feFuncG type="linear" slope="0.02"/>
+          <feFuncB type="linear" slope="0.02"/>
+        </feComponentTransfer>
+      </filter>
     </defs>
 
     <image 
