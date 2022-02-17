@@ -1,12 +1,7 @@
 /**
  * TODO
- * - take open doors into account
- *   - ✅ Doors communicate with Lights
- *   - ✅ light changes when door opens/closes
- *   - cleanup e.g. ids
- * - ✅ try <mask> with radial filled polys, instead of <path>
+ * - cleanup e.g. ids
  */
-
 import React from "react";
 import { Poly, Vect } from "../geom";
 import { geom } from "../service/geom";
@@ -20,12 +15,11 @@ export default function Lights(props) {
   const update = useUpdate();
 
   const state = useMuState(() => {
-    const { json } = props;
     return {
-      lights: /** @type {{ position: Vect; poly: Poly; ratio: Vect }[]} */ ([]),
+      lights: /** @type {{ position: Vect; poly: Poly; ratio: Vect; r: number; scale: Vect }[]} */ ([]),
       doors: /** @type {Record<number, 'open' | 'closed'>} */ ({}),
-      computeLights() {
-        const defs = props.lights;
+      /** @param {NPC.LightsProps} props */
+      computeLights({ json, lights: defs }) {
         const hullOutline = Poly.from(json.hull.poly[0]).removeHoles();
         const polys = json.walls.concat(
           // Include doors which are not explicitly open
@@ -37,53 +31,56 @@ export default function Lights(props) {
         state.lights = inners.map(def => {
           const position = def.p.clone();
           const poly = geom.lightPolygon(position, def.d, triangs);
-          const bounds = poly.rect;
+          const rect = poly.rect;
           const ratio = new Vect(
-            (position.x - bounds.x) / bounds.width,
-            (position.y - bounds.y) / bounds.height,
+            (position.x - rect.x) / rect.width,
+            (position.y - rect.y) / rect.height,
           );
-          return { position, poly, ratio };
+          const scale = rect.width >= rect.height
+            ? new Vect(1, rect.width / rect.height)
+            : new Vect(rect.height / rect.width, 1);
+          // Imagine ellipse centered in rect covering it (r=50% or r=0.5)
+          // We want it to correspond to light distance
+          const r = 0.5 * (def.d / (Math.max(rect.width, rect.height)/2));
+          return { position, poly, ratio, dist: def.d, scale, r };
         });
-
       },
     };
   });
   
-  React.useLayoutEffect(() => {
-    state.computeLights();
-  }, [props.lights]);
-
   React.useEffect(() => {
+    state.computeLights(props);
     const subs = props.wire.subscribe(msg => {
       switch (msg.key) {
         case 'opened-door': {
           state.doors[msg.index] = 'open';
-          state.computeLights();
+          state.computeLights(props);
           update();
           break;
         }
         case 'closed-door': {
           state.doors[msg.index] = 'closed';
-          state.computeLights();
+          state.computeLights(props);
           update();
           break;
         }
       }
     })
     return () => subs.unsubscribe();
-  }, []);
+  }, [props.lights]);
 
   return <>
     <defs>
-      {state.lights.map((light, i) => (
+      {state.lights.map(({ ratio, scale, r }, i) => (
         <radialGradient
           id={`my-radial-${i}`}
-          fx={light.ratio.x}
-          fy={light.ratio.y}
-          r="100%"
+          cx={ratio.x}
+          cy={ratio.y}
+          r={r}
+          gradientTransform={`translate(${ratio.x}, ${ratio.y}) scale(${scale.x}, ${scale.y}) translate(${-ratio.x}, ${-ratio.y})`}
         >
-          <stop offset="0%" stop-color="#bbb"/>
-          <stop offset="60%" stop-color="#000" />
+          <stop offset="0%" stop-color="#aaa"/>
+          <stop offset="80%" stop-color="#000" />
           <stop offset="100%" stop-color="#000" />
         </radialGradient>
       ))}
@@ -97,13 +94,6 @@ export default function Lights(props) {
         ))}
         <circle cx="50" cy="50" r="50" fill="url(#my-radial)" />
       </mask>
-      <filter id="brightness-test">
-        <feComponentTransfer>
-          <feFuncR type="linear" slope="0.02"/>
-          <feFuncG type="linear" slope="0.02"/>
-          <feFuncB type="linear" slope="0.02"/>
-        </feComponentTransfer>
-      </filter>
     </defs>
 
     <image 

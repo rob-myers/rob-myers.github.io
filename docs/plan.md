@@ -50,8 +50,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- mobile: provide alt UI e.g. force lowercase + arrow keys
-- mobile: issue with keyboard resizing screen and Xterm not resizing
+- ✅ light intensity is varying as doors are opened
 
 - nav demo + tty with `look`
   - ✅ move `NavCollide` into objective
@@ -71,8 +70,11 @@ __Aim towards website release__.
 - PanZoom should have blue blob indicating touches
 - PanZoom should have inertia
 
+- mobile: provide alt UI e.g. force lowercase + arrow keys
+- mobile: issue with keyboard resizing screen and Xterm not resizing
+
 - geomorphs article can be "coming soon" with preview
-- intend to redo site using Gatsby JamStack approach, but not until ready for first release
+- EVENTUALLY redo site using Gatsby JamStack approach (not until after first release)
 
 - 🚧 NPC foreignObject messages
   - ✅ can fit multiline text and other stuff

@@ -9,9 +9,11 @@ import useGeomorphJson from "../hooks/use-geomorph-json";
 import PanZoom from "../panzoom/PanZoom";
 import Doors from "../geomorph/Doors";
 import Lights from "../geomorph/Lights";
+import AugImage from "../geomorph/AugImage";
 
 /**
  * TODO
+ * - image -> <Image darken>
  * - dynamic lighting with door shadows
  * - new simpler version of <NPCs>
  */
@@ -25,7 +27,7 @@ export default function NavTest(props) {
     // NOTE Failed to infer type when directly returned (why?)
     const output = {
       lights: [
-        { p: new Vect(205, 385), d: 150 },
+        { p: new Vect(205, 385), d: 100 },
         { p: new Vect(620, 315), d: 250 },
       ],
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
@@ -46,7 +48,7 @@ export default function NavTest(props) {
       className={rootCss}
     >
         {gm && <>
-          <image 
+          {/* <image 
             {...gm.pngRect}
             className="geomorph"
             href={geomorphPngPath(layoutKey)}
@@ -54,6 +56,11 @@ export default function NavTest(props) {
               // Works in safari, but slow!
               filter: 'url(#brightness-test)'
             }}
+          /> */}
+          <AugImage
+            {...gm.pngRect}
+            className="geomorph"
+            href={geomorphPngPath(layoutKey)}
           />
           <Lights json={gm} lights={state.lights} wire={state.wire} />
           <Doors json={gm} wire={state.wire} />
