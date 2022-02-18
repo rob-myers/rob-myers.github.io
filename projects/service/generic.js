@@ -44,13 +44,16 @@ export function equals(x, y, depth = 0) {
   if (depth > 10) {
     throw Error('equals: recursive depth exceeded 10');
   }
-  if (typeof x?.equals === 'function') {
+  if (x !== undefined && y === undefined) {
+    return false;
+  } else if (typeof x?.equals === 'function') {
     return x.equals(y) === true;
   } else if (Array.isArray(x)) {
-    return x.every((u, i) => equals(u, y[i]), depth + 1);
+    return x.every((u, i) => equals(u, y[i]), depth + 1)
+      && x.length === y.length;
   } else if (isPlainObject(x)) {
-    // NOTE y may have additional keys
-    return Object.keys(x).every((key) => equals(x[key], y[key]), depth + 1);
+    return Object.keys(x).every((key) => equals(x[key], y[key]), depth + 1)
+      && Object.keys(x).length === Object.keys(y).length;
   }
   return x === y;
 }
