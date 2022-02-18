@@ -23,19 +23,15 @@ export default function NavTest(props) {
   const { data: gm } = useGeomorphJson(layoutKey);
 
   const state = useMuState(() => {
-    /** @type {Geom.LightDef[]} */
+    /** @type {NPC.LightDef[]} */
     const lightDefs = [
+      { key: 'light-def', def: [new Vect(620, 315), 250, 0.7] },
       { key: 'light-def', def: [new Vect(205, 385), 170, 1] },
-      { key: 'light-def', def: [new Vect(420, 400), 150, 0.5] },
-      { key: 'light-def', def: [new Vect(620, 315), 250, 1] },
+      { key: 'light-def', def: [new Vect(420, 400), 250, 0.2] },
+      { key: 'light-def', def: [new Vect(620, 430), 250, 1] },
     ];
-    
-    // NOTE Failed to infer type when directly returned (why?)
-    const output = {
-      lightDefs,
-      wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
-    };
-    return output;
+    const wire = /** @type {Subject<NPC.NavMessage>} */ (new Subject);
+    return { lightDefs, wire }
   }, {
     lightDefs: (curr, next) => equals(curr, next),
   });
@@ -53,7 +49,7 @@ export default function NavTest(props) {
             {...gm.pngRect}
             className="geomorph"
             href={geomorphPngPath(layoutKey)}
-            darken={0.85}
+            darken={0.95}
           />
           <Lights json={gm} defs={state.lightDefs} wire={state.wire} />
           <Doors json={gm} wire={state.wire} />

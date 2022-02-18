@@ -47,10 +47,4 @@ declare namespace Geom {
     angle: number;
   }
 
-  export interface LightDef {
-    key: 'light-def';
-    /** [position, distance ≥ 0, intensity in [0,1]] */
-    def: [Geom.Vect, number, number]
-  }
-
 }
