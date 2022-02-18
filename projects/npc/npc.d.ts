@@ -8,7 +8,7 @@ declare namespace NPC {
 
   export interface LightsProps {
     json: Geomorph.GeomorphJson;
-    lights: Geom.LightDef[];
+    defs: Geom.LightDef[];
     wire: NavWire;
   }
 

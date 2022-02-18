@@ -7,7 +7,7 @@ import { assertNonNull } from "../service/generic";
  */
 export default function AugImage(props) {
 
-  const { data } = useQuery(`Image:${props.href}(${props.darkness || 0})`, async () => {
+  const { data } = useQuery(`Image:${props.href}(${props.darken || 0})`, async () => {
     // Copy image into canvas
     const image = new Image;
     const canvas = document.createElement('canvas');
@@ -21,7 +21,7 @@ export default function AugImage(props) {
     ctxt.drawImage(image, 0, 0);
 
     // Darken TODO use props
-    ctxt.fillStyle = "rgba(0, 0, 0, 0.8)";
+    ctxt.fillStyle = `rgba(0, 0, 0, ${props.darken})`;
     ctxt.fillRect(0, 0, canvas.width, canvas.height);
     return canvas.toDataURL();
   });
@@ -37,5 +37,5 @@ export default function AugImage(props) {
 /**
  * @typedef Props @type {object}
  * @property {string} href Location of original image
- * @property {number} [darkness] Make image darker
+ * @property {number} [darken] Make image darker
  */

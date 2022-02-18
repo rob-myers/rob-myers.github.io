@@ -1,6 +1,7 @@
 /**
  * TODO
  * - cleanup e.g. ids
+ * - ensure lights "in right order", or do composite via <filter>?
  */
 import React from "react";
 import { Poly, Vect } from "../geom";
@@ -19,18 +20,17 @@ export default function Lights(props) {
       lights: /** @type {{ position: Vect; poly: Poly; ratio: Vect; r: number; scale: Vect }[]} */ ([]),
       doors: /** @type {Record<number, 'open' | 'closed'>} */ ({}),
       /** @param {NPC.LightsProps} props */
-      computeLights({ json, lights: defs }) {
+      computeLights({ json, defs }) {
         const hullOutline = Poly.from(json.hull.poly[0]).removeHoles();
         const polys = json.walls.concat(
           // Include doors which are not explicitly open
           json.doors.filter((_, i) => state.doors[i] !== 'open').map(x => x.poly)
         ).map(x => Poly.from(x));
         const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-        const inners = defs.filter(def => hullOutline.contains(def.p));
+        const inners = defs.filter(({ def: [position] }) => hullOutline.contains(position));
 
-        state.lights = inners.map(def => {
-          const position = def.p.clone();
-          const poly = geom.lightPolygon(position, def.d, triangs);
+        state.lights = inners.map(({ def: [position, distance] }) => {
+          const poly = geom.lightPolygon(position, distance, triangs);
           const rect = poly.rect;
           const ratio = new Vect(
             (position.x - rect.x) / rect.width,
@@ -41,8 +41,8 @@ export default function Lights(props) {
             : new Vect(rect.height / rect.width, 1);
           // Imagine ellipse centered in rect covering it (r=50% or r=0.5)
           // We want it to correspond to light distance
-          const r = 0.5 * (def.d / (Math.max(rect.width, rect.height)/2));
-          return { position, poly, ratio, dist: def.d, scale, r };
+          const r = 0.5 * (distance / (Math.max(rect.width, rect.height)/2));
+          return { position, poly, ratio, dist: distance, scale, r };
         });
       },
     };
@@ -67,7 +67,7 @@ export default function Lights(props) {
       }
     })
     return () => subs.unsubscribe();
-  }, [props.lights]);
+  }, [props.defs]);
 
   return <>
     <defs>
@@ -85,6 +85,9 @@ export default function Lights(props) {
         </radialGradient>
       ))}
       <mask id="lights-mask">
+        {/* 
+          TODO poly instead of rect
+         */}
         <rect {...props.json.pngRect} fill="#000" />
         {state.lights.map(({ poly }, i) => (
           <path

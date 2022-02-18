@@ -48,8 +48,9 @@ declare namespace Geom {
   }
 
   export interface LightDef {
-    p: Geom.Vect;
-    d: number;
+    key: 'light-def';
+    /** [position, distance ≥ 0, intensity in [0,1]] */
+    def: [Geom.Vect, number, number]
   }
 
 }

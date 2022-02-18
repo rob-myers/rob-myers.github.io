@@ -1,11 +1,12 @@
 import { css } from "goober";
 import { Subject } from "rxjs";
 
-import * as defaults from "./defaults";
+import { equals } from "../service/generic";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Vect } from "../geom/vect";
 import useMuState from "../hooks/use-mu-state";
 import useGeomorphJson from "../hooks/use-geomorph-json";
+import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import Doors from "../geomorph/Doors";
 import Lights from "../geomorph/Lights";
@@ -13,8 +14,6 @@ import AugImage from "../geomorph/AugImage";
 
 /**
  * TODO
- * - image -> <Image darken>
- * - dynamic lighting with door shadows
  * - new simpler version of <NPCs>
  */
 
@@ -24,19 +23,21 @@ export default function NavTest(props) {
   const { data: gm } = useGeomorphJson(layoutKey);
 
   const state = useMuState(() => {
+    /** @type {Geom.LightDef[]} */
+    const lightDefs = [
+      { key: 'light-def', def: [new Vect(205, 385), 170, 1] },
+      { key: 'light-def', def: [new Vect(420, 400), 150, 0.5] },
+      { key: 'light-def', def: [new Vect(620, 315), 250, 1] },
+    ];
+    
     // NOTE Failed to infer type when directly returned (why?)
     const output = {
-      lights: [
-        { p: new Vect(205, 385), d: 100 },
-        { p: new Vect(620, 315), d: 250 },
-      ],
+      lightDefs,
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
     };
     return output;
   }, {
-    lights: (curr, next) => curr.every((({ p, d }, i) =>
-      p.equals(next[i].p) && d === next[i].d)
-    ),
+    lightDefs: (curr, next) => equals(curr, next),
   });
 
   return (
@@ -48,21 +49,13 @@ export default function NavTest(props) {
       className={rootCss}
     >
         {gm && <>
-          {/* <image 
-            {...gm.pngRect}
-            className="geomorph"
-            href={geomorphPngPath(layoutKey)}
-            style={{
-              // Works in safari, but slow!
-              filter: 'url(#brightness-test)'
-            }}
-          /> */}
           <AugImage
             {...gm.pngRect}
             className="geomorph"
             href={geomorphPngPath(layoutKey)}
+            darken={0.85}
           />
-          <Lights json={gm} lights={state.lights} wire={state.wire} />
+          <Lights json={gm} defs={state.lightDefs} wire={state.wire} />
           <Doors json={gm} wire={state.wire} />
         </>}
     </PanZoom>
