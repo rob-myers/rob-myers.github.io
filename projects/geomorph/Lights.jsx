@@ -1,7 +1,8 @@
 /**
  * TODO
- * - cleanup e.g. ids
  * - ensure lights "in right order", or do composite via <filter>?
+ * - NOTE avoid storing stuff in useMuState because need to track change?
+ * - unique per geomorph i.e. need to translate for dups (?)
  */
 import React from "react";
 import { Poly, Vect } from "../geom";
@@ -17,6 +18,7 @@ export default function Lights(props) {
 
   const state = useMuState(() => {
     return {
+      key: `Lights_${props.json.id}`, // determined by geomorph
       lights: /** @type {{ position: Vect; poly: Poly; ratio: Vect; r: number; scale: Vect }[]} */ ([]),
       doors: /** @type {Record<number, 'open' | 'closed'>} */ ({}),
       /** @param {NPC.LightsProps} props */
@@ -39,7 +41,7 @@ export default function Lights(props) {
           const scale = rect.width >= rect.height
             ? new Vect(1, rect.width / rect.height)
             : new Vect(rect.height / rect.width, 1);
-          // Imagine ellipse centered in rect covering it (r=50% or r=0.5)
+          // Ellipse is centered in rect and covers it (when r=50% or r=0.5)
           // We want it to correspond to light distance
           const r = 0.5 * (distance / (Math.max(rect.width, rect.height)/2));
           return { position, poly, ratio, dist: distance, scale, r };
@@ -73,29 +75,24 @@ export default function Lights(props) {
     <defs>
       {state.lights.map(({ ratio, scale, r }, i) => (
         <radialGradient
-          id={`my-radial-${i}`}
+          id={`radial-${state.key}-${i}`}
           cx={ratio.x}
           cy={ratio.y}
           r={r}
           gradientTransform={`translate(${ratio.x}, ${ratio.y}) scale(${scale.x}, ${scale.y}) translate(${-ratio.x}, ${-ratio.y})`}
         >
           <stop offset="0%" stop-color="#aaa"/>
-          <stop offset="80%" stop-color="#000" />
+          <stop offset="90%" stop-color="#000" />
           <stop offset="100%" stop-color="#000" />
         </radialGradient>
       ))}
-      <mask id="lights-mask">
-        {/* 
-          TODO poly instead of rect
-         */}
-        <rect {...props.json.pngRect} fill="#000" />
+      <mask id={`mask-${state.key}`}>
         {state.lights.map(({ poly }, i) => (
           <path
             d={poly.svgPath}
-            fill={`url(#my-radial-${i})`}
+            fill={`url(#radial-${state.key}-${i})`}
           />
         ))}
-        <circle cx="50" cy="50" r="50" fill="url(#my-radial)" />
       </mask>
     </defs>
 
@@ -103,7 +100,7 @@ export default function Lights(props) {
       {...props.json.pngRect}
       className="geomorph-light"
       href={geomorphPngPath(props.json.key)}
-      mask="url(#lights-mask)"
+      mask={`url(#mask-${state.key})`}
     />
 
     {state.lights.map(({ position, poly }) => <>
