@@ -34,19 +34,37 @@ export function assertDefined(value, valueName) {
 
 /**
  * Test equality, i.e. test fn `equality`,
- * falling back to primitive equality, and recurse on arrays.
+ * falling back to primitive equality,
+ * and recurse on arrays/objects.
  * @param {*} x
  * @param {*} y
  * @returns {boolean}
  */
 export function equals(x, y, depth = 0) {
+  if (depth > 10) {
+    throw Error('equals: recursive depth exceeded 10');
+  }
   if (typeof x?.equals === 'function') {
     return x.equals(y) === true;
   } else if (Array.isArray(x)) {
-    if (depth > 10) {
-      throw Error('equals: recursive depth exceeded 10');
-    }
-    return x.every((u, i) => equals(u, /** @type {*} */ (y)[i]), depth + 1);
+    return x.every((u, i) => equals(u, y[i]), depth + 1);
+  } else if (isPlainObject(x)) {
+    // NOTE y may have additional keys
+    return Object.keys(x).every((key) => equals(x[key], y[key]), depth + 1);
   }
   return x === y;
+}
+
+/**
+ * https://github.com/sindresorhus/is-plain-obj/blob/main/index.js
+ * @param {*} value 
+ * @returns 
+ */
+ export default function isPlainObject(value) {
+	if (Object.prototype.toString.call(value) !== '[object Object]') {
+		return false;
+	}
+
+	const prototype = Object.getPrototypeOf(value);
+	return prototype === null || prototype === Object.prototype;
 }
