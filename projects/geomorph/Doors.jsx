@@ -1,6 +1,7 @@
 import React from "react";
 import { css } from "goober";
 import { Subject } from "rxjs";
+import classNames from "classnames";
 import useMuState from "../hooks/use-mu-state";
 
 // NOTE tried <foreignObject> with divs, but Safari/IOS issue
@@ -20,13 +21,16 @@ export default function Doors(props) {
 
     return {
       api,
+      open: /** @type {Record<Number, boolean>} */ ({}),
       /** @param {React.MouseEvent} e */
       onClick(e) {
         const rect = /** @type {SVGRectElement} */ (e.target);
+        const index = Number(rect.getAttribute('data-index'));
         const nowOpen = rect.classList.toggle('open');
+        state.open[index] = nowOpen;
         props.wire.next({
           key: nowOpen ? 'opened-door' : 'closed-door',
-          index: Number(rect.getAttribute('data-index')),
+          index,
         });
       },
     };
@@ -41,7 +45,7 @@ export default function Doors(props) {
         <rect
           key={i}
           data-index={i}
-          className="door"
+          className={classNames("door", { open: state.open[i] })}
           x={rect.x}
           y={rect.y}
           width={rect.width}
@@ -60,7 +64,6 @@ const rootCss = css`
   rect.door {
     cursor: pointer;
     fill: #000;
-    stroke: black;
     opacity: 1;
     transition: opacity 100ms linear;
     &.open {
