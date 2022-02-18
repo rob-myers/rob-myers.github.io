@@ -25,13 +25,16 @@ declare namespace NPC {
 
   export interface LightDef {
     key: 'light-def';
-    /** [position, distance ≥ 0, intensity in [0,1]] */
-    def: [Geom.Vect, number, number];
+    /** [position, distance ≥ 0, intensity in [0,1], maskId] */
+    def: [Geom.Vect, number, number, 0 | 1];
   }
 
   export interface Light {
     key: 'light';
+    /** Original index in light defs */
+    index: number;
     intensity: number;
+    maskId: 0 | 1;
     position: Vect;
     poly: Poly;
     ratio: Vect;

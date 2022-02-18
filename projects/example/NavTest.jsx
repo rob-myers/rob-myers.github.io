@@ -25,10 +25,10 @@ export default function NavTest(props) {
   const state = useMuState(() => {
     /** @type {NPC.LightDef[]} */
     const lightDefs = [
-      { key: 'light-def', def: [new Vect(620, 315), 250, 0.7] },
-      { key: 'light-def', def: [new Vect(205, 385), 170, 1] },
-      { key: 'light-def', def: [new Vect(420, 400), 250, 0.2] },
-      { key: 'light-def', def: [new Vect(620, 430), 250, 1] },
+      { key: 'light-def', def: [new Vect(205, 385), 170, 1, 0] },
+      { key: 'light-def', def: [new Vect(620, 430), 250, 0.8, 0] },
+      { key: 'light-def', def: [new Vect(420, 400), 250, 0.4, 1] },
+      { key: 'light-def', def: [new Vect(620, 315), 250, 1, 1] },
     ];
     const wire = /** @type {Subject<NPC.NavMessage>} */ (new Subject);
     return { lightDefs, wire }

@@ -1,9 +1,9 @@
 /**
  * TODO
- * - ensure lights "in right order", or do composite via <filter>?
  * - NOTE avoid storing stuff in useMuState because need to track change?
  * - unique per geomorph i.e. need to translate for dups (?)
  */
+
 import React from "react";
 import { Poly, Vect } from "../geom";
 import { geom } from "../service/geom";
@@ -31,7 +31,7 @@ export default function Lights(props) {
         const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
         const inners = defs.filter(({ def: [position] }) => hullOutline.contains(position));
 
-        state.lights = inners.map(({ def: [position, distance, intensity] }) => {
+        state.lights = inners.map(({ def: [position, distance, intensity, maskId] }, i) => {
           const poly = geom.lightPolygon(position, distance, triangs);
           const rect = poly.rect;
           const ratio = new Vect(
@@ -44,7 +44,10 @@ export default function Lights(props) {
           // Ellipse is centered in rect and covers it (when r=50% or r=0.5)
           // We want it to correspond to light distance
           const r = 0.5 * (distance / (Math.max(rect.width, rect.height)/2));
-          return { key: 'light', intensity, position, poly, ratio, r, scale };
+          return {
+            key: 'light', index: i, maskId,
+            intensity, position, poly, ratio, r, scale,
+          };
         });
       },
     };
@@ -87,23 +90,26 @@ export default function Lights(props) {
           <stop offset="100%" stop-color="#000" />
         </radialGradient>
       ))}
-      <mask id={`mask-${state.key}`}>
-        {state.lights.map(({ poly }, i) => (
-          <path
-            d={poly.svgPath}
-            fill={`url(#radial-${state.key}-${i})`}
-          />
-        ))}
-      </mask>
+      {[0, 1].map(maskId =>
+        <mask id={`mask-${state.key}-${maskId}`}>
+          {state.lights.filter(x => x.maskId === maskId).map(({ poly, index }) => (
+            <path
+              d={poly.svgPath}
+              fill={`url(#radial-${state.key}-${index})`}
+            />
+          ))}
+        </mask>
+      )}
     </defs>
 
-    <image 
-      {...props.json.pngRect}
-      className="geomorph-light"
-      href={geomorphPngPath(props.json.key)}
-      mask={`url(#mask-${state.key})`}
-    />
-
+    {[0, 1].map(maskId =>
+      <image 
+        {...props.json.pngRect}
+        className="geomorph-light"
+        href={geomorphPngPath(props.json.key)}
+        mask={`url(#mask-${state.key}-${maskId})`}
+      />
+    )}
     {state.lights.map(({ position }) => <>
       <image
         href="/icon/Simple_Icon_Eye.svg"
