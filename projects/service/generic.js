@@ -31,3 +31,22 @@ export function assertDefined(value, valueName) {
   }
   return /** @type {*} */ (value);
 }
+
+/**
+ * Test equality, i.e. test fn `equality`,
+ * falling back to primitive equality, and recurse on arrays.
+ * @param {*} x
+ * @param {*} y
+ * @returns {boolean}
+ */
+export function equals(x, y, depth = 0) {
+  if (typeof x?.equals === 'function') {
+    return x.equals(y) === true;
+  } else if (Array.isArray(x)) {
+    if (depth > 10) {
+      throw Error('equals: recursive depth exceeded 10');
+    }
+    return x.every((u, i) => equals(u, /** @type {*} */ (y)[i]), depth + 1);
+  }
+  return x === y;
+}
