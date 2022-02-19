@@ -46,7 +46,7 @@ const component = {
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-302--xboat-repair-bay' />),
   'example/NavUiTest': () => import('projects/example/NavUiTest')
     .then(x => (props: any) => <x.default disabled {...props} />),
-  'example/NavTest': () => import('projects/example/NavTest')
+  'example/SvgLightsTest': () => import('projects/example/SvgLightsTest')
     .then(x => (props: any) => <x.default disabled {...props} />),
   'example/TriangleDev#301': () => import('projects/example/TriangleDev')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),

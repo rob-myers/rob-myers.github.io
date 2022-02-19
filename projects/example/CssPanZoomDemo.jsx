@@ -4,7 +4,7 @@ import CssPanZoom from '../panzoom/CssPanZoom';
 export default function CssSvgPanZoomDemo() {
   return (
     <div className={rootCss}>
-      <CssPanZoom>
+      <CssPanZoom dark>
         <div>
           Hello, world!
         </div>
@@ -15,4 +15,5 @@ export default function CssSvgPanZoomDemo() {
 
 const rootCss = css`
   height: 100%;
+  color: white;
 `;

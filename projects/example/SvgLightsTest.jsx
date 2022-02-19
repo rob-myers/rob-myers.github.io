@@ -12,14 +12,8 @@ import Doors from "../geomorph/Doors";
 import Lights from "../geomorph/Lights";
 import AugImage from "../geomorph/AugImage";
 
-/**
- * TODO
- * - prob rename as SvgLightsTest
- * - new simpler version of <NPCs>
- */
-
 /** @param {{ disabled?: boolean }} props */
-export default function NavTest(props) {
+export default function SvgLightsTest(props) {
 
   const { data: gm } = useGeomorphJson(layoutKey);
 
@@ -50,7 +44,7 @@ export default function NavTest(props) {
             {...gm.pngRect}
             className="geomorph"
             href={geomorphPngPath(layoutKey)}
-            darken={0.85}
+            darken={0.95}
           />
           <Lights json={gm} defs={state.lightDefs} wire={state.wire} />
           <Doors json={gm} wire={state.wire} />

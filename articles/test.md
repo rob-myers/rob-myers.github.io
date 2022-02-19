@@ -8,8 +8,8 @@
   show="2"
   tabs="[
     // { key: 'component', filepath: 'example/GeomorphEdit' },
-    // { key: 'component', filepath: 'example/NavTest' },
-    { key: 'component', filepath: 'example/PanZoomTest', weight: 50 },
+    // { key: 'component', filepath: 'example/SvgLightsTest' },
+    // { key: 'component', filepath: 'example/PanZoomTest', weight: 50 },
     { key: 'component', filepath: 'example/CssPanZoomDemo' },
     // { key: 'component', filepath: 'example/CssSvgPanZoomDemo' },
     // { key: 'component', filepath: 'example/NavUiTest' },

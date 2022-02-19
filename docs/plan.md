@@ -50,10 +50,10 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- after testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
 - ✅ Get focal-point zooming example from @panzoom/panzoom working locally
   - https://timmywil.com/panzoom/demo/
 - ✅ Rewrite our own simplified version
-
 - ✅ light intensity is varying as doors are opened
 
 - nav demo + tty with `look`

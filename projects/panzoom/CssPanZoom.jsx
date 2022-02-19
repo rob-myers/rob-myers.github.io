@@ -1,12 +1,12 @@
+/**
+ * Based on @panzoom/panzoom
+ * TODO clean up if possible
+ */
 import React from 'react';
 import classNames from "classnames";
 import { css } from "goober";
 import { Vect } from "projects/geom";
 import useMuState from "../hooks/use-mu-state";
-
-/**
- * TODO clean up if possible
- */
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
@@ -212,7 +212,7 @@ export default function CssPanZoom(props) {
   });
 
   return (
-    <div className={classNames("panzoom-parent", rootCss)}>
+    <div className={classNames("panzoom-parent", rootCss(props))}>
       <div
         ref={state.rootRef}
         className="panzoom-root"
@@ -223,7 +223,8 @@ export default function CssPanZoom(props) {
   )
 }
 
-const rootCss = css`
+/** @param {Props} props */
+const rootCss = (props) => css`
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -231,6 +232,7 @@ const rootCss = css`
   /** This is important for mobile to prevent scrolling while panning */
   touch-action: none;
   cursor: auto;
+  background-color: ${props.dark ? '#222' : '#fff'};
 
   .panzoom-root {
     width: 100%;
@@ -244,6 +246,7 @@ const rootCss = css`
 /**
  * @typedef Props @type {object}
  * @property {string} [className]
+ * @property {boolean} [dark]
  */
 
 /**
