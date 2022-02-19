@@ -59,7 +59,8 @@ export default function CssPanZoom(props) {
             // Use the distance between the first 2 pointers
             // to determine the current scale
             const diff = getDistance(state.pointers) - state.start.distance
-            const toScale = Math.min(Math.max(((diff * state.opts.step) / 80 + state.start.scale), state.opts.minScale), state.opts.maxScale);
+            const step = 3 * state.opts.step;
+            const toScale = Math.min(Math.max(((diff * step) / 80 + state.start.scale), state.opts.minScale), state.opts.maxScale);
             state.zoomToPoint(toScale, current);
           } else {
             // Panning during pinch zoom can cause issues
