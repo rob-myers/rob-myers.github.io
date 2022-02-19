@@ -9,11 +9,11 @@ import useGeomorphJson from "../hooks/use-geomorph-json";
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import Doors from "../geomorph/Doors";
-import Lights from "../geomorph/Lights";
+import SvgLights from "../geomorph/SvgLights";
 import AugImage from "../geomorph/AugImage";
 
 /** @param {{ disabled?: boolean }} props */
-export default function SvgLightsTest(props) {
+export default function GeomorphSvgLightsTest(props) {
 
   const { data: gm } = useGeomorphJson(layoutKey);
 
@@ -46,7 +46,7 @@ export default function SvgLightsTest(props) {
             href={geomorphPngPath(layoutKey)}
             darken={0.95}
           />
-          <Lights json={gm} defs={state.lightDefs} wire={state.wire} />
+          <SvgLights json={gm} defs={state.lightDefs} wire={state.wire} />
           <Doors json={gm} wire={state.wire} />
         </>}
     </PanZoom>

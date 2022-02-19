@@ -8,9 +8,10 @@
   show="2"
   tabs="[
     // { key: 'component', filepath: 'example/GeomorphEdit' },
-    // { key: 'component', filepath: 'example/SvgLightsTest' },
-    // { key: 'component', filepath: 'example/PanZoomTest', weight: 50 },
-    { key: 'component', filepath: 'example/CssPanZoomDemo' },
+    { key: 'component', filepath: 'example/CssPanZoomDemo', weight: 50 },
+    { key: 'component', filepath: 'example/GeomorphCssLightsTest' },
+    // { key: 'component', filepath: 'example/GeomorphSvgLightsTest' },
+    // { key: 'component', filepath: 'example/PanZoomTest' },
     // { key: 'component', filepath: 'example/CssSvgPanZoomDemo' },
     // { key: 'component', filepath: 'example/NavUiTest' },
     // { key: 'component', filepath: 'example/RedoubtDemo3D' },

@@ -12,7 +12,7 @@ import useUpdate from "../hooks/use-update";
 import { geomorphPngPath } from "./geomorph.model";
 
 /** @param {NPC.LightsProps} props */
-export default function Lights(props) {
+export default function SvgLights(props) {
 
   const update = useUpdate();
 
