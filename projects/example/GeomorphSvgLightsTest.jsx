@@ -8,7 +8,7 @@ import useMuState from "../hooks/use-mu-state";
 import useGeomorphJson from "../hooks/use-geomorph-json";
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
-import Doors from "../geomorph/Doors";
+import SvgDoors from "../geomorph/SvgDoors";
 import SvgLights from "../geomorph/SvgLights";
 import AugImage from "../geomorph/AugImage";
 
@@ -47,7 +47,7 @@ export default function GeomorphSvgLightsTest(props) {
             darken={0.95}
           />
           <SvgLights json={gm} defs={state.lightDefs} wire={state.wire} />
-          <Doors json={gm} wire={state.wire} />
+          <SvgDoors json={gm} wire={state.wire} />
         </>}
     </PanZoom>
   );

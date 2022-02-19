@@ -16,7 +16,7 @@ export default function CssPanZoom(props) {
     return {
       root: /** @type {HTMLDivElement} */ ({}),
       parent: /** @type {HTMLDivElement} */ ({}),
-      opts: { minScale: 0.2, maxScale: 10, step: 0.1 },
+      opts: { minScale: 0.2, maxScale: 8, step: 0.1 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       isPanning: false,
       x: 0, y: 0, scale: 1,

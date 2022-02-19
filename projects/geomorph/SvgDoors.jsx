@@ -4,11 +4,14 @@ import { Subject } from "rxjs";
 import classNames from "classnames";
 import useMuState from "../hooks/use-mu-state";
 
+// NOTE tried <foreignObject> with divs, but Safari/IOS issue
+// https://bugs.webkit.org/show_bug.cgi?id=23113
+
 /**
  * Doors for a specific geomorph.
  * @param {NPC.DoorsProps} props
  */
-export default function Doors(props) {
+export default function SvgDoors(props) {
   const { json } = props;
 
   const state = useMuState(() => {
@@ -21,7 +24,7 @@ export default function Doors(props) {
       open: /** @type {Record<Number, boolean>} */ ({}),
       /** @param {React.MouseEvent} e */
       onClick(e) {
-        const rect = /** @type {HTMLDivElement} */ (e.target);
+        const rect = /** @type {SVGRectElement} */ (e.target);
         const index = Number(rect.getAttribute('data-index'));
         const nowOpen = rect.classList.toggle('open');
         state.open[index] = nowOpen;
@@ -34,34 +37,33 @@ export default function Doors(props) {
   });
 
   return (
-    <div
+    <g
       className={rootCss}
       onPointerUp={state.onClick}
     >
       {json.doors.map(({ rect, angle }, i) =>
-        <div
+        <rect
           key={i}
           data-index={i}
           className={classNames("door", { open: state.open[i] })}
+          x={rect.x}
+          y={rect.y}
+          width={rect.width}
+          height={rect.height}
           style={{
-            left: rect.x - json.pngRect.x,
-            top: rect.y - json.pngRect.y,
-            width: rect.width,
-            height: rect.height,
             transform: `rotate(${angle}rad)`,
-            transformOrigin: 'top left',
+            transformOrigin: `${rect.x}px ${rect.y}px`,
           }}
         />
       )}
-    </div>
+    </g>
   );
 }
 
 const rootCss = css`
-  div.door {
-    position: absolute;
+  rect.door {
     cursor: pointer;
-    background: #000;
+    fill: #000;
     opacity: 1;
     transition: opacity 100ms linear;
     &.open {
