@@ -1,7 +1,7 @@
 ## Objective
 
 We are going to create a **video game**.
-_Unusually_, we'll 
+Unusually, we'll 
 (a) describe the process in detail,
 (b) use standard web development techniques,
 and (c) develop rich Game AI.
@@ -15,11 +15,9 @@ Where does it take place?
 
 <aside>
 
-  _The Night Land_ (1912) was written by William Hope Hodgson,
-  who died in World War I.
+  _The Night Land_ (1912) was written by William Hope Hodgson.
   His _Last Redoubt_ had 1,320 cities and the same number of floors.
-  Keeping the number of cities the same, we reinterpret its architecture.
-  There are 125 + 64 = 189 floors, built from interconnected space vehicles.
+  We instead assume these cities span 125 + 64 = 189 floors, and are built from ancient interconnected space vehicles.
 
 </aside>
 
@@ -34,8 +32,9 @@ Where does it take place?
 ></div>
 
 How will you make it?
-> Importantly, this game will be made using everyday web development techniques.
-> Then we won't use WebGL, physics, walk-cycles etc.
+> Importantly, we will make this game using everyday web development techniques.
+> We won't use WebGL, a physics engine, walk-cycles etc.
+> The strategies we employ are relevant to a much wider audience i.e. those who build web applications.
 
 What distinguishes it?
 > The world is awash with beautifully-crafted yet shallow games.
@@ -60,7 +59,7 @@ myFunc() {
   show="2"
   tabs="[
     { key: 'terminal', filepath: 'nav-demo-1', weight: 30 },
-    { key: 'component', filepath: 'example/NavTest', weight: 70 },
+    { key: 'component', filepath: 'example/GeomorphCssLightsTest', weight: 70 },
   ]"
 ></div>
 
