@@ -12,7 +12,7 @@ import useGeomorphJson from "../hooks/use-geomorph-json";
 
 export default withSize({ refreshMode: 'debounce' })(
   /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; size: { width?: number } }} props */
-  function Css3d(props) {
+  function Css3dForeignObject(props) {
 
     const { data: gm } = useGeomorphJson(props.layoutKey);
 
