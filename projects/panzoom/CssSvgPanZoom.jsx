@@ -6,7 +6,7 @@ import useUpdate from '../hooks/use-update';
 import { getSvgMid, getSvgPos, isSvgEvent, projectSvgEvt } from '../service/dom';
 
 /** @param {React.PropsWithChildren<Props>} props */
-export default function CssPanZoom(props) {
+export default function CssSvgPanZoom(props) {
 
   const [measureRef, bounds] = useMeasure({ debounce: 30, scroll: false });
   const update = useUpdate();
@@ -133,7 +133,7 @@ export default function CssPanZoom(props) {
   return (
     <svg
       ref={state.rootRef}
-      className={rootCss}
+      className={rootCss(props)}
       preserveAspectRatio="xMinYMin slice"
     >
       <defs>
@@ -148,7 +148,7 @@ export default function CssPanZoom(props) {
           <path
             d={`M ${gridDim * 2} 0 L 0 0 0 ${gridDim * 2}`}
             fill="none"
-            stroke="rgba(0, 0, 0, 0.9)"
+            stroke={props.dark ? "rgba(200,200,200,0.4)" : 'rgba(0,0,0,0.5)'}
             strokeWidth="0.2"
           />
         </pattern>
@@ -161,7 +161,10 @@ export default function CssPanZoom(props) {
           height={`${100 / scale}%`}
           fill={`url(#${state.gridId})`}
         />
-        <g transform={`translate(${-min.x}, ${-min.y})`}>
+        <g
+          transform={`translate(${-min.x}, ${-min.y})`}
+          className={props.className}
+        >
           <state.Context.Provider value={state.ctxt}>
             {props.children}
           </state.Context.Provider>
@@ -171,10 +174,11 @@ export default function CssPanZoom(props) {
   ); 
 }
 
-const rootCss = css`
+/** @param {Props} props */
+const rootCss = (props) => css`
   width: 100%;
   height: 100%;
-  background: white;
+  background-color: ${props.dark ? '#000' : 'none'};
 
   rect.grid {
     pointer-events: none;
@@ -183,6 +187,8 @@ const rootCss = css`
 
 /**
  * @typedef Props @type {object}
+ * @property {string} [className]
+ * @property {boolean} [dark] Default false
  */
 
 /**
