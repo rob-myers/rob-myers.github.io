@@ -52,7 +52,7 @@ export default function Lights(props) {
       },
     };
   });
-  
+
   React.useEffect(() => {
     state.computeLights(props);
     const subs = props.wire.subscribe(msg => {

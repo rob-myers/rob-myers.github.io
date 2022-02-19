@@ -14,6 +14,7 @@ import AugImage from "../geomorph/AugImage";
 
 /**
  * TODO
+ * - prob rename as SvgLightsTest
  * - new simpler version of <NPCs>
  */
 
@@ -49,7 +50,7 @@ export default function NavTest(props) {
             {...gm.pngRect}
             className="geomorph"
             href={geomorphPngPath(layoutKey)}
-            darken={0.95}
+            darken={0.85}
           />
           <Lights json={gm} defs={state.lightDefs} wire={state.wire} />
           <Doors json={gm} wire={state.wire} />
