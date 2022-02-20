@@ -35,11 +35,14 @@ export default function CanvasLights(props) {
       /** @param {NPC.LightsProps} props */
       updateLights({ json, defs }) {
         const ctxt = state.ctxt;
+        ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
 
-        // IOS does not support, but there is a polyfill
-        // https://github.com/davidenke/context-filter-polyfill
-        ctxt.filter = 'brightness(50%)';
-        ctxt.drawImage(json.image, 0, 0);
+        /**
+         * Draw image so top left at world (0, 0), but with x2 width/height
+         * by construction of the image. We undo this scale via CSS below.
+         */
+        // ctxt.setTransform(1, 0, 0, 1, 2 * json.pngRect.x, 2 * json.pngRect.y);
+        // ctxt.drawImage(json.image, 0, 0);
 
         // Compute lights
         const polys = json.walls // Include doors which are not explicitly open
@@ -49,17 +52,34 @@ export default function CanvasLights(props) {
         // TODO filter defs so in json.d.hullOutline?
         state.lights = defs.map(({ def: [position, distance, intensity, maskId] }, i) => {
           const poly = geom.lightPolygon(position, distance, triangs);
-          return { key: 'light', index: i, intensity, position, poly };
+          return { key: 'light', index: i, intensity, position, poly, radius: distance };
         });
 
         // TODO add radial fill lights
-        ctxt.fillStyle = 'red';
-        ctxt.scale(2, 2);
-        ctxt.translate(-json.pngRect.x, -json.pngRect.y);
-        state.lights.forEach(({ poly }) => {
+        // ctxt.scale(2, 2);
+        // ctxt.translate(-json.pngRect.x, -json.pngRect.y);
+        // ctxt.globalCompositeOperation = 'multiply';
+
+        state.lights.forEach(({ poly, position, radius }) => {
+          const pattern = /** @type {CanvasPattern} */ (ctxt.createPattern(json.image, 'no-repeat'));
+          pattern.setTransform(new DOMMatrix(`scale(0.5) translate(${2 * json.pngRect.x}px, ${2 * json.pngRect.y}px)`))
+          ctxt.fillStyle = pattern;
+          ctxt.setTransform(2, 0, 0, 2, 0, 0); // Must scale up
           fillPolygon(state.ctxt, [poly]);
+
+          // const gradient = ctxt.createRadialGradient(
+          //   position.x, position.y, 0,
+          //   position.x, position.y, radius,
+          // );
+          // gradient.addColorStop(0, 'white');
+          // gradient.addColorStop(0.9, 'rgba(255,255,255,0)');
+          // ctxt.fillStyle = gradient;
+          // fillPolygon(state.ctxt, [poly]);
+
+          ctxt.setTransform(1, 0, 0, 1, 0, 0);
         });
-        ctxt.setTransform(1, 0, 0, 1, 0, 0);
+
+        // ctxt.globalCompositeOperation = 'source-over';
       },
     };
   });

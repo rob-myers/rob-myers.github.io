@@ -44,8 +44,8 @@ export default function Doors(props) {
           data-index={i}
           className={classNames("door", { open: state.open[i] })}
           style={{
-            left: rect.x - json.pngRect.x,
-            top: rect.y - json.pngRect.y,
+            left: rect.x,
+            top: rect.y,
             width: rect.width,
             height: rect.height,
             transform: `rotate(${angle}rad)`,
