@@ -53,8 +53,8 @@ const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
   img {
-    filter: invert(100%) contrast(200%) brightness(10%) ;
-    /* filter: invert(100%) brightness(30%); */
+    /* filter: invert(100%)  brightness(10%) ; */
+    filter: contrast(200%) invert(100%);
     position: absolute;
   }
   canvas {

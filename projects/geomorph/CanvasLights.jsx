@@ -5,7 +5,7 @@
  */
 
 import React from "react";
-import { fillPolygon } from "../service/dom";
+import { fillPolygon, strokePolygon } from "../service/dom";
 import { Poly, Vect } from "../geom";
 import { geom } from "../service/geom";
 import useMuState from "../hooks/use-mu-state";
@@ -35,6 +35,7 @@ export default function CanvasLights(props) {
       /** @param {NPC.LightsProps} props */
       updateLights({ json, defs }) {
         const ctxt = state.ctxt;
+        ctxt.globalCompositeOperation = 'source-over';
         ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
 
         /**
@@ -51,19 +52,20 @@ export default function CanvasLights(props) {
         const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
         // TODO filter defs so in json.d.hullOutline?
         state.lights = defs.map(({ def: [position, distance, intensity, maskId] }, i) => {
-          const poly = geom.lightPolygon(position, distance, triangs);
-          return { key: 'light', index: i, intensity, position, poly, radius: distance };
+          const d = 1000;
+          const poly = geom.lightPolygon(position, d, triangs);
+          return { key: 'light', index: i, intensity, position, poly, radius: d };
         });
 
         state.lights.forEach(({ poly, position, radius, intensity }) => {
           ctxt.setTransform(1, 0, 0, 1, 0, 0);
           ctxt.filter = 'none';
-          ctxt.globalCompositeOperation = 'source-over';
 
           ctxt.setTransform(2, 0, 0, 2, 0, 0); // Must scale up
           const gradient = ctxt.createRadialGradient(
             position.x, position.y, 0,
-            position.x, position.y, radius,
+            // position.x, position.y, radius,
+            position.x, position.y, 300 * intensity, // TEST
           );
           gradient.addColorStop(0, `rgba(0, 0, 0, ${intensity})`);
           gradient.addColorStop(0.56, `rgba(0, 0, 0, ${intensity / 2})`);
@@ -75,6 +77,15 @@ export default function CanvasLights(props) {
         ctxt.globalCompositeOperation = 'source-in';
         ctxt.setTransform(1, 0, 0, 1, 2 * json.pngRect.x, 2 * json.pngRect.y);
         ctxt.drawImage(json.image, 0, 0);
+
+        // TEST
+        ctxt.globalCompositeOperation = 'source-over';
+        ctxt.setTransform(2, 0, 0, 2, 0, 0)
+        state.lights.forEach(({ poly }) => {
+          ctxt.fillStyle = 'none';
+          ctxt.strokeStyle = '#500';
+          strokePolygon(state.ctxt, [poly]);
+        });
       },
     };
   });
