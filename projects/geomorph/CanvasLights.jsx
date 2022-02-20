@@ -55,31 +55,26 @@ export default function CanvasLights(props) {
           return { key: 'light', index: i, intensity, position, poly, radius: distance };
         });
 
-        // TODO add radial fill lights
-        // ctxt.scale(2, 2);
-        // ctxt.translate(-json.pngRect.x, -json.pngRect.y);
-        // ctxt.globalCompositeOperation = 'multiply';
-
-        state.lights.forEach(({ poly, position, radius }) => {
-          const pattern = /** @type {CanvasPattern} */ (ctxt.createPattern(json.image, 'no-repeat'));
-          pattern.setTransform(new DOMMatrix(`scale(0.5) translate(${2 * json.pngRect.x}px, ${2 * json.pngRect.y}px)`))
-          ctxt.fillStyle = pattern;
-          ctxt.setTransform(2, 0, 0, 2, 0, 0); // Must scale up
-          fillPolygon(state.ctxt, [poly]);
-
-          // const gradient = ctxt.createRadialGradient(
-          //   position.x, position.y, 0,
-          //   position.x, position.y, radius,
-          // );
-          // gradient.addColorStop(0, 'white');
-          // gradient.addColorStop(0.9, 'rgba(255,255,255,0)');
-          // ctxt.fillStyle = gradient;
-          // fillPolygon(state.ctxt, [poly]);
-
+        state.lights.forEach(({ poly, position, radius, intensity }) => {
           ctxt.setTransform(1, 0, 0, 1, 0, 0);
+          ctxt.filter = 'none';
+          ctxt.globalCompositeOperation = 'source-over';
+
+          ctxt.setTransform(2, 0, 0, 2, 0, 0); // Must scale up
+          const gradient = ctxt.createRadialGradient(
+            position.x, position.y, 0,
+            position.x, position.y, radius,
+          );
+          gradient.addColorStop(0, `rgba(0, 0, 0, ${intensity})`);
+          gradient.addColorStop(0.56, `rgba(0, 0, 0, ${intensity / 2})`);
+          gradient.addColorStop(0.86, '#00000000');
+          ctxt.fillStyle = gradient;
+          fillPolygon(state.ctxt, [poly]);
         });
 
-        // ctxt.globalCompositeOperation = 'source-over';
+        ctxt.globalCompositeOperation = 'source-in';
+        ctxt.setTransform(1, 0, 0, 1, 2 * json.pngRect.x, 2 * json.pngRect.y);
+        ctxt.drawImage(json.image, 0, 0);
       },
     };
   });

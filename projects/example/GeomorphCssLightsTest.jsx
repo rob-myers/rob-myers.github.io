@@ -17,10 +17,10 @@ export default function GeomorphCssLightsTest(props) {
   const state = useMuState(() => {
     /** @type {NPC.LightDef[]} */
     const lightDefs = [
-      { key: 'light-def', def: [new Vect(205, 385), 170, 1, 0] },
-      { key: 'light-def', def: [new Vect(620, 430), 250, 0.8, 0] },
-      { key: 'light-def', def: [new Vect(420, 400), 250, 0.4, 1] },
-      { key: 'light-def', def: [new Vect(620, 315), 250, 1, 1] },
+      { key: 'light-def', def: [new Vect(205, 385), 130, 0.7, 0] },
+      { key: 'light-def', def: [new Vect(740, 430), 80, 0.6, 0] },
+      { key: 'light-def', def: [new Vect(420, 400), 80, 0.4, 1] },
+      { key: 'light-def', def: [new Vect(600, 315), 250, 1, 1] },
     ];
     const wire = /** @type {Subject<NPC.NavMessage>} */ (new Subject);
     return { lightDefs, wire }
@@ -31,11 +31,16 @@ export default function GeomorphCssLightsTest(props) {
   return (
     <CssPanZoom dark className={rootCss}>
       {json && <>
-        {/* <img
-          {...json.pngRect}
+        <img
           src={geomorphPngPath(layoutKey)}
           draggable={false}
-        /> */}
+          style={{
+            left: json.pngRect.x,
+            top: json.pngRect.y,
+            width: json.pngRect.width,
+            height: json.pngRect.height,
+          }}
+        />
         <CanvasLights json={json} defs={state.lightDefs} wire={state.wire} />
         <Doors json={json} wire={state.wire} />
       </>}
@@ -47,7 +52,12 @@ export default function GeomorphCssLightsTest(props) {
 const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
-  /* img {
-    filter: brightness(10%);
-  } */
+  img {
+    filter: invert(100%) contrast(200%) brightness(10%) ;
+    /* filter: invert(100%) brightness(30%); */
+    position: absolute;
+  }
+  canvas {
+    position: absolute;
+  }
 `;
