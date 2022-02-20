@@ -34,6 +34,14 @@ declare namespace Geomorph {
     walls: Geom.GeoJsonPolygon[];
   }
 
+  export interface GeomorphData extends GeomorphJson {
+    image: HTMLImageElement;
+    /** Derived computations (?) */
+    d: {
+      navPoly: Geom.Poly[];
+    };
+  }
+
   /** Generated via `yarn svg-meta`. */
   export type SvgJson = Record<string, ParsedSymbol<Geom.GeoJsonPolygon>>;
 

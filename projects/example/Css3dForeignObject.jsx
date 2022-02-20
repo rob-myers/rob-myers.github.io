@@ -8,13 +8,13 @@ import { Poly, Vect } from "../geom";
 import { fillPolygon, getSvgPos } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
 import { geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
-import useGeomorphJson from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-json";
 
 export default withSize({ refreshMode: 'debounce' })(
   /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; size: { width?: number } }} props */
   function Css3dForeignObject(props) {
 
-    const { data: gm } = useGeomorphJson(props.layoutKey);
+    const { data: gm } = useGeomorphData(props.layoutKey);
 
     const [state] = React.useState(() => ({
       root3d: /** @type {HTMLDivElement} */ ({}),

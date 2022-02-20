@@ -2,7 +2,7 @@ import { css } from "goober";
 import { Vect } from "projects/geom";
 import { Subject } from "rxjs";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
-import useGeomorphJson from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-json";
 import useMuState from "../hooks/use-mu-state";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import CanvasLights from "../geomorph/CanvasLights";
@@ -12,7 +12,7 @@ import Doors from "../geomorph/Doors";
 /** @param {{ disabled?: boolean }} props */
 export default function GeomorphCssLightsTest(props) {
 
-  const { data: json } = useGeomorphJson(layoutKey);
+  const { data: json } = useGeomorphData(layoutKey);
 
   const state = useMuState(() => {
     /** @type {NPC.LightDef[]} */

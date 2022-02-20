@@ -9,7 +9,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../npc/DraggableNode";
-import useGeomorphJson from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
 
 // TODO
@@ -21,7 +21,7 @@ export default function NavStringPull(props) {
   /** @type {Geomorph.LayoutKey} */
   const layoutKey = 'g-301--bridge';
   const zoneKey = layoutKey;
-  const { data: gm } = useGeomorphJson(layoutKey);
+  const { data: gm } = useGeomorphData(layoutKey);
   const { data: pf } = usePathfinding(zoneKey, gm?.navDecomp, props.disabled);
 
   const [state] = React.useState(() => ({

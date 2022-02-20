@@ -5,7 +5,7 @@ import { equals } from "../service/generic";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Vect } from "../geom/vect";
 import useMuState from "../hooks/use-mu-state";
-import useGeomorphJson from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-json";
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import SvgDoors from "../geomorph/SvgDoors";
@@ -15,7 +15,7 @@ import AugImage from "../geomorph/AugImage";
 /** @param {{ disabled?: boolean }} props */
 export default function GeomorphSvgLightsTest(props) {
 
-  const { data: gm } = useGeomorphJson(layoutKey);
+  const { data: gm } = useGeomorphData(layoutKey);
 
   const state = useMuState(() => {
     /** @type {NPC.LightDef[]} */

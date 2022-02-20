@@ -1,6 +1,5 @@
 import React, { useMemo } from "react";
 import { css } from "goober";
-import { useQuery } from "react-query";
 import classNames from "classnames";
 
 import { Poly, Vect } from "../geom";
@@ -9,12 +8,12 @@ import { geom } from "../service/geom";
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../npc/DraggableNode";
-import useGeomorphJson from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-json";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
 export default function VisibilityDemo(props) {
 
-  const { data } = useGeomorphJson(props.layoutKey);
+  const { data } = useGeomorphData(props.layoutKey);
 
   const [init] = React.useState(() => ({
     lightA: new Vect(205, 385),

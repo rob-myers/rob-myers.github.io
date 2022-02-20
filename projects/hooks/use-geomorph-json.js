@@ -1,24 +1,38 @@
 import { useQuery } from "react-query";
 import { Poly } from "../geom/poly";
-import { geomorphJsonPath } from "../geomorph/geomorph.model";
+import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 
 /**
  * @param {Geomorph.LayoutKey} layoutKey 
  */
-export default function useGeomorphJson(layoutKey) {
+export default function useGeomorphData(layoutKey) {
   return useQuery(geomorphJsonPath(layoutKey), async () => {
-    /** @type {Geomorph.GeomorphJson} */
-    const json = (await (fetch(geomorphJsonPath(layoutKey)).then(x => x.json())));
-    return {
+    
+    /** @type {[Geomorph.GeomorphJson, HTMLImageElement]} */
+   const [json, image] = await Promise.all([
+      fetch(geomorphJsonPath(layoutKey))
+        .then(x => x.json()),
+      new Promise((res, rej) => {
+        const image = new Image;
+        image.onload = () => res(image);
+        image.onerror = rej;
+        image.src = geomorphPngPath(layoutKey);
+      }),
+    ]);
+
+    /** @type {Geomorph.GeomorphData} */
+    const output = {
       ...json,
+      image,
       /** Derived computations */
       d: {
         navPoly: json.navPoly.map(Poly.from),
       },
     };
+
+    return output;
   }, {
     keepPreviousData: true,
     cacheTime: Infinity,
   });
 }
-

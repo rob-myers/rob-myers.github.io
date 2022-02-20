@@ -3,13 +3,13 @@ import { css } from "goober";
 import { gridBounds, initViewBox } from "../example/defaults";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
-import useGeomorphJson from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-json";
 
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
 export default function DoorsDemo(props) {
 
-  const { data } = useGeomorphJson(props.layoutKey);
+  const { data } = useGeomorphData(props.layoutKey);
 
   return (
     <PanZoom

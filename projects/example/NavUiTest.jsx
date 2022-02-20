@@ -6,7 +6,7 @@ import { Poly, Rect, Vect } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
-import useGeomorphJson from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-json";
 import usePathfinding from "../hooks/use-pathfinding";
 import NPCsTest from "../npc/NPCWithUis";
 import Messages from "../npc/Messages";
@@ -38,7 +38,7 @@ export default function NavCollide(props) {
     testLight: new Vect(205, 385),
   }));
 
-  const { data: gm } = useGeomorphJson(layoutKey);
+  const { data: gm } = useGeomorphData(layoutKey);
   const { data: pf } = usePathfinding(layoutKey, gm?.navDecomp, props.disabled);
 
   React.useEffect(() => {
