@@ -19,7 +19,7 @@ export default function SvgLights(props) {
   const state = useMuState(() => {
     return {
       key: `Lights_${props.json.id}`, // determined by geomorph
-      lights: /** @type {NPC.Light[]} */ ([]),
+      lights: /** @type {NPC.SvgLight[]} */ ([]),
       doors: /** @type {Record<number, 'open' | 'closed'>} */ ({}),
       /** @param {NPC.LightsProps} props */
       computeLights({ json, defs }) {

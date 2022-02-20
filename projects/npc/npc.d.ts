@@ -34,6 +34,15 @@ declare namespace NPC {
     /** Original index in light defs */
     index: number;
     intensity: number;
+    position: Vect;
+    poly: Poly;
+  }
+
+  export interface SvgLight {
+    key: 'light';
+    /** Original index in light defs */
+    index: number;
+    intensity: number;
     maskId: 0 | 1;
     position: Vect;
     poly: Poly;

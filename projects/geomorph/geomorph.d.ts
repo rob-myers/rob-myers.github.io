@@ -39,6 +39,7 @@ declare namespace Geomorph {
     /** Derived computations (?) */
     d: {
       navPoly: Geom.Poly[];
+      hullOutine: Geom.Poly;
     };
   }
 
