@@ -3,6 +3,7 @@
  *   - `yarn render-layout 301`
  *   - `yarn render-layout 301 --debug`
  *   - `yarn render-layout 101 --debug --scale=4`
+ *   - `yarn render-layout 301 --scale=1 --suffix=x1`
  * - Outputs a PNG and JSON in public/geomorph.
  * - Debug option creates a .debug.png with all features.
  */
@@ -30,10 +31,12 @@ if (!layoutDef) {
 }
 
 const opts = getOpts(process.argv);
-const [debug, scale, defaultScale] = [opts.debug, opts.scale, 2];
+const [debug, scale, suffix, defaultScale] = [opts.debug, opts.scale, opts.suffix, 2];
 const publicDir = path.resolve(__dirname, '../../public');
 const outputDir = path.resolve(publicDir, 'geomorph');
-const outputPath =  path.resolve(outputDir, `${layoutDef.key}${debug ? '.debug.png' : '.png'}`);
+const outputPath =  path.resolve(outputDir, `${layoutDef.key}${
+  debug ? '.debug' : suffix ? `.${suffix}` : ''
+}.png`);
 
 (async function run() {
   const { layout, canvas } = await renderLayout(layoutDef);
