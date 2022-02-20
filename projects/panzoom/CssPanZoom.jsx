@@ -1,6 +1,8 @@
 /**
  * Based on @panzoom/panzoom
- * TODO clean up if possible
+ * TODO
+ * - add grid
+ * - clean
  */
 import React from 'react';
 import classNames from "classnames";
@@ -232,7 +234,7 @@ const rootCss = (props) => css`
   /** This is important for mobile to prevent scrolling while panning */
   touch-action: none;
   cursor: auto;
-  background-color: ${props.dark ? '#222' : '#fff'};
+  background-color: ${props.dark ? '#000' : '#fff'};
 
   .panzoom-root {
     width: 100%;
