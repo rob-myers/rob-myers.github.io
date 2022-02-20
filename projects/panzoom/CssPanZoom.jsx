@@ -220,10 +220,13 @@ export default function CssPanZoom(props) {
         className={classNames("panzoom-root", props.className)}
       >
         {props.children}
+        <div className="grid" />
       </div>
     </div>
   )
 }
+
+const gridExtent = 2000;
 
 /** @param {Props} props */
 const rootCss = (props) => css`
@@ -234,14 +237,28 @@ const rootCss = (props) => css`
   /** This is important for mobile to prevent scrolling while panning */
   touch-action: none;
   cursor: auto;
-  background-color: ${props.dark ? '#000' : '#fff'};
 
+  background-color: ${props.dark ? '#000' : '#fff'};
+  
   .panzoom-root {
     width: 100%;
     height: 100%;
     user-select: none;
     touch-action: none;
     transform-origin: 50% 50%;
+    
+    .grid {
+      position: absolute;
+      pointer-events: none;
+      left: ${-gridExtent}px;
+      top: ${-gridExtent}px;
+      width: ${2 * gridExtent}px;
+      height: ${2 * gridExtent}px;
+      background-size: 10px 10px;
+      background-image:
+        linear-gradient(to right, rgba(100, 100, 100, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(100, 100, 100, 0.15) 1px, transparent 1px);
+    }
   }
 `;
 
