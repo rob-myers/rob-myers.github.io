@@ -1,7 +1,8 @@
 /**
  * TODO
- * - <canvas> with drawImage of geomorph
- * - draw each light on top of it
+ * - ✅ tried halving image but no great speed-up
+ * - speed up by keeping lights in separate canvas,
+ *   and only redrawing "lights close to opened door"
  */
 
 import React from "react";
@@ -28,8 +29,8 @@ export default function CanvasLights(props) {
           state.canvas.width = 2 * props.json.pngRect.width;
           state.canvas.height = 2 * props.json.pngRect.height;
           state.ctxt = /** @type {*} */ (state.canvas.getContext('2d'));
+          // state.ctxt.imageSmoothingEnabled = false;
           state.updateLights(props);
-
         }
       },
       /** @param {NPC.LightsProps} props */
@@ -78,14 +79,14 @@ export default function CanvasLights(props) {
         ctxt.setTransform(1, 0, 0, 1, 2 * json.pngRect.x, 2 * json.pngRect.y);
         ctxt.drawImage(json.image, 0, 0);
 
-        // TEST
-        ctxt.globalCompositeOperation = 'source-over';
-        ctxt.setTransform(2, 0, 0, 2, 0, 0)
-        state.lights.forEach(({ poly }) => {
-          ctxt.fillStyle = 'none';
-          ctxt.strokeStyle = '#500';
-          strokePolygon(state.ctxt, [poly]);
-        });
+        // // TEST
+        // ctxt.globalCompositeOperation = 'source-over';
+        // ctxt.setTransform(2, 0, 0, 2, 0, 0)
+        // state.lights.forEach(({ poly }) => {
+        //   ctxt.fillStyle = 'none';
+        //   ctxt.strokeStyle = '#500';
+        //   strokePolygon(state.ctxt, [poly]);
+        // });
       },
     };
   });

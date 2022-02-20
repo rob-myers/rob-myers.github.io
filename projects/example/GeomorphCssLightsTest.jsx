@@ -19,7 +19,7 @@ export default function GeomorphCssLightsTest(props) {
     const lightDefs = [
       { key: 'light-def', def: [new Vect(205, 385), 130, 0.7, 0] },
       { key: 'light-def', def: [new Vect(740, 430), 80, 0.6, 0] },
-      { key: 'light-def', def: [new Vect(420, 400), 80, 0.4, 1] },
+      { key: 'light-def', def: [new Vect(420, 400), 80, 0.8, 1] },
       { key: 'light-def', def: [new Vect(600, 315), 250, 1, 1] },
     ];
     const wire = /** @type {Subject<NPC.NavMessage>} */ (new Subject);
@@ -53,8 +53,7 @@ const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
   img {
-    /* filter: invert(100%)  brightness(10%) ; */
-    filter: contrast(200%) invert(100%);
+    filter: contrast(200%) invert(100%) brightness(30%);
     position: absolute;
   }
   canvas {
