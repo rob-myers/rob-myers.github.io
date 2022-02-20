@@ -6,7 +6,7 @@ import { Poly, Rect, Vect } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
-import useGeomorphData from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
 import NPCsTest from "../npc/NPCWithUis";
 import Messages from "../npc/Messages";

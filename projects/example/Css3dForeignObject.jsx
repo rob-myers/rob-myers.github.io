@@ -8,7 +8,7 @@ import { Poly, Vect } from "../geom";
 import { fillPolygon, getSvgPos } from "../service/dom";
 import PanZoom from "../panzoom/PanZoom";
 import { geomorphPngPath, labelMeta } from "../geomorph/geomorph.model";
-import useGeomorphData from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-data";
 
 export default withSize({ refreshMode: 'debounce' })(
   /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; size: { width?: number } }} props */

@@ -5,7 +5,7 @@ import { equals } from "../service/generic";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Vect } from "../geom/vect";
 import useMuState from "../hooks/use-mu-state";
-import useGeomorphData from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-data";
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 import SvgDoors from "../geomorph/SvgDoors";

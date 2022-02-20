@@ -9,7 +9,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "../npc/DraggableNode";
-import useGeomorphData from "../hooks/use-geomorph-json";
+import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
 
 // TODO
