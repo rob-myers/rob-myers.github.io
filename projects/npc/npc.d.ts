@@ -30,6 +30,7 @@ declare namespace NPC {
     def: [Geom.Vect, number, number, 0 | 1];
   }
 
+  /** TODO remove */
   export interface Light {
     key: 'light';
     /** Original index in light defs */
@@ -40,6 +41,7 @@ declare namespace NPC {
     radius: number;
   }
 
+  /** TODO remove */
   export interface SvgLight {
     key: 'light';
     /** Original index in light defs */

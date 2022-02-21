@@ -213,8 +213,18 @@ declare namespace Geomorph {
 
   export interface LightDef {
     key: 'light-def';
-    /** [position, distance ≥ 0, intensity in [0,1], layerId] */
+    /** [position, radius ≥ 0, intensity in [0,1], layerId] */
     def: [Geom.VectJson, number, number, 0 | 1];
+  }
+
+  export interface Light {
+    key: 'light';
+    /** Original index in light defs */
+    index: number;
+    position: Vect;
+    poly: Poly;
+    intensity: number;
+    radius: number;
   }
 
 }
