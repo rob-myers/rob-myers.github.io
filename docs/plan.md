@@ -42,31 +42,26 @@ __Aim towards website release__.
 
 - Write text
 
-## "Come Let's Play" as motivator
-  - play in: create specification via user interaction
-  - play out: run system by non-trivially conforming to all specifications
-  - but **we do not wish to introduce graphical formalism** for live sequence charts
-  - instead, we'll keep it in the background as a motivation for how we'll use the shell
+### Ideas
 
+- > remove doors so can precompute lights
+  > then can fade in when appropriate, and simplifies pathfinding
 ## TODO (unsorted)
 
-- after testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
-- ✅ Get focal-point zooming example from @panzoom/panzoom working locally
-  - https://timmywil.com/panzoom/demo/
-- ✅ Rewrite our own simplified version
-- ✅ light intensity is varying as doors are opened
+- prerender geomorph lights
+  - ✅ create `render-light` script which draws lights as filled red polys
+  - migrate composite approach
 
-- nav demo + tty with `look`
-  - ✅ move `NavCollide` into objective
-  - ✅ `NavCollide` -> `NavTestUi`
-    - ✅ cleaner obstacles
-    - ✅ dynamic lighting test
-      - may need efficient version with precomputed shaded areas 
-  - Create new `NavTest`
-    - probably with new `NPCs`
-    - user can only moves npcs via terminal e.g. `click`...
-    - maybe consider shadows and door shadows (doors can fade)
-    - can pause it
+- Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
+- Bug: `Tabs` top is often fading in
+
+- After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
+
+- Create new `NavTest`
+  - probably with new `NPCs`
+  - user can only moves npcs via terminal e.g. `click`...
+  - maybe consider shadows and door shadows (doors can fade)
+  - can pause it
   - can write script manually or continually `look`ing
   - can see: npcs, meta points
 
@@ -122,6 +117,16 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Get focal-point zooming example from @panzoom/panzoom working locally
+  - https://timmywil.com/panzoom/demo/
+- ✅ Rewrite our own simplified version
+- ✅ light intensity is varying as doors are opened
+- nav demo + tty with `look`
+  - ✅ move `NavCollide` into objective
+  - ✅ `NavCollide` -> `NavTestUi`
+    - ✅ cleaner obstacles
+    - ✅ dynamic lighting test
+      - may need efficient version with precomputed shaded areas 
 - ✅ `poly` tag needs separate wall or obstacle
 - ✅ fix tty mobile issue with deleting
 - ✅ Tabs can have different height in mobile viewport

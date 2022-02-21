@@ -58,6 +58,7 @@ const layoutDefs = {
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 600, 1080] },
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 960, 1080] },
     ],
+    lights: [],
   },
   'g-301--bridge': {
     key: 'g-301--bridge',
@@ -85,6 +86,12 @@ const layoutDefs = {
       { symbol: 'console--031--1x1.2', transform: [1, 0, 0, 1, 840, 60] },
       { symbol: 'misc-stellar-cartography--023--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     ],
+    lights: [
+      { key: 'light-def', def: [{ x: 205, y: 385 }, 130, 0.7, 0] },
+      { key: 'light-def', def: [{ x: 740, y: 430 }, 80, 0.6, 0] },
+      { key: 'light-def', def: [{ x: 420, y: 400 }, 80, 0.8, 1] },
+      { key: 'light-def', def: [{ x: 600, y: 315 }, 250, 1, 1] },
+    ],
   },
   'g-302--xboat-repair-bay': {
     key: 'g-302--xboat-repair-bay',
@@ -103,6 +110,7 @@ const layoutDefs = {
       { symbol: 'shop--027--0.4x1.6', transform: [-1, 0, 0, 1, 900, 480] },
       { symbol: 'sensors--003--1x1.4', transform: [...getAngleMatrix(45), 90 + 5, -60 + 1] },
     ],
+    lights: [],
   },
   "g-303--passenger-deck": {
     key: 'g-303--passenger-deck',
@@ -132,6 +140,7 @@ const layoutDefs = {
       { symbol: 'machinery--020--1x1.6', transform: [0, -1, -1, 0, 910, 470] },
       { symbol: 'office--089--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
     ],
+    lights: [],
   },
 };
 

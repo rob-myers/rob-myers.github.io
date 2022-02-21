@@ -23,6 +23,7 @@ declare namespace NPC {
     index: number;
   }
 
+  /** TODO remove (replaced by Geomorph.LightDef) */
   export interface LightDef {
     key: 'light-def';
     /** [position, distance ≥ 0, intensity in [0,1], maskId] */

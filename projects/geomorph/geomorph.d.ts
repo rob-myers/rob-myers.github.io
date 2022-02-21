@@ -131,6 +131,7 @@ declare namespace Geomorph {
     key: LayoutKey;
     id: number;
     items: LayoutDefItem[];
+    lights: LightDef[];
   }
 
   export interface LayoutDefItem {
@@ -208,6 +209,12 @@ declare namespace Geomorph {
     poly: GeoJsonPolygon;
     seg: [Geom.VectJson, Geom.VectJson];
     tags: string[];
+  }
+
+  export interface LightDef {
+    key: 'light-def';
+    /** [position, distance ≥ 0, intensity in [0,1], layerId] */
+    def: [Geom.VectJson, number, number, 0 | 1];
   }
 
 }
