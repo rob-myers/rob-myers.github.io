@@ -5,7 +5,6 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
 import CssPanZoom from "../panzoom/CssPanZoom";
-import CanvasLights from "../geomorph/CanvasLights";
 import { equals } from "../service/generic";
 import Doors from "../geomorph/Doors";
 
@@ -44,6 +43,23 @@ export default function GeomorphCssLightsTest(props) {
             top: json.pngRect.y,
             width: json.pngRect.width,
             height: json.pngRect.height,
+            // clipPath: 'inset(40px 20px 30px 40px)',
+          }}
+        />
+        <img
+          className="geomorph-light"
+          src={geomorphPngPath(layoutKey)}
+          draggable={false}
+          style={{
+            left: json.pngRect.x,
+            top: json.pngRect.y,
+            width: json.pngRect.width,
+            height: json.pngRect.height,
+            /**
+             * TODO clip some room outlines
+             * - precompute them in layout?
+             */
+            clipPath: 'inset(100px 100px 100px 100px)',
           }}
         />
         {/* <img
@@ -57,7 +73,6 @@ export default function GeomorphCssLightsTest(props) {
             height: json.pngRect.height,
           }}
         /> */}
-        {/* <CanvasLights json={json} defs={state.lightDefs} wire={state.wire} /> */}
         <Doors json={json} wire={state.wire} />
       </>}
     </CssPanZoom>
@@ -69,7 +84,6 @@ const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
   img.geomorph {
-    filter: brightness(20%);
     filter: invert(100%) brightness(70%);
     position: absolute;
   }
