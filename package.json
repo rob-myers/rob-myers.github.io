@@ -16,7 +16,6 @@
     "minify-pngs": "yarn ts-script media/scripts/minify-pngs",
     "simplify-pngs": "yarn ts-script media/scripts/simplify-pngs",
     "render-layout": "yarn ts-script media/scripts/render-layout",
-    "render-light": "yarn ts-script media/scripts/render-light",
     "svg-meta": "yarn ts-script media/scripts/svg-meta",
     "watch-svg-meta": "nodemon --delay 2s --config media/scripts/svg-meta.nodemon.json --exec 'yarn svg-meta'",
     "dot": "dotToSvg () { dot -Tsvg \"projects/graph/$1.dot\" >\"public/pics/$1.svg\"; } ; dotToSvg",

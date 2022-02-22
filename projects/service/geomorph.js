@@ -103,17 +103,6 @@ export async function createLayout(def, lookup, triangleService) {
       return { text, center, rect, padded };
     });
 
-    const lights = filterSingles(groups.singles, 'light')
-      .map(({ poly, tags }) => {
-        const rect = poly.rect;
-        const position = rect.center.json;
-        const radius = rect.width / 2; // Assumed equal to rect.height/2
-        const [intensity] = [Number(tags[1])];
-        /** @type {Geomorph.LightDef} */
-        const light = { key: 'light-def', def: [position, radius, intensity] };
-        return light;
-      });
-
   return {
     def,
     groups,
@@ -121,7 +110,6 @@ export async function createLayout(def, lookup, triangleService) {
     navDecomp,
     walls,
     labels,
-    lights,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),

@@ -48,11 +48,8 @@ __Aim towards website release__.
   > then can fade in when appropriate, and simplifies pathfinding
 ## TODO (unsorted)
 
-- prerender geomorph lights
-  - ✅ create `render-light` script which draws lights as filled red polys
-  - ✅ migrate composite approach
-  - ✅ meta points define lights
-  - can turn on/off lights via clipPath mask
+- precompute symbol outlines and test
+- use a masks to "light" geomorph
 
 - Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
 - Bug: `Tabs` top is often fading in
@@ -119,6 +116,11 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- X prerender geomorph lights
+  - ✅ create `render-light` script which draws lights as filled red polys
+  - ✅ migrate composite approach
+  - ✅ meta points define lights
+  - X can turn on/off lights via clipPath mask
 - ✅ Get focal-point zooming example from @panzoom/panzoom working locally
   - https://timmywil.com/panzoom/demo/
 - ✅ Rewrite our own simplified version

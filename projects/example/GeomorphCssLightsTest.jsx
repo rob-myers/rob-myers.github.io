@@ -43,10 +43,9 @@ export default function GeomorphCssLightsTest(props) {
             top: json.pngRect.y,
             width: json.pngRect.width,
             height: json.pngRect.height,
-            // clipPath: 'inset(40px 20px 30px 40px)',
           }}
         />
-        <img
+        {/* <img
           className="geomorph-light"
           src={geomorphPngPath(layoutKey)}
           draggable={false}
@@ -55,22 +54,7 @@ export default function GeomorphCssLightsTest(props) {
             top: json.pngRect.y,
             width: json.pngRect.width,
             height: json.pngRect.height,
-            /**
-             * TODO clip some room outlines
-             * - precompute them in layout?
-             */
             clipPath: 'inset(100px 100px 100px 100px)',
-          }}
-        />
-        {/* <img
-          className="geomorph-light"
-          src={geomorphPngPath(layoutKey, 'light')}
-          draggable={false}
-          style={{
-            left: json.pngRect.x,
-            top: json.pngRect.y,
-            width: json.pngRect.width,
-            height: json.pngRect.height,
           }}
         /> */}
         <Doors json={json} wire={state.wire} />

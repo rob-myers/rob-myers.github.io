@@ -55,26 +55,5 @@
     <path d="M 424 119 L 455 93 L 493 71 L 534 56 L 578 49 L 621 48 L 664 56 L 706 71 L 744 93 L 775 119 L 779 124 L 772 131 L 767 127 L 737 102 L 701 82 L 661 67 L 620 59 L 578 59 L 537 67 L 498 82 L 462 103 L 433 127 L 428 132 L 419 124 L 424 119 Z" style="stroke: rgb(0, 0, 0); fill-opacity: 0.31;">
       <title>window</title>
     </path>
-    <ellipse style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.15;" cx="209.2" cy="372.6" rx="164.1" ry="164.1">
-      <title>light 1</title>
-    </ellipse>
-    <ellipse style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.15;" cx="222.6" cy="197.9" rx="58.4" ry="58.4">
-      <title>light 0.8</title>
-    </ellipse>
-    <ellipse style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.15;" cx="438" cy="402" rx="102" ry="102">
-      <title>light 1</title>
-    </ellipse>
-    <ellipse style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.15;" cx="762" cy="416.1" rx="102" ry="102">
-      <title>light 1</title>
-    </ellipse>
-    <ellipse style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.15;" cx="599.3" cy="283.6" rx="256.4" ry="256.4">
-      <title>light 1</title>
-    </ellipse>
-    <ellipse style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.15;" cx="1090.7" cy="490.7" rx="190.7" ry="190.7">
-      <title>light 1</title>
-    </ellipse>
-    <ellipse style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.15;" cx="1137.6" cy="126" rx="159.7" ry="159.7">
-      <title>light 1</title>
-    </ellipse>
   </g>
 </svg>

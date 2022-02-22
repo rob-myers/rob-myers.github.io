@@ -79,7 +79,6 @@ declare namespace Geomorph {
     navDecomp: Geom.TriangulationJson;
     walls: Poly[];
     labels: LayoutLabel[];
-    lights: LightDef[];
 
     hullPoly: Geom.Poly[];
     /** Bounds of hull */
