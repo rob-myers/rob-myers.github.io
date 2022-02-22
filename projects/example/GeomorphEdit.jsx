@@ -47,19 +47,15 @@ function Geomorph({ def, transform }) {
       <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
       <ForeignObject gm={gm} />
       <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
-      {
-        /**
-         * ISSUE with bridge i.e. need more detail for sub-rooms
-         * Similarly for a bedroom.
-         */
-      }
-      {gm.outlines.slice(1).map((poly, i) =>
-        <path
-          key={i}
-          fill="rgba(200, 0, 0, 0.8)"
-          stroke="black"
-          d={poly.svgPath}
-        />  
+      {gm.outlines.slice(1).map((polys, i) =>
+        polys.map((poly, j) =>
+          <path
+            key={`${i}:${j}`}
+            fill="rgba(200, 0, 0, 0.8)"
+            stroke="black"
+            d={poly.svgPath}
+          />
+        )
       )}
     </g>
   ) : null;
@@ -128,7 +124,7 @@ async function computeLayout(def) {
     /** Debug only */
     pngHref: layout.items[0].pngHref,
     labels: layout.labels,
-    outlines: layout.items.map(x => x.outline),
+    outlines: layout.items.map(x => x.outlines),
   };
 }
 

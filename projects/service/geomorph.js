@@ -103,11 +103,10 @@ export async function createLayout(def, lookup, triangleService) {
       return { text, center, rect, padded };
     });
 
-  // TEST
   const itemOutlines = def.items.map((item, i) => {
     m.feedFromArray(item.transform || [1, 0, 0, 1, 0, 0])
     if (i) m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
-    return symbols[i].outline.clone().applyMatrix(m);
+    return symbols[i].outlines.map(x => x.clone().applyMatrix(m));
   });
 
   return {
@@ -128,7 +127,7 @@ export async function createLayout(def, lookup, triangleService) {
       pngRect: sym.pngRect,
       transformArray: def.items[i].transform,
       transform: def.items[i].transform ? `matrix(${def.items[i].transform})` : undefined,
-      outline: itemOutlines[i],
+      outlines: itemOutlines[i],
     })),
   };
 }
@@ -148,14 +147,15 @@ export function parseStarshipSymbol(symbolName, svgContents) {
   const obstacles = extractGeoms($, topNodes, 'obstacles');
   const walls = extractGeoms($, topNodes, 'walls');
 
-  // TODO compute symbol outline(s) for highlighting
+  // Compute outlines of each subroom, or just whole ting
   const outlinePolys = hull.concat(walls)
     .concat(singles.filter((p) => ['wall', 'window'].includes(/** @type {*} */ (p)._ownTags[0])));
-  if (!outlinePolys.length) outlinePolys.push(...obstacles);
-  const outlines = Poly.union(outlinePolys).map(x => x.removeHoles());
-  const outline =  outlines.reduce((largest, outline) =>
-    outline.rect.area > largest.rect.area ? outline : largest
-  , outlines[0] || new Poly); // outlines can be empty e.g. iris-valves--005--1x1
+  !outlinePolys.length && outlinePolys.push(...obstacles);
+  const outlines = Poly.union(outlinePolys).flatMap(poly => [
+    ...poly.holes.length
+      ? poly.holes.map(ring => new Poly(ring))
+      : [new Poly(poly.outline)],
+  ]);
 
   return {
     key: symbolName,
@@ -164,7 +164,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     obstacles: Poly.union(obstacles),
     walls: Poly.union(walls),
     singles: singles.map((/** @type {*} */ poly) => ({ tags: poly._ownTags, poly })),
-    outline,
+    outlines,
   };
 }
 
@@ -196,7 +196,7 @@ export function serializeSymbol(parsed) {
     walls: toJsons(parsed.walls),
     singles: parsed.singles.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
     pngRect: parsed.pngRect,
-    outline: parsed.outline.geoJson,
+    outlines: parsed.outlines.map(x => x.geoJson),
   };
 }
 
@@ -212,7 +212,7 @@ function deserializeSymbol(json) {
     walls: json.walls.map(Poly.from),
     singles: json.singles.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),
     pngRect: json.pngRect,
-    outline: Poly.from(json.outline),
+    outlines: json.outlines.map(Poly.from),
   };
 }
 

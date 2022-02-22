@@ -58,7 +58,7 @@ declare namespace Geomorph {
     /** Hull walls, only in hull */
     hull: T[];
     pngRect: Geom.RectJson;
-    outline: T;
+    outlines: T[];
   }
 
   interface SvgGroups<T> {
@@ -101,7 +101,7 @@ declare namespace Geomorph {
       transformArray?: LayoutDefItem['transform'];
       /** If absent then is identity transform */
       transform?: string;
-      outline: Geom.Poly;
+      outlines: Geom.Poly[];
     }[];
   }
   
@@ -111,7 +111,7 @@ declare namespace Geomorph {
     doors: Geom.TaggedRect[];
     labels: LayoutLabel[];
     pngHref: string;
-    outlines: Geom.Poly[];
+    outlines: Geom.Poly[][];
   }
 
   export interface LayoutLabel {
