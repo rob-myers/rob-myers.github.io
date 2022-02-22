@@ -58,6 +58,7 @@ declare namespace Geomorph {
     /** Hull walls, only in hull */
     hull: T[];
     pngRect: Geom.RectJson;
+    outline: T;
   }
 
   interface SvgGroups<T> {
@@ -96,17 +97,21 @@ declare namespace Geomorph {
       key: string;
       pngHref: string;
       pngRect: Geom.RectJson;
+      /** If absent then is identity transform */
       transformArray?: LayoutDefItem['transform'];
+      /** If absent then is identity transform */
       transform?: string;
+      outline: Geom.Poly;
     }[];
   }
-
+  
   export interface BrowserLayout {
     dataUrl: string;
     pngRect: Geom.RectJson;
     doors: Geom.TaggedRect[];
     labels: LayoutLabel[];
     pngHref: string;
+    outlines: Geom.Poly[];
   }
 
   export interface LayoutLabel {

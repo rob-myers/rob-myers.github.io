@@ -6,7 +6,7 @@ import { svgPathToPolygon } from './dom';
 
 /**
  * Create a layout, given a definition and all symbols.
- * Can run in browser or server.
+ * Can run in browser or on server.
  * @param {Geomorph.LayoutDef} def
  * @param {Geomorph.SymbolLookup} lookup
  * @param {import('./triangle').TriangleService} [triangleService]
@@ -19,7 +19,7 @@ export async function createLayout(def, lookup, triangleService) {
   const groups = { singles: [], obstacles: [], walls: [] };
 
   def.items.forEach((item, i) => {
-    item.transform ? m.feedFromArray(item.transform) : m.setIdentity();
+    m.feedFromArray(item.transform || [1, 0, 0, 1, 0, 0]);
     const { singles, obstacles, walls, hull } = lookup[item.symbol];
     if (i) {
       /**
@@ -103,6 +103,13 @@ export async function createLayout(def, lookup, triangleService) {
       return { text, center, rect, padded };
     });
 
+  // TEST
+  const itemOutlines = def.items.map((item, i) => {
+    m.feedFromArray(item.transform || [1, 0, 0, 1, 0, 0])
+    if (i) m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
+    return symbols[i].outline.clone().applyMatrix(m);
+  });
+
   return {
     def,
     groups,
@@ -115,12 +122,13 @@ export async function createLayout(def, lookup, triangleService) {
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
     hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
 
-    items: symbols.map((sym, i) => ({
+    items: symbols.map(/** @returns {Geomorph.Layout['items'][0]} */  (sym, i) => ({
       key: sym.key,
       pngHref: i ? `/symbol/${sym.key}.png` : `/debug/${def.key}.png`,
       pngRect: sym.pngRect,
       transformArray: def.items[i].transform,
       transform: def.items[i].transform ? `matrix(${def.items[i].transform})` : undefined,
+      outline: itemOutlines[i],
     })),
   };
 }
@@ -140,6 +148,15 @@ export function parseStarshipSymbol(symbolName, svgContents) {
   const obstacles = extractGeoms($, topNodes, 'obstacles');
   const walls = extractGeoms($, topNodes, 'walls');
 
+  // TODO compute symbol outline(s) for highlighting
+  const outlinePolys = hull.concat(walls)
+    .concat(singles.filter((p) => ['wall', 'window'].includes(/** @type {*} */ (p)._ownTags[0])));
+  if (!outlinePolys.length) outlinePolys.push(...obstacles);
+  const outlines = Poly.union(outlinePolys).map(x => x.removeHoles());
+  const outline =  outlines.reduce((largest, outline) =>
+    outline.rect.area > largest.rect.area ? outline : largest
+  , outlines[0] || new Poly); // outlines can be empty e.g. iris-valves--005--1x1
+
   return {
     key: symbolName,
     pngRect,
@@ -147,6 +164,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     obstacles: Poly.union(obstacles),
     walls: Poly.union(walls),
     singles: singles.map((/** @type {*} */ poly) => ({ tags: poly._ownTags, poly })),
+    outline,
   };
 }
 
@@ -178,6 +196,7 @@ export function serializeSymbol(parsed) {
     walls: toJsons(parsed.walls),
     singles: parsed.singles.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
     pngRect: parsed.pngRect,
+    outline: parsed.outline.geoJson,
   };
 }
 
@@ -193,6 +212,7 @@ function deserializeSymbol(json) {
     walls: json.walls.map(Poly.from),
     singles: json.singles.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),
     pngRect: json.pngRect,
+    outline: Poly.from(json.outline),
   };
 }
 
