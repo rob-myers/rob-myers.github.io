@@ -9,6 +9,10 @@ import CanvasLights from "../geomorph/CanvasLights";
 import { equals } from "../service/generic";
 import Doors from "../geomorph/Doors";
 
+/**
+ * IDEA provide masks for "light rooms" and layer original image atop
+ */
+
 /** @param {{ disabled?: boolean }} props */
 export default function GeomorphCssLightsTest(props) {
 
@@ -42,7 +46,7 @@ export default function GeomorphCssLightsTest(props) {
             height: json.pngRect.height,
           }}
         />
-        <img
+        {/* <img
           className="geomorph-light"
           src={geomorphPngPath(layoutKey, 'light')}
           draggable={false}
@@ -52,9 +56,9 @@ export default function GeomorphCssLightsTest(props) {
             width: json.pngRect.width,
             height: json.pngRect.height,
           }}
-        />
+        /> */}
         {/* <CanvasLights json={json} defs={state.lightDefs} wire={state.wire} /> */}
-        {/* <Doors json={json} wire={state.wire} /> */}
+        <Doors json={json} wire={state.wire} />
       </>}
     </CssPanZoom>
   );
@@ -65,7 +69,8 @@ const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
   img.geomorph {
-    filter: invert(100%) brightness(20%);
+    filter: brightness(20%);
+    filter: invert(100%) brightness(70%);
     position: absolute;
   }
   img.geomorph-light {

@@ -61,7 +61,7 @@ const rootCss = css`
   div.door {
     position: absolute;
     cursor: pointer;
-    background: #000;
+    background: white;
     opacity: 1;
     transition: opacity 100ms linear;
     &.open {

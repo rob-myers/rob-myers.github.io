@@ -1,5 +1,5 @@
 /**
- * TODO two layers of lights so do not intersect
+ * Not yet sold i.e. we might not bother with this.
  */
 
 /**
