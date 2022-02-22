@@ -7,33 +7,32 @@ We've chosen the underlying technology, low-level game mechanics, and where even
 
 Let us list our chosen tools.
 
-- Use standard web dev techniques (e.g. not [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API)).
-- Use [NextJS](https://nextjs.org/) as our development environment.
-- Use [CodeSandbox](https://codesandbox.io) to share editable code.
+- Use everyday web dev techniques (e.g. not [WebGL](https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API)).
 - Use [Boxy SVG](https://boxy-svg.com/) to edit assets.
+- Use [NextJS](https://nextjs.org/) as our dev env (we may switch to [Gatsby](https://www.gatsbyjs.com/) though).
 - Use [React function components](https://reactjs.org/docs/components-and-props.html#function-and-class-components) and CSS-in-JS.
   > In particular, [Preact](https://www.npmjs.com/package/preact) (a [React](https://reactjs.org/) alternative) and [Goober](https://www.npmjs.com/package/goober).
+- Use [CodeSandbox](https://codesandbox.io) to share editable code.
 
-We'll also support both mobile and desktop devices.
+In so far as _modern_ web development goes,
+
+> we must support both mobile and desktop devices.
 
 <!-- NOTE italics inside link currently unsupported -->
-
-_The Last Redoubt_ refers to _Markup_, as in HyperText _Markup_ Language (HTML).
-We'll use standard web development technologies e.g. CSS, SVGs, PNGs and the Web Animations API.
+<!-- We'll use standard web development technologies e.g. CSS, SVGs, PNGs and the Web Animations API. -->
 
 <aside>
 
-Although WebGL permits far richer 3D graphics than CSS,
-it leads away from the declarative nature of Markup.
+Although WebGL permits rich 2D and 3D graphics,
+it leads away from the _declarative nature_ of everyday web dev.
 Sticking to core web technologies makes our approach relevant to a far larger audience.
 We also want to avoid obsessing over graphics, seeking superior Game AI instead.
 
 </aside>
 
-If you're unfamiliar with CodeSandbox (or similar sites), check out  [this example](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
-If you peruse the files, you'll find e.g. the rectangle class _Rect_ and a Geomorph PNG.
+If you're unfamiliar with CodeSandbox (or similar), check [this example](https://codesandbox.io/s/rogue-markup-panzoom-yq060?file=/src/panzoom/PanZoom.jsx  "@new-tab").
+Perusing the files, you'll find e.g. the rectangle class _Rect_ and a Geomorph PNG.
 Our CodeSandboxes use React, whereas this site uses _Preact_.
-More on that later.
 
 ### Game mechanics
 
