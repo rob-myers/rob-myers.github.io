@@ -50,7 +50,9 @@ __Aim towards website release__.
 
 - prerender geomorph lights
   - ✅ create `render-light` script which draws lights as filled red polys
-  - migrate composite approach
+  - ✅ migrate composite approach
+  - ✅ meta points define lights
+  - can turn on/off lights via clipPath mask
 
 - Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
 - Bug: `Tabs` top is often fading in

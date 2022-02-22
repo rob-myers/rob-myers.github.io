@@ -1,4 +1,8 @@
 /**
+ * TODO two layers of lights so do not intersect
+ */
+
+/**
  * - Usage:
  *   - `yarn render-light 301`
  *   - `yarn render-light 301 --suffix=test`
@@ -50,9 +54,10 @@ if (!fs.existsSync(geomorphPNGPath)) {
   // Compute the lights, assuming all doors are open
   const polys = layout.walls;
   const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-  const lights = layoutDef.lights.map(({ def: [p, radius, intensity, layerId] }, index) => {
+  const lights = layout.lights.map(({ def: [p, radius, intensity] }, index) => {
     const position = Vect.from(p)
-    const poly = geom.lightPolygon(position, 1000, triangs);
+    // const poly = geom.lightPolygon(position, 1000, triangs);
+    const poly = geom.lightPolygon(position, 2 * radius, triangs);
     /** @type {Geomorph.Light} */
     const output = { key: 'light', index, intensity, poly, position, radius };
     return output;
@@ -62,16 +67,19 @@ if (!fs.existsSync(geomorphPNGPath)) {
   const canvas = createCanvas(pngRect.width * scale, pngRect.height * scale);
   const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
   ctxt.globalCompositeOperation = 'destination-over';
-  ctxt.setTransform(scale, 0, 0, scale, 0, 0);
+  /**
+   * `pngRect` is world bounds of geomorph (prior to later transform).
+   * We must ensure top-left of canvas matches rect (x, y).
+   */
+  ctxt.setTransform(scale, 0, 0, scale, -scale * pngRect.x, -scale * pngRect.y);
 
-  lights.forEach(({ position, intensity, poly }) => {
+  lights.forEach(({ position, radius, intensity, poly }) => {
     const gradient = ctxt.createRadialGradient(
       position.x, position.y, 0,
-      // We use intensity to define radius (?)
-      position.x, position.y, 300 * intensity,
+      position.x, position.y, 2 * radius,
     );
     gradient.addColorStop(0, `rgba(0, 0, 0, ${intensity})`);
-    gradient.addColorStop(0.56, `rgba(0, 0, 0, ${intensity / 2})`);
+    gradient.addColorStop(0.5, '#00000000');
     gradient.addColorStop(0.86, '#00000000');
     ctxt.fillStyle = gradient;
     fillPolygon(ctxt, [poly]);
@@ -80,19 +88,18 @@ if (!fs.existsSync(geomorphPNGPath)) {
   /**
    * - Scale {geomorph}.png up by `scale`, assuming it is already scaled x2.
    * - Each geomorph has world bounds `pngRect` (prior to later transform),
-   *   and we ensure canvas top-left corresponds to world (0, 0).
-   *   Then lights should only effect areas ≥ (0, 0) pointwise.
+   *   and we ensure canvas top-left corresponds to image top-left.
    */
-  ctxt.setTransform(scale / 2, 0, 0, scale / 2, scale * pngRect.x, scale * pngRect.y);
+  ctxt.setTransform(scale / 2, 0, 0, scale / 2, 0, 0);
   ctxt.globalCompositeOperation = 'source-in';
   const image = await loadImage(fs.readFileSync(path.resolve(geomorphPNGPath)));
   ctxt.drawImage(/** @type {*} */ (image), 0, 0);
   ctxt.globalCompositeOperation = 'destination-over';
 
-  // TEST
-  ctxt.strokeStyle = 'red';
-  ctxt.setTransform(scale, 0, 0, scale, 0, 0);
-  lights.forEach(({ poly }) => strokePolygon(ctxt, [poly]));
+  // // TEST
+  // ctxt.strokeStyle = 'red';
+  // ctxt.setTransform(scale, 0, 0, scale, -scale * pngRect.x, -scale * pngRect.y);
+  // lights.forEach(({ poly }) => strokePolygon(ctxt, [poly]));
 
   await util.promisify(stream.pipeline)(
     canvas.createPNGStream(), 

@@ -32,6 +32,7 @@ export default function GeomorphCssLightsTest(props) {
     <CssPanZoom dark className={rootCss}>
       {json && <>
         <img
+          className="geomorph"
           src={geomorphPngPath(layoutKey)}
           draggable={false}
           style={{
@@ -41,8 +42,19 @@ export default function GeomorphCssLightsTest(props) {
             height: json.pngRect.height,
           }}
         />
-        <CanvasLights json={json} defs={state.lightDefs} wire={state.wire} />
-        <Doors json={json} wire={state.wire} />
+        <img
+          className="geomorph-light"
+          src={geomorphPngPath(layoutKey, 'light')}
+          draggable={false}
+          style={{
+            left: json.pngRect.x,
+            top: json.pngRect.y,
+            width: json.pngRect.width,
+            height: json.pngRect.height,
+          }}
+        />
+        {/* <CanvasLights json={json} defs={state.lightDefs} wire={state.wire} /> */}
+        {/* <Doors json={json} wire={state.wire} /> */}
       </>}
     </CssPanZoom>
   );
@@ -52,8 +64,12 @@ export default function GeomorphCssLightsTest(props) {
 const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
-  img {
-    filter: contrast(200%) invert(100%) brightness(30%);
+  img.geomorph {
+    filter: invert(100%) brightness(20%);
+    position: absolute;
+  }
+  img.geomorph-light {
+    filter: brightness(80%);
     position: absolute;
   }
   canvas {

@@ -78,10 +78,8 @@ declare namespace Geomorph {
     /** A rich triangulation involving Steiner points */
     navDecomp: Geom.TriangulationJson;
     walls: Poly[];
-
     labels: LayoutLabel[];
-
-    // TODO group hull
+    lights: LightDef[];
 
     hullPoly: Geom.Poly[];
     /** Bounds of hull */
@@ -131,7 +129,6 @@ declare namespace Geomorph {
     key: LayoutKey;
     id: number;
     items: LayoutDefItem[];
-    lights: LightDef[];
   }
 
   export interface LayoutDefItem {
@@ -213,8 +210,8 @@ declare namespace Geomorph {
 
   export interface LightDef {
     key: 'light-def';
-    /** [position, radius ≥ 0, intensity in [0,1], layerId] */
-    def: [Geom.VectJson, number, number, 0 | 1];
+    /** [position, radius ≥ 0, intensity in [0,1]] */
+    def: [Geom.VectJson, number, number];
   }
 
   export interface Light {

@@ -82,8 +82,8 @@ export async function createLayout(def, lookup, triangleService) {
   // Currently triangle-wasm runs server-side only
   const navDecomp = triangleService
     ? await triangleService.triangulate(navPoly, {
-      // minAngle: 28,
       maxSteiner: 120,
+      // minAngle: 28,
       // maxArea: 800,
     })
     : { vs: [], tris: [] };
@@ -103,6 +103,17 @@ export async function createLayout(def, lookup, triangleService) {
       return { text, center, rect, padded };
     });
 
+    const lights = filterSingles(groups.singles, 'light')
+      .map(({ poly, tags }) => {
+        const rect = poly.rect;
+        const position = rect.center.json;
+        const radius = rect.width / 2; // Assumed equal to rect.height/2
+        const [intensity] = [Number(tags[1])];
+        /** @type {Geomorph.LightDef} */
+        const light = { key: 'light-def', def: [position, radius, intensity] };
+        return light;
+      });
+
   return {
     def,
     groups,
@@ -110,6 +121,7 @@ export async function createLayout(def, lookup, triangleService) {
     navDecomp,
     walls,
     labels,
+    lights,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
@@ -211,7 +223,7 @@ export function deserializeSvgJson(svgJson) {
  */
 function extractGeoms(api, topNodes, title) {
   const group = topNodes.find(x => hasTitle(api, x, title));
-  const children = api(group).children('rect, path').toArray();
+  const children = api(group).children('rect, path, ellipse').toArray();
   return children.flatMap(x => extractGeom(api, x));
 }
 
@@ -232,8 +244,12 @@ function extractGeom(api, el) {
     // Must be a single connected polygon with ≥ 0 holes
     const poly = svgPathToPolygon(a.d);
     poly && output.push(Object.assign(poly, { _ownTags }));
+  } else if (tagName === 'ellipse') {
+    // Reinterpret ellipse as bounding rectangle (preserves info)
+    const poly = Poly.fromRect(new Rect((Number(a.cx) - Number(a.rx)) || 0, (Number(a.cy) - Number(a.ry)) || 0, 2 * Number(a.rx) || 0, 2 * Number(a.ry) || 0))
+    output.push(Object.assign(poly, { _ownTags }));
   } else {
-    console.warn('extractGeom: unexpected tagName:', tagName);
+    console.warn('extractGeom: unexpected tagName:', tagName, a);
   }
   // DOMMatrix not available server-side
   // const m = new DOMMatrix(a.transform);
