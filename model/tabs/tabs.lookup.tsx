@@ -46,8 +46,6 @@ const component = {
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-302--xboat-repair-bay' />),
   'example/NavUiTest': () => import('projects/example/NavUiTest')
     .then(x => (props: any) => <x.default disabled {...props} />),
-  'example/GeomorphSvgLightsTest': () => import('projects/example/GeomorphSvgLightsTest')
-    .then(x => (props: any) => <x.default disabled {...props} />),
   'example/GeomorphCssLightsTest': () => import('projects/example/GeomorphCssLightsTest')
     .then(x => x.default),
   'example/TriangleDev#301': () => import('projects/example/TriangleDev')

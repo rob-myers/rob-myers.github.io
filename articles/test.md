@@ -11,7 +11,6 @@
     { key: 'component', filepath: 'example/GeomorphCssLightsTest' },
     // { key: 'component', filepath: 'example/Css3dForeignObject#301' },
     // { key: 'component', filepath: 'example/CssPanZoomDemo', weight: 50 },
-    // { key: 'component', filepath: 'example/GeomorphSvgLightsTest' },
     // { key: 'component', filepath: 'example/PanZoomTest' },
     // { key: 'component', filepath: 'example/CssSvgPanZoomDemo' },
     // { key: 'component', filepath: 'example/NavUiTest' },
