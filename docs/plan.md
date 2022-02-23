@@ -48,8 +48,8 @@ __Aim towards website release__.
   > then can fade in when appropriate, and simplifies pathfinding
 ## TODO (unsorted)
 
-- precompute symbol outlines and test
-- use a masks to "light" geomorph
+- ✅ precompute symbol outlines and test
+- 🚧 GeomorphCssLightsTest: can toggle each area masks to "light" rooms
 
 - Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
 - Bug: `Tabs` top is often fading in

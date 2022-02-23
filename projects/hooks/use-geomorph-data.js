@@ -23,6 +23,7 @@ export default function useGeomorphData(layoutKey) {
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...json,
+      // TODO possibly remove, unless HTMLCanvas needed
       image,
       /** Derived computations */
       d: {

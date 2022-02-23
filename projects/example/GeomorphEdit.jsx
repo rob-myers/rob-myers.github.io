@@ -47,16 +47,18 @@ function Geomorph({ def, transform }) {
       <image className="geomorph" href={gm.dataUrl} x={gm.pngRect.x * scale} y={gm.pngRect.y * scale} />
       <ForeignObject gm={gm} />
       <image className="debug" href={gm.pngHref} x={gm.pngRect.x} y={gm.pngRect.y}/>
-      {gm.outlines.slice(1).map((polys, i) =>
+
+      {/* {gm.outlines.slice(1).map((polys, i) =>
         polys.map((poly, j) =>
           <path
             key={`${i}:${j}`}
-            fill="rgba(200, 0, 0, 0.8)"
+            fill="rgba(200, 0, 0, 0.2)"
             stroke="black"
             d={poly.svgPath}
           />
         )
-      )}
+      )} */}
+      
     </g>
   ) : null;
 }

@@ -1,6 +1,6 @@
 import { css } from "goober";
-import { Vect } from "projects/geom";
-import { Subject } from "rxjs";
+import { Poly, Vect } from "projects/geom";
+import { ConnectableObservable, Subject } from "rxjs";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
@@ -15,7 +15,7 @@ import Doors from "../geomorph/Doors";
 /** @param {{ disabled?: boolean }} props */
 export default function GeomorphCssLightsTest(props) {
 
-  const { data: json } = useGeomorphData(layoutKey);
+  const { data: gm } = useGeomorphData(layoutKey);
 
   const state = useMuState(() => {
     /** @type {NPC.LightDef[]} */
@@ -31,33 +31,75 @@ export default function GeomorphCssLightsTest(props) {
     lightDefs: (curr, next) => equals(curr, next),
   });
 
+  console.log(gm?.outlines)  
+
   return (
     <CssPanZoom dark className={rootCss}>
-      {json && <>
+      {gm && <>
         <img
           className="geomorph"
           src={geomorphPngPath(layoutKey)}
           draggable={false}
           style={{
-            left: json.pngRect.x,
-            top: json.pngRect.y,
-            width: json.pngRect.width,
-            height: json.pngRect.height,
+            left: gm.pngRect.x,
+            top: gm.pngRect.y,
+            width: gm.pngRect.width,
+            height: gm.pngRect.height,
           }}
         />
-        {/* <img
+
+        {/* Area dots */}
+        {gm.outlines.slice(1).map((polys, i) =>
+          polys.map((poly, j) => {
+            const { center } = Poly.from(poly);
+            return <div
+              key={`${i}:${j}`}
+              style={{
+                borderRadius: 5,
+                border: '5px solid #cc7',
+                position: 'absolute',
+                cursor: 'pointer',
+                left: center.x,
+                top: center.y,
+              }}
+            />
+          })
+        )}
+
+        {/* <svg
+          style={{
+            width: gm.pngRect.width,
+            height: gm.pngRect.height,
+            position: 'absolute',
+          }}
+        >
+          {gm.outlines.slice(1).map((polys, i) =>
+            polys.map((poly, j) =>
+              <path
+                key={`${i}:${j}`}
+                fill="rgba(200, 0, 0, 0.4)"
+                stroke="blue"
+                d={Poly.from(poly).svgPath}
+              />
+            )
+          )}
+        </svg> */}
+
+        <img
           className="geomorph-light"
           src={geomorphPngPath(layoutKey)}
           draggable={false}
           style={{
-            left: json.pngRect.x,
-            top: json.pngRect.y,
-            width: json.pngRect.width,
-            height: json.pngRect.height,
-            clipPath: 'inset(100px 100px 100px 100px)',
+            left: gm.pngRect.x,
+            top: gm.pngRect.y,
+            width: gm.pngRect.width,
+            height: gm.pngRect.height,
+            // TEST
+            clipPath: `path('${Poly.from(gm.outlines[5][0]).translate(-gm.pngRect.x, -gm.pngRect.y).svgPath}')`,
           }}
-        /> */}
-        <Doors json={json} wire={state.wire} />
+        />
+
+        <Doors json={gm} wire={state.wire} />
       </>}
     </CssPanZoom>
   );

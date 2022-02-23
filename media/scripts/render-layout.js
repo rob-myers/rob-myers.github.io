@@ -41,6 +41,10 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${
 (async function run() {
   const { layout, canvas } = await renderLayout(layoutDef);
 
+  /**
+   * TODO consider projecting svg.json in svg-meta instead
+   */
+
   /** @type {Geomorph.GeomorphJson} */
   const json = {
     key: layout.def.key,
@@ -60,6 +64,7 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${
     navPoly: layout.navPoly.map(x => x.geoJson),
     navDecomp: layout.navDecomp,
     obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
+    outlines: layout.items.map(({ outlines }) => outlines.map(x => x.geoJson)),
     walls: layout.walls.map(x => x.geoJson),
   };
 

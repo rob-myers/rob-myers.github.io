@@ -31,6 +31,7 @@ declare namespace Geomorph {
     navPoly: Geom.GeoJsonPolygon[];
     navDecomp: Geom.TriangulationJson;
     obstacles: Geom.GeoJsonPolygon[];
+    outlines: Geom.GeoJsonPolygon[][];
     walls: Geom.GeoJsonPolygon[];
   }
 
