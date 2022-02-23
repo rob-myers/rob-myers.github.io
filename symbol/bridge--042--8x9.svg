@@ -26,7 +26,7 @@
     <path d="M 1561 1818 L 1490 1818 L 1479 1798 L 1425 1759 L 1425 1695 L 977 1695 L 972 1757 L 924 1798 L 916 1818 L 842 1818 L 842 1908 L 911 1908 L 919 1926 L 977 1964 L 977 2031 L 1425 2031 L 1425 1962 L 1461 1948 L 1495 1908 L 1561 1908 L 1561 1818 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);"/>
     <path d="M 1194 2614 L 1252 2396 L 1264 2221 L 1243 1997 L 1173 1786 L 1078 1621 L 1205 1621 L 1298.3 1793.1 L 1380 2058.9 L 1380 2343.7 L 1295.4 2627.4 L 1201 2821 L 1078 2821 L 1194 2614 Z" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" transform="matrix(0, 1, -1, 0, 3422, 1020)"/>
   </g>
-  <g style="pointer-events: none;">
+  <g style="">
     <title>walls</title>
     <path d="M 316 315 L 343 343 L 311 376 L 186 531 L 84 721 L 25.4 892 L 1212 892 L 1212 913 L -16 910.4 L -16 902 L 49 710 L 116 576 L 183 468 L 282 350 L 316 315 Z" style="fill-opacity: 0.5; fill: rgb(255, 0, 0);"/>
     <path d="M 2393 902 L 2420 874 L 2388 841 L 2284 714 L 2193 565 L 2131 415 L 2101 315 L 2061 315 L 2125 506 L 2193 641 L 2260 749 L 2359 867 L 2393 902 Z" style="fill-opacity: 0.5; fill: rgb(255, 0, 0);" transform="matrix(-1, 0, 0, -1, 4481, 1217)"/>
@@ -39,14 +39,16 @@
     <rect x="2182" y="1343" width="20" height="159" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1790" y="1192" width="620" height="21" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1790" y="1492" width="595" height="21" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
-    <rect x="902" y="1502" width="888" height="62" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
+    <rect x="900" y="1502" width="892" height="62" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);">
+      <title>Rectangle</title>
+    </rect>
   </g>
   <g style="pointer-events: none;">
     <title>singles</title>
     <path d="M 323 290.2 L 478 160.2 L 668 50.2 L 873 -24.8 L 1093 -59.8 L 1308 -64.8 L 1523 -24.8 L 1733 50.2 L 1923 160.2 L 2078 290.2 L 2098 315.2 L 2063 350.2 L 2038 330.2 L 1888 205.2 L 1708 105.2 L 1508 30.2 L 1303 -9.8 L 1093 -9.8 L 888 30.2 L 693 105.2 L 513 210.2 L 368 330.2 L 343 355.2 L 298 315.2 L 323 290.2 Z" style="stroke: rgb(0, 0, 0); fill-opacity: 0.31;">
       <title>window</title>
     </path>
-    <rect x="59" y="1492" width="842" height="21" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
+    <rect x="59" y="1492" width="848.8" height="21" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
       <title>wall</title>
     </rect>
     <rect x="589" y="1199" width="21" height="1030" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
