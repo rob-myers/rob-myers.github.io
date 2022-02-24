@@ -18,9 +18,8 @@ import getOpts from 'getopts';
 
 import svgJson from '../../public/symbol/svg.json';
 import layoutDefs from '../../projects/geomorph/layouts';
-import { createLayout, deserializeSvgJson } from '../../projects/service/geomorph';
+import { createLayout, deserializeSvgJson, serializeLayout } from '../../projects/service/geomorph';
 import { renderGeomorph } from '../../projects/geomorph/render';
-import { geom } from '../../projects/service/geom';
 import { triangle } from '../../projects/service/triangle';
 
 const geomorphId = Number(process.argv[2]);
@@ -41,34 +40,11 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${
 (async function run() {
   const { layout, canvas } = await renderLayout(layoutDef);
 
-  /**
-   * TODO consider projecting svg.json in svg-meta instead
-   */
-
-  /** @type {Geomorph.GeomorphJson} */
-  const json = {
-    key: layout.def.key,
-    id: layout.def.id,
-    pngRect: layout.items[0].pngRect,
-    doors: layout.groups.singles
-      .filter(x => x.tags.includes('door'))
-      .map(({ poly, tags }) => {
-        const { angle, rect } = geom.polyToAngledRect(poly);
-        const [u, v] = geom.getAngledRectSeg({ angle, rect });
-        return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
-      }),
-    hull: {
-      poly: layout.hullPoly.map(x => x.geoJson),
-    },
-    labels: layout.labels,
-    navPoly: layout.navPoly.map(x => x.geoJson),
-    navDecomp: layout.navDecomp,
-    obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
-    outlines: layout.items.map(({ outlines }) => outlines.map(x => x.geoJson)),
-    walls: layout.walls.map(x => x.geoJson),
-  };
-
-  fs.writeFileSync(path.resolve(outputDir, `${layoutDef.key}.json`), stringify(json));
+  // Also done in svg-meta
+  fs.writeFileSync(
+    path.resolve(outputDir, `${layoutDef.key}.json`),
+    stringify(serializeLayout(layout)),
+  );
 
   await util.promisify(stream.pipeline)(
     canvas.createPNGStream(), 

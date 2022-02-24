@@ -1,29 +1,27 @@
 /**
- * - parse every svg symbol in /public/symbol
- * - write as a single json file /public/symbol/svg.json
+ * - Parse every svg symbol in /public/symbol
+ * - Write as a single json file /public/symbol/svg.json
+ * - Update any changed /geomorph/{geomorph}.json
  *
  * Usage: `yarn svg-meta`
  */
 /// <reference path="./deps.d.ts"/>
 
-/**
- * TODO
- * - ✅ detect which symbols have changed
- * - detect which layout defs reference those symbols
- * - run `await createLayout(def, symbolLookup, triangle)` appropriately
- */
-
 import fs from 'fs';
 import path from 'path';
 import stringify from 'json-stringify-pretty-compact';
-import { parseStarshipSymbol, serializeSymbol } from '../../projects/service/geomorph';
+import { keys } from '../../model/generic.model';
+import { createLayout, deserializeSvgJson, parseStarshipSymbol, serializeLayout, serializeSymbol } from '../../projects/service/geomorph';
+import layoutDefs from '../../projects/geomorph/layouts';
+import { triangle } from '../../projects/service/triangle';
 
 const publicDir = path.resolve(__dirname, '../../public');
 const symbolsDir = path.resolve(publicDir, 'symbol');
+const geomorphsDir = path.resolve(publicDir, 'geomorph');
 const svgFilenames = fs.readdirSync(symbolsDir).filter(x => x.endsWith('.svg'));
 const svgJsonFilename = path.resolve(symbolsDir, `svg.json`)
-/** @type {Record<string, Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>>} */
-const svgJsonLookup = {};
+/** @type {Record<Geomorph.SymbolKey, Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>>} */
+const svgJsonLookup = ({});
 
 let prevSvgJsonLookup = /** @type {null | typeof svgJsonLookup} */ (null);
 if (fs.existsSync(svgJsonFilename)) {
@@ -31,7 +29,7 @@ if (fs.existsSync(svgJsonFilename)) {
 }
 
 for (const filename of svgFilenames) {
-  const symbolName = filename.slice(0, -'.svg'.length);
+  const symbolName = /** @type {Geomorph.SymbolKey} */ (filename.slice(0, -'.svg'.length));
   const filepath = path.resolve(symbolsDir, filename);
   const contents = fs.readFileSync(filepath).toString();
   const lastModified = fs.statSync(filepath).mtimeMs;
@@ -43,10 +41,25 @@ for (const filename of svgFilenames) {
   svgJsonLookup[symbolName] = parsed;
 }
 
-const changedSymbols = Object.keys(svgJsonLookup).filter((symbolName) =>
+const changedSymbols = keys(svgJsonLookup).filter((symbolName) =>
   prevSvgJsonLookup?.[symbolName].lastModified !== svgJsonLookup[symbolName].lastModified
 );
+const changedLayoutDefs = Object.values(layoutDefs).filter(def => {
+  const usedSymbols = def.items.map(x => x.symbol);
+  return changedSymbols.some(symbolName => usedSymbols.includes(symbolName));
+});
+console.log({ changedSymbols, changedLayoutDefs });
 
-console.log({ changedSymbols });
+(async function writeChangedGeomorphJsons () {
+  const symbolLookup = deserializeSvgJson(svgJsonLookup);
+  // TODO may need threshold e.g. p-limit
+  await Promise.all(changedLayoutDefs.map(async def => {
+    const layout = await createLayout(def, symbolLookup, triangle);
+    const filename = path.resolve(geomorphsDir, `${def.key}.json`);
+    console.info('writing', filename, '...')
+    fs.writeFileSync(filename, stringify(serializeLayout(layout)));
+  }));
+})();
 
+// Finally, write svg.json
 fs.writeFileSync(svgJsonFilename, stringify(svgJsonLookup));

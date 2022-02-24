@@ -85,6 +85,10 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- svg-meta creates geomorph jsons
+  - ✅ detect which symbols have changed
+  - ✅ detect which layout defs reference those symbols
+  - ✅ run `await createLayout(def, symbolLookup, triangle)` appropriately
 - X prerender geomorph lights
   - ✅ create `render-light` script which draws lights as filled red polys
   - ✅ migrate composite approach

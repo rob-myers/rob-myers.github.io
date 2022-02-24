@@ -3,6 +3,7 @@ import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat } from '../geom';
 import { labelMeta } from '../geomorph/geomorph.model';
 import { svgPathToPolygon } from './dom';
+import { geom } from './geom';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -130,6 +131,33 @@ export async function createLayout(def, lookup, triangleService) {
       outlines: itemOutlines[i],
     })),
   };
+}
+
+/** @param {Geomorph.Layout} layout */
+export function serializeLayout(layout) {
+  /** @type {Geomorph.GeomorphJson} */
+  const json = {
+    key: layout.def.key,
+    id: layout.def.id,
+    pngRect: layout.items[0].pngRect,
+    doors: layout.groups.singles
+      .filter(x => x.tags.includes('door'))
+      .map(({ poly, tags }) => {
+        const { angle, rect } = geom.polyToAngledRect(poly);
+        const [u, v] = geom.getAngledRectSeg({ angle, rect });
+        return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
+      }),
+    hull: {
+      poly: layout.hullPoly.map(x => x.geoJson),
+    },
+    labels: layout.labels,
+    navPoly: layout.navPoly.map(x => x.geoJson),
+    navDecomp: layout.navDecomp,
+    obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
+    outlines: layout.items.map(({ outlines }) => outlines.map(x => x.geoJson)),
+    walls: layout.walls.map(x => x.geoJson),
+  };
+  return json;
 }
 
 /**
