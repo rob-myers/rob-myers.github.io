@@ -135,9 +135,10 @@ export async function createLayout(def, lookup, triangleService) {
 /**
  * @param {string} symbolName
  * @param {string} svgContents
+ * @param {number} lastModified
  * @returns {Geomorph.ParsedSymbol<Poly>}
  */
-export function parseStarshipSymbol(symbolName, svgContents) {
+export function parseStarshipSymbol(symbolName, svgContents, lastModified) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
   const pngRect = extractPngOffset($, topNodes);
@@ -165,6 +166,7 @@ export function parseStarshipSymbol(symbolName, svgContents) {
     walls: Poly.union(walls),
     singles: singles.map((/** @type {*} */ poly) => ({ tags: poly._ownTags, poly })),
     outlines,
+    lastModified,
   };
 }
 
@@ -197,6 +199,7 @@ export function serializeSymbol(parsed) {
     singles: parsed.singles.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
     pngRect: parsed.pngRect,
     outlines: parsed.outlines.map(x => x.geoJson),
+    lastModified: parsed.lastModified,
   };
 }
 
@@ -213,6 +216,7 @@ function deserializeSymbol(json) {
     singles: json.singles.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),
     pngRect: json.pngRect,
     outlines: json.outlines.map(Poly.from),
+    lastModified: json.lastModified,
   };
 }
 

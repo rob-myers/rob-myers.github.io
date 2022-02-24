@@ -60,6 +60,8 @@ declare namespace Geomorph {
     hull: T[];
     pngRect: Geom.RectJson;
     outlines: T[];
+    /** Since epoch in ms */
+    lastModified: number;
   }
 
   interface SvgGroups<T> {

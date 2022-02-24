@@ -15,7 +15,7 @@ __Aim towards website release__.
 - refine light masks
   - missing outlines via hull outline, known outlines, walls and doors
   - light switch metas in SVG
-  - yarn svg-meta triggers recompute geomorph json 
+  - 🚧 yarn svg-meta triggers recompute geomorph json 
 
 - ✅ precompute symbol outlines and test
 - ✅ GeomorphCssLightsTest: can toggle each area masks to "light" rooms
