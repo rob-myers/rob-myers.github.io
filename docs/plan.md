@@ -2,54 +2,23 @@
 
 __Aim towards website release__.
 
-### _Objective_ i.e. intro
-
-- Include image of Geomorph with description ✅
-- Add lighting demo ✅
-- Add 3d demo ✅
-- Improve lighting demo ✅
-- Improve 3d demo ✅
-  > Tried CSS transform approach but ultimately did not perform better when on a blog page (with various other components)
-- Make Light CodeSandbox ✅
-- Make 3D CodeSandbox ✅
-
-### _Constraints_
-
-- Link to a CodeSandbox ✅
-- Demo terminal ✅
-- Background about setting ✅
-
-### _Technology_ i.e. tech intro + js
-
-- `PanZoomDemo` uses a Geomorph PNG ✅
-- Redo CodeSandbox ✅
-- CodeSandbox link more prominent ✅
-- Finish "React Renders and Web Components" ✅
-
 ### 🚧 _Technology (Part 2)_ i.e. nav and raycast
 
-- Write text 🚧 👈
-- ✅ NavStringPull: animate goto navigation
-  - ✅ improve mobile e.g. larger, fix initial
 - Raycasting
   > https://github.com/rob-myers/rob-myers.github.io/blob/dev/model/geom/geom.service.ts
 
-### 🚧 _Technology (Part 3)_ i.e. static and runtime analysis
-
-- 🚧 Write text
 
 ### 🚧 _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
 
-- Write text
-
-### Ideas
-
-- > remove doors so can precompute lights
-  > then can fade in when appropriate, and simplifies pathfinding
 ## TODO (unsorted)
 
+- refine light masks
+  - missing outlines via hull outline, known outlines, walls and doors
+  - light switch metas in SVG
+  - yarn svg-meta triggers recompute geomorph json 
+
 - ✅ precompute symbol outlines and test
-- 🚧 GeomorphCssLightsTest: can toggle each area masks to "light" rooms
+- ✅ GeomorphCssLightsTest: can toggle each area masks to "light" rooms
 
 - Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
 - Bug: `Tabs` top is often fading in
