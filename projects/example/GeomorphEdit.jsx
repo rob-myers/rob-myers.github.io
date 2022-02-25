@@ -126,7 +126,6 @@ async function computeLayout(def) {
     /** Debug only */
     pngHref: layout.items[0].pngHref,
     labels: layout.labels,
-    outlines: layout.items.map(x => x.outlines),
   };
 }
 

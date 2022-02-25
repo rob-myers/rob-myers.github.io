@@ -32,7 +32,6 @@ declare namespace Geomorph {
     navPoly: Geom.GeoJsonPolygon[];
     navDecomp: Geom.TriangulationJson;
     obstacles: Geom.GeoJsonPolygon[];
-    outlines: Geom.GeoJsonPolygon[][];
     walls: Geom.GeoJsonPolygon[];
   }
 
@@ -111,8 +110,6 @@ declare namespace Geomorph {
       transformArray?: LayoutDefItem['transform'];
       /** If absent then is identity transform */
       transform?: string;
-      /** Outlines of holes inside symbol i.e. rooms */
-      outlines: Geom.Poly[];
     }[];
   }
   
@@ -122,7 +119,6 @@ declare namespace Geomorph {
     doors: Geom.TaggedRect[];
     labels: LayoutLabel[];
     pngHref: string;
-    outlines: Geom.Poly[][];
   }
 
   export interface LayoutLabel {

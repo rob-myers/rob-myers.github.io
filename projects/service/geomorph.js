@@ -84,9 +84,10 @@ export async function createLayout(def, lookup, triangleService) {
   // Currently triangle-wasm runs server-side only
   const navDecomp = triangleService
     ? await triangleService.triangulate(navPoly, {
-      maxSteiner: 120,
-      // minAngle: 28,
-      // maxArea: 800,
+      // maxSteiner: 300,
+      // minAngle: 10,
+      minAngle: 10,
+      // maxArea: 10000,
     })
     : { vs: [], tris: [] };
 
@@ -107,12 +108,7 @@ export async function createLayout(def, lookup, triangleService) {
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windows));
   const allHoles = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
-  // TODO cleaner approach, associating 'light switch metas'
-  const itemOutlines = def.items.map((item, i) => {
-    m.feedFromArray(item.transform || [1, 0, 0, 1, 0, 0])
-    if (i) m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
-    return symbols[i].outlines.map(x => x.clone().applyMatrix(m));
-  });
+  // TODO associate switches to holes
 
   return {
     def,
@@ -133,7 +129,6 @@ export async function createLayout(def, lookup, triangleService) {
       pngRect: sym.pngRect,
       transformArray: def.items[i].transform,
       transform: def.items[i].transform ? `matrix(${def.items[i].transform})` : undefined,
-      outlines: itemOutlines[i],
     })),
   };
 }
@@ -158,7 +153,6 @@ export function serializeLayout(layout) {
     navPoly: layout.navPoly.map(x => x.geoJson),
     navDecomp: layout.navDecomp,
     obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
-    outlines: layout.items.map(({ outlines }) => outlines.map(x => x.geoJson)),
     walls: layout.walls.map(x => x.geoJson),
   };
   return json;
