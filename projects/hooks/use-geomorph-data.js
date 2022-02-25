@@ -28,7 +28,7 @@ export default function useGeomorphData(layoutKey) {
       /** Derived computations */
       d: {
         navPoly: json.navPoly.map(Poly.from),
-        hullOutine: Poly.from(json.hull.poly[0]).removeHoles(),
+        hullOutine: Poly.from(json.hullPoly[0]).removeHoles(),
       },
     };
 

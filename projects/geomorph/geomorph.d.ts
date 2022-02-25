@@ -18,15 +18,16 @@ declare namespace Geomorph {
     wallColor?: string;
   }
 
-  /** Generated via `yarn render-layout` */
+  /**
+   * Serialized Geomorph.Layout.
+   */
   export interface GeomorphJson {
     key: LayoutKey;
     id: number;
     pngRect: Geom.RectJson;
+    allHoles: Geom.GeoJsonPolygon[];
     doors: DoorJson[];
-    hull: {
-      poly: Geom.GeoJsonPolygon[];
-    };
+    hullPoly: Geom.GeoJsonPolygon[];
     labels: LayoutLabel[];
     navPoly: Geom.GeoJsonPolygon[];
     navDecomp: Geom.TriangulationJson;
@@ -58,6 +59,10 @@ declare namespace Geomorph {
     key: string;
     /** Hull walls, only in hull */
     hull: T[];
+    /**
+     * Bounds of original image in symbol SVG.
+     * May be offset e.g. because doors are centred along edges.
+     */
     pngRect: Geom.RectJson;
     outlines: T[];
     /** Since epoch in ms */
@@ -83,11 +88,12 @@ declare namespace Geomorph {
     navDecomp: Geom.TriangulationJson;
     walls: Poly[];
     labels: LayoutLabel[];
+    allHoles: Geom.Poly[];
 
     hullPoly: Geom.Poly[];
     /** Bounds of hull */
     hullRect: Geom.RectJson;
-    /** Top of hull (sans windows/doors) */
+    /** Top of hull, sans windows/doors */
     hullTop: Poly[];
 
     /**
@@ -99,11 +105,13 @@ declare namespace Geomorph {
     items: {
       key: string;
       pngHref: string;
+      /** Untransformed */
       pngRect: Geom.RectJson;
       /** If absent then is identity transform */
       transformArray?: LayoutDefItem['transform'];
       /** If absent then is identity transform */
       transform?: string;
+      /** Outlines of holes inside symbol i.e. rooms */
       outlines: Geom.Poly[];
     }[];
   }

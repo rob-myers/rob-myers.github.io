@@ -10,7 +10,7 @@ import Doors from "../geomorph/Doors";
 import useUpdate from "projects/hooks/use-update";
 
 /**
- * IDEA provide masks for "light rooms" and layer original image atop
+ * TODO light switches via meta points in SVGs
  */
 
 /** @param {{ disabled?: boolean }} props */
@@ -37,6 +37,7 @@ export default function GeomorphCssLightsTest(props) {
     lightDefs: (curr, next) => equals(curr, next),
   });
 
+
   return (
     <CssPanZoom dark className={rootCss}>
       {gm && <>
@@ -52,7 +53,7 @@ export default function GeomorphCssLightsTest(props) {
           }}
         />
 
-        {Object.keys(state.maskedOutlines).length && <img
+        {Object.keys(state.maskedOutlines).length ? <img
           className="geomorph-light"
           src={geomorphPngPath(layoutKey)}
           draggable={false}
@@ -63,38 +64,36 @@ export default function GeomorphCssLightsTest(props) {
             height: gm.pngRect.height,
             clipPath: state.clipPath,
           }}
-        />}
+        /> : null}
 
-        <div /** Area dots */ 
+        <div // Area dots
           onClick={({ target }) => {
-            const dataIndex = (/** @type {HTMLElement} */ (target)).getAttribute('data-index') || '';
+            const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
             if (dataIndex in state.maskedOutlines) delete state.maskedOutlines[dataIndex];
             else state.maskedOutlines[dataIndex] = true;
             const svgPaths = Object.keys(state.maskedOutlines)
-              .map(dataIndex => dataIndex.split(':').map(Number))
-              .map(([i, j]) => `${Poly.from(gm.outlines[i][j]).translate(-gm.pngRect.x, -gm.pngRect.y).svgPath}`)
+              .map((i) => `${Poly.from(gm.allHoles[Number(i)]).translate(-gm.pngRect.x, -gm.pngRect.y).svgPath}`)
               .join(' ');
             state.clipPath = `path('${svgPaths}')`;
             update();
           }}
+          className="area-dots"
         >
-          {gm.outlines.slice(1).map((polys, i) =>
-            polys.map((poly, j) => {
-              const { center } = Poly.from(poly);
-              return <div
-                key={`${i + 1}:${j}`}
-                data-index={`${i + 1}:${j}`}
-                style={{
-                  borderRadius: 5,
-                  border: '5px solid red',
-                  position: 'absolute',
-                  cursor: 'pointer',
-                  left: center.x,
-                  top: center.y,
-                }}
-              />
-            })
-          )}
+          {gm.allHoles.map((poly, i) => {
+            const { center } = Poly.from(poly).rect;
+            return <div
+              key={i}
+              data-index={i}
+              style={{
+                borderRadius: 5,
+                border: '5px solid white',
+                position: 'absolute',
+                cursor: 'pointer',
+                left: center.x,
+                top: center.y,
+              }}
+            />
+          })}
         </div>
 
         {/* <svg
@@ -102,17 +101,17 @@ export default function GeomorphCssLightsTest(props) {
             width: gm.pngRect.width,
             height: gm.pngRect.height,
             position: 'absolute',
+            pointerEvents: 'none',
           }}
         >
-          {gm.outlines.slice(1).map((polys, i) =>
-            polys.map((poly, j) =>
-              <path
-                key={`${i}:${j}`}
-                fill="rgba(200, 0, 0, 0.4)"
-                stroke="blue"
-                d={Poly.from(poly).svgPath}
-              />
-            )
+          {gm.allHoles.map((poly, i) =>
+            <path
+              key={i}
+              // fill="rgba(0, 0, 200, 0.4)"
+              fill="none"
+              stroke="blue"
+              d={Poly.from(poly).svgPath}
+            />
           )}
         </svg> */}
 
@@ -124,17 +123,22 @@ export default function GeomorphCssLightsTest(props) {
 
 /** @type {Geomorph.LayoutKey} */
 const layoutKey = 'g-301--bridge';
+// const layoutKey = 'g-101--multipurpose';
+// const layoutKey = 'g-302--xboat-repair-bay';
 
 const rootCss = css`
   img.geomorph {
-    filter: invert(100%) brightness(70%);
+    filter: invert(100%) brightness(60%) contrast(200%);
     position: absolute;
   }
   img.geomorph-light {
-    filter: brightness(80%);
+    filter:  brightness(85%);
     position: absolute;
   }
-  canvas {
+  div.area-dots {
     position: absolute;
   }
+  /* canvas {
+    position: absolute;
+  } */
 `;

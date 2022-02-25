@@ -60,8 +60,9 @@ export async function createLayout(def, lookup, triangleService) {
   const doors = singlesToPolys(groups.singles, 'door');
   // Do not union walls yet, as may self-intersect when outset
   // Our polygon outset doesn't support self-intersecting outer ring
-  const walls = groups.walls.flatMap(x => Poly.cutOut(doors, [x]))
-  groups.walls = Poly.union(walls);
+  const unjoinedWalls = groups.walls.flatMap(x => Poly.cutOut(doors, [x]));
+  const uncutWalls = groups.walls; // Keep a reference to uncut walls
+  groups.walls = Poly.union(unjoinedWalls);
   groups.singles = groups.singles.reduce((agg, single) =>
     agg.concat(single.tags.includes('wall')
       ? Poly.cutOut(doors, [single.poly]).map(poly => ({ ...single, poly }))
@@ -71,12 +72,12 @@ export async function createLayout(def, lookup, triangleService) {
 
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSym = symbols[0];
-  const hullOutline = hullSym.hull.map(x => x.clone().removeHoles());
+  const hullOutline = hullSym.hull.map(x => x.clone().removeHoles()); // Not transformed
   const windows = singlesToPolys(groups.singles, 'window');
 
   // Navigation polygon
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
-    walls.flatMap(x => x.createOutset(12)), // Use non-unioned walls
+    unjoinedWalls.flatMap(x => x.createOutset(12)), // Use non-unioned walls
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
 
@@ -104,6 +105,9 @@ export async function createLayout(def, lookup, triangleService) {
       return { text, center, rect, padded };
     });
 
+  const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windows));
+  const allHoles = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
+  // TODO cleaner approach, associating 'light switch metas'
   const itemOutlines = def.items.map((item, i) => {
     m.feedFromArray(item.transform || [1, 0, 0, 1, 0, 0])
     if (i) m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
@@ -115,8 +119,9 @@ export async function createLayout(def, lookup, triangleService) {
     groups,
     navPoly,
     navDecomp,
-    walls,
+    walls: unjoinedWalls,
     labels,
+    allHoles,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
@@ -140,6 +145,7 @@ export function serializeLayout(layout) {
     key: layout.def.key,
     id: layout.def.id,
     pngRect: layout.items[0].pngRect,
+    allHoles: layout.allHoles.map(x => x.geoJson),
     doors: layout.groups.singles
       .filter(x => x.tags.includes('door'))
       .map(({ poly, tags }) => {
@@ -147,9 +153,7 @@ export function serializeLayout(layout) {
         const [u, v] = geom.getAngledRectSeg({ angle, rect });
         return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
       }),
-    hull: {
-      poly: layout.hullPoly.map(x => x.geoJson),
-    },
+    hullPoly: layout.hullPoly.map(x => x.geoJson),
     labels: layout.labels,
     navPoly: layout.navPoly.map(x => x.geoJson),
     navDecomp: layout.navDecomp,
@@ -298,6 +302,9 @@ function extractGeom(api, el) {
 }
 
 /**
+ * Each symbol has a copy of the original PNG in group `background`.
+ * It may have been offset e.g. so doors are aligned along border.
+ * Then we need to extract the respective rectangle.
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
  * @returns {Geom.RectJson}

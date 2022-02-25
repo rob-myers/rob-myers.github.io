@@ -30,8 +30,8 @@ export default function VisibilityDemo(props) {
     >
       {data && <>
         <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
-        <Light init={init.lightA} walls={data.walls} hull={data.hull.poly} />
-        <Light init={init.lightB} walls={data.walls} hull={data.hull.poly} />
+        <Light init={init.lightA} walls={data.walls} hull={data.hullPoly} />
+        <Light init={init.lightB} walls={data.walls} hull={data.hullPoly} />
       </>}
     </PanZoom>
   );
