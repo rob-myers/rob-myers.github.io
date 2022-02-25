@@ -59,8 +59,8 @@ const rootCss = css`
   div.door {
     position: absolute;
     cursor: pointer;
-    background: #666;
-    /* border: 2px solid #789; */
+    background: #fff;
+    border: 1px solid #4e4e4e;
     
     transition: width 100ms ease-in;
     &.open {

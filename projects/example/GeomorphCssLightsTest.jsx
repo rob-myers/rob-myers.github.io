@@ -1,6 +1,6 @@
 import { css } from "goober";
 import { Poly, Vect } from "projects/geom";
-import { ConnectableObservable, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
@@ -128,11 +128,11 @@ const layoutKey = 'g-301--bridge';
 
 const rootCss = css`
   img.geomorph {
-    filter: invert(100%) brightness(60%) contrast(200%);
+    filter: invert(100%) brightness(60%) contrast(200%) sepia(30%);
     position: absolute;
   }
   img.geomorph-light {
-    filter:  brightness(85%);
+    filter:  brightness(75%);
     position: absolute;
   }
   div.area-dots {
