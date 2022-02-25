@@ -256,8 +256,8 @@ const rootCss = (props) => css`
       height: ${2 * gridExtent}px;
       background-size: 10px 10px;
       background-image:
-        linear-gradient(to right, rgba(100, 100, 100, 0.1) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(100, 100, 100, 0.15) 1px, transparent 1px);
+        linear-gradient(to right, rgba(200, 200, 200, 0.1) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
     }
   }
 `;
