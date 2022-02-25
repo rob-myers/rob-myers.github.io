@@ -21,14 +21,12 @@ export default function Doors(props) {
       open: /** @type {Record<Number, boolean>} */ ({}),
       /** @param {React.MouseEvent} e */
       onClick(e) {
-        const rect = /** @type {HTMLDivElement} */ (e.target);
-        const index = Number(rect.getAttribute('data-index'));
-        const nowOpen = rect.classList.toggle('open');
-        state.open[index] = nowOpen;
-        props.wire.next({
-          key: nowOpen ? 'opened-door' : 'closed-door',
-          index,
-        });
+        const div = /** @type {HTMLDivElement} */ (e.target);
+        const index = Number(div.getAttribute('data-index'));
+        state.open[index] = !state.open[index];
+        const nextWidth = state.open[index] ? 10 : json.doors[index].rect.width; // Leq for borders
+        div.style.width = `${nextWidth}px`;
+        props.wire.next({ key: state.open[index] ? 'opened-door' : 'closed-door', index });
       },
     };
   });
@@ -61,11 +59,18 @@ const rootCss = css`
   div.door {
     position: absolute;
     cursor: pointer;
-    background: white;
-    opacity: 1;
+    background: #666;
+    /* border: 2px solid #789; */
+    
+    transition: width 100ms ease-in;
+    &.open {
+      width: 0;
+    }
+
+    /* opacity: 1;
     transition: opacity 100ms linear;
     &.open {
       opacity: 0.2;
-    }
+    } */
   }
 `;
