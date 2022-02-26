@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <rect x="27.639320225" y="27.639320225" width="44.72135955" height="44.72135955" style="stroke: rgb(0, 0, 0); fill: none;"/>
+  <rect x="27.639320225&#10;" y="0" width="72.360679775" height="27.639320225&#10;" style="stroke: rgb(0, 0, 0); fill: none;"/>
+  <rect x="27.6" width="72.4" height="27.6" style="stroke: rgb(0, 0, 0); fill: none;" transform="matrix(0, 1, -1, 0, 100, -0.000002)"/>
+  <rect y="72.4" width="72.4" height="27.6" style="stroke: rgb(0, 0, 0); fill: none;"/>
+  <rect x="27.6" width="72.4" height="27.6" style="stroke: rgb(0, 0, 0); fill: none;" transform="matrix(0, 1, -1, 0, 27.6, -27.6)"/>
+</svg>

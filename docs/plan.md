@@ -12,6 +12,13 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- ✅ Resize Last Redoubt i.e. height = 9 * (1/2 + 1/sqrt(2)
+- ✅ compute higher floor 5-city outline
+  - for unit square where a is central, b other (a + 2b = 1)
+    - a is (1 + sqrt(5))/(5 + sqrt(5))
+    - b is 2/(5 + sqrt(5))
+- replace screenshots with new redoubt
+
 - refine light masks
   - 🚧 missing outlines via: hull outline + known outlines + walls and doors
   - light switch metas in SVG
