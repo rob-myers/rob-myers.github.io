@@ -26,7 +26,7 @@ export default function Images(props) {
           background: black;
           padding: 16px;
           figure {
-            filter: grayscale(100%) brightness(150%);
+            filter: contrast(120%) grayscale(100%) brightness(120%);
             max-width: 800px;
             margin-bottom: 8px;
           }
