@@ -38,7 +38,7 @@ const rootCss = css`
   position: absolute;
   z-index: 10;
   right: ${width}px;
-  top: -48px;
+  top: -40px;
   @media(max-width: 1024px) { top: -32px; }
   @media(max-width: 600px) { top: 0; }
 

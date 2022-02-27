@@ -25,10 +25,7 @@ const titleComponents = {
   h1({ children, node, ...props }: any) {
     const router = useRouter();
     return (
-      <h1
-        onClick={() => router.push('/')}
-        {...props}
-      >
+      <h1 onClick={() => router.push('/')}>
         {children}
       </h1>
     );
@@ -39,43 +36,47 @@ const titleCss = css`
   position: relative;
   
   @media(max-width: 600px) {
-    background: #eee;
-    padding-bottom: 8px;
     padding-left: 8px;
-    border-bottom: 1px solid #aaa;
-    padding-top: 64px;
+    border-bottom: 1px solid #bbb;
   }
-  padding-top: 40px;
   
   h1 {
     margin: 0;
-    font-size: 5.5rem;
+    font-size: 4.8rem;
     font-weight: 300;
+    letter-spacing: 4px;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     cursor: pointer;
-    color: #333;
-    display: inline-block;
+    color: #444;
+    text-transform: uppercase;
+    text-shadow: 0 0 2px #888888bb;
+    background: linear-gradient(90deg, transparent, #66666655 75%, transparent 100%);
+    padding-top: 40px;
     
     @media(max-width: 800px) {
       font-size: 5rem;
     }
     @media(max-width: 600px) {
-      font-size: 2.9rem;
+      padding-top: 72px;
+      font-size: 2.2rem;
+      color: #333;
     }
   }
   
   /** Site subtitle */
   p {
-    color: #444;
-    letter-spacing: 3px;
-    font-size: 0.8rem;
+    color: #424242;
+    font-size: 1rem;
+    font-family: 'Courier New', Courier, monospace;
     margin: 0;
     padding: 40px 0 48px;
     font-weight: 300;
+    background: linear-gradient(90deg, transparent, #66666655 75%, transparent 100%);
+    text-transform: lowercase;
+    text-shadow: 0 0 2px #888888bb;
     
     @media(max-width: 600px) {
-      padding: 20px 0 20px 4px;
-      color: #222;
-      font-size: 0.9rem;
+      padding: 24px 0 28px 4px;
     }
   }
 

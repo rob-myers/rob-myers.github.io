@@ -151,13 +151,13 @@ const articleCss = css`
     letter-spacing: 2px;
   }
   h2 {
-    font-size: 3rem;
+    font-size: 2.8rem;
     @media(max-width: 1024px) {
-      font-size: 2.8rem;
+      font-size: 2.6rem;
     }
     @media(max-width: 600px) {
       margin: 16px 0 16px;
-      font-size: 1.9rem;
+      font-size: 1.7rem;
     }
   }
   h2 + time {
