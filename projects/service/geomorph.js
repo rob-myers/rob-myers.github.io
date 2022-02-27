@@ -191,7 +191,6 @@ export function parseStarshipSymbol(symbolName, svgContents, lastModified) {
     obstacles: Poly.union(obstacles),
     walls: Poly.union(walls),
     singles: singles.map((/** @type {*} */ poly) => ({ tags: poly._ownTags, poly })),
-    outlines,
     lastModified,
   };
 }
@@ -224,7 +223,6 @@ export function serializeSymbol(parsed) {
     walls: toJsons(parsed.walls),
     singles: parsed.singles.map(({ tags, poly }) => ({ tags, poly: poly.geoJson })),
     pngRect: parsed.pngRect,
-    outlines: parsed.outlines.map(x => x.geoJson),
     lastModified: parsed.lastModified,
   };
 }
@@ -241,7 +239,6 @@ function deserializeSymbol(json) {
     walls: json.walls.map(Poly.from),
     singles: json.singles.map(({ tags, poly }) => ({ tags, poly: Poly.from(poly) })),
     pngRect: json.pngRect,
-    outlines: json.outlines.map(Poly.from),
     lastModified: json.lastModified,
   };
 }

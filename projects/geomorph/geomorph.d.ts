@@ -63,7 +63,6 @@ declare namespace Geomorph {
      * May be offset e.g. because doors are centred along edges.
      */
     pngRect: Geom.RectJson;
-    outlines: T[];
     /** Since epoch in ms */
     lastModified: number;
   }
