@@ -11,12 +11,12 @@ import { geom } from './geom';
  * @param {Geomorph.LayoutDef} def
  * @param {Geomorph.SymbolLookup} lookup
  * @param {import('./triangle').TriangleService} [triangleService]
- * @returns {Promise<Geomorph.Layout>}
+ * @returns {Promise<Geomorph.ParsedLayout>}
  */
 export async function createLayout(def, lookup, triangleService) {
   const m = new Mat;
 
-  /** @type {Geomorph.Layout['groups']} */
+  /** @type {Geomorph.ParsedLayout['groups']} */
   const groups = { singles: [], obstacles: [], walls: [] };
 
   def.items.forEach((item, i) => {
@@ -123,7 +123,7 @@ export async function createLayout(def, lookup, triangleService) {
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
     hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
 
-    items: symbols.map(/** @returns {Geomorph.Layout['items'][0]} */  (sym, i) => ({
+    items: symbols.map(/** @returns {Geomorph.ParsedLayout['items'][0]} */  (sym, i) => ({
       key: sym.key,
       pngHref: i ? `/symbol/${sym.key}.png` : `/debug/${def.key}.png`,
       pngRect: sym.pngRect,
@@ -133,7 +133,7 @@ export async function createLayout(def, lookup, triangleService) {
   };
 }
 
-/** @param {Geomorph.Layout} layout */
+/** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout(layout) {
   /** @type {Geomorph.GeomorphJson} */
   const json = {

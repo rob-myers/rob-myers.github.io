@@ -6,7 +6,7 @@ import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePol
 /**
  * Render a single geomorph PNG,
  * optionally with e.g. doors.
- * @param {Geomorph.Layout} layout
+ * @param {Geomorph.ParsedLayout} layout
  * @param {Geomorph.SymbolLookup} lookup
  * @param {Canvas} canvas
  * @param {(pngHref: string) => Promise<Image>} getPng

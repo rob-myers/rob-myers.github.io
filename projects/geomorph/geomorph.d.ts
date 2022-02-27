@@ -1,7 +1,8 @@
 declare namespace Geomorph {
   
-  type Poly = import('../geom').Poly;
-  type Vect = import('../geom').Vect;
+  type Poly = Geom.Poly;
+  type PolyJson = Geom.GeoJsonPolygon;
+  type Vect = Geom.Vect;
 
   export interface RenderOpts {
     scale: number;
@@ -19,6 +20,7 @@ declare namespace Geomorph {
   }
 
   /**
+   * TODO remove
    * Serialized Geomorph.Layout.
    */
   export interface GeomorphJson {
@@ -73,26 +75,29 @@ declare namespace Geomorph {
     walls: T[];
   }
 
+  export type ParsedLayout = Layout<Poly>;
+  export type LayoutJson = Layout<PolyJson>;
+
   /**
    * Constructed from `LayoutDef` and `SymbolLookup`.
    */
-  export interface Layout {
+  export interface Layout<T> {
     def: LayoutDef;
     /** Transformed and filtered groups */
-    groups: SvgGroups<Poly>;
+    groups: SvgGroups<T>;
     /** The navigable area including doorways. */
-    navPoly: Poly[];
+    navPoly: T[];
     /** A rich triangulation involving Steiner points */
     navDecomp: Geom.TriangulationJson;
-    walls: Poly[];
+    walls: T[];
     labels: LayoutLabel[];
-    allHoles: Geom.Poly[];
+    allHoles: T[];
 
-    hullPoly: Geom.Poly[];
+    hullPoly: T[];
     /** Bounds of hull */
     hullRect: Geom.RectJson;
     /** Top of hull, sans windows/doors */
-    hullTop: Poly[];
+    hullTop: T[];
 
     /**
      * Symbol instances i.e. PNGs with transforms.
