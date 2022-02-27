@@ -32,12 +32,12 @@ Where does it take place?
 ></div>
 
 How is it made?
-> We'll use everyday web dev techniques.
-> For example, we won't use WebGL, a physics engine, or complex character animation.
-> Our approach is relevant to a wide audience: those who build performant web applications.
+> We'll use everyday web dev techniques,
+> avoiding WebGL, physics engines, and complex character animation.
+> Then our approach is relevant to a wide audience: builders of performant web applications.
 
 What distinguishes it?
-> The world is awash with beautifully-crafted yet somewhat shallow games.
+> The world is awash with beautiful games which are somewhat shallow.
 > Failing the former we'll overcome the latter via rich Game AI.
 > Instead of clunky behaviour editors or rigid task-based programming patterns,
 > we'll build things **interactively** via a browser-based terminal.
