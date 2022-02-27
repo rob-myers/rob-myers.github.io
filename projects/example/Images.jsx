@@ -29,8 +29,13 @@ export default function Images(props) {
             filter: contrast(120%) grayscale(100%) brightness(120%);
             max-width: 800px;
             margin-bottom: 8px;
+            background: #444;
+            img {
+              padding: 0 4px;
+            }
           }
           figcaption {
+            background: black;
             padding: 8px 0;
             border: 4px solid #444;
             color: #a3a3a3;

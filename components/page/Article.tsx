@@ -58,6 +58,7 @@ const articleCss = css`
     font-size: 1.1rem;
     border: none;
     line-height: 1.7;
+    font-weight: 300;
   }
 
   a {
@@ -119,6 +120,7 @@ const articleCss = css`
     @media(max-width: 600px) {
       margin: 20px 0;
       padding-left: 20px;
+      font-style: oblique;
     }
   }
   blockquote + p {

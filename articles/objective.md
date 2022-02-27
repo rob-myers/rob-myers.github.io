@@ -3,11 +3,11 @@
 We are going to create a **video game**.
 Unusually, we'll 
 (a) describe the process in detail,
-(b) use standard web development techniques,
-and (c) develop rich Game AI.
+(b) use everyday web development techniques,
+and (c) focus on rich Game AI.
 
 What kind of game?
-> An adventure game with top-down adventure.
+> An adventure from a [top-down perspective](https://en.wikipedia.org/wiki/Video_game_graphics#Top-down_perspective).
 
 Where does it take place?
 > [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") - a futuristic Earth whose Sun has died.
@@ -32,17 +32,15 @@ Where does it take place?
 ></div>
 
 How is it made?
-> We'll use everyday web development techniques.
+> We'll use everyday web dev techniques.
 > For example, we won't use WebGL, a physics engine, or complex character animation.
-> Our approach is relevant to a much wider audience i.e. those who build complex performant web applications.
-
-<!-- > We won't use WebGL, a physics engine, walk-cycles etc. -->
+> Our approach is relevant to a wide audience: those who build performant web applications.
 
 What distinguishes it?
-> The world is awash with beautifully-crafted yet ultimately shallow games.
+> The world is awash with beautifully-crafted yet somewhat shallow games.
 > Failing the former we'll overcome the latter via rich Game AI.
 > Instead of clunky behaviour editors or rigid task-based programming patterns,
-> we'll build Game AI **interactively** using a browser-based terminal.
+> we'll build things **interactively** via a browser-based terminal.
 
 __TODO__ a meaningful example 🚧
 
