@@ -7,7 +7,7 @@ Unusually, we'll
 and (c) develop rich Game AI.
 
 What kind of game?
-> A top-down adventure.
+> An adventure game with top-down adventure.
 
 Where does it take place?
 > [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") - a futuristic Earth whose Sun has died.
@@ -15,9 +15,9 @@ Where does it take place?
 
 <aside>
 
-  _The Night Land_ (1912) was written by William Hope Hodgson.
+  _The Night Land_ (1912) was written by [William Hope Hodgson](https://en.wikipedia.org/wiki/William_Hope_Hodgson).
   His _Last Redoubt_ had 1,320 cities and the same number of floors.
-  We instead assume these cities span 125 + 64 = 189 floors, and are built from ancient interconnected space vehicles.
+  We assume these same cities span 125 + 64 = 189 floors, and are built from ancient interconnected space vehicles.
 
 </aside>
 
@@ -31,16 +31,18 @@ Where does it take place?
   ]"
 ></div>
 
-How will you make it?
-> Importantly, we will make this game using everyday web development techniques.
-> We won't use WebGL, a physics engine, walk-cycles etc.
-> The strategies we employ are relevant to a much wider audience i.e. those who build web applications.
+How is it made?
+> We'll use everyday web development techniques.
+> For example, we won't use WebGL, a physics engine, or complex character animation.
+> Our approach is relevant to a much wider audience i.e. those who build complex performant web applications.
+
+<!-- > We won't use WebGL, a physics engine, walk-cycles etc. -->
 
 What distinguishes it?
-> The world is awash with beautifully-crafted yet shallow games.
-> Failing the former we strive to overcome the latter i.e. produce rich Game AI.
-> We'll avoid _clunky behaviour editors_ and _rigid task-based programming patterns_.
-> Instead we'll build Game AI **interactively** using a browser-based terminal.
+> The world is awash with beautifully-crafted yet ultimately shallow games.
+> Failing the former we'll overcome the latter via rich Game AI.
+> Instead of clunky behaviour editors or rigid task-based programming patterns,
+> we'll build Game AI **interactively** using a browser-based terminal.
 
 __TODO__ a meaningful example 🚧
 
