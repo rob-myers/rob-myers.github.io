@@ -138,5 +138,20 @@
     <rect y="900" width="20" height="300" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="2390">
       <title>wall</title>
     </rect>
+    <rect x="956.9" y="479.7" width="50" height="50" style="fill: rgb(2, 255, 2); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1552.556274, -43.400024)">
+      <title>switch</title>
+    </rect>
+    <rect x="956.9" y="479.6" width="50" height="50" style="fill: rgb(2, 255, 2); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1370.561279, -171.274826)">
+      <title>switch</title>
+    </rect>
+    <rect x="956.9" y="489.2" width="50" height="51" style="fill: rgb(2, 255, 2); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 2049.15332, -165.274826)">
+      <title>switch</title>
+    </rect>
+    <rect x="956.9" y="441.8" width="50" height="46.1" style="fill: rgb(2, 255, 2); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1365.824219, -656.900024)">
+      <title>switch</title>
+    </rect>
+    <rect x="956.9" y="479.6" width="50" height="50" style="fill: rgb(2, 255, 2); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1140.561279, 658.725159)">
+      <title>switch</title>
+    </rect>
   </g>
 </svg>
