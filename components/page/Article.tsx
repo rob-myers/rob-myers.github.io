@@ -57,7 +57,7 @@ const articleCss = css`
     padding: 8px 12px;
     font-size: 1.1rem;
     border: none;
-    line-height: 1.8;
+    line-height: 2;
     font-weight: 300;
   }
 
@@ -92,6 +92,7 @@ const articleCss = css`
       font-size: 0.9rem;
       border-radius: 12px;
       border-width: 0 2px 2px 0;
+      line-height: 1.6;
     }
 
     blockquote {
