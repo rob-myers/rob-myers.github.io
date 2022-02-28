@@ -7,7 +7,7 @@ Unusually, we'll
 and (c) focus on rich Game AI.
 
 What kind of game?
-> An adventure from a [top-down perspective](https://en.wikipedia.org/wiki/Video_game_graphics#Top-down_perspective).
+> A [top-down](https://en.wikipedia.org/wiki/Video_game_graphics#Top-down_perspective) adventure game.
 
 Where does it take place?
 > [The Night Land](https://en.wikipedia.org/wiki/The_Night_Land "@new-tab") - a futuristic Earth whose Sun has died.
@@ -18,8 +18,11 @@ Where does it take place?
   _The Night Land_ (1912) was written by [William Hope Hodgson](https://en.wikipedia.org/wiki/William_Hope_Hodgson).
   His _Last Redoubt_ had 1,320 cities and the same number of floors.
   We assume these same cities span 125 + 64 = 189 floors, and are built from ancient interconnected space vehicles.
+  
+  This can be clarified with some concept art.
 
 </aside>
+
 
 <div
   class="tabs"
@@ -32,9 +35,9 @@ Where does it take place?
 ></div>
 
 How is it made?
-> We'll use everyday web dev techniques,
-> avoiding WebGL, physics engines, and complex character animation.
-> Then our approach is relevant to a wide audience: builders of performant web applications.
+> We'll use everyday web dev techniques.
+> We'll avoid game-centric technology like WebGL, physics engines, and complex character animation.
+> Our approach is relevant to a wide audience i.e. web developers in general.
 
 What distinguishes it?
 > The world is awash with beautiful games which are somewhat shallow.
