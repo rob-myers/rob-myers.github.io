@@ -150,14 +150,14 @@ const rootCss = css`
     background: rgba(0, 0, 0, 0.6);
   }
 
-  @keyframes fadein {
+  /* @keyframes fadein {
     from { opacity: 0; }
     to   { opacity: 1; }
   }
 
   .flexlayout__tabset {
     animation: fadein 1s;
-  }
+  } */
 
   .flexlayout__tabset, .flexlayout__tab {
     background: white;
