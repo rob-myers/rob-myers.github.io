@@ -3,7 +3,6 @@ import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat } from '../geom';
 import { labelMeta } from '../geomorph/geomorph.model';
 import { svgPathToPolygon } from './dom';
-import { geom } from './geom';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -31,7 +30,7 @@ export async function createLayout(def, lookup, triangleService) {
     }
     // Transform singles (restricting doors/walls by tags)
     const restricted = singles
-      .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m).precision(1) }))
+      .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m).precision(4) }))
       .filter(({ tags }) => {
         if (item.doors && tags.includes('door'))
           return tags.some(tag => /** @type {string[]} */ (item.doors).includes(tag));
@@ -53,8 +52,9 @@ export async function createLayout(def, lookup, triangleService) {
   });
 
   // Ensure well-signed polygons
-  groups.obstacles.forEach(poly => poly.fixOrientation());
-  groups.singles.forEach(({ poly }) => poly.fixOrientation());
+  groups.singles.forEach(({ poly }) => poly.fixOrientation().precision(4));
+  groups.obstacles.forEach(poly => poly.fixOrientation().precision(4));
+  groups.walls.forEach((poly) => poly.fixOrientation().precision(4));
   
   // Cut doors from walls
   const doors = singlesToPolys(groups.singles, 'door');
@@ -79,7 +79,7 @@ export async function createLayout(def, lookup, triangleService) {
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
     unjoinedWalls.flatMap(x => x.createOutset(12)), // Use non-unioned walls
     groups.obstacles.flatMap(x => x.createOutset(8)),
-  ), hullOutline).map(x => x.cleanFinalReps().precision(1).fixOrientation());
+  ), hullOutline).map(x => x.cleanFinalReps().fixOrientation().precision(4));
 
   // Currently triangle-wasm runs server-side only
   const navDecomp = triangleService
@@ -199,22 +199,6 @@ export function serializeLayout({
     hullTop: hullTop.map(x => x.geoJson),
 
     items,
-
-    // pngRect: layout.items[0].pngRect,
-    // allHoles: layout.allHoles.map(x => x.geoJson),
-    // doors: layout.groups.singles
-    //   .filter(x => x.tags.includes('door'))
-    //   .map(({ poly, tags }) => {
-    //     const { angle, rect } = geom.polyToAngledRect(poly);
-    //     const [u, v] = geom.getAngledRectSeg({ angle, rect });
-    //     return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
-    //   }),
-    // hullPoly: layout.hullPoly.map(x => x.geoJson),
-    // labels: layout.labels,
-    // navPoly: layout.navPoly.map(x => x.geoJson),
-    // navDecomp: layout.navDecomp,
-    // obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
-    // walls: layout.walls.map(x => x.geoJson),
   };
   return json;
 }
@@ -234,16 +218,6 @@ export function parseStarshipSymbol(symbolName, svgContents, lastModified) {
   const hull = extractGeoms($, topNodes, 'hull');
   const obstacles = extractGeoms($, topNodes, 'obstacles');
   const walls = extractGeoms($, topNodes, 'walls');
-
-  // Compute outlines of each subroom, or just whole ting
-  const outlinePolys = hull.concat(walls)
-    .concat(singles.filter((p) => ['wall', 'window'].includes(/** @type {*} */ (p)._ownTags[0])));
-  !outlinePolys.length && outlinePolys.push(...obstacles);
-  const outlines = Poly.union(outlinePolys).flatMap(poly => [
-    ...poly.holes.length
-      ? poly.holes.map(ring => new Poly(ring))
-      : [new Poly(poly.outline)],
-  ]);
 
   return {
     key: symbolName,
@@ -320,7 +294,7 @@ export function deserializeSvgJson(svgJson) {
 function extractGeoms(api, topNodes, title) {
   const group = topNodes.find(x => hasTitle(api, x, title));
   const children = api(group).children('rect, path, ellipse').toArray();
-  return children.flatMap(x => extractGeom(api, x));
+  return children.flatMap(x => extractGeom(api, x)).map(x => x.precision(4));
 }
 
 /**

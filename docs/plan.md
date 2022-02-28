@@ -12,7 +12,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- clean up interfaces relating to Geomorph.Layout
+- simplify precision of polygons in geomorph json
+
+- ✅ clean up interfaces relating to Geomorph.Layout
   - Geomorph.{LayoutJson,ParsedLayout}
   - Geomorph.GeomorphData is Geomorph.ParsedLayout with derived data `d`
 
