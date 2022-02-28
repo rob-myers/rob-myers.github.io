@@ -20,7 +20,7 @@ html {
 }
 
 body {
-  /* background: var(--body-bg); */
+  background: var(--body-bg);
   padding: 0;
   margin: 0;
   font-family: sans-serif;
