@@ -37,7 +37,7 @@ const titleCss = css`
   
   @media(max-width: 600px) {
     padding-left: 8px;
-    /* border-bottom: 1px solid #bbb; */
+    border-bottom: 1px solid #777;
   }
   
   h1 {
@@ -50,7 +50,6 @@ const titleCss = css`
     color: #444;
     text-transform: uppercase;
     text-shadow: 0 0 2px #888888bb;
-    background: linear-gradient(90deg, transparent, #66666699 75%, transparent 100%);
     padding-top: 40px;
     
     @media(max-width: 800px) {
@@ -71,9 +70,7 @@ const titleCss = css`
     margin: 0;
     padding: 40px 0 48px;
     font-weight: 300;
-    background: linear-gradient(90deg, transparent, #66666699 75%, transparent 100%);
     text-transform: lowercase;
-    /* text-shadow: 0 0 2px #888888bb; */
     
     @media(max-width: 600px) {
       padding: 24px 0 28px 4px;

@@ -43,8 +43,10 @@ export default function Article(props: React.PropsWithChildren<{
 
 const articleCss = css`
   line-height: 2.2;
-  background: var(--focus-bg);
-  border: var(--blog-border-width) solid var(--border-bg);
+  /* background: var(--focus-bg); */
+  /* border: var(--blog-border-width) solid var(--border-bg); */
+  border: 0 solid var(--border-bg);
+  border-width: 1px 0 0 1px;
   font-size: 1rem;
   overflow-wrap: break-word;
   position: relative; /** For anchors */
@@ -59,6 +61,7 @@ const articleCss = css`
     border: none;
     line-height: 2;
     font-weight: 300;
+    background: white;
   }
 
   a {
@@ -92,7 +95,7 @@ const articleCss = css`
       font-size: 0.9rem;
       border-radius: 12px;
       border-width: 0 2px 2px 0;
-      line-height: 1.6;
+      line-height: 1.9;
     }
 
     blockquote {
@@ -145,11 +148,11 @@ const articleCss = css`
 
   h1, h2, h3, h4 {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-    font-weight: 400;
+    font-weight: 300;
+    letter-spacing: 2px;
     a {
       color: #444;
     }
-    letter-spacing: 2px;
   }
   h2 {
     font-size: 2.8rem;

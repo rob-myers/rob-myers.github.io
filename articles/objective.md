@@ -17,9 +17,9 @@ Where does it take place?
 
   _The Night Land_ (1912) was written by [William Hope Hodgson](https://en.wikipedia.org/wiki/William_Hope_Hodgson).
   His _Last Redoubt_ had 1,320 cities and the same number of floors.
-  We assume these same cities span 125 + 64 = 189 floors, and are built from ancient interconnected space vehicles.
+  We assume these 1000 + 320 cities span 125 + 64 = 189 floors, and are built from ancient interconnected space vehicles.
   
-  This can be clarified with some concept art.
+  Some concept art will clarify things.
 
 </aside>
 
