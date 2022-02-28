@@ -46,10 +46,10 @@ export default function GeomorphCssLightsTest(props) {
           src={geomorphPngPath(layoutKey)}
           draggable={false}
           style={{
-            left: gm.pngRect.x,
-            top: gm.pngRect.y,
-            width: gm.pngRect.width,
-            height: gm.pngRect.height,
+            left: gm.d.pngRect.x,
+            top: gm.d.pngRect.y,
+            width: gm.d.pngRect.width,
+            height: gm.d.pngRect.height,
           }}
         />
 
@@ -58,10 +58,10 @@ export default function GeomorphCssLightsTest(props) {
           src={geomorphPngPath(layoutKey)}
           draggable={false}
           style={{
-            left: gm.pngRect.x,
-            top: gm.pngRect.y,
-            width: gm.pngRect.width,
-            height: gm.pngRect.height,
+            left: gm.d.pngRect.x,
+            top: gm.d.pngRect.y,
+            width: gm.d.pngRect.width,
+            height: gm.d.pngRect.height,
             clipPath: state.clipPath,
           }}
         /> : null}
@@ -72,7 +72,7 @@ export default function GeomorphCssLightsTest(props) {
             if (dataIndex in state.maskedOutlines) delete state.maskedOutlines[dataIndex];
             else state.maskedOutlines[dataIndex] = true;
             const svgPaths = Object.keys(state.maskedOutlines)
-              .map((i) => `${Poly.from(gm.allHoles[Number(i)]).translate(-gm.pngRect.x, -gm.pngRect.y).svgPath}`)
+              .map((i) => `${gm.allHoles[Number(i)].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
               .join(' ');
             state.clipPath = `path('${svgPaths}')`;
             update();
@@ -80,7 +80,7 @@ export default function GeomorphCssLightsTest(props) {
           className="area-dots"
         >
           {gm.allHoles.map((poly, i) => {
-            const { center } = Poly.from(poly).rect;
+            const { center } = poly.rect;
             return <div
               key={i}
               data-index={i}
@@ -115,7 +115,7 @@ export default function GeomorphCssLightsTest(props) {
           )}
         </svg> */}
 
-        <Doors json={gm} wire={state.wire} />
+        <Doors gm={gm} wire={state.wire} />
       </>}
     </CssPanZoom>
   );

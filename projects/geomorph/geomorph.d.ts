@@ -19,33 +19,6 @@ declare namespace Geomorph {
     wallColor?: string;
   }
 
-  /**
-   * TODO remove
-   * Serialized Geomorph.Layout.
-   */
-  export interface GeomorphJson {
-    key: LayoutKey;
-    id: number;
-    pngRect: Geom.RectJson;
-    allHoles: Geom.GeoJsonPolygon[];
-    doors: DoorJson[];
-    hullPoly: Geom.GeoJsonPolygon[];
-    labels: LayoutLabel[];
-    navPoly: Geom.GeoJsonPolygon[];
-    navDecomp: Geom.TriangulationJson;
-    obstacles: Geom.GeoJsonPolygon[];
-    walls: Geom.GeoJsonPolygon[];
-  }
-
-  export interface GeomorphData extends GeomorphJson {
-    image: HTMLImageElement;
-    /** Derived computations (?) */
-    d: {
-      navPoly: Geom.Poly[];
-      hullOutine: Geom.Poly;
-    };
-  }
-
   /** Generated via `yarn svg-meta`. */
   export type SvgJson = Record<string, ParsedSymbol<Geom.GeoJsonPolygon>>;
 
@@ -75,13 +48,14 @@ declare namespace Geomorph {
     walls: T[];
   }
 
-  export type ParsedLayout = Layout<Poly>;
-  export type LayoutJson = Layout<PolyJson>;
-
   /**
-   * Constructed from `LayoutDef` and `SymbolLookup`.
+   * The layout of a single geomorph, 
+   * constructed from a `LayoutDef` and the `SymbolLookup`.
    */
   export interface Layout<T> {
+    key: LayoutKey;
+    id: number;
+
     def: LayoutDef;
     /** Transformed and filtered groups */
     groups: SvgGroups<T>;
@@ -93,6 +67,7 @@ declare namespace Geomorph {
     labels: LayoutLabel[];
     allHoles: T[];
 
+    /** Should probably have exactly one polygon */
     hullPoly: T[];
     /** Bounds of hull */
     hullRect: Geom.RectJson;
@@ -117,6 +92,26 @@ declare namespace Geomorph {
     }[];
   }
   
+  export type ParsedLayout = Layout<Poly>;
+  export type LayoutJson = Layout<PolyJson>;
+
+  /**
+   * Extension of Geomorph.ParsedLayout with derived data.
+   */
+   export interface GeomorphData extends Geomorph.ParsedLayout {
+    /** Useful for canvas ops (currently unused) */
+    image: HTMLImageElement;
+    /** Derived computations */
+    d: {
+      doors: DoorJson[];
+      hullOutine: Geom.Poly;
+      pngRect: Geom.Rect;
+    };
+  }
+
+  /**
+   * TODO replace by `GeomorphData` if possible.
+   */
   export interface BrowserLayout {
     dataUrl: string;
     pngRect: Geom.RectJson;

@@ -13,7 +13,7 @@ declare namespace NPC {
   }
 
   export interface DoorsProps {
-    json: Geomorph.GeomorphJson;
+    gm: Geomorph.GeomorphData;
     wire: NavWire;
   }
 

@@ -29,7 +29,7 @@ export default function VisibilityDemo(props) {
       dark
     >
       {data && <>
-        <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
+        <image {...data.d.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
         <Light init={init.lightA} walls={data.walls} hull={data.hullPoly} />
         <Light init={init.lightB} walls={data.walls} hull={data.hullPoly} />
       </>}
@@ -37,15 +37,15 @@ export default function VisibilityDemo(props) {
   );
 }
 
-/** @param {{ init: Geom.Vect; walls: Geom.GeoJsonPolygon[]; hull: Geom.GeoJsonPolygon[] }} props */
+/** @param {{ init: Geom.Vect; walls: Geom.Poly[]; hull: Geom.Poly[] }} props */
 function Light({ init, walls, hull }) {
 
   const [position, setPosition] = React.useState(() => init);
 
   const light = useMemo(() => {
-    const hullOutline = Poly.from(hull[0]).removeHoles();
+    const hullOutline = hull[0].clone().removeHoles();
     if (hullOutline.contains(position)) {
-      const polys = walls.map(x => Poly.from(x));
+      const polys = walls;
       const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
       return geom.lightPolygon(position, 2000, triangs);
     } else return new Poly;

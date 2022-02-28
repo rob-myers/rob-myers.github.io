@@ -1,6 +1,8 @@
 import { useQuery } from "react-query";
-import { Poly } from "../geom/poly";
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
+import { Rect } from "../geom";
+import { geom } from "../service/geom";
+import { parseLayout } from "../service/geomorph";
 
 /**
  * @param {Geomorph.LayoutKey} layoutKey 
@@ -8,10 +10,11 @@ import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
 export default function useGeomorphData(layoutKey) {
   return useQuery(geomorphJsonPath(layoutKey), async () => {
     
-    /** @type {[Geomorph.GeomorphJson, HTMLImageElement]} */
-   const [json, image] = await Promise.all([
+    /** @type {[Geomorph.ParsedLayout, HTMLImageElement]} */
+   const [layout, image] = await Promise.all([
       fetch(geomorphJsonPath(layoutKey))
-        .then(x => x.json()),
+        .then(x => x.json())
+        .then(parseLayout),
       new Promise((res, rej) => {
         const image = new Image;
         image.onload = () => res(image);
@@ -22,13 +25,19 @@ export default function useGeomorphData(layoutKey) {
 
     /** @type {Geomorph.GeomorphData} */
     const output = {
-      ...json,
+      ...layout,
       // TODO possibly remove, unless HTMLCanvas needed
       image,
-      /** Derived computations */
       d: {
-        navPoly: json.navPoly.map(Poly.from),
-        hullOutine: Poly.from(json.hullPoly[0]).removeHoles(),
+        doors: layout.groups.singles
+          .filter(x => x.tags.includes('door'))
+          .map(({ poly, tags }) => {
+            const { angle, rect } = geom.polyToAngledRect(poly);
+            const [u, v] = geom.getAngledRectSeg({ angle, rect });
+            return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
+          }),
+        hullOutine: layout.hullPoly[0].removeHoles(),
+        pngRect: Rect.fromJson(layout.items[0].pngRect),
       },
     };
 

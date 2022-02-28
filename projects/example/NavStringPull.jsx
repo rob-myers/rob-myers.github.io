@@ -58,7 +58,7 @@ export default function NavStringPull(props) {
           }
         }}
       >
-        {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
+        {gm && <image {...gm.d.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
         {!props.disabled && pf?.zone.groups.map(nodes => nodes.map(({ vertexIds }) =>
           <polygon className="navtri" points={`${vertexIds.map(id => pf?.zone.vertices[id])}`} />
@@ -69,7 +69,7 @@ export default function NavStringPull(props) {
             initial={state.source}
             icon="run"
             onStop={(p) => {
-              if (!gm.d.navPoly.some(x => x.contains(p))) return 'cancel';
+              if (!gm.navPoly.some(x => x.contains(p))) return 'cancel';
               state.source.copy(p);
               state.updatePath();
             }}
@@ -81,7 +81,7 @@ export default function NavStringPull(props) {
             initial={state.target}
             icon="finish"
             onStop={(p) => {
-              if (!gm.d.navPoly.some(x => x.contains(p))) return 'cancel';
+              if (!gm.navPoly.some(x => x.contains(p))) return 'cancel';
               state.target.copy(p);
               state.updatePath();
             }}

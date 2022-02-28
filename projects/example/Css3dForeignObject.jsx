@@ -49,7 +49,7 @@ export default withSize({ refreshMode: 'debounce' })(
                 setTimeout(() => state.onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement)));
               }
             }}>
-              <image {...gm.pngRect} href={geomorphPngPath(props.layoutKey)} />
+              <image {...gm.d.pngRect} href={geomorphPngPath(props.layoutKey)} />
               <ForeignObject gm={gm} />
             </g>
           )}
@@ -77,27 +77,27 @@ const Root = styled('div')`
 `;
 
 
-/** @param {{ gm: Geomorph.GeomorphJson }} props */
+/** @param {{ gm: Geomorph.GeomorphData }} props */
 function ForeignObject({ gm }) {
 
   const { wallsDataUrl, obstaclesDataUrl, labelsDataUrl } = useDataUrls(gm);
 
   const { wallSegs, doorSegs, obstacleSegs } = React.useMemo(() => {
     return {
-      wallSegs: gm.walls.flatMap(json =>
-        Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs
+      wallSegs: gm.walls.flatMap(poly =>
+        poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y).lineSegs
       ),
-      doorSegs: gm.doors.map(({ seg: [u, v] }) =>
-        [u, v].map(p => Vect.from(p).translate(-gm.pngRect.x, -gm.pngRect.y))
+      doorSegs: gm.d.doors.map(({ seg: [u, v] }) =>
+        [u, v].map(p => Vect.from(p).translate(-gm.d.pngRect.x, -gm.d.pngRect.y))
       ),
-      obstacleSegs: gm.obstacles.flatMap(json =>
-        Poly.from(json).translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs
+      obstacleSegs: gm.groups.obstacles.flatMap(poly =>
+        poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y).lineSegs
       ),
     };
   }, [gm.walls]);
 
   return (
-    <foreignObject xmlns="http://www.w3.org/1999/xhtml" {...gm.pngRect}>
+    <foreignObject xmlns="http://www.w3.org/1999/xhtml" {...gm.d.pngRect}>
       <div className={classNames("root-3d", threeDeeCss)}>
         {wallSegs.map(([v, u], i) => { // [v, u] fixes backface culling
           tempPoint.copy(u).sub(v);
@@ -188,22 +188,22 @@ const threeDeeCss = css`
 `;
 
 /**
- * @param {Geomorph.GeomorphJson} gm 
+ * @param {Geomorph.GeomorphData} gm 
  */
 function useDataUrls(gm) {
   return React.useMemo(() => {
     const canvas = document.createElement('canvas');
     const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
-    [canvas.width, canvas.height] = [gm.pngRect.width, gm.pngRect.height];
-    ctxt.translate(-gm.pngRect.x, -gm.pngRect.y);
+    [canvas.width, canvas.height] = [gm.d.pngRect.width, gm.d.pngRect.height];
+    ctxt.translate(-gm.d.pngRect.x, -gm.d.pngRect.y);
 
-    const walls = gm.walls.map(json => Poly.from(json));
+    const walls = gm.walls;
     ctxt.fillStyle = color.wallTop;
     fillPolygon(ctxt, walls);
     const wallsDataUrl = canvas.toDataURL();
     ctxt.clearRect(0, 0, canvas.width, canvas.height);
     
-    const obstacles = gm.obstacles.map(json => Poly.from(json));
+    const obstacles = gm.groups.obstacles;
     ctxt.fillStyle = color.obstacleTop;
     fillPolygon(ctxt, obstacles);
     const obstaclesDataUrl = canvas.toDataURL();

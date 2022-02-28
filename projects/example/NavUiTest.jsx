@@ -66,7 +66,7 @@ export default function NavCollide(props) {
     >
       <g className={rootCss}>
 
-        {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
+        {gm && <image {...gm.d.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
         <g className="navtris">
           {!props.disabled && pf?.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
@@ -122,15 +122,15 @@ const rootCss = css`
 
 const initViewBox = new Rect(0, 0, 800, 800);
 
-/** @param {{ init: Geom.Vect; walls: Geom.GeoJsonPolygon[]; hull: Geom.GeoJsonPolygon[] }} props */
+/** @param {{ init: Geom.Vect; walls: Geom.Poly[]; hull: Geom.Poly[] }} props */
 function Light({ init, walls, hull }) {
 
   const [position, setPosition] = React.useState(() => init);
 
   const light = React.useMemo(() => {
-    const hullOutline = Poly.from(hull[0]).removeHoles();
+    const hullOutline = hull[0].clone().removeHoles();
     if (hullOutline.contains(position)) {
-      const polys = walls.map(x => Poly.from(x));
+      const polys = walls;
       const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
       return geom.lightPolygon(position, 2000, triangs);
     } else return new Poly;

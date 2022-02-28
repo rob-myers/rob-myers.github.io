@@ -7,9 +7,6 @@ import { Poly, Rect, Vect } from '../geom';
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
 
-// TODO
-// - CodeSandbox
-
 /**
  * @param {{ layoutKey: Geomorph.LayoutKey}} props 
  */
@@ -37,12 +34,12 @@ export default function TriangleDev(props) {
   }));
 
   const { data: gmAux } = useQuery(`gm-aux-${props.layoutKey}`, async () => {
-    /** @type {Geomorph.GeomorphJson} */
+    /** @type {Geomorph.LayoutJson} */
     const json = await fetch(geomorphJsonPath(props.layoutKey)).then(x => x.json());
     const navPoly = json.navPoly.map(x => Poly.from(x)).slice(0, 1);
     return {
       navPoly,
-      pngRect: json.pngRect,
+      pngRect: json.items[0].pngRect
     };
   });
 

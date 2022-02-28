@@ -111,6 +111,8 @@ export async function createLayout(def, lookup, triangleService) {
   // TODO associate switches to holes
 
   return {
+    key: def.key,
+    id: def.id,
     def,
     groups,
     navPoly,
@@ -133,27 +135,86 @@ export async function createLayout(def, lookup, triangleService) {
   };
 }
 
+/** @param {Geomorph.LayoutJson} layout */
+export function parseLayout({
+  def,
+  groups, walls, allHoles, labels, 
+  navPoly, navDecomp,
+  hullPoly, hullRect, hullTop,
+  items,
+}) {
+  /** @type {Geomorph.ParsedLayout} */
+  const parsed = {
+    key: def.key,
+    id: def.id,
+
+    def,
+    groups: {
+      obstacles: groups.obstacles.map(Poly.from),
+      singles: groups.singles.map(x => ({ tags: x.tags, poly: Poly.from(x.poly) })),
+      walls: groups.walls.map(Poly.from),
+    },
+    navPoly: navPoly.map(Poly.from),
+    navDecomp,
+    walls: walls.map(Poly.from),
+    labels,
+    allHoles: allHoles.map(Poly.from),
+
+    hullPoly: hullPoly.map(Poly.from),
+    hullRect,
+    hullTop: hullTop.map(Poly.from),
+
+    items,
+  };
+  return parsed;
+}
+
 /** @param {Geomorph.ParsedLayout} layout */
-export function serializeLayout(layout) {
-  /** @type {Geomorph.GeomorphJson} */
+export function serializeLayout({
+  def,
+  groups, walls, allHoles, labels, 
+  navPoly, navDecomp,
+  hullPoly, hullRect, hullTop,
+  items,
+}) {
+  /** @type {Geomorph.LayoutJson} */
   const json = {
-    key: layout.def.key,
-    id: layout.def.id,
-    pngRect: layout.items[0].pngRect,
-    allHoles: layout.allHoles.map(x => x.geoJson),
-    doors: layout.groups.singles
-      .filter(x => x.tags.includes('door'))
-      .map(({ poly, tags }) => {
-        const { angle, rect } = geom.polyToAngledRect(poly);
-        const [u, v] = geom.getAngledRectSeg({ angle, rect });
-        return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
-      }),
-    hullPoly: layout.hullPoly.map(x => x.geoJson),
-    labels: layout.labels,
-    navPoly: layout.navPoly.map(x => x.geoJson),
-    navDecomp: layout.navDecomp,
-    obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
-    walls: layout.walls.map(x => x.geoJson),
+    key: def.key,
+    id: def.id,
+
+    def,
+    groups: {
+      obstacles: groups.obstacles.map(x => x.geoJson),
+      singles: groups.singles.map(x => ({ tags: x.tags, poly: x.poly.geoJson })),
+      walls: groups.walls.map(x => x.geoJson),
+    },
+    navPoly: navPoly.map(x => x.geoJson),
+    navDecomp,
+    walls: walls.map(x => x.geoJson),
+    labels,
+    allHoles: allHoles.map(x => x.geoJson),
+
+    hullPoly: hullPoly.map(x => x.geoJson),
+    hullRect,
+    hullTop: hullTop.map(x => x.geoJson),
+
+    items,
+
+    // pngRect: layout.items[0].pngRect,
+    // allHoles: layout.allHoles.map(x => x.geoJson),
+    // doors: layout.groups.singles
+    //   .filter(x => x.tags.includes('door'))
+    //   .map(({ poly, tags }) => {
+    //     const { angle, rect } = geom.polyToAngledRect(poly);
+    //     const [u, v] = geom.getAngledRectSeg({ angle, rect });
+    //     return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
+    //   }),
+    // hullPoly: layout.hullPoly.map(x => x.geoJson),
+    // labels: layout.labels,
+    // navPoly: layout.navPoly.map(x => x.geoJson),
+    // navDecomp: layout.navDecomp,
+    // obstacles: layout.groups.obstacles.map(poly => poly.geoJson),
+    // walls: layout.walls.map(x => x.geoJson),
   };
   return json;
 }

@@ -21,7 +21,9 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
       res.status(500).json({ error: `invalid input` });
     }
   } else if (req.method === 'GET')  {// Demo
-    const json = JSON.parse(fs.readFileSync('public' + geomorphJsonPath('g-301--bridge')).toString()) as Geomorph.GeomorphJson;
+    const json = JSON.parse(
+      fs.readFileSync('public' + geomorphJsonPath('g-301--bridge')).toString()
+    ) as Geomorph.LayoutJson;
     const polys = json.navPoly.map(x => Poly.from(x));
     const decomp =  await triangle.triangulate(polys);
     res.json(decomp);
