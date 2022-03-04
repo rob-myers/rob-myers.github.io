@@ -71,3 +71,26 @@ export function equals(x, y, depth = 0) {
 	const prototype = Object.getPrototypeOf(value);
 	return prototype === null || prototype === Object.prototype;
 }
+
+/**
+ * @template T
+ * @param {(T | T[])[]} items
+ */
+export function flatten(items) {
+  return /** @type {T[]} */ ([]).concat(...items);
+}
+
+/**
+ * Remove the _first_ occurrence of `elem` from _`array`_,
+ * **mutating** the latter if the former exists.
+ * @template T
+ * @param {T[]} array
+ * @param {T} elem
+ */
+ export function removeFirst(array, elem) {
+  const firstIndex = array.indexOf(elem);
+  if (firstIndex !== -1) {
+    array.splice(firstIndex, 1);
+  }
+  return array;
+}
