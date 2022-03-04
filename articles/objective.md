@@ -4,7 +4,7 @@ We are going to create a **video game**.
 Unusually, we'll 
 (a) describe the process in detail,
 (b) use everyday web development techniques,
-and (c) focus on rich Game AI.
+(c) focus on Game AI.
 
 What kind of game?
 > A [top-down](https://en.wikipedia.org/wiki/Video_game_graphics#Top-down_perspective) adventure game.
@@ -34,18 +34,21 @@ Where does it take place?
   ]"
 ></div>
 
-How is it made?
-> We'll use everyday web dev techniques.
-> We'll avoid game-centric technology like WebGL, physics engines, and complex character animation.
-> Our approach is relevant to a wide audience i.e. web developers in general.
+How will the game be made?
+> We'll use everyday web dev techniques,
+> avoiding game-centric technology like WebGL and physics engines.
+> Our approach is relevant to a wide audience i.e. web developers.
 
 What distinguishes it?
-> The world is awash with beautiful games which are somewhat shallow.
-> Failing the former we'll overcome the latter via rich Game AI.
-> Instead of clunky behaviour editors or rigid task-based programming patterns,
-> we'll build things **interactively** via a browser-based terminal.
+> The world is awash with beautiful games.
+> Beautiful, yes, but also somewhat shallow.
+> Failing the former we'll overcome the latter via rich Game AI (NPC behaviour).
+> We'll implement it **interactively** using a browser-based terminal.
 
-__TODO__ a meaningful example 🚧
+<!-- > We won't use clunky behaviour editors or rigid task-based programming patterns. -->
+
+__TODO__
+ a meaningful example 🚧
 
 <!-- ~~~
 myFunc() {
