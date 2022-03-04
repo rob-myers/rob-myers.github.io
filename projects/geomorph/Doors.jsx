@@ -60,17 +60,11 @@ const rootCss = css`
     position: absolute;
     cursor: pointer;
     background: #fff;
-    border: 1px solid #4e4e4e;
+    border: 1px solid #888;
     
     transition: width 100ms ease-in;
     &.open {
       width: 0;
     }
-
-    /* opacity: 1;
-    transition: opacity 100ms linear;
-    &.open {
-      opacity: 0.2;
-    } */
   }
 `;
