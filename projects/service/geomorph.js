@@ -24,7 +24,7 @@ export async function createLayout(def, lookup, triangleService) {
     if (i) {
       /**
        * Starship symbol PNGs are 5 times larger than Geomorph PNGs.
-       * We skipped 1st item i.e. the hull, which corresponds to a geomorph PNG.
+       * We skip 1st item i.e. hull, which corresponds to a geomorph PNG.
        */
       m.a *= 0.2, m.b *= 0.2, m.c *= 0.2, m.d *= 0.2;
     }
@@ -108,6 +108,10 @@ export async function createLayout(def, lookup, triangleService) {
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windows));
   const allHoles = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
+  // Bit of a hack
+  const allHolesWithDoors = allHoles
+    .flatMap(hole => Poly.union([hole].concat(doors)))
+    .filter(poly => poly.outline.length > 5);
   // TODO associate switches to holes
 
   return {
@@ -119,7 +123,7 @@ export async function createLayout(def, lookup, triangleService) {
     navDecomp,
     walls: unjoinedWalls,
     labels,
-    allHoles,
+    allHoles: allHolesWithDoors,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
@@ -133,40 +137,6 @@ export async function createLayout(def, lookup, triangleService) {
       transform: def.items[i].transform ? `matrix(${def.items[i].transform})` : undefined,
     })),
   };
-}
-
-/** @param {Geomorph.LayoutJson} layout */
-export function parseLayout({
-  def,
-  groups, walls, allHoles, labels, 
-  navPoly, navDecomp,
-  hullPoly, hullRect, hullTop,
-  items,
-}) {
-  /** @type {Geomorph.ParsedLayout} */
-  const parsed = {
-    key: def.key,
-    id: def.id,
-
-    def,
-    groups: {
-      obstacles: groups.obstacles.map(Poly.from),
-      singles: groups.singles.map(x => ({ tags: x.tags, poly: Poly.from(x.poly) })),
-      walls: groups.walls.map(Poly.from),
-    },
-    navPoly: navPoly.map(Poly.from),
-    navDecomp,
-    walls: walls.map(Poly.from),
-    labels,
-    allHoles: allHoles.map(Poly.from),
-
-    hullPoly: hullPoly.map(Poly.from),
-    hullRect,
-    hullTop: hullTop.map(Poly.from),
-
-    items,
-  };
-  return parsed;
 }
 
 /** @param {Geomorph.ParsedLayout} layout */
@@ -201,6 +171,40 @@ export function serializeLayout({
     items,
   };
   return json;
+}
+
+/** @param {Geomorph.LayoutJson} layout */
+export function parseLayout({
+  def,
+  groups, walls, allHoles, labels, 
+  navPoly, navDecomp,
+  hullPoly, hullRect, hullTop,
+  items,
+}) {
+  /** @type {Geomorph.ParsedLayout} */
+  const parsed = {
+    key: def.key,
+    id: def.id,
+
+    def,
+    groups: {
+      obstacles: groups.obstacles.map(Poly.from),
+      singles: groups.singles.map(x => ({ tags: x.tags, poly: Poly.from(x.poly) })),
+      walls: groups.walls.map(Poly.from),
+    },
+    navPoly: navPoly.map(Poly.from),
+    navDecomp,
+    walls: walls.map(Poly.from),
+    labels,
+    allHoles: allHoles.map(Poly.from),
+
+    hullPoly: hullPoly.map(Poly.from),
+    hullRect,
+    hullTop: hullTop.map(Poly.from),
+
+    items,
+  };
+  return parsed;
 }
 
 /**
