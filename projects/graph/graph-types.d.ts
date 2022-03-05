@@ -12,12 +12,11 @@ declare namespace Graph {
   }
 
   export interface BaseEdgeOpts<Node extends BaseNode> {
-    src: Node | string;
-    dst: Node | string;
+    src: string;
+    dst: string;
   }
 
-  /** Serializable and implementable, unlike `BaseEdgeClass`. */
-  export interface BaseEdge<
+  export interface Edge<
     Node extends BaseNode = BaseNode,
     EdgeOpts extends BaseEdgeOpts<Node> = BaseEdgeOpts<Node>
   > {
@@ -28,17 +27,12 @@ declare namespace Graph {
     origOpts: EdgeOpts;
   }
 
-  export interface EdgeClass<Node extends BaseNode, Edge extends BaseEdge<Node>> {
-    new(opts: Edge['origOpts']): Edge;
-  }
-
   export interface IGraph<
     Node extends BaseNode,
     NodeOpts extends BaseNodeOpts,
-    Edge extends BaseEdge<Node>,
     EdgeOpts extends BaseEdgeOpts<Node>
   > {
-    connect(opts: EdgeOpts): { isNew: boolean; edge: Edge | null };
+    connect(opts: EdgeOpts): { isNew: boolean; edge: Edge<Node, EdgeOpts> | null };
     disconnect(src: Node, dst: Node): boolean;
     removeNode(node: Node): boolean;
     removeNodeById(id: string): boolean;
@@ -49,13 +43,32 @@ declare namespace Graph {
     isConnected(src: Node, dst: Node): boolean;
     getNodeByid(nodeid: string): Node | null;
 
-    json(): GraphJson<Node, Edge>;
-    from(json: GraphJson<Node, Edge>): this;
+    json(): GraphJson<Node, EdgeOpts>;
+    from(json: GraphJson<Node, EdgeOpts>): this;
   }
 
-  export interface GraphJson<Node extends BaseNode, Edge extends BaseEdge> {
+  export interface GraphJson<Node extends BaseNode, EdgeOpts extends BaseEdgeOpts> {
     nodes: Node[];
-    edges: Edge[];
+    edges: EdgeOpts[];
   }
+
+  //#region RoomGraph
+  export interface RoomNodeOpts extends BaseNodeOpts {
+    /** `${holeIndex}` */
+    id: string;
+    /** Indexes `Geomorph.Layout['allHoles']` */
+    holeIndex: number;
+    // ...
+  }
+
+  export interface RoomNode extends BaseNode<RoomNodeOpts> {
+    // ...
+  }
+
+  export interface RoomEdgeOpts extends BaseEdgeOpts<RoomNode> {
+    /** Indexes `Geomorph.Layout['doors']` */
+    doorIndex: number;
+  }
+  //#endregion 
 
 }
