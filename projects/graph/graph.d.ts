@@ -16,6 +16,7 @@ declare namespace Graph {
     dst: Node | string;
   }
 
+  /** Serializable and implementable, unlike `BaseEdgeClass`. */
   export interface BaseEdge<
     Node extends BaseNode = BaseNode,
     EdgeOpts extends BaseEdgeOpts<Node> = BaseEdgeOpts<Node>
@@ -24,11 +25,11 @@ declare namespace Graph {
     id: string;
     src: Node;
     dst: Node;
-    otherOpts: Omit<EdgeOpts, 'src' | 'dst'>;
+    origOpts: EdgeOpts;
   }
 
-  export interface EdgeClass {
-    new(opts: EdgeOpts): Edge;
+  export interface EdgeClass<Node extends BaseNode, Edge extends BaseEdge<Node>> {
+    new(opts: Edge['origOpts']): Edge;
   }
 
   export interface IGraph<
@@ -47,6 +48,14 @@ declare namespace Graph {
     hasNode(node: Node): boolean;
     isConnected(src: Node, dst: Node): boolean;
     getNodeByid(nodeid: string): Node | null;
+
+    json(): GraphJson<Node, Edge>;
+    from(json: GraphJson<Node, Edge>): this;
+  }
+
+  export interface GraphJson<Node extends BaseNode, Edge extends BaseEdge> {
+    nodes: Node[];
+    edges: Edge[];
   }
 
 }

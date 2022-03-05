@@ -1,4 +1,4 @@
-import { flatten, removeFirst } from "../service/generic";
+import { deepClone, flatten, removeFirst } from "../service/generic";
 
 /**
  * @template {Graph.BaseNode} [Node=Graph.BaseNode]
@@ -45,10 +45,10 @@ export class BaseGraph {
    * @type {Map<string, Edge>}
    */
   idToEdge;
-  /** @type {Graph.EdgeClass} */
+  /** @type {Graph.EdgeClass<Node, Edge>} */
   EdgeClass;
 
-  /** @param {Graph.EdgeClass} EdgeClass */
+  /** @param {Graph.EdgeClass<Node, Edge>} EdgeClass */
   constructor(EdgeClass) {
     this.EdgeClass = EdgeClass;
     this.nodes = new Set();
@@ -363,6 +363,21 @@ export class BaseGraph {
   }
 
   /**
+   * Register (presumed new) nodes with the graph.
+   * @param {Node[]} nodes
+   * @protected
+   */
+  registerNodes(nodes) {
+    nodes.forEach(node => {
+      this.nodes.add(node);
+      this.succ.set(node, new Map);
+      this.pred.set(node, new Map);
+      this.idToNode.set(node.id, node);
+    });
+    this.nodesArray.push(...nodes);
+  }
+
+  /**
    * Register a (presumed new) edge.
    * Assume respective nodes already registered.
    * @param {Edge} edge
@@ -370,15 +385,71 @@ export class BaseGraph {
    */
   registerEdge(edge) {
     const { src, dst } = edge;
-    const succ = this.succ.get(src);
-    if (succ) {
-      succ.set(dst, edge);
-    }
-    const pred = this.pred.get(dst);
-    if (pred) {
-      pred.set(src, edge);
-    }
+    const succ = /** @type {Map<Node, Edge> } */ (this.succ.get(src));
+    succ.set(dst, edge);
+    const pred = /** @type {Map<Node, Edge> } */ (this.pred.get(dst));
+    pred.set(src, edge);
     this.idToEdge.set(edge.id, edge);
     this.edgesArray.push(edge);
+  }
+
+  /**
+   * Register (presumed new) edges.
+   * Assume respective nodes already registered.
+   * @param {Edge[]} edges
+   * @protected
+   */
+  registerEdges(edges) {
+    edges.forEach(edge => {
+      const { src, dst } = edge;
+      const succ = /** @type {Map<Node, Edge> } */ (this.succ.get(src));
+      succ.set(dst, edge);
+      const pred = /** @type {Map<Node, Edge> } */ (this.pred.get(dst));
+      pred.set(src, edge);
+      this.idToEdge.set(edge.id, edge);
+    });
+    this.edgesArray.push(...edges);
+  }
+
+
+  /** @returns {Graph.GraphJson<Node, Edge>} */
+  json() {
+    return {
+      nodes: this.nodesArray.map(deepClone),
+      edges: this.edgesArray.map(deepClone),
+    };
+  }
+  
+  /**
+   * We assume graph is currently empty e.g. by first doing
+   *`const graph = new BaseGraph(BaseEdgeClass)`.
+   * @param {Graph.GraphJson<Node, Edge>} json 
+   */
+  from(json) {
+    const nodes = json.nodes.map(deepClone);
+    this.registerNodes(nodes);
+    const edges = json.edges.map(def => new this.EdgeClass(def.origOpts));
+    this.registerEdges(edges);
+    return this;
+  }
+}
+
+/**
+ * @template {Graph.BaseNode} [Node=Graph.BaseNode]
+ * @template {Graph.BaseEdgeOpts<Node>} [EdgeOpts=Graph.BaseEdgeOpts<Node>]
+ * @implements {Graph.BaseEdge<Node, EdgeOpts>}
+ */
+export class BaseEdgeClass {
+  id;
+  src;
+  dst;
+  origOpts;
+
+  /** @param {EdgeOpts} opts */
+  constructor(opts) {
+    this.src = /** @type {Node} */ (opts.src);
+    this.dst = /** @type {Node} */ (opts.dst);
+    this.id = `${this.src.id}->${this.dst.id}`;
+    this.origOpts = opts;
   }
 }

@@ -94,3 +94,13 @@ export function flatten(items) {
   }
   return array;
 }
+
+/**
+ * Clone serializable data `input`, e.g. not regexes.
+ * @template T
+ * @param {T} input 
+ * @returns {T}
+ */
+export function deepClone(input) {
+  return JSON.parse(JSON.stringify(input));
+}
