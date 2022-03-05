@@ -141,8 +141,6 @@ export default function CssPanZoom(props) {
       /**
        * @param {number} toScale 
        * @param {{ clientX: number; clientY: number }} point 
-       * @param {*} zoomOptions 
-       * @param {*} originalEvent 
        * @returns 
        */
       zoomToPoint(toScale, point) {

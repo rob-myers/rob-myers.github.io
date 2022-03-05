@@ -22,8 +22,7 @@ export default function PanZoom(props) {
       ptrs: [],
       /** @type {null | number} */
       ptrDiff: null,
-      /** @type {SVGSVGElement} */
-      root: ({}),
+      root: /** @type {SVGSVGElement} */ ({}),
       rootCss: css`
         width: 100%;
         height: 100%;

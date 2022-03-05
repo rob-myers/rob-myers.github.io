@@ -28,8 +28,7 @@ const svgJsonFilename = path.resolve(symbolsDir, `svg.json`)
 const opts = getOpts(process.argv);
 const [updateAllGeomorphJsons] = [opts.all];
 
-/** @type {Record<Geomorph.SymbolKey, Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>>} */
-const svgJsonLookup = ({});
+const svgJsonLookup = /** @type {Record<Geomorph.SymbolKey, Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>>} */ ({});
 let prevSvgJsonLookup = /** @type {null | typeof svgJsonLookup} */ (null);
 if (fs.existsSync(svgJsonFilename)) {
   prevSvgJsonLookup = JSON.parse(fs.readFileSync(svgJsonFilename).toString());

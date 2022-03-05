@@ -15,12 +15,10 @@ export default function DraggableNode(props) {
       target: Vect.from(props.initial),
       dragging: false,
 
-      /** @type {SVGGElement} */
-      rootEl: ({}),
-      /** @type {SVGLineElement} */
-      lineEl: ({}),
-      /** @type {SVGCircleElement} */
-      circleEl: ({}),
+      
+      rootEl: /** @type {SVGGElement} */ ({}),
+      lineEl: /** @type {SVGLineElement} */ ({}),
+      circleEl: /** @type {SVGCircleElement} */ ({}),
 
       /** @type {React.RefCallback<SVGGElement>} */
       rootRef: (el) => {
@@ -44,8 +42,7 @@ export default function DraggableNode(props) {
         state.target.copy(state.position);
         ['x1', 'x2'].forEach(attr => state.lineEl.setAttribute(attr, String(state.position.x)));
         ['y1', 'y2'].forEach(attr => state.lineEl.setAttribute(attr, String(state.position.y)));
-        /** @type {SVGSVGElement} */
-        const svg = (state.lineEl.ownerSVGElement);
+        const svg = /** @type {SVGSVGElement} */ (state.lineEl.ownerSVGElement);
         svg.addEventListener('pointermove', state.onMove);
         svg.addEventListener('pointerleave', state.endDrag);
         svg.addEventListener('pointerup', state.applyDrag);
@@ -77,8 +74,7 @@ export default function DraggableNode(props) {
         state.lineEl.style.display = 'none';
         state.lineEl.setAttribute('x2', /** @type {*} */ (state.lineEl.getAttribute('x1')));
         state.lineEl.setAttribute('y2', /** @type {*} */ (state.lineEl.getAttribute('y1')));
-        /** @type {SVGSVGElement} */
-        const svg = (state.lineEl.ownerSVGElement);
+        const svg = /** @type {SVGSVGElement} */ (state.lineEl.ownerSVGElement);
         svg.removeEventListener('pointermove', state.onMove);
         svg.removeEventListener('pointerleave', state.endDrag);
         svg.removeEventListener('pointerup', state.applyDrag);

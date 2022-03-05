@@ -39,8 +39,7 @@ export default function DraggableRay(props) {
         state.dragging = true;
         state.lineEl.style.display = 'inline';
         ['x2', 'y2'].forEach(attr => state.lineEl.setAttribute(attr, '0'));
-        /** @type {SVGSVGElement} */
-        const svg = (state.lineEl.ownerSVGElement);
+        const svg = /** @type {SVGSVGElement} */ (state.lineEl.ownerSVGElement);
         svg.addEventListener('pointermove', state.onMove);
         svg.addEventListener('pointerleave', state.endDrag);
         svg.addEventListener('pointerup', state.applyDrag);
@@ -73,8 +72,7 @@ export default function DraggableRay(props) {
         state.dragging = false;
         state.lineEl.style.display = 'none';
         ['x2', 'y2'].forEach(attr => state.lineEl.setAttribute(attr, '0'));
-        /** @type {SVGSVGElement} */
-        const svg = (state.lineEl.ownerSVGElement);
+        const svg = /** @type {SVGSVGElement} */ (state.lineEl.ownerSVGElement);
         svg.removeEventListener('pointermove', state.onMove);
         svg.removeEventListener('pointerleave', state.endDrag);
         svg.removeEventListener('pointerup', state.applyDrag);

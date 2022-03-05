@@ -33,8 +33,7 @@ export async function renderGeomorph(
   const pngRect = hullSym.pngRect;
   canvas.width = pngRect.width * scale, canvas.height = pngRect.height * scale;
 
-  /** @type {CanvasRenderingContext2D} */
-  const ctxt = (canvas.getContext('2d'));
+  const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
   ctxt.scale(scale, scale);
   ctxt.translate(-pngRect.x, -pngRect.y);
 
