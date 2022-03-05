@@ -2254,6 +2254,46 @@
       ]
     }
   ],
+  "roomGraph": {
+    "nodes": [
+      {"id": "0", "opts": {"id": "0", "holeIndex": 0}},
+      {"id": "1", "opts": {"id": "1", "holeIndex": 1}},
+      {"id": "2", "opts": {"id": "2", "holeIndex": 2}},
+      {"id": "3", "opts": {"id": "3", "holeIndex": 3}},
+      {"id": "4", "opts": {"id": "4", "holeIndex": 4}},
+      {"id": "5", "opts": {"id": "5", "holeIndex": 5}},
+      {"id": "6", "opts": {"id": "6", "holeIndex": 6}},
+      {"id": "7", "opts": {"id": "7", "holeIndex": 7}},
+      {"id": "8", "opts": {"id": "8", "holeIndex": 8}},
+      {"id": "9", "opts": {"id": "9", "holeIndex": 9}},
+      {"id": "10", "opts": {"id": "10", "holeIndex": 10}},
+      {"id": "11", "opts": {"id": "11", "holeIndex": 11}},
+      {"id": "12", "opts": {"id": "12", "holeIndex": 12}},
+      {"id": "13", "opts": {"id": "13", "holeIndex": 13}}
+    ],
+    "edges": [
+      {"src": "2", "dst": "13", "doorIndex": 0},
+      {"src": "2", "dst": "13", "doorIndex": 1},
+      {"src": "2", "dst": "13", "doorIndex": 2},
+      {"src": "2", "dst": "13", "doorIndex": 3},
+      {"src": "5", "dst": "13", "doorIndex": 4},
+      {"src": "9", "dst": "13", "doorIndex": 5},
+      {"src": "2", "dst": "7", "doorIndex": 6},
+      {"src": "7", "dst": "8", "doorIndex": 7},
+      {"src": "2", "dst": "8", "doorIndex": 8},
+      {"src": "9", "dst": "13", "doorIndex": 9},
+      {"src": "9", "dst": "12", "doorIndex": 10},
+      {"src": "9", "dst": "11", "doorIndex": 11},
+      {"src": "9", "dst": "10", "doorIndex": 12},
+      {"src": "1", "dst": "2", "doorIndex": 13},
+      {"src": "0", "dst": "1", "doorIndex": 14},
+      {"src": "2", "dst": "9", "doorIndex": 15},
+      {"src": "2", "dst": "4", "doorIndex": 16},
+      {"src": "2", "dst": "5", "doorIndex": 17},
+      {"src": "5", "dst": "6", "doorIndex": 18},
+      {"src": "5", "dst": "6", "doorIndex": 19}
+    ]
+  },
   "hullPoly": [
     {
       "type": "Polygon",

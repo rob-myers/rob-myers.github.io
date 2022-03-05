@@ -117,18 +117,22 @@ export async function createLayout(def, lookup, triangleService) {
   //   .flatMap(hole => Poly.union([hole].concat(doors)))
   //   .filter(poly => poly.outline.length > 5);
   
-  // room/door graph
-  const roomGraph = new RoomGraph;
-  roomGraph.from({
-    nodes: allHoles.map((_, i) => ({ id: `${i}`, opts: { id: `${i}`, holeIndex: i } })),
-    // edges: [],
-    edges: doors.map((door, i) => {
-      /**
-       * TODO find adjacent holes
-       */
-      return { src: '__TODO__', dst: '__TODO__', doorIndex: i };
+  /** One extra to represent hull exterior */
+  const roomIndexes = [...Array(allHoles.length + 1)].map((_, i) => i);
+  /** @type {Graph.RoomGraphJson} */
+  const roomGraph = {
+    nodes: roomIndexes.map(i => ({ id: `${i}`, opts: { id: `${i}`, holeIndex: i } })),
+    edges: doors.flatMap((door, i) => {
+      const holeIds = allHoles.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
+      // Hull doors are connected to hull exterior
+      if (holeIds.length === 1) holeIds.push(allHoles.length);
+      if (holeIds.length === 2) {
+        return [{ src: `${holeIds[0]}`, dst: `${holeIds[1]}`, doorIndex: i }];
+      }
+      console.warn(`door ${i}: unexpected adjacent holes: ${holeIds}`)
+      return [];
     }),
-  });
+  }
 
 
   return {
@@ -141,6 +145,7 @@ export async function createLayout(def, lookup, triangleService) {
     navPoly,
     navDecomp,
     allHoles,
+    roomGraph,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
@@ -159,7 +164,7 @@ export async function createLayout(def, lookup, triangleService) {
 /** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout({
   def,
-  groups, walls, allHoles, labels, 
+  groups, walls, allHoles, labels, roomGraph,
   navPoly, navDecomp,
   hullPoly, hullRect, hullTop,
   items,
@@ -180,6 +185,7 @@ export function serializeLayout({
     walls: walls.map(x => x.geoJson),
     labels,
     allHoles: allHoles.map(x => x.geoJson),
+    roomGraph,
 
     hullPoly: hullPoly.map(x => x.geoJson),
     hullRect,
@@ -193,7 +199,7 @@ export function serializeLayout({
 /** @param {Geomorph.LayoutJson} layout */
 export function parseLayout({
   def,
-  groups, walls, allHoles, labels, 
+  groups, walls, allHoles, labels, roomGraph,
   navPoly, navDecomp,
   hullPoly, hullRect, hullTop,
   items,
@@ -214,6 +220,7 @@ export function parseLayout({
     walls: walls.map(Poly.from),
     labels,
     allHoles: allHoles.map(Poly.from),
+    roomGraph,
 
     hullPoly: hullPoly.map(Poly.from),
     hullRect,

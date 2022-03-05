@@ -66,6 +66,7 @@ declare namespace Geomorph {
     walls: T[];
     labels: LayoutLabel[];
     allHoles: T[];
+    roomGraph: Graph.RoomGraphJson;
 
     /** Should probably have exactly one polygon */
     hullPoly: T[];

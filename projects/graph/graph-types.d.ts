@@ -69,6 +69,8 @@ declare namespace Graph {
     /** Indexes `Geomorph.Layout['doors']` */
     doorIndex: number;
   }
+
+  export type RoomGraphJson = GraphJson<RoomNode, RoomEdgeOpts>;
   //#endregion 
 
 }
