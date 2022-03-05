@@ -13,6 +13,8 @@ import fs from 'fs';
 import path from 'path';
 import stringify from 'json-stringify-pretty-compact';
 import getOpts from 'getopts';
+import asyncPool from 'tiny-async-pool';
+import chalk from 'chalk';
 
 import { keys } from '../../model/generic.model';
 import { createLayout, deserializeSvgJson, parseStarshipSymbol, serializeLayout, serializeSymbol } from '../../projects/service/geomorph';
@@ -59,13 +61,21 @@ console.log({ changedSymbols, changedLayoutDefs });
 (async function writeChangedGeomorphJsons () {
   const symbolLookup = deserializeSvgJson(svgJsonLookup);
   const layoutDefsToUpdate = updateAllGeomorphJsons ? Object.values(layoutDefs) : changedLayoutDefs;
-  // TODO may need threshold e.g. p-limit
-  await Promise.all(layoutDefsToUpdate.map(async def => {
-    const layout = await createLayout(def, symbolLookup, triangle);
-    const filename = path.resolve(geomorphsDir, `${def.key}.json`);
-    console.info('writing', filename, '...')
-    fs.writeFileSync(filename, stringify(serializeLayout(layout)));
-  }));
+  
+  await asyncPool(
+    1, // One at a time aids debugging
+    layoutDefsToUpdate.map(def => {
+      return async () => {
+        console.log(chalk.blue('creating layout'), chalk.yellow(def.key), '...');
+        const layout = await createLayout(def, symbolLookup, triangle);
+        const filename = path.resolve(geomorphsDir, `${def.key}.json`);
+        console.log(chalk.blue('writing'), chalk.yellow(filename), '...');
+        fs.writeFileSync(filename, stringify(serializeLayout(layout)));
+      };
+    }),
+    action => action(),
+  );
+
 })();
 
 // Finally, write svg.json
