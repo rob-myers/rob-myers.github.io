@@ -12,11 +12,11 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- simplify precision of polygons in geomorph json
-
-- ✅ clean up interfaces relating to Geomorph.Layout
-  - Geomorph.{LayoutJson,ParsedLayout}
-  - Geomorph.GeomorphData is Geomorph.ParsedLayout with derived data `d`
+- create room/door graph
+  - ✅ graph.js + graph.d.ts
+- test render room/door graph
+- test toggle lights room and open adjacents
+- test toggle only shows nearby doors
 
 - refine light masks
   - ✅ missing outlines via: hull outline + known outlines + walls and doors
@@ -92,6 +92,10 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ simplify precision of polygons in geomorph json
+- ✅ clean up interfaces relating to Geomorph.Layout
+  - Geomorph.{LayoutJson,ParsedLayout}
+  - Geomorph.GeomorphData is Geomorph.ParsedLayout with derived data `d`
 - ✅ Resize Last Redoubt i.e. height = 9 * (1/2 + 1/sqrt(2)
 - ✅ compute higher floor 5-city outline
   - for unit square where a is central, b other (a + 2b = 1)

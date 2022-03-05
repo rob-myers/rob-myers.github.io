@@ -1,8 +1,9 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat } from '../geom';
-import { labelMeta } from '../geomorph/geomorph.model';
 import { svgPathToPolygon } from './dom';
+import { labelMeta } from '../geomorph/geomorph.model';
+import { RoomGraph } from '../graph/room-graph';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -81,13 +82,16 @@ export async function createLayout(def, lookup, triangleService) {
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().fixOrientation().precision(4));
 
-  // Currently triangle-wasm runs server-side only
+  /**
+   * - Currently triangle-wasm runs server-side only
+   * - Errors thrown by other code seems to trigger error at:
+   *   > `/Users/robmyers/coding/rob-myers.github.io/node_modules/triangle-wasm/triangle.out.js:9`
+   */
   const navDecomp = triangleService
     ? await triangleService.triangulate(navPoly, {
-      // maxSteiner: 300,
-      // minAngle: 10,
       minAngle: 10,
       // maxArea: 10000,
+      // maxSteiner: 300,
     })
     : { vs: [], tris: [] };
 
@@ -108,22 +112,35 @@ export async function createLayout(def, lookup, triangleService) {
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windows));
   const allHoles = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
-  // Bit of a hack
-  const allHolesWithDoors = allHoles
-    .flatMap(hole => Poly.union([hole].concat(doors)))
-    .filter(poly => poly.outline.length > 5);
-  // TODO associate switches to holes
+  // // TODO below is a hack
+  // const allHolesWithDoors = allHoles
+  //   .flatMap(hole => Poly.union([hole].concat(doors)))
+  //   .filter(poly => poly.outline.length > 5);
+  
+  // room/door graph
+  const roomGraph = new RoomGraph;
+  roomGraph.from({
+    nodes: allHoles.map((_, i) => ({ id: `${i}`, opts: { id: `${i}`, holeIndex: i } })),
+    // edges: [],
+    edges: doors.map((door, i) => {
+      /**
+       * TODO find adjacent holes
+       */
+      return { src: '__TODO__', dst: '__TODO__', doorIndex: i };
+    }),
+  });
+
 
   return {
     key: def.key,
     id: def.id,
     def,
     groups,
+    labels,
+    walls: groups.walls,
     navPoly,
     navDecomp,
-    walls: unjoinedWalls,
-    labels,
-    allHoles: allHolesWithDoors,
+    allHoles,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
