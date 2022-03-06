@@ -24,6 +24,7 @@ export default function GeomorphCssLightsTest(props) {
       clipPath: 'none',
       maskedOutlines: /** @type {{ [outlineIndex: string]: true }} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
+
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
       handleDotClick({ target }) {
         if (!gm) return;
@@ -36,10 +37,9 @@ export default function GeomorphCssLightsTest(props) {
         state.clipPath = `path('${svgPaths}')`;
         update();
       },
+      
     };
-  }, {
-    lightDefs: (curr, next) => equals(curr, next),
-  }, [gm]);
+  }, {}, [gm]);
 
 
   return (
