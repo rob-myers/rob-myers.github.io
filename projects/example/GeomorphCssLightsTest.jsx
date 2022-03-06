@@ -79,8 +79,7 @@ export default function GeomorphCssLightsTest(props) {
           }}
           className="area-dots"
         >
-          {gm.allHoles.map((poly, i) => {
-            const { center } = poly.rect;
+          {gm.d.holeCenters.map((center, i) => {
             return <div
               key={i}
               data-index={i}
@@ -89,31 +88,49 @@ export default function GeomorphCssLightsTest(props) {
                 border: '5px solid white',
                 position: 'absolute',
                 cursor: 'pointer',
-                left: center.x,
-                top: center.y,
+                left: center.x - 5,
+                top: center.y - 5,
               }}
             />
           })}
         </div>
 
-        {/* <svg
+        {/* TODO svg test room graph */}
+        <svg
           style={{
-            width: gm.pngRect.width,
-            height: gm.pngRect.height,
+            width: gm.d.pngRect.width,
+            height: gm.d.pngRect.height,
             position: 'absolute',
             pointerEvents: 'none',
           }}
         >
-          {gm.allHoles.map((poly, i) =>
-            <path
-              key={i}
-              // fill="rgba(0, 0, 200, 0.4)"
-              fill="none"
-              stroke="blue"
-              d={Poly.from(poly).svgPath}
+          {gm.d.holeCenters.map((center, i) =>
+            <g key={i}>
+              <circle
+                fill="rgba(100, 0, 0, 0.2)"
+                r={10}
+                cx={center.x}
+                cy={center.y}
+              />
+              {/* <path
+                // fill="rgba(0, 0, 200, 0.4)"
+                fill="none"
+                // stroke="blue"
+                stroke="red"
+                d={poly.svgPath}
+              /> */}
+            </g>
+          )}
+          {gm.roomGraph.edges.map(({ src, dst, doorIndex }) =>
+            <line
+              stroke="red"
+              x1={gm.d.holeCenters[Number(src)].x}
+              y1={gm.d.holeCenters[Number(src)].y}
+              x2={gm.d.holeCenters[Number(dst)].x}
+              y2={gm.d.holeCenters[Number(dst)].y}
             />
           )}
-        </svg> */}
+        </svg>
 
         <Doors gm={gm} wire={state.wire} />
       </>}

@@ -29,6 +29,7 @@ export default function useGeomorphData(layoutKey) {
       // TODO possibly remove, unless HTMLCanvas needed
       image,
       d: {
+        // TODO move to json?
         doors: layout.groups.singles
           .filter(x => x.tags.includes('door'))
           .map(({ poly, tags }) => {
@@ -38,6 +39,7 @@ export default function useGeomorphData(layoutKey) {
           }),
         hullOutine: layout.hullPoly[0].removeHoles(),
         pngRect: Rect.fromJson(layout.items[0].pngRect),
+        holeCenters: layout.allHoles.map(({ rect }) => rect.center),
       },
     };
 

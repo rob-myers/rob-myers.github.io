@@ -14,16 +14,12 @@ __Aim towards website release__.
 
 - create room/door graph
   - ✅ graph.js + graph.d.ts
-- test render room/door graph
+- ✅ test render room/door graph
 - test toggle lights room and open adjacents
 - test toggle only shows nearby doors
 
-- refine light masks
-  - ✅ missing outlines via: hull outline + known outlines + walls and doors
-  - 🚧 light switch metas in SVG
-
 - Create `NavDemo1` extending `GeomorphCssLightsTest`
-- `NavDemo1` has basic NPCs and or Androx
+- `NavDemo1` has basic NPCs and or Andros
 - Implement TTY interaction
 - Write into blog 'objective'
 

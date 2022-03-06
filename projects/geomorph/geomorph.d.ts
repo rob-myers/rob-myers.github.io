@@ -107,6 +107,8 @@ declare namespace Geomorph {
       doors: DoorJson[];
       hullOutine: Geom.Poly;
       pngRect: Geom.Rect;
+      /** For debug */
+      holeCenters: Geom.Vect[];
     };
   }
 

@@ -117,23 +117,21 @@ export async function createLayout(def, lookup, triangleService) {
   //   .flatMap(hole => Poly.union([hole].concat(doors)))
   //   .filter(poly => poly.outline.length > 5);
   
-  /** One extra to represent hull exterior */
-  const roomIndexes = [...Array(allHoles.length + 1)].map((_, i) => i);
   /** @type {Graph.RoomGraphJson} */
   const roomGraph = {
-    nodes: roomIndexes.map(i => ({ id: `${i}`, opts: { id: `${i}`, holeIndex: i } })),
+    nodes: allHoles.map((_, i) => ({ id: `${i}`, opts: { id: `${i}`, holeIndex: i } })),
     edges: doors.flatMap((door, i) => {
       const holeIds = allHoles.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
-      // Hull doors are connected to hull exterior
-      if (holeIds.length === 1) holeIds.push(allHoles.length);
-      if (holeIds.length === 2) {
+      if (holeIds.length === 1) {// Ignore hull doors
+        return [];
+      } else if (holeIds.length === 2) {
         return [{ src: `${holeIds[0]}`, dst: `${holeIds[1]}`, doorIndex: i }];
+      } else {
+        console.warn(`door ${i}: unexpected adjacent holes: ${holeIds}`)
+        return [];
       }
-      console.warn(`door ${i}: unexpected adjacent holes: ${holeIds}`)
-      return [];
     }),
-  }
-
+  };
 
   return {
     key: def.key,

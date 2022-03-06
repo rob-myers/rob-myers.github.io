@@ -4389,15 +4389,9 @@
       {"id": "16", "opts": {"id": "16", "holeIndex": 16}},
       {"id": "17", "opts": {"id": "17", "holeIndex": 17}},
       {"id": "18", "opts": {"id": "18", "holeIndex": 18}},
-      {"id": "19", "opts": {"id": "19", "holeIndex": 19}},
-      {"id": "20", "opts": {"id": "20", "holeIndex": 20}}
+      {"id": "19", "opts": {"id": "19", "holeIndex": 19}}
     ],
     "edges": [
-      {"src": "0", "dst": "20", "doorIndex": 0},
-      {"src": "0", "dst": "20", "doorIndex": 1},
-      {"src": "0", "dst": "20", "doorIndex": 2},
-      {"src": "0", "dst": "20", "doorIndex": 3},
-      {"src": "0", "dst": "20", "doorIndex": 4},
       {"src": "0", "dst": "1", "doorIndex": 5},
       {"src": "1", "dst": "2", "doorIndex": 6},
       {"src": "0", "dst": "4", "doorIndex": 7},
