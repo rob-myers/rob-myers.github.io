@@ -1,6 +1,5 @@
 import React from "react";
 import { css } from "goober";
-import { Subject } from "rxjs";
 import classNames from "classnames";
 import useMuState from "../hooks/use-mu-state";
 
@@ -12,24 +11,30 @@ export default function Doors(props) {
   const { gm } = props;
 
   const state = useMuState(() => {
+    /**
+     * TODO rethink
+     */
+    /** @type {NPC.DoorsApi} */
     const api = {
-      evt: /** @type {Subject<NPC.DoorMessage>} */ (new Subject),
-    };
+      getOpen() { return {...state.open}; },
+    };    
 
     return {
       api,
-      open: /** @type {Record<Number, boolean>} */ ({}),
+      open: /** @type {{ [doorIndex: number]: true }} */ ({}),
       /** @param {React.MouseEvent} e */
       onClick(e) {
         const div = /** @type {HTMLDivElement} */ (e.target);
         const index = Number(div.getAttribute('data-index'));
-        state.open[index] = !state.open[index];
+        state.open[index] ? delete state.open[index] : state.open[index] = true;
         const nextWidth = state.open[index] ? 10 : gm.doors[index].rect.width; // Leq for borders
         div.style.width = `${nextWidth}px`;
         props.wire.next({ key: state.open[index] ? 'opened-door' : 'closed-door', index });
       },
     };
   });
+
+  React.useLayoutEffect(() => props.onLoad?.(state.api), []);
 
   return (
     <div

@@ -18,10 +18,10 @@ export default function GeomorphCssLightsTest(props) {
       clipPath: 'none',
       isHoleMasked: /** @type {{ [holeIndex: string]: true }} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
+      doorApi: /** @type {NPC.DoorsApi} */ ({}),
 
       /**
        * TODO
-       * - show all adjacent masks whose door is open
        * - adjust masks when adjacent doors are opened/closed
        */
 
@@ -31,15 +31,17 @@ export default function GeomorphCssLightsTest(props) {
           const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
           dataIndex in state.isHoleMasked ? delete state.isHoleMasked[dataIndex] : state.isHoleMasked[dataIndex] = true;
 
-          // TODO compute all adjacents
           const { roomGraph: graph } = gm.d;
-          const rootIds = Object.keys(state.isHoleMasked).map(Number);
-          const adjIds = rootIds.flatMap(holeId => {// node-ordering aligned to holeIndex
-            return graph.getSuccs(graph.nodesArray[holeId]).map(x => x.opts.holeIndex);
+          const rootHoleIds = Object.keys(state.isHoleMasked).map(Number);
+          const openDoorIds = state.doorApi.getOpen();
+          const adjHoleIds = rootHoleIds.flatMap(holeId => {// node-ordering aligned to holeIndex
+            return graph.getEdgesFrom(graph.nodesArray[holeId])
+              .filter(edge => edge.origOpts.doorIndex in openDoorIds)
+              .map(edge => edge.dst.opts.holeIndex);
           });
-          const allIds = Array.from(new Set(rootIds.concat(adjIds)));
+          const litHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
 
-          const svgPaths = allIds
+          const svgPaths = litHoleIds
             .map((i) => `${gm.allHoles[i].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
             .join(' ');
           state.clipPath = `path('${svgPaths}')`;
@@ -49,7 +51,6 @@ export default function GeomorphCssLightsTest(props) {
       
     };
   }, [gm]);
-
 
   return (
     <CssPanZoom dark className={rootCss}>
@@ -101,12 +102,9 @@ export default function GeomorphCssLightsTest(props) {
 
         {/* TODO svg test room graph */}
         <svg
-          style={{
-            width: gm.d.pngRect.width,
-            height: gm.d.pngRect.height,
-            position: 'absolute',
-            pointerEvents: 'none',
-          }}
+          className="room-graph"
+          width={gm.d.pngRect.width}
+          height={gm.d.pngRect.height}
         >
           {gm.d.holeCenters.map((center, i) =>
             <g key={i}>
@@ -136,7 +134,7 @@ export default function GeomorphCssLightsTest(props) {
           )}
         </svg>
 
-        <Doors gm={gm} wire={state.wire} />
+        <Doors gm={gm} wire={state.wire} onLoad={api => state.doorApi = api} />
       </>}
     </CssPanZoom>
   );
@@ -158,6 +156,13 @@ const rootCss = css`
   }
   div.area-dots {
     position: absolute;
+  }
+  svg.room-graph {
+    position: absolute;
+    pointer-events: none;
+    circle, line {
+      pointer-events: none;
+    }
   }
   /* canvas {
     position: absolute;

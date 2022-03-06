@@ -6,15 +6,10 @@ declare namespace NPC {
     | DoorMessage
   );
 
-  export interface LightsProps {
-    json: Geomorph.GeomorphData;
-    defs: LightDef[];
-    wire: NavWire;
-  }
-
   export interface DoorsProps {
     gm: Geomorph.GeomorphData;
     wire: NavWire;
+    onLoad?: (api: DoorsApi) => void;
   }
 
   /** Fired when doors is opened-door/closed */
@@ -23,36 +18,8 @@ declare namespace NPC {
     index: number;
   }
 
-  /** TODO remove (replaced by Geomorph.LightDef) */
-  export interface LightDef {
-    key: 'light-def';
-    /** [position, distance ≥ 0, intensity in [0,1], maskId] */
-    def: [Geom.Vect, number, number, 0 | 1];
-  }
-
-  /** TODO remove */
-  export interface Light {
-    key: 'light';
-    /** Original index in light defs */
-    index: number;
-    position: Vect;
-    poly: Poly;
-    intensity: number;
-    radius: number;
-  }
-
-  /** TODO remove */
-  export interface SvgLight {
-    key: 'light';
-    /** Original index in light defs */
-    index: number;
-    intensity: number;
-    maskId: 0 | 1;
-    position: Vect;
-    poly: Poly;
-    ratio: Vect;
-    r: number;
-    scale: Vect;
+  export interface DoorsApi {
+    getOpen(): { [doorIndex: number]: true };
   }
 
 }
