@@ -5,13 +5,13 @@ import React from 'react';
  * together with dependencies and (crucially) better HMR.
  * @template State 
  * @param {() => State} initializer Should be side-effect free...
- * @param {TypeUtil.KeyedEquality<State>} [keyEquality]
  * @param {any[]} [deps]
+ * @param {{ equality?: TypeUtil.KeyedEquality<State>; }} [opts]
  */
 export default function useMuState(
   initializer,
-  keyEquality = {},
   deps = [],
+  opts = {},
 ) {
   const [state] = /** @type {[State & { _prevFn?: string; _prevInit?: State }, any]} */ (
     React.useState(initializer)
@@ -40,7 +40,7 @@ export default function useMuState(
          * _IN PROGRESS_ update if initial values changed
          * TODO automatic for primitive types
          */
-        else if (state._prevInit && keyEquality[key]?.((state._prevInit)[key], newInit[key]) === false) {
+        else if (state._prevInit && opts.equality?.[key]?.((state._prevInit)[key], newInit[key]) === false) {
           state[key] = newInit[key];
         }
       }

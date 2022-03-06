@@ -125,7 +125,10 @@ export async function createLayout(def, lookup, triangleService) {
       if (holeIds.length === 1) {// Ignore hull doors
         return [];
       } else if (holeIds.length === 2) {
-        return [{ src: `${holeIds[0]}`, dst: `${holeIds[1]}`, doorIndex: i }];
+        return [// undirected, so 2 directed edges
+          { src: `${holeIds[0]}`, dst: `${holeIds[1]}`, doorIndex: i },
+          { src: `${holeIds[1]}`, dst: `${holeIds[0]}`, doorIndex: i },
+        ];
       } else {
         console.warn(`door ${i}: unexpected adjacent holes: ${holeIds}`)
         return [];

@@ -52,6 +52,8 @@ declare namespace Graph {
     edges: EdgeOpts[];
   }
 
+  export type BaseGraphJson = GraphJson<BaseNode, BaseEdgeOpts<BaseNode>>;
+
   //#region RoomGraph
   export interface RoomNodeOpts extends BaseNodeOpts {
     /** `${holeIndex}` */
@@ -71,6 +73,9 @@ declare namespace Graph {
   }
 
   export type RoomGraphJson = GraphJson<RoomNode, RoomEdgeOpts>;
+
+  export type RoomGraph = import('./room-graph').RoomGraph;
   //#endregion 
+
 
 }

@@ -1,17 +1,11 @@
 import { css } from "goober";
-import { Poly, Vect } from "projects/geom";
 import { Subject } from "rxjs";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
 import CssPanZoom from "../panzoom/CssPanZoom";
-import { equals } from "../service/generic";
 import Doors from "../geomorph/Doors";
 import useUpdate from "projects/hooks/use-update";
-
-/**
- * TODO light switches via meta points in SVGs
- */
 
 /** @param {{ disabled?: boolean }} props */
 export default function GeomorphCssLightsTest(props) {
@@ -22,24 +16,39 @@ export default function GeomorphCssLightsTest(props) {
   const state = useMuState(() => {
     return {
       clipPath: 'none',
-      maskedOutlines: /** @type {{ [outlineIndex: string]: true }} */ ({}),
+      isHoleMasked: /** @type {{ [holeIndex: string]: true }} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
+
+      /**
+       * TODO
+       * - show all adjacent masks whose door is open
+       * - adjust masks when adjacent doors are opened/closed
+       */
 
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
       handleDotClick({ target }) {
-        if (!gm) return;
-        const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
-        if (dataIndex in state.maskedOutlines) delete state.maskedOutlines[dataIndex];
-        else state.maskedOutlines[dataIndex] = true;
-        const svgPaths = Object.keys(state.maskedOutlines)
-          .map((i) => `${gm.allHoles[Number(i)].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
-          .join(' ');
-        state.clipPath = `path('${svgPaths}')`;
-        update();
+        if (gm) {
+          const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
+          dataIndex in state.isHoleMasked ? delete state.isHoleMasked[dataIndex] : state.isHoleMasked[dataIndex] = true;
+
+          // TODO compute all adjacents
+          const { roomGraph: graph } = gm.d;
+          const rootIds = Object.keys(state.isHoleMasked).map(Number);
+          const adjIds = rootIds.flatMap(holeId => {// node-ordering aligned to holeIndex
+            return graph.getSuccs(graph.nodesArray[holeId]).map(x => x.opts.holeIndex);
+          });
+          const allIds = Array.from(new Set(rootIds.concat(adjIds)));
+
+          const svgPaths = allIds
+            .map((i) => `${gm.allHoles[i].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
+            .join(' ');
+          state.clipPath = `path('${svgPaths}')`;
+          update();
+        }
       },
       
     };
-  }, {}, [gm]);
+  }, [gm]);
 
 
   return (
@@ -57,7 +66,7 @@ export default function GeomorphCssLightsTest(props) {
           }}
         />
 
-        {Object.keys(state.maskedOutlines).length ? <img
+        {Object.keys(state.isHoleMasked).length ? <img
           className="geomorph-light"
           src={geomorphPngPath(layoutKey)}
           draggable={false}
@@ -74,10 +83,10 @@ export default function GeomorphCssLightsTest(props) {
           className="area-dots"
           onClick={state.handleDotClick}
         >
-          {gm.d.holeCenters.map((center, i) => {
+          {gm.d.holeCenters.map((center, holeIndex) => {
             return <div
-              key={i}
-              data-index={i}
+              key={holeIndex}
+              data-index={holeIndex}
               style={{
                 borderRadius: 5,
                 border: '5px solid white',
@@ -116,13 +125,13 @@ export default function GeomorphCssLightsTest(props) {
               /> */}
             </g>
           )}
-          {gm.roomGraph.edges.map(({ src, dst, doorIndex }) =>
+          {gm.d.roomGraph.edgesArray.map(({ src, dst }) =>
             <line
               stroke="grey"
-              x1={gm.d.holeCenters[Number(src)].x}
-              y1={gm.d.holeCenters[Number(src)].y}
-              x2={gm.d.holeCenters[Number(dst)].x}
-              y2={gm.d.holeCenters[Number(dst)].y}
+              x1={gm.d.holeCenters[Number(src.id)].x}
+              y1={gm.d.holeCenters[Number(src.id)].y}
+              x2={gm.d.holeCenters[Number(dst.id)].x}
+              y2={gm.d.holeCenters[Number(dst.id)].y}
             />
           )}
         </svg>

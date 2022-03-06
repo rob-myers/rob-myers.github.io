@@ -109,6 +109,7 @@ declare namespace Geomorph {
       pngRect: Geom.Rect;
       /** For debug */
       holeCenters: Vect[];
+      roomGraph: Graph.RoomGraph;
     };
   }
 

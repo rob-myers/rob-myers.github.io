@@ -409,4 +409,12 @@ export class BaseGraph {
     json.edges.forEach(def => this.registerEdge(def));
     return this;
   }
+
+  /**
+   * Must be reimplemented in subclasses.
+   * @param {Graph.BaseGraphJson} json 
+   */  
+  static fromJson(json) {
+    return (new BaseGraph).from(json);
+  }
 }
