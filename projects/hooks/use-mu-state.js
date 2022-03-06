@@ -5,10 +5,12 @@ import React from 'react';
  * @template {Record<string, any> & { _prevFn?: string, _prevInit?: State }} State 
  * @param {() => State} initializer Should be side-effect free...
  * @param {TypeUtil.KeyedEquality<State>} [keyEquality]
+ * @param {any[]} [deps]
  */
 export default function useMuState(
   initializer,
-  keyEquality = {}
+  keyEquality = {},
+  deps = [],
 ) {
   const [state] = React.useState(initializer);
 
@@ -43,8 +45,13 @@ export default function useMuState(
       }
       state._prevFn = initializer.toString();
       state._prevInit = newInit;
+    } else {// Deps changed: update function bodies
+      const newInit = initializer();
+      for (const [k, v] of Object.entries(newInit)) {
+        if (typeof v === 'function') /** @type {*} */ (state)[k] = v;
+      }
     }
-  }, []);
+  }, deps);
 
   return state;
 }

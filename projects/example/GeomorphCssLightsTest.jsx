@@ -20,22 +20,26 @@ export default function GeomorphCssLightsTest(props) {
   const update = useUpdate();
 
   const state = useMuState(() => {
-    /** @type {NPC.LightDef[]} */
-    const lightDefs = [
-      { key: 'light-def', def: [new Vect(205, 385), 130, 0.7, 0] },
-      { key: 'light-def', def: [new Vect(740, 430), 80, 0.6, 0] },
-      { key: 'light-def', def: [new Vect(420, 400), 80, 0.8, 1] },
-      { key: 'light-def', def: [new Vect(600, 315), 250, 1, 1] },
-    ];
     return {
       clipPath: 'none',
-      lightDefs,
       maskedOutlines: /** @type {{ [outlineIndex: string]: true }} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
+      /** @param {React.MouseEvent<HTMLDivElement>} param0  */
+      handleDotClick({ target }) {
+        if (!gm) return;
+        const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
+        if (dataIndex in state.maskedOutlines) delete state.maskedOutlines[dataIndex];
+        else state.maskedOutlines[dataIndex] = true;
+        const svgPaths = Object.keys(state.maskedOutlines)
+          .map((i) => `${gm.allHoles[Number(i)].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
+          .join(' ');
+        state.clipPath = `path('${svgPaths}')`;
+        update();
+      },
     };
   }, {
     lightDefs: (curr, next) => equals(curr, next),
-  });
+  }, [gm]);
 
 
   return (
@@ -66,18 +70,9 @@ export default function GeomorphCssLightsTest(props) {
           }}
         /> : null}
 
-        <div // Area dots
-          onClick={({ target }) => {
-            const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
-            if (dataIndex in state.maskedOutlines) delete state.maskedOutlines[dataIndex];
-            else state.maskedOutlines[dataIndex] = true;
-            const svgPaths = Object.keys(state.maskedOutlines)
-              .map((i) => `${gm.allHoles[Number(i)].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
-              .join(' ');
-            state.clipPath = `path('${svgPaths}')`;
-            update();
-          }}
+        <div
           className="area-dots"
+          onClick={state.handleDotClick}
         >
           {gm.d.holeCenters.map((center, i) => {
             return <div
@@ -107,7 +102,7 @@ export default function GeomorphCssLightsTest(props) {
           {gm.d.holeCenters.map((center, i) =>
             <g key={i}>
               <circle
-                fill="rgba(100, 0, 0, 0.2)"
+                fill="rgba(0, 0, 100, 0.2)"
                 r={10}
                 cx={center.x}
                 cy={center.y}
@@ -123,7 +118,7 @@ export default function GeomorphCssLightsTest(props) {
           )}
           {gm.roomGraph.edges.map(({ src, dst, doorIndex }) =>
             <line
-              stroke="red"
+              stroke="grey"
               x1={gm.d.holeCenters[Number(src)].x}
               y1={gm.d.holeCenters[Number(src)].y}
               x2={gm.d.holeCenters[Number(dst)].x}
