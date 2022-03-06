@@ -2,8 +2,8 @@ import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat } from '../geom';
 import { svgPathToPolygon } from './dom';
+import { geom } from './geom';
 import { labelMeta } from '../geomorph/geomorph.model';
-import { RoomGraph } from '../graph/room-graph';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -58,15 +58,15 @@ export async function createLayout(def, lookup, triangleService) {
   groups.walls.forEach((poly) => poly.fixOrientation().precision(4));
   
   // Cut doors from walls
-  const doors = singlesToPolys(groups.singles, 'door');
+  const doorPolys = singlesToPolys(groups.singles, 'door');
   // Do not union walls yet, as may self-intersect when outset
   // Our polygon outset doesn't support self-intersecting outer ring
-  const unjoinedWalls = groups.walls.flatMap(x => Poly.cutOut(doors, [x]));
+  const unjoinedWalls = groups.walls.flatMap(x => Poly.cutOut(doorPolys, [x]));
   const uncutWalls = groups.walls; // Keep a reference to uncut walls
   groups.walls = Poly.union(unjoinedWalls);
   groups.singles = groups.singles.reduce((agg, single) =>
     agg.concat(single.tags.includes('wall')
-      ? Poly.cutOut(doors, [single.poly]).map(poly => ({ ...single, poly }))
+      ? Poly.cutOut(doorPolys, [single.poly]).map(poly => ({ ...single, poly }))
       : single
     )
   , /** @type {typeof groups['singles']} */ ([]));
@@ -120,7 +120,7 @@ export async function createLayout(def, lookup, triangleService) {
   /** @type {Graph.RoomGraphJson} */
   const roomGraph = {
     nodes: allHoles.map((_, i) => ({ id: `${i}`, opts: { id: `${i}`, holeIndex: i } })),
-    edges: doors.flatMap((door, i) => {
+    edges: doorPolys.flatMap((door, i) => {
       const holeIds = allHoles.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
       if (holeIds.length === 1) {// Ignore hull doors
         return [];
@@ -133,21 +133,30 @@ export async function createLayout(def, lookup, triangleService) {
     }),
   };
 
+  /** @type {Geomorph.Door<Poly>[]}  */
+  const doors = groups.singles.filter(x => x.tags.includes('door'))
+    .map(({ poly, tags }) => {
+      const { angle, rect } = geom.polyToAngledRect(poly);
+      const [u, v] = geom.getAngledRectSeg({ angle, rect });
+      return { angle, rect: rect.json, poly, tags, seg: [u.json, v.json] };
+    });
+
   return {
     key: def.key,
     id: def.id,
     def,
     groups,
-    labels,
-    walls: groups.walls,
-    navPoly,
-    navDecomp,
+
     allHoles,
+    doors,
+    labels,
+    navDecomp,
+    navPoly,
     roomGraph,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
-    hullTop: Poly.cutOut(doors.concat(windows), hullSym.hull),
-    hullRect: Rect.from(...hullSym.hull.concat(doors).map(x => x.rect)),
+    hullTop: Poly.cutOut(doorPolys.concat(windows), hullSym.hull),
+    hullRect: Rect.from(...hullSym.hull.concat(doorPolys).map(x => x.rect)),
 
     items: symbols.map(/** @returns {Geomorph.ParsedLayout['items'][0]} */  (sym, i) => ({
       key: sym.key,
@@ -161,9 +170,8 @@ export async function createLayout(def, lookup, triangleService) {
 
 /** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout({
-  def,
-  groups, walls, allHoles, labels, roomGraph,
-  navPoly, navDecomp,
+  def,  groups,
+  allHoles, doors, labels, navPoly, navDecomp, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -178,11 +186,12 @@ export function serializeLayout({
       singles: groups.singles.map(x => ({ tags: x.tags, poly: x.poly.geoJson })),
       walls: groups.walls.map(x => x.geoJson),
     },
-    navPoly: navPoly.map(x => x.geoJson),
-    navDecomp,
-    walls: walls.map(x => x.geoJson),
-    labels,
+
     allHoles: allHoles.map(x => x.geoJson),
+    doors: doors.map((door) => ({ ...door, poly: door.poly.geoJson })),
+    labels,
+    navDecomp,
+    navPoly: navPoly.map(x => x.geoJson),
     roomGraph,
 
     hullPoly: hullPoly.map(x => x.geoJson),
@@ -196,9 +205,8 @@ export function serializeLayout({
 
 /** @param {Geomorph.LayoutJson} layout */
 export function parseLayout({
-  def,
-  groups, walls, allHoles, labels, roomGraph,
-  navPoly, navDecomp,
+  def,  groups,
+  allHoles, doors, labels, navPoly, navDecomp, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -213,11 +221,12 @@ export function parseLayout({
       singles: groups.singles.map(x => ({ tags: x.tags, poly: Poly.from(x.poly) })),
       walls: groups.walls.map(Poly.from),
     },
+
+    allHoles: allHoles.map(Poly.from),
+    doors: doors.map((door) => ({ ...door, poly: Poly.from(door.poly) })),
+    labels,
     navPoly: navPoly.map(Poly.from),
     navDecomp,
-    walls: walls.map(Poly.from),
-    labels,
-    allHoles: allHoles.map(Poly.from),
     roomGraph,
 
     hullPoly: hullPoly.map(Poly.from),

@@ -29,14 +29,6 @@ export default function useGeomorphData(layoutKey) {
       // TODO possibly remove, unless HTMLCanvas needed
       image,
       d: {
-        // TODO move to json?
-        doors: layout.groups.singles
-          .filter(x => x.tags.includes('door'))
-          .map(({ poly, tags }) => {
-            const { angle, rect } = geom.polyToAngledRect(poly);
-            const [u, v] = geom.getAngledRectSeg({ angle, rect });
-            return { angle, rect: rect.json, poly: poly.geoJson, tags, seg: [u.json, v.json] };
-          }),
         hullOutine: layout.hullPoly[0].removeHoles(),
         pngRect: Rect.fromJson(layout.items[0].pngRect),
         holeCenters: layout.allHoles.map(({ rect }) => rect.center),

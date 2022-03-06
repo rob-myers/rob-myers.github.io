@@ -84,17 +84,17 @@ function ForeignObject({ gm }) {
 
   const { wallSegs, doorSegs, obstacleSegs } = React.useMemo(() => {
     return {
-      wallSegs: gm.walls.flatMap(poly =>
+      wallSegs: gm.groups.walls.flatMap(poly =>
         poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y).lineSegs
       ),
-      doorSegs: gm.d.doors.map(({ seg: [u, v] }) =>
+      doorSegs: gm.doors.map(({ seg: [u, v] }) =>
         [u, v].map(p => Vect.from(p).translate(-gm.d.pngRect.x, -gm.d.pngRect.y))
       ),
       obstacleSegs: gm.groups.obstacles.flatMap(poly =>
         poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y).lineSegs
       ),
     };
-  }, [gm.walls]);
+  }, [gm.groups.walls]);
 
   return (
     <foreignObject xmlns="http://www.w3.org/1999/xhtml" {...gm.d.pngRect}>
@@ -197,7 +197,7 @@ function useDataUrls(gm) {
     [canvas.width, canvas.height] = [gm.d.pngRect.width, gm.d.pngRect.height];
     ctxt.translate(-gm.d.pngRect.x, -gm.d.pngRect.y);
 
-    const walls = gm.walls;
+    const walls = gm.groups.walls;
     ctxt.fillStyle = color.wallTop;
     fillPolygon(ctxt, walls);
     const wallsDataUrl = canvas.toDataURL();
@@ -224,5 +224,5 @@ function useDataUrls(gm) {
       obstaclesDataUrl,
       labelsDataUrl,
     }
-  }, [gm.walls]);
+  }, [gm.groups.walls]);
 }

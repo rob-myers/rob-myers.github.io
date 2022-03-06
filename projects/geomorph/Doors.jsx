@@ -24,7 +24,7 @@ export default function Doors(props) {
         const div = /** @type {HTMLDivElement} */ (e.target);
         const index = Number(div.getAttribute('data-index'));
         state.open[index] = !state.open[index];
-        const nextWidth = state.open[index] ? 10 : gm.d.doors[index].rect.width; // Leq for borders
+        const nextWidth = state.open[index] ? 10 : gm.doors[index].rect.width; // Leq for borders
         div.style.width = `${nextWidth}px`;
         props.wire.next({ key: state.open[index] ? 'opened-door' : 'closed-door', index });
       },
@@ -36,7 +36,7 @@ export default function Doors(props) {
       className={rootCss}
       onPointerUp={state.onClick}
     >
-      {gm.d.doors.map(({ rect, angle }, i) =>
+      {gm.doors.map(({ rect, angle }, i) =>
         <div
           key={i}
           data-index={i}

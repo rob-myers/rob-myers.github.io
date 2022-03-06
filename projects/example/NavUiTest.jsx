@@ -77,7 +77,7 @@ export default function NavCollide(props) {
         {pf && <NPCsTest defs={state.defs} onLoad={api => state.api = api} />}
 
         {/* TESTING */}
-        {gm && <Light init={state.testLight} walls={gm.walls} hull={gm.hullPoly} />}
+        {gm && <Light init={state.testLight} walls={gm.groups.walls} hull={gm.hullPoly} />}
 
         <Messages
           onLoad={api => {

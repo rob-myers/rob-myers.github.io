@@ -59,13 +59,14 @@ declare namespace Geomorph {
     def: LayoutDef;
     /** Transformed and filtered groups */
     groups: SvgGroups<T>;
+
+    allHoles: T[];
+    doors: Door<T>[];
+    labels: LayoutLabel[];
     /** The navigable area including doorways. */
     navPoly: T[];
     /** A rich triangulation involving Steiner points */
     navDecomp: Geom.TriangulationJson;
-    walls: T[];
-    labels: LayoutLabel[];
-    allHoles: T[];
     roomGraph: Graph.RoomGraphJson;
 
     /** Should probably have exactly one polygon */
@@ -104,11 +105,10 @@ declare namespace Geomorph {
     image: HTMLImageElement;
     /** Derived computations */
     d: {
-      doors: DoorJson[];
-      hullOutine: Geom.Poly;
+      hullOutine: Poly;
       pngRect: Geom.Rect;
       /** For debug */
-      holeCenters: Geom.Vect[];
+      holeCenters: Vect[];
     };
   }
 
@@ -215,8 +215,8 @@ declare namespace Geomorph {
     | 'window--007--0x2.4'
   );
 
-  interface DoorJson extends Geom.AngledRect<RectJson> {
-    poly: GeoJsonPolygon;
+  interface Door<T> extends Geom.AngledRect<RectJson> {
+    poly: T;
     seg: [Geom.VectJson, Geom.VectJson];
     tags: string[];
   }
