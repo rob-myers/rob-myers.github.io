@@ -1,3 +1,4 @@
+import React from "react";
 import { css } from "goober";
 import { Subject } from "rxjs";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
@@ -22,7 +23,8 @@ export default function GeomorphCssLightsTest(props) {
 
       /**
        * TODO
-       * - adjust masks when adjacent doors are opened/closed
+       * - fill in the doors too
+       * - new approach: dark on-top, image with hole restricts view
        */
 
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
@@ -30,27 +32,43 @@ export default function GeomorphCssLightsTest(props) {
         if (gm) {
           const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
           dataIndex in state.isHoleMasked ? delete state.isHoleMasked[dataIndex] : state.isHoleMasked[dataIndex] = true;
-
-          const { roomGraph: graph } = gm.d;
-          const rootHoleIds = Object.keys(state.isHoleMasked).map(Number);
-          const openDoorIds = state.doorApi.getOpen();
-          const adjHoleIds = rootHoleIds.flatMap(holeId => {// node-ordering aligned to holeIndex
-            return graph.getEdgesFrom(graph.nodesArray[holeId])
-              .filter(edge => edge.origOpts.doorIndex in openDoorIds)
-              .map(edge => edge.dst.opts.holeIndex);
-          });
-          const litHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
-
-          const svgPaths = litHoleIds
-            .map((i) => `${gm.allHoles[i].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
-            .join(' ');
-          state.clipPath = `path('${svgPaths}')`;
-          update();
+          state.updateMask();
         }
       },
-      
+
+      updateMask() {
+        if (!gm) return;
+        const { roomGraph: graph } = gm.d;
+
+        const rootHoleIds = Object.keys(state.isHoleMasked).map(Number);
+        const openDoorIds = state.doorApi.getOpen();
+        const adjHoleIds = rootHoleIds.flatMap(holeId => {// node-ordering aligned to holeIndex
+          return graph.getEdgesFrom(graph.nodesArray[holeId])
+            .filter(edge => edge.origOpts.doorIndex in openDoorIds)
+            .map(edge => edge.dst.opts.holeIndex);
+        });
+        const shownHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
+
+        const svgPaths = shownHoleIds
+          .map((i) => `${gm.allHoles[i].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
+          .join(' ');
+        state.clipPath = `path('${svgPaths}')`;
+        update();
+      },
     };
   }, [gm]);
+
+  React.useEffect(() => {
+    const sub = state.wire.subscribe((msg) => {
+      switch (msg.key) {
+        case 'closed-door':
+        case 'opened-door':
+          state.updateMask();
+          break;
+      }
+    });
+    return () => sub.unsubscribe();
+  }, []);
 
   return (
     <CssPanZoom dark className={rootCss}>

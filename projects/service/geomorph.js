@@ -114,7 +114,7 @@ export async function createLayout(def, lookup, triangleService) {
   const allHoles = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
   // // TODO below is a hack
   // const allHolesWithDoors = allHoles
-  //   .flatMap(hole => Poly.union([hole].concat(doors)))
+  //   .flatMap(hole => Poly.union([hole].concat(doorPolys)))
   //   .filter(poly => poly.outline.length > 5);
   
   /** @type {Graph.RoomGraphJson} */
