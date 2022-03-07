@@ -1,12 +1,19 @@
 import React from "react";
 import { css } from "goober";
 import { Subject } from "rxjs";
+import { filter } from "rxjs/operators";
+import { Poly } from "../geom/poly";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
-import useUpdate from "projects/hooks/use-update";
+import useUpdate from "../hooks/use-update";
+
+/**
+ * TODO new approach:
+ * - image with hole restricts view
+ */
 
 /** @param {{ disabled?: boolean }} props */
 export default function GeomorphCssLightsTest(props) {
@@ -20,11 +27,6 @@ export default function GeomorphCssLightsTest(props) {
       isHoleMasked: /** @type {{ [holeIndex: string]: true }} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
       doorApi: /** @type {NPC.DoorsApi} */ ({}),
-
-      /**
-       * TODO
-       * - new approach: dark on-top, image with hole restricts view
-       */
 
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
       handleDotClick({ target }) {
@@ -48,8 +50,9 @@ export default function GeomorphCssLightsTest(props) {
         });
         const shownHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
 
-        const holePolys = shownHoleIds.map(i => gm.d.holesWithDoors[i].clone());
-        const svgPaths = holePolys.map(poly => `${poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`).join(' ');
+        const holePolys = shownHoleIds.map(i => gm.d.holesWithDoors[i].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
+        const maskPoly = Poly.cutOut(holePolys, [gm.d.hullOutine]);
+        const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         state.clipPath = `path('${svgPaths}')`;
         update();
       },
@@ -57,20 +60,16 @@ export default function GeomorphCssLightsTest(props) {
   }, [gm]);
 
   React.useEffect(() => {
-    const sub = state.wire.subscribe((msg) => {
-      switch (msg.key) {
-        case 'closed-door':
-        case 'opened-door':
-          state.updateMask();
-          break;
-      }
-    });
+    const sub = state.wire
+      .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
+      .subscribe((_) => state.updateMask());
     return () => sub.unsubscribe();
   }, []);
 
   return (
     <CssPanZoom dark className={rootCss}>
       {gm && <>
+
         <img
           className="geomorph"
           src={geomorphPngPath(layoutKey)}
@@ -83,8 +82,8 @@ export default function GeomorphCssLightsTest(props) {
           }}
         />
 
-        {Object.keys(state.isHoleMasked).length ? <img
-          className="geomorph-light"
+        <img
+          className="geomorph-dark"
           src={geomorphPngPath(layoutKey)}
           draggable={false}
           style={{
@@ -94,7 +93,7 @@ export default function GeomorphCssLightsTest(props) {
             height: gm.d.pngRect.height,
             clipPath: state.clipPath,
           }}
-        /> : null}
+        />
 
         <div
           className="area-dots"
@@ -162,14 +161,18 @@ const layoutKey = 'g-301--bridge';
 // const layoutKey = 'g-302--xboat-repair-bay';
 
 const rootCss = css`
-  img.geomorph {
+  img.geomorph-dark {
     filter: invert(100%) brightness(60%) contrast(200%) sepia(30%);
     position: absolute;
   }
-  img.geomorph-light {
+  img.geomorph {
     filter:  brightness(75%);
     position: absolute;
   }
+  /* img.geomorph-light {
+    filter:  brightness(75%);
+    position: absolute;
+  } */
   div.area-dots {
     position: absolute;
   }
