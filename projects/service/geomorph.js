@@ -150,7 +150,7 @@ export async function createLayout(def, lookup, triangleService) {
     def,
     groups,
 
-    allHoles,
+    holes: allHoles,
     doors,
     labels,
     navDecomp,
@@ -174,7 +174,7 @@ export async function createLayout(def, lookup, triangleService) {
 /** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout({
   def,  groups,
-  allHoles, doors, labels, navPoly, navDecomp, roomGraph,
+  holes: allHoles, doors, labels, navPoly, navDecomp, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -190,7 +190,7 @@ export function serializeLayout({
       walls: groups.walls.map(x => x.geoJson),
     },
 
-    allHoles: allHoles.map(x => x.geoJson),
+    holes: allHoles.map(x => x.geoJson),
     doors: doors.map((door) => ({ ...door, poly: door.poly.geoJson })),
     labels,
     navDecomp,
@@ -209,7 +209,7 @@ export function serializeLayout({
 /** @param {Geomorph.LayoutJson} layout */
 export function parseLayout({
   def,  groups,
-  allHoles, doors, labels, navPoly, navDecomp, roomGraph,
+  holes: allHoles, doors, labels, navPoly, navDecomp, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -225,7 +225,7 @@ export function parseLayout({
       walls: groups.walls.map(Poly.from),
     },
 
-    allHoles: allHoles.map(Poly.from),
+    holes: allHoles.map(Poly.from),
     doors: doors.map((door) => ({ ...door, poly: Poly.from(door.poly) })),
     labels,
     navPoly: navPoly.map(Poly.from),

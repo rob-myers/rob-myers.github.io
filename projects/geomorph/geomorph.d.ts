@@ -60,7 +60,7 @@ declare namespace Geomorph {
     /** Transformed and filtered groups */
     groups: SvgGroups<T>;
 
-    allHoles: T[];
+    holes: T[];
     doors: Door<T>[];
     labels: LayoutLabel[];
     /** The navigable area including doorways. */
@@ -110,6 +110,7 @@ declare namespace Geomorph {
       /** For debug */
       holeCenters: Vect[];
       roomGraph: Graph.RoomGraph;
+      holesWithDoors: Poly[];
     };
   }
 

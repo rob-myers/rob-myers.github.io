@@ -23,7 +23,6 @@ export default function GeomorphCssLightsTest(props) {
 
       /**
        * TODO
-       * - fill in the doors too
        * - new approach: dark on-top, image with hole restricts view
        */
 
@@ -41,17 +40,16 @@ export default function GeomorphCssLightsTest(props) {
         const { roomGraph: graph } = gm.d;
 
         const rootHoleIds = Object.keys(state.isHoleMasked).map(Number);
-        const openDoorIds = state.doorApi.getOpen();
+        const openDoorLookup = state.doorApi.getOpen();
         const adjHoleIds = rootHoleIds.flatMap(holeId => {// node-ordering aligned to holeIndex
           return graph.getEdgesFrom(graph.nodesArray[holeId])
-            .filter(edge => edge.origOpts.doorIndex in openDoorIds)
+            .filter(edge => edge.origOpts.doorIndex in openDoorLookup)
             .map(edge => edge.dst.opts.holeIndex);
         });
         const shownHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
 
-        const svgPaths = shownHoleIds
-          .map((i) => `${gm.allHoles[i].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`)
-          .join(' ');
+        const holePolys = shownHoleIds.map(i => gm.d.holesWithDoors[i].clone());
+        const svgPaths = holePolys.map(poly => `${poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y).svgPath}`).join(' ');
         state.clipPath = `path('${svgPaths}')`;
         update();
       },

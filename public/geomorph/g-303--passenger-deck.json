@@ -1652,7 +1652,7 @@
       }
     ]
   },
-  "allHoles": [
+  "holes": [
     {
       "type": "Polygon",
       "coordinates": [

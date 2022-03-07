@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
-import { Rect } from "../geom";
+import { Poly, Rect } from "../geom";
 import { parseLayout } from "../service/geomorph";
 import { RoomGraph } from "projects/graph/room-graph";
 
@@ -23,6 +23,13 @@ export default function useGeomorphData(layoutKey) {
       }),
     ]);
 
+    const roomGraph = RoomGraph.fromJson(layout.roomGraph);
+    const holesWithDoors = roomGraph.nodesArray.map((node, holeIndex) => {
+      const doors = roomGraph.getEdgesFrom(node)
+        .map(edge => layout.doors[edge.origOpts.doorIndex].poly);
+      return Poly.union([layout.holes[holeIndex], ...doors])[0];
+    });
+
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...layout,
@@ -30,8 +37,9 @@ export default function useGeomorphData(layoutKey) {
       d: {
         hullOutine: layout.hullPoly[0].removeHoles(),
         pngRect: Rect.fromJson(layout.items[0].pngRect),
-        holeCenters: layout.allHoles.map(({ rect }) => rect.center),
-        roomGraph: RoomGraph.fromJson(layout.roomGraph),
+        holeCenters: layout.holes.map(({ rect }) => rect.center),
+        roomGraph,
+        holesWithDoors,
       },
     };
 
