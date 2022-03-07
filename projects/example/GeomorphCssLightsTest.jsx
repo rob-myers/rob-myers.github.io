@@ -50,8 +50,8 @@ export default function GeomorphCssLightsTest(props) {
         });
         const shownHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
 
-        const holePolys = shownHoleIds.map(i => gm.d.holesWithDoors[i].clone().translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
-        const maskPoly = Poly.cutOut(holePolys, [gm.d.hullOutine]);
+        const holePolys = shownHoleIds.map(i => gm.d.holesWithDoors[i].clone());
+        const maskPoly = Poly.cutOut(holePolys, [gm.d.hullOutine]).map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         state.clipPath = `path('${svgPaths}')`;
         update();
@@ -122,22 +122,23 @@ export default function GeomorphCssLightsTest(props) {
           height={gm.d.pngRect.height}
         >
           {gm.d.holeCenters.map((center, i) =>
-            <g key={i}>
-              <circle
-                fill="rgba(0, 0, 100, 0.2)"
-                r={10}
-                cx={center.x}
-                cy={center.y}
-              />
-              {/* <path
-                // fill="rgba(0, 0, 200, 0.4)"
-                fill="none"
-                // stroke="blue"
-                stroke="red"
-                d={poly.svgPath}
-              /> */}
-            </g>
+            <circle
+              key={i}
+              fill="rgba(0, 0, 100, 0.2)"
+              r={10}
+              cx={center.x}
+              cy={center.y}
+            />
           )}
+          {/* {gm.holes.map((poly) =>
+            <path
+              // fill="rgba(0, 0, 200, 0.4)"
+              fill="none"
+              // stroke="blue"
+              stroke="red"
+              d={poly.svgPath}
+            />
+          )} */}
           {gm.d.roomGraph.edgesArray.map(({ src, dst }) =>
             <line
               stroke="grey"
