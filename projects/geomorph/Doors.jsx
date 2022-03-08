@@ -78,7 +78,7 @@ const rootCss = css`
       opacity: 1;
       transition: opacity 300ms ease;
       &.open {
-        opacity: 0.2;
+        opacity: 0.1;
       }
     }
   }

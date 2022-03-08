@@ -1,3 +1,4 @@
+import chalk from "chalk";
 import { Vect } from "../geom";
 import { labelMeta } from './geomorph.model';
 import { singlesToPolys } from '../service/geomorph';
@@ -31,7 +32,7 @@ export async function renderGeomorph(
 ) {
   const hullSym = lookup[layout.items[0].key];
   const pngRect = hullSym.pngRect;
-  canvas.width = pngRect.width * scale, canvas.height = pngRect.height * scale;
+  [canvas.width, canvas.height] = [pngRect.width * scale, pngRect.height * scale];
 
   const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
   ctxt.scale(scale, scale);
@@ -43,7 +44,7 @@ export async function renderGeomorph(
     const hullOutline = hullSym.hull[0].outline;
     fillRing(ctxt, hullOutline);
   } else {
-    console.error('hull walls must: exist, be connected, have a hole');
+    console.error(chalk.red('hull walls must: exist, be connected, have a hole'));
   }
 
   ctxt.fillStyle = navColor;
@@ -78,6 +79,10 @@ export async function renderGeomorph(
       setStyle(ctxt, '#aaa', 'rgba(0, 0, 0, 0.5)', 1);
       const center = Vect.average(poly.outline);
       poly.outline.forEach(p => drawLine(ctxt, center, p));
+    }
+    if (tags.includes('wall')) {// Hull wall singles
+      setStyle(ctxt, 'rgba(50, 50, 50, 0.2)');
+      fillPolygon(ctxt, [poly]);
     }
   });
   //#endregion

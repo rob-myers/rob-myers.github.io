@@ -16,7 +16,9 @@ import Doors from "../geomorph/Doors";
  * - 🅧 LightHole didn't work (outlying rooms go blank when lit)
  * - new door type: support tag `iris`
  *   - ✅ change door design for existing
- *   - add missing walls + doors to hulls
+ *   - ✅ add missing walls + doors to hull 301 and 101
+ * - support multiple edges between same two rooms
+ * - support invisible doors which are always open, to split up large areas
  * - far doors shown dark
  */
 
@@ -163,8 +165,8 @@ export default function GeomorphCssLightsTest(props) {
 }
 
 /** @type {Geomorph.LayoutKey} */
-const layoutKey = 'g-301--bridge';
-// const layoutKey = 'g-101--multipurpose';
+// const layoutKey = 'g-301--bridge';
+const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-302--xboat-repair-bay';
 
 const rootCss = css`
