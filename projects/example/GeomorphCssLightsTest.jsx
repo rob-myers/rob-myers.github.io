@@ -14,11 +14,11 @@ import Doors from "../geomorph/Doors";
  * TODO new approach:
  * - ✅ create hole image between geomorph and geomorph-dark
  * - 🅧 LightHole didn't work (outlying rooms go blank when lit)
- * - new door type: support tag `iris`
+ * - ✅ new door type: support tag `iris`
  *   - ✅ change door design for existing
  *   - ✅ add missing walls + doors to hull 301 and 101
- * - support multiple edges between same two rooms
- * - support invisible doors which are always open, to split up large areas
+ * - 🚧 support multiple edges between same two rooms
+ * - support invisible + always open doors, to split up large areas
  * - far doors shown dark
  */
 
@@ -49,11 +49,11 @@ export default function GeomorphCssLightsTest(props) {
         const { roomGraph: graph } = gm.d;
 
         const rootHoleIds = Object.keys(state.isHoleMasked).map(Number);
-        const openDoorLookup = state.doorApi.getOpen();
-        const adjHoleIds = rootHoleIds.flatMap(holeId => {// node-ordering aligned to holeIndex
-          return graph.getEdgesFrom(graph.nodesArray[holeId])
-            .filter(edge => edge.origOpts.doorIndex in openDoorLookup)
-            .map(edge => edge.dst.opts.holeIndex);
+        const openDoorIds = Object.keys(state.doorApi.getOpen()).map(Number);
+        const adjHoleIds = rootHoleIds.flatMap(holeId => {
+          // Assume node-ordering aligned to holeIndex
+          return graph.getAdjacentRooms(graph.nodesArray[holeId], openDoorIds)
+            .map(roomNode => roomNode.opts.holeIndex);
         });
         const shownHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
 
@@ -67,7 +67,8 @@ export default function GeomorphCssLightsTest(props) {
   }, [gm]);
 
   React.useEffect(() => {
-    // state.updateMask();
+    // TODO trigger via `gm`
+    setTimeout(() => state.updateMask(), 1000);
     const sub = state.wire
       .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
       .subscribe((_) => state.updateMask());
@@ -165,8 +166,8 @@ export default function GeomorphCssLightsTest(props) {
 }
 
 /** @type {Geomorph.LayoutKey} */
-// const layoutKey = 'g-301--bridge';
-const layoutKey = 'g-101--multipurpose';
+const layoutKey = 'g-301--bridge';
+// const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-302--xboat-repair-bay';
 
 const rootCss = css`

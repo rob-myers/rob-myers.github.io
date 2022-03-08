@@ -24,11 +24,15 @@ export default function useGeomorphData(layoutKey) {
     ]);
 
     const roomGraph = RoomGraph.fromJson(layout.roomGraph);
-    const holesWithDoors = roomGraph.nodesArray.map((node, holeIndex) => {
-      const doors = roomGraph.getEdgesFrom(node)
-        .map(edge => layout.doors[edge.origOpts.doorIndex].poly);
-      return Poly.union([layout.holes[holeIndex], ...doors])[0];
-    });
+    const holesWithDoors = roomGraph.nodesArray
+      .filter(node => node.opts.type === 'room')
+      .map((node, holeIndex) => {
+        const doors = roomGraph.getEdgesFrom(node)
+          .flatMap(({ dst }) =>
+            dst.opts.type === 'door' ? layout.doors[dst.opts.doorIndex].poly : []
+          ); // Assume nodes aligned with holes...
+        return Poly.union([layout.holes[holeIndex], ...doors])[0];
+      });
 
     /** @type {Geomorph.GeomorphData} */
     const output = {

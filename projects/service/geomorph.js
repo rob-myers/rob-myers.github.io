@@ -112,25 +112,25 @@ export async function createLayout(def, lookup, triangleService) {
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windows));
   const allHoles = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
-  // // TODO below is a hack
-  // const allHolesWithDoors = allHoles
-  //   .flatMap(hole => Poly.union([hole].concat(doorPolys)))
-  //   .filter(poly => poly.outline.length > 5);
   
+  /** @type {Graph.RoomGraphNode[]} */
+  const roomNodes = [
+    ...allHoles.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, opts: { type: /** @type {const} */ ('room'), id: `hole-${holeIndex}`, holeIndex } })),
+    ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, opts: { type: /** @type {const} */ ('door'), id: `door-${doorIndex}`, doorIndex  } })),
+  ];
   /** @type {Graph.RoomGraphJson} */
   const roomGraph = {
-    nodes: allHoles.map((_, i) => ({ id: `${i}`, opts: { id: `${i}`, holeIndex: i } })),
-    edges: doorPolys.flatMap((door, i) => {
+    nodes: roomNodes,
+    edges: doorPolys.flatMap((door, doorIndex) => {
       const holeIds = allHoles.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
-      if (holeIds.length === 1) {// Ignore hull doors
-        return [];
-      } else if (holeIds.length === 2) {
-        return [// undirected, so 2 directed edges
-          { src: `${holeIds[0]}`, dst: `${holeIds[1]}`, doorIndex: i },
-          { src: `${holeIds[1]}`, dst: `${holeIds[0]}`, doorIndex: i },
-        ];
+      if (holeIds.length === 1 || holeIds.length === 2) {
+        // Hull door (1) or standard door (2)
+        return holeIds.flatMap(holeId => [// undirected means 2 directed edges
+          { src: `hole-${holeId}`, dst: `door-${doorIndex}` },
+          { dst: `hole-${holeId}`, src: `door-${doorIndex}` },
+        ]);
       } else {
-        console.warn(`door ${i}: unexpected adjacent holes: ${holeIds}`)
+        console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
         return [];
       }
     }),

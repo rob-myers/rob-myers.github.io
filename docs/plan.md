@@ -12,6 +12,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- Graph Node should directly extend NodeOpts ?
+- Graph Edge should directly extend EdgeOpts ?
+
 - create room/door graph
   - ✅ graph.js + graph.d.ts
 - ✅ test render room/door graph

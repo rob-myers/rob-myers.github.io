@@ -55,27 +55,33 @@ declare namespace Graph {
   export type BaseGraphJson = GraphJson<BaseNode, BaseEdgeOpts<BaseNode>>;
 
   //#region RoomGraph
-  export interface RoomNodeOpts extends BaseNodeOpts {
-    /** `${holeIndex}` */
+  export type RoomNodeOpts = (
+    | RoomOfTypeRoom
+    | RoomOfTypeDoor
+  );
+      
+  export interface RoomOfTypeRoom extends BaseNodeOpts {
+    type: 'room';
+    /** `room-${holeIndex} */
     id: string;
-    /** Indexes `Geomorph.Layout['allHoles']` */
+    /** Indexes `Geomorph.Layout['holes']` */
     holeIndex: number;
-    // ...
   }
-
-  export interface RoomNode extends BaseNode<RoomNodeOpts> {
-    // ...
-  }
-
-  export interface RoomEdgeOpts extends BaseEdgeOpts<RoomNode> {
+  export interface RoomOfTypeDoor extends BaseNodeOpts {
+    type: 'door';
+    /** `door-${doorIndex} */
+    id: string;
     /** Indexes `Geomorph.Layout['doors']` */
     doorIndex: number;
   }
 
-  export type RoomGraphJson = GraphJson<RoomNode, RoomEdgeOpts>;
+  export interface RoomGraphNode extends BaseNode<RoomNodeOpts> {}
+
+  export interface RoomEdgeOpts extends BaseEdgeOpts<RoomGraphNode> {}
+
+  export type RoomGraphJson = GraphJson<RoomGraphNode, RoomEdgeOpts>;
 
   export type RoomGraph = import('./room-graph').RoomGraph;
   //#endregion 
-
 
 }
