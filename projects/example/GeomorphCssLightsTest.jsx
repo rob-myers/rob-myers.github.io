@@ -13,10 +13,11 @@ import Doors from "../geomorph/Doors";
 /**
  * TODO new approach:
  * - ✅ create hole image between geomorph and geomorph-dark
- * - 🅧 LightHole doesn't work (edge rooms go blank when lit)
- * - clarify on/off and light cascade
- * - could split large holes via SVG meta e.g. 'subsectors" with pseudo doors
- * - far doors shown dark and closed (even when open)
+ * - 🅧 LightHole didn't work (outlying rooms go blank when lit)
+ * - new door type: support tag `iris`
+ *   - ✅ change door design for existing
+ *   - add missing walls + doors to hulls
+ * - far doors shown dark
  */
 
 /** @param {{ disabled?: boolean }} props */
@@ -121,7 +122,6 @@ export default function GeomorphCssLightsTest(props) {
         </div>
 
         <Doors gm={gm} wire={state.wire} onLoad={api => state.doorApi = api} />
-        {/* <LightHole gm={gm} /> */}
         
         <svg
           className="room-graph"

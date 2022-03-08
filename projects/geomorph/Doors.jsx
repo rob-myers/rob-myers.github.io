@@ -11,9 +11,6 @@ export default function Doors(props) {
   const { gm } = props;
 
   const state = useMuState(() => {
-    /**
-     * TODO rethink
-     */
     /** @type {NPC.DoorsApi} */
     const api = {
       getOpen() { return {...state.open}; },
@@ -27,8 +24,6 @@ export default function Doors(props) {
         const div = /** @type {HTMLDivElement} */ (e.target);
         const index = Number(div.getAttribute('data-index'));
         state.open[index] ? delete state.open[index] : state.open[index] = true;
-        const nextWidth = state.open[index] ? 10 : gm.doors[index].rect.width; // Leq for borders
-        div.style.width = `${nextWidth}px`;
         props.wire.next({ key: state.open[index] ? 'opened-door' : 'closed-door', index });
       },
     };
@@ -41,11 +36,11 @@ export default function Doors(props) {
       className={rootCss}
       onPointerUp={state.onClick}
     >
-      {gm.doors.map(({ rect, angle }, i) =>
+      {gm.doors.map(({ rect, angle, tags }, i) =>
         <div
           key={i}
           data-index={i}
-          className={classNames("door", { open: state.open[i] })}
+          className={classNames("door", { open: state.open[i], iris: tags.includes('iris') })}
           style={{
             left: rect.x,
             top: rect.y,
@@ -64,12 +59,27 @@ const rootCss = css`
   div.door {
     position: absolute;
     cursor: pointer;
-    background: #fff;
-    border: 1px solid #888;
-    
-    transition: width 100ms ease-in;
-    &.open {
-      width: 0;
+
+    &:not(.iris) {
+      background: #fff;
+      border: 1px solid #888;
+
+      transition: width 100ms ease-in;
+      &.open {
+        width: 10px !important;
+      }
+    }
+
+    &.iris {
+      background-image: linear-gradient(45deg, #888 33.33%, #333 33.33%, #333 50%, #888 50%, #888 83.33%, #333 83.33%, #333 100%);
+      background-size: 4.24px 4.24px;
+      border: 1px solid #fff;
+      
+      opacity: 1;
+      transition: opacity 300ms ease;
+      &.open {
+        opacity: 0.2;
+      }
     }
   }
 `;
