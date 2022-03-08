@@ -675,24 +675,6 @@
         }
       },
       {
-        "tags": ["switch"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [
-            [[356.4, 343], [356.4, 361], [346.4, 361], [346.4, 343]]
-          ]
-        }
-      },
-      {
-        "tags": ["switch"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [
-            [[853.4, 343], [853.4, 361], [843.4, 361], [843.4, 343]]
-          ]
-        }
-      },
-      {
         "tags": ["door"],
         "poly": {
           "type": "Polygon",

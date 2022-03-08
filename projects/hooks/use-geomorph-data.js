@@ -35,7 +35,7 @@ export default function useGeomorphData(layoutKey) {
       ...layout,
       image, // TODO possibly remove, unless HTMLCanvas needed
       d: {
-        hullOutine: layout.hullPoly[0].removeHoles(),
+        hullOutline: layout.hullPoly[0].removeHoles(),
         pngRect: Rect.fromJson(layout.items[0].pngRect),
         holeCenters: layout.holes.map(({ rect }) => rect.center),
         roomGraph,

@@ -6,13 +6,17 @@ import { Poly } from "../geom/poly";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
+import useUpdate from "../hooks/use-update";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
-import useUpdate from "../hooks/use-update";
 
 /**
  * TODO new approach:
- * - image with hole restricts view
+ * - ✅ create hole image between geomorph and geomorph-dark
+ * - 🅧 LightHole doesn't work (edge rooms go blank when lit)
+ * - clarify on/off and light cascade
+ * - could split large holes via SVG meta e.g. 'subsectors" with pseudo doors
+ * - far doors shown dark and closed (even when open)
  */
 
 /** @param {{ disabled?: boolean }} props */
@@ -51,7 +55,7 @@ export default function GeomorphCssLightsTest(props) {
         const shownHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
 
         const holePolys = shownHoleIds.map(i => gm.d.holesWithDoors[i].clone());
-        const maskPoly = Poly.cutOut(holePolys, [gm.d.hullOutine]).map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
+        const maskPoly = Poly.cutOut(holePolys, [gm.d.hullOutline]).map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         state.clipPath = `path('${svgPaths}')`;
         update();
@@ -60,6 +64,7 @@ export default function GeomorphCssLightsTest(props) {
   }, [gm]);
 
   React.useEffect(() => {
+    // state.updateMask();
     const sub = state.wire
       .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
       .subscribe((_) => state.updateMask());
@@ -115,7 +120,9 @@ export default function GeomorphCssLightsTest(props) {
           })}
         </div>
 
-        {/* TODO svg test room graph */}
+        <Doors gm={gm} wire={state.wire} onLoad={api => state.doorApi = api} />
+        {/* <LightHole gm={gm} /> */}
+        
         <svg
           className="room-graph"
           width={gm.d.pngRect.width}
@@ -139,7 +146,7 @@ export default function GeomorphCssLightsTest(props) {
               d={poly.svgPath}
             />
           )} */}
-          {gm.d.roomGraph.edgesArray.map(({ src, dst }) =>
+          {/* {gm.d.roomGraph.edgesArray.map(({ src, dst }) =>
             <line
               stroke="grey"
               x1={gm.d.holeCenters[Number(src.id)].x}
@@ -147,10 +154,9 @@ export default function GeomorphCssLightsTest(props) {
               x2={gm.d.holeCenters[Number(dst.id)].x}
               y2={gm.d.holeCenters[Number(dst.id)].y}
             />
-          )}
+          )} */}
         </svg>
 
-        <Doors gm={gm} wire={state.wire} onLoad={api => state.doorApi = api} />
       </>}
     </CssPanZoom>
   );
@@ -184,7 +190,4 @@ const rootCss = css`
       pointer-events: none;
     }
   }
-  /* canvas {
-    position: absolute;
-  } */
 `;

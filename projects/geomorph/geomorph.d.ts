@@ -105,7 +105,7 @@ declare namespace Geomorph {
     image: HTMLImageElement;
     /** Derived computations */
     d: {
-      hullOutine: Poly;
+      hullOutline: Poly;
       pngRect: Geom.Rect;
       /** For debug */
       holeCenters: Vect[];

@@ -341,28 +341,10 @@
             ]
           ]
         }
-      },
-      {
-        "tags": ["switch"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [
-            [[346.4, 343], [346.4, 361], [356.4, 361], [356.4, 343]]
-          ]
-        }
-      },
-      {
-        "tags": ["switch"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [
-            [[843.4, 343], [843.4, 361], [853.4, 361], [853.4, 343]]
-          ]
-        }
       }
     ],
     "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628},
-    "lastModified": 1645903047333.3164
+    "lastModified": 1646672434438.1494
   },
   "302--hull": {
     "key": "302--hull",
