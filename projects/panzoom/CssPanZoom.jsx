@@ -1,8 +1,6 @@
 /**
  * Based on @panzoom/panzoom
- * TODO
- * - add grid
- * - clean
+ * TODO clean
  */
 import React from 'react';
 import classNames from "classnames";
@@ -218,7 +216,8 @@ export default function CssPanZoom(props) {
         className={classNames("panzoom-root", props.className)}
       >
         {props.children}
-        <div className="grid" />
+        <div className="small-grid" />
+        <div className="large-grid" />
       </div>
     </div>
   )
@@ -245,17 +244,22 @@ const rootCss = (props) => css`
     touch-action: none;
     transform-origin: 50% 50%;
     
-    .grid {
+    .small-grid, .large-grid {
       position: absolute;
       pointer-events: none;
       left: ${-gridExtent}px;
       top: ${-gridExtent}px;
       width: ${2 * gridExtent}px;
       height: ${2 * gridExtent}px;
-      background-size: 10px 10px;
       background-image:
         linear-gradient(to right, rgba(200, 200, 200, 0.1) 1px, transparent 1px),
         linear-gradient(to bottom, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
+    }
+    .small-grid {
+      background-size: 10px 10px;
+    }
+    .large-grid {
+      background-size: 60px 60px;
     }
   }
 `;
