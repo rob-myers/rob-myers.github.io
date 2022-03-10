@@ -112,31 +112,7 @@ export async function createLayout(def, lookup, triangleService) {
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windows));
   const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
-  
-  /** @type {Graph.RoomGraphNode[]} */
-  const roomGraphNodes = [
-    ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, opts: { type: /** @type {const} */ ('room'), id: `hole-${holeIndex}`, holeIndex } })),
-    ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, opts: { type: /** @type {const} */ ('door'), id: `door-${doorIndex}`, doorIndex  } })),
-  ];
-  /** @type {Graph.RoomEdgeOpts[]} */
-  const roomGraphEdges = doorPolys.flatMap((door, doorIndex) => {
-    const holeIds = holes.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
-    if (holeIds.length === 1 || holeIds.length === 2) {
-      // Hull door (1) or standard door (2)
-      return holeIds.flatMap(holeId => [// undirected means 2 directed edges
-        { src: `hole-${holeId}`, dst: `door-${doorIndex}` },
-        { dst: `hole-${holeId}`, src: `door-${doorIndex}` },
-      ]);
-    } else {
-      console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
-      return [];
-    }
-  });
-  /** @type {Graph.RoomGraphJson} */
-  const roomGraph = {
-    nodes: roomGraphNodes,
-    edges: roomGraphEdges,
-  };
+  const roomGraphJson = computeRoomGraphJson(holes, doorPolys);
 
   /** @type {Geomorph.Door<Poly>[]}  */
   const doors = groups.singles.filter(x => x.tags.includes('door'))
@@ -157,7 +133,7 @@ export async function createLayout(def, lookup, triangleService) {
     labels,
     navDecomp,
     navPoly,
-    roomGraph,
+    roomGraph: roomGraphJson,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doorPolys.concat(windows), hullSym.hull),
@@ -241,6 +217,38 @@ export function parseLayout({
     items,
   };
   return parsed;
+}
+
+/**
+ * @param {Poly[]} holes 
+ * @param {Poly[]} doorPolys 
+ */
+function computeRoomGraphJson(holes, doorPolys) {
+  /** @type {Graph.RoomGraphNode[]} */
+  const roomGraphNodes = [
+    ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, opts: { type: /** @type {const} */ ('room'), id: `hole-${holeIndex}`, holeIndex } })),
+    ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, opts: { type: /** @type {const} */ ('door'), id: `door-${doorIndex}`, doorIndex  } })),
+  ];
+  /** @type {Graph.RoomEdgeOpts[]} */
+  const roomGraphEdges = doorPolys.flatMap((door, doorIndex) => {
+    const holeIds = holes.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
+    if (holeIds.length === 1 || holeIds.length === 2) {
+      // Hull door (1) or standard door (2)
+      return holeIds.flatMap(holeId => [// undirected means 2 directed edges
+        { src: `hole-${holeId}`, dst: `door-${doorIndex}` },
+        { dst: `hole-${holeId}`, src: `door-${doorIndex}` },
+      ]);
+    } else {
+      console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
+      return [];
+    }
+  });
+  /** @type {Graph.RoomGraphJson} */
+  const roomGraph = {
+    nodes: roomGraphNodes,
+    edges: roomGraphEdges,
+  };
+  return roomGraph;
 }
 
 /**

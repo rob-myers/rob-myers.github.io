@@ -26,7 +26,7 @@
     <path d="M 358.4 63.3 L 180 63.3 L 177.1 62.1 L 119.1 4 L -1 4 L -1 -4 L 122.4 -4 L 181.7 55.3 L 360.5 55.3 L 363.1 56.7 L 424.7 119 L 419 124.7 L 358.4 63.3 Z" style=""/>
     <path d="M 841 63 L 1020 63 L 1023 62 L 1081 4 L 1201 4 L 1201 -4 L 1077 -4 L 1018 55 L 839 55 L 837 56 L 773 119 L 779 125 L 841 63 Z" style=""/>
   </g>
-  <g style="pointer-events: none;">
+  <g style="">
     <title>singles</title>
     <path d="M 300 121 L 360 121 L 360 61 L 420 125.6 L 384.4 180 L 360 240 L 300 240.6 L 300 121 Z" style="stroke: rgb(0, 0, 0); stroke-width: 3px; fill: rgb(255, 255, 255); stroke-linecap: round; stroke-linejoin: round;">
       <title>poly #fff-#000-4</title>
@@ -67,11 +67,17 @@
     <rect x="260.1" y="-300" width="9" height="46" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9;" transform="matrix(0, 1, -1, 0, 653.757263, -23.891459)">
       <title>door iris</title>
     </rect>
-    <rect x="223.692" y="283.329" width="120" height="4" style="fill-opacity: 0.5; fill: rgb(255, 0, 0);" transform="matrix(0, 1, -1, 0, 523.328979, 16.307999)">
-      <title>cut</title>
+    <rect x="290" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
+      <title>switch</title>
     </rect>
-    <rect x="240" y="360" width="120" height="4" style="fill-opacity: 0.5; fill: rgb(255, 0, 0); pointer-events: auto;">
-      <title>cut</title>
+    <rect x="240" y="360" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
+      <title>switch</title>
+    </rect>
+    <rect x="1080" y="350" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
+      <title>switch</title>
+    </rect>
+    <rect x="900" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
+      <title>switch</title>
     </rect>
   </g>
 </svg>

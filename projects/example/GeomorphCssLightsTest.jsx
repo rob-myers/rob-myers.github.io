@@ -20,6 +20,7 @@ import Doors from "../geomorph/Doors";
  * - ✅ support multiple edges between same two rooms
  * - 🅧 try light polygons again
  * - ✅ far doors shown dark
+ * - use `switch` instead of hole center, if exists
  */
 
 /** @param {{ disabled?: boolean }} props */
