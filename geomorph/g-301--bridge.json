@@ -763,17 +763,31 @@
         }
       },
       {
-        "tags": ["cut"],
+        "tags": ["switch"],
         "poly": {
           "type": "Polygon",
-          "coordinates": [[[240, 360], [236, 360], [236, 240], [240, 240]]]
+          "coordinates": [[[300, 194], [300, 204], [290, 204], [290, 194]]]
         }
       },
       {
-        "tags": ["cut"],
+        "tags": ["switch"],
         "poly": {
           "type": "Polygon",
-          "coordinates": [[[360, 360], [360, 364], [240, 364], [240, 360]]]
+          "coordinates": [[[250, 360], [250, 370], [240, 370], [240, 360]]]
+        }
+      },
+      {
+        "tags": ["switch"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[1090, 350], [1090, 360], [1080, 360], [1080, 350]]]
+        }
+      },
+      {
+        "tags": ["switch"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[910, 194], [910, 204], [900, 204], [900, 194]]]
         }
       },
       {
@@ -4719,230 +4733,62 @@
   ],
   "roomGraph": {
     "nodes": [
-      {
-        "id": "hole-0",
-        "opts": {"type": "room", "id": "hole-0", "holeIndex": 0}
-      },
-      {
-        "id": "hole-1",
-        "opts": {"type": "room", "id": "hole-1", "holeIndex": 1}
-      },
-      {
-        "id": "hole-2",
-        "opts": {"type": "room", "id": "hole-2", "holeIndex": 2}
-      },
-      {
-        "id": "hole-3",
-        "opts": {"type": "room", "id": "hole-3", "holeIndex": 3}
-      },
-      {
-        "id": "hole-4",
-        "opts": {"type": "room", "id": "hole-4", "holeIndex": 4}
-      },
-      {
-        "id": "hole-5",
-        "opts": {"type": "room", "id": "hole-5", "holeIndex": 5}
-      },
-      {
-        "id": "hole-6",
-        "opts": {"type": "room", "id": "hole-6", "holeIndex": 6}
-      },
-      {
-        "id": "hole-7",
-        "opts": {"type": "room", "id": "hole-7", "holeIndex": 7}
-      },
-      {
-        "id": "hole-8",
-        "opts": {"type": "room", "id": "hole-8", "holeIndex": 8}
-      },
-      {
-        "id": "hole-9",
-        "opts": {"type": "room", "id": "hole-9", "holeIndex": 9}
-      },
-      {
-        "id": "hole-10",
-        "opts": {"type": "room", "id": "hole-10", "holeIndex": 10}
-      },
-      {
-        "id": "hole-11",
-        "opts": {"type": "room", "id": "hole-11", "holeIndex": 11}
-      },
-      {
-        "id": "hole-12",
-        "opts": {"type": "room", "id": "hole-12", "holeIndex": 12}
-      },
-      {
-        "id": "hole-13",
-        "opts": {"type": "room", "id": "hole-13", "holeIndex": 13}
-      },
-      {
-        "id": "hole-14",
-        "opts": {"type": "room", "id": "hole-14", "holeIndex": 14}
-      },
-      {
-        "id": "hole-15",
-        "opts": {"type": "room", "id": "hole-15", "holeIndex": 15}
-      },
-      {
-        "id": "hole-16",
-        "opts": {"type": "room", "id": "hole-16", "holeIndex": 16}
-      },
-      {
-        "id": "hole-17",
-        "opts": {"type": "room", "id": "hole-17", "holeIndex": 17}
-      },
-      {
-        "id": "hole-18",
-        "opts": {"type": "room", "id": "hole-18", "holeIndex": 18}
-      },
-      {
-        "id": "hole-19",
-        "opts": {"type": "room", "id": "hole-19", "holeIndex": 19}
-      },
-      {
-        "id": "hole-20",
-        "opts": {"type": "room", "id": "hole-20", "holeIndex": 20}
-      },
-      {
-        "id": "hole-21",
-        "opts": {"type": "room", "id": "hole-21", "holeIndex": 21}
-      },
-      {
-        "id": "hole-22",
-        "opts": {"type": "room", "id": "hole-22", "holeIndex": 22}
-      },
-      {
-        "id": "hole-23",
-        "opts": {"type": "room", "id": "hole-23", "holeIndex": 23}
-      },
-      {
-        "id": "hole-24",
-        "opts": {"type": "room", "id": "hole-24", "holeIndex": 24}
-      },
-      {
-        "id": "hole-25",
-        "opts": {"type": "room", "id": "hole-25", "holeIndex": 25}
-      },
-      {
-        "id": "hole-26",
-        "opts": {"type": "room", "id": "hole-26", "holeIndex": 26}
-      },
-      {
-        "id": "door-0",
-        "opts": {"type": "door", "id": "door-0", "doorIndex": 0}
-      },
-      {
-        "id": "door-1",
-        "opts": {"type": "door", "id": "door-1", "doorIndex": 1}
-      },
-      {
-        "id": "door-2",
-        "opts": {"type": "door", "id": "door-2", "doorIndex": 2}
-      },
-      {
-        "id": "door-3",
-        "opts": {"type": "door", "id": "door-3", "doorIndex": 3}
-      },
-      {
-        "id": "door-4",
-        "opts": {"type": "door", "id": "door-4", "doorIndex": 4}
-      },
-      {
-        "id": "door-5",
-        "opts": {"type": "door", "id": "door-5", "doorIndex": 5}
-      },
-      {
-        "id": "door-6",
-        "opts": {"type": "door", "id": "door-6", "doorIndex": 6}
-      },
-      {
-        "id": "door-7",
-        "opts": {"type": "door", "id": "door-7", "doorIndex": 7}
-      },
-      {
-        "id": "door-8",
-        "opts": {"type": "door", "id": "door-8", "doorIndex": 8}
-      },
-      {
-        "id": "door-9",
-        "opts": {"type": "door", "id": "door-9", "doorIndex": 9}
-      },
-      {
-        "id": "door-10",
-        "opts": {"type": "door", "id": "door-10", "doorIndex": 10}
-      },
-      {
-        "id": "door-11",
-        "opts": {"type": "door", "id": "door-11", "doorIndex": 11}
-      },
-      {
-        "id": "door-12",
-        "opts": {"type": "door", "id": "door-12", "doorIndex": 12}
-      },
-      {
-        "id": "door-13",
-        "opts": {"type": "door", "id": "door-13", "doorIndex": 13}
-      },
-      {
-        "id": "door-14",
-        "opts": {"type": "door", "id": "door-14", "doorIndex": 14}
-      },
-      {
-        "id": "door-15",
-        "opts": {"type": "door", "id": "door-15", "doorIndex": 15}
-      },
-      {
-        "id": "door-16",
-        "opts": {"type": "door", "id": "door-16", "doorIndex": 16}
-      },
-      {
-        "id": "door-17",
-        "opts": {"type": "door", "id": "door-17", "doorIndex": 17}
-      },
-      {
-        "id": "door-18",
-        "opts": {"type": "door", "id": "door-18", "doorIndex": 18}
-      },
-      {
-        "id": "door-19",
-        "opts": {"type": "door", "id": "door-19", "doorIndex": 19}
-      },
-      {
-        "id": "door-20",
-        "opts": {"type": "door", "id": "door-20", "doorIndex": 20}
-      },
-      {
-        "id": "door-21",
-        "opts": {"type": "door", "id": "door-21", "doorIndex": 21}
-      },
-      {
-        "id": "door-22",
-        "opts": {"type": "door", "id": "door-22", "doorIndex": 22}
-      },
-      {
-        "id": "door-23",
-        "opts": {"type": "door", "id": "door-23", "doorIndex": 23}
-      },
-      {
-        "id": "door-24",
-        "opts": {"type": "door", "id": "door-24", "doorIndex": 24}
-      },
-      {
-        "id": "door-25",
-        "opts": {"type": "door", "id": "door-25", "doorIndex": 25}
-      },
-      {
-        "id": "door-26",
-        "opts": {"type": "door", "id": "door-26", "doorIndex": 26}
-      },
-      {
-        "id": "door-27",
-        "opts": {"type": "door", "id": "door-27", "doorIndex": 27}
-      },
-      {
-        "id": "door-28",
-        "opts": {"type": "door", "id": "door-28", "doorIndex": 28}
-      }
+      {"id": "hole-0", "type": "room", "holeIndex": 0},
+      {"id": "hole-1", "type": "room", "holeIndex": 1},
+      {"id": "hole-2", "type": "room", "holeIndex": 2},
+      {"id": "hole-3", "type": "room", "holeIndex": 3},
+      {"id": "hole-4", "type": "room", "holeIndex": 4},
+      {"id": "hole-5", "type": "room", "holeIndex": 5},
+      {"id": "hole-6", "type": "room", "holeIndex": 6},
+      {"id": "hole-7", "type": "room", "holeIndex": 7},
+      {"id": "hole-8", "type": "room", "holeIndex": 8},
+      {"id": "hole-9", "type": "room", "holeIndex": 9},
+      {"id": "hole-10", "type": "room", "holeIndex": 10},
+      {"id": "hole-11", "type": "room", "holeIndex": 11},
+      {"id": "hole-12", "type": "room", "holeIndex": 12},
+      {"id": "hole-13", "type": "room", "holeIndex": 13},
+      {"id": "hole-14", "type": "room", "holeIndex": 14},
+      {"id": "hole-15", "type": "room", "holeIndex": 15},
+      {"id": "hole-16", "type": "room", "holeIndex": 16},
+      {"id": "hole-17", "type": "room", "holeIndex": 17},
+      {"id": "hole-18", "type": "room", "holeIndex": 18},
+      {"id": "hole-19", "type": "room", "holeIndex": 19},
+      {"id": "hole-20", "type": "room", "holeIndex": 20},
+      {"id": "hole-21", "type": "room", "holeIndex": 21},
+      {"id": "hole-22", "type": "room", "holeIndex": 22},
+      {"id": "hole-23", "type": "room", "holeIndex": 23},
+      {"id": "hole-24", "type": "room", "holeIndex": 24},
+      {"id": "hole-25", "type": "room", "holeIndex": 25},
+      {"id": "hole-26", "type": "room", "holeIndex": 26},
+      {"id": "door-0", "type": "door", "doorIndex": 0},
+      {"id": "door-1", "type": "door", "doorIndex": 1},
+      {"id": "door-2", "type": "door", "doorIndex": 2},
+      {"id": "door-3", "type": "door", "doorIndex": 3},
+      {"id": "door-4", "type": "door", "doorIndex": 4},
+      {"id": "door-5", "type": "door", "doorIndex": 5},
+      {"id": "door-6", "type": "door", "doorIndex": 6},
+      {"id": "door-7", "type": "door", "doorIndex": 7},
+      {"id": "door-8", "type": "door", "doorIndex": 8},
+      {"id": "door-9", "type": "door", "doorIndex": 9},
+      {"id": "door-10", "type": "door", "doorIndex": 10},
+      {"id": "door-11", "type": "door", "doorIndex": 11},
+      {"id": "door-12", "type": "door", "doorIndex": 12},
+      {"id": "door-13", "type": "door", "doorIndex": 13},
+      {"id": "door-14", "type": "door", "doorIndex": 14},
+      {"id": "door-15", "type": "door", "doorIndex": 15},
+      {"id": "door-16", "type": "door", "doorIndex": 16},
+      {"id": "door-17", "type": "door", "doorIndex": 17},
+      {"id": "door-18", "type": "door", "doorIndex": 18},
+      {"id": "door-19", "type": "door", "doorIndex": 19},
+      {"id": "door-20", "type": "door", "doorIndex": 20},
+      {"id": "door-21", "type": "door", "doorIndex": 21},
+      {"id": "door-22", "type": "door", "doorIndex": 22},
+      {"id": "door-23", "type": "door", "doorIndex": 23},
+      {"id": "door-24", "type": "door", "doorIndex": 24},
+      {"id": "door-25", "type": "door", "doorIndex": 25},
+      {"id": "door-26", "type": "door", "doorIndex": 26},
+      {"id": "door-27", "type": "door", "doorIndex": 27},
+      {"id": "door-28", "type": "door", "doorIndex": 28}
     ],
     "edges": [
       {"src": "hole-2", "dst": "door-0"},

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 120 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="">
+    <title>background</title>
+    <image width="137" height="575" x="-8.097" y="14.064" style="" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIkAAAI/AgMAAAA+RhIbAAAACVBMVEUAAAD///8AAABzxoNxAAAAAXRSTlMAQObYZgAAAOVJREFUeNrt270NgzAYBFBqRsk+TsEITMES6VMGpoyVgjRYiPD3ibwr0WuQLOtk6aqcoZxXlbOBGcKaPhXSMgzDMAyz3sTtABv1n7psukoum5v+HOdu2dE0w5iiaZeZLpzJh3napPT53mQzHGkK2cX06WfTLzfNlHl8zfQhzCAxDMMwDMMwDMMwDPOfppytTNx/ZxiGYRiGYRiGYRjmGsb7BsMwDMMwDMMwDMMw55l23R5k/fbkyL3MWTuges4E3FLNm2qNuY/kGWIfZy9sLywh9sJxN8XR7haGYRiGuaqJ1gEO6s9vRaNZPlkFg6sAAAAASUVORK5CYII="/>
+  </g>
+  <g style="">
+    <title>obstacles</title>
+    <rect width="120" height="574.627" style="fill-opacity: 0.5; fill: rgb(0, 0, 255);" y="15.03"/>
+  </g>
+</svg>
