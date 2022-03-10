@@ -57,3 +57,8 @@ Fix Gimp fill colour:
 # fixed point precision
 echo '2/3' | bc -l
 ```
+
+```sh
+git config --global user.name "Rob Myers"
+git config --global user.email "me.robmyers@gmail.com"
+```

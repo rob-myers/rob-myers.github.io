@@ -4,13 +4,6 @@ import { BaseGraph } from "./graph";
  * @extends {BaseGraph<Graph.RoomNodeOpts, Graph.RoomGraphNode, Graph.RoomEdgeOpts>}
  */
 export class RoomGraph extends BaseGraph {
-  /**
-   * Must be reimplemented in subclasses.
-   * @param {Graph.RoomGraphJson} json 
-   */  
-  static fromJson(json) {
-    return (new RoomGraph).from(json);
-  }
 
   /**
    * Given a 'room' node, find all other rooms connected via an open 'door' node.
@@ -26,4 +19,12 @@ export class RoomGraph extends BaseGraph {
         (other) => other.id !== node.id && other.opts.type === 'room'
       );
   }
+
+  /**
+   * @param {Graph.RoomGraphJson} json 
+   */  
+  static fromJson(json) {
+    return (new RoomGraph).from(json);
+  }
+
 }

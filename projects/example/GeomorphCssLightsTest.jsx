@@ -17,8 +17,8 @@ import Doors from "../geomorph/Doors";
  * - ✅ new door type: support tag `iris`
  *   - ✅ change door design for existing
  *   - ✅ add missing walls + doors to hull 301 and 101
- * - 🚧 support multiple edges between same two rooms
- * - support invisible + always open doors, to split up large areas
+ * - ✅ support multiple edges between same two rooms
+ * - try interesecting light polygons with masked area
  * - far doors shown dark
  */
 
@@ -105,7 +105,7 @@ export default function GeomorphCssLightsTest(props) {
         />
 
         <div
-          className="area-dots"
+          className="light-toggles"
           onClick={state.handleDotClick}
         >
           {gm.d.holeCenters.map((center, holeIndex) => {
@@ -119,6 +119,7 @@ export default function GeomorphCssLightsTest(props) {
                 cursor: 'pointer',
                 left: center.x - 5,
                 top: center.y - 5,
+                borderColor: state.isHoleMasked[holeIndex] ? '#5f5' : 'white',
               }}
             />
           })}
@@ -183,7 +184,7 @@ const rootCss = css`
     filter:  brightness(75%);
     position: absolute;
   } */
-  div.area-dots {
+  div.light-toggles {
     position: absolute;
   }
   svg.room-graph {
