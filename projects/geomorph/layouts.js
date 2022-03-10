@@ -116,11 +116,13 @@ const layoutDefs = {
       { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 360, 0] },
       { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 480, 0] },
       { symbol: 'stateroom--035--2x3', transform: [-1, 0, 0, 1, 720, 0] },
-      { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
-
       { symbol: 'stateroom--100--3x4', transform: [0, -1, -1, 0, 960, 180] },
-
+      
+      { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
       { symbol: 'fresher--002--0.4x0.6', transform: [1, 0, 0, -1, 200, 300] },
+      { symbol: 'gaming-tables--001--1x2', transform: [1, 0, 0, 1, 480, 240] },
+      { symbol: 'couch-and-chairs--006--0.4x2', transform: [1, 0, 0, -1, 660 + 10, 360] },
+      { symbol: 'couch-and-chairs--006--0.4x2', transform: [0, 1, -1, 0, 840, 240] },
 
       { symbol: 'machinery--077--1.6x1.8', transform: [0, 1, -1, 0, 160, 380] },
       { symbol: 'machinery--077--1.6x1.8', transform: [-1, 0, 0, 1, 220, 440] },

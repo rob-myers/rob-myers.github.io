@@ -2153,6 +2153,22 @@
     "pngRect": {"x": -4, "y": -4, "width": 377, "height": 307},
     "lastModified": 1646839468359.1248
   },
+  "couch-and-chairs--006--0.4x2": {
+    "key": "couch-and-chairs--006--0.4x2",
+    "hull": [],
+    "obstacles": [
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[0, 15.03], [120, 15.03], [120, 589.657], [0, 589.657], [0, 15.03]]
+        ]
+      }
+    ],
+    "walls": [],
+    "singles": [],
+    "pngRect": {"x": -8.097, "y": 14.064, "width": 137, "height": 575},
+    "lastModified": 1646933322401.4897
+  },
   "empty-room--006--2x2": {
     "key": "empty-room--006--2x2",
     "hull": [],
@@ -2559,6 +2575,22 @@
     ],
     "pngRect": {"x": -19, "y": -19.6, "width": 1238, "height": 639},
     "lastModified": 1646839468361.243
+  },
+  "gaming-tables--001--1x2": {
+    "key": "gaming-tables--001--1x2",
+    "hull": [],
+    "obstacles": [
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[0, 0], [600, 0], [600, 318.479], [0, 318.479], [0, 0]]
+        ]
+      }
+    ],
+    "walls": [],
+    "singles": [],
+    "pngRect": {"x": 0, "y": 0, "width": 592, "height": 322},
+    "lastModified": 1646933908225.5107
   },
   "iris-valves--005--1x1": {
     "key": "iris-valves--005--1x1",
