@@ -3,8 +3,8 @@ import { deepClone, flatten, removeFirst } from "../service/generic";
 
 /**
  * @template {Graph.BaseNodeOpts} [NodeOpts=Graph.BaseNodeOpts]
- * @template {Graph.BaseNode} [Node=Graph.BaseNode]
- * @template {Graph.BaseEdgeOpts<Node>} [EdgeOpts=Graph.BaseEdgeOpts<Node>]
+ * @template {Graph.BaseNode<Graph.BaseNodeOpts>} [Node=Graph.BaseNode<Graph.BaseNodeOpts>]
+ * @template {Graph.BaseEdgeOpts} [EdgeOpts=Graph.BaseEdgeOpts]
  * @implements {Graph.IGraph<Node, NodeOpts, EdgeOpts>}
  */
 export class BaseGraph {
@@ -50,13 +50,13 @@ export class BaseGraph {
   idToEdge;
 
   constructor() {
-    this.nodes = new Set();
-    this.succ = new Map();
-    this.pred = new Map();
+    this.nodes = new Set;
+    this.succ = new Map;
+    this.pred = new Map;
     this.nodesArray = [];
     this.edgesArray = [];
-    this.idToNode = new Map();
-    this.idToEdge = new Map();
+    this.idToNode = new Map;
+    this.idToEdge = new Map;
   }
 
   /**
@@ -379,7 +379,7 @@ export class BaseGraph {
     const [src, dst] = [this.getNodeById(def.src), this.getNodeById(def.dst)];
     if (src && dst) {
       /** @type {Edge} */
-      const edge = { src, dst, id: `${def.src}->${def.dst}`, origOpts: def };
+      const edge = { ...def, src, dst, id: `${def.src}->${def.dst}` };
       const succ = /** @type {Map<Node, Edge>} */ (this.succ.get(src));
       const pred = /** @type {Map<Node, Edge>} */ (this.pred.get(dst));
       succ.set(dst, edge);
@@ -395,7 +395,9 @@ export class BaseGraph {
   json() {
     return {
       nodes: this.nodesArray.map(deepClone),
-      edges: this.edgesArray.map(edge => deepClone(edge.origOpts)),
+      edges: this.edgesArray.map(edge => /** @type {*} */ (
+        deepClone({ ...edge, id: edge.id, src: edge.src.id, dst: edge.dst.id })
+      )),
     };
   }
   

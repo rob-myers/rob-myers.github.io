@@ -12,8 +12,7 @@ export class RoomGraph extends BaseGraph {
   getAdjacentDoors(nodes) {
     const doors = /** @type {Set<Graph.BaseNode<Graph.RoomOfTypeDoor>>} */ (new Set);
     nodes.forEach(node => this.getSuccs(node).forEach(other =>
-      other.opts.type === 'door' &&
-      doors.add(/** @type {Graph.BaseNode<Graph.RoomOfTypeDoor>} */ (other)))
+      other.type === 'door' && doors.add(other))
     );
     return Array.from(doors);
   }
@@ -26,10 +25,10 @@ export class RoomGraph extends BaseGraph {
    */
   getEnterableRooms(roomNode, openDoorIds) {
     return this.getSuccs(roomNode)
-      .filter(node => node.opts.type === 'door' && openDoorIds.includes(node.opts.doorIndex))
+      .filter(node => node.type === 'door' && openDoorIds.includes(node.doorIndex))
       .flatMap(doorNode => this.getSuccs(doorNode))
-      .filter(/** @type {function(*): other is Graph.BaseNode<Graph.RoomOfTypeRoom>} */
-        (other) => other.id !== roomNode.id && other.opts.type === 'room'
+      .filter(/** @returns {other is Graph.RoomOfTypeRoom} */
+        (other) => other.id !== roomNode.id && other.type === 'room'
       );
   }
 

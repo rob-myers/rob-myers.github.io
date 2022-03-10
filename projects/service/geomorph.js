@@ -226,8 +226,8 @@ export function parseLayout({
 function computeRoomGraphJson(holes, doorPolys) {
   /** @type {Graph.RoomGraphNode[]} */
   const roomGraphNodes = [
-    ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, opts: { type: /** @type {const} */ ('room'), id: `hole-${holeIndex}`, holeIndex } })),
-    ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, opts: { type: /** @type {const} */ ('door'), id: `door-${doorIndex}`, doorIndex  } })),
+    ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex })),
+    ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex  })),
   ];
   /** @type {Graph.RoomEdgeOpts[]} */
   const roomGraphEdges = doorPolys.flatMap((door, doorIndex) => {

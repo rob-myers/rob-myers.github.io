@@ -5,32 +5,29 @@ declare namespace Graph {
     id: string;
   }
 
-  export interface BaseNode<NodeOpts extends BaseNodeOpts = BaseNodeOpts> {
-    /** Equals `opts.id` */
-    id: string;
-    opts: NodeOpts;
-  }
+  export interface BaseNode<
+    NodeOpts extends BaseNodeOpts = BaseNodeOpts
+  > extends NodeOpts {}
 
-  export interface BaseEdgeOpts<Node extends BaseNode> {
+  export interface BaseEdgeOpts {
     src: string;
     dst: string;
   }
 
-  export interface Edge<
+  export type Edge<
     Node extends BaseNode = BaseNode,
-    EdgeOpts extends BaseEdgeOpts<Node> = BaseEdgeOpts<Node>
-  > {
+    EdgeOpts extends BaseEdgeOpts = BaseEdgeOpts
+  > = Omit<EdgeOpts, 'id' | 'src' | 'dst'> & {
     /** `${src_id}->${dst_id}` */
     id: string;
     src: Node;
     dst: Node;
-    origOpts: EdgeOpts;
   }
 
   export interface IGraph<
     Node extends BaseNode,
     NodeOpts extends BaseNodeOpts,
-    EdgeOpts extends BaseEdgeOpts<Node>
+    EdgeOpts extends BaseEdgeOpts
   > {
     connect(opts: EdgeOpts): { isNew: boolean; edge: Edge<Node, EdgeOpts> | null };
     disconnect(src: Node, dst: Node): boolean;
@@ -52,7 +49,7 @@ declare namespace Graph {
     edges: EdgeOpts[];
   }
 
-  export type BaseGraphJson = GraphJson<BaseNode, BaseEdgeOpts<BaseNode>>;
+  export type BaseGraphJson = GraphJson<BaseNode, BaseEdgeOpts>;
 
   //#region RoomGraph
   export type RoomNodeOpts = (
@@ -60,14 +57,14 @@ declare namespace Graph {
     | RoomOfTypeDoor
   );
       
-  export interface RoomOfTypeRoom extends BaseNodeOpts {
+  export interface RoomOfTypeRoom {
     type: 'room';
     /** `room-${holeIndex} */
     id: string;
     /** Indexes `Geomorph.Layout['holes']` */
     holeIndex: number;
   }
-  export interface RoomOfTypeDoor extends BaseNodeOpts {
+  export interface RoomOfTypeDoor {
     type: 'door';
     /** `door-${doorIndex} */
     id: string;
@@ -75,9 +72,9 @@ declare namespace Graph {
     doorIndex: number;
   }
 
-  export interface RoomGraphNode extends BaseNode<RoomNodeOpts> {}
+  export type RoomGraphNode = RoomNodeOpts;
 
-  export interface RoomEdgeOpts extends BaseEdgeOpts<RoomGraphNode> {}
+  export type RoomEdgeOpts = BaseEdgeOpts;
 
   export type RoomGraphJson = GraphJson<RoomGraphNode, RoomEdgeOpts>;
 

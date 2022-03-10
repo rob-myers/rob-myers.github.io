@@ -54,13 +54,13 @@ export default function GeomorphCssLightsTest(props) {
         const adjHoleIds = rootHoleIds.flatMap(holeId => {
           // Assume node-ordering aligned to holeIndex
           return graph.getEnterableRooms(graph.nodesArray[holeId], openDoorIds)
-            .map(roomNode => roomNode.opts.holeIndex);
+            .map(roomNode => roomNode.holeIndex);
         });
         const allHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
         const allHolePolys = allHoleIds.map(i => gm.d.holesWithDoors[i]);
 
         const observableDoors = graph.getAdjacentDoors(rootHoleIds.map(id => graph.nodesArray[id]));
-        this.doorApi.setObservableDoors(observableDoors.map(x => x.opts.doorIndex));
+        this.doorApi.setObservableDoors(observableDoors.map(x => x.doorIndex));
 
         const maskPoly = Poly.cutOut(allHolePolys, [gm.d.hullOutline],)
           .map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));

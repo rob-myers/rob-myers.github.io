@@ -12,9 +12,6 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- Graph Node should directly extend NodeOpts ?
-- Graph Edge should directly extend EdgeOpts ?
-
 - Create `NavDemo1` extending `GeomorphCssLightsTest`
 - `NavDemo1` has basic NPCs and or Andros
 - Implement TTY interaction
@@ -85,7 +82,9 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
-- ✅create room/door graph
+- ✅ Graph Node should directly extend NodeOpts
+- ✅ Graph Edge should directly extend EdgeOpts
+- ✅ create room/door graph
   - ✅ graph.js + graph.d.ts
 - ✅ test render room/door graph
 - ✅ test toggle lights room and open adjacents
