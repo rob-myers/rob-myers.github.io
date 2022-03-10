@@ -26,7 +26,7 @@
     </rect>
     <path d="M 64 -4 L 124 56 L 124 122 L 116 122 L 116 60 L 60 4 L 3 4 L 3 -4 L 64 -4 Z" style=""/>
   </g>
-  <g style="pointer-events: none;">
+  <g style="">
     <title>singles</title>
     <path d="M 60.6 240 L 60 480 L 120 540 L 240 540 L 240 420 L 120 240 L 60 240 L 60.6 240 Z" style="fill: rgb(216, 216, 216); stroke: rgb(0, 0, 0); stroke-width: 4px;">
       <title>poly #fff-#000-4</title>
@@ -55,7 +55,7 @@
     <rect x="1168.5" y="58" width="28.4" height="4" style="">
       <title>wall</title>
     </rect>
-    <rect x="1167.5" width="5.5" height="236.4" style="">
+    <rect x="1167.458" width="5.584" height="240" style="">
       <title>wall</title>
     </rect>
     <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
@@ -97,31 +97,31 @@
     <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1710, -870)">
       <title>door</title>
     </rect>
-    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="1159.1" y="18.6">
+    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1159.1" y="18.6">
       <title>label locker</title>
     </rect>
-    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="1159.1" y="79.3">
+    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1159.1" y="79.3">
       <title>label locker</title>
     </rect>
-    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="1159.1" y="137.4">
+    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1159.1" y="137.4">
       <title>label locker</title>
     </rect>
-    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="1159.1" y="199.2">
+    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1159.1" y="199.2">
       <title>label locker</title>
     </rect>
-    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="1118" y="109.1">
+    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1118" y="109.1">
       <title>label eva</title>
     </rect>
-    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="977.5" y="472">
+    <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="977.5" y="472">
       <title>label parts or cargo</title>
     </rect>
-    <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="158" y="458" height="22" width="22">
+    <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="158" y="458" height="22" width="22">
       <title>label fuel</title>
     </rect>
-    <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="500" y="470" height="22" width="22">
+    <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="500" y="470" height="22" width="22">
       <title>label airlock</title>
     </rect>
-    <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="728" y="472" height="22" width="22">
+    <rect style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="728" y="472" height="22" width="22">
       <title>label repair bay</title>
     </rect>
   </g>
