@@ -119,14 +119,12 @@ export default function GeomorphCssLightsTest(props) {
             return <div
               key={holeIndex}
               data-index={holeIndex}
+              className="toggle"
               style={{
-                borderRadius: 5,
-                border: '5px solid white',
-                position: 'absolute',
-                cursor: 'pointer',
                 left: center.x - 5,
                 top: center.y - 5,
-                borderColor: state.isHoleMasked[holeIndex] ? '#5f5' : 'white',
+                borderColor: state.isHoleMasked[holeIndex] ? '#5f5' : 'rgba(200, 0, 0, 0.3)',
+                outline: state.isHoleMasked[holeIndex] ? '1px solid black' : '1px solid rgba(255, 255, 255, 0.5)',
               }}
             />
           })}
@@ -146,10 +144,10 @@ export default function GeomorphCssLightsTest(props) {
 }
 
 /** @type {Geomorph.LayoutKey} */
-const layoutKey = 'g-301--bridge';
+// const layoutKey = 'g-301--bridge';
 // const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-302--xboat-repair-bay';
-// const layoutKey = 'g-303--passenger-deck';
+const layoutKey = 'g-303--passenger-deck';
 
 const rootCss = css`
   img.geomorph-dark {
@@ -166,6 +164,13 @@ const rootCss = css`
   } */
   div.light-toggles {
     position: absolute;
+
+    div.toggle {
+      border-radius: 5px;
+      border: 5px solid white;
+      position: absolute;
+      cursor: pointer;
+    }
   }
   svg.room-graph {
     position: absolute;
@@ -173,9 +178,6 @@ const rootCss = css`
     circle, line {
       pointer-events: none;
     }
-  }
-  path.light {
-    fill: rgba(255, 255, 255, 1);
   }
 `;
 
