@@ -118,6 +118,8 @@ const layoutDefs = {
       { symbol: 'stateroom--035--2x3', transform: [-1, 0, 0, 1, 720, 0] },
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
 
+      { symbol: 'stateroom--100--3x4', transform: [0, -1, -1, 0, 960, 180] },
+
       { symbol: 'fresher--002--0.4x0.6', transform: [1, 0, 0, -1, 200, 300] },
 
       { symbol: 'machinery--077--1.6x1.8', transform: [0, 1, -1, 0, 160, 380] },
