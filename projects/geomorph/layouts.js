@@ -120,7 +120,7 @@ const layoutDefs = {
       
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
       { symbol: 'fresher--002--0.4x0.6', transform: [1, 0, 0, -1, 200, 300] },
-      { symbol: 'gaming-tables--001--1x2', transform: [1, 0, 0, 1, 480, 240] },
+      { symbol: 'gaming-tables--001--1x2', transform: [1, 0, 0, 1, 480, 0] },
       { symbol: 'couch-and-chairs--006--0.4x2', transform: [1, 0, 0, -1, 660 + 10, 360] },
       { symbol: 'couch-and-chairs--006--0.4x2', transform: [0, 1, -1, 0, 840, 240] },
 
