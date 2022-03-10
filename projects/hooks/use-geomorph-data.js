@@ -11,8 +11,7 @@ export default function useGeomorphData(layoutKey) {
   return useQuery(geomorphJsonPath(layoutKey), async () => {
     
     const layout = await fetch(geomorphJsonPath(layoutKey))
-      .then(x => x.json())
-      .then(parseLayout);
+      .then(x => x.json()).then(parseLayout);
 
     const roomGraph = RoomGraph.fromJson(layout.roomGraph);
     const holesWithDoors = roomGraph.nodesArray
@@ -25,13 +24,19 @@ export default function useGeomorphData(layoutKey) {
         return Poly.union([layout.holes[holeIndex], ...doors])[0];
       });
 
+    const switchPoints = layout.groups.singles
+      .filter(x => x.tags.includes('switch')).map(x => x.poly.center);
+
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...layout,
       d: {
         hullOutline: layout.hullPoly[0].removeHoles(),
         pngRect: Rect.fromJson(layout.items[0].pngRect),
-        holeCenters: layout.holes.map(({ rect }) => rect.center),
+        holeSwitches: layout.holes.map((poly) => {
+          const found = switchPoints.find(p => poly.contains(p));
+          return found || poly.rect.center;
+        }),
         roomGraph,
         holesWithDoors,
       },

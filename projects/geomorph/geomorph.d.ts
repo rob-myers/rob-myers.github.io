@@ -105,8 +105,8 @@ declare namespace Geomorph {
     d: {
       hullOutline: Poly;
       pngRect: Geom.Rect;
-      /** For debug */
-      holeCenters: Vect[];
+      /** Default to hole centers */
+      holeSwitches: Vect[];
       roomGraph: Graph.RoomGraph;
       holesWithDoors: Poly[];
     };

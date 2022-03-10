@@ -115,7 +115,7 @@ export default function GeomorphCssLightsTest(props) {
           className="light-toggles"
           onClick={state.handleDotClick}
         >
-          {gm.d.holeCenters.map((center, holeIndex) => {
+          {gm.d.holeSwitches.map((center, holeIndex) => {
             return <div
               key={holeIndex}
               data-index={holeIndex}
@@ -143,38 +143,36 @@ export default function GeomorphCssLightsTest(props) {
           width={gm.d.pngRect.width}
           height={gm.d.pngRect.height}
         >
-          {gm.d.holeCenters.map((center, i) =>
+          {gm.d.roomGraph.nodesArray.map((node, i) =>
             <circle
               key={i}
-              fill="rgba(0, 0, 100, 0.2)"
-              r={10}
-              cx={center.x}
-              cy={center.y}
+              stroke="rgba(200, 200, 200, 1)"
+              fill="none"
+              r={5}
+              {...node.type === 'room'
+                ? { cx: gm.d.holeSwitches[i].x, cy: gm.d.holeSwitches[i].y,  }
+                : { cx: gm.doors[node.doorIndex].poly.center.x, cy: gm.doors[node.doorIndex].poly.center.y }
+              }
             />
           )}
           {/* {gm.holes.map((poly) =>
             <path
-              // fill="rgba(0, 0, 200, 0.4)"
-              fill="none"
-              // stroke="blue"
+              fill="rgba(0, 0, 200, 0.4)"
               stroke="red"
               d={poly.svgPath}
             />
           )} */}
-          {/* {gm.d.roomGraph.edgesArray.map(({ src, dst }) =>
-            <line
-              stroke="grey"
-              x1={gm.d.holeCenters[Number(src.id)].x}
-              y1={gm.d.holeCenters[Number(src.id)].y}
-              x2={gm.d.holeCenters[Number(dst.id)].x}
-              y2={gm.d.holeCenters[Number(dst.id)].y}
-            />
-          )} */}
-
-          {/* <path
-            className="light"
-            d={light?.svgPath}
-          /> */}
+          {gm.d.roomGraph.edgesArray
+            .filter((x) => x.src.type === 'room' && x.dst.type === 'door')
+            .map((edge) =>
+              <line
+                stroke="grey"
+                x1={gm.d.holeSwitches[/** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].x}
+                y1={gm.d.holeSwitches[/** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].y}
+                x2={gm.doors[/** @type {Graph.RoomOfTypeDoor} */ (edge.dst).doorIndex].poly.center.x}
+                y2={gm.doors[/** @type {Graph.RoomOfTypeDoor} */  (edge.dst).doorIndex].poly.center.y}
+              />
+          )}
         </svg>
 
       </>}
