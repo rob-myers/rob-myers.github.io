@@ -137,43 +137,8 @@ export default function GeomorphCssLightsTest(props) {
           wire={state.wire}
           onLoad={api => state.doorApi = api}
         />
-        
-        <svg
-          className="room-graph"
-          width={gm.d.pngRect.width}
-          height={gm.d.pngRect.height}
-        >
-          {gm.d.roomGraph.nodesArray.map((node, i) =>
-            <circle
-              key={i}
-              stroke="rgba(200, 200, 200, 1)"
-              fill="none"
-              r={5}
-              {...node.type === 'room'
-                ? { cx: gm.d.holeSwitches[i].x, cy: gm.d.holeSwitches[i].y,  }
-                : { cx: gm.doors[node.doorIndex].poly.center.x, cy: gm.doors[node.doorIndex].poly.center.y }
-              }
-            />
-          )}
-          {/* {gm.holes.map((poly) =>
-            <path
-              fill="rgba(0, 0, 200, 0.4)"
-              stroke="red"
-              d={poly.svgPath}
-            />
-          )} */}
-          {gm.d.roomGraph.edgesArray
-            .filter((x) => x.src.type === 'room' && x.dst.type === 'door')
-            .map((edge) =>
-              <line
-                stroke="grey"
-                x1={gm.d.holeSwitches[/** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].x}
-                y1={gm.d.holeSwitches[/** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].y}
-                x2={gm.doors[/** @type {Graph.RoomOfTypeDoor} */ (edge.dst).doorIndex].poly.center.x}
-                y2={gm.doors[/** @type {Graph.RoomOfTypeDoor} */  (edge.dst).doorIndex].poly.center.y}
-              />
-          )}
-        </svg>
+
+        {/* <DebugGraph gm={gm} /> */}
 
       </>}
     </CssPanZoom>
@@ -213,3 +178,49 @@ const rootCss = css`
     fill: rgba(255, 255, 255, 1);
   }
 `;
+
+/** @param {{ gm: Geomorph.GeomorphData }} props */
+function DebugGraph({ gm }) {
+  return (
+    <svg
+      className="room-graph"
+      width={gm.d.pngRect.width}
+      height={gm.d.pngRect.height}
+    >
+      {gm.d.roomGraph.nodesArray.map((node, i) =>
+        <circle
+          key={i}
+          stroke="rgba(200, 200, 200, 1)"
+          fill="none"
+          r={5}
+          {...node.type === 'room'
+            ? { cx: gm.d.holeSwitches[i].x, cy: gm.d.holeSwitches[i].y,  }
+            : { cx: gm.doors[node.doorIndex].poly.center.x, cy: gm.doors[node.doorIndex].poly.center.y }
+          }
+        />
+        )}
+        {/* {gm.holes.map((poly) =>
+          <path
+            fill="rgba(0, 0, 200, 0.4)"
+            stroke="red"
+            d={poly.svgPath}
+          />
+        )} */}
+        {gm.d.roomGraph.edgesArray
+          .filter((x) => x.src.type === 'room' && x.dst.type === 'door')
+          .map((edge) =>
+            <line
+              stroke="grey"
+              x1={gm.d.holeSwitches[
+                /** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].x}
+              y1={gm.d.holeSwitches[
+                /** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].y}
+              x2={gm.doors[
+                /** @type {Graph.RoomOfTypeDoor} */ (edge.dst).doorIndex].poly.center.x}
+              y2={gm.doors[
+                /** @type {Graph.RoomOfTypeDoor} */  (edge.dst).doorIndex].poly.center.y}
+            />
+        )}
+    </svg>
+  );
+}
