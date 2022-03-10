@@ -297,6 +297,21 @@ export class Poly {
   }
 
   /**
+   * Intersect union of `polys` with union of `others`.
+   * @param {Poly[]} polys
+   * @param {Poly[]} others
+   */
+  static intersect(polys, others) {
+    return polygonClipping
+      .intersection(
+        polys.map(({ geoJson: { coordinates } }) => coordinates),
+        others.map(({ geoJson: { coordinates } }) => coordinates),
+      )
+      .map(coords => Poly.from(coords)
+    );
+  }
+
+  /**
    * @param {Geom.VectJson} pt 
    * @param {Geom.VectJson} v1 
    * @param {Geom.VectJson} v2 
