@@ -109,6 +109,13 @@ const layoutDefs = {
     id: 303,
     items: [
       { symbol: '303--hull' },
+
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 90, -6] },
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 270, -6] },
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 390, -6] },
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 510, -6] },
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 630, -6] },
+
       { symbol: 'medical-bed--006--1.6x3.6', transform: [1, 0, 0, 1, 4, 10] },
       { symbol: 'low-berth--003--1x1', transform: [0, 1, -1, 0, 240, 0] },
       { symbol: 'console--022--1x2', transform: [-1, 0, 0, 1, 240, 60] },
@@ -120,7 +127,7 @@ const layoutDefs = {
       
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
       { symbol: 'fresher--002--0.4x0.6', transform: [1, 0, 0, -1, 200, 300] },
-      { symbol: 'gaming-tables--001--1x2', transform: [1, 0, 0, 1, 480, 0] },
+      { symbol: 'gaming-tables--001--1x2', transform: [1, 0, 0, 1, 480, 240] },
       { symbol: 'couch-and-chairs--006--0.4x2', transform: [1, 0, 0, -1, 660 + 10, 360] },
       { symbol: 'couch-and-chairs--006--0.4x2', transform: [0, 1, -1, 0, 840, 240] },
 

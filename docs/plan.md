@@ -12,6 +12,10 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- Finish 303
+  - ✅ fix windows
+  - add far top-right sector
+
 - Create `NavDemo1` extending `GeomorphCssLightsTest`
 - `NavDemo1` has basic NPCs and or Andros
 - Implement TTY interaction
