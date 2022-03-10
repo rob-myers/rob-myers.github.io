@@ -20,6 +20,7 @@ declare namespace NPC {
 
   export interface DoorsApi {
     getOpen(): { [doorIndex: number]: true };
+    setObservableDoors(doorIds: number[]): void ;
   }
 
 }

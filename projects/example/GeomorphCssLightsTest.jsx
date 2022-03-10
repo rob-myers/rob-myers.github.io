@@ -2,7 +2,7 @@ import React from "react";
 import { css } from "goober";
 import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
-import { Poly } from "../geom/poly";
+import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
@@ -18,8 +18,8 @@ import Doors from "../geomorph/Doors";
  *   - ✅ change door design for existing
  *   - ✅ add missing walls + doors to hull 301 and 101
  * - ✅ support multiple edges between same two rooms
- * - try interesecting light polygons with masked area
- * - far doors shown dark
+ * - 🅧 try light polygons again
+ * - ✅ far doors shown dark
  */
 
 /** @param {{ disabled?: boolean }} props */
@@ -31,9 +31,9 @@ export default function GeomorphCssLightsTest(props) {
   const state = useMuState(() => {
     return {
       clipPath: 'none',
+      doorApi: /** @type {NPC.DoorsApi} */ ({}),
       isHoleMasked: /** @type {{ [holeIndex: string]: true }} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
-      doorApi: /** @type {NPC.DoorsApi} */ ({}),
 
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
       handleDotClick({ target }) {
@@ -52,28 +52,34 @@ export default function GeomorphCssLightsTest(props) {
         const openDoorIds = Object.keys(state.doorApi.getOpen()).map(Number);
         const adjHoleIds = rootHoleIds.flatMap(holeId => {
           // Assume node-ordering aligned to holeIndex
-          return graph.getAdjacentRooms(graph.nodesArray[holeId], openDoorIds)
+          return graph.getEnterableRooms(graph.nodesArray[holeId], openDoorIds)
             .map(roomNode => roomNode.opts.holeIndex);
         });
-        const shownHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
+        const allHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
+        const allHolePolys = allHoleIds.map(i => gm.d.holesWithDoors[i]);
 
-        const holePolys = shownHoleIds.map(i => gm.d.holesWithDoors[i].clone());
-        const maskPoly = Poly.cutOut(holePolys, [gm.d.hullOutline]).map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
+        const observableDoors = graph.getAdjacentDoors(rootHoleIds.map(id => graph.nodesArray[id]));
+        this.doorApi.setObservableDoors(observableDoors.map(x => x.opts.doorIndex));
+
+        const maskPoly = Poly.cutOut(allHolePolys, [gm.d.hullOutline],)
+          .map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         state.clipPath = `path('${svgPaths}')`;
+
         update();
       },
     };
   }, [gm]);
 
   React.useEffect(() => {
-    // TODO trigger via `gm`
-    setTimeout(() => state.updateMask(), 1000);
-    const sub = state.wire
-      .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
-      .subscribe((_) => state.updateMask());
-    return () => sub.unsubscribe();
-  }, []);
+    if (gm) {
+      state.updateMask(); // Initial update
+      const sub = state.wire
+        .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
+        .subscribe((_) => state.updateMask());
+      return () => sub.unsubscribe();
+    }
+  }, [gm]);
 
   return (
     <CssPanZoom dark className={rootCss}>
@@ -125,7 +131,11 @@ export default function GeomorphCssLightsTest(props) {
           })}
         </div>
 
-        <Doors gm={gm} wire={state.wire} onLoad={api => state.doorApi = api} />
+        <Doors
+          gm={gm}
+          wire={state.wire}
+          onLoad={api => state.doorApi = api}
+        />
         
         <svg
           className="room-graph"
@@ -159,6 +169,11 @@ export default function GeomorphCssLightsTest(props) {
               y2={gm.d.holeCenters[Number(dst.id)].y}
             />
           )} */}
+
+          {/* <path
+            className="light"
+            d={light?.svgPath}
+          /> */}
         </svg>
 
       </>}
@@ -170,14 +185,15 @@ export default function GeomorphCssLightsTest(props) {
 const layoutKey = 'g-301--bridge';
 // const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-302--xboat-repair-bay';
+// const layoutKey = 'g-303--passenger-deck';
 
 const rootCss = css`
   img.geomorph-dark {
-    filter: invert(100%) brightness(60%) contrast(200%) sepia(30%);
+    filter: invert(100%) brightness(55%) contrast(200%) sepia(0%);
     position: absolute;
   }
   img.geomorph {
-    filter:  brightness(75%);
+    filter: brightness(80%);
     position: absolute;
   }
   /* img.geomorph-light {
@@ -193,5 +209,8 @@ const rootCss = css`
     circle, line {
       pointer-events: none;
     }
+  }
+  path.light {
+    fill: rgba(255, 255, 255, 1);
   }
 `;
