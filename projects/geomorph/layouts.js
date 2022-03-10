@@ -110,12 +110,6 @@ const layoutDefs = {
     items: [
       { symbol: '303--hull' },
 
-      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 90, -6] },
-      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 270, -6] },
-      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 390, -6] },
-      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 510, -6] },
-      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 630, -6] },
-
       { symbol: 'medical-bed--006--1.6x3.6', transform: [1, 0, 0, 1, 4, 10] },
       { symbol: 'low-berth--003--1x1', transform: [0, 1, -1, 0, 240, 0] },
       { symbol: 'console--022--1x2', transform: [-1, 0, 0, 1, 240, 60] },
@@ -142,6 +136,13 @@ const layoutDefs = {
       { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 840, 600] },
       // { symbol: 'machinery--020--1x1.6', transform: [0, -1, -1, 0, 910, 470] },
       { symbol: 'office--089--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
+
+      // Draw later so above rooms
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 90, -6] },
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 270, -6] },
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 390, -6] },
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 510, -6] },
+      { symbol: 'window--001--0x1', transform: [1, 0, 0, 1, 630, -6] },
     ],
   },
 };

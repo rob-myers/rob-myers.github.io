@@ -6,11 +6,6 @@
     "id": 303,
     "items": [
       {"symbol": "303--hull"},
-      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 90, -6]},
-      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 270, -6]},
-      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 390, -6]},
-      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 510, -6]},
-      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 630, -6]},
       {"symbol": "medical-bed--006--1.6x3.6", "transform": [1, 0, 0, 1, 4, 10]},
       {"symbol": "low-berth--003--1x1", "transform": [0, 1, -1, 0, 240, 0]},
       {"symbol": "console--022--1x2", "transform": [-1, 0, 0, 1, 240, 60]},
@@ -47,7 +42,12 @@
       {"symbol": "stateroom--036--2x4", "transform": [1, 0, 0, -1, 480, 600]},
       {"symbol": "stateroom--036--2x4", "transform": [-1, 0, 0, -1, 720, 600]},
       {"symbol": "stateroom--036--2x4", "transform": [-1, 0, 0, -1, 840, 600]},
-      {"symbol": "office--089--4x4", "transform": [-1, 0, 0, 1, 1200, 360]}
+      {"symbol": "office--089--4x4", "transform": [-1, 0, 0, 1, 1200, 360]},
+      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 90, -6]},
+      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 270, -6]},
+      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 390, -6]},
+      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 510, -6]},
+      {"symbol": "window--001--0x1", "transform": [1, 0, 0, 1, 630, -6]}
     ]
   },
   "groups": {
@@ -69,56 +69,6 @@
       {
         "type": "Polygon",
         "coordinates": [[[410, 333], [424.1, 333], [424.1, 349], [410, 349]]]
-      },
-      {
-        "type": "Polygon",
-        "coordinates": [
-          [[89.2204, -6], [150.6218, -6], [150.6218, 7.3692], [89.2204, 7.3692]]
-        ]
-      },
-      {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [269.2204, -6],
-            [330.6218, -6],
-            [330.6218, 7.3692],
-            [269.2204, 7.3692]
-          ]
-        ]
-      },
-      {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [389.2204, -6],
-            [450.6218, -6],
-            [450.6218, 7.3692],
-            [389.2204, 7.3692]
-          ]
-        ]
-      },
-      {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [509.2204, -6],
-            [570.6218, -6],
-            [570.6218, 7.3692],
-            [509.2204, 7.3692]
-          ]
-        ]
-      },
-      {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [629.2204, -6],
-            [690.6218, -6],
-            [690.6218, 7.3692],
-            [629.2204, 7.3692]
-          ]
-        ]
       },
       {
         "type": "Polygon",
@@ -628,6 +578,56 @@
             [1046.1684, 510.932],
             [1023.6909, 495.193],
             [1041.3341, 469.9959]
+          ]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [[89.2204, -6], [150.6218, -6], [150.6218, 7.3692], [89.2204, 7.3692]]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [269.2204, -6],
+            [330.6218, -6],
+            [330.6218, 7.3692],
+            [269.2204, 7.3692]
+          ]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [389.2204, -6],
+            [450.6218, -6],
+            [450.6218, 7.3692],
+            [389.2204, 7.3692]
+          ]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [509.2204, -6],
+            [570.6218, -6],
+            [570.6218, 7.3692],
+            [509.2204, 7.3692]
+          ]
+        ]
+      },
+      {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [629.2204, -6],
+            [690.6218, -6],
+            [690.6218, 7.3692],
+            [629.2204, 7.3692]
           ]
         ]
       }
@@ -5285,41 +5285,6 @@
       "pngRect": {"x": -6, "y": -6, "width": 1212, "height": 613}
     },
     {
-      "key": "window--001--0x1",
-      "pngHref": "/symbol/window--001--0x1.png",
-      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
-      "transformArray": [1, 0, 0, 1, 90, -6],
-      "transform": "matrix(1,0,0,1,90,-6)"
-    },
-    {
-      "key": "window--001--0x1",
-      "pngHref": "/symbol/window--001--0x1.png",
-      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
-      "transformArray": [1, 0, 0, 1, 270, -6],
-      "transform": "matrix(1,0,0,1,270,-6)"
-    },
-    {
-      "key": "window--001--0x1",
-      "pngHref": "/symbol/window--001--0x1.png",
-      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
-      "transformArray": [1, 0, 0, 1, 390, -6],
-      "transform": "matrix(1,0,0,1,390,-6)"
-    },
-    {
-      "key": "window--001--0x1",
-      "pngHref": "/symbol/window--001--0x1.png",
-      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
-      "transformArray": [1, 0, 0, 1, 510, -6],
-      "transform": "matrix(1,0,0,1,510,-6)"
-    },
-    {
-      "key": "window--001--0x1",
-      "pngHref": "/symbol/window--001--0x1.png",
-      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
-      "transformArray": [1, 0, 0, 1, 630, -6],
-      "transform": "matrix(1,0,0,1,630,-6)"
-    },
-    {
       "key": "medical-bed--006--1.6x3.6",
       "pngHref": "/symbol/medical-bed--006--1.6x3.6.png",
       "pngRect": {"x": 0, "y": -1, "width": 450, "height": 1094},
@@ -5472,6 +5437,41 @@
       "pngRect": {"x": -10, "y": 15, "width": 1194, "height": 1195},
       "transformArray": [-1, 0, 0, 1, 1200, 360],
       "transform": "matrix(-1,0,0,1,1200,360)"
+    },
+    {
+      "key": "window--001--0x1",
+      "pngHref": "/symbol/window--001--0x1.png",
+      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
+      "transformArray": [1, 0, 0, 1, 90, -6],
+      "transform": "matrix(1,0,0,1,90,-6)"
+    },
+    {
+      "key": "window--001--0x1",
+      "pngHref": "/symbol/window--001--0x1.png",
+      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
+      "transformArray": [1, 0, 0, 1, 270, -6],
+      "transform": "matrix(1,0,0,1,270,-6)"
+    },
+    {
+      "key": "window--001--0x1",
+      "pngHref": "/symbol/window--001--0x1.png",
+      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
+      "transformArray": [1, 0, 0, 1, 390, -6],
+      "transform": "matrix(1,0,0,1,390,-6)"
+    },
+    {
+      "key": "window--001--0x1",
+      "pngHref": "/symbol/window--001--0x1.png",
+      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
+      "transformArray": [1, 0, 0, 1, 510, -6],
+      "transform": "matrix(1,0,0,1,510,-6)"
+    },
+    {
+      "key": "window--001--0x1",
+      "pngHref": "/symbol/window--001--0x1.png",
+      "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
+      "transformArray": [1, 0, 0, 1, 630, -6],
+      "transform": "matrix(1,0,0,1,630,-6)"
     }
   ]
 }
