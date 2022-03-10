@@ -101,8 +101,6 @@ declare namespace Geomorph {
    * Extension of Geomorph.ParsedLayout with derived data.
    */
    export interface GeomorphData extends Geomorph.ParsedLayout {
-    /** Useful for canvas ops (currently unused) */
-    image: HTMLImageElement;
     /** Derived computations */
     d: {
       hullOutline: Poly;

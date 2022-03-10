@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { geomorphJsonPath, geomorphPngPath } from "../geomorph/geomorph.model";
+import { geomorphJsonPath } from "../geomorph/geomorph.model";
 import { Poly, Rect } from "../geom";
 import { parseLayout } from "../service/geomorph";
 import { RoomGraph } from "projects/graph/room-graph";
@@ -10,18 +10,9 @@ import { RoomGraph } from "projects/graph/room-graph";
 export default function useGeomorphData(layoutKey) {
   return useQuery(geomorphJsonPath(layoutKey), async () => {
     
-    /** @type {[Geomorph.ParsedLayout, HTMLImageElement]} */
-   const [layout, image] = await Promise.all([
-      fetch(geomorphJsonPath(layoutKey))
-        .then(x => x.json())
-        .then(parseLayout),
-      new Promise((res, rej) => {
-        const image = new Image;
-        image.onload = () => res(image);
-        image.onerror = rej;
-        image.src = geomorphPngPath(layoutKey);
-      }),
-    ]);
+    const layout = await fetch(geomorphJsonPath(layoutKey))
+      .then(x => x.json())
+      .then(parseLayout);
 
     const roomGraph = RoomGraph.fromJson(layout.roomGraph);
     const holesWithDoors = roomGraph.nodesArray
@@ -37,7 +28,6 @@ export default function useGeomorphData(layoutKey) {
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...layout,
-      image, // TODO possibly remove, unless HTMLCanvas needed
       d: {
         hullOutline: layout.hullPoly[0].removeHoles(),
         pngRect: Rect.fromJson(layout.items[0].pngRect),
