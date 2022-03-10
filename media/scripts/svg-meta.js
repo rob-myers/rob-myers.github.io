@@ -50,7 +50,9 @@ for (const filename of svgFilenames) {
 }
 
 const changedSymbols = keys(svgJsonLookup).filter((symbolName) =>
-  prevSvgJsonLookup?.[symbolName].lastModified !== svgJsonLookup[symbolName].lastModified
+  !prevSvgJsonLookup ||
+  !(symbolName in prevSvgJsonLookup) ||
+  prevSvgJsonLookup[symbolName].lastModified !== svgJsonLookup[symbolName].lastModified
 );
 const changedLayoutDefs = Object.values(layoutDefs).filter(def => {
   const usedSymbols = def.items.map(x => x.symbol);
