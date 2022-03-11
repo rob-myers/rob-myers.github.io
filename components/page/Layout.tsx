@@ -34,7 +34,7 @@ export default function Layout(props: Props) {
       });
       return output;
     },
-    [props.tabs],
+    [JSON.stringify(props.tabs)],
   );
 
   useRegisterTabs(props, model);

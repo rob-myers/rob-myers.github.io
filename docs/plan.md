@@ -12,14 +12,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
-- ✅ Bug: `Tabs` top is often fading in
-
-- Finish 303
-  - ✅ fix windows
-  - add far top-right sector
-
-- Create `NavDemo1` extending `GeomorphCssLightsTest`
+- Create `NavDemo1` based on `GeomorphCssLightsTest`
 - `NavDemo1` has basic NPCs and or Andros
 - Implement TTY interaction
 - Write into blog 'objective'
@@ -87,6 +80,11 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
+- ✅ Bug: `Tabs` top is often fading in
+- ✅ Finish 303
+  - ✅ fix windows
+  - ✅ add far top-right sector
 - ✅ Graph Node should directly extend NodeOpts
 - ✅ Graph Edge should directly extend EdgeOpts
 - ✅ create room/door graph

@@ -59,11 +59,10 @@ export default function Tabs(props: Props) {
     },
     preventTouch(e: React.TouchEvent) {
       e.preventDefault();
-    }
+    },
   }));
 
-  React.useEffect(() => {
-    // Initially trigger CSS animation
+  React.useEffect(() => {// Initially trigger CSS animation
     state.colour = state.enabled ? 'clear' : 'faded';
     update();
   }, []);
@@ -87,7 +86,7 @@ export default function Tabs(props: Props) {
           onTouchStart={state.preventTouch}
         />
         <div
-          className={fillSmallModalCss(props.height)}
+          className={fillInlineSpaceCss(props.height)}
         />
       </>}
 
@@ -213,7 +212,7 @@ const unexpandedCss = (height: number | number[]) => css`
 `;
 
 /** When expanded we need to fill original space */
-const fillSmallModalCss = (height: number | number[]) => css`
+const fillInlineSpaceCss = (height: number | number[]) => css`
   height: ${Array.isArray(height) ? height[1] : height}px;
   @media(max-width: 600px) {
     height: ${Array.isArray(height) ? height[0] : height}px;
