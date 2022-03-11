@@ -179,6 +179,7 @@ declare namespace Geomorph {
     | 'fresher--025--2x3'
     | 'fuel--010--2x4'
     | 'gaming-tables--001--1x2'
+    | 'galley-and-mess-halls--025--2x3'
     | 'iris-valves--005--1x1'
     | 'lifeboat--small-craft'
     | 'lounge--009--2x3'
