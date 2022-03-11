@@ -12,6 +12,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
+- ✅ Bug: `Tabs` top is often fading in
+
 - Finish 303
   - ✅ fix windows
   - add far top-right sector
@@ -21,8 +24,6 @@ __Aim towards website release__.
 - Implement TTY interaction
 - Write into blog 'objective'
 
-- Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
-- Bug: `Tabs` top is often fading in
 
 - After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
 

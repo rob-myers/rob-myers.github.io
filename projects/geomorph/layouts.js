@@ -118,8 +118,9 @@ const layoutDefs = {
       { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 480, 0] },
       { symbol: 'stateroom--035--2x3', transform: [-1, 0, 0, 1, 720, 0] },
       { symbol: 'stateroom--100--3x4', transform: [0, -1, -1, 0, 960, 180] },
+      { symbol: 'galley-and-mess-halls--006--2x4', transform: [1, 0, 0, 1, 960, 0] },
       
-      { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240] },
+      { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240 + 2] },
       { symbol: 'fresher--002--0.4x0.6', transform: [1, 0, 0, -1, 200, 300] },
       { symbol: 'gaming-tables--001--1x2', transform: [1, 0, 0, 1, 480, 240] },
       { symbol: 'couch-and-chairs--006--0.4x2', transform: [1, 0, 0, -1, 660 + 10, 360] },
@@ -128,13 +129,11 @@ const layoutDefs = {
       { symbol: 'machinery--077--1.6x1.8', transform: [0, 1, -1, 0, 160, 380] },
       { symbol: 'machinery--077--1.6x1.8', transform: [-1, 0, 0, 1, 220, 440] },
       { symbol: 'console--018--1x1', transform: [-1, 0, 0, 1, 120, 480] },
-      // { symbol: 'machinery--020--1x1.6', transform: [0, -1, 1, 0, 290, 470] },
       { symbol: 'iris-valves--005--1x1', transform: [-1, 0, 0, 1, 360, 540] },
       { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 360, 600] },
       { symbol: 'stateroom--036--2x4', transform: [1, 0, 0, -1, 480, 600] },
       { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 720, 600] },
       { symbol: 'stateroom--036--2x4', transform: [-1, 0, 0, -1, 840, 600] },
-      // { symbol: 'machinery--020--1x1.6', transform: [0, -1, -1, 0, 910, 470] },
       { symbol: 'office--089--4x4', transform: [-1, 0, 0, 1, 1200, 360] },
 
       // Draw later so above rooms
