@@ -19,29 +19,44 @@
   </g>
   <g style="pointer-events: none;">
     <title>obstacles</title>
-    <rect x="377.9" y="240" width="24" height="120" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+    <rect x="377.9" y="240" width="24" height="120" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;">
       <title>table</title>
     </rect>
-    <rect x="410" y="253" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+    <rect x="410" y="253" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;">
       <title>chair</title>
     </rect>
-    <rect x="410" y="293" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+    <rect x="410" y="293" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;">
       <title>chair</title>
     </rect>
-    <rect x="410" y="333" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); pointer-events: auto;">
+    <rect x="410" y="333" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;">
+      <title>chair</title>
+    </rect>
+    <path d="M 1196 222.4 L 1196 240 L 1187.278 240 L 1159.552 241.621 L 1130.832 246.288 L 1106.954 252.223 L 1086.33 258.358 L 1080 242.821 L 1104.312 235.097 L 1140 227.3 L 1176.027 222.761 L 1196 222.4 Z" style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(0, 0, 255); fill-opacity: 0.5;">
+      <title>table</title>
+    </path>
+    <rect x="988.811" y="176.371" width="12.91" height="13.031" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;" transform="matrix(0.95107, -0.308976, 0.308976, 0.95107, 83.280594, 358.43515)">
+      <title>chair</title>
+    </rect>
+    <rect x="988.811" y="176.371" width="12.91" height="13.031" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;" transform="matrix(0.970306, -0.24188, 0.24188, 0.970306, 109.43869, 279.487915)">
+      <title>chair</title>
+    </rect>
+    <rect x="988.811" y="176.371" width="12.91" height="13.031" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;" transform="matrix(0.990274, -0.13913, 0.13913, 0.990274, 142.254135, 167.149216)">
+      <title>chair</title>
+    </rect>
+    <rect x="988.811" y="176.371" width="12.91" height="13.031" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;" transform="matrix(1, 0.000044, -0.000044, 1, 192.286789, 24.02088)">
       <title>chair</title>
     </rect>
   </g>
-  <g style="pointer-events: none;">
+  <g style="">
     <title>walls</title>
     <path d="M 360 359 L 360 569.106 L 353.969 546.734 L 336.817 479 L 304.116 411.902 L 266 361 L 266 360 L 360 360 Z" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;">
       <title>wall</title>
     </path>
-    <path d="M 934 569.106 L 934 359 L 927.969 381.372 L 910.817 449.106 L 878.116 516.204 L 840 567.106 L 840 568.106 L 934 568.106 L 934 569.106 Z" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;" transform="matrix(-1, 0, 0, -1, 1774, 928.106018)">
+    <path d="M 934 569.106 L 934 359 L 927.969 381.372 L 910.817 449.106 L 878.116 516.204 L 840 567.106 L 840 568.106 L 934 568.106 L 934 569.106 Z" style="fill: rgb(255, 0, 0); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 1774, 928.106018)">
       <title>wall</title>
     </path>
   </g>
-  <g style="">
+  <g style="pointer-events: none;">
     <title>singles</title>
     <rect x="88.5" y="-6" width="62.2" height="14.1" style="fill-opacity: 0.4; fill: rgb(0, 255, 255);">
       <title>window</title>
@@ -139,10 +154,13 @@
     <rect x="187.5" y="236" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 540, 121.056206)">
       <title>door</title>
     </rect>
-    <path d="M 1200 240 L 1200 243.3 L 1182.518 242.933 L 1164.7 244.5 L 1144.2 247.1 L 1119.3 252.2 L 1080 263.7 L 1021.735 290.405 L 1003 302.9 L 966 303.213 L 900 303.084 L 900 299.651 L 957.599 299.364 L 957.6 180 L 962 180 L 962 299.3 L 1000 299.3 L 1017.937 287.955 L 1021.757 286.095 L 1080 259.4 L 1127.8 246.8 L 1145.6 243.3 L 1170.981 240 L 1193.7 240 L 1200 240 Z" style="fill-opacity: 0.5; fill: rgb(255, 0, 0);">
+    <path d="M 1200 240 L 1200 243.3 L 1182.518 242.933 L 1164.7 244.5 L 1144.2 247.1 L 1119.3 252.2 L 1080 263.7 L 1021.735 290.405 L 1003 302.9 L 966 303.213 L 902 303.1 L 902 360 L 898 360 L 898 299.7 L 957.599 299.364 L 957.6 180 L 962 180 L 962 299.3 L 1000 299.3 L 1017.937 287.955 L 1021.757 286.095 L 1080 259.4 L 1127.8 246.8 L 1145.6 243.3 L 1170.981 240 L 1193.7 240 L 1200 240 Z" style="fill-opacity: 0.5; fill: rgb(255, 0, 0);">
       <title>wall</title>
     </path>
     <rect x="187.5" y="236" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1200, 1.056206)">
+      <title>door</title>
+    </rect>
+    <rect x="187.5" y="236" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); pointer-events: auto;" transform="matrix(0, 1, -1, 0, 1140, 121.023315)">
       <title>door</title>
     </rect>
   </g>
