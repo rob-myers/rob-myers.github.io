@@ -12,11 +12,12 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- Create `NavDemo1` based on `GeomorphCssLightsTest`
-- `NavDemo1` has basic NPCs and or Andros
+- Rename `GeomorphCssLightsTest` as `LightsTest`
+- Create `NavDemo1` based on `LightsTest`
+- `NavDemo1` has Andros
+- `NavDemo1` has other NPCs Andros
 - Implement TTY interaction
 - Write into blog 'objective'
-
 
 - After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
 

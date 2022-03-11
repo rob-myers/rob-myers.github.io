@@ -24,7 +24,7 @@ import Doors from "../geomorph/Doors";
  */
 
 /** @param {{ disabled?: boolean }} props */
-export default function GeomorphCssLightsTest(props) {
+export default function LightsTest(props) {
 
   const { data: gm } = useGeomorphData(layoutKey);
   const update = useUpdate();
@@ -144,10 +144,10 @@ export default function GeomorphCssLightsTest(props) {
 }
 
 /** @type {Geomorph.LayoutKey} */
-// const layoutKey = 'g-301--bridge';
+const layoutKey = 'g-301--bridge';
 // const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-302--xboat-repair-bay';
-const layoutKey = 'g-303--passenger-deck';
+// const layoutKey = 'g-303--passenger-deck';
 
 const rootCss = css`
   img.geomorph-dark {

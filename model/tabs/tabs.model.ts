@@ -1,5 +1,5 @@
 import type { IJsonModel } from 'flexlayout-react';
-import type { CodeFilepathKey, ComponentFilepathKey } from './tabs.lookup';
+import type { CodeFilepathKey, ComponentFilepathKey } from './lookup';
 import { deepClone, testNever } from 'model/generic.model';
 
 /**

@@ -2,7 +2,7 @@ import React from 'react';
 import * as portals from "react-reverse-portal";
 import { css } from 'goober';
 
-import { getCode, getComponent } from 'model/tabs/tabs.lookup';
+import { getCode, getComponent } from 'model/tabs/lookup';
 import useSiteStore from "store/site.store";
 import { CodeEditor, Terminal } from 'components/dynamic';
 
