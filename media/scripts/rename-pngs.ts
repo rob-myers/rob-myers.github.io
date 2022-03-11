@@ -27,11 +27,10 @@
  * yarn rename-pngs symbol "media/Symbols/Shop & Repair Area" media/symbol-shop-repair-area
  * yarn rename-pngs symbol media/Symbols/Fresher media/symbol-fresher
  * yarn rename-pngs symbol media/Symbols/Medical media/symbol-medical
- * 
  * yarn rename-pngs symbol media/Symbols/Lounge media/symbol-lounge
  * yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
- * 
  * yarn rename-pngs symbol 'media/Symbols/Low Berth' media/symbol-low-berth
+ * yarn rename-pngs symbol 'media/Symbols/Galley & Mess' media/symbol-galley-mess
  * ```
  */
 import fs from 'fs';

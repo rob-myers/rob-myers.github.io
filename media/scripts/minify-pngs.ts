@@ -8,6 +8,7 @@
  * - yarn minify-pngs media/geomorph-edge
  * - yarn minify-pngs public/geomorph
  * - yarn minify-pngs public/symbol
+ *   > maybe better to do `yarn simplify-pngs public/symbol`
  */
 import fs from 'fs';
 import path from 'path';
