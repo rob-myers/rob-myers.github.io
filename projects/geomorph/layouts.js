@@ -118,7 +118,9 @@ const layoutDefs = {
       { symbol: 'stateroom--035--2x3', transform: [1, 0, 0, 1, 480, 0] },
       { symbol: 'stateroom--035--2x3', transform: [-1, 0, 0, 1, 720, 0] },
       { symbol: 'stateroom--100--3x4', transform: [0, -1, -1, 0, 960, 180] },
-      { symbol: 'galley-and-mess-halls--006--2x4', transform: [1, 0, 0, 1, 960, 0] },
+      { symbol: 'galley-and-mess-halls--006--2x4', transform: [-1, 0, 0, 1, 1200, 0] },
+      { symbol: 'table--009--0.8x0.8', transform: [1, 0, 0, 1, 960, 120] },
+      { symbol: 'table--009--0.8x0.8', transform: [1, 0, 0, 1, 960, 240 - 2] },
       
       { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 240 + 2] },
       { symbol: 'fresher--002--0.4x0.6', transform: [1, 0, 0, -1, 200, 300] },

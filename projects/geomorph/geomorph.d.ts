@@ -216,6 +216,7 @@ declare namespace Geomorph {
     | 'stateroom--035--2x3'
     | 'stateroom--036--2x4'
     | 'stateroom--100--3x4'
+    | 'table--009--0.8x0.8'
     | 'weaponry--013--1x2'
     | 'window--001--0x1'
     | 'window--007--0x2.4'

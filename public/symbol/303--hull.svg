@@ -85,6 +85,21 @@
     <rect x="410" y="333" width="14.1" height="16" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);">
       <title>poly #fff-#000-2 chair</title>
     </rect>
+    <path d="M 1196 222.4 L 1196 240 L 1187.278 240 L 1159.552 241.621 L 1130.832 246.288 L 1106.954 252.223 L 1086.33 258.358 L 1080 242.821 L 1104.312 235.097 L 1140 227.3 L 1176.027 222.761 L 1196 222.4 Z" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);">
+      <title>poly #fff-#000-2 table</title>
+    </path>
+    <rect x="988.811" y="176.371" width="12.91" height="13.031" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);" transform="matrix(0.95107, -0.308976, 0.308976, 0.95107, 83.280594, 358.43515)">
+      <title>poly #fff-#000-2 chair</title>
+    </rect>
+    <rect x="988.811" y="176.371" width="12.91" height="13.031" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);" transform="matrix(0.970306, -0.24188, 0.24188, 0.970306, 109.43869, 279.487915)">
+      <title>poly #fff-#000-2 chair</title>
+    </rect>
+    <rect x="988.811" y="176.371" width="12.91" height="13.031" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);" transform="matrix(0.990274, -0.13913, 0.13913, 0.990274, 142.254135, 167.149216)">
+      <title>poly #fff-#000-2 chair</title>
+    </rect>
+    <rect x="988.811" y="176.371" width="12.91" height="13.031" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255);" transform="matrix(1, 0.000044, -0.000044, 1, 192.286789, 24.02088)">
+      <title>poly #fff-#000-2 chair</title>
+    </rect>
     <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door door-w</title>
     </rect>
