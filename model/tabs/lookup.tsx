@@ -3,10 +3,10 @@ import React from 'react';
 const code = {
   'panzoom/PanZoom.jsx': () =>
     import('!!raw-loader!projects/panzoom/PanZoom.jsx'),
-  'example/PanZoomDemo.jsx': () =>
-    import('!!raw-loader!projects/example/PanZoomDemo.jsx'),
-  'example/NavStringPull.jsx': () =>
-    import('!!raw-loader!projects/example/NavStringPull.jsx'),
+  'example/SvgPanZoomDemo.jsx': () =>
+    import('!!raw-loader!projects/example/SvgPanZoomDemo.jsx'),
+  'example/SvgStringPull.jsx': () =>
+    import('!!raw-loader!projects/example/SvgStringPull.jsx'),
   'example/jsx-to-js.jsx': () =>
     import('!!raw-loader!projects/example/jsx-to-js.jsx'),
   'geom/rect.js': () =>
@@ -18,36 +18,30 @@ const component = {
     .then(x => (props: any) => <x.default {...props} srcKey='geomorph-301' />),
   'example/Images#redoubt-sketches': () => import('projects/example/Images')
     .then(x => (props: any) => <x.default {...props} srcKey='redoubt-sketches' />),
-  'example/Visibility#301': () => import('projects/example/Visibility')
+  'example/SvgVisibilityDemo#301': () => import('projects/example/SvgVisibilityDemo')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/Css3dForeignObject#301': () => import('projects/example/Css3dForeignObject')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/GeomorphEdit': () => import('projects/example/GeomorphEdit')
     .then(x => x.default),
-  'example/PanZoomDemo': () => import('projects/example/PanZoomDemo')
+  'example/SvgPanZoomDemo': () => import('projects/example/SvgPanZoomDemo')
     .then(x => x.default),
-  'example/CssSvgPanZoomDemo': () => import('projects/example/CssSvgPanZoomDemo')
+  'example/Pyramid3dDemo': () => import('projects/example/Pyramid3dDemo')
     .then(x => x.default),
-  'example/CssPanZoomDemo': () => import('projects/example/CssPanZoomDemo')
-    .then(x => x.default),
-  'example/PanZoomTest': () => import('projects/example/PanZoomTest')
-    .then(x => x.default),
-  'example/RedoubtDemo3D': () => import('projects/example/RedoubtDemo3D')
-    .then(x => x.default),
-  'example/DoorsDemo#101': () => import('projects/example/DoorsDemo')
+  'example/SvgDoorsDemo#101': () => import('projects/example/SvgDoorsDemo')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-101--multipurpose' />),
-  'example/DoorsDemo#301': () => import('projects/example/DoorsDemo')
+  'example/SvgDoorsDemo#301': () => import('projects/example/SvgDoorsDemo')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
-  'example/NavStringPull': () => import('projects/example/NavStringPull')
+  'example/SvgStringPull': () => import('projects/example/SvgStringPull')
     .then(x => (props:any) => <x.default disabled {...props} />),
-  'example/NavGraph#301': () => import('projects/example/NavGraph')
+  'example/SvgNavGraph#301': () => import('projects/example/SvgNavGraph')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
-  'example/NavGraph#302': () => import('projects/example/NavGraph')
+  'example/SvgNavGraph#302': () => import('projects/example/SvgNavGraph')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-302--xboat-repair-bay' />),
-  'example/NavUiTest': () => import('projects/example/NavUiTest')
-    .then(x => (props: any) => <x.default disabled {...props} />),
   'example/LightsTest': () => import('projects/example/LightsTest')
     .then(x => x.default),
+  'example/SvgNavDemo1': () => import('projects/example/SvgNavDemo1')
+      .then(x => (props: any) => <x.default disabled {...props} />),
   'example/TriangleDev#301': () => import('projects/example/TriangleDev')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/TriangleDev#101': () => import('projects/example/TriangleDev')

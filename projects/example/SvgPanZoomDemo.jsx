@@ -4,7 +4,7 @@ import PanZoom from '../panzoom/PanZoom';
 import { Rect } from '../geom';
 import * as defaults from './defaults';
 
-export default function PanZoomDemo() {
+export default function SvgPanZoomDemo() {
   return (
     <div className={rootCss}>
       <p>
@@ -32,10 +32,10 @@ const rootCss = css`
   height: 100%;
 
   > p {
-    padding: 12px 20px;
+    padding: 4px 8px;
     margin: 0;
     font-family: monospace;
-    font-size: 14px;
+    font-size: 12px;
     background: black;
     color: white;
   }

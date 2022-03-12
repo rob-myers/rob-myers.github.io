@@ -12,12 +12,16 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- Rename `GeomorphCssLightsTest` as `LightsTest`
+- ✅ Rename `GeomorphCssLightsTest` as `LightsTest`
 - Create `NavDemo1` based on `LightsTest`
-- `NavDemo1` has Andros
-- `NavDemo1` has other NPCs Andros
+- Characters
+  - Circle with heart-beat and breath
+  - `NavDemo1` has Andros
+  - `NavDemo1` has other NPCs
 - Implement TTY interaction
 - Write into blog 'objective'
+
+- Start Gatsby Project which aims to replace this one
 
 - After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
 
@@ -131,7 +135,7 @@ __Aim towards website release__.
 - instead of CSS 3d demo, we'll create blender models and render/screenshots
   - ✅ start creating last redoubt in blender
   - ✅ screenshot to go inside objective
-  - ✅ leave RedoubtDemo3D as is, but do not use
+  - ✅ leave Pyramid3dDemo as is, but do not use
 
 - ✅ build `CssPanZoom`
   > SVG-based panzoom using CSS transforms instead of viewBox
@@ -164,12 +168,12 @@ __Aim towards website release__.
 - ✅ fix: mobile Tabs not initially disabled
 - ✅ disabled prop unmounts large DOM e.g. hoverable navtris, Css3d
 - ✅ fix: Css3d perspective center wrong on mobile
-- ✅ fix: example/NavGraph triangles should be visible
+- ✅ fix: example/SvgNavGraph triangles should be visible
 - ✅ avoid dup g-301--bridge.json calls
 - ✅ Bug: modal hidden behind menu in max viewport
 - ✅ CodeSandbox for triangle-wasm
 - ✅ Next button auto-anchors
-- ✅ NavGraph#302 still not initialising (with modal)
+- ✅ SvgNavGraph#302 still not initialising (with modal)
 - ✅ can maximise Tabs into a modal
 - ✅ avoid computing Pathfinding until !props.disabled
 - ✅ Triangle (triangle-wasm) in browser dev
@@ -190,7 +194,7 @@ __Aim towards website release__.
   - repo archived-webs
 - ✅ tab metas support idSuffix
 - ✅ restart using public/geomorphs i.e. precomputed geomorphs
-- ✅ make `nav/DoorsDemo`
+- ✅ make `nav/SvgDoorsDemo`
 - ✅ anchor and focus on Tabs interact
 - ✅ Doors represented via rotated `<rect>`
 - ✅ Implement Tabs tab portals
@@ -224,8 +228,8 @@ __Aim towards website release__.
 - generate pngs for demo (so don't need code)
   - ✅ try server-side-render using npm module `canvas`
   - ✅ browser and server use same canvas overlay code
-  - generate some PNGs for `PanZoomDemo`
-- use in `PanZoomDemo`
+  - generate some PNGs for `SvgPanZoomDemo`
+- use in `SvgPanZoomDemo`
 - tidy `PanZoom` and update CodeSandbox
 
 - emphasise render-once approach to React in intro

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import PanZoomDemo from './PanZoomDemo';
+import SvgPanZoomDemo from './SvgPanZoomDemo';
 
 const withJsx = <div title="message">Welcome!</div>;
 const withoutJsx = React.createElement(
@@ -8,9 +8,9 @@ const withoutJsx = React.createElement(
   'Welcome!',
 );
 
-const withJsxToo = <div><PanZoomDemo /></div>;
+const withJsxToo = <div><SvgPanZoomDemo /></div>;
 const withoutJsxToo = React.createElement(
   'div',
   null,
-  React.createElement(PanZoomDemo, null),
+  React.createElement(SvgPanZoomDemo, null),
 );

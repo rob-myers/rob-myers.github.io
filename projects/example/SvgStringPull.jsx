@@ -12,11 +12,8 @@ import DraggableNode from "../npc/DraggableNode";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
 
-// TODO
-// - also show triangle path
-
 /** @param {{ disabled?: boolean }} props */
-export default function NavStringPull(props) {
+export default function SvgStringPull(props) {
 
   /** @type {Geomorph.LayoutKey} */
   const layoutKey = 'g-301--bridge';
@@ -35,9 +32,6 @@ export default function NavStringPull(props) {
     updatePath: () => {
       const groupId = pathfinding.getGroup(zoneKey, state.source);
       if (groupId !== null) {
-        /**
-         * TODO use returned `nodePath` and illustrate it
-         */
         state.path = [state.source.clone()].concat(
           pathfinding.findPath(state.source, state.target, zoneKey, groupId)?.path || []
         );
@@ -48,7 +42,7 @@ export default function NavStringPull(props) {
   }));
 
   return (
-    <PanZoom gridBounds={defaults.gridBounds} initViewBox={initViewBox} maxZoom={6}>
+    <PanZoom gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}>
       <g
         className={classNames(rootCss, !props.disabled && animateNavpathCss)}
         ref={(el) => {
@@ -97,6 +91,13 @@ const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
 
+  image.geomorph {
+    filter: invert(100%);
+  }
+  image.icon {
+    filter: invert(100%);
+  }
+
   polyline.navpath {
     fill: none;
     stroke: #083;
@@ -113,7 +114,7 @@ const rootCss = css`
   polygon.navtri {
     fill: transparent;
     &:hover {
-      stroke: #900;
+      stroke: #2b9900;
     }
   }
 `;
@@ -123,5 +124,3 @@ const animateNavpathCss = css`
     animation: 600ms stringPullFlash infinite linear;
   }
 `;
-
-const initViewBox = new Rect(200, 0, 600, 600);

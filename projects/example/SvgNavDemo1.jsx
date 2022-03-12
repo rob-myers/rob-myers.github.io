@@ -18,7 +18,7 @@ import DraggableNode from "../npc/DraggableNode";
 // - tty integration
 
 /** @param {{ disabled?: boolean }} props */
-export default function NavCollide(props) {
+export default function SvgNavDemo1(props) {
 
   /** @type {Geomorph.LayoutKey} */
   const layoutKey = 'g-301--bridge';

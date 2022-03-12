@@ -6,20 +6,10 @@ import useMuState from '../hooks/use-mu-state';
 /**
  * TODO
  * - 3d pyramid with 9km * 9km base and slope height 9 km ✅
- * - movable camera
- *   - show green dot when dragging ✅
- *   - show drag line when dragging ✅
- *   - look at pyramid base center whilst rotX on specific circle ✅
- * - use mousewheel/pinch instead of drag indicator
- * - can rotate around its axis
- * - can scale (maybe incremental buttons)
- * - 125 layered squares
- *   - but only show ≤ 10 at a time, fading out?
- * - can select layer and it comes out
+ * - show green dot when dragging ✅
  */
 
-
-export default function RedoubtDemo3D() {
+export default function Pyramid3dDemo() {
 
   const state = useMuState(() => {
 

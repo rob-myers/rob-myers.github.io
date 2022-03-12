@@ -11,7 +11,7 @@ import DraggableNode from "../npc/DraggableNode";
 import useGeomorphData from "../hooks/use-geomorph-data";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */
-export default function VisibilityDemo(props) {
+export default function SvgVisibilityDemoDemo(props) {
 
   const { data } = useGeomorphData(props.layoutKey);
 
@@ -68,7 +68,7 @@ function Light({ init, walls, hull }) {
 
 const rootCss = css`
   image {
-    filter: contrast(400%);
+    filter: contrast(200%) invert(100%);
   }
 
   path.light {

@@ -9,9 +9,7 @@ import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
-export default function NavGraphDemo(props) {
-
-  // console.log('render', props.layoutKey);
+export default function SvgSvgNavGraph(props) {
 
   const { data: gm } = useGeomorphData(props.layoutKey);
   const { data: pf } = usePathfinding(props.layoutKey, gm?.navDecomp, props.disabled);

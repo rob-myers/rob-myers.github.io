@@ -56,9 +56,9 @@ Consider an example, a pan/zoomable grid (also [on CodeSandbox](https://codesand
   height="400"
   name="panzoom"
   tabs="[
-    { key: 'component', filepath: 'example/PanZoomDemo' },
+    { key: 'component', filepath: 'example/SvgPanZoomDemo' },
     { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
-    { key: 'code', filepath: 'example/PanZoomDemo.jsx' },
+    { key: 'code', filepath: 'example/SvgPanZoomDemo.jsx' },
   ]"
 ></div>
 
@@ -66,7 +66,7 @@ The file _panzoom/PanZoom.jsx_ (see [tab above](#command "open-tab panzoom panzo
 One called _PanZoom_, another called _Grid_.
 Behaviourally:
 
-- _PanZoom_ renders an SVG containing _children_ (an image provided in _PanZoomDemo_) and `<Grid />`. Over time it adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
+- _PanZoom_ renders an SVG containing _children_ (an image provided in _SvgPanZoomDemo_) and `<Grid />`. Over time it adjusts the [SVG viewBox](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/viewBox) in response to mouse/pointer events.
 
 - _Grid_ renders part of an SVG i.e. two grid patterns.
   They repeat squares of size 10x10 and 60x60 in abstract [SVG user units](https://www.w3.org/TR/SVG2/coords.html#TermUserUnits).
@@ -197,7 +197,7 @@ More on that later. -->
 
 Traditionally, CSS is provided in separate files,
 linked in the `<head/>` and referenced by DOM elements via their space-separated attribute `class`.
-Both _PanZoom_ and _PanZoomDemo_ above are styled using CSS-in-JS.
+Both _PanZoom_ and _SvgPanZoomDemo_ above are styled using CSS-in-JS.
 This means the CSS is written inside JS or JSX files, often together with the React component it applies to.
 The npm module [Goober](https://www.npmjs.com/package/goober) handles this for us. -->
 

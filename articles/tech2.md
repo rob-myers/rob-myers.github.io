@@ -51,8 +51,8 @@ For example, the grey triangles below collectively induce the red navgraph.
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'example/NavGraph#301' },
-     { key: 'component', filepath: 'example/NavGraph#302' },
+     { key: 'component', filepath: 'example/SvgNavGraph#301' },
+     { key: 'component', filepath: 'example/SvgNavGraph#302' },
    ]"
 ></div>
 
@@ -98,7 +98,7 @@ Drag the nodes below to see _string-pulling_ in action.
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'example/NavStringPull' },
+     { key: 'component', filepath: 'example/SvgStringPull' },
    ]"
 ></div>
 
@@ -159,7 +159,7 @@ We'll detect their imminent collision, and then stop them both.
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'example/NavUiTest' },
+     { key: 'component', filepath: 'example/SvgNavDemo1' },
    ]"
 ></div>
 
@@ -183,7 +183,7 @@ __TODO__
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'example/DoorsDemo#101' },
-     { key: 'component', filepath: 'example/DoorsDemo#301' },
+     { key: 'component', filepath: 'example/SvgDoorsDemo#101' },
+     { key: 'component', filepath: 'example/SvgDoorsDemo#301' },
    ]"
 ></div>

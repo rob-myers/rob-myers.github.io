@@ -10,15 +10,16 @@
     // { key: 'component', filepath: 'example/GeomorphEdit' },
     { key: 'component', filepath: 'example/LightsTest' },
     // { key: 'component', filepath: 'example/Css3dForeignObject#301' },
-    // { key: 'component', filepath: 'example/CssPanZoomDemo', weight: 50 },
-    // { key: 'component', filepath: 'example/PanZoomTest' },
-    // { key: 'component', filepath: 'example/CssSvgPanZoomDemo' },
-    // { key: 'component', filepath: 'example/NavUiTest' },
-    // { key: 'component', filepath: 'example/RedoubtDemo3D' },
-    // { key: 'component', filepath: 'example/NavStringPull' },
+    // { key: 'component', filepath: 'example/SvgNavDemo1' },
+    // { key: 'component', filepath: 'example/Pyramid3dDemo' },
+    // { key: 'component', filepath: 'example/SvgStringPull' },
     // { key: 'component', filepath: 'example/TriangleDev#301' },
     // { key: 'terminal', filepath: 'test' },
     // { key: 'terminal', filepath: 'other' },
+    // { key: 'component', filepath: 'example/SvgDoorsDemo#101' },
+    // { key: 'component', filepath: 'example/SvgNavGraph#301' },
+    // { key: 'component', filepath: 'example/SvgPanZoomDemo' },
+    { key: 'component', filepath: 'example/SvgVisibilityDemo#301' },
   ]"
 >
 </div>

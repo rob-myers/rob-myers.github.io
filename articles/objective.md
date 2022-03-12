@@ -111,7 +111,7 @@ The latter 2000+ symbols will form the underlying basis of _The Last Redoubt_.
 
 </aside>
 
-__TODO__ remove Visibility and Css3d demo, replacing with NPC demo combined with terminal in some way.
+__TODO__ remove SvgVisibilityDemo and Css3d demo, replacing with NPC demo combined with terminal in some way.
 
 <!-- We end with two basic demos.
 You can pan/zoom, move the eyes, and view the obstacle polygons in 3D.
@@ -123,7 +123,7 @@ There are respective CodeSandboxes i.e. [visibility](https://codesandbox.io/s/ro
   name="light-demo"
   height="340"
   tabs="[
-    // { key: 'component', filepath: 'example/Visibility#301' },
+    // { key: 'component', filepath: 'example/SvgVisibilityDemo#301' },
     { key: 'component', filepath: 'example/Css3d#301' },
   ]"
 ></div>

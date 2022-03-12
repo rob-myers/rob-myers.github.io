@@ -1,13 +1,13 @@
 import React from "react";
 import { css } from "goober";
-import { gridBounds, initViewBox } from "../example/defaults";
+import { gridBounds, initViewBox } from "./defaults";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 import useGeomorphData from "../hooks/use-geomorph-data";
 
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
-export default function DoorsDemo(props) {
+export default function SvgDoorsDemo(props) {
 
   const { data } = useGeomorphData(props.layoutKey);
 
