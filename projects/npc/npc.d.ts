@@ -19,7 +19,8 @@ declare namespace NPC {
   }
 
   export interface DoorsApi {
-    getOpen(): { [doorIndex: number]: true };
+    /** Get ids of open doors */
+    getOpen(): number[];
     setObservableDoors(doorIds: number[]): void ;
   }
 

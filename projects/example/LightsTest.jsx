@@ -19,15 +19,15 @@ export default function LightsTest(props) {
   const state = useMuState(() => {
     return {
       clipPath: 'none',
-      doorApi: /** @type {NPC.DoorsApi} */ ({}),
-      isHoleMasked: /** @type {{ [holeIndex: string]: true }} */ ({}),
+      doorsApi: /** @type {NPC.DoorsApi} */ ({}),
+      isHoleShown: /** @type {{ [holeIndex: string]: true }} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
-      handleDotClick({ target }) {
+      onToggleLight({ target }) {
         if (gm) {
           const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
-          dataIndex in state.isHoleMasked ? delete state.isHoleMasked[dataIndex] : state.isHoleMasked[dataIndex] = true;
+          dataIndex in state.isHoleShown ? delete state.isHoleShown[dataIndex] : state.isHoleShown[dataIndex] = true;
           state.updateMask();
         }
       },
@@ -36,8 +36,8 @@ export default function LightsTest(props) {
         if (!gm) return;
         const { roomGraph: graph } = gm.d;
 
-        const rootHoleIds = Object.keys(state.isHoleMasked).map(Number);
-        const openDoorIds = Object.keys(state.doorApi.getOpen()).map(Number);
+        const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
+        const openDoorIds = state.doorsApi.getOpen();
         const adjHoleIds = rootHoleIds.flatMap(holeId => {
           // Assume node-ordering aligned to holeIndex
           return graph.getEnterableRooms(graph.nodesArray[holeId], openDoorIds)
@@ -47,7 +47,7 @@ export default function LightsTest(props) {
         const allHolePolys = allHoleIds.map(i => gm.d.holesWithDoors[i]);
 
         const observableDoors = graph.getAdjacentDoors(rootHoleIds.map(id => graph.nodesArray[id]));
-        this.doorApi.setObservableDoors(observableDoors.map(x => x.doorIndex));
+        this.doorsApi.setObservableDoors(observableDoors.map(x => x.doorIndex));
 
         const maskPoly = Poly.cutOut(allHolePolys, [gm.d.hullOutline],)
           .map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
@@ -100,7 +100,7 @@ export default function LightsTest(props) {
 
         <div
           className="light-toggles"
-          onClick={state.handleDotClick}
+          onClick={state.onToggleLight}
         >
           {gm.d.holeSwitches.map((center, holeIndex) => {
             return <div
@@ -110,8 +110,8 @@ export default function LightsTest(props) {
               style={{
                 left: center.x - 5,
                 top: center.y - 5,
-                borderColor: state.isHoleMasked[holeIndex] ? '#5f5' : 'rgba(200, 0, 0, 0.3)',
-                outline: state.isHoleMasked[holeIndex] ? '1px solid black' : '1px solid rgba(255, 255, 255, 0.5)',
+                borderColor: state.isHoleShown[holeIndex] ? '#5f5' : 'rgba(200, 0, 0, 0.3)',
+                outline: state.isHoleShown[holeIndex] ? '1px solid black' : '1px solid rgba(255, 255, 255, 0.5)',
               }}
             />
           })}
@@ -120,7 +120,7 @@ export default function LightsTest(props) {
         <Doors
           gm={gm}
           wire={state.wire}
-          onLoad={api => state.doorApi = api}
+          onLoad={api => state.doorsApi = api}
         />
 
         {/* <DebugGraph gm={gm} /> */}

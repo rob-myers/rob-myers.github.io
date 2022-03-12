@@ -17,7 +17,9 @@ export default function Doors(props) {
   const state = useMuState(() => {
     /** @type {NPC.DoorsApi} */
     const api = {
-      getOpen() { return {...state.open}; },
+      getOpen() {
+        return Object.keys(state.open).map(Number);
+      },
       /** @param {number[]} observableIds */
       setObservableDoors(observableIds) {
         state.observable = observableIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
