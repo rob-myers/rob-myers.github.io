@@ -90,7 +90,10 @@ export default function useMuState(
           });
         }
       }
-      state.onChangeDeps?.();
+      const cleanup = state.onChangeDeps?.();
+      if (typeof cleanup === 'function') {
+        return cleanup;
+      }
     }
   }, deps);
 

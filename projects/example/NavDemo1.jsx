@@ -1,6 +1,8 @@
 import React from "react";
 import { css } from "goober";
 import { Subject } from "rxjs";
+import { filter } from "rxjs/operators";
+
 import { assertDefined } from "../service/generic";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly } from "../geom";
@@ -23,8 +25,9 @@ export default function NavDemo1(props) {
     return {
       clipPath: 'none',
       /** Current hole of Andros */
-      currentHoleId: 2,
+      currentHoleId: 0,
       doorsApi: /** @type {NPC.DoorsApi} */ ({}),
+      /** Hack to avoid repeated assertions */
       get gm() { return assertDefined(gm); },
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
@@ -37,7 +40,12 @@ export default function NavDemo1(props) {
       onChangeDeps() {
         if (gm) {// Initial update
           state.updateClipPath();
+          state.updateObservableDoors();
           update();
+          const sub = state.wire
+            .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
+            .subscribe((_) => { state.updateClipPath(); update(); });
+          return () => sub.unsubscribe();
         }
       },
       updateClipPath() {
