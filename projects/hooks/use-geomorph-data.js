@@ -5,9 +5,10 @@ import { parseLayout } from "../service/geomorph";
 import { RoomGraph } from "projects/graph/room-graph";
 
 /**
- * @param {Geomorph.LayoutKey} layoutKey 
+ * @param {Geomorph.LayoutKey} layoutKey
+ * @param {import('react-query').UseQueryOptions} [useQueryOpts]
  */
-export default function useGeomorphData(layoutKey) {
+export default function useGeomorphData(layoutKey, useQueryOpts) {
   return useQuery(geomorphJsonPath(layoutKey), async () => {
     
     const layout = await fetch(geomorphJsonPath(layoutKey))
@@ -44,7 +45,8 @@ export default function useGeomorphData(layoutKey) {
 
     return output;
   }, {
-    keepPreviousData: true,
+    // keepPreviousData: true,
     cacheTime: Infinity,
+    .../** @type {*} */ (useQueryOpts),
   });
 }

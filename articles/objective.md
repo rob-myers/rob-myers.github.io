@@ -65,7 +65,7 @@ myFunc() {
   show="2"
   tabs="[
     { key: 'terminal', filepath: 'nav-demo-1', weight: 30 },
-    { key: 'component', filepath: 'example/GeomorphCssLightsTest', weight: 70 },
+    { key: 'component', filepath: 'example/LightsTest', weight: 70 },
   ]"
 ></div>
 

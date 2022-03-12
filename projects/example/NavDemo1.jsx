@@ -11,6 +11,7 @@ import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
+import NPCs from "../npc/NPCs";
 
 // TODO Andros is situated and lighting reacts
 
@@ -19,7 +20,7 @@ export default function NavDemo1(props) {
 
   const update = useUpdate();
 
-  const { data: gm } = useGeomorphData(props.layoutKey);
+  const { data: gm } = useGeomorphData(props.layoutKey, { staleTime: Infinity });
 
   const state = useMuState(() => {
     return {
@@ -29,6 +30,7 @@ export default function NavDemo1(props) {
       doorsApi: /** @type {NPC.DoorsApi} */ ({}),
       /** Hack to avoid repeated assertions */
       get gm() { return assertDefined(gm); },
+      npcsApi: /** @type {NPC.NPCsApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
       getAdjacentHoleIds() {
@@ -42,6 +44,9 @@ export default function NavDemo1(props) {
           state.updateClipPath();
           state.updateObservableDoors();
           update();
+          state.npcsApi.spawn([
+            { key: 'andros' },
+          ]);
           const sub = state.wire
             .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
             .subscribe((_) => { state.updateClipPath(); update(); });
@@ -77,6 +82,10 @@ export default function NavDemo1(props) {
         draggable={false}
         width={gm.d.pngRect.width}
         height={gm.d.pngRect.height}
+      />
+
+      <NPCs
+        onLoad={api => state.npcsApi = api}
       />
 
       <img
