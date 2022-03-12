@@ -8,6 +8,9 @@
  * - yarn simplify-pngs media/unsorted
  * - yarn simplify-pngs public/png
  * - yarn simplify-pngs public/symbol
+ *   > Above should not be run (causes many diffs)
+ *   > Instead, trim earlier in directory media/unsorted
+ * - yarn simplify-pngs media/unsorted
  */
 
 import fs from 'fs';

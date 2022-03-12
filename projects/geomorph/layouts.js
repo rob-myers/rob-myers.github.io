@@ -59,6 +59,15 @@ const layoutDefs = {
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 960, 1080] },
     ],
   },
+
+  'g-102--research-deck': {
+    key: 'g-102--research-deck',
+    id: 102,
+    items: [
+      { symbol: '102--hull' },
+    ],
+  },
+
   'g-301--bridge': {
     key: 'g-301--bridge',
     id: 301,

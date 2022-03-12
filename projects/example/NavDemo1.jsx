@@ -13,7 +13,8 @@ import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
 
-// TODO Andros is situated and lighting reacts
+// TODO
+// - Andros is situated and lighting reacts
 
 /** @param {{ disabled?: boolean; layoutKey: Geomorph.LayoutKey }} props */
 export default function NavDemo1(props) {

@@ -155,6 +155,7 @@ declare namespace Geomorph {
 
   export type LayoutKey = (
     | 'g-101--multipurpose'
+    | 'g-102--research-deck'
     | 'g-301--bridge'
     | 'g-302--xboat-repair-bay'
     | 'g-303--passenger-deck'
@@ -162,6 +163,7 @@ declare namespace Geomorph {
 
   export type SymbolKey = (
     | '101--hull'
+    | '102--hull'
     | '301--hull'
     | '302--hull'
     | '303--hull'
