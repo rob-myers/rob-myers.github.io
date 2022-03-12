@@ -13,10 +13,11 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - ✅ Rename `GeomorphCssLightsTest` as `LightsTest`
-- Create `NavDemo1` based on `LightsTest`
-- Characters
-  - Circle with heart-beat and breath
-  - `NavDemo1` has Andros
+- ✅ Create `NavDemo1`
+  > to be based on `LightsTest` and `SvgNavDemo1`
+- 🚧 Characters
+  - 🚧 Circle with heart-beat and breath
+  - 🚧 `NavDemo1` has Andros
   - `NavDemo1` has other NPCs
 - Implement TTY interaction
 - Write into blog 'objective'

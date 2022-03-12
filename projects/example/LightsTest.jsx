@@ -10,19 +10,6 @@ import useUpdate from "../hooks/use-update";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 
-/**
- * TODO new approach:
- * - ✅ create hole image between geomorph and geomorph-dark
- * - 🅧 LightHole didn't work (outlying rooms go blank when lit)
- * - ✅ new door type: support tag `iris`
- *   - ✅ change door design for existing
- *   - ✅ add missing walls + doors to hull 301 and 101
- * - ✅ support multiple edges between same two rooms
- * - 🅧 try light polygons again
- * - ✅ far doors shown dark
- * - ✅ use `switch` instead of hole center, if exists
- */
-
 /** @param {{ disabled?: boolean }} props */
 export default function LightsTest(props) {
 
