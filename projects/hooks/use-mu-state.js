@@ -72,6 +72,11 @@ export default function useMuState(
       }
       state._prevFn = initializer.toString();
       state._prevInit = newInit;
+
+      const cleanup = state.onChangeDeps?.();
+      if (typeof cleanup === 'function') {
+        return cleanup;
+      }
     } else {
       /**
        * Deps changed, so update function bodies
@@ -90,6 +95,7 @@ export default function useMuState(
           });
         }
       }
+
       const cleanup = state.onChangeDeps?.();
       if (typeof cleanup === 'function') {
         return cleanup;

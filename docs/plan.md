@@ -14,7 +14,7 @@ __Aim towards website release__.
 
 - ✅ Rename `GeomorphCssLightsTest` as `LightsTest`
 - ✅ Create `NavDemo1`
-  > to be based on `LightsTest` and `SvgNavDemo1`
+  > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
 - 🚧 Characters
   - 🚧 Circle with heart-beat and breath
   - 🚧 `NavDemo1` has Andros

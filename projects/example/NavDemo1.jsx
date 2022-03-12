@@ -40,7 +40,7 @@ export default function NavDemo1(props) {
           .map(roomNode => roomNode.holeIndex);
       },
       onChangeDeps() {
-        if (gm) {// Initial update
+        if (gm) {// Initial and HMR update
           state.updateClipPath();
           state.updateObservableDoors();
           update();

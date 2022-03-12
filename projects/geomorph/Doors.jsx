@@ -55,8 +55,10 @@ export default function Doors(props) {
     };
   });
 
-  React.useEffect(() => {
+  React.useLayoutEffect(() => {
     props.onLoad?.(state.api);
+  }, []);
+  React.useEffect(() => {
     state.renderUnobservables();
   }, []);
 
