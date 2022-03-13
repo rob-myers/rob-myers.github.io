@@ -1,4 +1,5 @@
 import { css } from "goober";
+import { assertNonNull } from "../service/generic";
 import useMuState from "../hooks/use-mu-state";
 
 /** @param {NPC.NPCsProps} props */
@@ -9,9 +10,18 @@ export default function NPCs(props) {
     /** @type {NPC.NPCsApi} */
     const output = {
       apis: [],
-      canvas: /** @type {HTMLCanvasElement} */ ({}),
-      spawn(defs) {
-        // TODO
+      background: /** @type {HTMLCanvasElement} */ ({}),
+      root: /** @type {HTMLDivElement} */ ({}),
+      rootRef(el) {
+        if (el) {
+          state.root = el;
+          const canvas = assertNonNull(el.querySelector(`canvas`));
+          canvas.width = props.gm.d.pngRect.width;
+          canvas.height = props.gm.d.pngRect.height;
+          state.background = canvas;
+        }
+      },
+      spawn(defs) {// TODO
         console.log('spawning', defs);
       },
     };
@@ -20,10 +30,11 @@ export default function NPCs(props) {
     return output;
   });
   
-  const { pngRect } = props.gm.d;
-
   return (
-    <div className={rootCss}>
+    <div
+      className={rootCss}
+      ref={state.rootRef}
+    >
       {
         /**
          * Draw navpaths into a canvas.
@@ -31,10 +42,7 @@ export default function NPCs(props) {
          * The TTY will be used for interaction.
          */
       }
-      <canvas
-        className="navpaths"
-        ref={el => el && (state.canvas = el)}
-      />
+      <canvas className="navpaths" />
       <div className="npcs">
         {state.apis.map(api => (
           <div key={api.key} className={`npc ${api.key}`}>

@@ -18,7 +18,7 @@ export function assertDefined(value, valueName) {
 }
 
 /** 
- * JSDoc types lack a non-null assertion.
+ * JSDoc types lack a non-null-or-undefined assertion.
  * https://github.com/Microsoft/TypeScript/issues/23405#issuecomment-873331031
  * @template T
  * @param {T} value
