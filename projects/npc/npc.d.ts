@@ -7,7 +7,9 @@ declare namespace NPC {
 
   export interface NPCsApi {
     apis: NPCApi[];
-    canvas: HTMLCanvasElement;
+    background: HTMLCanvasElement;
+    root: HTMLDivElement;
+    rootRef: React.RefCallback<HTMLDivElement>;
     spawn(defs: NPCDef[]): void;
   }
 
