@@ -86,6 +86,7 @@ export default function NavDemo1(props) {
       />
 
       <NPCs
+        gm={gm}
         onLoad={api => state.npcsApi = api}
       />
 

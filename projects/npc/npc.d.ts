@@ -1,7 +1,13 @@
 declare namespace NPC {
 
+  export interface NPCsProps {
+    gm: Geomorph.GeomorphData;
+    onLoad: ((api: NPC.NPCsApi) => void);
+  }
+
   export interface NPCsApi {
     apis: NPCApi[];
+    canvas: HTMLCanvasElement;
     spawn(defs: NPCDef[]): void;
   }
 
