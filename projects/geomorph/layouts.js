@@ -65,6 +65,7 @@ const layoutDefs = {
     id: 102,
     items: [
       { symbol: '102--hull' },
+      { symbol: 'misc-stellar-cartography--020--10x10', transform: [-1, 0, 0, 1, 600, 600] },
     ],
   },
 

@@ -198,6 +198,7 @@ declare namespace Geomorph {
     | 'medical--007--2x3'
     | 'medical--008--2x3'
     | 'medical-bed--006--1.6x3.6'
+    | 'misc-stellar-cartography--020--10x10'
     | 'misc-stellar-cartography--023--4x4'
     | 'office--001--2x2'
     | 'office--006--2x2'
