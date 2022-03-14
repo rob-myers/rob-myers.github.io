@@ -65,6 +65,10 @@ const layoutDefs = {
     id: 102,
     items: [
       { symbol: '102--hull' },
+      { symbol: 'office--004--2x2', transform: [0, 1, 1, 0, 420, 360], doors: ['w'] },
+      { symbol: 'office--004--2x2', transform: [0, 1, 1, 0, 540, 360], doors: ['w'] },
+      { symbol: 'stateroom--012--2x2', transform: [0, -1, -1, 0, 540, 600] },
+      { symbol: 'stateroom--012--2x2', transform: [0, -1, -1, 0, 660, 600] },
       { symbol: 'misc-stellar-cartography--020--10x10', transform: [-1, 0, 0, 1, 600, 600] },
     ],
   },
