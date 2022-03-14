@@ -1,0 +1,627 @@
+{
+  "parentFolder": "Engineering",
+  "sourceType": "symbol",
+  "fileMetas": [
+    {
+      "srcName": "Engineering 001 [10x10].png",
+      "dstName": "engineering--001--2x2.png",
+      "id": 1,
+      "gridDim": [2, 2],
+      "is": [],
+      "has": [],
+      "ids": [1]
+    },
+    {
+      "srcName": "Engineering 002 [10x15].png",
+      "dstName": "engineering--002--2x3.png",
+      "id": 2,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [2]
+    },
+    {
+      "srcName": "Engineering 003 [10x15].png",
+      "dstName": "engineering--003--2x3.png",
+      "id": 3,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [3]
+    },
+    {
+      "srcName": "Engineering 004 [10x20].png",
+      "dstName": "engineering--004--2x4.png",
+      "id": 4,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [4]
+    },
+    {
+      "srcName": "Engineering 005 [10x20].png",
+      "dstName": "engineering--005--2x4.png",
+      "id": 5,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [5]
+    },
+    {
+      "srcName": "Engineering 006 [10x20].png",
+      "dstName": "engineering--006--2x4.png",
+      "id": 6,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [6]
+    },
+    {
+      "srcName": "Engineering 007 [10x20].png",
+      "dstName": "engineering--007--2x4.png",
+      "id": 7,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [7]
+    },
+    {
+      "srcName": "Engineering 008 [10x20].png",
+      "dstName": "engineering--008--2x4.png",
+      "id": 8,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [8]
+    },
+    {
+      "srcName": "Engineering 009 [10x20].png",
+      "dstName": "engineering--009--2x4.png",
+      "id": 9,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [9]
+    },
+    {
+      "srcName": "Engineering 010 [10x20].png",
+      "dstName": "engineering--010--2x4.png",
+      "id": 10,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [10]
+    },
+    {
+      "srcName": "Engineering 011 [10x20].png",
+      "dstName": "engineering--011--2x4.png",
+      "id": 11,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [11]
+    },
+    {
+      "srcName": "Engineering 012 [10x20].png",
+      "dstName": "engineering--012--2x4.png",
+      "id": 12,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [12]
+    },
+    {
+      "srcName": "Engineering 013 [10x20].png",
+      "dstName": "engineering--013--2x4.png",
+      "id": 13,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [13]
+    },
+    {
+      "srcName": "Engineering 014 [10x20].png",
+      "dstName": "engineering--014--2x4.png",
+      "id": 14,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [14]
+    },
+    {
+      "srcName": "Engineering 015 [10x20].png",
+      "dstName": "engineering--015--2x4.png",
+      "id": 15,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [15]
+    },
+    {
+      "srcName": "Engineering 016 [10x20].png",
+      "dstName": "engineering--016--2x4.png",
+      "id": 16,
+      "gridDim": [2, 4],
+      "is": [],
+      "has": [],
+      "ids": [16]
+    },
+    {
+      "srcName": "Engineering 017 [15x20].png",
+      "dstName": "engineering--017--3x4.png",
+      "id": 17,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [17]
+    },
+    {
+      "srcName": "Engineering 018 [15x25].png",
+      "dstName": "engineering--018--3x5.png",
+      "id": 18,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [18]
+    },
+    {
+      "srcName": "Engineering 019 [15x20].png",
+      "dstName": "engineering--019--3x4.png",
+      "id": 19,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [19]
+    },
+    {
+      "srcName": "Engineering 020 [15x20].png",
+      "dstName": "engineering--020--3x4.png",
+      "id": 20,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [20]
+    },
+    {
+      "srcName": "Engineering 021 [15x25].png",
+      "dstName": "engineering--021--3x5.png",
+      "id": 21,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [21]
+    },
+    {
+      "srcName": "Engineering 022 [15x25].png",
+      "dstName": "engineering--022--3x5.png",
+      "id": 22,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [22]
+    },
+    {
+      "srcName": "Engineering 023 [10x15].png",
+      "dstName": "engineering--023--2x3.png",
+      "id": 23,
+      "gridDim": [2, 3],
+      "is": [],
+      "has": [],
+      "ids": [23]
+    },
+    {
+      "srcName": "Engineering 024 [25x25].png",
+      "dstName": "engineering--024--5x5.png",
+      "id": 24,
+      "gridDim": [5, 5],
+      "is": [],
+      "has": [],
+      "ids": [24]
+    },
+    {
+      "srcName": "Engineering 025 [15x20].png",
+      "dstName": "engineering--025--3x4.png",
+      "id": 25,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [25]
+    },
+    {
+      "srcName": "Engineering 026 [15x30].png",
+      "dstName": "engineering--026--3x6.png",
+      "id": 26,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [26]
+    },
+    {
+      "srcName": "Engineering 027 [15x30].png",
+      "dstName": "engineering--027--3x6.png",
+      "id": 27,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [27]
+    },
+    {
+      "srcName": "Engineering 028 [20x20].png",
+      "dstName": "engineering--028--4x4.png",
+      "id": 28,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [28]
+    },
+    {
+      "srcName": "Engineering 029 [20x20].png",
+      "dstName": "engineering--029--4x4.png",
+      "id": 29,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [29]
+    },
+    {
+      "srcName": "Engineering 030 [20x20].png",
+      "dstName": "engineering--030--4x4.png",
+      "id": 30,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [30]
+    },
+    {
+      "srcName": "Engineering 031 [20x20].png",
+      "dstName": "engineering--031--4x4.png",
+      "id": 31,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [31]
+    },
+    {
+      "srcName": "Engineering 032 [20x20].png",
+      "dstName": "engineering--032--4x4.png",
+      "id": 32,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [32]
+    },
+    {
+      "srcName": "Engineering 033 [20x20].png",
+      "dstName": "engineering--033--4x4.png",
+      "id": 33,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [33]
+    },
+    {
+      "srcName": "Engineering 034 [20x20].png",
+      "dstName": "engineering--034--4x4.png",
+      "id": 34,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [34]
+    },
+    {
+      "srcName": "Engineering 035 [20x20].png",
+      "dstName": "engineering--035--4x4.png",
+      "id": 35,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [35]
+    },
+    {
+      "srcName": "Engineering 036 [20x20].png",
+      "dstName": "engineering--036--4x4.png",
+      "id": 36,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [36]
+    },
+    {
+      "srcName": "Engineering 037 [20x20].png",
+      "dstName": "engineering--037--4x4.png",
+      "id": 37,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [37]
+    },
+    {
+      "srcName": "Engineering 038 [20x20].png",
+      "dstName": "engineering--038--4x4.png",
+      "id": 38,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [38]
+    },
+    {
+      "srcName": "Engineering 039 [20x20].png",
+      "dstName": "engineering--039--4x4.png",
+      "id": 39,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [39]
+    },
+    {
+      "srcName": "Engineering 040 [20x20].png",
+      "dstName": "engineering--040--4x4.png",
+      "id": 40,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [40]
+    },
+    {
+      "srcName": "Engineering 041 [20x20].png",
+      "dstName": "engineering--041--4x4.png",
+      "id": 41,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [41]
+    },
+    {
+      "srcName": "Engineering 042 [20x20].png",
+      "dstName": "engineering--042--4x4.png",
+      "id": 42,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [42]
+    },
+    {
+      "srcName": "Engineering 043 [20x20].png",
+      "dstName": "engineering--043--4x4.png",
+      "id": 43,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [43]
+    },
+    {
+      "srcName": "Engineering 044 [20x20].png",
+      "dstName": "engineering--044--4x4.png",
+      "id": 44,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [44]
+    },
+    {
+      "srcName": "Engineering 045 [20x30].png",
+      "dstName": "engineering--045--4x6.png",
+      "id": 45,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [45]
+    },
+    {
+      "srcName": "Engineering 046 [20x30].png",
+      "dstName": "engineering--046--4x6.png",
+      "id": 46,
+      "gridDim": [4, 6],
+      "is": [],
+      "has": [],
+      "ids": [46]
+    },
+    {
+      "srcName": "Engineering 047 [20x35].png",
+      "dstName": "engineering--047--4x7.png",
+      "id": 47,
+      "gridDim": [4, 7],
+      "is": [],
+      "has": [],
+      "ids": [47]
+    },
+    {
+      "srcName": "Engineering 048 [20x40].png",
+      "dstName": "engineering--048--4x8.png",
+      "id": 48,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [48]
+    },
+    {
+      "srcName": "Engineering 049 [30x40].png",
+      "dstName": "engineering--049--6x8.png",
+      "id": 49,
+      "gridDim": [6, 8],
+      "is": [],
+      "has": [],
+      "ids": [49]
+    },
+    {
+      "srcName": "Engineering 050 [15x20].png",
+      "dstName": "engineering--050--3x4.png",
+      "id": 50,
+      "gridDim": [3, 4],
+      "is": [],
+      "has": [],
+      "ids": [50]
+    },
+    {
+      "srcName": "Engineering 051 [15x30].png",
+      "dstName": "engineering--051--3x6.png",
+      "id": 51,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [51]
+    },
+    {
+      "srcName": "Engineering 052 [20x40].png",
+      "dstName": "engineering--052--4x8.png",
+      "id": 52,
+      "gridDim": [4, 8],
+      "is": [],
+      "has": [],
+      "ids": [52]
+    },
+    {
+      "srcName": "Engineering 053 [20x20].png",
+      "dstName": "engineering--053--4x4.png",
+      "id": 53,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [53]
+    },
+    {
+      "srcName": "Engineering 054 [20x20].png",
+      "dstName": "engineering--054--4x4.png",
+      "id": 54,
+      "gridDim": [4, 4],
+      "is": [],
+      "has": [],
+      "ids": [54]
+    },
+    {
+      "srcName": "Engineering 055 [15x30].png",
+      "dstName": "engineering--055--3x6.png",
+      "id": 55,
+      "gridDim": [3, 6],
+      "is": [],
+      "has": [],
+      "ids": [55]
+    },
+    {
+      "srcName": "Engineering 056 [15x25].png",
+      "dstName": "engineering--056--3x5.png",
+      "id": 56,
+      "gridDim": [3, 5],
+      "is": [],
+      "has": [],
+      "ids": [56]
+    },
+    {
+      "srcName": "Engineering 057 [15x15].png",
+      "dstName": "engineering--057--3x3.png",
+      "id": 57,
+      "gridDim": [3, 3],
+      "is": [],
+      "has": [],
+      "ids": [57]
+    },
+    {
+      "srcName": "Engineering 101 [35x60].png",
+      "dstName": "engineering--101--7x12.png",
+      "id": 101,
+      "gridDim": [7, 12],
+      "is": [],
+      "has": [],
+      "ids": [101]
+    },
+    {
+      "srcName": "Engineering 102 [35x40].png",
+      "dstName": "engineering--102--7x8.png",
+      "id": 102,
+      "gridDim": [7, 8],
+      "is": [],
+      "has": [],
+      "ids": [102]
+    },
+    {
+      "srcName": "Engineering 103 [25x45].png",
+      "dstName": "engineering--103--5x9.png",
+      "id": 103,
+      "gridDim": [5, 9],
+      "is": [],
+      "has": [],
+      "ids": [103]
+    },
+    {
+      "srcName": "Engineering 104 [25x30].png",
+      "dstName": "engineering--104--5x6.png",
+      "id": 104,
+      "gridDim": [5, 6],
+      "is": [],
+      "has": [],
+      "ids": [104]
+    },
+    {
+      "srcName": "Engineering 105 [25x35].png",
+      "dstName": "engineering--105--5x7.png",
+      "id": 105,
+      "gridDim": [5, 7],
+      "is": [],
+      "has": [],
+      "ids": [105]
+    },
+    {
+      "srcName": "Engineering 106 [20x25].png",
+      "dstName": "engineering--106--4x5.png",
+      "id": 106,
+      "gridDim": [4, 5],
+      "is": [],
+      "has": [],
+      "ids": [106]
+    },
+    {
+      "srcName": "Engineering 107 [25x45].png",
+      "dstName": "engineering--107--5x9.png",
+      "id": 107,
+      "gridDim": [5, 9],
+      "is": [],
+      "has": [],
+      "ids": [107]
+    },
+    {
+      "srcName": "Engineering 108 [35x50].png",
+      "dstName": "engineering--108--7x10.png",
+      "id": 108,
+      "gridDim": [7, 10],
+      "is": [],
+      "has": [],
+      "ids": [108]
+    },
+    {
+      "srcName": "Engineering 109 [40x45].png",
+      "dstName": "engineering--109--8x9.png",
+      "id": 109,
+      "gridDim": [8, 9],
+      "is": [],
+      "has": [],
+      "ids": [109]
+    },
+    {
+      "srcName": "Engineering 110 [25x50].png",
+      "dstName": "engineering--110--5x10.png",
+      "id": 110,
+      "gridDim": [5, 10],
+      "is": [],
+      "has": [],
+      "ids": [110]
+    },
+    {
+      "srcName": "Engineering 111 [45x70].png",
+      "dstName": "engineering--111--9x14.png",
+      "id": 111,
+      "gridDim": [9, 14],
+      "is": [],
+      "has": [],
+      "ids": [111]
+    },
+    {
+      "srcName": "Engineering 112 [60x100].png",
+      "dstName": "engineering--112--12x20.png",
+      "id": 112,
+      "gridDim": [12, 20],
+      "is": [],
+      "has": [],
+      "ids": [112]
+    }
+  ]
+}
