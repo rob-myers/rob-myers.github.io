@@ -12,6 +12,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- ensure windows cut out of walls (102)
+- clarify convention that walls must have things cut out of them, else holes cannot be computed
+
 - ✅ Rename `GeomorphCssLightsTest` as `LightsTest`
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`

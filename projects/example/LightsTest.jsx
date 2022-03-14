@@ -139,12 +139,12 @@ const layoutKey = 'g-102--research-deck';
 
 const rootCss = css`
   img.geomorph-dark {
-    filter: invert(100%) brightness(55%) contrast(200%) sepia(0%);
     position: absolute;
+    filter: invert(100%) brightness(45%) contrast(200%) sepia(0%) hue-rotate(0deg) blur(0px);
   }
   img.geomorph {
-    filter: brightness(80%);
     position: absolute;
+    filter: brightness(100%);
   }
   /* img.geomorph-light {
     filter:  brightness(75%);

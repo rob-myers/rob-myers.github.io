@@ -1,5 +1,4 @@
 import { css } from "goober";
-import { assertNonNull } from "../service/generic";
 import useMuState from "../hooks/use-mu-state";
 
 /** @param {NPC.NPCsProps} props */
@@ -15,7 +14,7 @@ export default function NPCs(props) {
       rootRef(el) {
         if (el) {
           state.root = el;
-          const canvas = assertNonNull(el.querySelector(`canvas`));
+          const canvas = /** @type {*} */ (el.querySelector('canvas.background'));
           canvas.width = props.gm.d.pngRect.width;
           canvas.height = props.gm.d.pngRect.height;
           state.background = canvas;
@@ -37,12 +36,13 @@ export default function NPCs(props) {
     >
       {
         /**
-         * Draw navpaths into a canvas.
+         * We'll draw navpaths into a canvas.
          * We don't want clickable navpoints.
          * The TTY will be used for interaction.
+         * We might use the TTY to place clickable points along a navpath.
          */
       }
-      <canvas className="navpaths" />
+      <canvas className="background" />
       <div className="npcs">
         {state.apis.map(api => (
           <div key={api.key} className={`npc ${api.key}`}>

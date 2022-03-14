@@ -186,6 +186,7 @@ declare namespace Geomorph {
     | 'galley-and-mess-halls--025--2x3'
     | 'iris-valves--005--1x1'
     | 'lifeboat--small-craft'
+    | 'lab--018--4x4'
     | 'lounge--009--2x3'
     | 'lounge--015--2x4'
     | 'low-berth--003--1x1'

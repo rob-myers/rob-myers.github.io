@@ -70,6 +70,9 @@ const layoutDefs = {
       { symbol: 'machinery--065--1.8x1.8', transform: [1, 0, 0, 1, 240 - 4, 240 - 2] },
       { symbol: 'console--018--1x1', transform: [-1, 0, 0, 1, 240, 0] },
       { symbol: 'iris-valves--005--1x1', transform: [0, -1, 1, 0, 0, 360] },
+      { symbol: 'lab--018--4x4', transform: [1, 0, 0, -1, 360, 240] },
+      { symbol: 'lab--018--4x4', transform: [1, 0, 0, -1, 600, 240] },
+
       { symbol: 'iris-valves--005--1x1', transform: [1, 0, 0, 1, 840, 0] },
       
       { symbol: 'machinery--156--1.8x3.6', transform: [1, 0, 0, 1, +5, 360] },
