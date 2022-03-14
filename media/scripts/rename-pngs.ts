@@ -31,6 +31,7 @@
  * yarn rename-pngs symbol media/Symbols/'Dock, Small Craft' media/symbol-dock-small-craft
  * yarn rename-pngs symbol 'media/Symbols/Low Berth' media/symbol-low-berth
  * yarn rename-pngs symbol 'media/Symbols/Galley & Mess' media/symbol-galley-mess
+ * yarn rename-pngs symbol 'media/Symbols/Engineering' media/symbol-engineering
  * ```
  */
 import fs from 'fs';

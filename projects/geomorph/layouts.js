@@ -14,7 +14,7 @@ const layoutDefs = {
       { symbol: 'iris-valves--005--1x1', transform: [1, 0, 0, 1, 840, 0] },
       { symbol: 'fuel--010--2x4', transform: [1, 0, 0, 1, 960, 0] },
 
-      { symbol: 'machinery--158--1.8x3.6', transform: [0, -1, 1, 0, +10, 240] },
+      { symbol: 'machinery--158--1.8x3.6', transform: [0, -1, 1, 0, 0, 240 + 5] },
       { symbol: 'stateroom--020--2x3', transform: [0, 1, 1, 0, 360, 120] },
       { symbol: 'fresher--020--2x2', transform: [0, 1, 1, 0, 540, 120] },
       { symbol: 'lounge--009--2x3', transform: [-1, 0, 0, -1, 840, 240] },
@@ -48,7 +48,7 @@ const layoutDefs = {
 
       { symbol: 'machinery--091--1.6x1.8', transform: [1, 0, 0, 1, 540 + 10, 960] },
       { symbol: 'office--025--2x3', transform: [0, 1, 1, 0, 360, 960], doors: ['w'] },
-      { symbol: 'machinery--156--1.8x3.6', transform: [0, -1, 1, 0, +12, 1080 - 12] },
+      { symbol: 'machinery--156--1.8x3.6', transform: [0, -1, 1, 0, 0, 1080 - 6] },
       { symbol: 'office--025--2x3', transform: [0, 1, -1, 0, 840, 960], doors: ['w'] },
       { symbol: 'machinery--357--2.2x4', transform: [1, 0, 0, 1, 960, 960] },
 
@@ -65,11 +65,21 @@ const layoutDefs = {
     id: 102,
     items: [
       { symbol: '102--hull' },
+      { symbol: 'empty-room--060--4x4', transform: [1, 0, 0, -1, 0, 240] },
+      { symbol: 'machinery--158--1.8x3.6', transform: [1, 0, 0, 1, + 5, 0] },
+      { symbol: 'machinery--065--1.8x1.8', transform: [1, 0, 0, 1, 240 - 4, 240 - 2] },
+      { symbol: 'console--018--1x1', transform: [-1, 0, 0, 1, 240, 0] },
+      { symbol: 'iris-valves--005--1x1', transform: [0, -1, 1, 0, 0, 360] },
+      { symbol: 'iris-valves--005--1x1', transform: [1, 0, 0, 1, 840, 0] },
+      
+      { symbol: 'machinery--156--1.8x3.6', transform: [1, 0, 0, 1, +5, 360] },
       { symbol: 'office--004--2x2', transform: [0, 1, 1, 0, 420, 360], doors: ['w'] },
       { symbol: 'office--004--2x2', transform: [0, 1, 1, 0, 540, 360], doors: ['w'] },
       { symbol: 'stateroom--012--2x2', transform: [0, -1, -1, 0, 540, 600] },
       { symbol: 'stateroom--012--2x2', transform: [0, -1, -1, 0, 660, 600] },
+
       { symbol: 'misc-stellar-cartography--020--10x10', transform: [-1, 0, 0, 1, 600, 600] },
+      { symbol: 'iris-valves--005--1x1', transform: [0, 1, 1, 0, 1140, 840] },
     ],
   },
 
