@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="pointer-events: none;">
+    <title>background</title>
+    <image width="620" height="620" x="-10" y="-10" xlink:href="data:image/png;base64,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"/>
+  </g>
+  <g style="pointer-events: none;" transform="matrix(1, 0, 0, 1, 0, 0.000001)">
+    <title>walls</title>
+    <rect y="-10" width="590" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;"/>
+    <rect y="590" width="610" height="20" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;"/>
+  </g>
+  <g style="pointer-events: none;">
+    <title>obstacles</title>
+    <rect x="221.163" y="296.453" width="158.649" height="137.09" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+    <rect x="9.462" y="448.083" width="579.878" height="142.204" style="stroke: rgb(0, 0, 0); fill: rgb(0, 0, 255); fill-opacity: 0.5;"/>
+  </g>
+  <g style="">
+    <title>singles</title>
+    <rect width="20" height="620" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="590" y="-10">
+      <title>wall</title>
+    </rect>
+    <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="247.824" y="82.658">
+      <title>label office</title>
+    </rect>
+    <rect width="20" height="620" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="-10" y="-10">
+      <title>wall</title>
+    </rect>
+    <rect x="575" y="50" width="48" height="200" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
+      <title>door e</title>
+    </rect>
+    <rect x="-25" y="50" width="48" height="200" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
+      <title>door w</title>
+    </rect>
+  </g>
+</svg>
