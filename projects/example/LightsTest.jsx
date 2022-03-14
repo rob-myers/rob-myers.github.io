@@ -131,8 +131,9 @@ export default function LightsTest(props) {
 }
 
 /** @type {Geomorph.LayoutKey} */
-const layoutKey = 'g-301--bridge';
+// const layoutKey = 'g-301--bridge';
 // const layoutKey = 'g-101--multipurpose';
+const layoutKey = 'g-102--research-deck';
 // const layoutKey = 'g-302--xboat-repair-bay';
 // const layoutKey = 'g-303--passenger-deck';
 
@@ -179,7 +180,7 @@ function DebugGraph({ gm }) {
       {gm.d.roomGraph.nodesArray.map((node, i) =>
         <circle
           key={i}
-          stroke="rgba(200, 200, 200, 1)"
+          stroke="rgba(200, 0, 0, 1)"
           fill="none"
           r={5}
           {...node.type === 'room'
@@ -188,18 +189,18 @@ function DebugGraph({ gm }) {
           }
         />
         )}
-        {/* {gm.holes.map((poly) =>
+        {gm.holes.map((poly) =>
           <path
-            fill="rgba(0, 0, 200, 0.4)"
-            stroke="red"
+            fill="none"
+            stroke="yellow"
             d={poly.svgPath}
           />
-        )} */}
+        )}
         {gm.d.roomGraph.edgesArray
           .filter((x) => x.src.type === 'room' && x.dst.type === 'door')
           .map((edge) =>
             <line
-              stroke="grey"
+              stroke="red"
               x1={gm.d.holeSwitches[
                 /** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].x}
               y1={gm.d.holeSwitches[
