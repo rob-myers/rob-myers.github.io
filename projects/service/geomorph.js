@@ -57,12 +57,19 @@ export async function createLayout(def, lookup, triangleService) {
   groups.obstacles.forEach(poly => poly.fixOrientation().precision(4));
   groups.walls.forEach((poly) => poly.fixOrientation().precision(4));
   
-  // Cut doors from walls
+  /**
+   * Cut doors from walls, changing `groups.walls` and `groups.singles`.
+   * We do not cut out windows because conceptually easier to have one notion.
+   * But when rendering we'll need to avoid drawing wall over window.
+   */
   const doorPolys = singlesToPolys(groups.singles, 'door');
-  // Do not union walls yet, as may self-intersect when outset
-  // Our polygon outset doesn't support self-intersecting outer ring
+  /**
+   * We cut doors from walls, without first unioning the walls.
+   * We do this because our polygon outset doesn't support self-intersecting outer ring.
+   */
   const unjoinedWalls = groups.walls.flatMap(x => Poly.cutOut(doorPolys, [x]));
-  const uncutWalls = groups.walls; // Keep a reference to uncut walls
+  /** We keep a reference to uncut walls */
+  const uncutWalls = groups.walls;
   groups.walls = Poly.union(unjoinedWalls);
   groups.singles = groups.singles.reduce((agg, single) =>
     agg.concat(single.tags.includes('wall')
@@ -74,11 +81,12 @@ export async function createLayout(def, lookup, triangleService) {
   const symbols = def.items.map(x => lookup[x.symbol]);
   const hullSym = symbols[0];
   const hullOutline = hullSym.hull.map(x => x.clone().removeHoles()); // Not transformed
-  const windows = singlesToPolys(groups.singles, 'window');
+  const windowPolys = singlesToPolys(groups.singles, 'window');
 
   // Navigation polygon
   const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
-    unjoinedWalls.flatMap(x => x.createOutset(12)), // Use non-unioned walls
+    // Use non-unioned walls to avoid outset issue
+    unjoinedWalls.flatMap(x => x.createOutset(12)),
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(x => x.cleanFinalReps().fixOrientation().precision(4));
 
@@ -110,7 +118,7 @@ export async function createLayout(def, lookup, triangleService) {
       return { text, center, rect, padded };
     });
 
-  const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windows));
+  const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys));
   const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
   const roomGraphJson = computeRoomGraphJson(holes, doorPolys);
 
@@ -136,7 +144,7 @@ export async function createLayout(def, lookup, triangleService) {
     roomGraph: roomGraphJson,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
-    hullTop: Poly.cutOut(doorPolys.concat(windows), hullSym.hull),
+    hullTop: Poly.cutOut(doorPolys.concat(windowPolys), hullSym.hull),
     hullRect: Rect.from(...hullSym.hull.concat(doorPolys).map(x => x.rect)),
 
     items: symbols.map(/** @returns {Geomorph.ParsedLayout['items'][0]} */  (sym, i) => ({

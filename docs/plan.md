@@ -12,7 +12,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ensure windows cut out of walls (102)
+- ✅ render: ensure windows cut out of walls
 - clarify convention that walls must have things cut out of them, else holes cannot be computed
 
 - ✅ Rename `GeomorphCssLightsTest` as `LightsTest`

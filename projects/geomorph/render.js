@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { Vect } from "../geom";
+import { Poly, Vect } from "../geom";
 import { labelMeta } from './geomorph.model';
 import { singlesToPolys } from '../service/geomorph';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service/dom';
@@ -108,17 +108,10 @@ export async function renderGeomorph(
   wallBounds && fillPolygon(ctxt, walls);
   ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(ctxt, layout.hullTop);
-  singles.forEach(({ poly, tags }) => {
-    if (tags.includes('wall')) {
-      ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
-      fillPolygon(ctxt, [poly]);
-    }
-  });
-
-  // // Outset testing
-  // // We do not support polygon outlines which self-intersect after being outset
-  // setStyle(ctxt, 'rgba(0, 0, 0, 0.5)', 'red', 2);
-  // strokePolygon(ctxt, walls.flatMap(x => new Poly(Poly.insetRing(x.outline, -12))) );
+  // Draw walls without drawing them over windows
+  const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
+  ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
+  fillPolygon(ctxt, wallsSansWindows);
 
   if (doors) {
     const doors = singlesToPolys(singles, 'door');
