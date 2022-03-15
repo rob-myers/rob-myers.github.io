@@ -153,6 +153,9 @@ const articleCss = css`
     a {
       color: #444;
     }
+    @media(max-width: 600px) {
+      font-weight: 400;
+    }
   }
   h2 {
     font-size: 2.8rem;
@@ -432,9 +435,9 @@ const articleComponents = (
   },
 
   // Occurs once in each article
-  h2({ node, children, ...props }: any) {
+  h2({ children }: any) {
     return <>
-      <h2 {...props}>
+      <h2>
         <Link href={`#${articleKey}`}>
           <a>{children}</a>
         </Link>
@@ -452,7 +455,7 @@ const articleComponents = (
     </>;
   },
 
-  h3({ node, children, ...props }: any) {
+  h3({ children }: any) {
     const id = React.useMemo(() => `${articleKey}--${
       React.Children.toArray(children)[0]
         .toString().toLowerCase().replace(/\s/g, '-')
@@ -460,7 +463,7 @@ const articleComponents = (
   , []);
 
     return (
-      <h3 {...props}>
+      <h3>
         <span id={id} className="anchor" />
         <Link href={`#${id}`}>
           <a>{children}</a>
