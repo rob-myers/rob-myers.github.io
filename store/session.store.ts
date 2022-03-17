@@ -243,13 +243,18 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     removeSession: (sessionKey) => {
-      const { process, ttyShell } = get().session[sessionKey];
-      for (const { cleanups } of Object.values(process)) {
-        cleanups.forEach(cleanup => cleanup());
-        cleanups.length = 0;
+      const session = get().session[sessionKey];
+      if (session) {
+        const { process, ttyShell } = get().session[sessionKey];
+        for (const { cleanups } of Object.values(process)) {
+          cleanups.forEach(cleanup => cleanup());
+          cleanups.length = 0;
+        }
+        delete get().device[ttyShell.key];
+        set(({ session }) => ({ session: removeFromLookup(sessionKey, session) }));
+      } else {
+        console.log(`removeSession: ${sessionKey}: cannot remove non-existent session`);
       }
-      delete get().device[ttyShell.key];
-      set(({ session }) => ({ session: removeFromLookup(sessionKey, session) }));
     },
 
     resolve: (fd, meta) => {
