@@ -35,6 +35,11 @@ export default function Terminal({ sessionKey, env }: Props) {
             );
             ttyXterm.initialise();
             /**
+             * We patched `xterm` so this textarea is actually an input,
+             * as suggested in https://github.com/xtermjs/xterm.js/issues/2403
+             */
+            xterm.textarea?.setAttribute('type', 'password');
+            /**
              * We wait because session[sessionKey] is not yet defined (?!),
              * e.g. on hot reload after edit ancestral html.
              */

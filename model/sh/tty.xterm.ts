@@ -273,15 +273,6 @@ export class TtyXterm {
     const ord = data.charCodeAt(0);
     let cursor: number;
 
-    // DEBUG IN PROGRESS
-    // document.body.append(JSON.stringify([Array.from(data), Array.from(this.input)]));
-    if (data.length > 1 && this.input.startsWith(data)) {
-      // Assume is a mobile input
-      this.clearInput();
-      this.setInput(this.forceLowerCase ? data.toLowerCase() : data);
-      return;
-    }
-
     if (ord == 0x1b) { // ANSI escape sequences
       switch (data.slice(1)) {
         case '[A': {// Up arrow
