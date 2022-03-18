@@ -115,14 +115,6 @@ export function svgPathToPolygon(svgPathString) {
 	);
 }
 
-/** https://stackoverflow.com/a/4819886/2917822 */
-export let canTouchDevice = (
-	typeof window !== 'undefined' && (
-		'ontouchstart' in window ||
-    navigator.maxTouchPoints > 0
-	)
-);
-
 /**
  * @param {CanvasRenderingContext2D} ctxt 
  * @param  {Geom.VectJson[]} ring 
@@ -221,4 +213,14 @@ export function loadImage(src) {
 export function getRelativePos(e) {
 	const { left, top } = (/** @type {HTMLElement} */ (e.currentTarget)).getBoundingClientRect();
 	return new Vect(e.clientX - left, e.clientY - top);
+}
+
+/** https://stackoverflow.com/a/4819886/2917822 */
+export function canTouchDevice() {
+  return (
+    typeof window !== 'undefined' && (
+    'ontouchstart' in window
+    || navigator.maxTouchPoints > 0
+    || /** @type {*} */ (navigator).msMaxTouchPoints > 0
+  ));
 }

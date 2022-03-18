@@ -4,18 +4,18 @@ import { useBeforeunload } from 'react-beforeunload';
 import type { ITerminalOptions } from 'xterm';
 
 import { TtyXterm } from 'model/sh/tty.xterm';
+import { canTouchDevice } from 'projects/service/dom';
 import useSession from 'store/session.store';
 import { XTerm } from 'components/dynamic';
-import useMediaQuery from 'projects/hooks/use-media-query';
+import useOnResize from 'projects/hooks/use-on-resize';
 
 export default function Terminal({ sessionKey, env }: Props) {
 
-  const session = useSession(({ session }) =>
-    sessionKey in session ? session[sessionKey] : null
-  );
-
+  const session = useSession(({ session }) => session[sessionKey]??null);
+  // TODO move to e.g. _app.tsx
   useBeforeunload(() => useSession.api.persist(sessionKey));
-  const smallView = useMediaQuery('(max-width: 600px)');
+
+  const isTouchDevice = useOnResize(canTouchDevice);
 
   React.useEffect(() => {
     useSession.api.createSession(sessionKey, env);
@@ -42,15 +42,20 @@ export default function Terminal({ sessionKey, env }: Props) {
           options={options}
         />
       ) : null}
-      {smallView && <MobileHelperUI />}
+
+      {isTouchDevice && (
+        <TouchHelperUI />
+      )}
     </Root>
   )
 };
 
 interface Props {
   sessionKey: string;
-  /** Can initialise variables */
-  env: Record<string, any>;
+  /** Can initialize variables */
+  env: {
+    [envVarName: string]: any;
+  };
 }
 
 const Root = styled('div')<{}>`
@@ -76,7 +81,7 @@ const options: ITerminalOptions = {
   rows: 50,
 };
 
-function MobileHelperUI() {
+function TouchHelperUI() {
   return (
     <div className={mobileHelperUiCss}>
       <div

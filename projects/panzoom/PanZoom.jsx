@@ -31,7 +31,8 @@ export default function PanZoom(props) {
         background-color: ${props.dark ? '#000' : 'none'};
 
         > g.content {
-          shape-rendering: ${canTouchDevice ? 'optimizeSpeed' : 'auto'};
+          /** TODO justification? */
+          shape-rendering: ${canTouchDevice() ? 'optimizeSpeed' : 'auto'};
         }
         > .grid {
           pointer-events: none;

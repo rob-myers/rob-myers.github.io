@@ -7,7 +7,7 @@ import useSiteStore from "store/site.store";
 import { CodeEditor, Terminal } from 'components/dynamic';
 
 export default function Portals() {
-  const lookup = useSiteStore(x => x.portal);
+  const lookup = useSiteStore(site => site.portal);
   const items = React.useMemo(() => Object.values(lookup), [lookup]);
 
   return <>
@@ -43,8 +43,8 @@ export default function Portals() {
           );
         }
         case 'terminal': {
-          const env = {
-            test: {}, // TODO
+          const env: React.ComponentProps<typeof Terminal>['env'] = {
+            test: {}, // TODO (?)
           };
           return (
             <portals.InPortal key={key} node={portal}>
