@@ -216,7 +216,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -6, "width": 1212, "height": 1212},
-    "lastModified": 1646752479474.997
+    "lastModified": 1646839468356.158
   },
   "102--hull": {
     "key": "102--hull",
@@ -340,7 +340,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -6, "width": 1212, "height": 1212},
-    "lastModified": 1647343305171.1003
+    "lastModified": 1647109475832.4443
   },
   "301--hull": {
     "key": "301--hull",
@@ -683,7 +683,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628},
-    "lastModified": 1647343305173.2314
+    "lastModified": 1646919788767.7744
   },
   "302--hull": {
     "key": "302--hull",
@@ -1040,7 +1040,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -61, "width": 1212, "height": 667},
-    "lastModified": 1647343305174.5776
+    "lastModified": 1646914825570.6655
   },
   "303--hull": {
     "key": "303--hull",
@@ -1688,7 +1688,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -6, "width": 1212, "height": 613},
-    "lastModified": 1647343305176.2603
+    "lastModified": 1647006796744.6777
   },
   "bridge--042--8x9": {
     "key": "bridge--042--8x9",
@@ -2388,7 +2388,7 @@
       }
     ],
     "pngRect": {"x": -19, "y": -69, "width": 2439, "height": 2790},
-    "lastModified": 1645979907374.6526
+    "lastModified": 1646839468358.2805
   },
   "console--018--1x1": {
     "key": "console--018--1x1",
@@ -2417,7 +2417,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -3.5, "y": -3.5, "width": 307, "height": 307},
-    "lastModified": 1643556154570.2737
+    "lastModified": 1646839468358.574
   },
   "console--022--1x2": {
     "key": "console--022--1x2",
@@ -2443,7 +2443,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -3.5, "y": -3.5, "width": 307, "height": 607},
-    "lastModified": 1643897744898.3682
+    "lastModified": 1646839468358.841
   },
   "console--031--1x1.2": {
     "key": "console--031--1x1.2",
@@ -2469,7 +2469,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -4, "y": -4, "width": 377, "height": 307},
-    "lastModified": 1635005697985.7683
+    "lastModified": 1646839468359.1248
   },
   "couch-and-chairs--006--0.4x2": {
     "key": "couch-and-chairs--006--0.4x2",
@@ -2485,7 +2485,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -8.097, "y": 14.064, "width": 137, "height": 575},
-    "lastModified": 1647343305181.3855
+    "lastModified": 1646933322401.4897
   },
   "empty-room--006--2x2": {
     "key": "empty-room--006--2x2",
@@ -2535,7 +2535,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1635005697986.9119
+    "lastModified": 1646839468359.3916
   },
   "empty-room--013--2x3": {
     "key": "empty-room--013--2x3",
@@ -2583,7 +2583,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 920},
-    "lastModified": 1635005697989.995
+    "lastModified": 1646839468359.6348
   },
   "empty-room--020--2x4": {
     "key": "empty-room--020--2x4",
@@ -2629,7 +2629,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 1220},
-    "lastModified": 1635005697991.1274
+    "lastModified": 1646839468359.8735
   },
   "empty-room--039--3x4": {
     "key": "empty-room--039--3x4",
@@ -2682,7 +2682,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 920, "height": 1220},
-    "lastModified": 1635005697993.1736
+    "lastModified": 1646839468360.1382
   },
   "empty-room--060--4x4": {
     "key": "empty-room--060--4x4",
@@ -2743,7 +2743,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 1220},
-    "lastModified": 1647343305185.6218
+    "lastModified": 1647264966264.846
   },
   "fresher--002--0.4x0.6": {
     "key": "fresher--002--0.4x0.6",
@@ -2765,7 +2765,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 0, "y": 0, "width": 106, "height": 180},
-    "lastModified": 1643896863335.3518
+    "lastModified": 1646839468360.4226
   },
   "fresher--020--2x2": {
     "key": "fresher--020--2x2",
@@ -2836,7 +2836,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1635005697993.5886
+    "lastModified": 1646839468360.7185
   },
   "fresher--025--2x3": {
     "key": "fresher--025--2x3",
@@ -2923,7 +2923,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 920, "height": 620},
-    "lastModified": 1635005697993.9763
+    "lastModified": 1646839468360.976
   },
   "fuel--010--2x4": {
     "key": "fuel--010--2x4",
@@ -2953,7 +2953,7 @@
       }
     ],
     "pngRect": {"x": -19, "y": -19.6, "width": 1238, "height": 639},
-    "lastModified": 1635005697994.427
+    "lastModified": 1646839468361.243
   },
   "galley-and-mess-halls--006--2x4": {
     "key": "galley-and-mess-halls--006--2x4",
@@ -3074,7 +3074,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 643},
-    "lastModified": 1647343305192.2373
+    "lastModified": 1647002152501.44
   },
   "galley-and-mess-halls--025--2x3": {
     "key": "galley-and-mess-halls--025--2x3",
@@ -3149,7 +3149,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 920},
-    "lastModified": 1647343305192.7612
+    "lastModified": 1646999819936.898
   },
   "gaming-tables--001--1x2": {
     "key": "gaming-tables--001--1x2",
@@ -3165,7 +3165,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 0, "y": 0, "width": 592, "height": 322},
-    "lastModified": 1647343305193.23
+    "lastModified": 1646933908225.5107
   },
   "iris-valves--005--1x1": {
     "key": "iris-valves--005--1x1",
@@ -3174,7 +3174,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 0, "y": 40, "width": 221, "height": 220},
-    "lastModified": 1635005697994.8066
+    "lastModified": 1646839468361.5012
   },
   "lab--018--4x4": {
     "key": "lab--018--4x4",
@@ -3339,7 +3339,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -32.5, "width": 1220, "height": 1243},
-    "lastModified": 1647343305194.8105
+    "lastModified": 1647268603058.1587
   },
   "lifeboat--small-craft": {
     "key": "lifeboat--small-craft",
@@ -3467,7 +3467,7 @@
       }
     ],
     "pngRect": {"x": -20, "y": -20, "width": 640, "height": 1238},
-    "lastModified": 1643635352023.7393
+    "lastModified": 1646839468361.8252
   },
   "lounge--009--2x3": {
     "key": "lounge--009--2x3",
@@ -3522,7 +3522,7 @@
     ],
     "singles": [],
     "pngRect": {"x": -10, "y": -10, "width": 920, "height": 620},
-    "lastModified": 1635005697998.022
+    "lastModified": 1646839468362.132
   },
   "lounge--015--2x4": {
     "key": "lounge--015--2x4",
@@ -3661,7 +3661,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 620},
-    "lastModified": 1637416007723.994
+    "lastModified": 1646839468362.4531
   },
   "low-berth--003--1x1": {
     "key": "low-berth--003--1x1",
@@ -3683,7 +3683,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -3.5, "y": -3, "width": 307, "height": 356},
-    "lastModified": 1643897469928.601
+    "lastModified": 1646839468362.7341
   },
   "machinery--020--1x1.6": {
     "key": "machinery--020--1x1.6",
@@ -3697,7 +3697,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -1.5, "y": 0, "width": 503, "height": 290},
-    "lastModified": 1643627957175.1394
+    "lastModified": 1646839468363.0347
   },
   "machinery--065--1.8x1.8": {
     "key": "machinery--065--1.8x1.8",
@@ -3718,7 +3718,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 20, "y": 20, "width": 560, "height": 560},
-    "lastModified": 1647343305199.067
+    "lastModified": 1647266055400.1323
   },
   "machinery--077--1.6x1.8": {
     "key": "machinery--077--1.6x1.8",
@@ -3741,7 +3741,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -0.5, "y": -5.5, "width": 501, "height": 511},
-    "lastModified": 1643556209127.9802
+    "lastModified": 1646839468363.3394
   },
   "machinery--091--1.6x1.8": {
     "key": "machinery--091--1.6x1.8",
@@ -3769,7 +3769,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -10, "y": -10, "width": 500, "height": 559},
-    "lastModified": 1635005697999.6409
+    "lastModified": 1646839468363.6733
   },
   "machinery--155--1.8x3.6": {
     "key": "machinery--155--1.8x3.6",
@@ -3783,7 +3783,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 10, "y": -10, "width": 520, "height": 1100},
-    "lastModified": 1635005698000.0764
+    "lastModified": 1646839468363.9507
   },
   "machinery--156--1.8x3.6": {
     "key": "machinery--156--1.8x3.6",
@@ -3805,7 +3805,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 20, "y": 50, "width": 560, "height": 1100},
-    "lastModified": 1647343305201.76
+    "lastModified": 1647266273794.7605
   },
   "machinery--158--1.8x3.6": {
     "key": "machinery--158--1.8x3.6",
@@ -3827,7 +3827,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 20, "y": 50, "width": 560, "height": 1100},
-    "lastModified": 1647343305202.8013
+    "lastModified": 1647265271265.8655
   },
   "machinery--357--2.2x4": {
     "key": "machinery--357--2.2x4",
@@ -3843,7 +3843,7 @@
     ],
     "singles": [],
     "pngRect": {"x": -10, "y": -72.5, "width": 1220, "height": 683},
-    "lastModified": 1635005698001.612
+    "lastModified": 1646839468364.889
   },
   "medical--007--2x3": {
     "key": "medical--007--2x3",
@@ -3934,7 +3934,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 920, "height": 620},
-    "lastModified": 1635005698002.9307
+    "lastModified": 1646839468365.1626
   },
   "medical--008--2x3": {
     "key": "medical--008--2x3",
@@ -4020,7 +4020,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 920, "height": 620},
-    "lastModified": 1635005698004.8174
+    "lastModified": 1646839468365.4702
   },
   "medical-bed--005--0.6x1.2": {
     "key": "medical-bed--005--0.6x1.2",
@@ -4034,7 +4034,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -1, "y": -1, "width": 382, "height": 202},
-    "lastModified": 1643620649063.9946
+    "lastModified": 1646839468365.7676
   },
   "medical-bed--006--1.6x3.6": {
     "key": "medical-bed--006--1.6x3.6",
@@ -4074,7 +4074,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 0, "y": -1, "width": 450, "height": 1094},
-    "lastModified": 1643624475105.4019
+    "lastModified": 1646839468366.0835
   },
   "misc-stellar-cartography--020--10x10": {
     "key": "misc-stellar-cartography--020--10x10",
@@ -4286,7 +4286,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 3020, "height": 3020},
-    "lastModified": 1647343305207.0583
+    "lastModified": 1647263779526.3767
   },
   "misc-stellar-cartography--023--4x4": {
     "key": "misc-stellar-cartography--023--4x4",
@@ -4392,7 +4392,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 1220, "height": 1220},
-    "lastModified": 1644603308330.3037
+    "lastModified": 1646839468366.7856
   },
   "office--001--2x2": {
     "key": "office--001--2x2",
@@ -4473,7 +4473,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1644603111897.1316
+    "lastModified": 1646839468367.0679
   },
   "office--004--2x2": {
     "key": "office--004--2x2",
@@ -4559,7 +4559,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1647343305209.0164
+    "lastModified": 1647262225742.1978
   },
   "office--006--2x2": {
     "key": "office--006--2x2",
@@ -4674,7 +4674,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1637415695182.7
+    "lastModified": 1646839468367.3271
   },
   "office--020--2x3": {
     "key": "office--020--2x3",
@@ -4751,7 +4751,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 920},
-    "lastModified": 1635005698009.2542
+    "lastModified": 1646839468367.5815
   },
   "office--023--2x3": {
     "key": "office--023--2x3",
@@ -4853,7 +4853,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 934},
-    "lastModified": 1635005698009.7239
+    "lastModified": 1646839468367.879
   },
   "office--025--2x3": {
     "key": "office--025--2x3",
@@ -4928,7 +4928,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 920},
-    "lastModified": 1635005698011.0764
+    "lastModified": 1646839468368.1633
   },
   "office--026--2x3": {
     "key": "office--026--2x3",
@@ -5026,7 +5026,7 @@
       }
     ],
     "pngRect": {"x": -34, "y": -10, "width": 644, "height": 920},
-    "lastModified": 1635005698012.6008
+    "lastModified": 1646839468368.4656
   },
   "office--061--3x4": {
     "key": "office--061--3x4",
@@ -5122,7 +5122,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 920, "height": 1220},
-    "lastModified": 1635005698013.1804
+    "lastModified": 1646839468368.7725
   },
   "office--089--4x4": {
     "key": "office--089--4x4",
@@ -5281,7 +5281,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": 15, "width": 1194, "height": 1195},
-    "lastModified": 1643974192545.045
+    "lastModified": 1646839468369.1423
   },
   "sensors--003--1x1.4": {
     "key": "sensors--003--1x1.4",
@@ -5290,7 +5290,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 88.5, "y": -10, "width": 423, "height": 319},
-    "lastModified": 1635005698013.7317
+    "lastModified": 1646839468369.4805
   },
   "ships-locker--011--1x2": {
     "key": "ships-locker--011--1x2",
@@ -5345,7 +5345,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -20, "width": 620, "height": 334},
-    "lastModified": 1637416139588.204
+    "lastModified": 1646839468369.7717
   },
   "shop--027--0.4x1.6": {
     "key": "shop--027--0.4x1.6",
@@ -5361,7 +5361,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 56.5, "y": 110, "width": 487, "height": 128},
-    "lastModified": 1635005698015.3408
+    "lastModified": 1646839468370.12
   },
   "shop--028--0.8x1.6": {
     "key": "shop--028--0.8x1.6",
@@ -5377,7 +5377,7 @@
     ],
     "singles": [],
     "pngRect": {"x": 57.5, "y": 33, "width": 485, "height": 234},
-    "lastModified": 1635005698015.7922
+    "lastModified": 1646839468370.3987
   },
   "stateroom--012--2x2": {
     "key": "stateroom--012--2x2",
@@ -5463,7 +5463,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1647343305218.5198
+    "lastModified": 1647262742651.162
   },
   "stateroom--014--2x2": {
     "key": "stateroom--014--2x2",
@@ -5548,7 +5548,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1635005698016.6523
+    "lastModified": 1646839468370.6792
   },
   "stateroom--018--2x3": {
     "key": "stateroom--018--2x3",
@@ -5631,7 +5631,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 920},
-    "lastModified": 1635005698017.0774
+    "lastModified": 1646839468370.9705
   },
   "stateroom--019--2x3": {
     "key": "stateroom--019--2x3",
@@ -5726,7 +5726,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 633, "height": 920},
-    "lastModified": 1635005698017.7156
+    "lastModified": 1646839468371.4102
   },
   "stateroom--020--2x3": {
     "key": "stateroom--020--2x3",
@@ -5831,7 +5831,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 920},
-    "lastModified": 1635005698018.1958
+    "lastModified": 1646839468371.694
   },
   "stateroom--035--2x3": {
     "key": "stateroom--035--2x3",
@@ -5932,7 +5932,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 920},
-    "lastModified": 1635495251288.449
+    "lastModified": 1646839468371.9841
   },
   "stateroom--036--2x4": {
     "key": "stateroom--036--2x4",
@@ -6046,7 +6046,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 1220},
-    "lastModified": 1645554912199.7773
+    "lastModified": 1646839468372.3289
   },
   "stateroom--100--3x4": {
     "key": "stateroom--100--3x4",
@@ -6227,7 +6227,7 @@
       }
     ],
     "pngRect": {"x": -24, "y": -20, "width": 957, "height": 1239},
-    "lastModified": 1647343305225.28
+    "lastModified": 1646932646664.273
   },
   "table--009--0.8x0.8": {
     "key": "table--009--0.8x0.8",
@@ -6265,7 +6265,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 23.131, "y": 21.383, "width": 255, "height": 254},
-    "lastModified": 1647343305230.6511
+    "lastModified": 1647003500293.0916
   },
   "weaponry--013--1x2": {
     "key": "weaponry--013--1x2",
@@ -6274,7 +6274,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": 25, "y": 195, "width": 852, "height": 417},
-    "lastModified": 1635005698021.7637
+    "lastModified": 1646839468373.1445
   },
   "window--001--0x1": {
     "key": "window--001--0x1",
@@ -6296,7 +6296,7 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -4, "y": 0, "width": 307, "height": 67},
-    "lastModified": 1647343305233.4216
+    "lastModified": 1646936045777.692
   },
   "window--007--0x2.4": {
     "key": "window--007--0x2.4",
@@ -6310,6 +6310,6 @@
     "walls": [],
     "singles": [],
     "pngRect": {"x": -4, "y": -4, "width": 907, "height": 67},
-    "lastModified": 1647343305240.802
+    "lastModified": 1646935188710.0312
   }
 }
