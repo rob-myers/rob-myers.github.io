@@ -278,21 +278,15 @@ export class TtyXterm {
 
     if (ord == 0x1b) { // ANSI escape sequences
       switch (data.slice(1)) {
-        case '[A': {// Up arrow.
+        case '[A': {// Up arrow
           if (this.promptReady) {
-            this.io.writeToReaders({
-              key: 'req-history-line',
-              historyIndex: this.historyIndex + 1
-            });
+            this.reqHistoryLine(+1);
           }
           break;  
         }
         case '[B': {// Down arrow
           if (this.promptReady) {
-            this.io.writeToReaders({
-              key: 'req-history-line',
-              historyIndex: this.historyIndex - 1
-            });
+            this.reqHistoryLine(-1);
           }
           break;
         }
@@ -513,6 +507,13 @@ export class TtyXterm {
       this.commandBuffer.push(command);
     }
     this.printPending();
+  }
+
+  public reqHistoryLine(dir: -1 | 1) {
+    this.io.writeToReaders({
+      key: 'req-history-line',
+      historyIndex: this.historyIndex + dir,
+    });
   }
 
   /**

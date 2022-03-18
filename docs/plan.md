@@ -12,10 +12,8 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ render: ensure windows cut out of walls
-- clarify convention that walls must have things cut out of them, else holes cannot be computed
+- mobile: provide alt UI e.g. force lowercase + arrow keys
 
-- ✅ Rename `GeomorphCssLightsTest` as `LightsTest`
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
 - 🚧 Characters
@@ -41,7 +39,6 @@ __Aim towards website release__.
 - PanZoom should have blue blob indicating touches
 - PanZoom should have inertia
 
-- mobile: provide alt UI e.g. force lowercase + arrow keys
 - mobile: issue with keyboard resizing screen and Xterm not resizing
 
 - geomorphs article can be "coming soon" with preview
@@ -89,6 +86,9 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ render: ensure windows cut out of walls
+- ✅ clarify convention that walls must have things cut out of them, else holes cannot be computed
+- ✅ Rename `GeomorphCssLightsTest` as `LightsTest`
 - ✅ Bug: `Tabs` layout is resetting on resize window? (2 cols -> 2 rows)
 - ✅ Bug: `Tabs` top is often fading in
 - ✅ Finish 303
