@@ -13,6 +13,8 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - mobile: provide alt UI e.g. force lowercase + arrow keys
+  - TODO: issue with double spaces
+  - TODO: sometimes mobile inputs not handled properly
 
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`

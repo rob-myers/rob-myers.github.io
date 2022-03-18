@@ -49,6 +49,9 @@ export class TtyXterm {
   private linesPerUpdate = 500;
   private refreshMs = 0;
 
+  /** Useful for mobile keyboard inputs */
+  public forceLowerCase = false;
+
   constructor(
     public xterm: Terminal,
     private sessionKey: string,
@@ -270,10 +273,13 @@ export class TtyXterm {
     const ord = data.charCodeAt(0);
     let cursor: number;
 
-    if (data && data === this.input.slice(0, -1)) {
-      // Assume is a mobile delete
-      // TODO could actualy be a paste?
-      return this.handleCursorErase(true);
+    // DEBUG IN PROGRESS
+    // document.body.append(JSON.stringify([Array.from(data), Array.from(this.input)]));
+    if (data.length > 1 && this.input.startsWith(data)) {
+      // Assume is a mobile input
+      this.clearInput();
+      this.setInput(this.forceLowerCase ? data.toLowerCase() : data);
+      return;
     }
 
     if (ord == 0x1b) { // ANSI escape sequences
@@ -388,8 +394,15 @@ export class TtyXterm {
         }
       }
     } else {// Visible characters
+      if (this.forceLowerCase) {
+        data = data.toLowerCase();
+      }
       this.handleCursorInsert(data);
     }
+  }
+
+  public hasInput() {
+    return this.input.length > 0;
   }
 
   /**
@@ -477,6 +490,13 @@ export class TtyXterm {
         this.queueCommands([{
           key: 'line',
           line: `${ansiWarn}${msg.msg}${ansiReset}`,
+        }]);
+        break;
+      }
+      case 'warn': {
+        this.queueCommands([{
+          key: 'line',
+          line: `${ansiYellow}${msg.msg}${ansiReset}`,
         }]);
         break;
       }

@@ -1,6 +1,7 @@
 import { css } from 'goober';
 import type { Session } from 'store/session.store';
 import useMuState from 'projects/hooks/use-mu-state';
+import useSessionStore from 'store/session.store';
 
 export function TouchHelperUI(props: {
   session: Session;
@@ -10,14 +11,16 @@ export function TouchHelperUI(props: {
     return {
       onClick(e: React.MouseEvent) {
         const target = e.target as HTMLElement;
+        const { xterm } = props.session.ttyShell;
+        xterm.xterm.scrollToBottom();
         if (target.classList.contains('force-lowercase')) {
-          // TODO
-          console.log('force-lowercase');
+          const forced = (xterm.forceLowerCase = !xterm.forceLowerCase);
+          const prefix = xterm.hasInput() ? '\n\r' : '';
+          const message = `input ${forced ? 'forced as' : 'not forced as'} lowercase`;
+          useSessionStore.api.warn(props.session.key, `${prefix}⚠️  ${message}`);
         } else if (target.classList.contains('up')) {
-          const { xterm  } = props.session.ttyShell;
           xterm.reqHistoryLine(+1);
         } else if (target.classList.contains('down')) {
-          const { xterm  } = props.session.ttyShell;
           xterm.reqHistoryLine(-1);
         } 
       },

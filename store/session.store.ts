@@ -285,7 +285,7 @@ const useStore = create<State>(devtools((set, get) => ({
     },
 
     warn: (sessionKey, msg) => {
-      api.getSession(sessionKey).ttyIo.write({ key: 'error', msg });
+      api.getSession(sessionKey).ttyIo.write({ key: 'warn', msg });
     },
   },
 
