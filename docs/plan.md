@@ -16,6 +16,7 @@ __Aim towards website release__.
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
 - 🚧 Characters
   - ✅ Circle with heart-beat and breath
+    > https://stackoverflow.com/questions/34762009/pulsing-heart-css-animation
   - ✅ `NavDemo1` has Andros
   - `NavDemo1` has other NPCs
 - can move Andros via TTY

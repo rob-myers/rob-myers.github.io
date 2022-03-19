@@ -115,7 +115,7 @@ const rootCss = css`
     animation: animateBreath 3s infinite;
   }
   .npcs.disabled {
-    .npc.body, .npc.breath {
+    .npc .body, .npc .breath {
       animation-play-state: paused;
     }
   }
