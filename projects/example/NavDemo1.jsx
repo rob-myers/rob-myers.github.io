@@ -46,7 +46,7 @@ export default function NavDemo1(props) {
           state.updateObservableDoors();
           update();
           state.npcsApi.spawn([
-            { key: 'andros' },
+            { key: 'andros', position: { x: 50, y: 30 } },
           ]);
           const sub = state.wire
             .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))

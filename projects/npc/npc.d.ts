@@ -9,6 +9,7 @@ declare namespace NPC {
     apis: NPCApi[];
     background: HTMLCanvasElement;
     root: HTMLDivElement;
+    npcRef: React.RefCallback<HTMLDivElement>;
     rootRef: React.RefCallback<HTMLDivElement>;
     spawn(defs: NPCDef[]): void;
   }
@@ -23,6 +24,7 @@ declare namespace NPC {
 
   export interface NPCDef {
     key: string;
+    position: Geom.VectJson;
     // zoneKey: string;
     // /** Initially paused? */
     // paused: boolean;

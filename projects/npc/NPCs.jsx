@@ -14,6 +14,18 @@ export default function NPCs(props) {
       apis: [],
       background: /** @type {HTMLCanvasElement} */ ({}),
       root: /** @type {HTMLDivElement} */ ({}),
+      npcRef(el) {
+        if (el) {
+          const api = state.apis.find(x => el.classList.contains(x.key));
+          if (api) {
+            api.el = { root: el };
+            el.style.left = `${api.def.position.x}px`;
+            el.style.top = `${api.def.position.y}px`;
+          } else {
+            console.error(`${NPCs.name}: npc not found for div.${Array.from(el.classList.values()).join('.')}`);
+          }
+        }
+      },
       rootRef(el) {
         if (el) {
           state.root = el;
@@ -58,7 +70,11 @@ export default function NPCs(props) {
       />
       <div className="npcs">
         {state.apis.map(api => (
-          <div key={api.key} className={`npc ${api.key}`}>
+          <div
+            key={api.key}
+            className={`npc ${api.key}`}
+            ref={state.npcRef}
+          >
             <div className="body" />
           </div>
         ))}
