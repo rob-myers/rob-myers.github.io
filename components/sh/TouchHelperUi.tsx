@@ -57,6 +57,7 @@ const rootCss = css`
   width: 32px;
   height: 90px;
 
+  line-height: 1; /** Needed for mobile viewing as 'Desktop site' */
   background-color: rgba(255, 255, 255, 0.25);
   font-size: 1rem;
   border: 1px solid #555;
