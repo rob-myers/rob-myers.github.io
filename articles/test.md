@@ -15,7 +15,7 @@
     // { key: 'component', filepath: 'example/Pyramid3dDemo' },
     // { key: 'component', filepath: 'example/SvgStringPull' },
     // { key: 'component', filepath: 'example/TriangleDev#301' },
-    // { key: 'terminal', filepath: 'test' },
+    { key: 'terminal', filepath: 'test' },
     // { key: 'terminal', filepath: 'other' },
     // { key: 'component', filepath: 'example/SvgDoorsDemo#101' },
     // { key: 'component', filepath: 'example/SvgNavGraph#301' },

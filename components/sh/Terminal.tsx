@@ -2,6 +2,7 @@ import React from 'react';
 import { styled } from 'goober';
 import { useBeforeunload } from 'react-beforeunload';
 import type { ITerminalOptions } from 'xterm';
+import { debounce } from 'debounce';
 
 import { TtyXterm } from 'model/sh/tty.xterm';
 import { canTouchDevice } from 'projects/service/dom';
@@ -13,6 +14,8 @@ import { TouchHelperUI } from './TouchHelperUi';
 export default function Terminal({ sessionKey, env }: Props) {
 
   const session = useSession(({ session }) => session[sessionKey]??null);
+  const [offset, setOffset] = React.useState(0);
+
   // TODO move to e.g. _app.tsx
   useBeforeunload(() => useSession.api.persist(sessionKey));
 
@@ -25,27 +28,29 @@ export default function Terminal({ sessionKey, env }: Props) {
 
   return (
     <Root>
-      {session ? (
-        <XTerm
-          onMount={(xterm) => {
-            const ttyXterm = new TtyXterm(
-              xterm, // xterm.js instance
-              session.key,
-              session.ttyIo,
-            );
-            ttyXterm.initialise();
-            /**
-             * We wait because session[sessionKey] is not yet defined (?!),
-             * e.g. on hot reload after edit ancestral html.
-             */
-            setTimeout(() => session.ttyShell.initialise(ttyXterm));
-          }}
-          options={options}
-        />
-      ) : null}
-
-      {session && isTouchDevice && (
-        <TouchHelperUI session={session} />
+      {session && (
+        <>
+          <XTerm
+            // `xterm` is an xterm.js instance
+            onMount={(xterm) => {
+              const ttyXterm = new TtyXterm(xterm, session.key, session.ttyIo);
+              ttyXterm.initialise();
+              session.ttyShell.initialise(ttyXterm);
+              // TODO don't run on non-touch-devices
+              const updateTouchUiOffset = debounce(() => {
+                setOffset(Math.max(0, parseInt(xterm.textarea!.style.top) - 72));
+              }, 100);
+              ttyXterm.xterm.onLineFeed(() => updateTouchUiOffset());
+            }}
+            options={options}
+          />
+          {session && isTouchDevice &&
+            <TouchHelperUI
+              session={session}
+              offset={offset}
+            />
+          }
+        </>
       )}
     </Root>
   )
@@ -63,7 +68,7 @@ const Root = styled('div')<{}>`
   grid-area: terminal;
   background: black;
   height: 100%;
-  padding: 4px;
+  /** TODO fix padding without scrollbar offset */
 `;
 
 const options: ITerminalOptions = {
@@ -72,7 +77,7 @@ const options: ITerminalOptions = {
   cursorBlink: true,
   rendererType: 'canvas',
   // mobile: can select single word via long press
-  // rightClickSelectsWord: true,
+  rightClickSelectsWord: true,
   theme: {
     background: 'black',
     foreground: '#41FF00',

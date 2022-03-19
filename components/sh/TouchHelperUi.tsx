@@ -4,6 +4,7 @@ import useMuState from 'projects/hooks/use-mu-state';
 import useSessionStore from 'store/session.store';
 
 export function TouchHelperUI(props: {
+  offset: number;
   session: Session;
 }) {
 
@@ -31,6 +32,9 @@ export function TouchHelperUI(props: {
     <div
       className={rootCss}
       onClick={state.onClick}
+      style={{
+        top: `${props.offset}px`,
+      }}
     >
       <div className="lowercase">
         🔤
@@ -55,26 +59,27 @@ const rootCss = css`
 
   background-color: rgba(255, 255, 255, 0.25);
   font-size: 1rem;
-  border: 1px solid #777;
-  border-width: 0 1px 1px 1px;
+  border: 1px solid #555;
+  border-width: 1px 1px 1px 1px;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: top 500ms ease;
 
   .lowercase {
-      filter: saturate(200%);
+    filter: saturate(200%);
   }
   .up, .down {
-      filter: brightness(0%) invert(100%);
+    filter: brightness(0%) invert(100%);
   }
   .lowercase, .up, .down {
-      cursor: pointer;
-      width: 100%;
-      text-align: center;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 `;
