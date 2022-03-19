@@ -7,7 +7,6 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
       <Title />
       <main>
         {children}
-        <div style={{ height: 400, background: 'red', position: 'fixed' }}>Hi</div>
       </main>
     </section>
   );
