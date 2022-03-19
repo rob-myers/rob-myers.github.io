@@ -15,10 +15,16 @@ __Aim towards website release__.
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
 - 🚧 Characters
-  - 🚧 Circle with heart-beat and breath
-  - 🚧 `NavDemo1` has Andros
+  - ✅ Circle with heart-beat and breath
+  - ✅ `NavDemo1` has Andros
   - `NavDemo1` has other NPCs
-- probably with new `NPCs`
+- can move Andros via TTY
+  - implement `click`
+  - can show navpath from andros to clicked point
+  - ...
+
+- NPCs have label
+- NPCs label tracks them as they move
 - user can only moves npcs via terminal e.g. `click`...
 - maybe consider shadows and door shadows (doors can fade)
 - can pause it
