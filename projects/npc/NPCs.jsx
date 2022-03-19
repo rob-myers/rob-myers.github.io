@@ -1,8 +1,11 @@
 import { css } from "goober";
+import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
 
 /** @param {NPC.NPCsProps} props */
 export default function NPCs(props) {
+
+  const update = useUpdate();
 
   const state = useMuState(() => {
 
@@ -22,6 +25,14 @@ export default function NPCs(props) {
       },
       spawn(defs) {// TODO
         console.log('spawning', defs);
+        for (const def of defs) {
+          state.apis.push({
+            key: def.key,
+            def,
+            el: /** @type {*} */ ({}),
+          });
+        }
+        update();
       },
     };
 
@@ -42,7 +53,9 @@ export default function NPCs(props) {
          * We might use the TTY to place clickable points along a navpath.
          */
       }
-      <canvas className="background" />
+      <canvas
+        className="background"
+      />
       <div className="npcs">
         {state.apis.map(api => (
           <div key={api.key} className={`npc ${api.key}`}>
@@ -56,7 +69,16 @@ export default function NPCs(props) {
 
 const rootCss = css`
   position: absolute;
-  .navpaths {
-
+  canvas {
+    position: absolute;
+  }
+  .npc {
+    position: absolute;
+    left: -10px;
+    top: -10px;
+  }
+  .npc .body {
+    border-radius: 10px;
+    border: 10px solid red;
   }
 `;

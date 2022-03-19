@@ -12,30 +12,24 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- mobile: provide alt UI e.g. force lowercase + arrow keys
-  - TODO: issue with double spaces
-  - TODO: sometimes mobile inputs not handled properly
-
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
 - 🚧 Characters
   - 🚧 Circle with heart-beat and breath
   - 🚧 `NavDemo1` has Andros
   - `NavDemo1` has other NPCs
+- probably with new `NPCs`
+- user can only moves npcs via terminal e.g. `click`...
+- maybe consider shadows and door shadows (doors can fade)
+- can pause it
+- can write script manually or continually `look`ing
+- can see: npcs, meta points
 - Implement TTY interaction
 - Write into blog 'objective'
 
 - Start Gatsby Project which aims to replace this one
 
 - After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
-
-- Create new `NavTest`
-  - probably with new `NPCs`
-  - user can only moves npcs via terminal e.g. `click`...
-  - maybe consider shadows and door shadows (doors can fade)
-  - can pause it
-  - can write script manually or continually `look`ing
-  - can see: npcs, meta points
 
 - finish passenger-deck 303
 - PanZoom should have blue blob indicating touches
@@ -88,6 +82,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ mobile: provide alt UI e.g. force lowercase + arrow keys
+  - https://stackoverflow.com/questions/71537402/xtermjs-distinguish-backspace-on-mobile-device
 - ✅ render: ensure windows cut out of walls
 - ✅ clarify convention that walls must have things cut out of them, else holes cannot be computed
 - ✅ Rename `GeomorphCssLightsTest` as `LightsTest`
