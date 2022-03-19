@@ -84,6 +84,7 @@
     "@types/optimize-css-assets-webpack-plugin": "^5.0.2",
     "@types/react": "^17.0.2",
     "@types/react-beforeunload": "^2.1.0",
+    "@types/react-dom": "^17.0.14",
     "@types/safe-json-stringify": "^1.1.2",
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@types/svg-path-parser": "^1.1.2",
