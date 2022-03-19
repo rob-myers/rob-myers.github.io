@@ -76,12 +76,16 @@ export default function NPCs(props) {
             ref={state.npcRef}
           >
             <div className="body" />
+            <div className="breath" />
           </div>
         ))}
       </div>
     </div>
   );
 }
+
+const npcRadius = 5;
+const breathRadius = 3;
 
 const rootCss = css`
   position: absolute;
@@ -90,11 +94,53 @@ const rootCss = css`
   }
   .npc {
     position: absolute;
-    left: -10px;
-    top: -10px;
+    left: ${-npcRadius}px;
+    top: ${-npcRadius}px;
   }
   .npc .body {
-    border-radius: 10px;
-    border: 10px solid red;
+    position: absolute;
+    border-radius: ${npcRadius}px;
+    border: ${npcRadius}px solid rgba(255, 0, 0, 0.9);
+    outline: 1px solid rgba(255, 0, 0, 0.7);
+    animation: animateHeart 2.2s infinite;
+  }
+  .npc .breath {
+    position: absolute;
+    border-radius: ${breathRadius}px;
+    border: ${breathRadius}px solid rgba(0, 0, 255, 0.25);
+    top: ${npcRadius - breathRadius}px;
+    left: ${2 * (npcRadius) - breathRadius}px;
+    /* outline: 1px solid rgba(0, 0, 255, 0.25); */
+    animation: animateBreath 3s infinite;
+  }
+
+  @keyframes animateHeart {
+    0% {
+      transform: scale(0.8);
+    }
+    5% {
+      transform: scale(0.9);
+    }
+    10% {
+      transform: scale(0.8);
+    }
+    15% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.8);
+    }
+    100% {
+      transform: scale(0.8);
+    }
+  }
+
+  @keyframes animateBreath {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(0.25);
+    }
   }
 `;
