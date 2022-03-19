@@ -129,6 +129,8 @@ export class TtyXterm {
     this.xterm.write('\x1b[F'.repeat(this.xterm.rows));
     this.xterm.scrollToBottom();
     this.cursorRow = 1;
+
+    this.showPendingInput();
   }
 
   /**
@@ -370,8 +372,6 @@ export class TtyXterm {
         case '\x0C': {// Ctrl + L
           // Clear screen
           this.clearScreen();
-          // Show prompt again
-          this.setInput(this.input);
           break;
         }
         case '\x0b': {// Ctrl + K
@@ -699,6 +699,12 @@ export class TtyXterm {
       this.commandBuffer.shift();
     }
     this.queueCommands([{ key: 'prompt', prompt }]);
+  }
+
+  public showPendingInput() {
+    if (this.promptReady) {
+      this.setInput(this.input);
+    }
   }
 
   /**

@@ -50,6 +50,7 @@ export type State = {
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     setVarDeep: (sessionKey: string, varPath: string, varValue: any) => void;
     warn: (sessionKey: string, msg: string) => void;
+    warnCleanly: (sessionKey: string, msg: string) => void;
   }
 }
 
@@ -102,11 +103,11 @@ const useStore = create<State>(devtools((set, get) => ({
   persist: {},
 
   api: {
-    addCleanup: (meta, ...cleanups) => {
+    addCleanup(meta, ...cleanups) {
       api.getProcess(meta).cleanups.push(...cleanups);
     },
 
-    addFunc: (sessionKey, funcName, file) => {
+    addFunc(sessionKey, funcName, file) {
       api.getSession(sessionKey).func[funcName] = {
         key: funcName,
         node: file,
@@ -119,7 +120,7 @@ const useStore = create<State>(devtools((set, get) => ({
       return get().device[fifo.key] = fifo;
     },
 
-    createProcess: ({ sessionKey, ppid, pgid, src, posPositionals }) => {
+    createProcess({ sessionKey, ppid, pgid, src, posPositionals }) {
       const pid = get().api.getNextPid(sessionKey);
       const processes = get().api.getSession(sessionKey).process;
       processes[pid] = {
@@ -137,7 +138,7 @@ const useStore = create<State>(devtools((set, get) => ({
       return processes[pid];
     },
 
-    createSession: (sessionKey, env) => {
+    createSession(sessionKey, env) {
       const persisted = api.rehydrate(sessionKey);
       const ttyIo = makeShellIo<MessageFromXterm, MessageFromShell>();
       const ttyShell = new TtyShell(sessionKey, ttyIo, persisted.history || []);
@@ -168,49 +169,51 @@ const useStore = create<State>(devtools((set, get) => ({
       return get().device[device.key] = device;
     },
 
-    ensureSession: (sessionKey, env) => {
+    ensureSession(sessionKey, env) {
       const { session } = get();
       return session[sessionKey] = session[sessionKey]
         || get().api.createSession(sessionKey, env);
     },
 
-    getFunc: (sessionKey, funcName) => {
+    getFunc(sessionKey, funcName) {
       return get().session[sessionKey].func[funcName] || undefined;
     },
 
-    getFuncs: (sessionKey) => {
+    getFuncs(sessionKey) {
       return Object.values(get().session[sessionKey].func);
     },
 
-    getNextPid: (sessionKey) => {
+    getNextPid(sessionKey) {
       return get().session[sessionKey].nextPid++;
     },
 
-    getPositional: (pid, sessionKey, varName) => {
+    getPositional(pid, sessionKey, varName) {
       return get().session[sessionKey].process[pid].positionals[varName] || '';
     },
 
-    getProcess: ({ pid, sessionKey }) => {
+    getProcess({ pid, sessionKey }) {
       return get().session[sessionKey].process[pid];
     },
 
-    getProcesses: (sessionKey, pgid) => {
+    getProcesses(sessionKey, pgid) {
       const processes = Object.values(get().session[sessionKey].process);
       return pgid === undefined ? processes : processes.filter(x => x.pgid === pgid);
     },
 
-    getVar: (sessionKey, varName) => {
+    getVar(sessionKey, varName) {
       return get().session[sessionKey].var[varName];
     },
 
-    getVarDeep: (sessionKey, varPath) => {
+    getVarDeep(sessionKey, varPath) {
       const root = get().session[sessionKey].var;
       return Function('__', `return __.${varPath}`)(root);
     },
 
-    getSession: (sessionKey) => get().session[sessionKey],
+    getSession(sessionKey) {
+      return get().session[sessionKey];
+    },
 
-    persist: (sessionKey) => {
+    persist(sessionKey) {
       const { ttyShell, var: varLookup } = api.getSession(sessionKey);
       
       localStorage.setItem(
@@ -227,7 +230,7 @@ const useStore = create<State>(devtools((set, get) => ({
       ));
     },
 
-    rehydrate: (sessionKey) => {
+    rehydrate(sessionKey) {
       const storedHistory = JSON.parse(localStorage.getItem(`history@session-${sessionKey}`) || 'null');
       const storedVar = JSON.parse(localStorage.getItem(`var@session-${sessionKey}`) || 'null');
       return { history: storedHistory, var: storedVar };
@@ -242,7 +245,7 @@ const useStore = create<State>(devtools((set, get) => ({
       delete processes[pid];
     },
 
-    removeSession: (sessionKey) => {
+    removeSession(sessionKey) {
       const session = get().session[sessionKey];
       if (session) {
         const { process, ttyShell } = get().session[sessionKey];
@@ -257,15 +260,15 @@ const useStore = create<State>(devtools((set, get) => ({
       }
     },
 
-    resolve: (fd, meta) => {
+    resolve(fd, meta) {
       return get().device[meta.fd[fd]];
     },
 
-    setVar: (sessionKey, varName, varValue) => {
+    setVar(sessionKey, varName, varValue) {
       api.getSession(sessionKey).var[varName] = varValue;
     },
 
-    setVarDeep: (sessionKey, varPath, varValue) => {
+    setVarDeep(sessionKey, varPath, varValue) {
       /** Like root of process context, but only has `home` */
       const root = { home : api.getSession(sessionKey).var };
       const pwd = api.getVar(sessionKey, 'PWD') as string;
@@ -284,8 +287,17 @@ const useStore = create<State>(devtools((set, get) => ({
       }
     },
 
-    warn: (sessionKey, msg) => {
+    warn(sessionKey, msg) {
       api.getSession(sessionKey).ttyIo.write({ key: 'warn', msg });
+    },
+
+    warnCleanly(sessionKey, msg) {
+      const { xterm } = api.getSession(sessionKey).ttyShell;
+      if (xterm.hasInput()) {
+        msg = '\n\r' + msg;
+      }
+      api.getSession(sessionKey).ttyIo.write({ key: 'warn', msg });
+      setTimeout(() => xterm.showPendingInput()); // Hack: prompts after .write
     },
   },
 
@@ -296,7 +308,6 @@ const useSessionStore = Object.assign(useStore, { api });
 
 export default useSessionStore;
 
-if (module.hot) {
-  // Avoid breaking preact-prefresh
+if (module.hot) {// Avoid breaking preact-prefresh
   module.hot.accept();
 }

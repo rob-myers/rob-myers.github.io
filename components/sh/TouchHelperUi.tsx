@@ -16,13 +16,18 @@ export function TouchHelperUI(props: {
         xterm.xterm.scrollToBottom();
         if (target.classList.contains('lowercase')) {
           const forced = (xterm.forceLowerCase = !xterm.forceLowerCase);
-          const prefix = xterm.hasInput() ? '\n\r' : '';
-          const message = `input ${forced ? 'forced as' : 'not forced as'} lowercase`;
-          useSessionStore.api.warn(props.session.key, `${prefix}⚠️  ${message}`);
+          const message = `⚠️  input ${forced ? 'forced as' : 'not forced as'} lowercase`;
+          useSessionStore.api.warnCleanly(props.session.key, message);
+          target.classList.toggle('enabled');
+        } else if (target.classList.contains('clear')) {
+          xterm.clearScreen();
+          xterm.xterm.focus();
         } else if (target.classList.contains('up')) {
           xterm.reqHistoryLine(+1);
+          xterm.xterm.focus();
         } else if (target.classList.contains('down')) {
           xterm.reqHistoryLine(-1);
+          xterm.xterm.focus();
         } 
       },
     };
@@ -37,13 +42,16 @@ export function TouchHelperUI(props: {
       }}
     >
       <div className="lowercase">
-        🔤
+        abc
+      </div>
+      <div className="clear">
+        ∅
       </div>
       <div className="up">
-        🔺
+        ⬆
       </div>
       <div className="down">
-        🔻
+        ⬇
       </div>
     </div>
   );
@@ -57,9 +65,9 @@ const rootCss = css`
   width: 32px;
   height: 90px;
 
-  line-height: 1; /** Needed for mobile viewing as 'Desktop site' */
-  background-color: rgba(255, 255, 255, 0.25);
-  font-size: 1rem;
+  line-height: 1; /** Needed for mobile viewing 'Desktop site' */
+  background-color: rgba(0, 0, 0, 0.7);
+  font-size: 0.75rem;
   border: 1px solid #555;
   border-width: 1px 1px 1px 1px;
 
@@ -69,12 +77,15 @@ const rootCss = css`
   transition: top 500ms ease;
 
   .lowercase {
-    filter: saturate(200%);
+    color: #999;
+    &.enabled {
+      color: white;
+    }
   }
-  .up, .down {
-    filter: brightness(0%) invert(100%);
+  .clear, .up, .down {
+    color: white;
   }
-  .lowercase, .up, .down {
+  .lowercase, .clear, .up, .down {
     cursor: pointer;
     width: 100%;
     text-align: center;

@@ -31,20 +31,21 @@ export default function Terminal({ sessionKey, env }: Props) {
       {session && (
         <>
           <XTerm
-            // `xterm` is an xterm.js instance
             onMount={(xterm) => {
+              // `xterm` is an xterm.js instance
               const ttyXterm = new TtyXterm(xterm, session.key, session.ttyIo);
               ttyXterm.initialise();
               session.ttyShell.initialise(ttyXterm);
+
               // TODO don't run on non-touch-devices
               const updateTouchUiOffset = debounce(() => {
-                setOffset(Math.max(0, parseInt(xterm.textarea!.style.top) - 72));
+                setOffset(Math.max(1, parseInt(xterm.textarea!.style.top) - 72));
               }, 100);
               ttyXterm.xterm.onLineFeed(() => updateTouchUiOffset());
             }}
             options={options}
           />
-          {session && isTouchDevice &&
+          {isTouchDevice &&
             <TouchHelperUI
               session={session}
               offset={offset}
@@ -68,6 +69,7 @@ const Root = styled('div')<{}>`
   grid-area: terminal;
   background: black;
   height: 100%;
+  padding: 4px;
   /** TODO fix padding without scrollbar offset */
 `;
 
