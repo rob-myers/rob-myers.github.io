@@ -114,9 +114,9 @@ const rootCss = css`
     /* outline: 1px solid rgba(0, 0, 255, 0.25); */
     animation: animateBreath 3s infinite;
   }
-  .npcs.disabled .npc {
-    .body, .breath {
-      animation: none;
+  .npcs.disabled {
+    .npc.body, .npc.breath {
+      animation-play-state: paused;
     }
   }
 
