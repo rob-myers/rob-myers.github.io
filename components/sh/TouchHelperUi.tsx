@@ -13,7 +13,7 @@ export function TouchHelperUI(props: {
         const target = e.target as HTMLElement;
         const { xterm } = props.session.ttyShell;
         xterm.xterm.scrollToBottom();
-        if (target.classList.contains('force-lowercase')) {
+        if (target.classList.contains('lowercase')) {
           const forced = (xterm.forceLowerCase = !xterm.forceLowerCase);
           const prefix = xterm.hasInput() ? '\n\r' : '';
           const message = `input ${forced ? 'forced as' : 'not forced as'} lowercase`;
@@ -32,11 +32,8 @@ export function TouchHelperUI(props: {
       className={rootCss}
       onClick={state.onClick}
     >
-      <div
-        className="force-lowercase"
-        title="force lowercase"
-      >
-        abc
+      <div className="lowercase">
+        🔤
       </div>
       <div className="up">
         🔺
@@ -54,11 +51,10 @@ const rootCss = css`
   top: 0;
   right: 16px;
   width: 32px;
-  height: 80px;
-  line-height: 1;
+  height: 90px;
 
   background-color: rgba(255, 255, 255, 0.25);
-  font-size: 0.8rem;
+  font-size: 1rem;
   border: 1px solid #777;
   border-width: 0 1px 1px 1px;
 
@@ -66,18 +62,13 @@ const rootCss = css`
   flex-direction: column;
   align-items: center;
 
-  .force-lowercase {
-      color: white;
-      cursor: pointer;
-      width: 100%;
-      text-align: center;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+  .lowercase {
+      filter: saturate(200%);
   }
   .up, .down {
       filter: brightness(0%) invert(100%);
+  }
+  .lowercase, .up, .down {
       cursor: pointer;
       width: 100%;
       text-align: center;

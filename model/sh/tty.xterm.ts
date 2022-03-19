@@ -273,6 +273,12 @@ export class TtyXterm {
     const ord = data.charCodeAt(0);
     let cursor: number;
 
+    // Decided to ignore input-replacement deletes,
+    // because cannot handle them properly (ambiguous).
+    if (data.length > 1 && this.input.startsWith(data)) {
+      return;
+    }
+
     if (ord == 0x1b) { // ANSI escape sequences
       switch (data.slice(1)) {
         case '[A': {// Up arrow
