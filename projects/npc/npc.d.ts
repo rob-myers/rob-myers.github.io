@@ -3,6 +3,7 @@ declare namespace NPC {
   export interface NPCsProps {
     gm: Geomorph.GeomorphData;
     onLoad: ((api: NPC.NPCsApi) => void);
+    disabled?: boolean;
   }
 
   export interface NPCsApi {

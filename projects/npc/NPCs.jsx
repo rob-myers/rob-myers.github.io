@@ -1,4 +1,5 @@
 import { css } from "goober";
+import classNames from "classnames";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
 
@@ -68,7 +69,7 @@ export default function NPCs(props) {
       <canvas
         className="background"
       />
-      <div className="npcs">
+      <div className={classNames('npcs', { disabled: props.disabled })}>
         {state.apis.map(api => (
           <div
             key={api.key}
@@ -101,7 +102,7 @@ const rootCss = css`
     position: absolute;
     border-radius: ${npcRadius}px;
     border: ${npcRadius}px solid rgba(255, 0, 0, 0.9);
-    outline: 1px solid rgba(255, 0, 0, 0.7);
+    outline: 1px solid rgba(0, 0, 0, 1);
     animation: animateHeart 2.2s infinite;
   }
   .npc .breath {
@@ -112,6 +113,11 @@ const rootCss = css`
     left: ${2 * (npcRadius) - breathRadius}px;
     /* outline: 1px solid rgba(0, 0, 255, 0.25); */
     animation: animateBreath 3s infinite;
+  }
+  .npcs.disabled .npc {
+    .body, .breath {
+      animation: none;
+    }
   }
 
   @keyframes animateHeart {
