@@ -9,7 +9,8 @@
   tabs="[
     // { key: 'component', filepath: 'example/GeomorphEdit' },
     // { key: 'component', filepath: 'example/LightsTest' },
-    { key: 'component', filepath: 'example/NavDemo1#301' },
+    // { key: 'component', filepath: 'example/NavDemo1#301' },
+    { key: 'component', filepath: 'example/SpriteTest' },
     // { key: 'component', filepath: 'example/Css3dForeignObject#301' },
     // { key: 'component', filepath: 'example/SvgNavDemo1' },
     // { key: 'component', filepath: 'example/Pyramid3dDemo' },

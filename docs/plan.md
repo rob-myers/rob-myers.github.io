@@ -27,11 +27,14 @@ __Aim towards website release__.
       - maybe high res if want to construct spritesheet after (1024px * 1024px)
     - Animation view, Show Dope sheet, X delete, A + S to reduce frames
       > Walk cycle: delete final; scale by 0.6; get [1, 19] inclusive after shift left
-  - display via CSS, following:
+  - ✅ basic spritesheet generation
+    > https://www.codeandweb.com/free-sprite-sheet-packer
+  - ✅ display via CSS, following:
     > https://blog.logrocket.com/making-css-animations-using-a-sprite-sheet/
   - for multiple animations prob need control rig and import animations
     > https://youtu.be/yDc-E-o_I-c
   - check out `Character Creator 3`
+  - try generating spritesheet using blender (rest of https://youtu.be/-zpORxZF4FE)
 
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`

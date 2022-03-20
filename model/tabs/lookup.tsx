@@ -28,6 +28,8 @@ const component = {
     .then(x => x.default),
   'example/Pyramid3dDemo': () => import('projects/example/Pyramid3dDemo')
     .then(x => x.default),
+  'example/SpriteTest': () => import('projects/example/SpriteTest')
+    .then(x => (props: any) => <x.default disabled {...props} />),
   'example/SvgDoorsDemo#101': () => import('projects/example/SvgDoorsDemo')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-101--multipurpose' />),
   'example/SvgDoorsDemo#301': () => import('projects/example/SvgDoorsDemo')
