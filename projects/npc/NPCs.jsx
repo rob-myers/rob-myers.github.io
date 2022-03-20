@@ -85,8 +85,8 @@ export default function NPCs(props) {
   );
 }
 
-const npcRadius = 5;
-const breathRadius = 3;
+const npcRadius = 7.5;
+const breathRadius = 5;
 
 const rootCss = css`
   position: absolute;
@@ -108,11 +108,11 @@ const rootCss = css`
   .npc .breath {
     position: absolute;
     border-radius: ${breathRadius}px;
-    border: ${breathRadius}px solid rgba(0, 0, 255, 0.25);
+    border: ${breathRadius}px solid rgba(0, 0, 255, 0.5);
     top: ${npcRadius - breathRadius}px;
-    left: ${2 * (npcRadius) - breathRadius}px;
-    /* outline: 1px solid rgba(0, 0, 255, 0.25); */
-    animation: animateBreath 3s infinite;
+    left: ${2 * npcRadius - 1.5 * breathRadius}px;
+    /* outline: 1px solid rgba(0, 0, 255, 0.5); */
+    animation: animateBreath 2s infinite ease-in-out;
   }
   .npcs.disabled {
     .npc .body, .npc .breath {
@@ -131,7 +131,7 @@ const rootCss = css`
       transform: scale(0.8);
     }
     15% {
-      transform: scale(1);
+      transform: scale(1.1);
     }
     50% {
       transform: scale(0.8);
@@ -146,7 +146,7 @@ const rootCss = css`
       transform: scale(1);
     }
     50% {
-      transform: scale(0.25);
+      transform: scale(0.5);
     }
   }
 `;
