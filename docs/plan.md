@@ -12,13 +12,34 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- 🚧 create a blender spritesheet
+  - ✅ get a walk cycle from mixamo
+    > https://www.mixamo.com/#/?page=1&query=walk&type=Motion%2CMotionPack
+  - ✅ generate walk cycle images using https://youtu.be/-zpORxZF4FE
+    - camera looking down from above 
+      - opt g, opt r to reset
+      - object data properties > Lens > type > Orthographic
+      - output properties > Output > directory where to save images
+      - Top menu > Animation > Render animation
+    - scene properties > film > transparent
+    - world properties > surface: emission > white
+    - output properties > Format > Resolution X, Y
+      - maybe high res if want to construct spritesheet after (1024px * 1024px)
+    - Animation view, Show Dope sheet, X delete, A + S to reduce frames
+      > Walk cycle: delete final; scale by 0.6; get [1, 19] inclusive after shift left
+  - display via CSS, following:
+    > https://blog.logrocket.com/making-css-animations-using-a-sprite-sheet/
+  - for multiple animations prob need control rig and import animations
+    > https://youtu.be/yDc-E-o_I-c
+  - check out `Character Creator 3`
+
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
 - 🚧 Characters
   - ✅ Circle with heart-beat and breath
     > https://stackoverflow.com/questions/34762009/pulsing-heart-css-animation
-  - ✅ `NavDemo1` has Andros
-  - `NavDemo1` has other NPCs
+  -  `NavDemo1` has Andros
+  - 🚧`NavDemo1` has other NPCs
 - can move Andros via TTY
   - implement `click`
   - can show navpath from andros to clicked point
@@ -46,14 +67,6 @@ __Aim towards website release__.
 
 - geomorphs article can be "coming soon" with preview
 - EVENTUALLY redo site using Gatsby JamStack approach (not until after first release)
-
-- 🚧 NPC foreignObject messages
-  - ✅ can fit multiline text and other stuff
-  - controls: drag, close
-  - examples: name/info/speech
-  - can animate along move track
-  - can change speed via +/- (playback rate)
-  - toggle for `pointer-events: none`
 
 - 🚧 start blog rewrite in terms of The Last Redoubt
   - https://www.poetryfoundation.org/poems/43825/darkness-56d222aeeee1b
