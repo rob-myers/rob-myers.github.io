@@ -42,6 +42,11 @@ __Aim towards website release__.
   - ✅ make a walk cycle with one of the polyperfect characters
   - ✅ make a walk/idle polyperfect character anim
   - 🚧 integrate walk/idle anim into `NavDemo1`
+    - ✅ can switch between idle/walk
+    - `click` works
+    - can show navpath from Andros via shell
+    - can move along navpath
+    - animate walk/cycle along navpath
 
 
 - ✅ Create `NavDemo1`

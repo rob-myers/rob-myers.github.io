@@ -37,6 +37,11 @@ declare namespace NPC {
     // angle: number;
   }
 
+  export type AnimState = (
+    | 'idle'
+    | 'walk'
+  );
+
   export type NavWire = import('rxjs').Subject<NPC.NavMessage>;
 
   export type NavMessage = (

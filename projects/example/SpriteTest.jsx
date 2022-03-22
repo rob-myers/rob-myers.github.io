@@ -1,14 +1,17 @@
 import classNames from "classnames";
 import { css } from "goober";
 
+/**
+ * TODO covers all sprites at once, and mutates them
+ */
+
 /** @param {{ disabled?: boolean }} props  */
 export default function SpriteTest(props) {
 
   return (
     <div className={classNames(rootCss, { disabled: props.disabled })}>
-      {/* <div className="walk" /> */}
       <div
-        className="idle"
+        className={"idle"}
         onMouseOver={e => {
           /** @type {HTMLDivElement} */ (e.target).classList.toggle('idle');
           /** @type {HTMLDivElement} */ (e.target).classList.toggle('walk');
@@ -27,17 +30,23 @@ const idleSteps = 13;
 const spriteWidth = 256;
 
 const rootCss = css`
+  position: absolute;
   width: ${spriteWidth}px;
   height: ${spriteWidth}px;
-  background-color: #ddd;
+  left: ${-spriteWidth/2}px;
+  top: ${-spriteWidth/2}px;
+  cursor: pointer;
+  transform: scale(0.18);
+  filter: saturate(200%);
   
   .walk, .idle {
+    position: absolute;
     width: ${spriteWidth}px;
     height: ${spriteWidth}px;
   }
   
   .walk {
-    animation: walk 2s steps(${walkSteps}) infinite;
+    animation: walk 0.5s steps(${walkSteps}) infinite;
     background: url('/pics/spritesheet-walk-test-2.png');
   }
 

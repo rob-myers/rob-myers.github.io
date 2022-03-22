@@ -46,7 +46,7 @@ export default function NavDemo1(props) {
           state.updateObservableDoors();
           update();
           state.npcsApi.spawn([
-            { key: 'andros', position: { x: 50, y: 35 } },
+            { key: 'andros', position: { x: 50, y: 38 } },
           ]);
           const sub = state.wire
             .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
@@ -75,7 +75,11 @@ export default function NavDemo1(props) {
   });
 
   return gm ? (
-    <CssPanZoom dark className={rootCss(gm)}>
+    <CssPanZoom
+      stageKey="nav-demo-1"
+      dark
+      className={rootCss(gm)}
+    >
 
       <img
         className="geomorph"

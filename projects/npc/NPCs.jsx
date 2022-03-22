@@ -2,6 +2,7 @@ import { css } from "goober";
 import classNames from "classnames";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
+import SpriteTest from "projects/example/SpriteTest";
 
 /** @param {NPC.NPCsProps} props */
 export default function NPCs(props) {
@@ -76,8 +77,9 @@ export default function NPCs(props) {
             className={`npc ${api.key}`}
             ref={state.npcRef}
           >
-            <div className="body" />
-            <div className="breath" />
+            <SpriteTest disabled={props.disabled} />
+            {/* <div className="body" />
+            <div className="breath" /> */}
           </div>
         ))}
       </div>
@@ -95,8 +97,6 @@ const rootCss = css`
   }
   .npc {
     position: absolute;
-    left: ${-npcRadius}px;
-    top: ${-npcRadius}px;
   }
   .npc .body {
     position: absolute;
@@ -104,13 +104,15 @@ const rootCss = css`
     border: ${npcRadius}px solid rgba(255, 0, 0, 0.9);
     outline: 1px solid rgba(0, 0, 0, 1);
     animation: animateHeart 2.2s infinite;
+    left: ${-npcRadius}px;
+    top: ${-npcRadius}px;
   }
   .npc .breath {
     position: absolute;
     border-radius: ${breathRadius}px;
     border: ${breathRadius}px solid rgba(0, 0, 255, 0.5);
-    top: ${npcRadius - breathRadius}px;
-    left: ${2 * npcRadius - 1.5 * breathRadius}px;
+    top: ${-breathRadius}px;
+    left: ${npcRadius - 1.5 * breathRadius}px;
     /* outline: 1px solid rgba(0, 0, 255, 0.5); */
     animation: animateBreath 2s infinite ease-in-out;
   }
