@@ -220,8 +220,8 @@ export default function CssPanZoom(props) {
         ref={state.rootRef}
         className={classNames("panzoom-root", props.className)}
       >
-        {props.children}
         <div className="small-grid" />
+        {props.children}
         <div className="large-grid" />
       </div>
     </div>
