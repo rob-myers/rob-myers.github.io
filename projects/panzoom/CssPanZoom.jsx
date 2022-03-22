@@ -7,6 +7,7 @@ import classNames from "classnames";
 import { css } from "goober";
 import { Vect } from "projects/geom";
 import useMuState from "../hooks/use-mu-state";
+import useSiteStore from 'store/site.store';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
@@ -209,6 +210,10 @@ export default function CssPanZoom(props) {
     };
   });
 
+  React.useEffect(() => {
+    props.stageKey && useSiteStore.api.ensureStage(props.stageKey);
+  }, [props.stageKey]);
+
   return (
     <div className={classNames("panzoom-parent", rootCss(props))}>
       <div
@@ -269,6 +274,7 @@ const rootCss = (props) => css`
  * @typedef Props @type {object}
  * @property {string} [className]
  * @property {boolean} [dark]
+ * @property {string} [stageKey] Global identifier e.g. so shells can receive clicks.
  */
 
 /**
