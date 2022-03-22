@@ -78,8 +78,8 @@ export default function NPCs(props) {
             ref={state.npcRef}
           >
             <SpriteTest disabled={props.disabled} />
-            {/* <div className="body" />
-            <div className="breath" /> */}
+            {/* <div className="body" /> */}
+            {/* <div className="breath" /> */}
           </div>
         ))}
       </div>

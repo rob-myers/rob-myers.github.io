@@ -10,6 +10,7 @@ export default function SpriteTest(props) {
 
   return (
     <div className={classNames(rootCss, { disabled: props.disabled })}>
+      <div className="shadow" />
       <div
         className={"idle"}
         onMouseOver={e => {
@@ -28,25 +29,27 @@ export default function SpriteTest(props) {
 const walkSteps = 16;
 const idleSteps = 13;
 const spriteWidth = 256;
+const shadowRadius = 12;
 
 const rootCss = css`
   position: absolute;
   width: ${spriteWidth}px;
   height: ${spriteWidth}px;
-  left: ${-spriteWidth/2}px;
-  top: ${-spriteWidth/2}px;
   cursor: pointer;
-  transform: scale(0.18);
-  filter: saturate(200%);
+  
+  filter: contrast(200%);
   
   .walk, .idle {
     position: absolute;
     width: ${spriteWidth}px;
     height: ${spriteWidth}px;
+    left: ${-spriteWidth/2}px;
+    top: ${-spriteWidth/2}px;
+    transform: scale(0.18);
   }
   
   .walk {
-    animation: walk 0.5s steps(${walkSteps}) infinite;
+    animation: walk 1s steps(${walkSteps}) infinite;
     background: url('/pics/spritesheet-walk-test-2.png');
   }
 
@@ -66,5 +69,13 @@ const rootCss = css`
   @keyframes idle {
     from { background-position: 0px; }
     to { background-position: ${-idleSteps * spriteWidth}px; }
+  }
+
+  .shadow {
+    position: absolute;
+    left: ${-shadowRadius}px;
+    top: ${-shadowRadius}px;
+    border-radius: ${shadowRadius}px;
+    border: ${shadowRadius}px solid rgba(0, 0, 0, 0.3);
   }
 `;
