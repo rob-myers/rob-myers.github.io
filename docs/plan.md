@@ -33,8 +33,16 @@ __Aim towards website release__.
     > https://blog.logrocket.com/making-css-animations-using-a-sprite-sheet/
   - for multiple animations prob need control rig and import animations
     > https://youtu.be/yDc-E-o_I-c
-  - check out `Character Creator 3`
+  - ❌ check out `Character Creator 3`
   - try generating spritesheet using blender (rest of https://youtu.be/-zpORxZF4FE)
+  - download low poly assets previously bought from Unity
+    - `ls ~/Library/Unity/Asset\ Store-5.x/polyperfect/`
+    - `/Users/robmyers/first-project/Assets/polyperfect/Low Poly Animated People/- Models/Rigs`
+  - ❌ export polyperfect prefab from unity as fbx and import to blender
+  - ✅ make a walk cycle with one of the polyperfect characters
+  - ✅ make a walk/idle polyperfect character anim
+  - 🚧 integrate walk/idle anim into `NavDemo1`
+
 
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
@@ -43,10 +51,13 @@ __Aim towards website release__.
     > https://stackoverflow.com/questions/34762009/pulsing-heart-css-animation
   -  `NavDemo1` has Andros
   - 🚧`NavDemo1` has other NPCs
-- can move Andros via TTY
   - implement `click`
-  - can show navpath from andros to clicked point
-  - ...
+    - see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
+    - ✅ CssPanZoom has optional stageKey
+    - 🚧 TTY sessions have associated stageKey
+  - can move Andros via TTY
+    - can show navpath from andros to clicked point
+    - ...
 
 - NPCs have label
 - NPCs label tracks them as they move
