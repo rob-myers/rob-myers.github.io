@@ -78,8 +78,6 @@ export default function NPCs(props) {
             ref={state.npcRef}
           >
             <SpriteTest disabled={props.disabled} />
-            {/* <div className="body" /> */}
-            {/* <div className="breath" /> */}
           </div>
         ))}
       </div>
@@ -97,58 +95,5 @@ const rootCss = css`
   }
   .npc {
     position: absolute;
-  }
-  .npc .body {
-    position: absolute;
-    border-radius: ${npcRadius}px;
-    border: ${npcRadius}px solid rgba(255, 0, 0, 0.9);
-    outline: 1px solid rgba(0, 0, 0, 1);
-    animation: animateHeart 2.2s infinite;
-    left: ${-npcRadius}px;
-    top: ${-npcRadius}px;
-  }
-  .npc .breath {
-    position: absolute;
-    border-radius: ${breathRadius}px;
-    border: ${breathRadius}px solid rgba(0, 0, 255, 0.5);
-    top: ${-breathRadius}px;
-    left: ${npcRadius - 1.5 * breathRadius}px;
-    /* outline: 1px solid rgba(0, 0, 255, 0.5); */
-    animation: animateBreath 2s infinite ease-in-out;
-  }
-  .npcs.disabled {
-    .npc .body, .npc .breath {
-      animation-play-state: paused;
-    }
-  }
-
-  @keyframes animateHeart {
-    0% {
-      transform: scale(0.8);
-    }
-    5% {
-      transform: scale(0.9);
-    }
-    10% {
-      transform: scale(0.8);
-    }
-    15% {
-      transform: scale(1.1);
-    }
-    50% {
-      transform: scale(0.8);
-    }
-    100% {
-      transform: scale(0.8);
-    }
-  }
-
-  @keyframes animateBreath {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(0.5);
-    }
   }
 `;
