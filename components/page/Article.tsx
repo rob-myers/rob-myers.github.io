@@ -414,12 +414,19 @@ const articleComponents = (
   div({ node, ...props }: any) {
     switch (props.className) {
       case 'tabs': {
-        const height = React.useMemo<number | number[]>(() => Function(`return ${props.height}`)(), [props.height]);
+        const height = React.useMemo<number | number[]>(
+          () => Function(`return ${props.height}`)(),
+          [props.height],
+        );
         /** Flat list of tab metas */
-        const flatTabs = React.useMemo<TabMeta[]>(() => Function(`return ${props.tabs || '[]'}`)(), [props.tabs]);
+        const flatTabs = React.useMemo<TabMeta[]>(
+          () => Function(`return ${props.tabs || '[]'}`)(),
+          [props.tabs],
+        );
         /** Number of tabs shown initially */
         const show = Number(props.show) || 1;
         const tabs: [TabMeta[], TabMeta[]] = [flatTabs.slice(0, show), flatTabs.slice(show)];
+
         return (
           <Tabs
             id={props.name ? getTabsId(articleKey, props.name) : ''}

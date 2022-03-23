@@ -29,7 +29,7 @@ export function getTabsId(articleKey: string, tabsName: string) {
 export type TabMeta = { idSuffix?: string; weight?: number; } & (
   | { key: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
   | { key: 'component'; filepath: ComponentFilepathKey; }
-  | { key: 'terminal'; /** Session identifier */ filepath: string }
+  | { key: 'terminal'; /** Session identifier */ filepath: string; env?: Record<string, any>; }
 );
 
 export function computeJsonModel(tabs: [TabMeta[], TabMeta[]]): IJsonModel {

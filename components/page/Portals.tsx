@@ -43,12 +43,12 @@ export default function Portals() {
           );
         }
         case 'terminal': {
-          const env: React.ComponentProps<typeof Terminal>['env'] = {
-            test: {}, // TODO (?)
+          const defaultEnv: React.ComponentProps<typeof Terminal>['env'] = {
+            README: 'No environment was provided to this terminal.',
           };
           return (
             <portals.InPortal key={key} node={portal}>
-              <Terminal sessionKey={meta.filepath} env={env} />
+              <Terminal sessionKey={meta.filepath} env={meta.env || defaultEnv} />
             </portals.InPortal>
           );
         }
