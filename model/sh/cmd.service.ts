@@ -9,10 +9,16 @@ import { computeNormalizedParts, createKillError as killError, normalizeAbsParts
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
+import useSiteStore from 'store/site.store';
 
 const commandKeys = {
   /** Change current key prefix */
   cd: true,
+  /**
+   * TODO move to function?
+   * We'd rather not add anything which might change
+   */
+  click: true,
   /** List function definitions */
   declare: true,
   /** Output arguments as space-separated string */
@@ -91,6 +97,41 @@ class CmdService {
           useSession.api.setVar(meta.sessionKey, 'OLDPWD', prevPwd);
           throw new ShError(`${args[0]} not found`, 1);
         }
+        break;
+      }
+      case 'click': {
+        /**
+         * TODO prior association to a CssPanZoom via stageKey
+         */
+        const numClicks = args[0] === undefined ? Number.MAX_SAFE_INTEGER : Number(args[0]);
+        if (!Number.isFinite(numClicks)) {
+          throw new ShError('format: click [numberOfClicks]', 1);
+        }
+        const stageKey = useSession.api.getVar(node.meta.sessionKey, 'STAGE_KEY');
+        const stage = useSiteStore.getState().stage[stageKey];
+        if (typeof stageKey !== 'string') {
+          throw new ShError('STAGE_KEY: expected string value', 1);
+        }
+        if (!stage) {
+          throw new ShError(`stage not found for STAGE_KEY "${stageKey}"`, 1);
+        }
+
+        const process = useSession.api.getProcess(meta);
+        let [resolve, reject] = [(_: Geom.VectJson) => {}, (_: any) => {}];
+
+        const sub = stage.ptrEvent.subscribe({
+           next: (e) => {
+             if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
+               resolve({ x: e.point.x, y: e.point.y });
+             }
+           },
+         });
+         process.cleanups.push(() => sub.unsubscribe(), () => reject(killError(meta)));
+
+        for (let i = 0; i < numClicks; i++) {
+          yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
+        }
+        sub.unsubscribe();
         break;
       }
       case 'declare': {

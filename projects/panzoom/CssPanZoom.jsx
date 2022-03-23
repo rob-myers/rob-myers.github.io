@@ -77,14 +77,29 @@ export default function CssPanZoom(props) {
         /** @param {PointerEvent} e */
         pointerup(e) {
           // e.preventDefault();
-          // Note: don't remove all pointers
-          // Can restart without having to reinitiate all of them
-          // Remove the pointer regardless of the isPanning state
-          removePointer(state.pointers, e)
+          /**
+           * NOTE: don't remove all pointers.
+           * Can restart without having to reinitiate all of them.
+           * Remove the pointer regardless of the isPanning state.
+           */
+          removePointer(state.pointers, e);
           if (!state.isPanning) {
-            return
+            return;
           }
-          state.isPanning = false
+          if (props.stageKey) {
+            useSiteStore.getState().stage[props.stageKey]?.ptrEvent.next({
+              key: 'pointerup',
+              /**
+               * TODO get world point under point
+               * Need to work things out really carefully...
+               */
+              point: {
+                x: e.clientX,
+                y: e.clientY,
+              }
+            });
+          }
+          state.isPanning = false;
           state.origin = state.start.clientX = state.start.clientY = undefined;
         },
       },
@@ -96,7 +111,8 @@ export default function CssPanZoom(props) {
         // const result = constrainXY(toX, toY, scale, panOptions)
         // Only try to set if the result is somehow different
         if (state.x !== toX || state.y !== toY) {
-          state.x = toX, state.y = toY;
+          state.x = toX;
+          state.y = toY;
           state.root.style.transform = `scale(${state.scale}) translate(${state.x}px, ${state.y}px)`;
         }
         // Originally there was a return value
@@ -140,10 +156,9 @@ export default function CssPanZoom(props) {
       /**
        * @param {number} toScale 
        * @param {{ clientX: number; clientY: number }} point 
-       * @returns 
        */
       zoomToPoint(toScale, point) {
-        const dims = getDimensions(state.root)
+        const dims = getDimensions(state.root);
     
         // Instead of thinking of operating on the panzoom element,
         // think of operating on the area inside the panzoom

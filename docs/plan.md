@@ -15,11 +15,9 @@ __Aim towards website release__.
 - ✅ trace topdown characters using Boxy SVG
   - ✅ permit arbitrary <path>s
     > don't restrict to lineTos, because browser will render (not us)
-  - can display each frame in React component
+  - 🚧 can display each frame in React component
   - extract (possibly scaled up) PNGs
 
-- ✅ Mobile UI has Ctrl-C
-- ✅ Mobile UI has larger arrows
 - Mobile UI defaults to force lowercase + session storage
 
 - ✅ Create `NavDemo1`
@@ -30,9 +28,11 @@ __Aim towards website release__.
   -  `NavDemo1` has Andros
   - `NavDemo1` has other NPCs
   - 🚧 implement `click`
-    - see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
+    - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
     - ✅ CssPanZoom has optional stageKey
-    - 🚧 TTY sessions have associated stageKey
+    - ✅ TTY sessions have associated stageKey
+      > via `env: { STAGE_KEY: 'foo' }` in TabMeta
+    - click works
   - can move Andros via TTY
     - can show navpath from andros to clicked point
     - ...
@@ -94,6 +94,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Mobile UI has Ctrl-C
+- ✅ Mobile UI has larger arrows
 - ✅ decided against blender spritesheets, in favour of _hand-crafted vector drawings_, which may be rendered to PNG using browser
 - ❌ create a blender spritesheet
   - ✅ get a walk cycle from mixamo
