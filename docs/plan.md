@@ -12,6 +12,10 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- 🚧 trace topdown characters using Boxy SVG
+  - permit arbitrary <path>s i.e. do not restrict to lineTos, because expect browser to render it (directly or via previous PNG render), not us
+  - ...
+
 - ✅ Mobile UI has Ctrl-C
 - ✅ Mobile UI has larger arrows
 - Mobile UI defaults to force lowercase + session storage
@@ -22,8 +26,8 @@ __Aim towards website release__.
   - ✅ Circle with heart-beat and breath
     > https://stackoverflow.com/questions/34762009/pulsing-heart-css-animation
   -  `NavDemo1` has Andros
-  - 🚧`NavDemo1` has other NPCs
-  - implement `click`
+  - `NavDemo1` has other NPCs
+  - 🚧 implement `click`
     - see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
     - ✅ CssPanZoom has optional stageKey
     - 🚧 TTY sessions have associated stageKey
