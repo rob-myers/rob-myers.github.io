@@ -12,9 +12,11 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- 🚧 trace topdown characters using Boxy SVG
-  - permit arbitrary <path>s i.e. do not restrict to lineTos, because expect browser to render it (directly or via previous PNG render), not us
-  - ...
+- ✅ trace topdown characters using Boxy SVG
+  - ✅ permit arbitrary <path>s
+    > don't restrict to lineTos, because browser will render (not us)
+  - can display each frame in React component
+  - extract (possibly scaled up) PNGs
 
 - ✅ Mobile UI has Ctrl-C
 - ✅ Mobile UI has larger arrows
