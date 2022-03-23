@@ -19,16 +19,16 @@ export function TouchHelperUI(props: {
           const message = `⚠️  input ${forced ? 'forced as' : 'not forced as'} lowercase`;
           useSessionStore.api.warnCleanly(props.session.key, message);
           target.classList.toggle('enabled');
+        } else if (target.classList.contains('ctrl-c')) {
+          xterm.sendSigKill();
         } else if (target.classList.contains('clear')) {
           xterm.clearScreen();
-          xterm.xterm.focus();
         } else if (target.classList.contains('up')) {
           xterm.reqHistoryLine(+1);
-          xterm.xterm.focus();
         } else if (target.classList.contains('down')) {
           xterm.reqHistoryLine(-1);
-          xterm.xterm.focus();
         } 
+        xterm.xterm.focus();
       },
     };
   });
@@ -41,17 +41,20 @@ export function TouchHelperUI(props: {
         top: `${props.offset}px`,
       }}
     >
-      <div className="lowercase">
+      <div className="icon lowercase">
         abc
       </div>
-      <div className="clear">
+      <div className="icon ctrl-c">
+        💀
+      </div>
+      <div className="icon clear">
         ∅
       </div>
-      <div className="up">
-        ⬆
+      <div className="icon up">
+        ⬆️
       </div>
-      <div className="down">
-        ⬇
+      <div className="icon down">
+        ⬇️
       </div>
     </div>
   );
@@ -63,13 +66,14 @@ const rootCss = css`
   top: 0;
   right: 16px;
   width: 32px;
-  height: 90px;
+  height: 128px;
 
   line-height: 1; /** Needed for mobile viewing 'Desktop site' */
   background-color: rgba(0, 0, 0, 0.7);
   font-size: 0.75rem;
   border: 1px solid #555;
   border-width: 1px 1px 1px 1px;
+  color: white;
 
   display: flex;
   flex-direction: column;
@@ -82,10 +86,8 @@ const rootCss = css`
       color: white;
     }
   }
-  .clear, .up, .down {
-    color: white;
-  }
-  .lowercase, .clear, .up, .down {
+
+  .icon {
     cursor: pointer;
     width: 100%;
     text-align: center;

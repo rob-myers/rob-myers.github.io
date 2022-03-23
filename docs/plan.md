@@ -12,42 +12,9 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- 🚧 create a blender spritesheet
-  - ✅ get a walk cycle from mixamo
-    > https://www.mixamo.com/#/?page=1&query=walk&type=Motion%2CMotionPack
-  - ✅ generate walk cycle images using https://youtu.be/-zpORxZF4FE
-    - camera looking down from above 
-      - opt g, opt r to reset
-      - object data properties > Lens > type > Orthographic
-      - output properties > Output > directory where to save images
-      - Top menu > Animation > Render animation
-    - scene properties > film > transparent
-    - world properties > surface: emission > white
-    - output properties > Format > Resolution X, Y
-      - maybe high res if want to construct spritesheet after (1024px * 1024px)
-    - Animation view, Show Dope sheet, X delete, A + S to reduce frames
-      > Walk cycle: delete final; scale by 0.6; get [1, 19] inclusive after shift left
-  - ✅ basic spritesheet generation
-    > https://www.codeandweb.com/free-sprite-sheet-packer
-  - ✅ display via CSS, following:
-    > https://blog.logrocket.com/making-css-animations-using-a-sprite-sheet/
-  - for multiple animations prob need control rig and import animations
-    > https://youtu.be/yDc-E-o_I-c
-  - ❌ check out `Character Creator 3`
-  - try generating spritesheet using blender (rest of https://youtu.be/-zpORxZF4FE)
-  - download low poly assets previously bought from Unity
-    - `ls ~/Library/Unity/Asset\ Store-5.x/polyperfect/`
-    - `/Users/robmyers/first-project/Assets/polyperfect/Low Poly Animated People/- Models/Rigs`
-  - ❌ export polyperfect prefab from unity as fbx and import to blender
-  - ✅ make a walk cycle with one of the polyperfect characters
-  - ✅ make a walk/idle polyperfect character anim
-  - 🚧 integrate walk/idle anim into `NavDemo1`
-    - ✅ can switch between idle/walk
-    - 🚧 `click` works
-    - can show navpath from Andros via shell
-    - can move along navpath
-    - animate walk/cycle along navpath
-
+- ✅ Mobile UI has Ctrl-C
+- ✅ Mobile UI has larger arrows
+- Mobile UI defaults to force lowercase + session storage
 
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
@@ -121,6 +88,42 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ decided against blender spritesheets, in favour of _hand-crafted vector drawings_, which may be rendered to PNG using browser
+- ❌ create a blender spritesheet
+  - ✅ get a walk cycle from mixamo
+    > https://www.mixamo.com/#/?page=1&query=walk&type=Motion%2CMotionPack
+  - ✅ generate walk cycle images using https://youtu.be/-zpORxZF4FE
+    - camera looking down from above 
+      - opt g, opt r to reset
+      - object data properties > Lens > type > Orthographic
+      - output properties > Output > directory where to save images
+      - Top menu > Animation > Render animation
+    - scene properties > film > transparent
+    - world properties > surface: emission > white
+    - output properties > Format > Resolution X, Y
+      - maybe high res if want to construct spritesheet after (1024px * 1024px)
+    - Animation view, Show Dope sheet, X delete, A + S to reduce frames
+      > Walk cycle: delete final; scale by 0.6; get [1, 19] inclusive after shift left
+  - ✅ basic spritesheet generation
+    > https://www.codeandweb.com/free-sprite-sheet-packer
+  - ✅ display via CSS, following:
+    > https://blog.logrocket.com/making-css-animations-using-a-sprite-sheet/
+  - for multiple animations prob need control rig and import animations
+    > https://youtu.be/yDc-E-o_I-c
+  - ❌ check out `Character Creator 3`
+  - try generating spritesheet using blender (rest of https://youtu.be/-zpORxZF4FE)
+  - download low poly assets previously bought from Unity
+    - `ls ~/Library/Unity/Asset\ Store-5.x/polyperfect/`
+    - `/Users/robmyers/first-project/Assets/polyperfect/Low Poly Animated People/- Models/Rigs`
+  - ❌ export polyperfect prefab from unity as fbx and import to blender
+  - ✅ make a walk cycle with one of the polyperfect characters
+  - ✅ make a walk/idle polyperfect character anim
+  - 🚧 integrate walk/idle anim into `NavDemo1`
+    - ✅ can switch between idle/walk
+    - 🚧 `click` works
+    - can show navpath from Andros via shell
+    - can move along navpath
+    - animate walk/cycle along navpath
 - ✅ mobile: provide alt UI e.g. force lowercase + arrow keys
   - https://stackoverflow.com/questions/71537402/xtermjs-distinguish-backspace-on-mobile-device
 - ✅ render: ensure windows cut out of walls
