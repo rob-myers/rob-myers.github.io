@@ -92,6 +92,7 @@ const rootCss = css`
   position: absolute;
   canvas {
     position: absolute;
+    pointer-events: none;
   }
   .npc {
     position: absolute;
