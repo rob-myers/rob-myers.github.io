@@ -1,9 +1,9 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat } from '../geom';
-import { svgPathToPolygon } from './dom';
 import { geom } from './geom';
 import { labelMeta } from '../geomorph/geomorph.model';
+import { extractGeomsAt, hasTitle } from './cheerio';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -270,10 +270,10 @@ export function parseStarshipSymbol(symbolName, svgContents, lastModified) {
   const topNodes = Array.from($('svg > *'));
   const pngRect = extractPngOffset($, topNodes);
 
-  const singles = extractGeoms($, topNodes, 'singles');
-  const hull = extractGeoms($, topNodes, 'hull');
-  const obstacles = extractGeoms($, topNodes, 'obstacles');
-  const walls = extractGeoms($, topNodes, 'walls');
+  const singles = extractGeomsAt($, topNodes, 'singles');
+  const hull = extractGeomsAt($, topNodes, 'hull');
+  const obstacles = extractGeomsAt($, topNodes, 'obstacles');
+  const walls = extractGeomsAt($, topNodes, 'walls');
 
   return {
     key: symbolName,
@@ -343,47 +343,6 @@ export function deserializeSvgJson(svgJson) {
 }
 
 /**
- * @param {CheerioAPI} api
- * @param {Element[]} topNodes
- * @param {string} title
- */
-function extractGeoms(api, topNodes, title) {
-  const group = topNodes.find(x => hasTitle(api, x, title));
-  const children = api(group).children('rect, path, ellipse').toArray();
-  return children.flatMap(x => extractGeom(api, x)).map(x => x.precision(4));
-}
-
-/**
- * @param {CheerioAPI} api
- * @param {Element} el
- */
-function extractGeom(api, el) {
-  const { tagName, attribs: a } = el;
-  const output = /** @type {Poly[]} */ ([]);
-  const title = api(el).children('title').text() || null;
-  const _ownTags = title ? title.split(' ') : [];
-
-  if (tagName === 'rect') {
-    const poly = Poly.fromRect(new Rect(Number(a.x || 0), Number(a.y || 0), Number(a.width || 0), Number(a.height || 0)))
-    output.push(Object.assign(poly, { _ownTags }));
-  } else if (tagName === 'path') {
-    // Must be a single connected polygon with ≥ 0 holes
-    const poly = svgPathToPolygon(a.d);
-    poly && output.push(Object.assign(poly, { _ownTags }));
-  } else if (tagName === 'ellipse') {
-    // Reinterpret ellipse as bounding rectangle (preserves info)
-    const poly = Poly.fromRect(new Rect((Number(a.cx) - Number(a.rx)) || 0, (Number(a.cy) - Number(a.ry)) || 0, 2 * Number(a.rx) || 0, 2 * Number(a.ry) || 0))
-    output.push(Object.assign(poly, { _ownTags }));
-  } else {
-    console.warn('extractGeom: unexpected tagName:', tagName, a);
-  }
-  // DOMMatrix not available server-side
-  // const m = new DOMMatrix(a.transform);
-  const m = new Mat(a.transform);
-  return output.map(poly => poly.applyMatrix(m));
-}
-
-/**
  * Each symbol has a copy of the original PNG in group `background`.
  * It may have been offset e.g. so doors are aligned along border.
  * Then we need to extract the respective rectangle.
@@ -400,17 +359,6 @@ function extractPngOffset(api, topNodes) {
     width: Number(a.width || 0),
     height: Number(a.height || 0),
   };
-}
-
-/**
- * - Test if node has child <title>{title}</title>,
- * - Additionally add class {title} if so.
- * @param {CheerioAPI} api 
- * @param {Element} node 
- * @param {string} title 
- */
-function hasTitle(api, node, title) {
-  return api(node).children('title').text() === title && api(node).addClass(title)
 }
 
 /** @param {Poly[]} polys */
