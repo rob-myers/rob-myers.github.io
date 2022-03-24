@@ -32,7 +32,7 @@ __Aim towards website release__.
     - ✅ CssPanZoom has optional stageKey
     - ✅ TTY sessions have associated stageKey
       > via `env: { STAGE_KEY: 'foo' }` in TabMeta
-    - click works
+    - ✅ click works
   - can move Andros via TTY
     - can show navpath from andros to clicked point
     - ...

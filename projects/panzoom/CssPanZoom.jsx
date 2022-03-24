@@ -87,16 +87,19 @@ export default function CssPanZoom(props) {
             return;
           }
           if (props.stageKey) {
+            const dims = getDimensions(state.root);
+            const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
+            const point = matrix.transformPoint({ x: e.clientX - dims.parent.left, y: e.clientY - dims.parent.top });
+            /**
+             * Unsure how to fix offset, possibly due to transform-origin of state.root.
+             * To solve this we invert a point known to be at the origin.
+             */
+            const { x: ox, y: oy } = state.root.children[0].getBoundingClientRect();
+            const offset = matrix.transformPoint({ x: ox - dims.parent.left, y: oy - dims.parent.top });
+
             useSiteStore.getState().stage[props.stageKey]?.ptrEvent.next({
               key: 'pointerup',
-              /**
-               * TODO get world point under point
-               * Need to work things out really carefully...
-               */
-              point: {
-                x: e.clientX,
-                y: e.clientY,
-              }
+              point: { x: point.x - offset.x, y: point.y - offset.y }
             });
           }
           state.isPanning = false;
@@ -235,6 +238,7 @@ export default function CssPanZoom(props) {
         ref={state.rootRef}
         className={classNames("panzoom-root", props.className)}
       >
+        <div className="origin" />
         <div className="small-grid" />
         {props.children}
         <div className="large-grid" />
@@ -281,6 +285,9 @@ const rootCss = (props) => css`
     }
     .large-grid {
       background-size: 60px 60px;
+    }
+    .origin {
+      position: absolute;
     }
   }
 `;
