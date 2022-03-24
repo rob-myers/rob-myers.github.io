@@ -12,6 +12,8 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- clean away old stuff from projects/npc (?)
+
 - ✅ trace topdown characters using Boxy SVG
   - restrict to things we can render server-side
   - 🚧 can render each frame in node.js script

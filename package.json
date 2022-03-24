@@ -13,6 +13,7 @@
     "postinstall": "patch-package",
     "ts-script": "ts-node -O '{ \"module\": \"commonjs\", \"isolatedModules\": false }'",
     "rename-pngs": "yarn ts-script media/scripts/rename-pngs",
+    "render-npc": "yarn ts-script media/scripts/render-npc",
     "minify-pngs": "yarn ts-script media/scripts/minify-pngs",
     "simplify-pngs": "yarn ts-script media/scripts/simplify-pngs",
     "render-layout": "yarn ts-script media/scripts/render-layout",

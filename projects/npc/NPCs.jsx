@@ -85,9 +85,6 @@ export default function NPCs(props) {
   );
 }
 
-const npcRadius = 7.5;
-const breathRadius = 5;
-
 const rootCss = css`
   position: absolute;
   canvas {
