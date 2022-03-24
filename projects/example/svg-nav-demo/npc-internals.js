@@ -1,5 +1,5 @@
-import { Poly, Vect } from "../geom";
-import { pathfinding } from '../pathfinding/Pathfinding';
+import { Poly, Vect } from "../../geom";
+import { pathfinding } from '../../pathfinding/Pathfinding';
 
 /**
  * @param {NPCTest.NPCApi} api

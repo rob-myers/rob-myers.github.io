@@ -1,7 +1,7 @@
 import React from "react";
 import { css } from "goober";
-import { Vect } from "../geom";
-import { pathfinding } from '../pathfinding/Pathfinding';
+import { Vect } from "../../geom";
+import { pathfinding } from '../../pathfinding/Pathfinding';
 import DraggableNode from "./DraggableNode";
 import { getInternalNpcApi, navNodeRadius } from "./npc-internals";
 import DraggableRay from "./DraggableRay";

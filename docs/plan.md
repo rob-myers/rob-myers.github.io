@@ -12,10 +12,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- clean away old stuff from projects/npc (?)
-
 - ✅ trace topdown characters using Boxy SVG
-  - restrict to things we can render server-side
   - 🚧 can render each frame in node.js script
 
 - Mobile UI defaults to force lowercase + session storage
@@ -94,6 +91,7 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ tidy away old NPC stuff (SVG based)
 - ✅ Mobile UI has Ctrl-C
 - ✅ Mobile UI has larger arrows
 - ✅ decided against blender spritesheets, in favour of _hand-crafted vector drawings_, which may be rendered to PNG using browser

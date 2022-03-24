@@ -8,7 +8,7 @@ import { pathfinding } from '../pathfinding/Pathfinding';
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
-import DraggableNode from "../npc/DraggableNode";
+import DraggableNode from "./svg-nav-demo/DraggableNode";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
 

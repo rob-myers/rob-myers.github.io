@@ -8,10 +8,10 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
-import NPCsTest from "../npc/NPCWithUis";
-import Messages from "../npc/Messages";
+import NPCsTest from "./svg-nav-demo/NPCWithUis";
+import Messages from "./svg-nav-demo/Messages";
 import { geom } from "../service/geom";
-import DraggableNode from "../npc/DraggableNode";
+import DraggableNode from "./svg-nav-demo/DraggableNode";
 
 // TODO
 // - can change speed

@@ -1,7 +1,7 @@
 import React from "react";
 import { css } from "goober";
-import { getSvgPos } from "../service/dom";
-import { Vect } from "../geom/vect";
+import { getSvgPos } from "../../service/dom";
+import { Vect } from "../../geom/vect";
 
 /** @param {NPCTest.DraggableRayProps} props */
 export default function DraggableRay(props) {
