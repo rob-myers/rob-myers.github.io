@@ -13,10 +13,8 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - ✅ trace topdown characters using Boxy SVG
-  - ✅ permit arbitrary <path>s
-    > don't restrict to lineTos, because browser will render (not us)
-  - 🚧 can display each frame in React component
-  - extract (possibly scaled up) PNGs
+  - restrict to things we can render server-side
+  - 🚧 can render each frame in node.js script
 
 - Mobile UI defaults to force lowercase + session storage
 

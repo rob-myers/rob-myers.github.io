@@ -19,8 +19,6 @@ Triangle.init().then(() => {
   Triangle.freeIO(output);
 });
 
-
-
 // {
 //   pointlist: [[0.2, -0.7764], [0.22, -0.7732] ...],
 //   pointattributelist: [-0.57, -0.55, -0.51, -0.53 ...],

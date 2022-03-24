@@ -1,22 +1,16 @@
-export interface FileMeta {
-  srcName: string;
-  /** Numeric identifier from Starship Geomorphs 2.0 */
-  id: number;
-  /** Sometimes a range is given */
-  ids: number[];
-  extendedId?: string;
-  /** Dimension in grid squares of Starship Geomorphs 2.0 */
-  gridDim: [number, number];
-  dstName: string;
-  is: string[];
-  has: string[];
-}
+/// <reference path="./deps.d.ts"/>
+import chalk from "chalk";
+import { assertDefined } from "../../projects/service/generic";
 
 export const rootFilenameRegex = /^(\d+x\d+)(.*)\.png$/;
 
-export function metaFromRootFilename(matched: RegExpMatchArray): FileMeta {
+/**
+ * @param {RegExpMatchArray} matched 
+ * @returns {ServerTypes.FileMeta}
+ */
+export function metaFromRootFilename(matched) {
   const srcName = matched[0];
-  const gridDim = matched[1].split('x').map(x => Number(x) / 5) as [number, number];
+  const gridDim = /** @type {[number, number]} */ (matched[1].split('x').map(x => Number(x) / 5));
   const id = -1;
   const ids = [id];
   const description = normalizeChars(matched[2]);
@@ -26,12 +20,16 @@ export function metaFromRootFilename(matched: RegExpMatchArray): FileMeta {
 
 export const geomorphsFilenameRegex = /^([A-Z]+)?([\d,]+) \[(\d+x\d+)\] ([^(]*)(.*)\.png$/;
 
-export function metaFromGeomorphFilename(matched: RegExpMatchArray): FileMeta {
+/**
+ * @param {RegExpMatchArray} matched 
+ * @returns {ServerTypes.FileMeta}
+ */
+export function metaFromGeomorphFilename(matched) {
   const srcName = matched[0];
   const ids = matched[1] ? [-1] : matched[2].split(',').map(Number);
   const id = ids[0];
   const extendedId = matched[1] ? `${matched[1]}${matched[2]}` : undefined;
-  const gridDim = matched[3].split('x').map(x => Number(x) / 5) as [number, number];
+  const gridDim = /** @type {[number, number]} */ (matched[3].split('x').map(x => Number(x) / 5));
   const description = matched[4].concat(matched[5]);
   const { label, is, has } = extractGeomorphInfo(description);
   const dstName =`g-${extendedId || matched[2].split(',')[0]}--${label}.png`;
@@ -43,14 +41,18 @@ export function metaFromGeomorphFilename(matched: RegExpMatchArray): FileMeta {
  */
 export const symbolsFilenameRegex = /^(.*) (\d+)([a-z])? (?:(.+) )?\[(\d+x\d+)\](.*)\.png$/;
 
-export function metaFromSymbolFilename(matched: RegExpMatchArray): FileMeta {
+/**
+ * @param {RegExpMatchArray} matched 
+ * @returns {ServerTypes.FileMeta}
+ */
+export function metaFromSymbolFilename(matched) {
   let category = normalizeChars(matched[1]);
   if (matched[4]) category += `-${normalizeChars(matched[4])}`;
   const id = Number(matched[2]);
   const ids = [id];
-  const gridDim = matched[5].split('x').map(x => Number(x) / 5) as [number, number];
+  const gridDim = /** @type {[number, number]} */ (matched[5].split('x').map(x => Number(x) / 5));
   // ids are local unlike geomorphs
-  const is = [] as string[];
+  const is = /** @type {string[]} */ ([]);
   if (matched[3]) is.push(`part-${matched[3]}`);
   if (matched[6]) is.push(normalizeChars(matched[6]));
   return {
@@ -65,9 +67,13 @@ export function metaFromSymbolFilename(matched: RegExpMatchArray): FileMeta {
  */
 export const altSymbolsFilenameRegex = /^(.*) \[(\d+x\d+)\]\.png$/;
 
-export function metaFromAltSymbolFilename(matched: RegExpMatchArray): FileMeta {
+/**
+ * @param {RegExpMatchArray} matched 
+ * @returns {ServerTypes.FileMeta}
+ */
+export function metaFromAltSymbolFilename(matched) {
   const category = normalizeChars(matched[1]);
-  const gridDim = matched[2].split('x').map(x => Number(x) / 5) as [number, number];
+  const gridDim = /** @type {[number, number]} */ (matched[2].split('x').map(x => Number(x) / 5));
   return { 
     srcName: matched[0],
     dstName: `${category}--${gridDim[0]}x${gridDim[1]}.png`,
@@ -77,7 +83,11 @@ export function metaFromAltSymbolFilename(matched: RegExpMatchArray): FileMeta {
 
 export const smallCraftFilenameRegex = /^(.*).png$/;
 
-export function metaFromSmallCraftFilename(matched: RegExpMatchArray): FileMeta {
+/**
+ * @param {RegExpMatchArray} matched 
+ * @returns {ServerTypes.FileMeta}
+ */
+export function metaFromSmallCraftFilename(matched) {
   return {
     srcName: matched[0],
     dstName: `${normalizeChars(matched[1])}--small-craft.png`,
@@ -88,19 +98,23 @@ export function metaFromSmallCraftFilename(matched: RegExpMatchArray): FileMeta 
   };
 }
 
-function extractGeomorphInfo(info: string): FilenameMeta {
-  const is = [] as string[];
-  const has = [] as string[];
+/**
+ * @param {string} info 
+ * @returns {ServerTypes.FilenameMeta}
+ */
+function extractGeomorphInfo(info) {
+  const is = /** @type {string[]} */ ([]);
+  const has = /** @type {string[]} */  ([])
   const parts = info.split(' ');
 
   if (parts[0] === '[Overlay]') {
-    is.push(parts.shift()!.slice(1, -1).toLowerCase());
+    is.push(assertDefined(parts.shift()).slice(1, -1).toLowerCase());
   }
   if (parts[0].match(/^\(\d+\)$/)) {
-    is.push(`part-${parts.shift()!.slice(1, -1)}`);
+    is.push(`part-${assertDefined(parts.shift()).slice(1, -1)}`);
   }
   if (parts[0].match(/^\d+x$/)) {
-    is.push(parts.shift()!.toLowerCase());
+    is.push(assertDefined(parts.shift()).toLowerCase());
   }
 
   const startBracket = parts.findIndex(x => x.startsWith('('));
@@ -116,13 +130,10 @@ function extractGeomorphInfo(info: string): FilenameMeta {
   };
 }
 
-interface FilenameMeta {
-  label: string;
-  is: string[];
-  has: string[];
-}
-
-function normalizeChars(word: string) {
+/**
+ * @param {string} word 
+ */
+function normalizeChars(word) {
   return word.trim().toLowerCase()
     .replace(/&/g, 'and')
     .replace(/[ -]+/g, '-')
@@ -130,14 +141,21 @@ function normalizeChars(word: string) {
   ;
 }
 
-import chalk from "chalk";
-
-export function error(...args: string[]) {
+/**
+ * @param  {...string} args 
+ */
+export function error(...args) {
   console.error(chalk.red(...args));
 }
-export function info(...args: string[]) {
+/**
+ * @param  {...string} args 
+ */
+export function info(...args) {
   console.info(chalk.yellow(...args));
 }
-export function warn(...args: string[]) {
+/**
+ * @param  {...string} args 
+ */
+export function warn(...args) {
   console.info(chalk.grey(...args));
 }

@@ -43,7 +43,6 @@ import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 import { nanoid } from 'nanoid';
 
 import { 
-  FileMeta,
   metaFromRootFilename,
   metaFromGeomorphFilename,
   metaFromSymbolFilename,
@@ -90,7 +89,7 @@ if (childProcess.execSync(
 const srcFilenames = fs.readdirSync(srcDir);
 fs.mkdirSync(dstDir, { recursive: true });
 const manifestPath = path.join(dstDir, 'manifest.json');
-const fileMetas = [] as FileMeta[];
+const fileMetas = /** @type {ServerTypes.FileMeta[]} */ ([]);
 
 info('creating manifest', manifestPath);
 
