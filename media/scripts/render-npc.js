@@ -20,8 +20,6 @@ if (!npcName || !fs.existsSync(npcFilepath)) {
 }
 
 const contents = fs.readFileSync(npcFilepath).toString();
-
 const parsed = parseNpc(npcName, contents);
-
 // TODO
 console.log(parsed);

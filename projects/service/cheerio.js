@@ -38,7 +38,7 @@ export function extractGeoms(api, parent) {
  */
 function extractGeom(api, el) {
   const { tagName, attribs: a } = el;
-  const output = /** @type {Geom.Poly[]} */ ([]);
+  const output = /** @type {(Geom.Poly & { _ownTags: string[] })[]} */ ([]);
   const title = api(el).children('title').text() || null;
   const _ownTags = title ? title.split(' ') : [];
 
