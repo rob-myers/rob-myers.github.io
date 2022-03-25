@@ -7,7 +7,7 @@
 import path from 'path';
 import fs from 'fs';
 import { error, info } from './service';
-import { parseNpc } from '../../projects/service/npc';
+import { parseNpc, renderNpc } from '../../projects/service/npc';
 
 const [,, npcName] = process.argv;
 const npcDir = 'media/npc'
@@ -21,5 +21,8 @@ if (!npcName || !fs.existsSync(npcFilepath)) {
 
 const contents = fs.readFileSync(npcFilepath).toString();
 const parsed = parseNpc(npcName, contents);
+
 // TODO
-console.log(parsed);
+console.log({ parsed });
+renderNpc(parsed);
+

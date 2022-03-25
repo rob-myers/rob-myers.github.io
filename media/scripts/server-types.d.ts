@@ -35,4 +35,9 @@ declare namespace ServerTypes {
     frames: GeomTagMeta[][];
   }
 
+  export interface ParsedNpc {
+    npcName: string;
+    animLookup: { [animName: string]: ServerTypes.NpcAnim };
+  }
+
 }

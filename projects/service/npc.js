@@ -1,5 +1,5 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
-import { Image, createCanvas } from 'canvas';
+import { Image, createCanvas, Canvas } from 'canvas';
 import path from 'path';
 import util from 'util';
 import stream from 'stream';
@@ -7,9 +7,36 @@ import fs from 'fs';
 
 import { extractGeomsAt, extractMetas, hasTitle } from './cheerio';
 
+const publicDir = path.resolve(__dirname, '../../public');
+const outputDir = path.resolve(publicDir, 'npc');
+
+/**
+ * @param {ServerTypes.ParsedNpc} parsed 
+ */
+export function renderNpc(parsed) {
+  /**
+   * - ✅ test render a frame
+   *   > use https://github.com/Automattic/node-canvas/issues/1116
+   * - ✅ better render of frame
+   * - output a whole animation
+   * - output all animations
+   */
+   const anim = parsed.animLookup.idle;
+   const canvas = createCanvas(anim.aabb.width, anim.aabb.height);
+   drawFrame(anim, 0, canvas)
+ 
+   const outputPath = path.resolve(outputDir, 'test.png');
+   util.promisify(stream.pipeline)(
+     canvas.createPNGStream(), 
+     fs.createWriteStream(outputPath),
+   );
+
+}
+
 /**
  * @param {string} npcName 
- * @param {string} svgContents 
+ * @param {string} svgContents
+ * @returns {ServerTypes.ParsedNpc}
  */
 export function parseNpc(npcName, svgContents) {
   const $ = cheerio.load(svgContents);
@@ -20,55 +47,42 @@ export function parseNpc(npcName, svgContents) {
   const animHeads = metaBoundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect }));
   console.log('found', { animHeads });
 
-  const toAnim = animHeads.reduce((agg, { animName, aabb }) => ({ ...agg,
-    [animName]: { aabb, frames: extractFrames($, topNodes, animName) },
-  }), /** @type {{ [animName: string]: ServerTypes.NpcAnim }} */ ({}));  
+  return {
+    npcName,
+    animLookup: animHeads.reduce((agg, { animName, aabb }) => ({ ...agg,
+      [animName]: { aabb, frames: extractFrames($, topNodes, animName) },
+    }), {}),
+  };
+}
 
-  /**
-   * TODO test render a frame
-   * - use https://github.com/Automattic/node-canvas/issues/1116
-   */
-  const anim = toAnim.idle;
-  const frame = anim.frames[0];
-  const svgItems = frame.map(item => {
+/**
+ * 
+ * @param {ServerTypes.NpcAnim} anim 
+ * @param {number} frame
+ * @param {Canvas} canvas 
+ */
+function drawFrame(anim, frame, canvas) {
+  const svgItems = anim.frames[frame].map(item => {
+    const style = Object.entries(item.style).map(x => x.join(': ')).join(';');
     if (item.tagName === 'ellipse') {
-      // TODO
-      return `<ellipse cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" />`;
+      // TODO styles
+      return `<ellipse style="${style}" cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" />`;
     } else if (item.tagName === 'path') {
       // TODO
-      return `<path stroke="red" d="${item.d}" />`;
+      return `<path style="${style}" d="${item.d}" />`;
     } else if (item.tagName === 'rect') {
       // TODO
-      return `<rect fill="blue" x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" />`;
+      return `<rect style="${style}" x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" />`;
     }
   });
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="${anim.aabb.width}" height="${anim.aabb.height}">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="${anim.aabb.toString()}" width="${anim.aabb.width}" height="${anim.aabb.height}">
       ${svgItems.join('\n    ')}
     </svg>
   `;
   const image = new Image;
   image.src = Buffer.from(svg, 'utf-8');
-
-  const canvas = createCanvas(anim.aabb.width, anim.aabb.height);
-  const ctxt = canvas.getContext('2d');
-  ctxt.drawImage(image, 0, 0);
-  const publicDir = path.resolve(__dirname, '../../public');
-  const outputDir = path.resolve(publicDir, 'npc');
-  const outputPath = path.resolve(outputDir, 'test.png');
-  util.promisify(stream.pipeline)(
-    canvas.createPNGStream(), 
-    fs.createWriteStream(outputPath),
-  );
-
-  console.log({ 
-    frame,
-    svg,
-  });
-
-  return {
-    // TODO
-  };
+  canvas.getContext('2d').drawImage(image, 0, 0);
 }
 
 /**
