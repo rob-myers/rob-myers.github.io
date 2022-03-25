@@ -90,12 +90,14 @@ function extractMeta(api, el) {
     ? /** @type {[number, number, number, number, number, number]} */ ([m.a, m.b, m.c, m.d, m.e, m.f])
     : undefined;
 
+  const style = (a.style??'').split(/;\s?/).map(x => x.split(/:\s?/)).reduce((agg, [k, v]) => ({ ...agg, [k]: v }), {});
+
   if (tagName === 'rect') {
-    return { tags, transform, tagName: 'rect', x: Number(a.x || 0), y: Number(a.y || 0), width: Number(a.width || 0), height: Number(a.height || 0) };
+    return { tags, transform, style, tagName: 'rect', x: Number(a.x || 0), y: Number(a.y || 0), width: Number(a.width || 0), height: Number(a.height || 0) };
   } else if (tagName === 'path') {
-    return { tags, transform, tagName: 'path', d: a.d };
+    return { tags, transform, style, tagName: 'path', d: a.d };
   } else if (tagName === 'ellipse') {
-    return { tags, transform, tagName: 'ellipse', cx: Number(a.cx || 0), cy: Number(a.cy || 0), rx: Number(a.rx || 0), ry: Number(a.ry || 0) };
+    return { tags, transform, style, tagName: 'ellipse', cx: Number(a.cx || 0), cy: Number(a.cy || 0), rx: Number(a.rx || 0), ry: Number(a.ry || 0) };
   } else {
     console.warn('extractMeta: unexpected tagName:', tagName, a);
   }

@@ -14,6 +14,10 @@ __Aim towards website release__.
 
 - ✅ trace topdown characters using Boxy SVG
   - 🚧 can render each frame in node.js script
+  - perhaps `Image` with `<svg>` src?
+    > https://github.com/Automattic/node-canvas/issues/1116
+  - ...
+  
 
 - Mobile UI defaults to force lowercase + session storage
 
@@ -30,7 +34,8 @@ __Aim towards website release__.
     - ✅ TTY sessions have associated stageKey
       > via `env: { STAGE_KEY: 'foo' }` in TabMeta
     - ✅ click works
-  - can move Andros via TTY
+  - Andros is __situated__
+  - Can move Andros via TTY
     - can show navpath from andros to clicked point
     - ...
 

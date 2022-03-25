@@ -23,10 +23,16 @@ declare namespace ServerTypes {
   export type GeomTagMeta = {
     tags: string[];
     transform?: [number, number, number, number, number, number];
+    style: { [key: string]: any };
   } & (
     | { tagName: 'ellipse'; cx: number; cy: number; rx: number; ry: number; }
     | { tagName: 'path'; d: string; }
     | { tagName: 'rect'; } & Geom.RectJson
   );
+
+  export interface NpcAnim {
+    aabb: Geom.Rect;
+    frames: GeomTagMeta[][];
+  }
 
 }
