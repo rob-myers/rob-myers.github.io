@@ -37,15 +37,14 @@ export default function Terminal({ sessionKey, env }: Props) {
               ttyXterm.initialise();
               session.ttyShell.initialise(ttyXterm);
 
-              // TODO don't run on non-touch-devices
               const updateTouchUiOffset = debounce(() => {
                 setOffset(Math.max(1, parseInt(xterm.textarea!.style.top) - 100));
               }, 100);
-              ttyXterm.xterm.onLineFeed(() => updateTouchUiOffset());
+              ttyXterm.xterm.onLineFeed(() => isTouchDevice.value && updateTouchUiOffset());
             }}
             options={options}
           />
-          {isTouchDevice &&
+          {isTouchDevice.value &&
             <TouchHelperUI
               session={session}
               offset={offset}

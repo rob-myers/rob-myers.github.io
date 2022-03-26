@@ -215,7 +215,11 @@ export function getRelativePos(e) {
 	return new Vect(e.clientX - left, e.clientY - top);
 }
 
-/** https://stackoverflow.com/a/4819886/2917822 */
+/**
+ * https://stackoverflow.com/a/4819886/2917822
+ * If Chrome devtool initially open as mobile device,
+ * `'ontouchstart' in window` continues to be true if switch to desktop.
+ */
 export function canTouchDevice() {
   return (
     typeof window !== 'undefined' && (
