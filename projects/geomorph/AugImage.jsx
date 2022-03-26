@@ -3,6 +3,8 @@ import { assertNonNull } from "../service/generic";
 
 /**
  * Augmented image
+ * - Currently unused, but might be helpful in the future.
+ * - More generally we may wish to augment images without generating them.
  * @param {Props & React.SVGProps<SVGImageElement>} props
  */
 export default function AugImage(props) {

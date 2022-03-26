@@ -21,6 +21,7 @@ import layoutDefs from '../../projects/geomorph/layouts';
 import { createLayout, deserializeSvgJson, serializeLayout } from '../../projects/service/geomorph';
 import { renderGeomorph } from '../../projects/geomorph/render-geomorph';
 import { triangle } from '../../projects/service/triangle';
+import { saveCanvasAsFile } from '../../projects/service/file';
 
 const geomorphId = Number(process.argv[2]);
 const layoutDef = Object.values(layoutDefs).find(x => x.id === geomorphId);
@@ -40,16 +41,13 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${
 (async function run() {
   const { layout, canvas } = await renderLayout(layoutDef);
 
-  // Also done in svg-meta
+  // Write /geomorph/{geomorph-key}.json (as does svg-meta.js)
   fs.writeFileSync(
     path.resolve(outputDir, `${layoutDef.key}.json`),
     stringify(serializeLayout(layout)),
   );
 
-  await util.promisify(stream.pipeline)(
-    canvas.createPNGStream(), 
-    fs.createWriteStream(outputPath),
-  );
+  await saveCanvasAsFile(canvas, outputPath);
 })();
 
 /**

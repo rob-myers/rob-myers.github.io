@@ -6,6 +6,7 @@ import stream from 'stream';
 import fs from 'fs';
 
 import { extractGeomsAt, extractMetas, hasTitle } from './cheerio';
+import { saveCanvasAsFile } from './file';
 
 const publicDir = path.resolve(__dirname, '../../public');
 const outputDir = path.resolve(publicDir, 'npc');
@@ -23,13 +24,10 @@ export function renderNpc(parsed) {
    */
    const anim = parsed.animLookup.idle;
    const canvas = createCanvas(anim.aabb.width, anim.aabb.height);
-   drawFrame(anim, 0, canvas)
+   drawFrameAt(anim, 0, canvas)
  
    const outputPath = path.resolve(outputDir, 'test.png');
-   util.promisify(stream.pipeline)(
-     canvas.createPNGStream(), 
-     fs.createWriteStream(outputPath),
-   );
+   saveCanvasAsFile(canvas, outputPath);
 
 }
 
@@ -43,35 +41,33 @@ export function parseNpc(npcName, svgContents) {
   const topNodes = Array.from($('svg > *'));
 
   const metaGeoms = extractGeomsAt($, topNodes, 'meta');
-  const metaBoundsGeoms = metaGeoms.filter(x => x._ownTags[1] === 'bounds');
-  const animHeads = metaBoundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect }));
-  console.log('found', { animHeads });
+  const boundsGeoms = metaGeoms.filter(x => x._ownTags[1] === 'bounds');
+  const animMetas = boundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect }));
+  console.log('found', { animMetas });
 
   return {
     npcName,
-    animLookup: animHeads.reduce((agg, { animName, aabb }) => ({ ...agg,
+    animLookup: animMetas.reduce((agg, { animName, aabb }) => ({ ...agg,
       [animName]: { aabb, frames: extractFrames($, topNodes, animName) },
     }), {}),
   };
 }
 
 /**
- * 
+ * Render by recreating an SVG and assigning as Image src.
+ * Permits complex SVG <path>s, non-trivial to draw directly into canvas.
  * @param {ServerTypes.NpcAnim} anim 
- * @param {number} frame
+ * @param {number} frame 0-based frame index
  * @param {Canvas} canvas 
  */
-function drawFrame(anim, frame, canvas) {
+function drawFrameAt(anim, frame, canvas) {
   const svgItems = anim.frames[frame].map(item => {
     const style = Object.entries(item.style).map(x => x.join(': ')).join(';');
     if (item.tagName === 'ellipse') {
-      // TODO styles
       return `<ellipse style="${style}" cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" />`;
     } else if (item.tagName === 'path') {
-      // TODO
       return `<path style="${style}" d="${item.d}" />`;
     } else if (item.tagName === 'rect') {
-      // TODO
       return `<rect style="${style}" x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" />`;
     }
   });
