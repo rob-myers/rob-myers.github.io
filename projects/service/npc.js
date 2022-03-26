@@ -1,9 +1,6 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { Image, createCanvas, Canvas } from 'canvas';
 import path from 'path';
-import util from 'util';
-import stream from 'stream';
-import fs from 'fs';
 
 import { extractGeomsAt, extractMetas, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
@@ -19,16 +16,64 @@ export function renderNpc(parsed) {
    * - ✅ test render a frame
    *   > use https://github.com/Automattic/node-canvas/issues/1116
    * - ✅ better render of frame
-   * - output a whole animation
+   * - ✅ can zoom
+   * - ✅ can output whole animation as horizontal spritesheet
    * - output all animations
    */
-   const anim = parsed.animLookup.idle;
-   const canvas = createCanvas(anim.aabb.width, anim.aabb.height);
-   drawFrameAt(anim, 0, canvas)
+  const anim = parsed.animLookup.walk;
+  const zoom = 2;
+  const canvas = drawAnimSpriteSheet(anim, zoom);
  
-   const outputPath = path.resolve(outputDir, 'test.png');
-   saveCanvasAsFile(canvas, outputPath);
+  const outputPath = path.resolve(outputDir, 'test.png');
+  saveCanvasAsFile(canvas, outputPath);
 
+}
+
+/**
+ * @param {ServerTypes.NpcAnim} anim 
+ * @param {number} [zoom] 
+ */
+function drawAnimSpriteSheet(anim, zoom = 1) {
+  const frameCount = anim.frames.length;
+  const canvas = createCanvas(anim.aabb.width * zoom * frameCount, anim.aabb.height * zoom);
+
+  const ctxt = canvas.getContext('2d');
+  for (let i = 0; i < frameCount; i++) {
+    drawFrameAt(anim, i, canvas, zoom);
+    ctxt.translate(anim.aabb.width * zoom, 0);
+  }
+  ctxt.restore();
+  return canvas;
+}
+
+/**
+ * Render by recreating an SVG and assigning as Image src.
+ * Permits complex SVG <path>s, non-trivial to draw directly into canvas.
+ * @param {ServerTypes.NpcAnim} anim 
+ * @param {number} frame 0-based frame index
+ * @param {Canvas} canvas 
+ * @param {number} [zoom] 
+ */
+function drawFrameAt(anim, frame, canvas, zoom = 1) {
+  const svgItems = anim.frames[frame].map(item => {
+    const style = Object.entries(item.style).map(x => x.join(': ')).join(';');
+    if (item.tagName === 'ellipse') {
+      return `<ellipse style="${style}" cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" />`;
+    } else if (item.tagName === 'path') {
+      return `<path style="${style}" d="${item.d}" />`;
+    } else if (item.tagName === 'rect') {
+      return `<rect style="${style}" x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" />`;
+    }
+  });
+
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="${anim.aabb.toString()}" width="${anim.aabb.width * zoom}" height="${anim.aabb.height * zoom}">
+      ${svgItems.join('\n    ')}
+    </svg>
+  `;
+  const image = new Image;
+  image.src = Buffer.from(svg, 'utf-8');
+  canvas.getContext('2d').drawImage(image, 0, 0);
 }
 
 /**
@@ -36,7 +81,7 @@ export function renderNpc(parsed) {
  * @param {string} svgContents
  * @returns {ServerTypes.ParsedNpc}
  */
-export function parseNpc(npcName, svgContents) {
+ export function parseNpc(npcName, svgContents) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
 
@@ -48,37 +93,9 @@ export function parseNpc(npcName, svgContents) {
   return {
     npcName,
     animLookup: animMetas.reduce((agg, { animName, aabb }) => ({ ...agg,
-      [animName]: { aabb, frames: extractFrames($, topNodes, animName) },
+      [animName]: { aabb, frames: extractNpcFrames($, topNodes, animName) },
     }), {}),
   };
-}
-
-/**
- * Render by recreating an SVG and assigning as Image src.
- * Permits complex SVG <path>s, non-trivial to draw directly into canvas.
- * @param {ServerTypes.NpcAnim} anim 
- * @param {number} frame 0-based frame index
- * @param {Canvas} canvas 
- */
-function drawFrameAt(anim, frame, canvas) {
-  const svgItems = anim.frames[frame].map(item => {
-    const style = Object.entries(item.style).map(x => x.join(': ')).join(';');
-    if (item.tagName === 'ellipse') {
-      return `<ellipse style="${style}" cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" />`;
-    } else if (item.tagName === 'path') {
-      return `<path style="${style}" d="${item.d}" />`;
-    } else if (item.tagName === 'rect') {
-      return `<rect style="${style}" x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" />`;
-    }
-  });
-  const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="${anim.aabb.toString()}" width="${anim.aabb.width}" height="${anim.aabb.height}">
-      ${svgItems.join('\n    ')}
-    </svg>
-  `;
-  const image = new Image;
-  image.src = Buffer.from(svg, 'utf-8');
-  canvas.getContext('2d').drawImage(image, 0, 0);
 }
 
 /**
@@ -86,7 +103,7 @@ function drawFrameAt(anim, frame, canvas) {
  * @param {Element[]} topNodes
  * @param {string} title
  */
-function extractFrames(api, topNodes, title) {
+function extractNpcFrames(api, topNodes, title) {
   /** The group containing groups of frames */
   const animGroup = topNodes.find(x => hasTitle(api, x, title));
   /** The groups inside the group `animGroup` */
