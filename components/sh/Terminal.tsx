@@ -39,7 +39,7 @@ export default function Terminal({ sessionKey, env }: Props) {
 
               // TODO don't run on non-touch-devices
               const updateTouchUiOffset = debounce(() => {
-                setOffset(Math.max(1, parseInt(xterm.textarea!.style.top) - 72));
+                setOffset(Math.max(1, parseInt(xterm.textarea!.style.top) - 100));
               }, 100);
               ttyXterm.xterm.onLineFeed(() => updateTouchUiOffset());
             }}
