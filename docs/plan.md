@@ -12,36 +12,29 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ trace topdown characters using Boxy SVG
-  - ✅ can render each frame in node.js script
-  - ✅ perhaps `Image` with `<svg>` src?
-    > https://github.com/Automattic/node-canvas/issues/1116
-  - ✅ output a spritesheet for each animation
-  - ✅ output a json for each animation
-  - NavDemo1: idle/walk cycle: animate on click
-
-- ✅ Create `NavDemo1`
-  > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
-- 🚧 Characters
+- 🚧 `NavDemo1`
   - ✅ Circle with heart-beat and breath
     > https://stackoverflow.com/questions/34762009/pulsing-heart-css-animation
-  -  `NavDemo1` has Andros
-  - `NavDemo1` has other NPCs
-  - 🚧 implement `click`
-    - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
-    - ✅ CssPanZoom has optional stageKey
-    - ✅ TTY sessions have associated stageKey
-      > via `env: { STAGE_KEY: 'foo' }` in TabMeta
-    - ✅ click works
+  - ✅ Remove heart/breath
+  - ✅ `NavDemo1` has Andros
+    > First approximation i.e. first-npc
+  - TTY script places navpath from Andros on click
+  - TTY script restrict navpath from Andros to lit area
+  - Can move Andros along navpath
   - Andros is __situated__
-  - Can move Andros via TTY
-    - can show navpath from andros to clicked point
-    - ...
+  - `NavDemo1` has other NPCs
 
-- NPCs have label
+- ✅ implement `click`
+  - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
+  - ✅ CssPanZoom has optional stageKey
+  - ✅ TTY sessions have associated stageKey
+    > via `env: { STAGE_KEY: 'foo' }` in TabMeta
+  - ✅ click works
+
+- 🤔 NPCs have label
 - NPCs label tracks them as they move
-- user can only moves npcs via terminal e.g. `click`...
-- maybe consider shadows and door shadows (doors can fade)
+- user can only move npcs via terminal e.g. `click`...
+- ❌ maybe consider shadows and door shadows (doors can fade)
 - can pause it
 - can write script manually or continually `look`ing
 - can see: npcs, meta points
@@ -95,6 +88,15 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Create `NavDemo1`
+  > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
+- ✅ trace topdown characters using Boxy SVG
+  - ✅ can render each frame in node.js script
+  - ✅ perhaps `Image` with `<svg>` src?
+    > https://github.com/Automattic/node-canvas/issues/1116
+  - ✅ output a spritesheet for each animation
+  - ✅ output a json for each animation
+  - ✅ NavDemo1: idle/walk cycle: animate on pointer down
 - ✅ Mobile UI defaults to force lowercase + session storage
 - ✅ tidy away old NPC stuff (SVG based)
 - ✅ Mobile UI has Ctrl-C

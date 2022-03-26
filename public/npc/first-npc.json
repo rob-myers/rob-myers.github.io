@@ -3,7 +3,7 @@
   "animLookup": {
     "idle": {
       "animName": "idle",
-      "aabb": {"x": 1, "y": 5.39, "width": 50.955, "height": 25.035},
+      "aabb": {"x": 1, "y": 5, "width": 51, "height": 26},
       "frames": [
         [
           {
@@ -107,7 +107,7 @@
     },
     "walk": {
       "animName": "walk",
-      "aabb": {"x": 1, "y": 0, "width": 49.58, "height": 36.131},
+      "aabb": {"x": 1, "y": 0, "width": 49, "height": 37},
       "frames": [
         [
           {

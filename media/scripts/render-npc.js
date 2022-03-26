@@ -22,9 +22,9 @@ if (!npcName || !fs.existsSync(npcSvgFilepath)) {
 
 const publicDir = path.resolve(__dirname, '../../public');
 const npcOutputDir = path.resolve(publicDir, 'npc');
-const contents = fs.readFileSync(npcSvgFilepath).toString();
+const svgContents = fs.readFileSync(npcSvgFilepath).toString();
 
 const zoom = 2;
-const parsed = parseNpc(npcName, contents, zoom);
+const parsed = parseNpc(npcName, svgContents, zoom);
 renderNpcSpriteSheets(parsed, npcOutputDir, zoom);
 writeAsJson(parsed, path.resolve(npcOutputDir, npcName + '.json'));

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg viewBox="0 0 52 36" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <g style="">
+  <g style="visibility: hidden;">
     <title>idle</title>
     <g style="">
       <title>npc-1</title>
@@ -137,10 +137,10 @@
     <rect x="24" y="17.5" width="2" height="2" style="fill: rgb(255, 0, 0);">
       <title>origin</title>
     </rect>
-    <rect x="1" y="5.39" width="50.955" height="25.035" style="fill: none; stroke: rgb(255, 0, 0); stroke-width: 0.25px; pointer-events: none;">
+    <rect x="1" y="5" width="51" height="26" style="fill: none; stroke: rgb(255, 0, 0); stroke-width: 0.25px; pointer-events: none;">
       <title>idle bounds</title>
     </rect>
-    <rect x="1" width="49.58" height="36.131" style="fill: none; stroke: rgb(255, 0, 0); stroke-width: 0.25px; pointer-events: none; visibility: hidden;">
+    <rect x="1" width="49" height="37" style="fill: none; stroke: rgb(255, 0, 0); stroke-width: 0.25px; pointer-events: none;">
       <title>walk bounds</title>
     </rect>
   </g>

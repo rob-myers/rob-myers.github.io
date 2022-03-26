@@ -1,55 +1,60 @@
+import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
+import { Vect } from "../geom";
+
+/**
+ * TODO induced by anim's JSON
+ * TODO extend to cover all sprites of all NPCs
+ * TODO shadow
+ */
 
 /** @param {{ disabled?: boolean }} props  */
 export default function SpriteTest(props) {
 
+  const [state, setState] = React.useState(/** @type {'idle' | 'walk'} */ ('idle'));
+
   return (
     <div
-      className={classNames(rootCss, 'idle', { disabled: props.disabled })}
-      ref={el => {
-        if (el) {
-          const body = el.children[1];
-          const toggle = () => {
-            el.classList.toggle('idle');
-            el.classList.toggle('walk');
-          };
-          body.addEventListener('pointerdown', toggle);
-          body.addEventListener('pointerup', toggle);
-        }
-      }}
+      className={classNames(rootCss, state, { disabled: props.disabled })}
+      onPointerDown={() => setState('walk')}
+      onPointerUp={() => setState('idle')}
     >
-      <div className="shadow" />
       <div className="body" />
     </div>
   );
 }
 
-const walkSteps = 16;
-const idleSteps = 13;
-const spriteWidth = 256;
-const shadowRadius = 9;
+const zoom = 2;
+const walkSteps = 3;
+const idleSteps = 1;
+const idleDim = new Vect(51, 26).scale(zoom);
+const walkDim = new Vect(49, 37).scale(zoom);
 
 const rootCss = css`
   .body {
     cursor: pointer;
     position: absolute;
-    width: ${spriteWidth}px;
-    height: ${spriteWidth}px;
-    left: ${-spriteWidth/2}px;
-    top: ${-spriteWidth/2}px;
     transform: scale(0.18);
     pointer-events: all;
     filter: contrast(200%);
   }
   
   &.walk .body {
-    animation: walk 1s steps(${walkSteps}) infinite;
-    background: url('/pics/spritesheet-walk-test-2.png');
+    width: ${walkDim.x}px;
+    height: ${walkDim.y}px;
+    left: ${-walkDim.x/2}px;
+    top: ${-walkDim.y/2}px;
+    animation: walk 300ms steps(${walkSteps}) infinite;
+    background: url('/npc/first-npc--walk.png');
   }
   &.idle .body {
+    width: ${idleDim.x}px;
+    height: ${idleDim.y}px;
+    left: ${-idleDim.x/2}px;
+    top: ${-idleDim.y/2}px;
     animation: idle 2s steps(${idleSteps}) infinite;
-    background: url('/pics/spritesheet-idle-test-2.png');
+    background: url('/npc/first-npc--idle.png');
   }
 
   &.disabled .body {
@@ -58,22 +63,10 @@ const rootCss = css`
 
   @keyframes walk {
     from { background-position: 0px; }
-    to { background-position: ${-walkSteps * spriteWidth}px; }
+    to { background-position: ${-walkSteps * walkDim.x}px; }
   }
   @keyframes idle {
     from { background-position: 0px; }
-    to { background-position: ${-idleSteps * spriteWidth}px; }
-  }
-
-  .shadow {
-    position: absolute;
-    left: ${-shadowRadius}px;
-    top: ${-shadowRadius}px;
-    border-radius: ${shadowRadius}px;
-    border: ${shadowRadius}px solid rgba(0, 0, 0, 0.25);
-    pointer-events: none;
-  }
-  &.walk .shadow {
-    transform: scale(1.2);
+    to { background-position: ${-idleSteps * idleDim.x}px; }
   }
 `;
