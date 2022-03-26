@@ -13,13 +13,12 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - ✅ trace topdown characters using Boxy SVG
-  - 🚧 can render each frame in node.js script
-  - perhaps `Image` with `<svg>` src?
+  - ✅ can render each frame in node.js script
+  - ✅ perhaps `Image` with `<svg>` src?
     > https://github.com/Automattic/node-canvas/issues/1116
   - ...
-  
 
-- Mobile UI defaults to force lowercase + session storage
+- ✅ Mobile UI defaults to force lowercase + session storage
 
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`

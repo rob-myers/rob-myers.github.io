@@ -1,14 +1,21 @@
 import React from 'react';
-import * as portals from "react-reverse-portal";
 import { css } from 'goober';
+import * as portals from "react-reverse-portal";
+import { useBeforeunload } from 'react-beforeunload';
 
 import { getCode, getComponent } from 'model/tabs/lookup';
 import useSiteStore from "store/site.store";
+import useSession from "store/session.store";
 import { CodeEditor, Terminal } from 'components/dynamic';
 
 export default function Portals() {
   const lookup = useSiteStore(site => site.portal);
   const items = React.useMemo(() => Object.values(lookup), [lookup]);
+
+  useBeforeunload(() => {
+    const sessionKeys = Object.keys(useSession.getState().session);
+    sessionKeys.forEach(sessionKey => useSession.api.persist(sessionKey));
+  });
 
   return <>
     {items.map((state) => {

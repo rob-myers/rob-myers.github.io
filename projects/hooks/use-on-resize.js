@@ -1,5 +1,4 @@
 import React from "react";
-import useUpdate from "./use-update";
 
 /**
  * Returns changed return value of callback.
@@ -8,15 +7,10 @@ import useUpdate from "./use-update";
  * @param {() => T} cb
  */
 export default function useOnResize(cb) {
-    // Always provide same object so can pass around without getting stale
-    const [state] = React.useState(() => ({ value: cb() }));
-    const update = useUpdate();
+    const [state, setState] = React.useState(() => cb());
 
     React.useEffect(() => {
-        function onResize() {
-            state.value = cb();
-            update();
-        }
+        function onResize() { setState(cb()); }
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
     }, []);

@@ -5,6 +5,7 @@ import type { Router } from 'next/router';
 import React from 'react';
 
 //#region polyfill
+
 // NOTE dynamic ResizeObserver import does not work e.g. Safari 12.1.2
 import { ResizeObserver } from '@juggle/resize-observer';
 if (typeof window !== 'undefined') {
@@ -24,6 +25,7 @@ if (typeof window !== 'undefined') {
   //@ts-ignore
   import('web-animations-js');
 }
+
 //#endregion
 
 import { setup } from 'goober';

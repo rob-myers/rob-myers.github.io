@@ -1,4 +1,5 @@
 import { css } from 'goober';
+import classNames from 'classnames';
 import type { Session } from 'store/session.store';
 import useMuState from 'projects/hooks/use-mu-state';
 import useSessionStore from 'store/session.store';
@@ -19,6 +20,7 @@ export function TouchHelperUI(props: {
           const message = `⚠️  input ${forced ? 'forced as' : 'not forced as'} lowercase`;
           useSessionStore.api.warnCleanly(props.session.key, message);
           target.classList.toggle('enabled');
+          localStorage.setItem(localStorageKey, `${forced}`);
         } else if (target.classList.contains('ctrl-c')) {
           xterm.sendSigKill();
         } else if (target.classList.contains('clear')) {
@@ -29,6 +31,15 @@ export function TouchHelperUI(props: {
           xterm.reqHistoryLine(-1);
         } 
         xterm.xterm.focus();
+      },
+      onChangeDeps() {
+        const { xterm } = props.session.ttyShell;
+        if (!localStorage.getItem(localStorageKey)) {
+          // force lowercase by default on touch device
+          localStorage.setItem(localStorageKey, 'true');
+        }
+        xterm.forceLowerCase = localStorage.getItem(localStorageKey) === 'true';
+        return () => xterm.forceLowerCase = false;
       },
     };
   });
@@ -41,7 +52,10 @@ export function TouchHelperUI(props: {
         top: `${props.offset}px`,
       }}
     >
-      <div className="icon lowercase">
+      <div className={classNames(
+        'icon lowercase',
+        { enabled: props.session.ttyShell.xterm.forceLowerCase },
+      )}>
         abc
       </div>
       <div className="icon ctrl-c">
@@ -59,6 +73,8 @@ export function TouchHelperUI(props: {
     </div>
   );
 }
+
+const localStorageKey = 'touch-tty-force-lowercase';
 
 const rootCss = css`
   position: absolute;

@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
 import { Terminal, ITerminalOptions } from 'xterm';
@@ -7,11 +7,11 @@ import { withSize } from 'react-sizeme';
 
 export default withSize({ monitorHeight: true, monitorWidth: true })(
   function XTermComponent(props: Props) {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const xtermRef = useRef<Terminal>();
-    const resizeRef = useRef<() => void>();
+    const containerRef = React.useRef<HTMLDivElement>(null);
+    const xtermRef = React.useRef<Terminal>();
+    const resizeRef = React.useRef<() => void>();
 
-    useEffect(() => {
+    React.useEffect(() => {
       const xterm = xtermRef.current = new Terminal(props.options);
     
       // Saw Uncaught Error: This API only accepts integers
@@ -31,7 +31,7 @@ export default withSize({ monitorHeight: true, monitorWidth: true })(
       };
     }, []);
 
-    useEffect(
+    React.useEffect(
       () => void resizeRef.current?.(),
       [props.size?.height, props.size?.width],
     );
