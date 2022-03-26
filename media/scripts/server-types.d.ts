@@ -39,6 +39,8 @@ declare namespace ServerTypes {
   export interface ParsedNpc {
     npcName: string;
     animLookup: { [animName: string]: ServerTypes.NpcAnim };
+    /** How much the rendered PNGs have been scaled up. */
+    zoom: number;
   }
 
 }

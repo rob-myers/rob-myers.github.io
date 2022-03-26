@@ -1,0 +1,492 @@
+{
+  "npcName": "first-npc",
+  "animLookup": {
+    "idle": {
+      "animName": "idle",
+      "aabb": {"x": 1, "y": 5.39, "width": 50.955, "height": 25.035},
+      "frames": [
+        [
+          {
+            "tags": ["foot-l"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(0, 255, 0)",
+              "stroke-width": "0.5px"
+            },
+            "tagName": "ellipse",
+            "cx": 13.01,
+            "cy": 12.141,
+            "rx": 2.543,
+            "ry": 4.334
+          },
+          {
+            "tags": ["foot-r"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(0, 255, 0)",
+              "stroke-width": "0.5px"
+            },
+            "tagName": "ellipse",
+            "cx": 35.357,
+            "cy": 9.867,
+            "rx": 2.543,
+            "ry": 4.334
+          },
+          {
+            "tags": ["body"],
+            "transform": [
+              0.996287,
+              -0.086089,
+              0.086089,
+              0.996287,
+              -1.555586,
+              2.295072
+            ],
+            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "tagName": "path",
+            "d": "M 50.101 18.756 C 50.101 24.713 39.292 28.878 25.889 28.878 C 12.486 28.878 1.563 24.713 1.563 18.756 C 1.563 12.799 12.56 9.489 25.963 9.489 C 39.366 9.489 50.101 12.799 50.101 18.756 Z"
+          },
+          {
+            "tags": ["body-hole"],
+            "transform": [
+              0.981298,
+              -0.192495,
+              0.192495,
+              0.981298,
+              -460.694993,
+              48.039796
+            ],
+            "style": {
+              "fill": "rgb(255, 255, 255)",
+              "stroke-opacity": "0.5",
+              "fill-opacity": "0.9"
+            },
+            "tagName": "ellipse",
+            "cx": 482.933,
+            "cy": 64.706,
+            "rx": 12.552,
+            "ry": 10.94
+          },
+          {
+            "tags": ["head"],
+            "transform": [-1, 0, 0, -1, 0, 0],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.1px",
+              "fill": "rgb(244, 212, 255)"
+            },
+            "tagName": "ellipse",
+            "cx": -25.337,
+            "cy": -18.048,
+            "rx": 9.093,
+            "ry": 11.127
+          },
+          {
+            "tags": ["hair"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(255, 255, 0)",
+              "stroke-width": "0.35px"
+            },
+            "tagName": "ellipse",
+            "cx": 25.337,
+            "cy": 19.048,
+            "rx": 10.001,
+            "ry": 11.127
+          }
+        ]
+      ]
+    },
+    "walk": {
+      "animName": "walk",
+      "aabb": {"x": 1, "y": 0, "width": 49.58, "height": 36.131},
+      "frames": [
+        [
+          {
+            "tags": ["foot-r"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(0, 255, 0)",
+              "stroke-width": "0.5px"
+            },
+            "tagName": "ellipse",
+            "cx": 34.283,
+            "cy": 11.094,
+            "rx": 2.543,
+            "ry": 4.334
+          },
+          {
+            "tags": ["foot-l"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(0, 255, 0)",
+              "stroke-width": "0.5px"
+            },
+            "tagName": "ellipse",
+            "cx": 14.283,
+            "cy": 11.094,
+            "rx": 2.543,
+            "ry": 4.334
+          },
+          {
+            "tags": ["body"],
+            "transform": [
+              0.999847,
+              0.017476,
+              -0.017476,
+              0.999847,
+              0.322512,
+              -0.438486
+            ],
+            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "tagName": "path",
+            "d": "M 48.906 16.715 C 48.906 22.672 39.294 27.928 25.891 27.928 C 12.488 27.928 1.593 24.404 1.593 18.447 C 1.593 12.49 12.562 8.539 25.965 8.539 C 39.368 8.539 48.906 10.758 48.906 16.715 Z"
+          },
+          {
+            "tags": ["body-hole"],
+            "transform": [
+              0.981298,
+              -0.192495,
+              0.192495,
+              0.981298,
+              -461.086931,
+              46.676881
+            ],
+            "style": {"fill": "rgb(255, 255, 255)", "fill-opacity": "0.9"},
+            "tagName": "ellipse",
+            "cx": 482.933,
+            "cy": 64.706,
+            "rx": 12.082,
+            "ry": 11.097
+          },
+          {
+            "tags": ["head"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.25px",
+              "fill": "rgb(244, 212, 255)",
+              "stroke": "rgb(0, 0, 0)"
+            },
+            "tagName": "path",
+            "d": "M 35.338 17.202 C 35.338 23.332 30.722 28.301 25.028 28.301 C 19.334 28.301 14.718 23.332 14.718 17.202 C 14.718 11.072 19.334 6.103 25.028 6.103 C 30.722 6.103 35.338 11.072 35.338 17.202 Z"
+          },
+          {
+            "tags": ["hair"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(255, 255, 0)",
+              "stroke-width": "0.35px"
+            },
+            "tagName": "ellipse",
+            "cx": 25.028,
+            "cy": 18.202,
+            "rx": 10.31,
+            "ry": 11.099
+          }
+        ],
+        [
+          {
+            "tags": ["foot-l"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(0, 255, 0)",
+              "stroke-width": "0.5px"
+            },
+            "tagName": "ellipse",
+            "cx": 13.064,
+            "cy": 32.06,
+            "rx": 2.692,
+            "ry": 1.912
+          },
+          {
+            "tags": ["foot-r"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(0, 255, 0)",
+              "stroke-width": "0.5px"
+            },
+            "tagName": "ellipse",
+            "cx": 34.283,
+            "cy": 8.094,
+            "rx": 2.543,
+            "ry": 4.334
+          },
+          {
+            "tags": ["hand-l"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(244, 212, 255)",
+              "stroke-width": "0.25px"
+            },
+            "tagName": "ellipse",
+            "cx": 7.952,
+            "cy": 5.122,
+            "rx": 2.389,
+            "ry": 4.334
+          },
+          {
+            "tags": ["leg-l"],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-width": "0.5px",
+              "fill": "rgb(39, 79, 4)"
+            },
+            "tagName": "path",
+            "d": "M 10.377 32.072 L 15.679 31.832 L 15.981 24.627 L 9.523 24.791 L 10.377 32.072 Z"
+          },
+          {
+            "tags": ["arm-l"],
+            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "tagName": "path",
+            "d": "M 5.808 4.315 L 9.984 4.232 L 11.426 17.64 L 2.216 17.64 L 5.808 4.315 Z"
+          },
+          {
+            "tags": ["hand-r"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(244, 212, 255)",
+              "stroke-width": "0.25px"
+            },
+            "tagName": "ellipse",
+            "cx": 45.093,
+            "cy": 26.058,
+            "rx": 2.389,
+            "ry": 4.334
+          },
+          {
+            "tags": ["arm-r"],
+            "transform": [-1, 0, 0, -1, 90.183002, 43.816],
+            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "tagName": "path",
+            "d": "M 43.189 16.521 L 47.003 16.318 L 48.483 27.444 L 41.7 27.498 L 43.189 16.521 Z"
+          },
+          {
+            "tags": ["body"],
+            "transform": [
+              0.996287,
+              -0.086089,
+              0.086089,
+              0.996287,
+              -1.475964,
+              2.241398
+            ],
+            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "tagName": "path",
+            "d": "M 48.906 16.715 C 48.906 22.672 39.294 27.928 25.891 27.928 C 12.488 27.928 1.593 24.404 1.593 18.447 C 1.593 12.49 12.562 8.539 25.965 8.539 C 39.368 8.539 48.906 10.758 48.906 16.715 Z"
+          },
+          {
+            "tags": ["body-hole"],
+            "transform": [
+              0.981298,
+              -0.192495,
+              0.192495,
+              0.981298,
+              -461.086931,
+              46.676881
+            ],
+            "style": {"fill": "rgb(255, 255, 255)", "fill-opacity": "0.9"},
+            "tagName": "ellipse",
+            "cx": 482.933,
+            "cy": 64.706,
+            "rx": 12.082,
+            "ry": 11.097
+          },
+          {
+            "tags": ["head"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.25px",
+              "fill": "rgb(244, 212, 255)",
+              "stroke": "rgb(0, 0, 0)"
+            },
+            "tagName": "path",
+            "d": "M 35.338 17.202 C 35.338 23.332 30.722 28.301 25.028 28.301 C 19.334 28.301 14.718 23.332 14.718 17.202 C 14.718 11.072 19.334 6.103 25.028 6.103 C 30.722 6.103 35.338 11.072 35.338 17.202 Z"
+          },
+          {
+            "tags": ["hair"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(255, 255, 0)",
+              "stroke-width": "0.35px"
+            },
+            "tagName": "ellipse",
+            "cx": 25.028,
+            "cy": 18.202,
+            "rx": 10.31,
+            "ry": 11.099
+          }
+        ],
+        [
+          {
+            "tags": ["foot-l"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(0, 255, 0)",
+              "stroke-width": "0.5px"
+            },
+            "tagName": "ellipse",
+            "cx": 15.952,
+            "cy": 6.815,
+            "rx": 2.692,
+            "ry": 2.312
+          },
+          {
+            "tags": ["foot-r"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(0, 255, 0)",
+              "stroke-width": "0.5px"
+            },
+            "tagName": "ellipse",
+            "cx": 36.896,
+            "cy": 33.713,
+            "rx": 2.543,
+            "ry": 1.398
+          },
+          {
+            "tags": ["hand-l"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(244, 212, 255)",
+              "stroke-width": "0.25px"
+            },
+            "tagName": "ellipse",
+            "cx": 5.09,
+            "cy": 28.291,
+            "rx": 2.767,
+            "ry": 2.202
+          },
+          {
+            "tags": ["leg-r"],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-width": "0.5px",
+              "fill": "rgb(39, 79, 4)"
+            },
+            "tagName": "path",
+            "d": "M 34.27 33.567 L 39.572 33.327 L 39.874 26.122 L 33.416 26.286 L 34.27 33.567 Z"
+          },
+          {
+            "tags": ["arm-l"],
+            "transform": [-1, 0, 0, -1, 12.878001, 43.071],
+            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "tagName": "path",
+            "d": "M 5.394 14.574 L 10.256 15.696 L 10.975 28.278 L 1.903 28.497 L 5.394 14.574 Z"
+          },
+          {
+            "tags": ["hand-r"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(244, 212, 255)",
+              "stroke-width": "0.25px"
+            },
+            "tagName": "ellipse",
+            "cx": 42.225,
+            "cy": 4.274,
+            "rx": 2.603,
+            "ry": 2.906
+          },
+          {
+            "tags": ["arm-r"],
+            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "tagName": "path",
+            "d": "M 39.894 4.415 L 44.514 4.462 L 48.025 17.517 L 39.214 12.746 L 39.894 4.415 Z"
+          },
+          {
+            "tags": ["body"],
+            "transform": [
+              0.983224,
+              0.182401,
+              -0.182401,
+              0.983224,
+              3.775767,
+              -4.293457
+            ],
+            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "tagName": "path",
+            "d": "M 49.031 16.812 C 49.031 22.964 39.419 28.393 26.016 28.393 C 12.613 28.393 1.427 24.65 1.427 18.497 C 1.427 12.345 12.687 8.367 26.09 8.367 C 39.493 8.367 49.031 10.659 49.031 16.812 Z"
+          },
+          {
+            "tags": ["body-hole"],
+            "transform": [
+              0.981298,
+              -0.192495,
+              0.192495,
+              0.981298,
+              -460.896837,
+              46.145188
+            ],
+            "style": {"fill": "rgb(255, 255, 255)", "fill-opacity": "0.9"},
+            "tagName": "ellipse",
+            "cx": 482.933,
+            "cy": 64.706,
+            "rx": 12.08,
+            "ry": 11.489
+          },
+          {
+            "tags": ["head"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.25px",
+              "fill": "rgb(244, 212, 255)",
+              "stroke": "rgb(0, 0, 0)"
+            },
+            "tagName": "path",
+            "d": "M 35.578 17.163 C 35.578 23.293 30.962 28.262 25.268 28.262 C 19.574 28.262 14.958 23.293 14.958 17.163 C 14.958 11.034 19.574 6.064 25.268 6.064 C 30.962 6.064 35.578 11.034 35.578 17.163 Z"
+          },
+          {
+            "tags": ["hair"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "fill": "rgb(255, 255, 0)",
+              "stroke-width": "0.35px"
+            },
+            "tagName": "ellipse",
+            "cx": 25.081,
+            "cy": 18.017,
+            "rx": 10.31,
+            "ry": 11.004
+          }
+        ]
+      ]
+    }
+  },
+  "zoom": 2
+}

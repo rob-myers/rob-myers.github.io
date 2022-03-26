@@ -17,7 +17,7 @@ __Aim towards website release__.
   - ✅ perhaps `Image` with `<svg>` src?
     > https://github.com/Automattic/node-canvas/issues/1116
   - ✅ output a spritesheet for each animation
-  - output a json for each animation
+  - ✅ output a json for each animation
   - NavDemo1: idle/walk cycle: animate on click
 
 - ✅ Create `NavDemo1`

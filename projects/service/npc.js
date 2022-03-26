@@ -5,30 +5,17 @@ import path from 'path';
 import { extractGeomsAt, extractMetas, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
 
-const publicDir = path.resolve(__dirname, '../../public');
-const outputDir = path.resolve(publicDir, 'npc');
-
 /**
  * @param {ServerTypes.ParsedNpc} parsed 
+ * @param {string} npcOutputDir 
+ * @param {number} [zoom] 
  */
-export function renderNpc(parsed) {
-  /**
-   * - ✅ test render a frame
-   *   > use https://github.com/Automattic/node-canvas/issues/1116
-   * - ✅ better render of frame
-   * - ✅ can zoom
-   * - ✅ can output whole animation as horizontal spritesheet
-   * - ✅ output all animations
-   * - output jsons with aabb, zoom, numFrames etc.
-   */
-  const zoom = 2;
-
+export function renderNpcSpriteSheets(parsed, npcOutputDir, zoom = 1) {
   for (const anim of Object.values(parsed.animLookup)) {
     const canvas = drawAnimSpriteSheet(anim, zoom);
-    const outputPath = path.resolve(outputDir, `${parsed.npcName}--${anim.animName}.png`);
+    const outputPath = path.resolve(npcOutputDir, `${parsed.npcName}--${anim.animName}.png`);
     saveCanvasAsFile(canvas, outputPath);
   }
-
 }
 
 /**
@@ -82,9 +69,10 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
 /**
  * @param {string} npcName 
  * @param {string} svgContents
+ * @param {number} [zoom] 
  * @returns {ServerTypes.ParsedNpc}
  */
- export function parseNpc(npcName, svgContents) {
+ export function parseNpc(npcName, svgContents, zoom = 1) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
 
@@ -98,6 +86,7 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
     animLookup: animMetas.reduce((agg, { animName, aabb }) => ({ ...agg,
       [animName]: { animName, aabb, frames: extractNpcFrames($, topNodes, animName) },
     }), /** @type {ServerTypes.ParsedNpc['animLookup']} */ ({})),
+    zoom,
   };
 }
 

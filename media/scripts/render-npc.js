@@ -7,22 +7,24 @@
 import path from 'path';
 import fs from 'fs';
 import { error, info } from './service';
-import { parseNpc, renderNpc } from '../../projects/service/npc';
+import { parseNpc, renderNpcSpriteSheets } from '../../projects/service/npc';
+import { writeAsJson } from '../../projects/service/file';
 
 const [,, npcName] = process.argv;
-const npcDir = 'media/npc'
-const npcFilepath = path.resolve(npcDir, npcName + '.svg');
-if (!npcName || !fs.existsSync(npcFilepath)) {
+const npcInputDir = 'media/npc'
+const npcSvgFilepath = path.resolve(npcInputDir, npcName + '.svg');
+if (!npcName || !fs.existsSync(npcSvgFilepath)) {
   error(`error: usage: yarn render-npc {npc-name} where
     - media/npc/{npc-name}.svg exists
   `);
   process.exit(1);
 }
 
-const contents = fs.readFileSync(npcFilepath).toString();
-const parsed = parseNpc(npcName, contents);
+const publicDir = path.resolve(__dirname, '../../public');
+const npcOutputDir = path.resolve(publicDir, 'npc');
+const contents = fs.readFileSync(npcSvgFilepath).toString();
 
-// TODO
-console.log({ parsed });
-renderNpc(parsed);
-
+const zoom = 2;
+const parsed = parseNpc(npcName, contents, zoom);
+renderNpcSpriteSheets(parsed, npcOutputDir, zoom);
+writeAsJson(parsed, path.resolve(npcOutputDir, npcName + '.json'));
