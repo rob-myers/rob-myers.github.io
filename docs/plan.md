@@ -18,11 +18,21 @@ __Aim towards website release__.
   - ✅ Remove heart/breath
   - ✅ `NavDemo1` has Andros
     > First approximation i.e. first-npc
-  - TTY script places navpath from Andros on click
+  - 🚧 TTY script places navpath from Andros on click
+    - script needs Andros position
+      - `<NPCs>` also has stageKey `nav-demo-1`, registering Andros
+    - script needs access to NavMesh
+      - projects need redux store (for CodeSandbox too)
+      - move `stage` to it
+      - add (per geomorph) `pathfinding` to it
+      - migrate `usePathfinding`
   - TTY script restrict navpath from Andros to lit area
   - Can move Andros along navpath
   - Andros is __situated__
   - `NavDemo1` has other NPCs
+
+- Basic improvements to first-npc
+  - ...
 
 - ✅ implement `click`
   - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
