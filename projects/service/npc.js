@@ -18,14 +18,16 @@ export function renderNpc(parsed) {
    * - ✅ better render of frame
    * - ✅ can zoom
    * - ✅ can output whole animation as horizontal spritesheet
-   * - output all animations
+   * - ✅ output all animations
+   * - output jsons with aabb, zoom, numFrames etc.
    */
-  const anim = parsed.animLookup.walk;
   const zoom = 2;
-  const canvas = drawAnimSpriteSheet(anim, zoom);
- 
-  const outputPath = path.resolve(outputDir, 'test.png');
-  saveCanvasAsFile(canvas, outputPath);
+
+  for (const anim of Object.values(parsed.animLookup)) {
+    const canvas = drawAnimSpriteSheet(anim, zoom);
+    const outputPath = path.resolve(outputDir, `${parsed.npcName}--${anim.animName}.png`);
+    saveCanvasAsFile(canvas, outputPath);
+  }
 
 }
 
@@ -94,8 +96,8 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
   return {
     npcName,
     animLookup: animMetas.reduce((agg, { animName, aabb }) => ({ ...agg,
-      [animName]: { aabb, frames: extractNpcFrames($, topNodes, animName) },
-    }), {}),
+      [animName]: { animName, aabb, frames: extractNpcFrames($, topNodes, animName) },
+    }), /** @type {ServerTypes.ParsedNpc['animLookup']} */ ({})),
   };
 }
 

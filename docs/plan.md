@@ -16,7 +16,9 @@ __Aim towards website release__.
   - ✅ can render each frame in node.js script
   - ✅ perhaps `Image` with `<svg>` src?
     > https://github.com/Automattic/node-canvas/issues/1116
-  - ...
+  - ✅ output a spritesheet for each animation
+  - output a json for each animation
+  - NavDemo1: idle/walk cycle: animate on click
 
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
