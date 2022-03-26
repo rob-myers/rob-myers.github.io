@@ -57,12 +57,13 @@ function drawAnimSpriteSheet(anim, zoom = 1) {
 function drawFrameAt(anim, frame, canvas, zoom = 1) {
   const svgItems = anim.frames[frame].map(item => {
     const style = Object.entries(item.style).map(x => x.join(': ')).join(';');
+    const transform = item.transform ? `matrix(${item.transform})` : '';
     if (item.tagName === 'ellipse') {
-      return `<ellipse style="${style}" cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" />`;
+      return `<ellipse cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" style="${style}" transform="${transform}" />`;
     } else if (item.tagName === 'path') {
-      return `<path style="${style}" d="${item.d}" />`;
+      return `<path d="${item.d}" style="${style}" transform="${transform}" />`;
     } else if (item.tagName === 'rect') {
-      return `<rect style="${style}" x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" />`;
+      return `<rect x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" style="${style}" transform="${transform}" />`;
     }
   });
 

@@ -18,8 +18,6 @@ __Aim towards website release__.
     > https://github.com/Automattic/node-canvas/issues/1116
   - ...
 
-- ✅ Mobile UI defaults to force lowercase + session storage
-
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
 - 🚧 Characters
@@ -95,6 +93,7 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Mobile UI defaults to force lowercase + session storage
 - ✅ tidy away old NPC stuff (SVG based)
 - ✅ Mobile UI has Ctrl-C
 - ✅ Mobile UI has larger arrows
