@@ -10,10 +10,7 @@
 /// <reference path="./deps.d.ts"/>
 import fs from 'fs';
 import path from 'path';
-import util from 'util';
-import stream from 'stream';
 import { createCanvas, loadImage } from 'canvas';
-import stringify from 'json-stringify-pretty-compact';
 import getOpts from 'getopts';
 
 import svgJson from '../../public/symbol/svg.json';
@@ -21,7 +18,7 @@ import layoutDefs from '../../projects/geomorph/layouts';
 import { createLayout, deserializeSvgJson, serializeLayout } from '../../projects/service/geomorph';
 import { renderGeomorph } from '../../projects/geomorph/render-geomorph';
 import { triangle } from '../../projects/service/triangle';
-import { saveCanvasAsFile } from '../../projects/service/file';
+import { saveCanvasAsFile, writeAsJson } from '../../projects/service/file';
 
 const geomorphId = Number(process.argv[2]);
 const layoutDef = Object.values(layoutDefs).find(x => x.id === geomorphId);
@@ -40,13 +37,9 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${
 
 (async function run() {
   const { layout, canvas } = await renderLayout(layoutDef);
-
-  // Write /geomorph/{geomorph-key}.json (as does svg-meta.js)
-  fs.writeFileSync(
-    path.resolve(outputDir, `${layoutDef.key}.json`),
-    stringify(serializeLayout(layout)),
-  );
-
+  // Also done in svg-meta.js
+  const geomorphJsonPath = path.resolve(outputDir, `${layoutDef.key}.json`);
+  writeAsJson(serializeLayout(layout), geomorphJsonPath);
   await saveCanvasAsFile(canvas, outputPath);
 })();
 

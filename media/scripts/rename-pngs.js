@@ -39,7 +39,6 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import childProcess from 'child_process';
-import jsonStringifyPrettyCompact from 'json-stringify-pretty-compact';
 import { nanoid } from 'nanoid';
 
 import { 
@@ -57,6 +56,7 @@ import {
   smallCraftFilenameRegex,
   metaFromSmallCraftFilename,
 } from './service';
+import { writeAsJson } from '../../projects/service/file';
 
 const [,, inputType, srcDir, dstDir] = process.argv;
 
@@ -140,11 +140,11 @@ switch (inputType) {
     break;
 }
 
-fs.writeFileSync(path.join(dstDir, 'manifest.json'), jsonStringifyPrettyCompact({
+writeAsJson({
   parentFolder: path.basename(srcDir),
   sourceType: inputType,
   fileMetas,
-}));
+}, path.join(dstDir, 'manifest.json'));
 
 if (!fileMetas.length) {
   info('no files found');

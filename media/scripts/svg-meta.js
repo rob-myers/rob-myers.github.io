@@ -11,7 +11,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import stringify from 'json-stringify-pretty-compact';
 import getOpts from 'getopts';
 import asyncPool from 'tiny-async-pool';
 import chalk from 'chalk';
@@ -20,6 +19,7 @@ import { keys } from '../../model/generic.model';
 import { createLayout, deserializeSvgJson, parseStarshipSymbol, serializeLayout, serializeSymbol } from '../../projects/service/geomorph';
 import layoutDefs from '../../projects/geomorph/layouts';
 import { triangle } from '../../projects/service/triangle';
+import { writeAsJson } from '../../projects/service/file';
 
 const publicDir = path.resolve(__dirname, '../../public');
 const symbolsDir = path.resolve(publicDir, 'symbol');
@@ -72,7 +72,7 @@ console.log({ changedSymbols, changedLayoutDefs });
         const layout = await createLayout(def, symbolLookup, triangle);
         const filename = path.resolve(geomorphsDir, `${def.key}.json`);
         console.log(chalk.blue('writing'), chalk.yellow(filename), '...');
-        fs.writeFileSync(filename, stringify(serializeLayout(layout)));
+        writeAsJson(serializeLayout(layout), filename);
       };
     }),
     action => action(),
@@ -81,4 +81,4 @@ console.log({ changedSymbols, changedLayoutDefs });
 })();
 
 // Finally, write svg.json
-fs.writeFileSync(svgJsonFilename, stringify(svgJsonLookup));
+writeAsJson(svgJsonLookup, svgJsonFilename);
