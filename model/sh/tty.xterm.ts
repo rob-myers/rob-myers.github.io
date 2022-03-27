@@ -391,7 +391,7 @@ export class TtyXterm {
         }
       }
     } else {// Visible characters
-      if (this.forceLowerCase) {
+      if (this.forceLowerCase && !data.includes('/')) {
         data = data.toLowerCase();
       }
       this.handleCursorInsert(data);
