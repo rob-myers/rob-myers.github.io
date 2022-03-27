@@ -46,9 +46,13 @@
               -1.555586,
               2.295072
             ],
-            "style": {"stroke": "rgb(0, 0, 0)", "fill-opacity": "0.9"},
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "fill-opacity": "0.9",
+              "pointer-events": "auto"
+            },
             "tagName": "path",
-            "d": "M 50.101 18.756 C 50.101 24.713 39.292 28.878 25.889 28.878 C 12.486 28.878 1.563 24.713 1.563 18.756 C 1.563 12.799 12.56 9.489 25.963 9.489 C 39.366 9.489 50.101 12.799 50.101 18.756 Z"
+            "d": "M 50.101 18.756 C 50.101 21.697 49.323 24.884 46.299 26.669 C 37.059 32.124 9.907 27.894 6.553 26.184 C 3.203 24.476 1.563 21.31 1.563 18.756 C 1.563 15.979 2.322 11.997 6.231 10.438 C 10.708 8.652 18.808 9.489 25.963 9.489 C 32.686 9.489 40.378 9.386 44.74 10.968 C 49.074 12.54 50.101 15.787 50.101 18.756 Z"
           },
           {
             "tags": ["body-hole"],
@@ -77,9 +81,8 @@
             "style": {
               "fill-opacity": "0.5",
               "stroke": "rgb(0, 0, 0)",
-              "stroke-opacity": "0.5",
-              "stroke-width": "0.1px",
-              "fill": "rgb(244, 212, 255)"
+              "fill": "rgb(244, 212, 255)",
+              "stroke-width": "0.25px"
             },
             "tagName": "ellipse",
             "cx": -25.337,
@@ -90,11 +93,9 @@
           {
             "tags": ["hair"],
             "style": {
-              "fill-opacity": "0.5",
-              "stroke": "rgb(0, 0, 0)",
-              "stroke-opacity": "0.5",
-              "fill": "rgb(255, 255, 0)",
-              "stroke-width": "0.35px"
+              "stroke": "rgb(203, 126, 12)",
+              "stroke-width": "0.5px",
+              "fill": "rgb(230, 167, 72)"
             },
             "tagName": "ellipse",
             "cx": 25.337,
@@ -186,11 +187,9 @@
           {
             "tags": ["hair"],
             "style": {
-              "fill-opacity": "0.5",
-              "stroke": "rgb(0, 0, 0)",
-              "stroke-opacity": "0.5",
-              "fill": "rgb(255, 255, 0)",
-              "stroke-width": "0.35px"
+              "stroke-width": "0.35px",
+              "fill": "rgb(230, 167, 72)",
+              "stroke": "rgb(203, 126, 12)"
             },
             "tagName": "ellipse",
             "cx": 25.028,
@@ -329,11 +328,9 @@
           {
             "tags": ["hair"],
             "style": {
-              "fill-opacity": "0.5",
-              "stroke": "rgb(0, 0, 0)",
-              "stroke-opacity": "0.5",
-              "fill": "rgb(255, 255, 0)",
-              "stroke-width": "0.35px"
+              "stroke-width": "0.35px",
+              "fill": "rgb(230, 167, 72)",
+              "stroke": "rgb(203, 126, 12)"
             },
             "tagName": "ellipse",
             "cx": 25.028,
@@ -472,11 +469,9 @@
           {
             "tags": ["hair"],
             "style": {
-              "fill-opacity": "0.5",
-              "stroke": "rgb(0, 0, 0)",
-              "stroke-opacity": "0.5",
-              "fill": "rgb(255, 255, 0)",
-              "stroke-width": "0.35px"
+              "stroke-width": "0.35px",
+              "fill": "rgb(230, 167, 72)",
+              "stroke": "rgb(203, 126, 12)"
             },
             "tagName": "ellipse",
             "cx": 25.081,

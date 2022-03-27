@@ -37,7 +37,7 @@ const rootCss = css`
     position: absolute;
     transform: scale(0.18);
     pointer-events: all;
-    filter: contrast(200%);
+    filter: grayscale(100%);
   }
   
   &.walk .body {
