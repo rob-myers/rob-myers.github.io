@@ -7,7 +7,6 @@ import classNames from "classnames";
 import { css } from "goober";
 import { Vect } from "projects/geom";
 import useMuState from "../hooks/use-mu-state";
-import useSiteStore from 'store/site.store';
 import useStage, { getCachedItem } from 'projects/hooks/use-stage';
 
 /** @param {React.PropsWithChildren<Props>} props */

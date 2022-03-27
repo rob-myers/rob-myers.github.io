@@ -93,6 +93,7 @@ export default function NavDemo1(props) {
         gm={gm}
         onLoad={api => state.npcsApi = api}
         disabled={props.disabled}
+        stageKey="stage-nav-demo-1"
       />
 
       <img

@@ -6,6 +6,7 @@ declare namespace NPC {
     gm: Geomorph.GeomorphData;
     onLoad: ((api: NPC.NPCsApi) => void);
     disabled?: boolean;
+    stageKey: string;
   }
 
   export interface NPCsApi {
@@ -20,6 +21,7 @@ declare namespace NPC {
   export interface NPCApi {
     key: string;
     def: NPCDef;
+    animState: 'idle' | 'walk';
     el: {
       root: HTMLDivElement;
     };
