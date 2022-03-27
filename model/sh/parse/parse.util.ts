@@ -90,9 +90,12 @@ export function getChildren(node: Sh.ParsedSh): Sh.ParsedSh[] {
 }
 
 export function getOpts(args: string[], options?: getopts.Options) {
+  /** Changes e.g. -a1 to -1a (avoid short-opt-assigns) */
+  const sortedOpts = args.filter(x => x[0] === '-').map(x => Array.from(x).sort().join(''));
+  const operands = args.filter(x => x[0] !== '-');
   return {
-    opts: simplifyGetOpts(getopts(args, options)),
-    operands: args.filter(x => x[0] !== '-'),
+    opts: simplifyGetOpts(getopts(sortedOpts, options)),
+    operands,
   };
 }
 

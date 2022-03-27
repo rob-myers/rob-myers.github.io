@@ -3,7 +3,7 @@ import cliColumns from 'cli-columns';
 import { testNever, truncate, Deferred, pause, keysDeep, safeStringify, pretty } from 'model/generic.model';
 import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
-import { getProcessStatusIcon, ReadResult, dataChunk, isDataChunk, preProcessRead } from './io/io.model';
+import { getProcessStatusIcon, ReadResult, preProcessRead } from './io/io.model';
 import useSession, { ProcessStatus } from 'store/session.store';
 import { computeNormalizedParts, createKillError as killError, normalizeAbsParts, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
@@ -15,8 +15,9 @@ const commandKeys = {
   /** Change current key prefix */
   cd: true,
   /**
-   * TODO move to function?
-   * We'd rather not add anything which might change
+   * __TODO__ consider:
+   * - rewriting as a shell function, or
+   * - emphasize this is not a "builtin" but stage dependent
    */
   click: true,
   /** List function definitions */
@@ -100,18 +101,15 @@ class CmdService {
         break;
       }
       case 'click': {
-        /**
-         * TODO prior association to a CssPanZoom via stageKey
-         */
         const numClicks = args[0] === undefined ? Number.MAX_SAFE_INTEGER : Number(args[0]);
         if (!Number.isFinite(numClicks)) {
           throw new ShError('format: click [numberOfClicks]', 1);
         }
         const stageKey = useSession.api.getVar(node.meta.sessionKey, 'STAGE_KEY');
-        const stage = useSiteStore.getState().stage[stageKey];
         if (typeof stageKey !== 'string') {
           throw new ShError('STAGE_KEY: expected string value', 1);
         }
+        const stage = useSiteStore.getState().stage[stageKey];
         if (!stage) {
           throw new ShError(`stage not found for STAGE_KEY "${stageKey}"`, 1);
         }
@@ -223,8 +221,8 @@ class CmdService {
           '1', /** One line per item */
           'l', /** Detailed */
           'r', /** Recursive properties (prototype) */
-          'a', /** Show capitilized vars at top level */
-        ], });
+          'a', /** Show capitalized vars at top level */
+        ] });
         const pwd = useSession.api.getVar(meta.sessionKey, 'PWD');
         const queries = operands.length ? operands.slice() : [''];
         const root = this.provideProcessCtxt(meta);
