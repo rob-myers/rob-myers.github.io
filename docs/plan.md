@@ -19,30 +19,22 @@ __Aim towards website release__.
   - ✅ `NavDemo1` has Andros
     > First approximation i.e. first-npc
   - 🚧 TTY script places navpath from Andros on click
+    - ✅ expose use-query cache in terminal
+    - move `stage` lookup into individual items in use-query cache
     - script needs Andros position
-      - `<NPCs>` also has stageKey `nav-demo-1`, registering Andros
+      - `<NPCs>` has stageKey `nav-demo-1`, registering Andros
     - script needs access to NavMesh
-      - projects need redux store (for CodeSandbox too)
-      - move `stage` to it
-      - add (per geomorph) `pathfinding` to it
-      - migrate `usePathfinding`
+      - access pathfinding from `use-query` cache
   - TTY script restrict navpath from Andros to lit area
   - Can move Andros along navpath
   - Andros is __situated__
   - `NavDemo1` has other NPCs
 
-- Basic improvements to first-npc
-  - ...
-
-- ✅ implement `click`
-  - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
-  - ✅ CssPanZoom has optional stageKey
-  - ✅ TTY sessions have associated stageKey
-    > via `env: { STAGE_KEY: 'foo' }` in TabMeta
-  - ✅ click works
+- 🚧 Improve the look of first-npc
+  - try robotic hard edge look first
 
 - 🤔 NPCs have label
-- NPCs label tracks them as they move
+  - NPCs label tracks them as they move
 - user can only move npcs via terminal e.g. `click`...
 - ❌ maybe consider shadows and door shadows (doors can fade)
 - can pause it
@@ -98,6 +90,12 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ implement `click`
+  - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
+  - ✅ CssPanZoom has optional stageKey
+  - ✅ TTY sessions have associated stageKey
+    > via `env: { STAGE_KEY: 'foo' }` in TabMeta
+  - ✅ click works
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`
 - ✅ trace topdown characters using Boxy SVG

@@ -10,14 +10,13 @@ import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
 import useSiteStore from 'store/site.store';
+import { queryCache } from 'store/query-client';
 
 const commandKeys = {
   /** Change current key prefix */
   cd: true,
   /**
-   * __TODO__ consider:
-   * - rewriting as a shell function, or
-   * - emphasize this is not a "builtin" but stage dependent
+   * Receive world position clicks from STAGE_KEY to stdin.
    */
   click: true,
   /** List function definitions */
@@ -425,14 +424,22 @@ class CmdService {
     const session = useSession.api.getSession(meta.sessionKey);
     return new Proxy({
       home: session.var,
+      cache: queryCache, 
     }, {
       get: (_, key) => {
         if (key === 'api') return this.provideProcessApi(meta);
         if (key === 'args') return posPositionals;
         return (_ as any)[key];
       },
-      deleteProperty: (_target, _key) => {
+      deleteProperty(_target, _key) {
         return false;
+      },
+      // getOwnPropertyDescriptor(target, prop) {
+      //   return { enumerable: true, configurable: true };
+      // },
+      ownKeys(target) {
+        // return Reflect.ownKeys(target).concat('api', 'args', 'site');
+        return Reflect.ownKeys(target);
       },
     });
   }

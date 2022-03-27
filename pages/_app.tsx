@@ -6,9 +6,11 @@ import React from 'react';
 
 //#region polyfill
 
-// NOTE dynamic ResizeObserver import does not work e.g. Safari 12.1.2
+// NOTE dynamic import of ResizeObserver doesn't work (e.g. Safari 12.1.2)
 import { ResizeObserver } from '@juggle/resize-observer';
+
 if (typeof window !== 'undefined') {
+
   history.scrollRestoration = 'manual';
   if (('ResizeObserver' in window) === false) {
     window.ResizeObserver = ResizeObserver;
@@ -19,9 +21,11 @@ if (typeof window !== 'undefined') {
       .then(x => x.default.polyfill())
       // .then(() => import('smoothscroll-anchor-polyfill'));
   }
+
   if (('onpointerdown' in document.documentElement) === false) {
     import('pepjs');
   }
+
   //@ts-ignore
   import('web-animations-js');
 }
@@ -35,8 +39,7 @@ setup(
   shouldForwardProp(prop => !prop.startsWith('__')),
 );
 
-import { QueryClient, QueryClientProvider } from 'react-query';
-const queryClient = new QueryClient;
+import { QueryClientProvider } from 'react-query';
 
 import { Nav, Portals } from 'components/dynamic';
 
@@ -45,6 +48,7 @@ import 'xterm/css/xterm.css';
 import 'flexlayout-react/style/light.css'
 import 'codemirror/lib/codemirror.css';
 import 'components/code/codemirror/custom-theme.css';
+import { queryClient } from 'store/query-client';
 
 export default function PagesRoot({ Component, pageProps }: RootProps) {
   return <>
