@@ -20,7 +20,7 @@ __Aim towards website release__.
     > First approximation i.e. first-npc
   - 🚧 TTY script places navpath from Andros on click
     - ✅ expose use-query cache in terminal
-    - move `stage` lookup into individual items in use-query cache
+    - ✅ move `stage` lookup into individual items in use-query cache
     - script needs Andros position
       - `<NPCs>` has stageKey `nav-demo-1`, registering Andros
     - script needs access to NavMesh
@@ -32,6 +32,8 @@ __Aim towards website release__.
 
 - 🚧 Improve the look of first-npc
   - try robotic hard edge look first
+
+- start using `yarn inspect` as in BFF for server side debug
 
 - 🤔 NPCs have label
   - NPCs label tracks them as they move
@@ -94,7 +96,7 @@ __Aim towards website release__.
   - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
   - ✅ CssPanZoom has optional stageKey
   - ✅ TTY sessions have associated stageKey
-    > via `env: { STAGE_KEY: 'foo' }` in TabMeta
+    > via `env: { STAGE_KEY: 'stage-foo' }` in TabMeta
   - ✅ click works
 - ✅ Create `NavDemo1`
   > to be based on ✅ `LightsTest` and 🚧 `SvgNavDemo1`

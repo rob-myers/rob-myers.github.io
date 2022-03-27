@@ -11,6 +11,7 @@ import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
 import useSiteStore from 'store/site.store';
 import { queryCache } from 'store/query-client';
+import { getCachedItem } from 'projects/hooks/use-stage';
 
 const commandKeys = {
   /** Change current key prefix */
@@ -108,7 +109,7 @@ class CmdService {
         if (typeof stageKey !== 'string') {
           throw new ShError('STAGE_KEY: expected string value', 1);
         }
-        const stage = useSiteStore.getState().stage[stageKey];
+        const stage = getCachedItem(stageKey) as NPC.Stage;
         if (!stage) {
           throw new ShError(`stage not found for STAGE_KEY "${stageKey}"`, 1);
         }

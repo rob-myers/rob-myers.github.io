@@ -8,6 +8,7 @@ import { css } from "goober";
 import { Vect } from "projects/geom";
 import useMuState from "../hooks/use-mu-state";
 import useSiteStore from 'store/site.store';
+import useStage, { getCachedItem } from 'projects/hooks/use-stage';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
@@ -97,7 +98,8 @@ export default function CssPanZoom(props) {
             const { x: ox, y: oy } = state.root.children[0].getBoundingClientRect();
             const offset = matrix.transformPoint({ x: ox - dims.parent.left, y: oy - dims.parent.top });
 
-            useSiteStore.getState().stage[props.stageKey]?.ptrEvent.next({
+            const stage = /** @type {NPC.Stage} */ (getCachedItem(props.stageKey));
+            stage?.ptrEvent.next({
               key: 'pointerup',
               point: { x: point.x - offset.x, y: point.y - offset.y }
             });
@@ -228,9 +230,7 @@ export default function CssPanZoom(props) {
     };
   });
 
-  React.useEffect(() => {
-    props.stageKey && useSiteStore.api.ensureStage(props.stageKey);
-  }, [props.stageKey]);
+  useStage(props.stageKey);
 
   return (
     <div className={classNames("panzoom-parent", rootCss(props))}>

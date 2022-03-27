@@ -76,7 +76,7 @@ export default function NavDemo1(props) {
 
   return gm ? (
     <CssPanZoom
-      stageKey="nav-demo-1"
+      stageKey="stage-nav-demo-1"
       dark
       className={rootCss(gm)}
     >

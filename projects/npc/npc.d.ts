@@ -1,5 +1,7 @@
 declare namespace NPC {
 
+  import { Subject } from 'rxjs';
+
   export interface NPCsProps {
     gm: Geomorph.GeomorphData;
     onLoad: ((api: NPC.NPCsApi) => void);
@@ -65,5 +67,32 @@ declare namespace NPC {
     getOpen(): number[];
     setObservableDoors(doorIds: number[]): void ;
   }
+
+  export interface Stage {
+    key: string;
+    /** Keyboard events sent by `Stage` */
+    keyEvent: Subject<StageKeyEvent>;
+    /** Mouse events sent by `Stage` */
+    ptrEvent: Subject<StagePointerEvent>;
+  }
+  
+  type StageKeyEvent = Pick<KeyboardEvent, (
+    | 'key'
+    | 'metaKey'
+    | 'shiftKey'
+    | 'type'
+  )> & {
+    type: 'keydown' | 'keyup';
+  };
+  
+  type StagePointerEvent = {
+    /** Position on ground */
+    point: Geom.VectJson;
+  } & (
+    | { key: 'pointerdown' }
+    | { key: 'pointerup' }
+    | { key: 'pointerleave' }
+    | { key: 'pointermove' }
+  );
 
 }
