@@ -32,7 +32,7 @@ export default function LightsTest(props) {
         }
       },
 
-      updateMask() {
+      updateMask(delayMask = 0) {
         if (!gm) return;
         const { roomGraph: graph } = gm.d;
 
@@ -48,13 +48,15 @@ export default function LightsTest(props) {
 
         const observableDoors = graph.getAdjacentDoors(rootHoleIds.map(id => graph.nodesArray[id]));
         this.doorsApi.setObservableDoors(observableDoors.map(x => x.doorIndex));
-
         const maskPoly = Poly.cutOut(allHolePolys, [gm.d.hullOutline],)
-          .map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
+        .map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
-        state.clipPath = `path('${svgPaths}')`;
-
         update();
+
+        setTimeout(() => {
+          state.clipPath = `path('${svgPaths}')`;
+          update();
+        }, delayMask); // We delay mask update when closing doors
       },
     };
   }, [gm]);
@@ -64,7 +66,7 @@ export default function LightsTest(props) {
       state.updateMask(); // Initial update
       const sub = state.wire
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
-        .subscribe((_) => state.updateMask());
+        .subscribe((x) => state.updateMask(x.key === 'closed-door' ? 300 : 0));
       return () => sub.unsubscribe();
     }
   }, [gm]);
@@ -133,8 +135,8 @@ export default function LightsTest(props) {
 /** @type {Geomorph.LayoutKey} */
 // const layoutKey = 'g-301--bridge';
 // const layoutKey = 'g-101--multipurpose';
-const layoutKey = 'g-102--research-deck';
-// const layoutKey = 'g-302--xboat-repair-bay';
+// const layoutKey = 'g-102--research-deck';
+const layoutKey = 'g-302--xboat-repair-bay';
 // const layoutKey = 'g-303--passenger-deck';
 
 const rootCss = css`
@@ -144,12 +146,8 @@ const rootCss = css`
   }
   img.geomorph {
     position: absolute;
-    filter: brightness(100%);
+    filter: brightness(65%) sepia(50%) hue-rotate(180deg);
   }
-  /* img.geomorph-light {
-    filter:  brightness(75%);
-    position: absolute;
-  } */
   div.light-toggles {
     position: absolute;
 
