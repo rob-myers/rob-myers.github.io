@@ -113,6 +113,7 @@ export default function NavDemo1(props) {
         height={gm.d.pngRect.height}
         style={{
           clipPath: state.clipPath,
+          WebkitClipPath: state.clipPath,
         }}
       />
 
