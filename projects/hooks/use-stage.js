@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
 import { Subject } from 'rxjs';
-import { getCachedItem } from '../service/query-client';
+import { getCached } from '../service/query-client';
 
 /**
  * Ensure stage `stageKey` (default `stage-default`)
@@ -26,5 +26,5 @@ export default function useStage(stageKey = 'stage-default') {
  * @returns {NPC.Stage | undefined}
  */
 export function getCachedStage(stageKey) {
-  return getCachedItem(stageKey);
+  return getCached(stageKey);
 }

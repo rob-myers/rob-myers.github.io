@@ -44,12 +44,15 @@ export default function NPCs(props) {
         }
       },
       spawn(defs) {// TODO
-        console.log('spawning...', defs);
         const stage = getCachedStage(props.stageKey);
         if (stage) {
+          console.log('spawning...', defs);
           /**
-           * TODO somehow register/unregister NPC with stage
+           * TODO
+           * - somehow register/unregister NPC with stage
+           * - prevent dups
            */
+          state.apis = state.apis.filter(x => !defs.some(y => x.key === y.key));
           for (const def of defs) {
             state.apis.push({
               key: def.key,

@@ -92,6 +92,46 @@ call '({args}) =>
   log: `{
   map 'x => console.log(x)'
 }`,
+
+  /**
+   * Receive world position clicks from STAGE_KEY to stdin.
+   */
+  click: `{
+run '({ api, args, home }) {
+  const numClicks = args[0] === ""
+    ? Number.MAX_SAFE_INTEGER : Number(args[0]);
+  if (!Number.isFinite(numClicks)) {
+    api.throwError("format: click [numberOfClicks]");
+  }
+  const stageKey = home.STAGE_KEY
+  if (typeof stageKey !== "string") {
+    api.throwError("STAGE_KEY: expected string value");
+  }
+  const stage = api.getCached(stageKey);
+  if (!stage) {
+    api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`);
+  }
+
+  const process = api.getProcess();
+  let [resolve, reject] = [(_) => {}, (_) => {}];
+
+  const sub = stage.ptrEvent.subscribe({
+    next: (e) => {
+      // ProcessStatus.Running === 1
+      if (e.key === "pointerup" && process.status === 1) {
+        resolve({ x: e.point.x, y: e.point.y });
+      }
+    },
+  });
+  process.cleanups.push(() => sub.unsubscribe());
+
+  for (let i = 0; i < numClicks; i++) {
+    yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
+  }
+  sub.unsubscribe();
+
+}' "$@"
+}`
 };
 
 export const preloadedVariables = {};

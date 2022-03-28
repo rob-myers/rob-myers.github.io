@@ -8,6 +8,6 @@ export const queryCache = queryClient.getQueryCache();
  * @param {string} queryKey
  * @returns {any | undefined}
  */
-export function getCachedItem(queryKey) {
+export function getCached(queryKey) {
   return queryCache.find(queryKey)?.state.data;
 }

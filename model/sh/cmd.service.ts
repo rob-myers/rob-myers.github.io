@@ -9,15 +9,11 @@ import { computeNormalizedParts, createKillError as killError, normalizeAbsParts
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
-import { queryCache, getCachedItem } from 'projects/service/query-client';
+import { queryCache, getCached } from 'projects/service/query-client';
 
 const commandKeys = {
   /** Change current key prefix */
   cd: true,
-  /**
-   * Receive world position clicks from STAGE_KEY to stdin.
-   */
-  click: true,
   /** List function definitions */
   declare: true,
   /** Output arguments as space-separated string */
@@ -98,38 +94,6 @@ class CmdService {
         }
         break;
       }
-      case 'click': {
-        const numClicks = args[0] === undefined ? Number.MAX_SAFE_INTEGER : Number(args[0]);
-        if (!Number.isFinite(numClicks)) {
-          throw new ShError('format: click [numberOfClicks]', 1);
-        }
-        const stageKey = useSession.api.getVar(node.meta.sessionKey, 'STAGE_KEY');
-        if (typeof stageKey !== 'string') {
-          throw new ShError('STAGE_KEY: expected string value', 1);
-        }
-        const stage = getCachedItem(stageKey) as NPC.Stage;
-        if (!stage) {
-          throw new ShError(`stage not found for STAGE_KEY "${stageKey}"`, 1);
-        }
-
-        const process = useSession.api.getProcess(meta);
-        let [resolve, reject] = [(_: Geom.VectJson) => {}, (_: any) => {}];
-
-        const sub = stage.ptrEvent.subscribe({
-           next: (e) => {
-             if (e.key === 'pointerup' && process.status === ProcessStatus.Running) {
-               resolve({ x: e.point.x, y: e.point.y });
-             }
-           },
-         });
-         process.cleanups.push(() => sub.unsubscribe(), () => reject(killError(meta)));
-
-        for (let i = 0; i < numClicks; i++) {
-          yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
-        }
-        sub.unsubscribe();
-        break;
-      }
       case 'declare': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
@@ -187,7 +151,7 @@ class CmdService {
           'STOP', /** --STOP pauses a process */
           'CONT', /** --CONT continues a paused process */
         ] });
-        const pgids = operands.map(x => this.parseJsonArg(x))
+        const pgids = operands.map(x => parseJsonArg(x))
           .filter((x): x is number => Number.isFinite(x));
         for (const pgid of pgids) {
           const processes = useSession.api.getProcesses(meta.sessionKey, pgid).reverse();
@@ -316,7 +280,7 @@ class CmdService {
       }
       case 'set': {
         const root = this.provideProcessCtxt(meta);
-        const value = this.parseJsArg(args[1]);
+        const value = parseJsArg(args[1]);
         if (args[0][0] === '/') {
           Function('__1', '__2', `return __1.${args[0].slice(1)} = __2`)(root, value);
         } else {
@@ -327,7 +291,7 @@ class CmdService {
       }
       case 'sleep': {
         const process = useSession.api.getProcess(meta);
-        let ms = 1000 * (args.length ? parseFloat(this.parseJsonArg(args[0])) || 0 : 1);
+        let ms = 1000 * (args.length ? parseFloat(parseJsonArg(args[0])) || 0 : 1);
         let started = -1;
         do {
           await new Promise<void>((resolve, reject) => {
@@ -382,6 +346,11 @@ class CmdService {
 
   private provideProcessApi(meta: Sh.BaseMeta) {
     return {
+      getCached,
+
+      getProcess() {
+        return useSession.api.getProcess(meta);
+      },
       /**
        * Read from stdin. We convert `{ eof: true }` to `null` for
        * easier assignment, but beware of other falsies.
@@ -401,11 +370,11 @@ class CmdService {
       provideCtxt: (args: string[]) => this.provideProcessCtxt(meta, args),
 
       /** js parse with string fallback */
-      parseJsArg: this.parseJsArg,
+      parseJsArg,
 
       /** Output 1, 2, ... at fixed intervals */
       poll: async function* (args: string[]) {
-        const seconds = args.length ? parseFloat(cmdService.parseJsonArg(args[0])) || 1 : 1;
+        const seconds = args.length ? parseFloat(parseJsonArg(args[0])) || 1 : 1;
         const [delayMs, deferred] = [Math.max(seconds, 0.5) * 1000, new Deferred<void>()];
         useSession.api.addCleanup(meta, () => deferred.resolve());
         let count = 1;
@@ -415,7 +384,9 @@ class CmdService {
         }
       },
 
-      pretty: (x: any) => pretty(JSON.parse(safeStringify(x))),
+      pretty: prettySafe,
+
+      throwError,
     };
   }
 
@@ -476,24 +447,30 @@ class CmdService {
     }
     return { eof: true };
   }
+  
+}
 
-  /** JSON.parse with string fallback */
-  private parseJsonArg(input: string) {
-    try {
-      return input === undefined ? undefined : JSON.parse(input);
-    } catch {
-      return input;
-    }
+/** js parse with string fallback */
+function parseJsArg(input: string) {
+  try {
+    return Function(`return ${input}`)();
+  } catch (e) {
+    return input;
   }
-
-  /** js parse with string fallbak */
-  private parseJsArg(input: string) {
-    try {
-      return Function(`return ${input}`)();
-    } catch (e) {
-      return input;
-    }
+}
+/** JSON.parse with string fallback */
+function parseJsonArg(input: string) {
+  try {
+    return input === undefined ? undefined : JSON.parse(input);
+  } catch {
+    return input;
   }
+}
+function prettySafe(x: any) {
+  pretty(JSON.parse(safeStringify(x)));
+}
+function throwError(message: string, exitCode?: number) {
+  throw new ShError(message, exitCode || 1);
 }
 
 export const cmdService = new CmdService;

@@ -14,6 +14,12 @@ import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
 
 // TODO
+// - ✅ rewrite `click` as a function
+// - spawn from TTY
+//   - symbols have points tagged 'spawn'
+//   - implement spawn as shell function
+//   - default spawn to 1st (in hull or first symbol with a spawn point)
+//   - can specify point to spawn from
 // - Andros is situated and lighting reacts
 
 /** @param {{ disabled?: boolean; layoutKey: Geomorph.LayoutKey }} props */
@@ -71,11 +77,11 @@ export default function NavDemo1(props) {
     equality: { currentHoleId: true },
   });
 
-  React.useEffect(() => {
-    state.npcsApi.spawn?.([
-      { key: 'andros', position: { x: 50, y: 38 } },
-    ]);
-  }, [state.npcsApi]);
+  // React.useEffect(() => {
+  //   state.npcsApi.spawn([
+  //     { key: 'andros', position: { x: 50, y: 38 } },
+  //   ]);
+  // }, [state.npcsApi]);
 
   return gm ? (
     <CssPanZoom
