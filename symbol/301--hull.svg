@@ -26,7 +26,7 @@
     <path d="M 358.4 63.3 L 180 63.3 L 177.1 62.1 L 119.1 4 L -1 4 L -1 -4 L 122.4 -4 L 181.7 55.3 L 360.5 55.3 L 363.1 56.7 L 424.7 119 L 419 124.7 L 358.4 63.3 Z" style=""/>
     <path d="M 841 63 L 1020 63 L 1023 62 L 1081 4 L 1201 4 L 1201 -4 L 1077 -4 L 1018 55 L 839 55 L 837 56 L 773 119 L 779 125 L 841 63 Z" style=""/>
   </g>
-  <g style="pointer-events: none;">
+  <g style="">
     <title>singles</title>
     <path d="M 300 121 L 360 121 L 360 61 L 420 125.6 L 384.4 180 L 360 240 L 300 240.6 L 300 121 Z" style="stroke: rgb(0, 0, 0); stroke-width: 3px; fill: rgb(255, 255, 255); stroke-linecap: round; stroke-linejoin: round;">
       <title>poly #fff-#000-4</title>
@@ -78,36 +78,6 @@
     </rect>
     <rect x="900" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
       <title>switch</title>
-    </rect>
-    <rect x="60" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="180" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="300" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="300" y="410" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="300" y="530" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="1020" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="1140" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="900" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="900" y="410" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="900" y="530" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
     </rect>
   </g>
 </svg>
