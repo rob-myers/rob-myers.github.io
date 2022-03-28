@@ -33,7 +33,8 @@ export default function Doors(props) {
       canvas: /** @type {HTMLCanvasElement} */ ({}),
       open: /** @type {{ [doorIndex: number]: true }} */ ({}),
       observable: /** @type {{ [doorIndex: number]: true }} */ ({}),
-      /** @param {React.MouseEvent} e */
+      rootEl: /** @type {HTMLDivElement} */ ({}),
+      /** @param {PointerEvent} e */
       onToggleDoor(e) {
         const index = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-index'));
         if (!state.observable[index]) return;
@@ -60,12 +61,16 @@ export default function Doors(props) {
   }, []);
   React.useEffect(() => {
     state.renderUnobservables();
+    state.rootEl.addEventListener('pointerup', state.onToggleDoor);
+    return () => {
+      state.rootEl.removeEventListener('pointerup', state.onToggleDoor);
+    };
   }, []);
 
   return (
     <div
       className={rootCss}
-      onPointerUp={state.onToggleDoor}
+      ref={el => el && (state.rootEl = el)}
     >
       {gm.doors.map(({ rect, angle, tags }, i) =>
         state.observable[i] && <div

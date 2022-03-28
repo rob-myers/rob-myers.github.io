@@ -97,6 +97,7 @@ export default function LightsTest(props) {
             width: gm.d.pngRect.width,
             height: gm.d.pngRect.height,
             clipPath: state.clipPath,
+            WebkitClipPath: state.clipPath,
           }}
         />
 
