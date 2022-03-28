@@ -348,9 +348,14 @@ class CmdService {
     return {
       getCached,
 
+      getKillError() {
+        return killError(meta);
+      },
+
       getProcess() {
         return useSession.api.getProcess(meta);
       },
+
       /**
        * Read from stdin. We convert `{ eof: true }` to `null` for
        * easier assignment, but beware of other falsies.

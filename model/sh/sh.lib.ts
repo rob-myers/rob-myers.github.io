@@ -123,7 +123,7 @@ run '({ api, args, home }) {
       }
     },
   });
-  process.cleanups.push(() => sub.unsubscribe());
+  process.cleanups.push(() => sub.unsubscribe(), () => reject(api.getKillError()));
 
   for (let i = 0; i < numClicks; i++) {
     yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
