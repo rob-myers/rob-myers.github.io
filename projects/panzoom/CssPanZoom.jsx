@@ -7,7 +7,7 @@ import classNames from "classnames";
 import { css } from "goober";
 import { Vect } from "projects/geom";
 import useMuState from "../hooks/use-mu-state";
-import useStage, { getCachedItem } from 'projects/hooks/use-stage';
+import useStage, { getCachedStage } from 'projects/hooks/use-stage';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
@@ -97,7 +97,7 @@ export default function CssPanZoom(props) {
             const { x: ox, y: oy } = state.root.children[0].getBoundingClientRect();
             const offset = matrix.transformPoint({ x: ox - dims.parent.left, y: oy - dims.parent.top });
 
-            const stage = /** @type {NPC.Stage} */ (getCachedItem(props.stageKey));
+            const stage = getCachedStage(props.stageKey);
             stage?.ptrEvent.next({
               key: 'pointerup',
               point: { x: point.x - offset.x, y: point.y - offset.y }

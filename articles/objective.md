@@ -124,6 +124,6 @@ There are respective CodeSandboxes i.e. [visibility](https://codesandbox.io/s/ro
   height="340"
   tabs="[
     // { key: 'component', filepath: 'example/SvgVisibilityDemo#301' },
-    { key: 'component', filepath: 'example/Css3d#301' },
+    { key: 'component', filepath: 'example/Css3dForeignObject#301' },
   ]"
 ></div>

@@ -21,7 +21,7 @@ __Aim towards website release__.
   - 🚧 TTY script places navpath from Andros on click
     - ✅ expose use-query cache in terminal
     - ✅ move `stage` lookup into individual items in use-query cache
-    - 🚧 script needs Andros position
+    - 🚧 script needs position of Andros
       - `<NPCs>` has stageKey `nav-demo-1`, registering Andros
     - script needs access to NavMesh
       - access pathfinding from `use-query` cache

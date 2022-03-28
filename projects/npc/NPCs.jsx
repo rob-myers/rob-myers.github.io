@@ -3,7 +3,8 @@ import classNames from "classnames";
 import { Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
-import { assertDefined } from "projects/service/generic";
+import { assertDefined } from "../service/generic";
+import { getCachedStage } from "../hooks/use-stage";
 /**
  * TODO
  * - better approach to NPCs.
@@ -43,14 +44,22 @@ export default function NPCs(props) {
         }
       },
       spawn(defs) {// TODO
-        console.log('spawning', defs);
-        for (const def of defs) {
-          state.apis.push({
-            key: def.key,
-            def,
-            animState: 'idle',
-            el: /** @type {*} */ ({}),
-          });
+        console.log('spawning...', defs);
+        const stage = getCachedStage(props.stageKey);
+        if (stage) {
+          /**
+           * TODO somehow register/unregister NPC with stage
+           */
+          for (const def of defs) {
+            state.apis.push({
+              key: def.key,
+              def,
+              animState: 'idle',
+              el: /** @type {*} */ ({}),
+            });
+          }
+        } else {
+          console.error(`${NPCs.name}: cannot spawn into non-existent stage "${props.stageKey}"`);
         }
         update();
       },

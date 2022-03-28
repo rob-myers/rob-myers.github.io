@@ -9,9 +9,7 @@ import { computeNormalizedParts, createKillError as killError, normalizeAbsParts
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
-import useSiteStore from 'store/site.store';
-import { queryCache } from 'store/query-client';
-import { getCachedItem } from 'projects/hooks/use-stage';
+import { queryCache, getCachedItem } from 'projects/service/query-client';
 
 const commandKeys = {
   /** Change current key prefix */

@@ -48,7 +48,7 @@ import 'xterm/css/xterm.css';
 import 'flexlayout-react/style/light.css'
 import 'codemirror/lib/codemirror.css';
 import 'components/code/codemirror/custom-theme.css';
-import { queryClient } from 'store/query-client';
+import { queryClient } from 'projects/service/query-client';
 
 export default function PagesRoot({ Component, pageProps }: RootProps) {
   return <>

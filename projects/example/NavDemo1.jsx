@@ -45,9 +45,6 @@ export default function NavDemo1(props) {
           state.updateClipPath();
           state.updateObservableDoors();
           update();
-          state.npcsApi.spawn([
-            { key: 'andros', position: { x: 50, y: 38 } },
-          ]);
           const sub = state.wire
             .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
             .subscribe((_) => { state.updateClipPath(); update(); });
@@ -74,6 +71,12 @@ export default function NavDemo1(props) {
     equality: { currentHoleId: true },
   });
 
+  React.useEffect(() => {
+    state.npcsApi.spawn?.([
+      { key: 'andros', position: { x: 50, y: 38 } },
+    ]);
+  }, [state.npcsApi]);
+
   return gm ? (
     <CssPanZoom
       stageKey="stage-nav-demo-1"
@@ -91,7 +94,7 @@ export default function NavDemo1(props) {
 
       <NPCs
         gm={gm}
-        onLoad={api => state.npcsApi = api}
+        onLoad={api => { state.npcsApi = api; update() }}
         disabled={props.disabled}
         stageKey="stage-nav-demo-1"
       />
