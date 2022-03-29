@@ -178,7 +178,7 @@ export interface FileWithMeta extends File {
  * - `sessionKey`: which session we are running the code in,
  *   - links the code to a table.
  *   - has value `${defaultSessionKey}` if code not run.
- * - `fd`: mapping from file descriptor to device ket
+ * - `fd`: mapping from file descriptor to device
  */
 export interface BaseMeta {
   sessionKey: string;

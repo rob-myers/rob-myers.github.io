@@ -181,7 +181,9 @@ class SemanticsService {
         } catch (error) {
           // Terminate children and this process on pipeline error
           clones.map(({ meta }) => useSession.api.getProcess(meta))
-            .forEach(x => x && (x.status = ProcessStatus.Killed));
+            // Processes may have terminated, including their descendants.
+            // Perhaps we should try to cleanup their descendants too?
+            .forEach(x => x && (x.status = ProcessStatus.Killed) && x.cleanups.forEach(cleanup => cleanup()));
           throw createKillError(node.meta);
         } finally {
           fifos.forEach(fifo => {
