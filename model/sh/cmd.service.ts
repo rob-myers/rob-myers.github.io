@@ -352,12 +352,16 @@ class CmdService {
         return killError(meta);
       },
 
-      getProcess() {
-        return useSession.api.getProcess(meta);
+      isTtyAt(fd = 0) {
+        return meta.fd[fd]?.startsWith('/dev/tty-');
       },
 
+      getProcess() {
+        return useSession.api.getProcess(meta);
+      },  
+
       /**
-       * Read from stdin. We convert `{ eof: true }` to `null` for
+       * Read once from stdin. We convert `{ eof: true }` to `null` for
        * easier assignment, but beware of other falsies.
        */
       read: async () => {
@@ -444,7 +448,9 @@ class CmdService {
   }
 
   /**
-   * Reading once often means two outputs i.e. `{ data }` then `{ eof: true }`
+   * Reading once often means two outputs i.e. `{ data }` then `{ eof: true }`.
+   * If there is any real data we return `{ data }`,
+   * otherwise we (possibly eventually) return `{ eof: true }`.
    */
   private async readOnce(meta: Sh.BaseMeta): Promise<ReadResult> {
     for await (const data of this.readLoop(meta, true)) {

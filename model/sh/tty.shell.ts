@@ -139,6 +139,7 @@ export class TtyShell implements Device {
       }
       throw e;
     } finally {
+      useSession.api.getProcess(meta).cleanups.forEach(cleanup => cleanup());
       !opts.leading && useSession.api.removeProcess(meta.pid, this.sessionKey);
     }
   }

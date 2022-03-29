@@ -73,19 +73,10 @@ declare namespace NPC {
   export interface Stage {
     key: string;
     /** Keyboard events sent by `Stage` */
-    keyEvent: Subject<StageKeyEvent>;
+    npcEvent: Subject<StageNpcEvent>;
     /** Mouse events sent by `Stage` */
     ptrEvent: Subject<StagePointerEvent>;
   }
-  
-  type StageKeyEvent = Pick<KeyboardEvent, (
-    | 'key'
-    | 'metaKey'
-    | 'shiftKey'
-    | 'type'
-  )> & {
-    type: 'keydown' | 'keyup';
-  };
   
   type StagePointerEvent = {
     /** Position on ground */
@@ -95,6 +86,12 @@ declare namespace NPC {
     | { key: 'pointerup' }
     | { key: 'pointerleave' }
     | { key: 'pointermove' }
+  );
+
+  type StageNpcEvent = {
+    npcKey: string;
+  } & (
+    | { key: 'spawn'; at: Geom.VectJson; }
   );
 
 }

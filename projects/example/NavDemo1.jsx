@@ -15,7 +15,7 @@ import NPCs from "../npc/NPCs";
 
 // TODO
 // - ✅ rewrite `click` as a function
-// - spawn from TTY
+// - 🚧 spawn from TTY
 //   - symbols have points tagged 'spawn'
 //   - implement spawn as shell function
 //   - default spawn to 1st (in hull or first symbol with a spawn point)

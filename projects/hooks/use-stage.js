@@ -11,7 +11,7 @@ export default function useStage(stageKey = 'stage-default') {
     /** @type {NPC.Stage} */
     const stage = {
       key: stageKey,
-      keyEvent: new Subject,
+      npcEvent: new Subject,
       ptrEvent: new Subject,
     };
     return stage;

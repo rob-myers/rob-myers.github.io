@@ -92,6 +92,7 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ process cleanups now always called from `spawn` in TtyShell
 - ✅ implement `click`
   - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh
   - ✅ CssPanZoom has optional stageKey
@@ -384,6 +385,16 @@ __Aim towards website release__.
 - can trigger shell command from markdown link
 - focus terminal onclick interact
 - focus terminal onchange tab
+
+```sh
+# this crashes -- can we prevent it?
+run '({}) { while (true) yield undefined; }'
+
+run '({ api }) { while (true) {
+  await api.sleep(1)
+  yield "foo"
+} }'
+```
 
 - ✅ replace various shell commands by shell functions and `run`
 - ✅ simplify `help`

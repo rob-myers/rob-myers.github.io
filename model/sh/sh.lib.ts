@@ -103,10 +103,7 @@ run '({ api, args, home }) {
   if (!Number.isFinite(numClicks)) {
     api.throwError("format: click [numberOfClicks]");
   }
-  const stageKey = home.STAGE_KEY
-  if (typeof stageKey !== "string") {
-    api.throwError("STAGE_KEY: expected string value");
-  }
+  const stageKey = home.STAGE_KEY;
   const stage = api.getCached(stageKey);
   if (!stage) {
     api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`);
@@ -131,7 +128,29 @@ run '({ api, args, home }) {
   sub.unsubscribe();
 
 }' "$@"
-}`
+}`,
+
+  spawn: `{
+  run '({ api, args, home }) {
+    const npcKey = args[0];
+    if (!npcKey) {
+      api.throwError("format: \`spawn {key}\` optionally reading vector from stdin");
+    }
+    const stageKey = home.STAGE_KEY;
+    const stage = api.getCached(stageKey);
+    if (!stage) {
+      api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`);
+    }
+
+    // TODO default to first spawnPoint from ... (?)
+    let at = { x: 0, y: 0 };
+    if (!api.isTtyAt(0)) {
+      at = await api.read();
+    }
+
+    stage.npcEvent.next({ npcKey, key: "spawn", at });
+  }' "$@"
+}`,
 };
 
 export const preloadedVariables = {};
