@@ -28,18 +28,22 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
     const switchPoints = layout.groups.singles
       .filter(x => x.tags.includes('switch')).map(x => x.poly.center);
 
+    const spawnPoints = layout.groups.singles
+      .filter(x => x.tags.includes('spawn')).map(x => x.poly.center);
+
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...layout,
       d: {
         hullOutline: layout.hullPoly[0].removeHoles(),
         pngRect: Rect.fromJson(layout.items[0].pngRect),
+        roomGraph,
+        holesWithDoors,
         holeSwitches: layout.holes.map((poly) => {
           const found = switchPoints.find(p => poly.contains(p));
           return found || poly.rect.center;
         }),
-        roomGraph,
-        holesWithDoors,
+        spawnPoints,
       },
     };
 
