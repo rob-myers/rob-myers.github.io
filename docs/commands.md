@@ -37,3 +37,11 @@ $ map 'x => [x, x].map(Number)'
 42
 [42,42]
 ```
+
+```sh
+$ seq 10 | sponge
+[0,1,2,3,4,5,6,7,8,9]
+
+$ seq 10 | reduce '(agg, item) => agg + item'
+45
+```
