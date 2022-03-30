@@ -98,10 +98,10 @@ export function kebabToCamel(text: string) {
   return text.replace(/-(.)/g, (_, c: string) => c.toUpperCase());
 }
 
-export function truncate(text: string, maxLength = 50) {
-  return text.length <= maxLength
-    ? text
-    : `${text.slice(0, maxLength)} ...`;
+export function truncateOneLine(text: string, maxLength = 50) {
+  text = text.trimLeft();
+  const isLong = text.length > maxLength;
+  return isLong ? `${text.split('\n', 1)[0].slice(0, maxLength)} ...` : text;
 }
 
 /** Typed `Object.keys`, usually as finitely many string literals. */

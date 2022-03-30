@@ -44,4 +44,35 @@ $ seq 10 | sponge
 
 $ seq 10 | reduce '(agg, item) => agg + item'
 45
+
+$ filter 'x => x.length > 2'
+ab  # user input sans prompt
+abc # user input sans prompt
+abc # response
+```
+
+```sh
+$ poll 1 | map 'x => 2 ** x'
+2
+4
+8 # ...
+^C
+
+$ poll 5 | map 'x => 2 ** x' &
+2
+4
+$ ps -a
+pid   ppid  pgid 
+0     0     0    ▶️  ps -a
+1     0     1    ▶️  poll 5 | map 'x => 2 ** x' &
+2     1     1    ▶️  poll 5
+3     1     1    ▶️  map 'x => 2 ** x'
+4     2     1    ▶️  run '({ api, args }) { ...
+5     3     1    ▶️  run '(ctxt) { ...
+16
+64
+$ kill 1
+$ ps -a
+pid   ppid  pgid 
+0     0     0    ▶️  ps -a
 ```

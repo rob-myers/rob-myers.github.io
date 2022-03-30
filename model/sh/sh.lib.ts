@@ -99,7 +99,8 @@ call '({args}) =>
   click: `{
 run '({ api, args, home }) {
   const numClicks = args[0] === ""
-    ? Number.MAX_SAFE_INTEGER : Number(args[0]);
+    ? Number.MAX_SAFE_INTEGER
+    : Number(args[0]);
   if (!Number.isFinite(numClicks)) {
     api.throwError("format: click [numberOfClicks]");
   }
@@ -113,14 +114,16 @@ run '({ api, args, home }) {
   let [resolve, reject] = [(_) => {}, (_) => {}];
 
   const sub = stage.ptrEvent.subscribe({
-    next: (e) => {
-      // ProcessStatus.Running === 1
+    next: (e) => {// ProcessStatus.Running === 1
       if (e.key === "pointerup" && process.status === 1) {
         resolve({ x: e.point.x, y: e.point.y });
       }
     },
   });
-  process.cleanups.push(() => sub.unsubscribe(), () => reject(api.getKillError()));
+  process.cleanups.push(
+    () => sub.unsubscribe(),
+    () => reject(api.getKillError()),
+  );
 
   for (let i = 0; i < numClicks; i++) {
     yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
@@ -146,6 +149,9 @@ run '({ api, args, home }) {
     let at = { x: 0, y: 0 };
     if (!api.isTtyAt(0)) {
       at = await api.read();
+      if (!(at && typeof at.x === "number" && typeof at.y === "number")) {
+        api.throwError(\`expected vector from stdin but received \${JSON.stringify(at)}\`);
+      }
     }
 
     stage.npcEvent.next({ npcKey, key: "spawn", at });

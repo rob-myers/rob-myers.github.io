@@ -162,9 +162,11 @@ class SemanticsService {
           }
           const stdOuts = clones.map(({ meta }) => useSession.api.resolve(1, meta));
 
-          await Promise.all(clones.map((file, i) =>
+          const process = useSession.api.getProcess(node.meta)
+          await Promise.allSettled(clones.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
               try {
+                process.cleanups.push(() => reject()); // Handle Ctrl-C
                 await ttyShell.spawn(file);
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();

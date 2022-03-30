@@ -1,6 +1,6 @@
 import cliColumns from 'cli-columns';
 
-import { testNever, truncate, Deferred, pause, keysDeep, safeStringify, pretty } from 'model/generic.model';
+import { testNever, truncateOneLine, Deferred, pause, keysDeep, safeStringify, pretty } from 'model/generic.model';
 import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, preProcessRead } from './io/io.model';
@@ -222,7 +222,7 @@ class CmdService {
           's', /** Show process src */
         ], });
         const processes = Object.values(useSession.api.getProcesses(meta.sessionKey))
-          .filter(opts.a ? x => x : ({ key: pid, pgid }) => pid === pgid);
+          .filter(({ key: pid, pgid }) => opts.a ? true : pid === pgid);
         const title = ['pid', 'ppid', 'pgid'].map(x => x.padEnd(5)).join(' ')
 
         if (opts.s) {
@@ -237,8 +237,9 @@ class CmdService {
           yield `${ansiBlue}${title}${ansiReset}`;
           for (const { key: pid, ppid, pgid, status, src } of processes) {
             const icon = getProcessStatusIcon(status);
-            const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
-            yield `${info}${icon}  ${truncate(src, 30)}`;
+            const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ');
+            const shortSrc = truncateOneLine(src.trimLeft(), 30);
+            yield `${info}${icon}  ${shortSrc}`;
           }
         }
         break;
@@ -352,13 +353,13 @@ class CmdService {
         return killError(meta);
       },
 
+      getProcess() {
+        return useSession.api.getProcess(meta);
+      },
+  
       isTtyAt(fd = 0) {
         return meta.fd[fd]?.startsWith('/dev/tty-');
       },
-
-      getProcess() {
-        return useSession.api.getProcess(meta);
-      },  
 
       /**
        * Read once from stdin. We convert `{ eof: true }` to `null` for

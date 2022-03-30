@@ -12,6 +12,12 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- ✅ fix pipeline semantics
+  - do not terminate until all have terminated
+  - terminate all if parent process killed
+
+- maybe change to `spawn rob "$( myVec )"`
+
 - 🚧 `NavDemo1`
   - ✅ Circle with heart-beat and breath
     > https://stackoverflow.com/questions/34762009/pulsing-heart-css-animation
