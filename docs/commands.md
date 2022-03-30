@@ -2,16 +2,13 @@
 
 ```sh
 $ cd /
-# Get queryKey of first cached item
-$ cache/queries/0/cache/queries/0/queryKey
-/geomorph/g-301--bridge.json
-
 # Get all queryKeys
-$ cache/queries/0/cache/queries | map '([x]) => x.queryKey'
-/geomorph/g-301--bridge.json
+$ cache/queries | split | map 'x => x.queryKey'
+# or
+$ cache/queries | map 'xs => xs.map(x => x.queryKey)'
 
 # Get keys of data of first cached item
-$ cache/queries/0/cache/queries/0/state/data | keys
+$ cache/queries/0/state/data | keys
 ["key","id","def","groups","holes","doors","labels","navPoly","navDecomp","roomGraph","hullPoly","hullRect","hullTop","items","d"]
 ```
 
