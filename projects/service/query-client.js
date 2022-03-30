@@ -1,5 +1,8 @@
 import { QueryClient } from 'react-query';
 
+/**
+ * Singleton instance for entire App.
+ */
 export const queryClient = new QueryClient;
 
 export const queryCache = queryClient.getQueryCache();
@@ -10,4 +13,15 @@ export const queryCache = queryClient.getQueryCache();
  */
 export function getCached(queryKey) {
   return queryCache.find(queryKey)?.state.data;
+}
+
+/**
+ * @template T
+ * @param {string} queryKey 
+ * @param {import('react-query/types/core/utils').Updater<T | undefined, T>} updater 
+ */
+export function setCached(queryKey, updater) {
+  // TODO review options
+  queryClient.setQueryDefaults(queryKey, { cacheTime: Infinity, staleTime: Infinity });
+  queryClient.setQueryData(queryKey, updater);
 }
