@@ -12,11 +12,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ fix pipeline semantics
-  - do not terminate until all have terminated
-  - terminate all if parent process killed
-
-- maybe change to `spawn rob "$( myVec )"`
+- ✅ spawn has format `spawn rob ["$( position )"]`
 
 - 🚧 `NavDemo1`
   - ✅ Circle with heart-beat and breath
@@ -98,6 +94,9 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ fix pipeline semantics
+  - do not terminate until all have terminated
+  - terminate all if parent process killed
 - ✅ process cleanups now always called from `spawn` in TtyShell
 - ✅ implement `click`
   - ✅ see https://github.com/rob-myers/rob-myers.github.io/tree/three-cli/model/sh

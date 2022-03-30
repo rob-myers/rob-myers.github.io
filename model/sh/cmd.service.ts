@@ -396,6 +396,9 @@ class CmdService {
 
       pretty: prettySafe,
 
+      /** JSON.parse which returns `undefined` on parse error */
+      safeJsonParse,
+
       throwError,
     };
   }
@@ -480,6 +483,13 @@ function parseJsonArg(input: string) {
 }
 function prettySafe(x: any) {
   pretty(JSON.parse(safeStringify(x)));
+}
+function safeJsonParse(input: string) {
+  try {
+    return JSON.parse(input);
+  } catch  {
+    return;
+  }
 }
 function throwError(message: string, exitCode?: number) {
   throw new ShError(message, exitCode || 1);

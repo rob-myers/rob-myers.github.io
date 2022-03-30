@@ -97,47 +97,12 @@ call '({args}) =>
    * Receive world position clicks from STAGE_KEY to stdin.
    */
   click: `{
-run '({ api, args, home }) {
-  const numClicks = args[0] === ""
-    ? Number.MAX_SAFE_INTEGER
-    : Number(args[0]);
-  if (!Number.isFinite(numClicks)) {
-    api.throwError("format: click [numberOfClicks]");
-  }
-  const stageKey = home.STAGE_KEY;
-  const stage = api.getCached(stageKey);
-  if (!stage) {
-    api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`);
-  }
-
-  const process = api.getProcess();
-  let [resolve, reject] = [(_) => {}, (_) => {}];
-
-  const sub = stage.ptrEvent.subscribe({
-    next: (e) => {// ProcessStatus.Running === 1
-      if (e.key === "pointerup" && process.status === 1) {
-        resolve({ x: e.point.x, y: e.point.y });
-      }
-    },
-  });
-  process.cleanups.push(
-    () => sub.unsubscribe(),
-    () => reject(api.getKillError()),
-  );
-
-  for (let i = 0; i < numClicks; i++) {
-    yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
-  }
-  sub.unsubscribe();
-
-}' "$@"
-}`,
-
-  spawn: `{
   run '({ api, args, home }) {
-    const npcKey = args[0];
-    if (!npcKey) {
-      api.throwError("format: \`spawn {key}\` optionally reading vector from stdin");
+    const numClicks = args[0] === ""
+      ? Number.MAX_SAFE_INTEGER
+      : Number(args[0]);
+    if (!Number.isFinite(numClicks)) {
+      api.throwError("format: click [numberOfClicks]");
     }
     const stageKey = home.STAGE_KEY;
     const stage = api.getCached(stageKey);
@@ -145,14 +110,49 @@ run '({ api, args, home }) {
       api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`);
     }
 
-    // TODO default to first spawnPoint from ... (?)
-    let at = { x: 0, y: 0 };
-    if (!api.isTtyAt(0)) {
-      at = await api.read();
-      if (!(at && typeof at.x === "number" && typeof at.y === "number")) {
-        api.throwError(\`expected vector from stdin but received \${JSON.stringify(at)}\`);
-      }
+    const process = api.getProcess();
+    let [resolve, reject] = [(_) => {}, (_) => {}];
+
+    const sub = stage.ptrEvent.subscribe({
+      next: (e) => {// ProcessStatus.Running === 1
+        if (e.key === "pointerup" && process.status === 1) {
+          resolve({ x: e.point.x, y: e.point.y });
+        }
+      },
+    });
+    process.cleanups.push(
+      () => sub.unsubscribe(),
+      () => reject(api.getKillError()),
+    );
+
+    for (let i = 0; i < numClicks; i++) {
+      yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
     }
+    sub.unsubscribe();
+
+  }' "$@"
+}`,
+
+  spawn: `{
+  run '({ api, args, home }) {
+    const npcKey = args[0];
+    const position = api.safeJsonParse(args[1] || "null");
+    if (
+      !npcKey
+      || position === undefined
+      || position && !(typeof position.x === "number" && typeof position.y === "number")
+    ) {
+      api.throwError("format: spawn {key} [{vecJson}] e.g. spawn andros \'{"x":300,"y":120}\'");
+    }
+
+    const stageKey = home.STAGE_KEY;
+    const stage = api.getCached(stageKey);
+    if (!stage) {
+      api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`);
+    }
+
+    // TODO default to first spawnPoint from ... (?)
+    const at = position || { x: 0, y: 0 };
 
     stage.npcEvent.next({ npcKey, key: "spawn", at });
   }' "$@"
