@@ -22,12 +22,13 @@ import NPCs from "../npc/NPCs";
 //   - can specify point to spawn from
 // - Andros is situated and lighting reacts
 
-/** @param {{ disabled?: boolean; layoutKey: Geomorph.LayoutKey }} props */
+/** @param {{ disabled?: boolean }} props */
 export default function NavDemo1(props) {
 
   const update = useUpdate();
+  const layoutKey = 'g-301--bridge';
 
-  const { data: gm } = useGeomorphData(props.layoutKey, { staleTime: Infinity });
+  const { data: gm } = useGeomorphData(layoutKey, { staleTime: Infinity });
 
   const state = useMuState(() => {
     return {
@@ -92,7 +93,7 @@ export default function NavDemo1(props) {
 
       <img
         className="geomorph"
-        src={geomorphPngPath(props.layoutKey)}
+        src={geomorphPngPath(layoutKey)}
         draggable={false}
         width={gm.d.pngRect.width}
         height={gm.d.pngRect.height}
@@ -107,7 +108,7 @@ export default function NavDemo1(props) {
 
       <img
         className="geomorph-dark"
-        src={geomorphPngPath(props.layoutKey)}
+        src={geomorphPngPath(layoutKey)}
         draggable={false}
         width={gm.d.pngRect.width}
         height={gm.d.pngRect.height}

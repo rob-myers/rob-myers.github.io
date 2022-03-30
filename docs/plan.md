@@ -13,6 +13,8 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - ✅ spawn has format `spawn rob ["$( position )"]`
+- NavDemo1 has 2 or more geomorphs
+- Stage can access spawnPoints from useGeomorphData
 
 - 🚧 `NavDemo1`
   - ✅ Circle with heart-beat and breath
