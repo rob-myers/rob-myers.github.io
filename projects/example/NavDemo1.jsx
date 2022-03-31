@@ -12,6 +12,7 @@ import useMuState from "../hooks/use-mu-state";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
+import useGeomorphs from "projects/hooks/use-geomorphs";
 
 // TODO
 // - ✅ rewrite `click` as a function
@@ -26,9 +27,19 @@ import NPCs from "../npc/NPCs";
 export default function NavDemo1(props) {
 
   const update = useUpdate();
-  const layoutKey = 'g-301--bridge';
 
-  const { data: gm } = useGeomorphData(layoutKey, { staleTime: Infinity });
+  /**
+   * TODO
+   * - `useGeomorphs` hook
+   * - show em all below
+   */
+
+  const { data: gm } = useGeomorphData(layoutKey[301], { staleTime: Infinity });
+
+  const gms = useGeomorphs([
+    { layoutKey: 'g-301--bridge' },
+    { layoutKey: 'g-101--multipurpose', transform: [0, 0, 0, 0, 0, 600] },
+  ]);
 
   const state = useMuState(() => {
     return {
@@ -93,7 +104,7 @@ export default function NavDemo1(props) {
 
       <img
         className="geomorph"
-        src={geomorphPngPath(layoutKey)}
+        src={geomorphPngPath(layoutKey[301])}
         draggable={false}
         width={gm.d.pngRect.width}
         height={gm.d.pngRect.height}
@@ -108,7 +119,7 @@ export default function NavDemo1(props) {
 
       <img
         className="geomorph-dark"
-        src={geomorphPngPath(layoutKey)}
+        src={geomorphPngPath(layoutKey[301])}
         draggable={false}
         width={gm.d.pngRect.width}
         height={gm.d.pngRect.height}
@@ -127,6 +138,11 @@ export default function NavDemo1(props) {
     </CssPanZoom>
   ) : null;
 }
+
+const layoutKey = /** @type {const} */ ({
+  101: 'g-101--multipurpose',
+  301: 'g-301--bridge',
+});
 
 /** @param {Geomorph.GeomorphData} gm */
 const rootCss = (gm) => css`
