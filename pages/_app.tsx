@@ -3,6 +3,7 @@ import type { NextComponentType, NextPageContext } from 'next';
 import type { AppInitialProps } from 'next/app';
 import type { Router } from 'next/router';
 import React from 'react';
+import { ReactQueryDevtools } from 'react-query/devtools'
 
 //#region polyfill
 
@@ -61,6 +62,7 @@ export default function PagesRoot({ Component, pageProps }: RootProps) {
       <Nav />
       <Component {...pageProps} />
       <Portals />
+      <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   </>;
 }
