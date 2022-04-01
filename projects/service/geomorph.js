@@ -1,5 +1,6 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
+import { keys } from './generic';
 import { Poly, Rect, Mat } from '../geom';
 import { geom } from './geom';
 import { labelMeta } from '../geomorph/geomorph.model';
@@ -365,3 +366,14 @@ function extractPngOffset(api, topNodes) {
 function toJsons(polys) {
   return polys.map(x => x.geoJson);
 }
+
+/** @type {Record<Geomorph.LayoutKey, true>} */
+const allLayoutKeysLookup = {
+  "g-101--multipurpose": true,
+  "g-102--research-deck": true,
+  "g-301--bridge": true,
+  "g-302--xboat-repair-bay": true,
+  "g-303--passenger-deck": true,
+};
+
+export const allLayoutKeys = keys(allLayoutKeysLookup);

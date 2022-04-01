@@ -15,11 +15,11 @@ import getOpts from 'getopts';
 import asyncPool from 'tiny-async-pool';
 import chalk from 'chalk';
 
-import { keys } from '../../model/generic.model';
+import { keys } from '../../projects/service/generic';
 import { createLayout, deserializeSvgJson, parseStarshipSymbol, serializeLayout, serializeSymbol } from '../../projects/service/geomorph';
-import layoutDefs from '../../projects/geomorph/layouts';
 import { triangle } from '../../projects/service/triangle';
 import { writeAsJson } from '../../projects/service/file';
+import layoutDefs from '../../projects/geomorph/layouts';
 
 const publicDir = path.resolve(__dirname, '../../public');
 const symbolsDir = path.resolve(publicDir, 'symbol');

@@ -1,4 +1,5 @@
 import safeStableStringify from 'safe-stable-stringify';
+import { keys } from 'projects/service/generic';
 
 /** Useful for state management */
 export interface KeyedLookup<Value extends { key: K }, K extends string | number = string | number> {
@@ -102,13 +103,6 @@ export function truncateOneLine(text: string, maxLength = 50) {
   text = text.trimLeft();
   const isLong = text.length > maxLength;
   return isLong ? `${text.split('\n', 1)[0].slice(0, maxLength)} ...` : text;
-}
-
-/** Typed `Object.keys`, usually as finitely many string literals. */
-export function keys<K extends string>(
-  record: Partial<Record<K, any>> | Record<K, any>,
-) {
-  return Object.keys(record) as K[];
 }
 
 /**

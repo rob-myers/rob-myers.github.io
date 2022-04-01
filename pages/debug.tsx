@@ -1,4 +1,4 @@
-import { keys } from 'model/generic.model';
+import { keys } from 'projects/service/generic';
 import Main from 'components/page/Main';
 import Articles from 'components/page/Articles';
 import type { ArticleKey } from 'articles';

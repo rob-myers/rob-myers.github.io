@@ -104,3 +104,12 @@ export function flatten(items) {
 export function deepClone(input) {
   return JSON.parse(JSON.stringify(input));
 }
+
+/**
+ * @template {string} K
+ * @param {Partial<Record<K, any>> | Record<K, any>} record
+ * Typed `Object.keys`, usually as finitely many string literals.
+ */
+export function keys(record) {
+  return /** @type {K[]} */ (Object.keys(record));
+}
