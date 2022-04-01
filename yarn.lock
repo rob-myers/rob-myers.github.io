@@ -211,11 +211,6 @@
   dependencies:
     "@napi-rs/triples" "^1.0.3"
 
-"@panzoom/panzoom@^4.4.4":
-  version "4.4.4"
-  resolved "https://registry.yarnpkg.com/@panzoom/panzoom/-/panzoom-4.4.4.tgz#6300583aedd2a6e4354c20c8e264c4997cd4e3fa"
-  integrity sha512-ek82o3JCc/w/v3Iqu1NpwT2XBc5m54HmjCt6xKa1yFd+RKk429cwC6hj8vpjIKiRgTfOZs13RshFpKL8YzcxyA==
-
 "@polka/url@^1.0.0-next.9":
   version "1.0.0-next.11"
   resolved "https://registry.npmjs.org/@polka/url/-/url-1.0.0-next.11.tgz"
