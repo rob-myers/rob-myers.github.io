@@ -3,7 +3,6 @@ declare namespace NPC {
   import { Subject } from 'rxjs';
 
   export interface NPCsProps {
-    gm: Geomorph.GeomorphData;
     onLoad: ((api: NPC.NPCsApi) => void);
     disabled?: boolean;
     stageKey: string;
@@ -11,7 +10,6 @@ declare namespace NPC {
 
   export interface NPCsApi {
     apis: NPCApi[];
-    background: HTMLCanvasElement;
     root: HTMLDivElement;
     npcRef: React.RefCallback<HTMLDivElement>;
     rootRef: React.RefCallback<HTMLDivElement>;
@@ -59,7 +57,7 @@ declare namespace NPC {
   }
 
   export interface DoorsProps {
-    gm: Geomorph.GeomorphData;
+    gm: Geomorph.UseGeomorphsItem;
     wire: NavWire;
     onLoad?: (api: DoorsApi) => void;
   }

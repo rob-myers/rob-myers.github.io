@@ -242,4 +242,12 @@ declare namespace Geomorph {
     transform?: [number, number, number, number, number, number];
   }
 
+  export interface UseGeomorphsItem extends UseGeomorphsDefItem {
+    pngRect: Geom.Rect;
+    roomGraph: Graph.RoomGraph;
+    hullOutline: Poly;
+    holesWithDoors: Poly[];
+    doors: Door<Poly>[];
+  }
+
 }

@@ -71,6 +71,9 @@ export default function Doors(props) {
     <div
       className={rootCss}
       ref={el => el && (state.rootEl = el)}
+      /**
+       * TODO apply gm.transform
+       */
     >
       {gm.doors.map(({ rect, angle, tags }, i) =>
         state.observable[i] && <div
@@ -93,8 +96,8 @@ export default function Doors(props) {
       }
       <canvas
         ref={(el) => el && (state.canvas = el)}
-        width={gm.d.pngRect.width}
-        height={gm.d.pngRect.height}
+        width={gm.pngRect.width}
+        height={gm.pngRect.height}
       />
     </div>
   );

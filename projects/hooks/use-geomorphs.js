@@ -1,5 +1,6 @@
 import React from "react";
 import { Mat } from "../geom";
+import { assertDefined } from "../service/generic";
 import useGeomorphData from "./use-geomorph-data";
 
 /**
@@ -20,19 +21,31 @@ export default function useGeomorphs(defs) {
   }, [layoutKeys]);
 
   const queries = layoutKeys.map(layoutKey => useGeomorphData(layoutKey, { staleTime: Infinity }));
-  const ready = queries.every(Boolean);
+  const ready = queries.every(x => x.data) && defs.every(x => layoutKeys.includes(x.layoutKey));
 
   return React.useMemo(() => {
     if (ready) {
       const matrix = new Mat;
       return defs.map(def => {
         const queryIndex = layoutKeys.findIndex(y => y === def.layoutKey);
-        const { data } = queries[queryIndex];
+        const data = assertDefined(queries[queryIndex].data)
         def.transform ? matrix.feedFromArray(def.transform) : matrix.setIdentity();
-        return {
-          pngRect: data?.d.pngRect.applyMatrix(matrix),
-          // TODO
+
+        const pngRect = data.d.pngRect.clone().applyMatrix(matrix);
+
+        /** @type {Geomorph.UseGeomorphsItem} */
+        const output = {
+          layoutKey: def.layoutKey,
+          transform: def.transform,
+          pngRect,
+          roomGraph: data.d.roomGraph, // No need to clone or transform
+          holesWithDoors: data.d.holesWithDoors.map(x => x.clone().applyMatrix(matrix)),
+          hullOutline: data.d.hullOutline.clone().applyMatrix(matrix),
+          doors: data.doors.map((meta) => ({
+            ...meta, poly: meta.poly.clone().applyMatrix(matrix),
+          })),
         };
+        return output;
       });
     } else {
       return [];

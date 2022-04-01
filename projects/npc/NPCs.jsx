@@ -20,7 +20,6 @@ export default function NPCs(props) {
     /** @type {NPC.NPCsApi} */
     const output = {
       apis: [],
-      background: /** @type {HTMLCanvasElement} */ ({}),
       root: /** @type {HTMLDivElement} */ ({}),
       npcRef(el) {
         if (el) {
@@ -37,10 +36,6 @@ export default function NPCs(props) {
       rootRef(el) {
         if (el) {
           state.root = el;
-          const canvas = /** @type {*} */ (el.querySelector('canvas.background'));
-          canvas.width = props.gm.d.pngRect.width;
-          canvas.height = props.gm.d.pngRect.height;
-          state.background = canvas;
         }
       },
       spawn(defs) {// TODO
@@ -76,15 +71,6 @@ export default function NPCs(props) {
       className={rootCss}
       ref={state.rootRef}
     >
-      {
-        /**
-         * We'll draw navpaths into a canvas.
-         * We don't want clickable navpoints.
-         * The TTY will be used for interaction.
-         * We might use the TTY to place clickable points along a navpath.
-         */
-      }
-      <canvas className="background" />
       <div
         className={classNames('npcs', { disabled: props.disabled })}
         onPointerDown={(e) => {
