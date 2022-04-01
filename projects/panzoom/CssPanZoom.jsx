@@ -1,6 +1,5 @@
 /**
  * Based on @panzoom/panzoom
- * TODO clean
  */
 import React from 'react';
 import classNames from "classnames";
@@ -17,12 +16,19 @@ export default function CssPanZoom(props) {
     return {
       root: /** @type {HTMLDivElement} */ ({}),
       parent: /** @type {HTMLDivElement} */ ({}),
-      opts: { minScale: 0.2, maxScale: 8, step: 0.1 },
+      opts: { minScale: 0.05, maxScale: 10, step: 0.1 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       isPanning: false,
-      x: 0, y: 0, scale: 1,
+      x: 0,
+      y: 0,
+      scale: props.zoom || 1,
       origin: /** @type {Vect | undefined} */ (undefined),
-      start: { clientX: /** @type {number | undefined} */ (0), clientY: /** @type {number | undefined} */ (0), scale: 1, distance: 0 },
+      start: {
+        clientX: /** @type {number | undefined} */ (0),
+        clientY: /** @type {number | undefined} */ (0),
+        scale: props.zoom || 1,
+        distance: 0,
+      },
 
       evt: {
         /** @param {WheelEvent} e */
@@ -47,7 +53,11 @@ export default function CssPanZoom(props) {
         /** @param {PointerEvent} e */
         pointermove(e) {
           // e.preventDefault();
-          if (state.origin === undefined || state.start.clientX === undefined || state.start.clientY === undefined) {
+          if (
+            state.origin === undefined
+            || state.start.clientX === undefined
+            || state.start.clientY === undefined
+          ) {
             return
           }
           ensurePointer(state.pointers, e);
@@ -90,17 +100,11 @@ export default function CssPanZoom(props) {
             const dims = getDimensions(state.root);
             const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
             const point = matrix.transformPoint({ x: e.clientX - dims.parent.left, y: e.clientY - dims.parent.top });
-            /**
-             * Unsure how to fix offset, possibly due to transform-origin of state.root.
-             * To solve this we invert a point known to be at the origin.
-             */
-            const { x: ox, y: oy } = state.root.children[0].getBoundingClientRect();
-            const offset = matrix.transformPoint({ x: ox - dims.parent.left, y: oy - dims.parent.top });
 
             const stage = getCachedStage(props.stageKey);
             stage?.ptrEvent.next({
               key: 'pointerup',
-              point: { x: point.x - offset.x, y: point.y - offset.y }
+              point: { x: point.x, y: point.y }
             });
           }
           state.isPanning = false;
@@ -117,7 +121,7 @@ export default function CssPanZoom(props) {
         if (state.x !== toX || state.y !== toY) {
           state.x = toX;
           state.y = toY;
-          state.root.style.transform = `scale(${state.scale}) translate(${state.x}px, ${state.y}px)`;
+          state.updateView();
         }
         // Originally there was a return value
       },
@@ -134,8 +138,11 @@ export default function CssPanZoom(props) {
           state.parent.addEventListener('pointercancel', state.evt.pointerup);
         }
       },
+      updateView() {
+        state.root.style.transform = `scale(${state.scale}) translate(${state.x}px, ${state.y}px)`;
+      },
       /**
-       * TODO could reintroduce opt `animate`
+       * NOTE could reintroduce opt `animate`
        * @param {number} toScale 
        * @param {{ focal?: Geom.VectJson }} opts 
        */
@@ -151,10 +158,10 @@ export default function CssPanZoom(props) {
           toX = (focal.x / toScale - focal.x / state.scale + state.x * toScale) / toScale
           toY = (focal.y / toScale - focal.y / state.scale + state.y * toScale) / toScale
         }
-        // const panResult = constrainXY(toX, toY, toScale, { relative: false, force: true })
-        // state.x = panResult.x, state.y = panResult.y;
-        state.x = toX, state.y = toY, state.scale = toScale;
-        state.root.style.transform = `scale(${state.scale}) translate(${state.x}px, ${state.y}px)`;
+        state.x = toX;
+        state.y = toY;
+        state.scale = toScale;
+        state.updateView();
         // Originally there was a return value
       },
       /**
@@ -198,11 +205,6 @@ export default function CssPanZoom(props) {
           dims.parent.border.top -
           dims.elem.margin.top
     
-        // Adjust the clientX/clientY for HTML elements,
-        // because they have a transform-origin of 50% 50%
-        clientX -= dims.elem.width / state.scale / 2;
-        clientY -= dims.elem.height / state.scale / 2;
-    
         // Convert the mouse point from it's position over the
         // effective area before the scale to the position
         // over the effective area after the scale.
@@ -219,7 +221,7 @@ export default function CssPanZoom(props) {
       zoomWithWheel(event) {
         // Need to prevent the default here
         // or it conflicts with regular page scroll
-        event.preventDefault()
+        event.preventDefault();
         // Normalize to deltaX in case shift modifier is used on Mac
         const delta = event.deltaY === 0 && event.deltaX ? event.deltaX : event.deltaY
         const wheel = delta < 0 ? 1 : -1
@@ -231,8 +233,16 @@ export default function CssPanZoom(props) {
 
   useStage(props.stageKey);
 
+  React.useLayoutEffect(() => {
+    if (props.zoom) {
+      // state.root's 1st child lies at world origin
+      const { x: clientX, y: clientY } = state.root.children[0].getBoundingClientRect();
+      state.zoomToPoint(props.zoom, { clientX, clientY });
+    }
+  }, [props.zoom]);
+
   return (
-    <div className={classNames("panzoom-parent", rootCss(props))}>
+    <div className={classNames("panzoom-parent", rootCss, backgroundCss(props))}>
       <div
         ref={state.rootRef}
         className={classNames("panzoom-root", props.className)}
@@ -249,8 +259,7 @@ export default function CssPanZoom(props) {
 /** Must divide 60 */
 const gridExtent = 60 * 30;
 
-/** @param {Props} props */
-const rootCss = (props) => css`
+const rootCss = css`
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -258,15 +267,14 @@ const rootCss = (props) => css`
   /** This is important for mobile to prevent scrolling while panning */
   touch-action: none;
   cursor: auto;
-
-  background-color: ${props.dark ? '#000' : '#fff'};
   
   .panzoom-root {
     width: 100%;
     height: 100%;
     user-select: none;
     touch-action: none;
-    transform-origin: 50% 50%;
+    /** @panzoom/panzoom uses 50% 50% instead */
+    transform-origin: 0 0;
     
     .small-grid, .large-grid {
       position: absolute;
@@ -291,11 +299,17 @@ const rootCss = (props) => css`
   }
 `;
 
+/** @param {Props} props */
+const backgroundCss = (props) => css`
+  background-color: ${props.dark ? '#000' : '#fff'};
+`;
+
 /**
  * @typedef Props @type {object}
  * @property {string} [className]
  * @property {boolean} [dark]
  * @property {string} [stageKey] Global identifier e.g. so shells can receive clicks.
+ * @property {number} [zoom] Initial zoom factor
  */
 
 /**

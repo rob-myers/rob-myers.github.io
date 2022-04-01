@@ -15,6 +15,8 @@ import NPCs from "../npc/NPCs";
 
 // TODO
 // - ✅ rewrite `click` as a function
+// - 🚧 integrate `useGeomorphs` hook
+//   - cleanup Doors
 // - 🚧 spawn from TTY
 //   - symbols have points tagged 'spawn'
 //   - implement spawn as shell function
@@ -26,12 +28,6 @@ import NPCs from "../npc/NPCs";
 export default function NavDemo1(props) {
 
   const update = useUpdate();
-
-  /**
-   * TODO
-   * - `useGeomorphs` hook
-   * - show em all below
-   */
 
   const gms = useGeomorphs([
     { layoutKey: 'g-301--bridge' },
@@ -109,6 +105,7 @@ export default function NavDemo1(props) {
       stageKey="stage-nav-demo-1"
       dark
       className={rootCss}
+      zoom={0.4}
     >
       {gms.map(gm =>
         <img
