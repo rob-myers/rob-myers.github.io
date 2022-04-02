@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
+import { geomorphDataToGeomorphsItem } from "../service/geomorph";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
 import useUpdate from "../hooks/use-update";
@@ -121,7 +122,7 @@ export default function LightsTest(props) {
         </div>
 
         <Doors
-          gm={gm}
+          gm={geomorphDataToGeomorphsItem(gm, [1, 0, 0, 1, 0, 0])}
           wire={state.wire}
           onLoad={api => state.doorsApi = api}
         />

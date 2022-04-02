@@ -1,14 +1,9 @@
 declare namespace Graph {
 
-  export interface BaseNodeOpts {
+  export interface BaseNode {
     /** Identifies the node. */
     id: string;
   }
-
-  export interface BaseNode<
-    NodeOpts extends BaseNodeOpts = BaseNodeOpts
-  > extends NodeOpts {}
-
   export interface BaseEdgeOpts {
     src: string;
     dst: string;
@@ -26,7 +21,6 @@ declare namespace Graph {
 
   export interface IGraph<
     Node extends BaseNode,
-    NodeOpts extends BaseNodeOpts,
     EdgeOpts extends BaseEdgeOpts
   > {
     connect(opts: EdgeOpts): { isNew: boolean; edge: Edge<Node, EdgeOpts> | null };
@@ -52,6 +46,7 @@ declare namespace Graph {
   export type BaseGraphJson = GraphJson<BaseNode, BaseEdgeOpts>;
 
   //#region RoomGraph
+
   export type RoomNodeOpts = (
     | RoomOfTypeRoom
     | RoomOfTypeDoor
@@ -74,11 +69,18 @@ declare namespace Graph {
 
   export type RoomGraphNode = RoomNodeOpts;
 
-  export type RoomEdgeOpts = BaseEdgeOpts;
+  export type RoomGraphEdgeOpts = BaseEdgeOpts;
 
-  export type RoomGraphJson = GraphJson<RoomGraphNode, RoomEdgeOpts>;
+  export type RoomGraphJson = GraphJson<RoomGraphNode, RoomGraphEdgeOpts>;
 
   export type RoomGraph = import('./room-graph').RoomGraph;
+
   //#endregion 
+
+  //#region GmGraph
+
+  // TODO
+
+  //#endregion
 
 }

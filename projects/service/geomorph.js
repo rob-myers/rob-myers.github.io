@@ -229,6 +229,7 @@ export function parseLayout({
 }
 
 /**
+ * TODO move to RoomGraph
  * @param {Poly[]} holes 
  * @param {Poly[]} doorPolys 
  */
@@ -238,7 +239,7 @@ function computeRoomGraphJson(holes, doorPolys) {
     ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex })),
     ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex  })),
   ];
-  /** @type {Graph.RoomEdgeOpts[]} */
+  /** @type {Graph.RoomGraphEdgeOpts[]} */
   const roomGraphEdges = doorPolys.flatMap((door, doorIndex) => {
     const holeIds = holes.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
     if (holeIds.length === 1 || holeIds.length === 2) {
@@ -377,3 +378,40 @@ const allLayoutKeysLookup = {
 };
 
 export const allLayoutKeys = keys(allLayoutKeysLookup);
+
+/**
+ * `GeomorphData`
+ * - comes from `useGeomorph`,
+ * - wraps `ParsedLayout`.
+ *
+ * `UseGeomorphsItem`
+ * - comes from `useGeomorphs`
+ * - wraps `GeomorphData` relative to a `transform`.
+ * @param {Geomorph.GeomorphData} gm 
+ * @param {[number, number, number, number, number, number]} transform 
+ */
+export function geomorphDataToGeomorphsItem(gm, transform) {
+  const matrix = new Mat;
+  matrix.feedFromArray(transform);
+  const pngRect = gm.d.pngRect.clone().applyMatrix(matrix);
+
+  // TODO support matrix inversion in `Mat`
+  const { a, b, c, d, e, f } = new DOMMatrix(transform).inverse();
+
+  /** @type {Geomorph.UseGeomorphsItem} */
+  const output = {
+    layoutKey: gm.key,
+    transform,
+    inverseTransform: [a, b, c, d, e, f],
+    transformStyle: `matrix(${transform})`,
+    pngRect,
+    roomGraph: gm.d.roomGraph, // No need to clone or transform
+    holesWithDoors: gm.d.holesWithDoors.map(x => x.clone().applyMatrix(matrix)),
+    hullOutline: gm.d.hullOutline.clone().applyMatrix(matrix),
+    doors: gm.doors.map((meta) => ({
+      ...meta, poly: meta.poly.clone().applyMatrix(matrix),
+    })),
+  };
+
+  return output;
+} 

@@ -1,7 +1,7 @@
 import { BaseGraph } from "./graph";
 
 /**
- * @extends {BaseGraph<Graph.RoomNodeOpts, Graph.RoomGraphNode, Graph.RoomEdgeOpts>}
+ * @extends {BaseGraph<Graph.RoomNodeOpts, Graph.RoomGraphEdgeOpts>}
  */
 export class RoomGraph extends BaseGraph {
 
@@ -10,7 +10,7 @@ export class RoomGraph extends BaseGraph {
    * @param {Graph.RoomGraphNode[]} nodes
    */
   getAdjacentDoors(nodes) {
-    const doors = /** @type {Set<Graph.BaseNode<Graph.RoomOfTypeDoor>>} */ (new Set);
+    const doors = /** @type {Set<Graph.RoomOfTypeDoor>} */ (new Set);
     nodes.forEach(node => this.getSuccs(node).forEach(other =>
       other.type === 'door' && doors.add(other))
     );

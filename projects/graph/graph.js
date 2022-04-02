@@ -2,10 +2,9 @@ import chalk from "chalk";
 import { deepClone, flatten, removeFirst } from "../service/generic";
 
 /**
- * @template {Graph.BaseNodeOpts} [NodeOpts=Graph.BaseNodeOpts]
- * @template {Graph.BaseNode<Graph.BaseNodeOpts>} [Node=Graph.BaseNode<Graph.BaseNodeOpts>]
+ * @template {Graph.BaseNode} [Node=Graph.BaseNode]
  * @template {Graph.BaseEdgeOpts} [EdgeOpts=Graph.BaseEdgeOpts]
- * @implements {Graph.IGraph<Node, NodeOpts, EdgeOpts>}
+ * @implements {Graph.IGraph<Node, EdgeOpts>}
  */
 export class BaseGraph {
 
