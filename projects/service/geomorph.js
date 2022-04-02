@@ -362,7 +362,9 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
   const matrix = new Mat(transform);
   const pngRect = gm.d.pngRect.clone().applyMatrix(matrix);
   const doors = gm.doors.map((meta) => ({
-    ...meta, poly: meta.poly.clone().applyMatrix(matrix),
+    ...meta,
+    poly: meta.poly.clone().applyMatrix(matrix),
+    rect: Rect.fromJson(meta.rect).applyMatrix(matrix).json,
   }));
 
   const { a, b, c, d, e, f } = matrix.getInverseMatrix();
