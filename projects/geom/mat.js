@@ -17,6 +17,51 @@ export class Mat {
       : this.setMatrixValue(/** @type {undefined | string} */(args));
   }
 
+  /**
+	 * The determinant of 2x2 part of affine matrix.
+	 * @returns {number}
+	 */
+	get determinant() {
+		return this.a * this.d - this.b * this.c;
+	}
+
+  /**
+	 * Get an inverse matrix of current matrix. The method returns a new
+	 * matrix with values you need to use to get to an identity matrix.
+	 * Context from parent matrix is not applied to the returned matrix.
+   * > https://github.com/deoxxa/transformation-matrix-js/blob/5d0391a169e938c31da6c09f5d4e7dc836fd0ec2/src/matrix.js#L329
+	 * @returns {Mat}
+	 */
+  inverse() {
+    if (this.isIdentity) {
+			return new Mat;
+		}
+		else if (!this.isInvertible) {
+			throw "Matrix is not invertible.";
+		}
+		else {
+			let me = this,
+				a = me.a,
+				b = me.b,
+				c = me.c,
+				d = me.d,
+				e = me.e,
+				f = me.f,
+
+				m = new Mat,
+				dt = a * d - b * c;	// determinant(), skip DRY here...
+
+			m.a = d / dt;
+			m.b = -b / dt;
+			m.c = -c / dt;
+			m.d = a / dt;
+			m.e = (c * f - d * e) / dt;
+			m.f = -(a * f - b * e) / dt;
+
+			return m;
+		} 
+  }
+
   get isIdentity() {
     return (
       this.a === 1 && this.b === 0
@@ -24,6 +69,10 @@ export class Mat {
       && this.e === 0 && this.f === 0
     );
   }
+
+  get isInvertible() {
+		return Math.abs(this.determinant) >= 1e-14
+	}
 
   setIdentity() {
     this.a = 1;
