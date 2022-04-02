@@ -149,15 +149,6 @@ const rootCss = css`
     background: rgba(0, 0, 0, 0.6);
   }
 
-  /* @keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-
-  .flexlayout__tabset {
-    animation: fadein 1s;
-  } */
-
   .flexlayout__tabset, .flexlayout__tab {
     background: white;
   }
@@ -166,7 +157,8 @@ const rootCss = css`
     background: #444;
   }
   .flexlayout__tab {
-    border-top: 4px solid #444;
+    /** Pixel 5: white lines when 4px */
+    border-top: 3px solid #444;
     position: relative;
     overflow: hidden;
 
@@ -204,11 +196,12 @@ const rootCss = css`
 const unexpandedCss = (height: number | number[]) => css`
   width: 100%;
   height: ${Array.isArray(height) ? height[1] : height}px;
+  position: relative;
+  border: var(--tabs-border-width) solid #444;
+  
   @media(max-width: 600px) {
     height: ${Array.isArray(height) ? height[0] : height}px;
   }
-  position: relative;
-  border: var(--tabs-border-width) solid #444;
 `;
 
 /** When expanded we need to fill original space */
