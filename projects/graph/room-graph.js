@@ -1,3 +1,4 @@
+import { Poly } from "../geom";
 import { BaseGraph } from "./graph";
 
 /**
@@ -38,5 +39,40 @@ export class RoomGraph extends BaseGraph {
   static fromJson(json) {
     return (new RoomGraph).from(json);
   }
+
+ /**
+  * @param {Geom.Poly[]} holes 
+  * @param {Geom.Poly[]} doorPolys 
+  */
+  static holesAndDoorsToJson(holes, doorPolys) {
+   /** @type {Graph.RoomGraphNode[]} */
+   const roomGraphNodes = [
+     ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex })),
+     ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex  })),
+   ];
+
+   /** @type {Graph.RoomGraphEdgeOpts[]} */
+   const roomGraphEdges = doorPolys.flatMap((door, doorIndex) => {
+     const holeIds = holes.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
+     if (holeIds.length === 1 || holeIds.length === 2) {
+       // Hull door (1) or standard door (2)
+       return holeIds.flatMap(holeId => [// undirected means 2 directed edges
+         { src: `hole-${holeId}`, dst: `door-${doorIndex}` },
+         { dst: `hole-${holeId}`, src: `door-${doorIndex}` },
+       ]);
+     } else {
+       console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
+       return [];
+     }
+   });
+
+   /** @type {Graph.RoomGraphJson} */
+   const roomGraph = {
+     nodes: roomGraphNodes,
+     edges: roomGraphEdges,
+   };
+
+   return roomGraph;
+ }
 
 }

@@ -2,9 +2,10 @@ import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
 import { keys } from './generic';
 import { Poly, Rect, Mat } from '../geom';
+import { extractGeomsAt, hasTitle } from './cheerio';
 import { geom } from './geom';
 import { labelMeta } from '../geomorph/geomorph.model';
-import { extractGeomsAt, hasTitle } from './cheerio';
+import { RoomGraph } from '../graph/room-graph';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -121,7 +122,7 @@ export async function createLayout(def, lookup, triangleService) {
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys));
   const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
-  const roomGraphJson = computeRoomGraphJson(holes, doorPolys);
+  const roomGraphJson = RoomGraph.holesAndDoorsToJson(holes, doorPolys);
 
   /** @type {Geomorph.Door<Poly>[]}  */
   const doors = groups.singles.filter(x => x.tags.includes('door'))
@@ -226,39 +227,6 @@ export function parseLayout({
     items,
   };
   return parsed;
-}
-
-/**
- * TODO move to RoomGraph
- * @param {Poly[]} holes 
- * @param {Poly[]} doorPolys 
- */
-function computeRoomGraphJson(holes, doorPolys) {
-  /** @type {Graph.RoomGraphNode[]} */
-  const roomGraphNodes = [
-    ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex })),
-    ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex  })),
-  ];
-  /** @type {Graph.RoomGraphEdgeOpts[]} */
-  const roomGraphEdges = doorPolys.flatMap((door, doorIndex) => {
-    const holeIds = holes.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
-    if (holeIds.length === 1 || holeIds.length === 2) {
-      // Hull door (1) or standard door (2)
-      return holeIds.flatMap(holeId => [// undirected means 2 directed edges
-        { src: `hole-${holeId}`, dst: `door-${doorIndex}` },
-        { dst: `hole-${holeId}`, src: `door-${doorIndex}` },
-      ]);
-    } else {
-      console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
-      return [];
-    }
-  });
-  /** @type {Graph.RoomGraphJson} */
-  const roomGraph = {
-    nodes: roomGraphNodes,
-    edges: roomGraphEdges,
-  };
-  return roomGraph;
 }
 
 /**
