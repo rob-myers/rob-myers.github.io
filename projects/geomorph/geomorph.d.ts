@@ -247,7 +247,7 @@ declare namespace Geomorph {
     doors: Door<Poly>[];
     holesWithDoors: Poly[];
     /** Filtered transformed doors */
-    hullDoors: Door[];
+    hullDoors: Door<Poly>[];
     hullOutline: Poly;
     inverseTransform: [number, number, number, number, number, number];
     pngRect: Geom.Rect;

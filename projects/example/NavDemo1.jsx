@@ -30,7 +30,7 @@ export default function NavDemo1(props) {
 
   const update = useUpdate();
 
-  const { gms } = useGeomorphs([
+  const { gms, gmGraph } = useGeomorphs([
     { layoutKey: 'g-301--bridge' },
     { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
   ]);

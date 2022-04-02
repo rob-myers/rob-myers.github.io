@@ -40,7 +40,7 @@ export class RoomGraph extends BaseGraph {
     return (new RoomGraph).from(json);
   }
 
- /**
+  /**
   * @param {Geom.Poly[]} holes 
   * @param {Geom.Poly[]} doorPolys 
   * @returns {Graph.RoomGraphJson}
@@ -68,12 +68,12 @@ export class RoomGraph extends BaseGraph {
    });
 
    /** @type {Graph.RoomGraphJson} */
-   const roomGraph = {
+   const roomGraphJson = {
      nodes: roomGraphNodes,
      edges: roomGraphEdges,
    };
 
-   return roomGraph;
+   return roomGraphJson;
  }
 
 }

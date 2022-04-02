@@ -80,7 +80,7 @@ declare namespace Graph {
   /** A transformed geomorph */
   export interface GmGraphNodeGm {
     type: 'gm';
-    /** `gm-${gmKey}-${transform} */
+    /** `gm-${gmKey}-${transform}` */
     id: string;
     gmKey: Geomorph.LayoutKey;
     transform: [number, number, number, number, number, number];
@@ -89,12 +89,12 @@ declare namespace Graph {
   /** A hull door of some transformed geomorph */
   export interface GmGraphNodeDoor {
     type: 'door';
-    /** `door-${gmKey}-${transform}-{doorIndex} */
+    /** `door-${gmKey}-${transform}-${hullDoorIndex}` */
     id: string;
     gmKey: Geomorph.LayoutKey;
     transform: [number, number, number, number, number, number];
     /** Index of `Geomorph.UseGeomorphsItem['hullDoors']` */
-    doorIndex: number;
+    hullDoorIndex: number;
   }
 
   export type GmGraphNode = (
