@@ -202,13 +202,13 @@ function DebugGraph({ gm }) {
             <line
               stroke="red"
               x1={gm.d.holeSwitches[
-                /** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].x}
+                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).holeIndex].x}
               y1={gm.d.holeSwitches[
-                /** @type {Graph.RoomOfTypeRoom} */ (edge.src).holeIndex].y}
+                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).holeIndex].y}
               x2={gm.doors[
-                /** @type {Graph.RoomOfTypeDoor} */ (edge.dst).doorIndex].poly.center.x}
+                /** @type {Graph.RoomGraphNodeDoor} */ (edge.dst).doorIndex].poly.center.x}
               y2={gm.doors[
-                /** @type {Graph.RoomOfTypeDoor} */  (edge.dst).doorIndex].poly.center.y}
+                /** @type {Graph.RoomGraphNodeDoor} */  (edge.dst).doorIndex].poly.center.y}
             />
         )}
     </svg>
