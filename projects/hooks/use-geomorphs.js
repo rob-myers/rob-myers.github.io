@@ -4,11 +4,6 @@ import { assertDefined } from "../service/generic";
 import useGeomorphData from "./use-geomorph-data";
 
 /**
- * TODO
- * - maintain monotonically increasing array of items
- */
-
-/**
  * @param {Geomorph.UseGeomorphsDefItem[]} defs 
  */
 export default function useGeomorphs(defs) {
@@ -33,10 +28,15 @@ export default function useGeomorphs(defs) {
 
         const pngRect = data.d.pngRect.clone().applyMatrix(matrix);
 
+        const transform = def.transform || [1, 0, 0, 1, 0, 0];
+        const { a, b, c, d, e, f } = new DOMMatrix(transform).inverse();
+
         /** @type {Geomorph.UseGeomorphsItem} */
         const output = {
           layoutKey: def.layoutKey,
-          transform: def.transform,
+          transform,
+          inverseTransform: [a, b, c, d, e, f],
+          transformStyle: `matrix(${transform})`,
           pngRect,
           roomGraph: data.d.roomGraph, // No need to clone or transform
           holesWithDoors: data.d.holesWithDoors.map(x => x.clone().applyMatrix(matrix)),

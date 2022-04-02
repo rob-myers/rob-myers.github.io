@@ -15,8 +15,9 @@ import NPCs from "../npc/NPCs";
 
 // TODO
 // - ✅ rewrite `click` as a function
-// - 🚧 integrate `useGeomorphs` hook
-//   - cleanup Doors
+// - ✅ integrate `useGeomorphs` hook
+//   - ✅ cleanup Doors
+//   - ...
 // - 🚧 spawn from TTY
 //   - symbols have points tagged 'spawn'
 //   - implement spawn as shell function

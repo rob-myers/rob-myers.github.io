@@ -242,7 +242,11 @@ declare namespace Geomorph {
     transform?: [number, number, number, number, number, number];
   }
 
-  export interface UseGeomorphsItem extends UseGeomorphsDefItem {
+  export interface UseGeomorphsItem {
+    layoutKey: LayoutKey;
+    transform: [number, number, number, number, number, number];
+    inverseTransform: [number, number, number, number, number, number];
+    transformStyle: string;
     pngRect: Geom.Rect;
     roomGraph: Graph.RoomGraph;
     hullOutline: Poly;

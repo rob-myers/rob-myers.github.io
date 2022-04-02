@@ -44,6 +44,8 @@ export default function Doors(props) {
       },
       renderUnobservables() {
         const ctxt = assertNonNull(state.canvas.getContext('2d'));
+        // Offset so drawings actually appear in canvas when geomorph is transformed
+        ctxt.setTransform(...gm.inverseTransform);
         ctxt.clearRect(0, 0, state.canvas.width, state.canvas.height);
         ctxt.fillStyle = '#444';
         ctxt.strokeStyle = '#00204b';
@@ -69,11 +71,9 @@ export default function Doors(props) {
 
   return (
     <div
-      className={rootCss}
+      className={classNames("doors", rootCss)}
       ref={el => el && (state.rootEl = el)}
-      /**
-       * TODO apply gm.transform
-       */
+      style={{ transform: gm.transformStyle }}
     >
       {gm.doors.map(({ rect, angle, tags }, i) =>
         state.observable[i] && <div
