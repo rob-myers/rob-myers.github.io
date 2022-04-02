@@ -206,7 +206,7 @@ export class Rect {
   }
 
   /**
-   * Does this filled rectangle intersect with {other} filled rectangle?
+   * Does this filled bordered rectangle intersect with {other} filled rectangle?
    * @param {Rect} other
    */
   intersects(other) {
@@ -255,6 +255,15 @@ export class Rect {
     this.y = y;
     this.width = w;
     this.height = h;
+    return this;
+  }
+
+  /** @param {Geom.RectJson} _ */
+  setFromJson({ x, y, width, height }) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
     return this;
   }
 
