@@ -43,8 +43,9 @@ export class RoomGraph extends BaseGraph {
  /**
   * @param {Geom.Poly[]} holes 
   * @param {Geom.Poly[]} doorPolys 
+  * @returns {Graph.RoomGraphJson}
   */
-  static holesAndDoorsToJson(holes, doorPolys) {
+  static fromGeometry(holes, doorPolys) {
    /** @type {Graph.RoomGraphNode[]} */
    const roomGraphNodes = [
      ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex })),
@@ -56,7 +57,7 @@ export class RoomGraph extends BaseGraph {
      const holeIds = holes.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
      if (holeIds.length === 1 || holeIds.length === 2) {
        // Hull door (1) or standard door (2)
-       return holeIds.flatMap(holeId => [// undirected means 2 directed edges
+       return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
          { src: `hole-${holeId}`, dst: `door-${doorIndex}` },
          { dst: `hole-${holeId}`, src: `door-${doorIndex}` },
        ]);

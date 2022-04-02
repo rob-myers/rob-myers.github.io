@@ -1,6 +1,6 @@
 import React from "react";
-import { Mat } from "../geom";
 import { assertDefined } from "../service/generic";
+import { GmGraph } from "../graph/gm-graph";
 import { geomorphDataToGeomorphsItem } from "../service/geomorph";
 import useGeomorphData from "./use-geomorph-data";
 
@@ -12,6 +12,7 @@ export default function useGeomorphs(defs) {
   const [layoutKeys, setLayoutKeys] = React.useState(() => defs.map(x => x.layoutKey));
 
   React.useEffect(() => {
+    // Append unseen keys to layoutKeys i.e. monotonically increases
     const unseenKeys = defs.map(x => x.layoutKey).filter(x => !layoutKeys.includes(x));
     setLayoutKeys([...layoutKeys, ...unseenKeys]);
   }, [layoutKeys]);
@@ -21,14 +22,19 @@ export default function useGeomorphs(defs) {
 
   return React.useMemo(() => {
     if (ready) {
-      return defs.map(def => {
+      const items = defs.map(def => {
         const queryIndex = layoutKeys.findIndex(y => y === def.layoutKey);
         const data = assertDefined(queries[queryIndex].data)
         const transform = def.transform || [1, 0, 0, 1, 0, 0];
         return geomorphDataToGeomorphsItem(data, transform);
       });
+
+      // TODO compute GmGraph
+      const gmGraph = null;
+
+      return { gms: items, gmGraph };
     } else {
-      return [];
+      return { gms: [], gmGraph: new GmGraph };
     }
   }, [ready]);
 }

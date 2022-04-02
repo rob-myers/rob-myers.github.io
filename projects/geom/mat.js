@@ -32,12 +32,12 @@ export class Mat {
    * > https://github.com/deoxxa/transformation-matrix-js/blob/5d0391a169e938c31da6c09f5d4e7dc836fd0ec2/src/matrix.js#L329
 	 * @returns {Mat}
 	 */
-  inverse() {
+  getInverseMatrix() {
     if (this.isIdentity) {
 			return new Mat;
 		}
 		else if (!this.isInvertible) {
-			throw "Matrix is not invertible.";
+			throw Error("Matrix is not invertible.");
 		}
 		else {
 			let me = this,
@@ -92,7 +92,7 @@ export class Mat {
     } else if (!source) {
       return this;
     } else if (Array.isArray(source)) {
-      return this.feedFromArray([this.a, this.b, this.c, this.d, this.e, this.f]);
+      return this.feedFromArray(source);
     } else {
       return this.feedFromArray([source.a, source.b, source.c, source.d, source.e, source.f]);
     }

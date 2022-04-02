@@ -246,6 +246,7 @@ declare namespace Geomorph {
     layoutKey: LayoutKey;
     doors: Door<Poly>[];
     holesWithDoors: Poly[];
+    /** Filtered transformed doors */
     hullDoors: Door[];
     hullOutline: Poly;
     inverseTransform: [number, number, number, number, number, number];

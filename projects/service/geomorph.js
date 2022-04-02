@@ -122,7 +122,7 @@ export async function createLayout(def, lookup, triangleService) {
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys));
   const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
-  const roomGraphJson = RoomGraph.holesAndDoorsToJson(holes, doorPolys);
+  const roomGraphJson = RoomGraph.fromGeometry(holes, doorPolys);
 
   /** @type {Geomorph.Door<Poly>[]}  */
   const doors = groups.singles.filter(x => x.tags.includes('door'))
@@ -349,29 +349,30 @@ export const allLayoutKeys = keys(allLayoutKeysLookup);
 
 /**
  * `GeomorphData`
- * - comes from `useGeomorph`,
- * - wraps `ParsedLayout`.
+ * - comes from `useGeomorph`
+ * - wraps `ParsedLayout`
  *
  * `UseGeomorphsItem`
  * - comes from `useGeomorphs`
- * - wraps `GeomorphData` relative to a `transform`.
+ * - wraps `GeomorphData` relative to a `transform`
  * @param {Geomorph.GeomorphData} gm 
  * @param {[number, number, number, number, number, number]} transform 
  */
 export function geomorphDataToGeomorphsItem(gm, transform) {
-  const matrix = new Mat;
-  matrix.feedFromArray(transform);
+  const matrix = new Mat(transform);
   const pngRect = gm.d.pngRect.clone().applyMatrix(matrix);
-  const { a, b, c, d, e, f } = matrix.inverse();
+  const doors = gm.doors.map((meta) => ({
+    ...meta, poly: meta.poly.clone().applyMatrix(matrix),
+  }));
+
+  const { a, b, c, d, e, f } = matrix.getInverseMatrix();
 
   /** @type {Geomorph.UseGeomorphsItem} */
   const output = {
     layoutKey: gm.key,
-    doors: gm.doors.map((meta) => ({
-      ...meta, poly: meta.poly.clone().applyMatrix(matrix),
-    })),
+    doors,
     holesWithDoors: gm.d.holesWithDoors.map(x => x.clone().applyMatrix(matrix)),
-    hullDoors: gm.doors.filter(x => x.tags.includes('hull')),
+    hullDoors: doors.filter(x => x.tags.includes('hull')),
     hullOutline: gm.d.hullOutline.clone().applyMatrix(matrix),
     inverseTransform: [a, b, c, d, e, f],
     pngRect,
