@@ -14,30 +14,30 @@
     "walls": [],
     "singles": [
       {
-        "tags": ["door", "door-w-n"],
+        "tags": ["door", "door-w-n", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[-6, 250.7], [-6, 348.7], [6, 348.7], [6, 250.7]]]
         }
       },
       {
-        "tags": ["door", "door-w-s"],
+        "tags": ["door", "door-w-s", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[-6, 850.7], [-6, 948.7], [6, 948.7], [6, 850.7]]]
         }
       },
       {
-        "tags": ["door", "door-e-n"],
+        "tags": ["door", "door-e-n", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
-            [[1194, 250.7], [1194, 348.7], [1206, 348.7], [1206, 250.7]]
+            [[1195, 250.7], [1195, 348.7], [1207, 348.7], [1207, 250.7]]
           ]
         }
       },
       {
-        "tags": ["door", "door-e-s"],
+        "tags": ["door", "door-e-s", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -46,28 +46,28 @@
         }
       },
       {
-        "tags": ["door", "door-n-e"],
+        "tags": ["door", "door-n-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[949, -6], [851, -6], [851, 6], [949, 6]]]
         }
       },
       {
-        "tags": ["door", "door-n-w"],
+        "tags": ["door", "door-n-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[349, -6], [251, -6], [251, 6], [349, 6]]]
         }
       },
       {
-        "tags": ["door", "door-s-e"],
+        "tags": ["door", "door-s-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[949, 1194], [851, 1194], [851, 1206], [949, 1206]]]
         }
       },
       {
-        "tags": ["door", "door-s-w"],
+        "tags": ["door", "door-s-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[349, 1194], [251, 1194], [251, 1206], [349, 1206]]]
@@ -216,7 +216,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -6, "width": 1212, "height": 1212},
-    "lastModified": 1646839468356.158
+    "lastModified": 1648899393499.1409
   },
   "102--hull": {
     "key": "102--hull",
@@ -233,21 +233,21 @@
     "walls": [],
     "singles": [
       {
-        "tags": ["door", "door-w-n"],
+        "tags": ["door", "door-w-n", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[-6, 250.7], [-6, 348.7], [6, 348.7], [6, 250.7]]]
         }
       },
       {
-        "tags": ["door", "door-w-s"],
+        "tags": ["door", "door-w-s", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[-6, 850.7], [-6, 948.7], [6, 948.7], [6, 850.7]]]
         }
       },
       {
-        "tags": ["door", "door-e-n"],
+        "tags": ["door", "door-e-n", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -256,7 +256,7 @@
         }
       },
       {
-        "tags": ["door", "door-e-s"],
+        "tags": ["door", "door-e-s", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -265,28 +265,28 @@
         }
       },
       {
-        "tags": ["door", "door-n-e"],
+        "tags": ["door", "door-n-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[949, -6], [851, -6], [851, 6], [949, 6]]]
         }
       },
       {
-        "tags": ["door", "door-n-w"],
+        "tags": ["door", "door-n-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[349, -6], [251, -6], [251, 6], [349, 6]]]
         }
       },
       {
-        "tags": ["door", "door-s-e"],
+        "tags": ["door", "door-s-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[949, 1194], [851, 1194], [851, 1206], [949, 1206]]]
         }
       },
       {
-        "tags": ["door", "door-s-w"],
+        "tags": ["door", "door-s-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[349, 1194], [251, 1194], [251, 1206], [349, 1206]]]
@@ -340,7 +340,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -6, "width": 1212, "height": 1212},
-    "lastModified": 1647109475832.4443
+    "lastModified": 1648899354040.9944
   },
   "301--hull": {
     "key": "301--hull",
@@ -544,28 +544,28 @@
         }
       },
       {
-        "tags": ["door", "door-w"],
+        "tags": ["door", "door-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[-6, 251], [-6, 349], [6, 349], [6, 251]]]
         }
       },
       {
-        "tags": ["door", "door-e"],
+        "tags": ["door", "door-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[1194, 251], [1194, 349], [1206, 349], [1206, 251]]]
         }
       },
       {
-        "tags": ["door", "door-s-e"],
+        "tags": ["door", "door-s-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[250, 594], [250, 606], [348, 606], [348, 594]]]
         }
       },
       {
-        "tags": ["door", "door-s-w"],
+        "tags": ["door", "door-s-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[850, 594], [850, 606], [948, 606], [948, 594]]]
@@ -753,7 +753,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628},
-    "lastModified": 1648471573567.8193
+    "lastModified": 1648899269291.2896
   },
   "302--hull": {
     "key": "302--hull",
@@ -934,21 +934,21 @@
         }
       },
       {
-        "tags": ["door", "door-w"],
+        "tags": ["door", "door-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[-6, 251], [-6, 349], [6, 349], [6, 251]]]
         }
       },
       {
-        "tags": ["door", "door-e"],
+        "tags": ["door", "door-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[1194, 251], [1194, 349], [1206, 349], [1206, 251]]]
         }
       },
       {
-        "tags": ["door", "door-s-e"],
+        "tags": ["door", "door-s-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -957,7 +957,7 @@
         }
       },
       {
-        "tags": ["door", "door-s-w"],
+        "tags": ["door", "door-s-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[850, 594], [850, 606], [948, 606], [948, 594]]]
@@ -1110,7 +1110,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -61, "width": 1212, "height": 667},
-    "lastModified": 1646914825570.6655
+    "lastModified": 1648899432996.6738
   },
   "303--hull": {
     "key": "303--hull",
@@ -1491,21 +1491,21 @@
         }
       },
       {
-        "tags": ["door", "door-w"],
+        "tags": ["door", "door-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[-6, 251], [-6, 349], [6, 349], [6, 251]]]
         }
       },
       {
-        "tags": ["door", "door-e"],
+        "tags": ["door", "door-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[1194, 251], [1194, 349], [1206, 349], [1206, 251]]]
         }
       },
       {
-        "tags": ["door", "door-s-e"],
+        "tags": ["door", "door-s-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -1514,7 +1514,7 @@
         }
       },
       {
-        "tags": ["door", "door-s-w"],
+        "tags": ["door", "door-s-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[850, 594], [850, 606], [948, 606], [948, 594]]]
@@ -1758,7 +1758,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -6, "width": 1212, "height": 613},
-    "lastModified": 1647006796744.6777
+    "lastModified": 1648899466881.859
   },
   "bridge--042--8x9": {
     "key": "bridge--042--8x9",
