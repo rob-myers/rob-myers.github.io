@@ -14,7 +14,9 @@ export default function useGeomorphs(defs) {
   React.useEffect(() => {
     // Append unseen keys to layoutKeys i.e. monotonically increases
     const unseenKeys = defs.map(x => x.layoutKey).filter(x => !layoutKeys.includes(x));
-    setLayoutKeys([...layoutKeys, ...unseenKeys]);
+    if (unseenKeys.length) {
+      setLayoutKeys([...layoutKeys, ...unseenKeys]);
+    }
   }, [layoutKeys]);
 
   const queries = layoutKeys.map(layoutKey => useGeomorphData(layoutKey, { staleTime: Infinity }));
