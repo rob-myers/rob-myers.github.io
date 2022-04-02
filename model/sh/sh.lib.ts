@@ -102,7 +102,7 @@ call '({args}) =>
       ? Number.MAX_SAFE_INTEGER
       : Number(args[0]);
     if (!Number.isFinite(numClicks)) {
-      api.throwError("format: click [numberOfClicks]");
+      api.throwError("format: \`click [numberOfClicks]\`");
     }
     const stageKey = home.STAGE_KEY;
     const stage = api.getCached(stageKey);
@@ -142,7 +142,7 @@ call '({args}) =>
       || position === undefined
       || position && !(typeof position.x === "number" && typeof position.y === "number")
     ) {
-      api.throwError("format: spawn {key} [{vecJson}] e.g. spawn andros \'{"x":300,"y":120}\'");
+      api.throwError("format: \`spawn {key} [{vecJson}]\` e.g. spawn andros \'{"x":300,"y":120}\'");
     }
 
     const stageKey = home.STAGE_KEY;

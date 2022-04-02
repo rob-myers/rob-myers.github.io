@@ -271,8 +271,14 @@ class CmdService {
       }
       /** e.g. run '({ api:{read} }) { yield "foo"; yield await read(); }' */
       case 'run': {
-        const func = Function('_', `return async function *generator ${args[0]}`);
-        yield* func()(this.provideProcessCtxt(meta, args.slice(1)));
+        try {
+          const func = Function('_', `return async function *generator ${args[0]}`);
+          yield* func()(this.provideProcessCtxt(meta, args.slice(1)));
+        } catch (e) {
+          throw e instanceof ShError
+            ? e
+            : new ShError('format: \`run {async_generator}\` e.g. run \'({ api:{read} }) { yield "foo"; yield await read(); }\'', 1);
+        }
         break;
       }
       case 'session': {
