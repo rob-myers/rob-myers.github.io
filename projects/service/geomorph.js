@@ -394,24 +394,23 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
   const matrix = new Mat;
   matrix.feedFromArray(transform);
   const pngRect = gm.d.pngRect.clone().applyMatrix(matrix);
-
-  // TODO support matrix inversion in `Mat`
-  const { a, b, c, d, e, f } = new DOMMatrix(transform).inverse();
+  const { a, b, c, d, e, f } = matrix.inverse();
 
   /** @type {Geomorph.UseGeomorphsItem} */
   const output = {
     layoutKey: gm.key,
-    transform,
-    inverseTransform: [a, b, c, d, e, f],
-    transformStyle: `matrix(${transform})`,
-    pngRect,
-    roomGraph: gm.d.roomGraph, // No need to clone or transform
-    holesWithDoors: gm.d.holesWithDoors.map(x => x.clone().applyMatrix(matrix)),
-    hullOutline: gm.d.hullOutline.clone().applyMatrix(matrix),
     doors: gm.doors.map((meta) => ({
       ...meta, poly: meta.poly.clone().applyMatrix(matrix),
     })),
+    holesWithDoors: gm.d.holesWithDoors.map(x => x.clone().applyMatrix(matrix)),
+    hullDoors: gm.doors.filter(x => x.tags.includes('hull')),
+    hullOutline: gm.d.hullOutline.clone().applyMatrix(matrix),
+    inverseTransform: [a, b, c, d, e, f],
+    pngRect,
+    roomGraph: gm.d.roomGraph, // No need to clone or transform
+    transform,
+    transformStyle: `matrix(${transform})`,
   };
 
   return output;
-} 
+}

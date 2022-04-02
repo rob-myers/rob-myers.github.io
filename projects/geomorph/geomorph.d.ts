@@ -244,14 +244,15 @@ declare namespace Geomorph {
 
   export interface UseGeomorphsItem {
     layoutKey: LayoutKey;
-    transform: [number, number, number, number, number, number];
+    doors: Door<Poly>[];
+    holesWithDoors: Poly[];
+    hullDoors: Door[];
+    hullOutline: Poly;
     inverseTransform: [number, number, number, number, number, number];
-    transformStyle: string;
     pngRect: Geom.Rect;
     roomGraph: Graph.RoomGraph;
-    hullOutline: Poly;
-    holesWithDoors: Poly[];
-    doors: Door<Poly>[];
+    transform: [number, number, number, number, number, number];
+    transformStyle: string;
   }
 
 }

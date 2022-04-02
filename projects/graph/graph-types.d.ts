@@ -47,27 +47,25 @@ declare namespace Graph {
 
   //#region RoomGraph
 
-  export type RoomNodeOpts = (
-    | RoomOfTypeRoom
-    | RoomOfTypeDoor
-  );
-      
-  export interface RoomOfTypeRoom {
+  export interface RoomGraphNodeRoom {
     type: 'room';
     /** `room-${holeIndex} */
     id: string;
-    /** Indexes `Geomorph.Layout['holes']` */
+    /** Index of `Geomorph.Layout['holes']` */
     holeIndex: number;
   }
-  export interface RoomOfTypeDoor {
+  export interface RoomGraphNodeDoor {
     type: 'door';
     /** `door-${doorIndex} */
     id: string;
-    /** Indexes `Geomorph.Layout['doors']` */
+    /** Index of `Geomorph.Layout['doors']` */
     doorIndex: number;
   }
 
-  export type RoomGraphNode = RoomNodeOpts;
+  export type RoomGraphNode = (
+    | RoomGraphNodeRoom
+    | RoomGraphNodeDoor
+  );
 
   export type RoomGraphEdgeOpts = BaseEdgeOpts;
 
@@ -79,7 +77,32 @@ declare namespace Graph {
 
   //#region GmGraph
 
-  // TODO
+  /** A transformed geomorph */
+  export interface GmGraphNodeGm {
+    type: 'gm';
+    /** `gm-${gmKey}-${transform} */
+    id: string;
+    gmKey: Geomorph.LayoutKey;
+    transform: [number, number, number, number, number, number];
+  }
+
+  /** A hull door of some transformed geomorph */
+  export interface GmGraphNodeDoor {
+    type: 'door';
+    /** `door-${gmKey}-${transform}-{doorIndex} */
+    id: string;
+    gmKey: Geomorph.LayoutKey;
+    transform: [number, number, number, number, number, number];
+    /** Index of `Geomorph.UseGeomorphsItem['hullDoors']` */
+    doorIndex: number;
+  }
+
+  export type GmGraphNode = (
+    | GmGraphNodeGm
+    | GmGraphNodeDoor
+  );
+
+  export type GmGraphEdgeOpts = BaseEdgeOpts;
 
   //#endregion
 
