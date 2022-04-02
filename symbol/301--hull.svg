@@ -41,16 +41,16 @@
       <title>poly #ccc-#000-4</title>
     </path>
     <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door door-w</title>
+      <title>door door-w hull</title>
     </rect>
     <rect x="1194" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door door-e</title>
+      <title>door door-e hull</title>
     </rect>
     <rect x="250" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door door-s-e</title>
+      <title>door door-s-e hull</title>
     </rect>
     <rect x="850" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door door-s-w</title>
+      <title>door door-s-w hull</title>
     </rect>
     <path d="M 424 119 L 455 93 L 493 71 L 534 56 L 578 49 L 621 48 L 664 56 L 706 71 L 744 93 L 775 119 L 779 124 L 772 131 L 767 127 L 737 102 L 701 82 L 661 67 L 620 59 L 578 59 L 537 67 L 498 82 L 462 103 L 433 127 L 428 132 L 419 124 L 424 119 Z" style="stroke: rgb(0, 0, 0); fill-opacity: 0.31;">
       <title>window</title>

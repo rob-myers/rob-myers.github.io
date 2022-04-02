@@ -116,16 +116,16 @@
       <title>poly #fff-#000-2 chair</title>
     </rect>
     <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door door-w</title>
+      <title>door door-w hull</title>
     </rect>
     <rect x="1194" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door door-e</title>
+      <title>door door-e hull</title>
     </rect>
     <rect x="249.996" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door door-s-e</title>
+      <title>door door-s-e hull</title>
     </rect>
     <rect x="850" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door door-s-w</title>
+      <title>door door-s-w hull</title>
     </rect>
     <path d="M 235.8 554.7 L 235.2 600 L 230.7 600 L 230.9 554.9 L 229 535.3 L 225.2 516.5 L 219.5 498.3 L 216 489.3 L 212.1 480.6 L 203.3 464 L 193 448.6 L 181.2 434.3 L 174.6 427.4 L 167.9 420.9 L 153.7 408.9 L 138.4 398.5 L 122.1 389.6 L 113.4 385.7 L 104.6 382.2 L 86.5 376.4 L 67.8 372.6 L 48.4 370.7 L 38.3 370.4 L 0 370.4 L 0 365.4 L 38.3 365.4 L 48.6 365.7 L 68.5 367.7 L 87.7 371.6 L 106.2 377.5 L 115.3 381.1 L 124.1 385.1 L 140.9 394.2 L 156.6 404.9 L 171.2 417.2 L 178.1 423.9 L 184.8 430.8 L 196.9 445.6 L 207.5 461.4 L 216.6 478.4 L 220.5 487.3 L 224.2 496.4 L 230 515.2 L 233.9 534.5 L 235.8 554.7 Z" style="stroke: rgb(0, 0, 0); fill-opacity: 0.5; fill: rgb(255, 0, 0);">
       <title>wall</title>

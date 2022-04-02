@@ -419,21 +419,21 @@
     ],
     "singles": [
       {
-        "tags": ["door", "door-w-n"],
+        "tags": ["door", "door-w-n", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[6, 250.7], [6, 348.7], [-6, 348.7], [-6, 250.7]]]
         }
       },
       {
-        "tags": ["door", "door-w-s"],
+        "tags": ["door", "door-w-s", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[6, 850.7], [6, 948.7], [-6, 948.7], [-6, 850.7]]]
         }
       },
       {
-        "tags": ["door", "door-e-n"],
+        "tags": ["door", "door-e-n", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -442,7 +442,7 @@
         }
       },
       {
-        "tags": ["door", "door-e-s"],
+        "tags": ["door", "door-e-s", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -451,28 +451,28 @@
         }
       },
       {
-        "tags": ["door", "door-n-e"],
+        "tags": ["door", "door-n-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[949, 6], [851, 6], [851, -6], [949, -6]]]
         }
       },
       {
-        "tags": ["door", "door-n-w"],
+        "tags": ["door", "door-n-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[349, 6], [251, 6], [251, -6], [349, -6]]]
         }
       },
       {
-        "tags": ["door", "door-s-e"],
+        "tags": ["door", "door-s-e", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[949, 1206], [851, 1206], [851, 1194], [949, 1194]]]
         }
       },
       {
-        "tags": ["door", "door-s-w"],
+        "tags": ["door", "door-s-w", "hull"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[349, 1206], [251, 1206], [251, 1194], [349, 1194]]]
@@ -1621,7 +1621,7 @@
         "type": "Polygon",
         "coordinates": [[[6, 250.7], [6, 348.7], [-6, 348.7], [-6, 250.7]]]
       },
-      "tags": ["door", "door-w-n"],
+      "tags": ["door", "door-w-n", "hull"],
       "seg": [{"x": 0, "y": 250.7}, {"x": 6.000769315822031e-15, "y": 348.7}]
     },
     {
@@ -1631,7 +1631,7 @@
         "type": "Polygon",
         "coordinates": [[[6, 850.7], [6, 948.7], [-6, 948.7], [-6, 850.7]]]
       },
-      "tags": ["door", "door-w-s"],
+      "tags": ["door", "door-w-s", "hull"],
       "seg": [{"x": 0, "y": 850.7}, {"x": 6.000769315822031e-15, "y": 948.7}]
     },
     {
@@ -1643,7 +1643,7 @@
           [[1206, 250.7], [1206, 348.7], [1194, 348.7], [1194, 250.7]]
         ]
       },
-      "tags": ["door", "door-e-n"],
+      "tags": ["door", "door-e-n", "hull"],
       "seg": [{"x": 1200, "y": 250.7}, {"x": 1200, "y": 348.7}]
     },
     {
@@ -1655,7 +1655,7 @@
           [[1206, 850.7], [1206, 948.7], [1194, 948.7], [1194, 850.7]]
         ]
       },
-      "tags": ["door", "door-e-s"],
+      "tags": ["door", "door-e-s", "hull"],
       "seg": [{"x": 1200, "y": 850.7}, {"x": 1200, "y": 948.7}]
     },
     {
@@ -1665,7 +1665,7 @@
         "type": "Polygon",
         "coordinates": [[[949, 6], [851, 6], [851, -6], [949, -6]]]
       },
-      "tags": ["door", "door-n-e"],
+      "tags": ["door", "door-n-e", "hull"],
       "seg": [{"x": 949, "y": 0}, {"x": 851, "y": 1.2001538631644062e-14}]
     },
     {
@@ -1675,7 +1675,7 @@
         "type": "Polygon",
         "coordinates": [[[349, 6], [251, 6], [251, -6], [349, -6]]]
       },
-      "tags": ["door", "door-n-w"],
+      "tags": ["door", "door-n-w", "hull"],
       "seg": [{"x": 349, "y": 0}, {"x": 251, "y": 1.2001538631644062e-14}]
     },
     {
@@ -1685,7 +1685,7 @@
         "type": "Polygon",
         "coordinates": [[[949, 1206], [851, 1206], [851, 1194], [949, 1194]]]
       },
-      "tags": ["door", "door-s-e"],
+      "tags": ["door", "door-s-e", "hull"],
       "seg": [{"x": 949, "y": 1200}, {"x": 851, "y": 1200}]
     },
     {
@@ -1695,7 +1695,7 @@
         "type": "Polygon",
         "coordinates": [[[349, 1206], [251, 1206], [251, 1194], [349, 1194]]]
       },
-      "tags": ["door", "door-s-w"],
+      "tags": ["door", "door-s-w", "hull"],
       "seg": [{"x": 349, "y": 1200}, {"x": 251, "y": 1200}]
     },
     {
