@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
+import { assertDefined } from "../service/generic";
 import { geomorphDataToGeomorphsItem } from "../service/geomorph";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
@@ -26,38 +27,36 @@ export default function LightsTest(props) {
 
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
       onToggleLight({ target }) {
-        if (gm) {
-          const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
-          dataIndex in state.isHoleShown ? delete state.isHoleShown[dataIndex] : state.isHoleShown[dataIndex] = true;
-          state.updateMask();
-        }
+        const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
+        dataIndex in state.isHoleShown ? delete state.isHoleShown[dataIndex] : state.isHoleShown[dataIndex] = true;
+        state.updateMask();
       },
 
       updateMask(delayMask = 0) {
-        if (!gm) return;
-        const { roomGraph: graph } = gm.d;
+        const { pngRect, hullOutline, holesWithDoors, roomGraph } = assertDefined(gm).d;
 
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
         const openDoorIds = state.doorsApi.getOpen();
         const adjHoleIds = rootHoleIds.flatMap(holeId => {
           // Assume node-ordering aligned to holeIndex
-          return graph.getEnterableRooms(graph.nodesArray[holeId], openDoorIds)
+          return roomGraph.getEnterableRooms(roomGraph.nodesArray[holeId], openDoorIds)
             .map(roomNode => roomNode.holeIndex);
         });
         const allHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
-        const allHolePolys = allHoleIds.map(i => gm.d.holesWithDoors[i]);
+        // TODO adjHoles should contribute a light polygon instead
+        const allHolePolys = allHoleIds.map(i => holesWithDoors[i]);
 
-        const observableDoors = graph.getAdjacentDoors(rootHoleIds.map(id => graph.nodesArray[id]));
+        const observableDoors = roomGraph.getAdjacentDoors(rootHoleIds.map(id => roomGraph.nodesArray[id]));
         this.doorsApi.setObservableDoors(observableDoors.map(x => x.doorIndex));
-        const maskPoly = Poly.cutOut(allHolePolys, [gm.d.hullOutline],)
-        .map(poly => poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y));
+        const maskPoly = Poly.cutOut(allHolePolys, [hullOutline],)
+          .map(poly => poly.translate(-pngRect.x, -pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         update();
 
-        setTimeout(() => {
+        setTimeout(() => {// We delay mask update when closing doors
           state.clipPath = `path('${svgPaths}')`;
           update();
-        }, delayMask); // We delay mask update when closing doors
+        }, delayMask);
       },
     };
   }, [gm]);
