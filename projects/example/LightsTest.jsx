@@ -44,27 +44,18 @@ export default function LightsTest(props) {
 
         // AdjHoles contribute a light polygon
         const lightPolygons = rootHoleIds.flatMap(srcHoleId => {
-          // room-node ordering aligned to holes
           const roomNode = roomGraph.nodesArray[srcHoleId];
-          const adjDoorIds = roomGraph.getAdjacentDoors([roomNode]).map(x => x.doorIndex);
-          const adjOpenDoorIds = adjDoorIds.filter(id => openDoorIds.includes(id));
-          // const closedDoorIds = adjDoorIds.filter(id => !adjOpenDoorIds.includes(id));
-          const closedDoorIds = doors.map((_, doorId) => doorId).filter(id => !adjOpenDoorIds.includes(id));
-          const closedDoorPolys = closedDoorIds.map(id => doors[id]).map(x => x.poly);
+          const adjOpenDoorIds = roomGraph.getAdjacentDoors([roomNode]).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
+          // NOTE _adjacent_ closed doors insufficient, but using all `doors` is overkill
+          const closedDoorPolys = doors.flatMap((door, id) => !adjOpenDoorIds.includes(id) ? door.poly : []);
           /**
-           * TODO move light backwards into room
-           * - need normal for each door ✅
-           * - RoomGraph says which side ✅
            * TODO simplify walls
            * - restrict to union of current/succ hole polys 🚧
            */
-          
           return adjOpenDoorIds.map(doorIndex => {
             const door = doors[doorIndex];
             const roomSign = roomGraph.getRoomSign(srcHoleId, doorIndex);
-            if (roomSign === null) {
-              console.warn(`hole ${srcHoleId}: door ${doorIndex}: unexpected roomSign`);
-            }
+            if (roomSign === null) console.warn(`hole ${srcHoleId}: door ${doorIndex}: unexpected roomSign`);
             const lightSource = door.poly.center.addScaledVector(door.normal, 20 * (roomSign || 0))
             const triangs = walls.concat(closedDoorPolys)
               .flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
@@ -73,10 +64,8 @@ export default function LightsTest(props) {
         });
         const allHolePolys = rootHoleIds.map(id => holesWithDoors[id]).concat(lightPolygons);
         
-        // OLD APPROACH i.e. without light polygons
-        //
+        // OLD APPROACH without light polygons
         // const adjHoleIds = rootHoleIds.flatMap(holeId => {
-        //   // Assume room-node-ordering aligned to holeIndex
         //   return roomGraph.getEnterableRooms(roomGraph.nodesArray[holeId], openDoorIds)
         //     .map(roomNode => roomNode.holeIndex);
         // });
@@ -171,10 +160,10 @@ export default function LightsTest(props) {
 }
 
 /** @type {Geomorph.LayoutKey} */
-// const layoutKey = 'g-301--bridge';
+const layoutKey = 'g-301--bridge';
 // const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-102--research-deck';
-const layoutKey = 'g-302--xboat-repair-bay';
+// const layoutKey = 'g-302--xboat-repair-bay';
 // const layoutKey = 'g-303--passenger-deck';
 
 const rootCss = css`
