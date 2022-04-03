@@ -3112,7 +3112,8 @@
         "coordinates": [[[6, 251], [6, 349], [-6, 349], [-6, 251]]]
       },
       "tags": ["door", "door-w", "hull"],
-      "seg": [{"x": 0, "y": 251}, {"x": 6.000769315822031e-15, "y": 349}]
+      "seg": [{"x": 0, "y": 251}, {"x": 0, "y": 349}],
+      "normal": {"x": -1, "y": 0}
     },
     {
       "angle": 1.5707963267948966,
@@ -3122,16 +3123,12 @@
         "coordinates": [[[1206, 251], [1206, 349], [1194, 349], [1194, 251]]]
       },
       "tags": ["door", "door-e", "hull"],
-      "seg": [{"x": 1200, "y": 251}, {"x": 1200, "y": 349}]
+      "seg": [{"x": 1200, "y": 251}, {"x": 1200, "y": 349}],
+      "normal": {"x": -1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {
-        "x": 347.996,
-        "y": 606,
-        "width": 97.99999999999997,
-        "height": 12
-      },
+      "rect": {"x": 347.996, "y": 606, "width": 98, "height": 12},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3139,7 +3136,8 @@
         ]
       },
       "tags": ["door", "door-s-e", "hull"],
-      "seg": [{"x": 347.996, "y": 600}, {"x": 249.996, "y": 600}]
+      "seg": [{"x": 347.996, "y": 600}, {"x": 249.996, "y": 600}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": 3.141592653589793,
@@ -3149,7 +3147,8 @@
         "coordinates": [[[948, 594], [948, 606], [850, 606], [850, 594]]]
       },
       "tags": ["door", "door-s-w", "hull"],
-      "seg": [{"x": 948, "y": 600}, {"x": 850, "y": 600}]
+      "seg": [{"x": 948, "y": 600}, {"x": 850, "y": 600}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": 3.141592653589793,
@@ -3161,7 +3160,8 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 171.5, "y": 240}, {"x": 127.5, "y": 240}]
+      "seg": [{"x": 171.5, "y": 240}, {"x": 127.5, "y": 240}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": 3.141592653589793,
@@ -3171,7 +3171,8 @@
         "coordinates": [[[52, 372.7], [6, 372.7], [6, 363.7], [52, 363.7]]]
       },
       "tags": ["door"],
-      "seg": [{"x": 52, "y": 368.2}, {"x": 6, "y": 368.2}]
+      "seg": [{"x": 52, "y": 368.2}, {"x": 6, "y": 368.2}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": 1.5707963267948966,
@@ -3188,7 +3189,8 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 232.68, "y": 547.054}, {"x": 232.68, "y": 593.054}]
+      "seg": [{"x": 232.68, "y": 547.054}, {"x": 232.68, "y": 593.054}],
+      "normal": {"x": -1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
@@ -3200,11 +3202,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 231.5, "y": 240}, {"x": 187.5, "y": 240}]
+      "seg": [{"x": 231.5, "y": 240}, {"x": 187.5, "y": 240}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": -1.5707963267948966,
-      "rect": {"x": 236.8, "y": 232.5562, "width": 44, "height": 8},
+      "rect": {"x": 236.8, "y": 232.556, "width": 44, "height": 8},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3217,11 +3220,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 240.8, "y": 232.5562}, {"x": 240.8, "y": 188.5562}]
+      "seg": [{"x": 240.8, "y": 232.556}, {"x": 240.8, "y": 188.556}],
+      "normal": {"x": 1, "y": 0}
     },
     {
       "angle": -1.5707963267948966,
-      "rect": {"x": 296, "y": 352.5562, "width": 44, "height": 8},
+      "rect": {"x": 296, "y": 352.556, "width": 44, "height": 8},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3229,11 +3233,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 300, "y": 352.5562}, {"x": 300, "y": 308.5562}]
+      "seg": [{"x": 300, "y": 352.556}, {"x": 300, "y": 308.556}],
+      "normal": {"x": 1, "y": 0}
     },
     {
       "angle": -1.5707963267948966,
-      "rect": {"x": 956, "y": 232.5562, "width": 44, "height": 8},
+      "rect": {"x": 956, "y": 232.556, "width": 44, "height": 8},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3241,11 +3246,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 960, "y": 232.5562}, {"x": 960, "y": 188.5562}]
+      "seg": [{"x": 960, "y": 232.556}, {"x": 960, "y": 188.556}],
+      "normal": {"x": 1, "y": 0}
     },
     {
       "angle": -1.5707963267948966,
-      "rect": {"x": 896, "y": 352.5233, "width": 44, "height": 8},
+      "rect": {"x": 896, "y": 352.523, "width": 44, "height": 8},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3253,26 +3259,23 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 900, "y": 352.5233}, {"x": 900, "y": 308.5233}]
+      "seg": [{"x": 900, "y": 352.523}, {"x": 900, "y": 308.523}],
+      "normal": {"x": 1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {"x": 352, "y": 185, "width": 46, "height": 9.599999999999994},
+      "rect": {"x": 352, "y": 185, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[352, 175.4], [352, 185], [306, 185], [306, 175.4]]]
       },
       "tags": ["door"],
-      "seg": [{"x": 352, "y": 180.2}, {"x": 306, "y": 180.2}]
+      "seg": [{"x": 352, "y": 180.2}, {"x": 306, "y": 180.2}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": -1.5707963267948966,
-      "rect": {
-        "x": 295,
-        "y": 171.8809,
-        "width": 46,
-        "height": 9.600000000000023
-      },
+      "rect": {"x": 295, "y": 171.881, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3285,26 +3288,23 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 299.8, "y": 171.8809}, {"x": 299.8, "y": 125.8809}]
+      "seg": [{"x": 299.8, "y": 171.881}, {"x": 299.8, "y": 125.881}],
+      "normal": {"x": 1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {"x": 472, "y": 185, "width": 46, "height": 9.599999999999994},
+      "rect": {"x": 472, "y": 185, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[472, 175.4], [472, 185], [426, 185], [426, 175.4]]]
       },
       "tags": ["door"],
-      "seg": [{"x": 472, "y": 180.2}, {"x": 426, "y": 180.2}]
+      "seg": [{"x": 472, "y": 180.2}, {"x": 426, "y": 180.2}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": -1.5707963267948966,
-      "rect": {
-        "x": 415,
-        "y": 171.8809,
-        "width": 46,
-        "height": 9.600000000000023
-      },
+      "rect": {"x": 415, "y": 171.881, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3317,26 +3317,23 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 419.8, "y": 171.8809}, {"x": 419.8, "y": 125.8809}]
+      "seg": [{"x": 419.8, "y": 171.881}, {"x": 419.8, "y": 125.881}],
+      "normal": {"x": 1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {"x": 592, "y": 185, "width": 46, "height": 9.599999999999994},
+      "rect": {"x": 592, "y": 185, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[592, 175.4], [592, 185], [546, 185], [546, 175.4]]]
       },
       "tags": ["door"],
-      "seg": [{"x": 592, "y": 180.2}, {"x": 546, "y": 180.2}]
+      "seg": [{"x": 592, "y": 180.2}, {"x": 546, "y": 180.2}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": -1.5707963267948966,
-      "rect": {
-        "x": 535,
-        "y": 171.8809,
-        "width": 46,
-        "height": 9.600000000000023
-      },
+      "rect": {"x": 535, "y": 171.881, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3349,26 +3346,23 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 539.8, "y": 171.8809}, {"x": 539.8, "y": 125.8809}]
+      "seg": [{"x": 539.8, "y": 171.881}, {"x": 539.8, "y": 125.881}],
+      "normal": {"x": 1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {"x": 654, "y": 185, "width": 46, "height": 9.599999999999994},
+      "rect": {"x": 654, "y": 185, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [[[654, 175.4], [654, 185], [608, 185], [608, 175.4]]]
       },
       "tags": ["door"],
-      "seg": [{"x": 654, "y": 180.2}, {"x": 608, "y": 180.2}]
+      "seg": [{"x": 654, "y": 180.2}, {"x": 608, "y": 180.2}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": 1.5707963267948966,
-      "rect": {
-        "x": 665,
-        "y": 125.8809,
-        "width": 46,
-        "height": 9.600000000000023
-      },
+      "rect": {"x": 665, "y": 125.881, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3381,16 +3375,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 660.2, "y": 125.8809}, {"x": 660.2, "y": 171.8809}]
+      "seg": [{"x": 660.2, "y": 125.881}, {"x": 660.2, "y": 171.881}],
+      "normal": {"x": -1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {
-        "x": 833.5609,
-        "y": 184.7017,
-        "width": 44,
-        "height": 9.599999999999994
-      },
+      "rect": {"x": 833.561, "y": 184.702, "width": 44, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3403,16 +3393,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 833.5609, "y": 179.9017}, {"x": 789.5609, "y": 179.9017}]
+      "seg": [{"x": 833.561, "y": 179.902}, {"x": 789.561, "y": 179.902}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": -1.5707963267948966,
-      "rect": {
-        "x": 774.9692,
-        "y": 112.3578,
-        "width": 44,
-        "height": 9.600000000000023
-      },
+      "rect": {"x": 774.969, "y": 112.358, "width": 44, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3425,11 +3411,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 779.7692, "y": 112.3578}, {"x": 779.7692, "y": 68.3578}]
+      "seg": [{"x": 779.769, "y": 112.358}, {"x": 779.769, "y": 68.358}],
+      "normal": {"x": 1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {"x": 1191.184, "y": 34.0764, "width": 44, "height": 8},
+      "rect": {"x": 1191.184, "y": 34.076, "width": 44, "height": 8},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3442,14 +3429,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [
-        {"x": 1191.184, "y": 30.0764},
-        {"x": 1147.184, "y": 30.076400000000007}
-      ]
+      "seg": [{"x": 1191.184, "y": 30.076}, {"x": 1147.184, "y": 30.076}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {"x": 1191.184, "y": 124.0764, "width": 44, "height": 8},
+      "rect": {"x": 1191.184, "y": 124.076, "width": 44, "height": 8},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3462,11 +3447,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 1191.184, "y": 120.0764}, {"x": 1147.184, "y": 120.0764}]
+      "seg": [{"x": 1191.184, "y": 120.076}, {"x": 1147.184, "y": 120.076}],
+      "normal": {"x": 0, "y": -1}
     },
     {
       "angle": 0,
-      "rect": {"x": 428, "y": 535.2, "width": 44, "height": 9.599999999999909},
+      "rect": {"x": 428, "y": 535.2, "width": 44, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3474,11 +3460,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 428, "y": 540}, {"x": 472, "y": 540}]
+      "seg": [{"x": 428, "y": 540}, {"x": 472, "y": 540}],
+      "normal": {"x": 0, "y": 1}
     },
     {
       "angle": 0,
-      "rect": {"x": 426, "y": 355.2, "width": 46, "height": 9.600000000000023},
+      "rect": {"x": 426, "y": 355.2, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3486,11 +3473,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 426, "y": 360}, {"x": 472, "y": 360}]
+      "seg": [{"x": 426, "y": 360}, {"x": 472, "y": 360}],
+      "normal": {"x": 0, "y": 1}
     },
     {
       "angle": 0,
-      "rect": {"x": 548, "y": 535.2, "width": 44, "height": 9.599999999999909},
+      "rect": {"x": 548, "y": 535.2, "width": 44, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3498,11 +3486,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 548, "y": 540}, {"x": 592, "y": 540}]
+      "seg": [{"x": 548, "y": 540}, {"x": 592, "y": 540}],
+      "normal": {"x": 0, "y": 1}
     },
     {
       "angle": 0,
-      "rect": {"x": 546, "y": 355.2, "width": 46, "height": 9.600000000000023},
+      "rect": {"x": 546, "y": 355.2, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3510,11 +3499,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 546, "y": 360}, {"x": 592, "y": 360}]
+      "seg": [{"x": 546, "y": 360}, {"x": 592, "y": 360}],
+      "normal": {"x": 0, "y": 1}
     },
     {
       "angle": 0,
-      "rect": {"x": 608, "y": 535.2, "width": 44, "height": 9.599999999999909},
+      "rect": {"x": 608, "y": 535.2, "width": 44, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3522,11 +3512,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 608, "y": 540}, {"x": 652, "y": 540}]
+      "seg": [{"x": 608, "y": 540}, {"x": 652, "y": 540}],
+      "normal": {"x": 0, "y": 1}
     },
     {
       "angle": 0,
-      "rect": {"x": 608, "y": 355.2, "width": 46, "height": 9.600000000000023},
+      "rect": {"x": 608, "y": 355.2, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3534,11 +3525,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 608, "y": 360}, {"x": 654, "y": 360}]
+      "seg": [{"x": 608, "y": 360}, {"x": 654, "y": 360}],
+      "normal": {"x": 0, "y": 1}
     },
     {
       "angle": 0,
-      "rect": {"x": 728, "y": 535.2, "width": 44, "height": 9.599999999999909},
+      "rect": {"x": 728, "y": 535.2, "width": 44, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3546,11 +3538,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 728, "y": 540}, {"x": 772, "y": 540}]
+      "seg": [{"x": 728, "y": 540}, {"x": 772, "y": 540}],
+      "normal": {"x": 0, "y": 1}
     },
     {
       "angle": 0,
-      "rect": {"x": 728, "y": 355.2, "width": 46, "height": 9.600000000000023},
+      "rect": {"x": 728, "y": 355.2, "width": 46, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3558,16 +3551,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 728, "y": 360}, {"x": 774, "y": 360}]
+      "seg": [{"x": 728, "y": 360}, {"x": 774, "y": 360}],
+      "normal": {"x": 0, "y": 1}
     },
     {
       "angle": 1.5707963267948966,
-      "rect": {
-        "x": 972.4,
-        "y": 547.9998,
-        "width": 44,
-        "height": 9.600000000000023
-      },
+      "rect": {"x": 972.4, "y": 548, "width": 44, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3580,14 +3569,12 @@
         ]
       },
       "tags": ["door"],
-      "seg": [
-        {"x": 967.5999999999999, "y": 547.9998},
-        {"x": 967.5999999999999, "y": 591.9998}
-      ]
+      "seg": [{"x": 967.6, "y": 548}, {"x": 967.6, "y": 592}],
+      "normal": {"x": -1, "y": 0}
     },
     {
       "angle": 3.141592653589793,
-      "rect": {"x": 1192, "y": 371.8, "width": 44, "height": 9.600000000000023},
+      "rect": {"x": 1192, "y": 371.8, "width": 44, "height": 9.6},
       "poly": {
         "type": "Polygon",
         "coordinates": [
@@ -3595,7 +3582,8 @@
         ]
       },
       "tags": ["door"],
-      "seg": [{"x": 1192, "y": 367}, {"x": 1148, "y": 367}]
+      "seg": [{"x": 1192, "y": 367}, {"x": 1148, "y": 367}],
+      "normal": {"x": 0, "y": -1}
     }
   ],
   "labels": [
@@ -5858,196 +5846,196 @@
   ],
   "roomGraph": {
     "nodes": [
-      {"id": "hole-0", "type": "room", "holeIndex": 0},
-      {"id": "hole-1", "type": "room", "holeIndex": 1},
-      {"id": "hole-2", "type": "room", "holeIndex": 2},
-      {"id": "hole-3", "type": "room", "holeIndex": 3},
-      {"id": "hole-4", "type": "room", "holeIndex": 4},
-      {"id": "hole-5", "type": "room", "holeIndex": 5},
-      {"id": "hole-6", "type": "room", "holeIndex": 6},
-      {"id": "hole-7", "type": "room", "holeIndex": 7},
-      {"id": "hole-8", "type": "room", "holeIndex": 8},
-      {"id": "hole-9", "type": "room", "holeIndex": 9},
-      {"id": "hole-10", "type": "room", "holeIndex": 10},
-      {"id": "hole-11", "type": "room", "holeIndex": 11},
-      {"id": "hole-12", "type": "room", "holeIndex": 12},
-      {"id": "hole-13", "type": "room", "holeIndex": 13},
-      {"id": "hole-14", "type": "room", "holeIndex": 14},
-      {"id": "hole-15", "type": "room", "holeIndex": 15},
-      {"id": "hole-16", "type": "room", "holeIndex": 16},
-      {"id": "hole-17", "type": "room", "holeIndex": 17},
-      {"id": "hole-18", "type": "room", "holeIndex": 18},
-      {"id": "hole-19", "type": "room", "holeIndex": 19},
-      {"id": "hole-20", "type": "room", "holeIndex": 20},
-      {"id": "hole-21", "type": "room", "holeIndex": 21},
-      {"id": "hole-22", "type": "room", "holeIndex": 22},
-      {"id": "hole-23", "type": "room", "holeIndex": 23},
-      {"id": "hole-24", "type": "room", "holeIndex": 24},
-      {"id": "hole-25", "type": "room", "holeIndex": 25},
-      {"id": "hole-26", "type": "room", "holeIndex": 26},
-      {"id": "hole-27", "type": "room", "holeIndex": 27},
-      {"id": "door-0", "type": "door", "doorIndex": 0},
-      {"id": "door-1", "type": "door", "doorIndex": 1},
-      {"id": "door-2", "type": "door", "doorIndex": 2},
-      {"id": "door-3", "type": "door", "doorIndex": 3},
-      {"id": "door-4", "type": "door", "doorIndex": 4},
-      {"id": "door-5", "type": "door", "doorIndex": 5},
-      {"id": "door-6", "type": "door", "doorIndex": 6},
-      {"id": "door-7", "type": "door", "doorIndex": 7},
-      {"id": "door-8", "type": "door", "doorIndex": 8},
-      {"id": "door-9", "type": "door", "doorIndex": 9},
-      {"id": "door-10", "type": "door", "doorIndex": 10},
-      {"id": "door-11", "type": "door", "doorIndex": 11},
-      {"id": "door-12", "type": "door", "doorIndex": 12},
-      {"id": "door-13", "type": "door", "doorIndex": 13},
-      {"id": "door-14", "type": "door", "doorIndex": 14},
-      {"id": "door-15", "type": "door", "doorIndex": 15},
-      {"id": "door-16", "type": "door", "doorIndex": 16},
-      {"id": "door-17", "type": "door", "doorIndex": 17},
-      {"id": "door-18", "type": "door", "doorIndex": 18},
-      {"id": "door-19", "type": "door", "doorIndex": 19},
-      {"id": "door-20", "type": "door", "doorIndex": 20},
-      {"id": "door-21", "type": "door", "doorIndex": 21},
-      {"id": "door-22", "type": "door", "doorIndex": 22},
-      {"id": "door-23", "type": "door", "doorIndex": 23},
-      {"id": "door-24", "type": "door", "doorIndex": 24},
-      {"id": "door-25", "type": "door", "doorIndex": 25},
-      {"id": "door-26", "type": "door", "doorIndex": 26},
-      {"id": "door-27", "type": "door", "doorIndex": 27},
-      {"id": "door-28", "type": "door", "doorIndex": 28},
-      {"id": "door-29", "type": "door", "doorIndex": 29},
-      {"id": "door-30", "type": "door", "doorIndex": 30},
-      {"id": "door-31", "type": "door", "doorIndex": 31},
-      {"id": "door-32", "type": "door", "doorIndex": 32},
-      {"id": "door-33", "type": "door", "doorIndex": 33}
+      {"id": "room-0", "type": "room", "holeIndex": 0},
+      {"id": "room-1", "type": "room", "holeIndex": 1},
+      {"id": "room-2", "type": "room", "holeIndex": 2},
+      {"id": "room-3", "type": "room", "holeIndex": 3},
+      {"id": "room-4", "type": "room", "holeIndex": 4},
+      {"id": "room-5", "type": "room", "holeIndex": 5},
+      {"id": "room-6", "type": "room", "holeIndex": 6},
+      {"id": "room-7", "type": "room", "holeIndex": 7},
+      {"id": "room-8", "type": "room", "holeIndex": 8},
+      {"id": "room-9", "type": "room", "holeIndex": 9},
+      {"id": "room-10", "type": "room", "holeIndex": 10},
+      {"id": "room-11", "type": "room", "holeIndex": 11},
+      {"id": "room-12", "type": "room", "holeIndex": 12},
+      {"id": "room-13", "type": "room", "holeIndex": 13},
+      {"id": "room-14", "type": "room", "holeIndex": 14},
+      {"id": "room-15", "type": "room", "holeIndex": 15},
+      {"id": "room-16", "type": "room", "holeIndex": 16},
+      {"id": "room-17", "type": "room", "holeIndex": 17},
+      {"id": "room-18", "type": "room", "holeIndex": 18},
+      {"id": "room-19", "type": "room", "holeIndex": 19},
+      {"id": "room-20", "type": "room", "holeIndex": 20},
+      {"id": "room-21", "type": "room", "holeIndex": 21},
+      {"id": "room-22", "type": "room", "holeIndex": 22},
+      {"id": "room-23", "type": "room", "holeIndex": 23},
+      {"id": "room-24", "type": "room", "holeIndex": 24},
+      {"id": "room-25", "type": "room", "holeIndex": 25},
+      {"id": "room-26", "type": "room", "holeIndex": 26},
+      {"id": "room-27", "type": "room", "holeIndex": 27},
+      {"id": "door-0", "type": "door", "doorIndex": 0, "roomSigns": [-1]},
+      {"id": "door-1", "type": "door", "doorIndex": 1, "roomSigns": [1]},
+      {"id": "door-2", "type": "door", "doorIndex": 2, "roomSigns": [1]},
+      {"id": "door-3", "type": "door", "doorIndex": 3, "roomSigns": [1]},
+      {"id": "door-4", "type": "door", "doorIndex": 4, "roomSigns": [1, -1]},
+      {"id": "door-5", "type": "door", "doorIndex": 5, "roomSigns": [1, -1]},
+      {"id": "door-6", "type": "door", "doorIndex": 6, "roomSigns": [-1, 1]},
+      {"id": "door-7", "type": "door", "doorIndex": 7, "roomSigns": [1, -1]},
+      {"id": "door-8", "type": "door", "doorIndex": 8, "roomSigns": [-1, 1]},
+      {"id": "door-9", "type": "door", "doorIndex": 9, "roomSigns": [-1, 1]},
+      {"id": "door-10", "type": "door", "doorIndex": 10, "roomSigns": [-1, 1]},
+      {"id": "door-11", "type": "door", "doorIndex": 11, "roomSigns": [-1, 1]},
+      {"id": "door-12", "type": "door", "doorIndex": 12, "roomSigns": [1, -1]},
+      {"id": "door-13", "type": "door", "doorIndex": 13, "roomSigns": [1, -1]},
+      {"id": "door-14", "type": "door", "doorIndex": 14, "roomSigns": [-1, 1]},
+      {"id": "door-15", "type": "door", "doorIndex": 15, "roomSigns": [1, -1]},
+      {"id": "door-16", "type": "door", "doorIndex": 16, "roomSigns": [-1, 1]},
+      {"id": "door-17", "type": "door", "doorIndex": 17, "roomSigns": [1, -1]},
+      {"id": "door-18", "type": "door", "doorIndex": 18, "roomSigns": [-1, 1]},
+      {"id": "door-19", "type": "door", "doorIndex": 19, "roomSigns": [1, -1]},
+      {"id": "door-20", "type": "door", "doorIndex": 20, "roomSigns": [-1, 1]},
+      {"id": "door-21", "type": "door", "doorIndex": 21, "roomSigns": [-1, 1]},
+      {"id": "door-22", "type": "door", "doorIndex": 22, "roomSigns": [-1, 1]},
+      {"id": "door-23", "type": "door", "doorIndex": 23, "roomSigns": [1]},
+      {"id": "door-24", "type": "door", "doorIndex": 24, "roomSigns": [-1, 1]},
+      {"id": "door-25", "type": "door", "doorIndex": 25, "roomSigns": [-1, 1]},
+      {"id": "door-26", "type": "door", "doorIndex": 26, "roomSigns": [-1, 1]},
+      {"id": "door-27", "type": "door", "doorIndex": 27, "roomSigns": [-1, 1]},
+      {"id": "door-28", "type": "door", "doorIndex": 28, "roomSigns": [-1, 1]},
+      {"id": "door-29", "type": "door", "doorIndex": 29, "roomSigns": [-1, 1]},
+      {"id": "door-30", "type": "door", "doorIndex": 30, "roomSigns": [-1, 1]},
+      {"id": "door-31", "type": "door", "doorIndex": 31, "roomSigns": [-1, 1]},
+      {"id": "door-32", "type": "door", "doorIndex": 32, "roomSigns": [1, -1]},
+      {"id": "door-33", "type": "door", "doorIndex": 33, "roomSigns": [1, -1]}
     ],
     "edges": [
-      {"src": "hole-1", "dst": "door-0"},
-      {"dst": "hole-1", "src": "door-0"},
-      {"src": "hole-24", "dst": "door-1"},
-      {"dst": "hole-24", "src": "door-1"},
-      {"src": "hole-1", "dst": "door-2"},
-      {"dst": "hole-1", "src": "door-2"},
-      {"src": "hole-24", "dst": "door-3"},
-      {"dst": "hole-24", "src": "door-3"},
-      {"src": "hole-0", "dst": "door-4"},
-      {"dst": "hole-0", "src": "door-4"},
-      {"src": "hole-3", "dst": "door-4"},
-      {"dst": "hole-3", "src": "door-4"},
-      {"src": "hole-1", "dst": "door-5"},
-      {"dst": "hole-1", "src": "door-5"},
-      {"src": "hole-2", "dst": "door-5"},
-      {"dst": "hole-2", "src": "door-5"},
-      {"src": "hole-1", "dst": "door-6"},
-      {"dst": "hole-1", "src": "door-6"},
-      {"src": "hole-2", "dst": "door-6"},
-      {"dst": "hole-2", "src": "door-6"},
-      {"src": "hole-0", "dst": "door-7"},
-      {"dst": "hole-0", "src": "door-7"},
-      {"src": "hole-4", "dst": "door-7"},
-      {"dst": "hole-4", "src": "door-7"},
-      {"src": "hole-0", "dst": "door-8"},
-      {"dst": "hole-0", "src": "door-8"},
-      {"src": "hole-7", "dst": "door-8"},
-      {"dst": "hole-7", "src": "door-8"},
-      {"src": "hole-1", "dst": "door-9"},
-      {"dst": "hole-1", "src": "door-9"},
-      {"src": "hole-7", "dst": "door-9"},
-      {"dst": "hole-7", "src": "door-9"},
-      {"src": "hole-7", "dst": "door-10"},
-      {"dst": "hole-7", "src": "door-10"},
-      {"src": "hole-25", "dst": "door-10"},
-      {"dst": "hole-25", "src": "door-10"},
-      {"src": "hole-7", "dst": "door-11"},
-      {"dst": "hole-7", "src": "door-11"},
-      {"src": "hole-24", "dst": "door-11"},
-      {"dst": "hole-24", "src": "door-11"},
-      {"src": "hole-5", "dst": "door-12"},
-      {"dst": "hole-5", "src": "door-12"},
-      {"src": "hole-7", "dst": "door-12"},
-      {"dst": "hole-7", "src": "door-12"},
-      {"src": "hole-5", "dst": "door-13"},
-      {"dst": "hole-5", "src": "door-13"},
-      {"src": "hole-6", "dst": "door-13"},
-      {"dst": "hole-6", "src": "door-13"},
-      {"src": "hole-7", "dst": "door-14"},
-      {"dst": "hole-7", "src": "door-14"},
-      {"src": "hole-8", "dst": "door-14"},
-      {"dst": "hole-8", "src": "door-14"},
-      {"src": "hole-8", "dst": "door-15"},
-      {"dst": "hole-8", "src": "door-15"},
-      {"src": "hole-9", "dst": "door-15"},
-      {"dst": "hole-9", "src": "door-15"},
-      {"src": "hole-7", "dst": "door-16"},
-      {"dst": "hole-7", "src": "door-16"},
-      {"src": "hole-12", "dst": "door-16"},
-      {"dst": "hole-12", "src": "door-16"},
-      {"src": "hole-12", "dst": "door-17"},
-      {"dst": "hole-12", "src": "door-17"},
-      {"src": "hole-13", "dst": "door-17"},
-      {"dst": "hole-13", "src": "door-17"},
-      {"src": "hole-7", "dst": "door-18"},
-      {"dst": "hole-7", "src": "door-18"},
-      {"src": "hole-16", "dst": "door-18"},
-      {"dst": "hole-16", "src": "door-18"},
-      {"src": "hole-16", "dst": "door-19"},
-      {"dst": "hole-16", "src": "door-19"},
-      {"src": "hole-19", "dst": "door-19"},
-      {"dst": "hole-19", "src": "door-19"},
-      {"src": "hole-7", "dst": "door-20"},
-      {"dst": "hole-7", "src": "door-20"},
-      {"src": "hole-21", "dst": "door-20"},
-      {"dst": "hole-21", "src": "door-20"},
-      {"src": "hole-20", "dst": "door-21"},
-      {"dst": "hole-20", "src": "door-21"},
-      {"src": "hole-21", "dst": "door-21"},
-      {"dst": "hole-21", "src": "door-21"},
-      {"src": "hole-25", "dst": "door-22"},
-      {"dst": "hole-25", "src": "door-22"},
-      {"src": "hole-27", "dst": "door-22"},
-      {"dst": "hole-27", "src": "door-22"},
-      {"src": "hole-25", "dst": "door-23"},
-      {"dst": "hole-25", "src": "door-23"},
-      {"src": "hole-10", "dst": "door-24"},
-      {"dst": "hole-10", "src": "door-24"},
-      {"src": "hole-11", "dst": "door-24"},
-      {"dst": "hole-11", "src": "door-24"},
-      {"src": "hole-7", "dst": "door-25"},
-      {"dst": "hole-7", "src": "door-25"},
-      {"src": "hole-10", "dst": "door-25"},
-      {"dst": "hole-10", "src": "door-25"},
-      {"src": "hole-14", "dst": "door-26"},
-      {"dst": "hole-14", "src": "door-26"},
-      {"src": "hole-15", "dst": "door-26"},
-      {"dst": "hole-15", "src": "door-26"},
-      {"src": "hole-7", "dst": "door-27"},
-      {"dst": "hole-7", "src": "door-27"},
-      {"src": "hole-14", "dst": "door-27"},
-      {"dst": "hole-14", "src": "door-27"},
-      {"src": "hole-17", "dst": "door-28"},
-      {"dst": "hole-17", "src": "door-28"},
-      {"src": "hole-18", "dst": "door-28"},
-      {"dst": "hole-18", "src": "door-28"},
-      {"src": "hole-7", "dst": "door-29"},
-      {"dst": "hole-7", "src": "door-29"},
-      {"src": "hole-17", "dst": "door-29"},
-      {"dst": "hole-17", "src": "door-29"},
-      {"src": "hole-22", "dst": "door-30"},
-      {"dst": "hole-22", "src": "door-30"},
-      {"src": "hole-23", "dst": "door-30"},
-      {"dst": "hole-23", "src": "door-30"},
-      {"src": "hole-7", "dst": "door-31"},
-      {"dst": "hole-7", "src": "door-31"},
-      {"src": "hole-22", "dst": "door-31"},
-      {"dst": "hole-22", "src": "door-31"},
-      {"src": "hole-24", "dst": "door-32"},
-      {"dst": "hole-24", "src": "door-32"},
-      {"src": "hole-26", "dst": "door-32"},
-      {"dst": "hole-26", "src": "door-32"},
-      {"src": "hole-24", "dst": "door-33"},
-      {"dst": "hole-24", "src": "door-33"},
-      {"src": "hole-26", "dst": "door-33"},
-      {"dst": "hole-26", "src": "door-33"}
+      {"src": "room-1", "dst": "door-0"},
+      {"dst": "room-1", "src": "door-0"},
+      {"src": "room-24", "dst": "door-1"},
+      {"dst": "room-24", "src": "door-1"},
+      {"src": "room-1", "dst": "door-2"},
+      {"dst": "room-1", "src": "door-2"},
+      {"src": "room-24", "dst": "door-3"},
+      {"dst": "room-24", "src": "door-3"},
+      {"src": "room-0", "dst": "door-4"},
+      {"dst": "room-0", "src": "door-4"},
+      {"src": "room-3", "dst": "door-4"},
+      {"dst": "room-3", "src": "door-4"},
+      {"src": "room-1", "dst": "door-5"},
+      {"dst": "room-1", "src": "door-5"},
+      {"src": "room-2", "dst": "door-5"},
+      {"dst": "room-2", "src": "door-5"},
+      {"src": "room-1", "dst": "door-6"},
+      {"dst": "room-1", "src": "door-6"},
+      {"src": "room-2", "dst": "door-6"},
+      {"dst": "room-2", "src": "door-6"},
+      {"src": "room-0", "dst": "door-7"},
+      {"dst": "room-0", "src": "door-7"},
+      {"src": "room-4", "dst": "door-7"},
+      {"dst": "room-4", "src": "door-7"},
+      {"src": "room-0", "dst": "door-8"},
+      {"dst": "room-0", "src": "door-8"},
+      {"src": "room-7", "dst": "door-8"},
+      {"dst": "room-7", "src": "door-8"},
+      {"src": "room-1", "dst": "door-9"},
+      {"dst": "room-1", "src": "door-9"},
+      {"src": "room-7", "dst": "door-9"},
+      {"dst": "room-7", "src": "door-9"},
+      {"src": "room-7", "dst": "door-10"},
+      {"dst": "room-7", "src": "door-10"},
+      {"src": "room-25", "dst": "door-10"},
+      {"dst": "room-25", "src": "door-10"},
+      {"src": "room-7", "dst": "door-11"},
+      {"dst": "room-7", "src": "door-11"},
+      {"src": "room-24", "dst": "door-11"},
+      {"dst": "room-24", "src": "door-11"},
+      {"src": "room-5", "dst": "door-12"},
+      {"dst": "room-5", "src": "door-12"},
+      {"src": "room-7", "dst": "door-12"},
+      {"dst": "room-7", "src": "door-12"},
+      {"src": "room-5", "dst": "door-13"},
+      {"dst": "room-5", "src": "door-13"},
+      {"src": "room-6", "dst": "door-13"},
+      {"dst": "room-6", "src": "door-13"},
+      {"src": "room-7", "dst": "door-14"},
+      {"dst": "room-7", "src": "door-14"},
+      {"src": "room-8", "dst": "door-14"},
+      {"dst": "room-8", "src": "door-14"},
+      {"src": "room-8", "dst": "door-15"},
+      {"dst": "room-8", "src": "door-15"},
+      {"src": "room-9", "dst": "door-15"},
+      {"dst": "room-9", "src": "door-15"},
+      {"src": "room-7", "dst": "door-16"},
+      {"dst": "room-7", "src": "door-16"},
+      {"src": "room-12", "dst": "door-16"},
+      {"dst": "room-12", "src": "door-16"},
+      {"src": "room-12", "dst": "door-17"},
+      {"dst": "room-12", "src": "door-17"},
+      {"src": "room-13", "dst": "door-17"},
+      {"dst": "room-13", "src": "door-17"},
+      {"src": "room-7", "dst": "door-18"},
+      {"dst": "room-7", "src": "door-18"},
+      {"src": "room-16", "dst": "door-18"},
+      {"dst": "room-16", "src": "door-18"},
+      {"src": "room-16", "dst": "door-19"},
+      {"dst": "room-16", "src": "door-19"},
+      {"src": "room-19", "dst": "door-19"},
+      {"dst": "room-19", "src": "door-19"},
+      {"src": "room-7", "dst": "door-20"},
+      {"dst": "room-7", "src": "door-20"},
+      {"src": "room-21", "dst": "door-20"},
+      {"dst": "room-21", "src": "door-20"},
+      {"src": "room-20", "dst": "door-21"},
+      {"dst": "room-20", "src": "door-21"},
+      {"src": "room-21", "dst": "door-21"},
+      {"dst": "room-21", "src": "door-21"},
+      {"src": "room-25", "dst": "door-22"},
+      {"dst": "room-25", "src": "door-22"},
+      {"src": "room-27", "dst": "door-22"},
+      {"dst": "room-27", "src": "door-22"},
+      {"src": "room-25", "dst": "door-23"},
+      {"dst": "room-25", "src": "door-23"},
+      {"src": "room-10", "dst": "door-24"},
+      {"dst": "room-10", "src": "door-24"},
+      {"src": "room-11", "dst": "door-24"},
+      {"dst": "room-11", "src": "door-24"},
+      {"src": "room-7", "dst": "door-25"},
+      {"dst": "room-7", "src": "door-25"},
+      {"src": "room-10", "dst": "door-25"},
+      {"dst": "room-10", "src": "door-25"},
+      {"src": "room-14", "dst": "door-26"},
+      {"dst": "room-14", "src": "door-26"},
+      {"src": "room-15", "dst": "door-26"},
+      {"dst": "room-15", "src": "door-26"},
+      {"src": "room-7", "dst": "door-27"},
+      {"dst": "room-7", "src": "door-27"},
+      {"src": "room-14", "dst": "door-27"},
+      {"dst": "room-14", "src": "door-27"},
+      {"src": "room-17", "dst": "door-28"},
+      {"dst": "room-17", "src": "door-28"},
+      {"src": "room-18", "dst": "door-28"},
+      {"dst": "room-18", "src": "door-28"},
+      {"src": "room-7", "dst": "door-29"},
+      {"dst": "room-7", "src": "door-29"},
+      {"src": "room-17", "dst": "door-29"},
+      {"dst": "room-17", "src": "door-29"},
+      {"src": "room-22", "dst": "door-30"},
+      {"dst": "room-22", "src": "door-30"},
+      {"src": "room-23", "dst": "door-30"},
+      {"dst": "room-23", "src": "door-30"},
+      {"src": "room-7", "dst": "door-31"},
+      {"dst": "room-7", "src": "door-31"},
+      {"src": "room-22", "dst": "door-31"},
+      {"dst": "room-22", "src": "door-31"},
+      {"src": "room-24", "dst": "door-32"},
+      {"dst": "room-24", "src": "door-32"},
+      {"src": "room-26", "dst": "door-32"},
+      {"dst": "room-26", "src": "door-32"},
+      {"src": "room-24", "dst": "door-33"},
+      {"dst": "room-24", "src": "door-33"},
+      {"src": "room-26", "dst": "door-33"},
+      {"dst": "room-26", "src": "door-33"}
     ]
   },
   "hullPoly": [
