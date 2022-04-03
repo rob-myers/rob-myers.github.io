@@ -234,6 +234,7 @@ declare namespace Geomorph {
   interface Door<T> extends Geom.AngledRect<RectJson> {
     poly: T;
     seg: [Geom.VectJson, Geom.VectJson];
+    normal: Geom.VectJson;
     tags: string[];
   }
 

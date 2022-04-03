@@ -235,6 +235,19 @@ export class Rect {
     return this;
   }
 
+  /**
+   * Mutate precision.
+   * @param {number} dp decimal places
+   */
+  precision(dp) {
+    return this.set(
+      Number(this.x.toFixed(dp)),
+      Number(this.y.toFixed(dp)),
+      Number(this.width.toFixed(dp)),
+      Number(this.height.toFixed(dp)),
+    );
+  }
+
   /** @param {number} k */
   scale(k) {
     this.x *= k;

@@ -129,7 +129,15 @@ export async function createLayout(def, lookup, triangleService) {
     .map(({ poly, tags }) => {
       const { angle, rect } = geom.polyToAngledRect(poly);
       const [u, v] = geom.getAngledRectSeg({ angle, rect });
-      return { angle, rect: rect.json, poly, tags, seg: [u.json, v.json] };
+      const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
+      return {
+        angle,
+        rect: rect.precision(3).json,
+        poly,
+        tags,
+        seg: [u.precision(3).json, v.precision(3).json],
+        normal: normal.precision(3).json,
+      };
     });
 
   return {
