@@ -60,6 +60,12 @@ declare namespace Graph {
     id: string;
     /** Index of `Geomorph.Layout['doors']` */
     doorIndex: number;
+    /**
+     * This array is aligned with this node's successors (1 or 2 room nodes).
+     * We compute the sign of the dot product of (a) the respective door's normal,
+     * (b) the direction from the door towards the respective room.
+     */
+    roomSigns: (-1 | 1)[];
   }
 
   export type RoomGraphNode = (
@@ -82,7 +88,9 @@ declare namespace Graph {
     type: 'gm';
     /** `gm-${gmKey}-[${transform}]` */
     id: string;
+    /** Key of parent geomorph */
     gmKey: Geomorph.LayoutKey;
+    /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
   }
 
@@ -91,10 +99,18 @@ declare namespace Graph {
     type: 'door';
     /** `door-${gmKey}-[${transform}]-${hullDoorIndex}` */
     id: string;
+    /** Key of parent geomorph */
     gmKey: Geomorph.LayoutKey;
+    /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
     /** Index of `Geomorph.UseGeomorphsItem['hullDoors']` */
     hullDoorIndex: number;
+    /**
+     * Recall that a door node is connected to exactly one room node.
+     * We compute the sign of the dot product of (a) the respective door's normal,
+     * (b) the direction from the door towards the respective room.
+     */
+    roomSign: -1 | 1;
   }
 
   export type GmGraphNode = (

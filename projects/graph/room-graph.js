@@ -18,6 +18,27 @@ export class RoomGraph extends BaseGraph {
     return Array.from(doors);
   }
 
+  /** @param {number} doorIndex */
+  getDoorNode(doorIndex) {
+    return /** @type {Graph.RoomGraphNodeDoor} */ (this.getNodeById(`door-${doorIndex}`));
+  }
+
+  /** @param {number} roomIndex */
+  getRoomNode(roomIndex) {
+    return /** @type {Graph.RoomGraphNodeRoom} */ (this.getNodeById(`room-${roomIndex}`));
+  }
+  
+  /**
+   * @param {*} roomIndex The i^th room
+   * @param {number} doorIndex The i^th door
+   */
+  getRoomSign(roomIndex, doorIndex) {
+    const room = this.getRoomNode(roomIndex);
+    const door = this.getDoorNode(doorIndex);
+    const roomSuccIndex = /** @type {-1 | 0 | 1} */ (this.getSuccs(door).indexOf(room));
+    return roomSuccIndex === -1 ? null : door.roomSigns[roomSuccIndex];
+  }
+
   /**
    * Given a 'room' node, find all other rooms connected via an open 'door' node.
    * We assume the undirected graph is bipartite i.e. rooms only connect to doors.
@@ -42,30 +63,45 @@ export class RoomGraph extends BaseGraph {
 
   /**
   * @param {Geom.Poly[]} holes 
-  * @param {Geom.Poly[]} doorPolys 
+  * @param {Geomorph.Door<Poly>[]} doors 
   * @returns {Graph.RoomGraphJson}
   */
-  static fromGeometry(holes, doorPolys) {
-   /** @type {Graph.RoomGraphNode[]} */
-   const roomGraphNodes = [
-     ...holes.map((_, holeIndex) => ({ id: `hole-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex })),
-     ...doorPolys.map((_, doorIndex) => ({ id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex  })),
-   ];
+  static fromHolesAndDoors(holes, doors) {
 
-   /** @type {Graph.RoomGraphEdgeOpts[]} */
-   const roomGraphEdges = doorPolys.flatMap((door, doorIndex) => {
-     const holeIds = holes.flatMap((hole, i) => Poly.union([hole, door]).length === 1 ? i : []);
-     if (holeIds.length === 1 || holeIds.length === 2) {
-       // Hull door (1) or standard door (2)
-       return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
-         { src: `hole-${holeId}`, dst: `door-${doorIndex}` },
-         { dst: `hole-${holeId}`, src: `door-${doorIndex}` },
-       ]);
-     } else {
-       console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
-       return [];
-     }
-   });
+    /**
+     * For each door, the respective adjacent hole ids.
+     * Each array will be aligned with the respective door node's successors.
+     */
+    const doorsHoleIds = doors.map(door => holes.flatMap((hole, i) => Poly.union([hole, door.poly]).length === 1 ? i : []));
+
+    /** @type {Graph.RoomGraphNode[]} */
+    const roomGraphNodes = [
+      ...holes.map((_, holeIndex) => ({
+        id: `room-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex,
+      })),
+      ...doors.map((door, doorIndex) => {
+        const alongNormal = door.poly.center.addScaledVector(door.normal, 10);
+        const roomSigns = doorsHoleIds[doorIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
+        return ({ id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex, roomSigns });
+      }),
+    ];
+
+    /** @type {Graph.RoomGraphEdgeOpts[]} */
+    const roomGraphEdges = doors.flatMap((_door, doorIndex) => {
+      const holeIds = doorsHoleIds[doorIndex];
+      if (
+        holeIds.length === 1 // Hull door
+        || holeIds.length === 2 // Standard door
+      ) {
+        return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
+          { src: `room-${holeId}`, dst: `door-${doorIndex}` },
+          { dst: `room-${holeId}`, src: `door-${doorIndex}` },
+        ]);
+      } else {
+        console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
+        return [];
+      }
+    });
 
    /** @type {Graph.RoomGraphJson} */
    const roomGraphJson = {

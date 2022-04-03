@@ -1,7 +1,7 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
 import { keys } from './generic';
-import { Poly, Rect, Mat } from '../geom';
+import { Poly, Rect, Mat, Vect } from '../geom';
 import { extractGeomsAt, hasTitle } from './cheerio';
 import { geom } from './geom';
 import { labelMeta } from '../geomorph/geomorph.model';
@@ -122,7 +122,6 @@ export async function createLayout(def, lookup, triangleService) {
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys));
   const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
-  const roomGraphJson = RoomGraph.fromGeometry(holes, doorPolys);
 
   /** @type {Geomorph.Door<Poly>[]}  */
   const doors = groups.singles.filter(x => x.tags.includes('door'))
@@ -139,6 +138,8 @@ export async function createLayout(def, lookup, triangleService) {
         normal: normal.precision(3).json,
       };
     });
+
+  const roomGraphJson = RoomGraph.fromHolesAndDoors(holes, doors);
 
   return {
     key: def.key,
@@ -373,6 +374,7 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
     ...meta,
     poly: meta.poly.clone().applyMatrix(matrix),
     rect: Rect.fromJson(meta.rect).applyMatrix(matrix).json,
+    normal: matrix.transformPoint(Vect.from(meta.normal)).json,
   }));
 
   const { a, b, c, d, e, f } = matrix.getInverseMatrix();

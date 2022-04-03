@@ -21,9 +21,11 @@ export class GmGraph extends BaseGraph {
         const gmNode = { type: 'gm', gmKey: x.layoutKey, id: `gm-${x.layoutKey}-[${x.transform}]`, transform: x.transform  };
         return gmNode;        
       }),
-      ...gmItems.flatMap(x => x.hullDoors.map((_, hullDoorIndex) => {
+      ...gmItems.flatMap(x => x.hullDoors.map((hullDoor, hullDoorIndex) => {
+        const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 10);
+        const roomSign = x.pngRect.contains(alongNormal) ? 1 : -1;
         /** @type {Graph.GmGraphNodeDoor} */
-        const doorNode = { type: 'door', gmKey: x.layoutKey, id: `door-${x.layoutKey}-[${x.transform}]-${hullDoorIndex}`, hullDoorIndex, transform: x.transform };
+        const doorNode = { type: 'door', gmKey: x.layoutKey, id: `door-${x.layoutKey}-[${x.transform}]-${hullDoorIndex}`, hullDoorIndex, transform: x.transform, roomSign };
         return doorNode;
       })
       ),

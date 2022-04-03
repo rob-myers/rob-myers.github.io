@@ -5,6 +5,7 @@ import { filter } from "rxjs/operators";
 import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { assertDefined } from "../service/generic";
+import { geom } from "../service/geom";
 import { geomorphDataToGeomorphsItem } from "../service/geomorph";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
@@ -33,18 +34,54 @@ export default function LightsTest(props) {
       },
 
       updateMask(delayMask = 0) {
-        const { pngRect, hullOutline, holesWithDoors, roomGraph } = assertDefined(gm).d;
+        const {
+          d: {pngRect, hullOutline, holesWithDoors, roomGraph},
+          doors, groups: { walls },
+        } = assertDefined(gm);
 
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
         const openDoorIds = state.doorsApi.getOpen();
-        const adjHoleIds = rootHoleIds.flatMap(holeId => {
-          // Assume node-ordering aligned to holeIndex
-          return roomGraph.getEnterableRooms(roomGraph.nodesArray[holeId], openDoorIds)
-            .map(roomNode => roomNode.holeIndex);
+
+        // AdjHoles contribute a light polygon
+        const lightPolygons = rootHoleIds.flatMap(srcHoleId => {
+          // room-node ordering aligned to holes
+          const roomNode = roomGraph.nodesArray[srcHoleId];
+          const adjDoorIds = roomGraph.getAdjacentDoors([roomNode]).map(x => x.doorIndex);
+          const adjOpenDoorIds = adjDoorIds.filter(id => openDoorIds.includes(id));
+          // const closedDoorIds = adjDoorIds.filter(id => !adjOpenDoorIds.includes(id));
+          const closedDoorIds = doors.map((_, doorId) => doorId).filter(id => !adjOpenDoorIds.includes(id));
+          const closedDoorPolys = closedDoorIds.map(id => doors[id]).map(x => x.poly);
+          /**
+           * TODO move light backwards into room
+           * - need normal for each door ✅
+           * - RoomGraph says which side ✅
+           * TODO simplify walls
+           * - restrict to union of current/succ hole polys 🚧
+           */
+          
+          return adjOpenDoorIds.map(doorIndex => {
+            const door = doors[doorIndex];
+            const roomSign = roomGraph.getRoomSign(srcHoleId, doorIndex);
+            if (roomSign === null) {
+              console.warn(`hole ${srcHoleId}: door ${doorIndex}: unexpected roomSign`);
+            }
+            const lightSource = door.poly.center.addScaledVector(door.normal, 20 * (roomSign || 0))
+            const triangs = walls.concat(closedDoorPolys)
+              .flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
+            return geom.lightPolygon(lightSource, 1000, triangs);
+          })
         });
-        const allHoleIds = Array.from(new Set(rootHoleIds.concat(adjHoleIds)));
-        // TODO adjHoles should contribute a light polygon instead
-        const allHolePolys = allHoleIds.map(i => holesWithDoors[i]);
+        const allHolePolys = rootHoleIds.map(id => holesWithDoors[id]).concat(lightPolygons);
+        
+        // OLD APPROACH i.e. without light polygons
+        //
+        // const adjHoleIds = rootHoleIds.flatMap(holeId => {
+        //   // Assume room-node-ordering aligned to holeIndex
+        //   return roomGraph.getEnterableRooms(roomGraph.nodesArray[holeId], openDoorIds)
+        //     .map(roomNode => roomNode.holeIndex);
+        // });
+        // const allHoleIds = removeDups(rootHoleIds.concat(adjHoleIds));
+        // const allHolePolys = allHoleIds.map(i => holesWithDoors[i]);
 
         const observableDoors = roomGraph.getAdjacentDoors(rootHoleIds.map(id => roomGraph.nodesArray[id]));
         this.doorsApi.setObservableDoors(observableDoors.map(x => x.doorIndex));
