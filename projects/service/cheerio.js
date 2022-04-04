@@ -17,19 +17,21 @@ export function hasTitle(api, node, title) {
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
  * @param {string} title
+ * @param {number} [precisionDp]
  */
-export function extractGeomsAt(api, topNodes, title) {
+export function extractGeomsAt(api, topNodes, title, precisionDp) {
   const group = topNodes.find(x => hasTitle(api, x, title));
-  return group ? extractGeoms(api, group) : [];
+  return group ? extractGeoms(api, group, precisionDp) : [];
 }
 
 /**
  * @param {CheerioAPI} api
  * @param {Element} parent
+ * @param {number} [precisionDp]
  */
-export function extractGeoms(api, parent) {
+export function extractGeoms(api, parent, precisionDp = 4) {
   const children = api(parent).children('rect, path, ellipse').toArray();
-  return children.flatMap(x => extractGeom(api, x)).map(x => x.precision(4));
+  return children.flatMap(x => extractGeom(api, x)).map(x => x.precision(precisionDp));
 }
 
 /**
