@@ -8,14 +8,26 @@ export class RoomGraph extends BaseGraph {
 
   /**
    * Given nodes, find all adjacent doors.
-   * @param {Graph.RoomGraphNode[]} nodes
+   * @param {...Graph.RoomGraphNode} nodes
    */
-  getAdjacentDoors(nodes) {
+  getAdjacentDoors(...nodes) {
     const doors = /** @type {Set<Graph.RoomGraphNodeDoor>} */ (new Set);
     nodes.forEach(node => this.getSuccs(node).forEach(other =>
       other.type === 'door' && doors.add(other))
     );
     return Array.from(doors);
+  }
+
+  /**
+   * Given nodes, find all adjacent rooms.
+   * @param {...Graph.RoomGraphNode} nodes
+   */
+  getAdjacentRooms(...nodes) {
+    const rooms = /** @type {Set<Graph.RoomGraphNodeRoom>} */ (new Set);
+    nodes.forEach(node => this.getSuccs(node).forEach(other =>
+      other.type === 'room' && rooms.add(other))
+    );
+    return Array.from(rooms);
   }
 
   /** @param {number} doorIndex */

@@ -30,49 +30,46 @@ export default function LightsTest(props) {
       onToggleLight({ target }) {
         const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
         dataIndex in state.isHoleShown ? delete state.isHoleShown[dataIndex] : state.isHoleShown[dataIndex] = true;
-        state.updateMask();
+        state.updateMasks();
       },
 
-      updateMask(delayMask = 0) {
+      updateMasks(delayMask = 0) {
         const {
           d: {pngRect, hullOutline, holesWithDoors, roomGraph},
-          doors, groups: { walls },
+          doors,
         } = assertDefined(gm);
 
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
         const openDoorIds = state.doorsApi.getOpen();
 
+        // TODO 🚧 windows have light polygons too
         // AdjHoles contribute a light polygon
-        const lightPolygons = rootHoleIds.flatMap(srcHoleId => {
+        const lightPolygons = rootHoleIds.flatMap((srcHoleId) => {
           const roomNode = roomGraph.nodesArray[srcHoleId];
-          const adjOpenDoorIds = roomGraph.getAdjacentDoors([roomNode]).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
-          // NOTE _adjacent_ closed doors insufficient, but using all `doors` is overkill
+          const adjOpenDoorIds = roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
+          // NOTE adjacent closed doors insufficient
           const closedDoorPolys = doors.flatMap((door, id) => !adjOpenDoorIds.includes(id) ? door.poly : []);
-          /**
-           * TODO simplify walls
-           * - restrict to union of current/succ hole polys 🚧
-           */
+
           return adjOpenDoorIds.map(doorIndex => {
             const door = doors[doorIndex];
+            const adjRoomNodes = roomGraph.getAdjacentRooms(roomGraph.getDoorNode(doorIndex));
             const roomSign = roomGraph.getRoomSign(srcHoleId, doorIndex);
-            if (roomSign === null) console.warn(`hole ${srcHoleId}: door ${doorIndex}: unexpected roomSign`);
-            const lightSource = door.poly.center.addScaledVector(door.normal, 20 * (roomSign || 0))
-            const triangs = walls.concat(closedDoorPolys)
-              .flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-            return geom.lightPolygon(lightSource, 1000, triangs);
+            if (roomSign === null)
+              console.warn(`hole ${srcHoleId}: door ${doorIndex}: roomSign is null`);
+            const lightPosition = door.poly.center.addScaledVector(door.normal, 20 * (roomSign || 0))
+            const lightWalls = Poly.union(adjRoomNodes.map(x => holesWithDoors[x.holeIndex]))[0];
+            // TODO cache door triangulation earlier
+            const triangs = closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
+            return geom.lightPolygon(lightPosition, 1000, triangs, lightWalls);
           })
         });
-        const allHolePolys = rootHoleIds.map(id => holesWithDoors[id]).concat(lightPolygons);
-        
-        // OLD APPROACH without light polygons
-        // const adjHoleIds = rootHoleIds.flatMap(holeId => {
-        //   return roomGraph.getEnterableRooms(roomGraph.nodesArray[holeId], openDoorIds)
-        //     .map(roomNode => roomNode.holeIndex);
-        // });
-        // const allHoleIds = removeDups(rootHoleIds.concat(adjHoleIds));
-        // const allHolePolys = allHoleIds.map(i => holesWithDoors[i]);
 
-        const observableDoors = roomGraph.getAdjacentDoors(rootHoleIds.map(id => roomGraph.nodesArray[id]));
+        const allHolePolys = rootHoleIds
+          .map(id => holesWithDoors[id]) // Each root contribs holeWithDoor
+          .concat(lightPolygons) // Each open door contribs a light polygon
+          .map(x => x.precision(3));
+
+        const observableDoors = roomGraph.getAdjacentDoors(...rootHoleIds.map(id => roomGraph.nodesArray[id]));
         this.doorsApi.setObservableDoors(observableDoors.map(x => x.doorIndex));
         const maskPoly = Poly.cutOut(allHolePolys, [hullOutline],)
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));
@@ -89,10 +86,10 @@ export default function LightsTest(props) {
 
   React.useEffect(() => {
     if (gm) {
-      state.updateMask(); // Initial update
+      state.updateMasks(); // Initial update
       const sub = state.wire
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
-        .subscribe((x) => state.updateMask(x.key === 'closed-door' ? 300 : 0));
+        .subscribe((x) => state.updateMasks(x.key === 'closed-door' ? 300 : 0));
       return () => sub.unsubscribe();
     }
   }, [gm]);
@@ -160,8 +157,8 @@ export default function LightsTest(props) {
 }
 
 /** @type {Geomorph.LayoutKey} */
-const layoutKey = 'g-301--bridge';
-// const layoutKey = 'g-101--multipurpose';
+// const layoutKey = 'g-301--bridge';
+const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-102--research-deck';
 // const layoutKey = 'g-302--xboat-repair-bay';
 // const layoutKey = 'g-303--passenger-deck';

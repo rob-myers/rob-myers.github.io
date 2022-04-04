@@ -86,7 +86,7 @@ export default function NavDemo1(props) {
         gms.map(gm => {
           const { roomGraph } = gm;
           const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
-          const observableDoors = roomGraph.getAdjacentDoors([currentRoomNode]);
+          const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
           this.doorsApi[gm.layoutKey].setObservableDoors(observableDoors.map(x => x.doorIndex));
         });
       },
@@ -94,6 +94,12 @@ export default function NavDemo1(props) {
   }, [gms], {
     equality: { currentHoleId: true },
   });
+
+  // React.useEffect(() => {
+  //   if (gms.length) {
+  //     console.log(gmGraph)
+  //   }
+  // }, [gmGraph]);
 
   // React.useEffect(() => {
   //   state.npcsApi.spawn([
@@ -156,11 +162,6 @@ export default function NavDemo1(props) {
     </CssPanZoom>
   ) : null;
 }
-
-const layoutKey = /** @type {const} */ ({
-  101: 'g-101--multipurpose',
-  301: 'g-301--bridge',
-});
 
 /** @param {Geomorph.GeomorphData} gm */
 const rootCss = css`
