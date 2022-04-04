@@ -113,3 +113,11 @@ export function deepClone(input) {
 export function keys(record) {
   return /** @type {K[]} */ (Object.keys(record));
 }
+
+/**
+ * @template T
+ * @param {T[]} items 
+ */
+export function removeDups(items) {
+  return Array.from(new Set(items));
+}
