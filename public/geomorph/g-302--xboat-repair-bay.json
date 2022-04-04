@@ -2323,7 +2323,9 @@
       {"id": "door-16", "type": "door", "doorIndex": 16, "roomSigns": [-1, 1]},
       {"id": "door-17", "type": "door", "doorIndex": 17, "roomSigns": [1, -1]},
       {"id": "door-18", "type": "door", "doorIndex": 18, "roomSigns": [1, -1]},
-      {"id": "door-19", "type": "door", "doorIndex": 19, "roomSigns": [1, -1]}
+      {"id": "door-19", "type": "door", "doorIndex": 19, "roomSigns": [1, -1]},
+      {"id": "window-0", "type": "window", "windowIndex": 0, "roomSigns": []},
+      {"id": "window-1", "type": "window", "windowIndex": 1, "roomSigns": []}
     ],
     "edges": [
       {"src": "room-2", "dst": "door-0"},

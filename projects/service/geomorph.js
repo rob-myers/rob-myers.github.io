@@ -130,7 +130,7 @@ export async function createLayout(def, lookup, triangleService) {
     .map((x) => singleToRichAngleRect(x)
   );
 
-  const roomGraphJson = RoomGraph.fromHolesAndDoors(holes, doors);
+  const roomGraphJson = RoomGraph.fromHolesAndDoors(holes, doors, windows);
 
   return {
     key: def.key,

@@ -76,15 +76,17 @@ export class RoomGraph extends BaseGraph {
   /**
   * @param {Geom.Poly[]} holes 
   * @param {Geomorph.RichAngledRect<Poly>[]} doors 
+  * @param {Geomorph.RichAngledRect<Poly>[]} windows 
   * @returns {Graph.RoomGraphJson}
   */
-  static fromHolesAndDoors(holes, doors) {
+  static fromHolesAndDoors(holes, doors, windows) {
 
     /**
      * For each door, the respective adjacent hole ids.
      * Each array will be aligned with the respective door node's successors.
      */
     const doorsHoleIds = doors.map(door => holes.flatMap((hole, i) => Poly.union([hole, door.poly]).length === 1 ? i : []));
+    const windowsHoleIds = windows.map(window => holes.flatMap((hole, i) => Poly.union([hole, window.poly]).length === 1 ? i : []));
 
     /** @type {Graph.RoomGraphNode[]} */
     const roomGraphNodes = [
@@ -94,26 +96,46 @@ export class RoomGraph extends BaseGraph {
       ...doors.map((door, doorIndex) => {
         const alongNormal = door.poly.center.addScaledVector(door.normal, 10);
         const roomSigns = doorsHoleIds[doorIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
-        return ({ id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex, roomSigns });
+        /** @type {Graph.RoomGraphNodeDoor} */
+        const doorNode = { id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex, roomSigns };
+        return doorNode;
+      }),
+      ...windows.map((window, windowIndex) => {
+        const alongNormal = window.poly.center.addScaledVector(window.normal, 10);
+        const roomSigns = windowsHoleIds[windowIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
+        /** @type {Graph.RoomGraphNodeWindow} */
+        const windowNode = { id: `window-${windowIndex}`, type: /** @type {const} */ ('window'), windowIndex: windowIndex, roomSigns };
+        return windowNode;
       }),
     ];
 
     /** @type {Graph.RoomGraphEdgeOpts[]} */
-    const roomGraphEdges = doors.flatMap((_door, doorIndex) => {
-      const holeIds = doorsHoleIds[doorIndex];
-      if (
-        holeIds.length === 1 // Hull door
-        || holeIds.length === 2 // Standard door
-      ) {
-        return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
-          { src: `room-${holeId}`, dst: `door-${doorIndex}` },
-          { dst: `room-${holeId}`, src: `door-${doorIndex}` },
-        ]);
-      } else {
-        console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
-        return [];
-      }
-    });
+    const roomGraphEdges = [
+      ...doors.flatMap((_door, doorIndex) => {
+        const holeIds = doorsHoleIds[doorIndex];
+        if ([1,2].includes(holeIds.length)) {// Hull door has 1, standard has 2
+          return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
+            { src: `room-${holeId}`, dst: `door-${doorIndex}` },
+            { dst: `room-${holeId}`, src: `door-${doorIndex}` },
+          ]);
+        } else {
+          console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
+          return [];
+        }
+      }),
+      ...windows.flatMap((_window, windowIndex) => {
+        const holeIds = windowsHoleIds[windowIndex];
+        if ([1,2].includes(holeIds.length)) {// Hull window has 1, standard has 2
+          return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
+            { src: `room-${holeId}`, dst: `window-${windowIndex}` },
+            { dst: `room-${holeId}`, src: `window-${windowIndex}` },
+          ]);
+        } else {
+          console.warn(`window ${windowIndex}: unexpected adjacent holes: ${holeIds}`)
+          return [];
+        }
+      }),
+    ];
 
    /** @type {Graph.RoomGraphJson} */
    const roomGraphJson = {

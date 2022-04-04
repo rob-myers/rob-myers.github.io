@@ -163,10 +163,10 @@ export default function LightsTest(props) {
 
 /** @type {Geomorph.LayoutKey} */
 // const layoutKey = 'g-301--bridge';
-// const layoutKey = 'g-101--multipurpose';
+const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-102--research-deck';
 // const layoutKey = 'g-302--xboat-repair-bay';
-const layoutKey = 'g-303--passenger-deck';
+// const layoutKey = 'g-303--passenger-deck';
 
 const rootCss = css`
   img.geomorph-dark {
@@ -211,9 +211,11 @@ function DebugGraph({ gm }) {
           fill="none"
           r={5}
           {...node.type === 'room'
-            ? { cx: gm.d.holeSwitches[i].x, cy: gm.d.holeSwitches[i].y,  }
-            : { cx: gm.doors[node.doorIndex].poly.center.x, cy: gm.doors[node.doorIndex].poly.center.y }
-          }
+            && { cx: gm.d.holeSwitches[i].x, cy: gm.d.holeSwitches[i].y,  }}
+          {...node.type === 'door'
+            && { cx: gm.doors[node.doorIndex].poly.center.x, cy: gm.doors[node.doorIndex].poly.center.y }}
+          {...node.type === 'window'
+            && { cx: gm.doors[node.windowIndex].poly.center.x, cy: gm.windows[node.windowIndex].poly.center.y }}
         />
         )}
         {gm.holes.map((poly) =>
