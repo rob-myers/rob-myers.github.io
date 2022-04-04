@@ -153,22 +153,21 @@ class GeomService {
    * Compute light polygon.
    * @param {Geom.Vect} pos Position of light.
    * @param {number} range 
-   * @param {Geom.Poly[]} tris Each polygon must be a triangle.
+   * @param {Geom.Poly[]} [tris] Triangles defining obstructions
+   * @param {Geom.Poly} [exterior] Simple polygon (i.e. ring) we are inside
    * @returns 
    */
-  lightPolygon(pos, range, tris) {
+  lightPolygon(pos, range, tris, exterior) {
     const lightBounds = new Rect(pos.x - range, pos.y - range, 2 * range, 2 * range);
-    const closeTris = tris.filter(({ rect }) => lightBounds.intersects(rect));
-    const points = new Set(
-      closeTris.reduce(
-        (agg, { outline }) => agg.concat(outline),
-        /** @type {Geom.Vect[]} */ ([]),
-      )
+    const closeTris = tris??[].filter(({ rect }) => lightBounds.intersects(rect));
+    const points = new Set(closeTris
+        .reduce((agg, { outline }) => agg.concat(outline), /** @type {Geom.Vect[]} */ ([]))
+        .concat(exterior?.outline??[]),
     );
-    const lineSegs = closeTris.reduce(
+    const allLineSegs = closeTris.reduce(
       (agg, { outline: [u, v, w] }) => agg.concat([[u, v], [v, w], [w, u]]),
       /** @type {[Geom.Vect, Geom.Vect][]} */ ([]),
-    );
+    ).concat(exterior?.lineSegs??[]);
 
     // These will be unit directional vectors.
     const dir0 = Vect.zero;
@@ -188,7 +187,7 @@ class GeomService {
       dir0.copy(dir1).rotate(-0.001);
       dir2.copy(dir1).rotate(+0.001);
       dist0 = dist1 = dist2 = range;
-      lineSegs.forEach(([q0, q1]) => {
+      allLineSegs.forEach(([q0, q1]) => {
         d = this.getLineLineSegIntersect(pos, dir0, q0, q1);
         if (d !== null && d >= 0 && d < dist0) {
           dist0 = d;
