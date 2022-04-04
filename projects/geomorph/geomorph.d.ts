@@ -43,9 +43,14 @@ declare namespace Geomorph {
   }
 
   interface SvgGroups<T> {
-    singles: { tags: string[]; poly: T }[];
+    singles: SvgGroupsSingle<T>[];
     obstacles: T[];
     walls: T[];
+  }
+
+  interface SvgGroupsSingle<T> {
+    poly: T;
+    tags: string[];
   }
 
   /**
@@ -60,13 +65,16 @@ declare namespace Geomorph {
     /** Transformed and filtered groups */
     groups: SvgGroups<T>;
 
+    /** Correspond to 'rooms' and referenced in `roomGraph`. */
     holes: T[];
-    doors: Door<T>[];
+    doors: RichAngledRect<T>[];
+    windows: RichAngledRect<T>[];
     labels: LayoutLabel[];
     /** The navigable area including doorways. */
     navPoly: T[];
     /** A rich triangulation involving Steiner points */
     navDecomp: Geom.TriangulationJson;
+    /** Connectivity graph involving holes and doors */
     roomGraph: Graph.RoomGraphJson;
 
     /** Should probably have exactly one polygon */
@@ -87,9 +95,9 @@ declare namespace Geomorph {
       pngHref: string;
       /** Untransformed */
       pngRect: Geom.RectJson;
-      /** If absent then is identity transform */
+      /** If absent use identity transform */
       transformArray?: LayoutDefItem['transform'];
-      /** If absent then is identity transform */
+      /** If absent use identity transform */
       transform?: string;
     }[];
   }
@@ -231,7 +239,7 @@ declare namespace Geomorph {
     | 'window--007--0x2.4'
   );
 
-  interface Door<T> extends Geom.AngledRect<RectJson> {
+  interface RichAngledRect<T> extends Geom.AngledRect<RectJson> {
     poly: T;
     seg: [Geom.VectJson, Geom.VectJson];
     normal: Geom.VectJson;
@@ -245,10 +253,10 @@ declare namespace Geomorph {
 
   export interface UseGeomorphsItem {
     layoutKey: LayoutKey;
-    doors: Door<Poly>[];
+    doors: RichAngledRect<Poly>[];
     holesWithDoors: Poly[];
     /** Filtered transformed doors */
-    hullDoors: Door<Poly>[];
+    hullDoors: RichAngledRect<Poly>[];
     hullOutline: Poly;
     inverseTransform: [number, number, number, number, number, number];
     pngRect: Geom.Rect;

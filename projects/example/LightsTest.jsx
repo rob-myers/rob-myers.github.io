@@ -86,7 +86,12 @@ export default function LightsTest(props) {
 
   React.useEffect(() => {
     if (gm) {
-      state.updateMasks(); // Initial update
+      // Ensure consistency on switch geomorphs
+      for (const holeId of Object.keys(state.isHoleShown).map(Number)) {
+        if (!gm.holes[holeId]) delete state.isHoleShown[holeId];
+      }
+      // Initial update
+      state.updateMasks();
       const sub = state.wire
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
         .subscribe((x) => state.updateMasks(x.key === 'closed-door' ? 300 : 0));
@@ -158,10 +163,10 @@ export default function LightsTest(props) {
 
 /** @type {Geomorph.LayoutKey} */
 // const layoutKey = 'g-301--bridge';
-const layoutKey = 'g-101--multipurpose';
+// const layoutKey = 'g-101--multipurpose';
 // const layoutKey = 'g-102--research-deck';
 // const layoutKey = 'g-302--xboat-repair-bay';
-// const layoutKey = 'g-303--passenger-deck';
+const layoutKey = 'g-303--passenger-deck';
 
 const rootCss = css`
   img.geomorph-dark {

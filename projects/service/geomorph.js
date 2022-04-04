@@ -123,21 +123,12 @@ export async function createLayout(def, lookup, triangleService) {
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys));
   const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
 
-  /** @type {Geomorph.Door<Poly>[]}  */
   const doors = groups.singles.filter(x => x.tags.includes('door'))
-    .map(({ poly, tags }) => {
-      const { angle, rect } = geom.polyToAngledRect(poly);
-      const [u, v] = geom.getAngledRectSeg({ angle, rect });
-      const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
-      return {
-        angle,
-        rect: rect.precision(3).json,
-        poly,
-        tags,
-        seg: [u.precision(3).json, v.precision(3).json],
-        normal: normal.precision(3).json,
-      };
-    });
+    .map((x) => singleToRichAngleRect(x)
+  );
+  const windows = groups.singles.filter(x => x.tags.includes('window'))
+    .map((x) => singleToRichAngleRect(x)
+  );
 
   const roomGraphJson = RoomGraph.fromHolesAndDoors(holes, doors);
 
@@ -149,6 +140,7 @@ export async function createLayout(def, lookup, triangleService) {
 
     holes,
     doors,
+    windows,
     labels,
     navDecomp,
     navPoly,
@@ -168,10 +160,29 @@ export async function createLayout(def, lookup, triangleService) {
   };
 }
 
+/**
+ * @param {Geomorph.SvgGroupsSingle<Geom.Poly>} single 
+ * @returns {Geomorph.RichAngledRect<Geom.Poly>}
+ */
+function singleToRichAngleRect(single) {
+  const { poly, tags } = single;
+  const { angle, rect } = geom.polyToAngledRect(poly);
+  const [u, v] = geom.getAngledRectSeg({ angle, rect });
+  const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
+  return {
+    angle,
+    rect: rect.precision(3).json,
+    poly,
+    tags,
+    seg: [u.precision(3).json, v.precision(3).json],
+    normal: normal.precision(3).json,
+  };
+}
+
 /** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout({
-  def,  groups,
-  holes: allHoles, doors, labels, navPoly, navDecomp, roomGraph,
+  def, groups,
+  holes: allHoles, doors, windows, labels, navPoly, navDecomp, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -188,7 +199,8 @@ export function serializeLayout({
     },
 
     holes: allHoles.map(x => x.geoJson),
-    doors: doors.map((door) => ({ ...door, poly: door.poly.geoJson })),
+    doors: doors.map((x) => ({ ...x, poly: x.poly.geoJson })),
+    windows: windows.map((x) => ({ ...x, poly: x.poly.geoJson })),
     labels,
     navDecomp,
     navPoly: navPoly.map(x => x.geoJson),
@@ -205,8 +217,8 @@ export function serializeLayout({
 
 /** @param {Geomorph.LayoutJson} layout */
 export function parseLayout({
-  def,  groups,
-  holes: allHoles, doors, labels, navPoly, navDecomp, roomGraph,
+  def, groups,
+  holes: allHoles, doors, windows, labels, navPoly, navDecomp, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -224,6 +236,7 @@ export function parseLayout({
 
     holes: allHoles.map(Poly.from),
     doors: doors.map((door) => ({ ...door, poly: Poly.from(door.poly) })),
+    windows: windows.map((x) => ({ ...x, poly: Poly.from(x.poly) })),
     labels,
     navPoly: navPoly.map(Poly.from),
     navDecomp,

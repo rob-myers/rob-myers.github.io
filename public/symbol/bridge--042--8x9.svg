@@ -40,7 +40,7 @@
     <rect x="1790" y="1192" width="620" height="21" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1790" y="1492" width="595" height="21" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="900" y="1502" width="892" height="62" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);">
-      <title>Rectangle</title>
+      <title>window</title>
     </rect>
   </g>
   <g style="pointer-events: none;">
@@ -48,6 +48,9 @@
     <path d="M 323 290.2 L 478 160.2 L 668 50.2 L 873 -24.8 L 1093 -59.8 L 1308 -64.8 L 1523 -24.8 L 1733 50.2 L 1923 160.2 L 2078 290.2 L 2098 315.2 L 2063 350.2 L 2038 330.2 L 1888 205.2 L 1708 105.2 L 1508 30.2 L 1303 -9.8 L 1093 -9.8 L 888 30.2 L 693 105.2 L 513 210.2 L 368 330.2 L 343 355.2 L 298 315.2 L 323 290.2 Z" style="stroke: rgb(0, 0, 0); fill-opacity: 0.31;">
       <title>window</title>
     </path>
+    <rect x="900" y="1502" width="892" height="62" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0);">
+      <title>window</title>
+    </rect>
     <rect x="59" y="1492" width="848.8" height="21" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
       <title>wall</title>
     </rect>
