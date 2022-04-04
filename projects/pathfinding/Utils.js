@@ -49,17 +49,15 @@ export class Utils {
   }
 
   /**
-   * @param {Geom.VectJson} vector 
-   * @param {{ vertexIds: number[]}} polygon 
-   * @param {Geom.VectJson[]} vertices 
+   * This is `this.isPointInPoly` plus an optimization i.e.
+   * first check if vector.y projects into the polygon's y-interval.
+   * @param {Geom.VectJson} vector The vector to test against
+   * @param {{ vertexIds: number[]}} polygon E.g. the triangle defining a nav node
+   * @param {Geom.VectJson[]} vertices Reference to the actual vector
    */
   static isVectorInPolygon (vector, polygon, vertices) {
-
-    // reference point will be the centroid of the polygon
-    // We need to rotate the vector as well as all the points which the polygon uses
-
-    let lowestPoint = 100000;
-    let highestPoint = -100000;
+    let lowestPoint = Infinity;
+    let highestPoint = -Infinity;
     let polygonVertices = /** @type {Geom.VectJson[]} */ ([]);
 
     polygon.vertexIds.forEach((vId) => {
