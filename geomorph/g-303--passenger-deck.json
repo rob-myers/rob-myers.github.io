@@ -6000,7 +6000,19 @@
       {"id": "door-30", "type": "door", "doorIndex": 30, "roomSigns": [-1, 1]},
       {"id": "door-31", "type": "door", "doorIndex": 31, "roomSigns": [-1, 1]},
       {"id": "door-32", "type": "door", "doorIndex": 32, "roomSigns": [1, -1]},
-      {"id": "door-33", "type": "door", "doorIndex": 33, "roomSigns": [1, -1]}
+      {"id": "door-33", "type": "door", "doorIndex": 33, "roomSigns": [1, -1]},
+      {"id": "window-0", "type": "window", "windowIndex": 0, "roomSigns": [-1]},
+      {"id": "window-1", "type": "window", "windowIndex": 1, "roomSigns": [-1]},
+      {"id": "window-2", "type": "window", "windowIndex": 2, "roomSigns": [-1]},
+      {"id": "window-3", "type": "window", "windowIndex": 3, "roomSigns": [-1]},
+      {"id": "window-4", "type": "window", "windowIndex": 4, "roomSigns": [-1]},
+      {"id": "window-5", "type": "window", "windowIndex": 5, "roomSigns": [-1]},
+      {
+        "id": "window-6",
+        "type": "window",
+        "windowIndex": 6,
+        "roomSigns": [-1, -1]
+      }
     ],
     "edges": [
       {"src": "room-1", "dst": "door-0"},
@@ -6128,7 +6140,23 @@
       {"src": "room-24", "dst": "door-33"},
       {"dst": "room-24", "src": "door-33"},
       {"src": "room-26", "dst": "door-33"},
-      {"dst": "room-26", "src": "door-33"}
+      {"dst": "room-26", "src": "door-33"},
+      {"src": "room-0", "dst": "window-0"},
+      {"dst": "room-0", "src": "window-0"},
+      {"src": "room-5", "dst": "window-1"},
+      {"dst": "room-5", "src": "window-1"},
+      {"src": "room-8", "dst": "window-2"},
+      {"dst": "room-8", "src": "window-2"},
+      {"src": "room-12", "dst": "window-3"},
+      {"dst": "room-12", "src": "window-3"},
+      {"src": "room-16", "dst": "window-4"},
+      {"dst": "room-16", "src": "window-4"},
+      {"src": "room-21", "dst": "window-5"},
+      {"dst": "room-21", "src": "window-5"},
+      {"src": "room-24", "dst": "window-6"},
+      {"dst": "room-24", "src": "window-6"},
+      {"src": "room-26", "dst": "window-6"},
+      {"dst": "room-26", "src": "window-6"}
     ]
   },
   "hullPoly": [

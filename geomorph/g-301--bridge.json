@@ -4965,7 +4965,15 @@
       {"id": "door-25", "type": "door", "doorIndex": 25, "roomSigns": [-1, 1]},
       {"id": "door-26", "type": "door", "doorIndex": 26, "roomSigns": [1, -1]},
       {"id": "door-27", "type": "door", "doorIndex": 27, "roomSigns": [-1, 1]},
-      {"id": "door-28", "type": "door", "doorIndex": 28, "roomSigns": [1, -1]}
+      {"id": "door-28", "type": "door", "doorIndex": 28, "roomSigns": [1, -1]},
+      {"id": "window-0", "type": "window", "windowIndex": 0, "roomSigns": []},
+      {"id": "window-1", "type": "window", "windowIndex": 1, "roomSigns": []},
+      {
+        "id": "window-2",
+        "type": "window",
+        "windowIndex": 2,
+        "roomSigns": [1, -1]
+      }
     ],
     "edges": [
       {"src": "room-2", "dst": "door-0"},
@@ -5075,7 +5083,11 @@
       {"src": "room-22", "dst": "door-28"},
       {"dst": "room-22", "src": "door-28"},
       {"src": "room-24", "dst": "door-28"},
-      {"dst": "room-24", "src": "door-28"}
+      {"dst": "room-24", "src": "door-28"},
+      {"src": "room-11", "dst": "window-2"},
+      {"dst": "room-11", "src": "window-2"},
+      {"src": "room-16", "dst": "window-2"},
+      {"dst": "room-16", "src": "window-2"}
     ]
   },
   "hullPoly": [
