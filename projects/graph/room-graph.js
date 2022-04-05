@@ -19,6 +19,18 @@ export class RoomGraph extends BaseGraph {
   }
 
   /**
+   * Given nodes, find all adjacent windows.
+   * @param {...Graph.RoomGraphNode} nodes
+   */
+  getAdjacentWindows(...nodes) {
+    const windows = /** @type {Set<Graph.RoomGraphNodeWindow>} */ (new Set);
+    nodes.forEach(node => this.getSuccs(node).forEach(other =>
+      other.type === 'window' && windows.add(other))
+    );
+    return Array.from(windows);
+  }
+
+  /**
    * Given nodes, find all adjacent rooms.
    * @param {...Graph.RoomGraphNode} nodes
    */
@@ -35,20 +47,24 @@ export class RoomGraph extends BaseGraph {
     return /** @type {Graph.RoomGraphNodeDoor} */ (this.getNodeById(`door-${doorIndex}`));
   }
 
+  /** @param {number} windowIndex */
+  getWindowNode(windowIndex) {
+    return /** @type {Graph.RoomGraphNodeWindow} */ (this.getNodeById(`window-${windowIndex}`));
+  }
+
   /** @param {number} roomIndex */
   getRoomNode(roomIndex) {
     return /** @type {Graph.RoomGraphNodeRoom} */ (this.getNodeById(`room-${roomIndex}`));
   }
   
   /**
-   * @param {*} roomIndex The i^th room
-   * @param {number} doorIndex The i^th door
+   * @param {number} roomIndex The i^th room
+   * @param {Graph.RoomGraphNodeDoor | Graph.RoomGraphNodeWindow} doorOrWindowNode
    */
-  getRoomSign(roomIndex, doorIndex) {
+  getRoomSign(roomIndex, doorOrWindowNode) {
     const room = this.getRoomNode(roomIndex);
-    const door = this.getDoorNode(doorIndex);
-    const roomSuccIndex = /** @type {-1 | 0 | 1} */ (this.getSuccs(door).indexOf(room));
-    return roomSuccIndex === -1 ? null : door.roomSigns[roomSuccIndex];
+    const roomSuccIndex = /** @type {-1 | 0 | 1} */ (this.getSuccs(doorOrWindowNode).indexOf(room));
+    return roomSuccIndex === -1 ? null : doorOrWindowNode.roomSigns[roomSuccIndex];
   }
 
   /**

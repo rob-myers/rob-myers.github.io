@@ -13,6 +13,9 @@ import useUpdate from "../hooks/use-update";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 
+// TODO
+// - 🚧 cleanup approach below
+
 /** @param {{ disabled?: boolean }} props */
 export default function LightsTest(props) {
 
@@ -36,32 +39,48 @@ export default function LightsTest(props) {
       updateMasks(delayMask = 0) {
         const {
           d: {pngRect, hullOutline, holesWithDoors, roomGraph},
-          doors,
+          doors, windows, holes,
         } = assertDefined(gm);
 
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
         const openDoorIds = state.doorsApi.getOpen();
 
-        // TODO 🚧 windows have light polygons too
-        // AdjHoles contribute a light polygon
+        // lights through doors and windows
         const lightPolygons = rootHoleIds.flatMap((srcHoleId) => {
           const roomNode = roomGraph.nodesArray[srcHoleId];
           const adjOpenDoorIds = roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
           // NOTE adjacent closed doors insufficient
           const closedDoorPolys = doors.flatMap((door, id) => !adjOpenDoorIds.includes(id) ? door.poly : []);
 
-          return adjOpenDoorIds.map(doorIndex => {
+          const doorLights = adjOpenDoorIds.map(doorIndex => {
             const door = doors[doorIndex];
-            const adjRoomNodes = roomGraph.getAdjacentRooms(roomGraph.getDoorNode(doorIndex));
-            const roomSign = roomGraph.getRoomSign(srcHoleId, doorIndex);
-            if (roomSign === null)
-              console.warn(`hole ${srcHoleId}: door ${doorIndex}: roomSign is null`);
+            const doorNode = roomGraph.getDoorNode(doorIndex);
+            const adjRoomNodes = roomGraph.getAdjacentRooms(doorNode);
+            const roomSign = roomGraph.getRoomSign(srcHoleId, doorNode);
+            if (roomSign === null) console.warn(`hole ${srcHoleId}: door ${doorIndex}: roomSign is null`);
             const lightPosition = door.poly.center.addScaledVector(door.normal, 20 * (roomSign || 0))
             const lightWalls = Poly.union(adjRoomNodes.map(x => holesWithDoors[x.holeIndex]))[0];
-            // TODO cache door triangulation earlier
+            // TODO cache door triangulations earlier
             const triangs = closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
             return geom.lightPolygon(lightPosition, 1000, triangs, lightWalls);
-          })
+          });
+          
+          const adjWindowIds = roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
+          const windowLights = adjWindowIds.map(windowIndex => {
+            const window = windows[windowIndex];
+            const windowNode = roomGraph.getWindowNode(windowIndex);
+            const adjRoomNodes = roomGraph.getAdjacentRooms(windowNode);
+            const roomSign = roomGraph.getRoomSign(srcHoleId, windowNode);
+            if (roomSign === null) console.warn(`hole ${srcHoleId}: window ${windowIndex}: roomSign is null`);
+            const lightPosition = window.poly.center.addScaledVector(window.normal, 30 * (roomSign || 0))
+            const lightWalls = Poly.union(adjRoomNodes.map(x => holes[x.holeIndex]).concat(window.poly))[0];
+            return geom.lightPolygon(lightPosition, 1000, undefined, lightWalls);
+          });
+
+          return [
+            ...doorLights,
+            ...windowLights,
+          ];
         });
 
         const allHolePolys = rootHoleIds
