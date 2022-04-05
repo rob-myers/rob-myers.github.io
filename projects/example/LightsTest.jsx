@@ -72,7 +72,7 @@ export default function LightsTest(props) {
             const adjRoomNodes = roomGraph.getAdjacentRooms(windowNode);
             const roomSign = roomGraph.getRoomSign(srcHoleId, windowNode);
             if (roomSign === null) console.warn(`hole ${srcHoleId}: window ${windowIndex}: roomSign is null`);
-            const lightPosition = window.poly.center.addScaledVector(window.normal, 30 * (roomSign || 0))
+            const lightPosition = window.poly.center.addScaledVector(window.normal, 60 * (roomSign || 0))
             const lightWalls = Poly.union(adjRoomNodes.map(x => holes[x.holeIndex]).concat(window.poly))[0];
             return geom.lightPolygon(lightPosition, 1000, undefined, lightWalls);
           });

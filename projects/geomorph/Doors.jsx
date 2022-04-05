@@ -44,16 +44,11 @@ export default function Doors(props) {
       },
       renderUnobservables() {
         const ctxt = assertNonNull(state.canvas.getContext('2d'));
-        // Offset so drawings actually appear in canvas when geomorph is transformed
-        ctxt.setTransform(...gm.inverseTransform);
         ctxt.clearRect(0, 0, state.canvas.width, state.canvas.height);
-        ctxt.fillStyle = '#444';
+        ctxt.fillStyle = '#555';
         ctxt.strokeStyle = '#00204b';
-        gm.doors.filter((_, i) => !state.observable[i])
-          .forEach(({ poly }) => {
-            fillPolygon(ctxt, [poly]);
-            ctxt.stroke();
-          });
+        gm.gm.doors.filter((_, i) => !state.observable[i])
+          .forEach(({ poly }) => { fillPolygon(ctxt, [poly]); ctxt.stroke(); });
       },
     };
   });
@@ -73,10 +68,18 @@ export default function Doors(props) {
     <div
       className={classNames("doors", rootCss)}
       ref={el => el && (state.rootEl = el)}
-      style={{ transform: gm.transformStyle }}
+      style={{
+        transform: gm.transformStyle,
+        transformOrigin: `${gm.gm.d.pngRect.x}px ${gm.gm.d.pngRect.y}px`,
+      }}
     >
-      {gm.doors.map(({ rect, angle, tags }, i) =>
-        state.observable[i] && <div
+      {
+        // TODO since we use untransformed doors,
+        // maybe don't precompute transformed ones
+      }
+      {gm.gm.doors.map(({ rect, angle, tags }, i) =>
+        state.observable[i] && (
+          <div
             key={i}
             data-index={i}
             className={classNames("door", {
@@ -92,6 +95,7 @@ export default function Doors(props) {
               transformOrigin: 'top left',
             }}
           />
+          )
         )
       }
       <canvas

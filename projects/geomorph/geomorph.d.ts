@@ -239,7 +239,7 @@ declare namespace Geomorph {
     | 'window--007--0x2.4'
   );
 
-  interface RichAngledRect<T> extends Geom.AngledRect<RectJson> {
+  interface RichAngledRect<T> extends Geom.AngledRect<Geom.RectJson> {
     poly: T;
     seg: [Geom.VectJson, Geom.VectJson];
     normal: Geom.VectJson;
@@ -263,6 +263,8 @@ declare namespace Geomorph {
     roomGraph: Graph.RoomGraph;
     transform: [number, number, number, number, number, number];
     transformStyle: string;
+    gm: Geomorph.GeomorphData;
+    itemKey: string;
   }
 
 }

@@ -383,12 +383,18 @@ export const allLayoutKeys = keys(allLayoutKeysLookup);
 export function geomorphDataToGeomorphsItem(gm, transform) {
   const matrix = new Mat(transform);
   const pngRect = gm.d.pngRect.clone().applyMatrix(matrix);
-  const doors = gm.doors.map((meta) => ({
-    ...meta,
-    poly: meta.poly.clone().applyMatrix(matrix),
-    rect: Rect.fromJson(meta.rect).applyMatrix(matrix).json,
-    normal: matrix.transformPoint(Vect.from(meta.normal)).json,
-  }));
+  const doors = gm.doors.map((meta) => {
+    const normal = matrix.transformPoint(Vect.from(meta.normal));
+    return {
+      ...meta,
+      poly: meta.poly.clone().applyMatrix(matrix),
+      // rect: Rect.fromJson(meta.rect).applyMatrix(matrix).json,
+      rect: meta.poly.clone().applyMatrix(matrix).rect.json,
+      normal: normal.json,
+      // TODO angle and line segs too?
+      angle: normal.angle - Math.PI/2,
+    };
+  });
 
   const { a, b, c, d, e, f } = matrix.getInverseMatrix();
 
@@ -404,6 +410,9 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
     roomGraph: gm.d.roomGraph, // No need to clone or transform
     transform,
     transformStyle: `matrix(${transform})`,
+
+    gm,
+    itemKey: `${gm.key}-${transform}`,
   };
 
   return output;

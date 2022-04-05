@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
-import { Poly } from "../geom";
+import { Mat, Poly } from "../geom";
 import { allLayoutKeys } from "../service/geomorph";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
@@ -14,13 +14,14 @@ import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
 
 // TODO
-// - ✅ rewrite `click` as a function
-// - ✅ integrate `useGeomorphs` hook
-//   - ✅ cleanup Doors
-//   - ...
+// - 🚧 current state is [gm id, hole id]
+// - 🚧 light propagates over geomorph boundary
+// - 🚧 GmGraph has windows
+
+// TODO
 // - 🚧 spawn from TTY
-//   - symbols have points tagged 'spawn'
-//   - implement spawn as shell function
+//   - ✅ symbols have points tagged 'spawn'
+//   - ✅ implement spawn as shell function
 //   - default spawn to 1st (in hull or first symbol with a spawn point)
 //   - can specify point to spawn from
 // - Andros is situated and lighting reacts
@@ -33,6 +34,7 @@ export default function NavDemo1(props) {
   const { gms, gmGraph } = useGeomorphs([
     { layoutKey: 'g-301--bridge' },
     { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
+    { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 20 + 1200 + 600 + 20], },
   ]);
 
   const state = useMuState(() => {
@@ -46,22 +48,21 @@ export default function NavDemo1(props) {
        */
       /** Current hole id Andros */
       currentHoleId:0,
-      doorsApi: /** @type {Record<Geomorph.LayoutKey, NPC.DoorsApi>} */  ({}),
+      doorsApi: /** @type {{ [gmsIndex: number]: NPC.DoorsApi }} */  ({}),
       /** Hack to avoid repeated assertions */
       // get gm() { return assertDefined(gm); },
       npcsApi: /** @type {NPC.NPCsApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
-      /** @param {Geomorph.UseGeomorphsItem} gm */
-      getAdjacentHoleIds(gm) {
-        const { roomGraph } = gm;
-        const openDoorIds = state.doorsApi[gm.layoutKey].getOpen();
+      /** @param {number} gmIndex */
+      getAdjacentHoleIds(gmIndex) {
+        const { roomGraph } = gms[gmIndex];
+        const openDoorIds = state.doorsApi[gmIndex].getOpen();
         return roomGraph.getEnterableRooms(roomGraph.nodesArray[state.currentHoleId], openDoorIds)
           .map(roomNode => roomNode.holeIndex);
       },
       onChangeDeps() {
-        // Initial and HMR update
-        if (gms.length) {
+        if (gms.length) {// Initial and HMR update
           state.updateClipPath();
           state.updateObservableDoors();
           update();
@@ -72,40 +73,34 @@ export default function NavDemo1(props) {
         }
       },
       updateClipPath() {
-        gms.map(gm => {
+        gms.map((gm, gmIndex) => {
           const { holesWithDoors, hullOutline, pngRect } = gm;
-          const shownHoleIds = [state.currentHoleId].concat(state.getAdjacentHoleIds(gm));
+          const shownHoleIds = [state.currentHoleId].concat(state.getAdjacentHoleIds(gmIndex));
           const holePolys = shownHoleIds.map(i => holesWithDoors[i]);
-          const maskPoly = Poly.cutOut(holePolys, [hullOutline],)
-            .map(poly => poly.translate(-pngRect.x, -pngRect.y)); // ?
+          /**
+           * TODO since we undo transform,
+           * we could use original polys
+           */
+          const matrix = new Mat(gm.inverseTransform);
+          const maskPoly = Poly.cutOut(holePolys, [hullOutline])
+            .map(poly => poly.applyMatrix(matrix))
+            .map(poly => poly.translate(-gm.gm.d.pngRect.x, -gm.gm.d.pngRect.y))
           const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
           state.clipPath[gm.layoutKey] = svgPaths.length ? `path('${svgPaths}')` : 'none'; // ?
         });
       },
       updateObservableDoors() {
-        gms.map(gm => {
+        gms.map((gm, gmIndex) => {
           const { roomGraph } = gm;
           const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
           const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
-          this.doorsApi[gm.layoutKey].setObservableDoors(observableDoors.map(x => x.doorIndex));
+          this.doorsApi[gmIndex].setObservableDoors(observableDoors.map(x => x.doorIndex));
         });
       },
     };
   }, [gms], {
     equality: { currentHoleId: true },
   });
-
-  // React.useEffect(() => {
-  //   if (gms.length) {
-  //     console.log(gmGraph)
-  //   }
-  // }, [gmGraph]);
-
-  // React.useEffect(() => {
-  //   state.npcsApi.spawn([
-  //     { key: 'andros', position: { x: 50, y: 38 } },
-  //   ]);
-  // }, [state.npcsApi]);
 
   return gms.length ? (
     <CssPanZoom
@@ -122,8 +117,9 @@ export default function NavDemo1(props) {
           width={gm.pngRect.width}
           height={gm.pngRect.height}
           style={{
-            left: gm.pngRect.x,
-            top: gm.pngRect.y,
+            left: gm.gm.d.pngRect.x,
+            top: gm.gm.d.pngRect.y,
+            transform: `matrix(${gm.transform})`,
           }}
         />
       )}
@@ -134,9 +130,10 @@ export default function NavDemo1(props) {
         stageKey="stage-nav-demo-1"
       />
 
-      {gms.map(gm =>
+      {gms.map((gm, gmIndex) =>
         [
           <img
+            key={gm.itemKey}
             className="geomorph-dark"
             src={geomorphPngPath(gm.layoutKey)}
             draggable={false}
@@ -145,16 +142,16 @@ export default function NavDemo1(props) {
             style={{
               clipPath: state.clipPath[gm.layoutKey],
               WebkitClipPath: state.clipPath[gm.layoutKey],
-              left: gm.pngRect.x,
-              top: gm.pngRect.y,
-              // transform: `matrix(${gm.transform})`,
+              left: gm.gm.d.pngRect.x,
+              top: gm.gm.d.pngRect.y,
+              transform: `matrix(${gm.transform})`,
             }}
           />,
 
           <Doors
             gm={gm}
             wire={state.wire}
-            onLoad={api => state.doorsApi[gm.layoutKey] = api}
+            onLoad={api => state.doorsApi[gmIndex] = api}
           />
         ]
       )}
@@ -167,6 +164,7 @@ export default function NavDemo1(props) {
 const rootCss = css`
   img {
     position: absolute;
+    transform-origin: top left;
   }
   img.geomorph {
     filter: brightness(80%);
