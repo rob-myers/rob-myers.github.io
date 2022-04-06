@@ -7,102 +7,138 @@ import useMuState from "../hooks/use-mu-state";
 import useUpdate from "../hooks/use-update";
 
 /**
- * Doors for a specific geomorph.
+ * Doors for Geomorph.UseGeomorphItems.
  * @param {NPC.DoorsProps} props
  */
 export default function Doors(props) {
-  const { gm } = props;
   const update = useUpdate();
 
   const state = useMuState(() => {
     /** @type {NPC.DoorsApi} */
     const api = {
-      getOpen() {
-        return Object.keys(state.open).map(Number);
+      getOpen(gmIndex) {
+        return Object.keys(state.open[gmIndex]).map(Number);
       },
-      /** @param {number[]} observableIds */
-      setObservableDoors(observableIds) {
-        state.observable = observableIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
-        state.renderUnobservables();
+      setObservableDoors(gmIndex, observableIds) {
+        state.observable[gmIndex] = observableIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
+        state.renderUnobservables(gmIndex);
         update();
       },
     };
 
     return {
       api,
-      canvas: /** @type {HTMLCanvasElement} */ ({}),
-      open: /** @type {{ [doorIndex: number]: true }} */ ({}),
-      observable: /** @type {{ [doorIndex: number]: true }} */ ({}),
+      /** @type {HTMLCanvasElement[]} */
+      canvas: [],
+      /** @type {{ [doorIndex: number]: true }[]} */
+      open: props.gms.map(_ => ({})),
+      /** @type {{ [doorIndex: number]: true }[]} */
+      observable: props.gms.map(_ => ({})),
       rootEl: /** @type {HTMLDivElement} */ ({}),
+
       /** @param {PointerEvent} e */
       onToggleDoor(e) {
+        const gmIndex = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-index'));
         const index = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-index'));
-        if (!state.observable[index]) return;
-        state.open[index] ? delete state.open[index] : state.open[index] = true;
-        props.wire.next({ key: state.open[index] ? 'opened-door' : 'closed-door', index });
-        state.renderUnobservables();
+
+        if (!state.observable[gmIndex][index]) {
+          return;
+        }
+
+        if (state.open[gmIndex][index]) {
+          delete state.open[gmIndex][index]
+        } else {
+          state.open[gmIndex][index] = true;
+        }
+        props.wire.next({
+          gmIndex,
+          index,
+          key: state.open[gmIndex][index] ? 'opened-door' : 'closed-door',
+        });
+        state.renderUnobservables(gmIndex);
       },
-      renderUnobservables() {
-        const ctxt = assertNonNull(state.canvas.getContext('2d'));
-        ctxt.clearRect(0, 0, state.canvas.width, state.canvas.height);
+      /** @param {number} gmIndex */
+      renderUnobservables(gmIndex) {
+        const canvas = state.canvas[gmIndex];
+        const ctxt = assertNonNull(canvas.getContext('2d'));
+        ctxt.clearRect(0, 0, canvas.width, canvas.height);
         ctxt.fillStyle = '#555';
         ctxt.strokeStyle = '#00204b';
-        gm.gm.doors.filter((_, i) => !state.observable[i])
-          .forEach(({ poly }) => { fillPolygon(ctxt, [poly]); ctxt.stroke(); });
+        const gm = props.gms[gmIndex];
+        gm.gm.doors.filter((_, i) => !state.observable[gmIndex][i])
+          .forEach(({ poly }) => {
+            fillPolygon(ctxt, [poly]);
+            ctxt.stroke();
+          });
       },
     };
-  });
+  }, [props.gms]);
 
+  // Must useLayoutEffect because NavDemo1 onChangeDeps runs early (?)
   React.useLayoutEffect(() => {
-    props.onLoad?.(state.api);
+    props.onLoad(state.api);
   }, []);
+
   React.useEffect(() => {
-    state.renderUnobservables();
+    props.gms.forEach((_, gmIndex) => {
+      state.open[gmIndex] = state.open[gmIndex] || {};
+      state.observable[gmIndex] = state.observable[gmIndex] || {};
+      // TODO could also interchange/clear state.open[i]'s based on previous
+      props.gms.forEach((_, gmIndex) => state.renderUnobservables(gmIndex));
+    });
+  }, [props.gms]);
+  
+  React.useEffect(() => {
     state.rootEl.addEventListener('pointerup', state.onToggleDoor);
-    return () => {
-      state.rootEl.removeEventListener('pointerup', state.onToggleDoor);
-    };
-  }, []);
+    return () => void state.rootEl.removeEventListener('pointerup', state.onToggleDoor);
+  }, [props.gms]);
 
   return (
     <div
-      className={classNames("doors", rootCss)}
       ref={el => el && (state.rootEl = el)}
-      style={{
-        transform: gm.transformStyle,
-        transformOrigin: `${gm.gm.d.pngRect.x}px ${gm.gm.d.pngRect.y}px`,
-      }}
+      className={classNames("doors", rootCss)}
     >
-      {
-        // TODO since we use untransformed doors,
-        // maybe don't precompute transformed ones
-      }
-      {gm.gm.doors.map(({ rect, angle, tags }, i) =>
-        state.observable[i] && (
-          <div
-            key={i}
-            data-index={i}
-            className={classNames("door", {
-              open: state.open[i],
-              iris: tags.includes('iris'),
-            })}
-            style={{
-              left: rect.x,
-              top: rect.y,
-              width: rect.width,
-              height: rect.height,
-              transform: `rotate(${angle}rad)`,
-              transformOrigin: 'top left',
-            }}
+      {props.gms.map((gm, gmIndex) => (
+        <div
+          key={gm.itemKey}
+          style={{
+            transform: gm.transformStyle,
+            transformOrigin: `${gm.gm.d.pngRect.x}px ${gm.gm.d.pngRect.y}px`,
+          }}
+        >
+          {
+            // TODO since we use untransformed doors,
+            // maybe don't precompute transformed ones
+          }
+          {gm.gm.doors.map(({ rect, angle, tags }, i) =>
+            state.observable[gmIndex][i] && (
+              <div
+                key={i}
+                data-gm-index={gmIndex}
+                data-index={i}
+                className={classNames("door", {
+                  open: state.open[gmIndex][i],
+                  iris: tags.includes('iris'),
+                })}
+                style={{
+                  left: rect.x,
+                  top: rect.y,
+                  width: rect.width,
+                  height: rect.height,
+                  transform: `rotate(${angle}rad)`,
+                  transformOrigin: 'top left',
+                }}
+              />
+              )
+            )
+          }
+          <canvas
+            ref={(el) => el && (state.canvas[gmIndex] = el)}
+            width={gm.pngRect.width}
+            height={gm.pngRect.height}
           />
-          )
-        )
-      }
-      <canvas
-        ref={(el) => el && (state.canvas = el)}
-        width={gm.pngRect.width}
-        height={gm.pngRect.height}
-      />
+        </div>
+      ))}
     </div>
   );
 }
@@ -115,9 +151,9 @@ const rootCss = css`
 
   div.door {
     position: absolute;
+    cursor: pointer;
 
     &:not(.iris) {
-      cursor: pointer;
       background: #fff;
       border: 1px solid #555;
 
@@ -128,7 +164,6 @@ const rootCss = css`
     }
 
     &.iris {
-      cursor: pointer;
       background-image: linear-gradient(45deg, #888 33.33%, #333 33.33%, #333 50%, #888 50%, #888 83.33%, #333 83.33%, #333 100%);
       background-size: 4.24px 4.24px;
       border: 1px solid #fff;

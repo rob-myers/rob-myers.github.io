@@ -13,14 +13,15 @@ import useUpdate from "../hooks/use-update";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 
-// TODO
-// - 🚧 cleanup approach below
-
 /** @param {{ disabled?: boolean }} props */
 export default function LightsTest(props) {
 
-  const { data: gm } = useGeomorphData(layoutKey);
   const update = useUpdate();
+
+  const { data: gm } = useGeomorphData(layoutKey);
+  const gms = React.useMemo(() =>
+    gm ? [geomorphDataToGeomorphsItem(gm, [1, 0, 0, 1, 0, 0])] : []
+  , [gm]);
 
   const state = useMuState(() => {
     return {
@@ -36,15 +37,16 @@ export default function LightsTest(props) {
         state.updateMasks();
       },
 
-      updateMasks(delayMask = 0) {
+      updateMasks(delayUpdate = 0) {
         const {
           d: {pngRect, hullOutline, holesWithDoors, roomGraph},
           doors, windows, holes,
         } = assertDefined(gm);
 
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
-        const openDoorIds = state.doorsApi.getOpen();
+        const openDoorIds = state.doorsApi.getOpen(0);
 
+        // TODO 🚧 simplify below
         // lights through doors and windows
         const lightPolygons = rootHoleIds.flatMap((srcHoleId) => {
           const roomNode = roomGraph.nodesArray[srcHoleId];
@@ -89,7 +91,7 @@ export default function LightsTest(props) {
           .map(x => x.precision(3));
 
         const observableDoors = roomGraph.getAdjacentDoors(...rootHoleIds.map(id => roomGraph.nodesArray[id]));
-        this.doorsApi.setObservableDoors(observableDoors.map(x => x.doorIndex));
+        this.doorsApi.setObservableDoors(0, observableDoors.map(x => x.doorIndex));
         const maskPoly = Poly.cutOut(allHolePolys, [hullOutline],)
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
@@ -98,7 +100,7 @@ export default function LightsTest(props) {
         setTimeout(() => {// We delay mask update when closing doors
           state.clipPath = `path('${svgPaths}')`;
           update();
-        }, delayMask);
+        }, delayUpdate);
       },
     };
   }, [gm]);
@@ -168,7 +170,7 @@ export default function LightsTest(props) {
         </div>
 
         <Doors
-          gm={geomorphDataToGeomorphsItem(gm, [1, 0, 0, 1, 0, 0])}
+          gms={gms}
           wire={state.wire}
           onLoad={api => state.doorsApi = api}
         />

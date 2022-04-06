@@ -5,7 +5,6 @@ import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Mat, Poly } from "../geom";
-import { allLayoutKeys } from "../service/geomorph";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -14,6 +13,9 @@ import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
 
 // TODO
+// - ✅ <Doors> supports multiple transformed geomorphs
+// - ✅ fix door interference between multiple instances of g-301--bridge
+// - 🚧 avoid precomputing unused transformed geometry
 // - 🚧 current state is [gm id, hole id]
 // - 🚧 light propagates over geomorph boundary
 // - 🚧 GmGraph has windows
@@ -39,27 +41,24 @@ export default function NavDemo1(props) {
 
   const state = useMuState(() => {
     return {
-      clipPath: allLayoutKeys.reduce(
-        (agg, key) => ({ ...agg, [key]: 'none' }),
-        /** @type {Record<Geomorph.LayoutKey, string>} */ ({}),
-      ),
-      /**
-       * TODO specify index of gms too
-       */
-      /** Current hole id Andros */
-      currentHoleId:0,
-      doorsApi: /** @type {{ [gmsIndex: number]: NPC.DoorsApi }} */  ({}),
-      /** Hack to avoid repeated assertions */
-      // get gm() { return assertDefined(gm); },
+      currentHoleId: 0,
+      currentGmIndex: 0,
+
+      clipPath: gms.map(_ => 'none'),
+
+      doorsApi: /** @type {NPC.DoorsApi} */  ({}),
       npcsApi: /** @type {NPC.NPCsApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
-      /** @param {number} gmIndex */
-      getAdjacentHoleIds(gmIndex) {
+      /**
+       * TODO need adjacent holes from other geomorphs sometimes
+       */
+      getAdjacentHoleIds() {
+        const gmIndex = state.currentGmIndex;
         const { roomGraph } = gms[gmIndex];
-        const openDoorIds = state.doorsApi[gmIndex].getOpen();
-        return roomGraph.getEnterableRooms(roomGraph.nodesArray[state.currentHoleId], openDoorIds)
-          .map(roomNode => roomNode.holeIndex);
+        const openDoorIds = state.doorsApi.getOpen(gmIndex);
+        const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
+        return roomGraph.getEnterableRooms(currentRoomNode, openDoorIds).map(({ holeIndex }) => holeIndex);
       },
       onChangeDeps() {
         if (gms.length) {// Initial and HMR update
@@ -68,34 +67,38 @@ export default function NavDemo1(props) {
           update();
           const sub = state.wire
             .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
-            .subscribe((_) => { state.updateClipPath(); update(); });
+            .subscribe((_) => {
+              state.updateClipPath();
+              update();
+            });
           return () => sub.unsubscribe();
         }
       },
       updateClipPath() {
-        gms.map((gm, gmIndex) => {
-          const { holesWithDoors, hullOutline, pngRect } = gm;
-          const shownHoleIds = [state.currentHoleId].concat(state.getAdjacentHoleIds(gmIndex));
-          const holePolys = shownHoleIds.map(i => holesWithDoors[i]);
-          /**
-           * TODO since we undo transform,
-           * we could use original polys
-           */
-          const matrix = new Mat(gm.inverseTransform);
-          const maskPoly = Poly.cutOut(holePolys, [hullOutline])
-            .map(poly => poly.applyMatrix(matrix))
-            .map(poly => poly.translate(-gm.gm.d.pngRect.x, -gm.gm.d.pngRect.y))
-          const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
-          state.clipPath[gm.layoutKey] = svgPaths.length ? `path('${svgPaths}')` : 'none'; // ?
-        });
+        const gmIndex = state.currentGmIndex;
+        const gm = gms[gmIndex];
+
+        const { holesWithDoors, hullOutline, pngRect } = gm;
+        const shownHoleIds = [state.currentHoleId].concat(state.getAdjacentHoleIds());
+        const holePolys = shownHoleIds.map(i => holesWithDoors[i]);
+        /**
+         * TODO since we undo transform,
+         * we could use original polys
+         */
+        const matrix = new Mat(gm.inverseTransform);
+        const maskPoly = Poly.cutOut(holePolys, [hullOutline])
+          .map(poly => poly.applyMatrix(matrix))
+          .map(poly => poly.translate(-gm.gm.d.pngRect.x, -gm.gm.d.pngRect.y))
+        const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
+        state.clipPath[gmIndex] = svgPaths.length ? `path('${svgPaths}')` : 'none'; // ?
       },
       updateObservableDoors() {
-        gms.map((gm, gmIndex) => {
-          const { roomGraph } = gm;
-          const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
-          const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
-          this.doorsApi[gmIndex].setObservableDoors(observableDoors.map(x => x.doorIndex));
-        });
+        const gmIndex = state.currentGmIndex;
+        const gm = gms[gmIndex];
+        const { roomGraph } = gm;
+        const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
+        const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
+        this.doorsApi.setObservableDoors(gmIndex, observableDoors.map(x => x.doorIndex));
       },
     };
   }, [gms], {
@@ -131,30 +134,28 @@ export default function NavDemo1(props) {
       />
 
       {gms.map((gm, gmIndex) =>
-        [
-          <img
-            key={gm.itemKey}
-            className="geomorph-dark"
-            src={geomorphPngPath(gm.layoutKey)}
-            draggable={false}
-            width={gm.pngRect.width}
-            height={gm.pngRect.height}
-            style={{
-              clipPath: state.clipPath[gm.layoutKey],
-              WebkitClipPath: state.clipPath[gm.layoutKey],
-              left: gm.gm.d.pngRect.x,
-              top: gm.gm.d.pngRect.y,
-              transform: `matrix(${gm.transform})`,
-            }}
-          />,
-
-          <Doors
-            gm={gm}
-            wire={state.wire}
-            onLoad={api => state.doorsApi[gmIndex] = api}
-          />
-        ]
+        <img
+          key={gmIndex}
+          className="geomorph-dark"
+          src={geomorphPngPath(gm.layoutKey)}
+          draggable={false}
+          width={gm.pngRect.width}
+          height={gm.pngRect.height}
+          style={{
+            clipPath: state.clipPath[gmIndex],
+            WebkitClipPath: state.clipPath[gmIndex],
+            left: gm.gm.d.pngRect.x,
+            top: gm.gm.d.pngRect.y,
+            transform: `matrix(${gm.transform})`,
+          }}
+        />
       )}
+
+      <Doors
+        gms={gms}
+        wire={state.wire}
+        onLoad={api => state.doorsApi = api}
+      />
       
     </CssPanZoom>
   ) : null;

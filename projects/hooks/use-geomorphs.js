@@ -20,7 +20,10 @@ export default function useGeomorphs(defs) {
   }, [layoutKeys]);
 
   const queries = layoutKeys.map(layoutKey => useGeomorphData(layoutKey, { staleTime: Infinity }));
-  const ready = queries.every(x => x.data) && defs.every(x => layoutKeys.includes(x.layoutKey));
+  const ready = (
+    defs.every(x => layoutKeys.includes(x.layoutKey)) 
+    && queries.every(x => x.data)
+  );
 
   return React.useMemo(() => {
     if (ready) {

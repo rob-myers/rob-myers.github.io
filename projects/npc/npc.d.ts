@@ -53,19 +53,20 @@ declare namespace NPC {
   /** Fired when doors is opened-door/closed */
   export interface DoorMessage {
     key: 'opened-door' | 'closed-door';
+    gmIndex: number;
     index: number;
   }
 
   export interface DoorsProps {
-    gm: Geomorph.UseGeomorphsItem;
+    gms: Geomorph.UseGeomorphsItem[];
     wire: NavWire;
-    onLoad?: (api: DoorsApi) => void;
+    onLoad: (api: DoorsApi) => void;
   }
 
   export interface DoorsApi {
     /** Get ids of open doors */
-    getOpen(): number[];
-    setObservableDoors(doorIds: number[]): void ;
+    getOpen(gmIndex: number): number[];
+    setObservableDoors(gmIndex: number, doorIds: number[]): void ;
   }
 
   export interface Stage {
