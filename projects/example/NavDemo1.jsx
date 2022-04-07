@@ -47,9 +47,8 @@ export default function NavDemo1(props) {
 
   const state = useMuState(() => {
     return {
-      currentHoleId: 6,
       currentGmIndex: 0,
-
+      currentHoleId: 8,
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
@@ -83,20 +82,14 @@ export default function NavDemo1(props) {
       updateClipPath() {
         const gmIndex = state.currentGmIndex;
         const gm = gms[gmIndex];
-
-        const { holesWithDoors, hullOutline, pngRect } = gm;
+        const { gm: { d: { hullOutline, holesWithDoors }} } = gm;
         const shownHoleIds = [state.currentHoleId].concat(state.getAdjacentHoleIds());
         const holePolys = shownHoleIds.map(i => holesWithDoors[i]);
-        /**
-         * TODO since we undo transform,
-         * we could use original polys
-         */
-        const matrix = new Mat(gm.inverseTransform);
         const maskPoly = Poly.cutOut(holePolys, [hullOutline])
-          .map(poly => poly.applyMatrix(matrix))
-          .map(poly => poly.translate(-gm.gm.d.pngRect.x, -gm.gm.d.pngRect.y))
+          .map(poly => poly.translate(-gm.gm.d.pngRect.x, -gm.gm.d.pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
-        state.clipPath[gmIndex] = svgPaths.length ? `path('${svgPaths}')` : 'none'; // ?
+        state.clipPath = state.clipPath.map(_ => 'none');
+        state.clipPath[gmIndex] = `path('${svgPaths}')`;
       },
       updateObservableDoors() {
         const gmIndex = state.currentGmIndex;
@@ -108,7 +101,7 @@ export default function NavDemo1(props) {
       },
     };
   }, [gms], {
-    equality: { currentHoleId: true },
+    equality: { currentGmIndex: true, currentHoleId: true },
   });
 
   return gms.length ? (
