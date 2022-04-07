@@ -7,7 +7,7 @@ import useMuState from "../hooks/use-mu-state";
 import useUpdate from "../hooks/use-update";
 
 /**
- * Doors for Geomorph.UseGeomorphItems.
+ * Doors for `Geomorph.UseGeomorphItems`.
  * @param {NPC.DoorsProps} props
  */
 export default function Doors(props) {
@@ -16,6 +16,12 @@ export default function Doors(props) {
   const state = useMuState(() => {
     /** @type {NPC.DoorsApi} */
     const api = {
+      get ready() {
+        return true;
+      },
+      getObservable(gmIndex) {
+        return Object.keys(state.observable[gmIndex]).map(Number);
+      },
       getOpen(gmIndex) {
         return Object.keys(state.open[gmIndex]).map(Number);
       },
@@ -86,13 +92,10 @@ export default function Doors(props) {
       // TODO could also interchange/clear state.open[i]'s based on previous
       props.gms.forEach((_, gmIndex) => state.renderUnobservables(gmIndex));
     });
-  }, [props.gms]);
-  
-  React.useEffect(() => {
     state.rootEl.addEventListener('pointerup', state.onToggleDoor);
     return () => void state.rootEl.removeEventListener('pointerup', state.onToggleDoor);
   }, [props.gms]);
-
+  
   return (
     <div
       ref={el => el && (state.rootEl = el)}
@@ -111,7 +114,7 @@ export default function Doors(props) {
             // maybe don't precompute transformed ones
           }
           {gm.gm.doors.map(({ rect, angle, tags }, i) =>
-            state.observable[gmIndex][i] && (
+            state.observable[gmIndex][i] &&
               <div
                 key={i}
                 data-gm-index={gmIndex}
@@ -129,7 +132,6 @@ export default function Doors(props) {
                   transformOrigin: 'top left',
                 }}
               />
-              )
             )
           }
           <canvas
@@ -142,6 +144,7 @@ export default function Doors(props) {
     </div>
   );
 }
+
 
 const rootCss = css`
   canvas {

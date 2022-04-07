@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
-import { Mat, Poly } from "../geom";
+import { Mat, Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -13,9 +13,15 @@ import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
 
 // TODO
-// - ✅ <Doors> supports multiple transformed geomorphs
+// - ✅ Doors supports multiple transformed geomorphs
 // - ✅ fix door interference between multiple instances of g-301--bridge
+
 // - 🚧 avoid precomputing unused transformed geometry
+// - 🚧 precompute { holeIds: [infront, behind] } inside doors/windows
+// - 🚧 simplify relationship:
+//      Geomorph.Layout -> Geomorph.GeomorphData -> Geomorph.UseGeomorphsItem
+
+// - 🚧 can set next hole when adjacent to current
 // - 🚧 current state is [gm id, hole id]
 // - 🚧 light propagates over geomorph boundary
 // - 🚧 GmGraph has windows
@@ -41,12 +47,12 @@ export default function NavDemo1(props) {
 
   const state = useMuState(() => {
     return {
-      currentHoleId: 0,
+      currentHoleId: 6,
       currentGmIndex: 0,
 
       clipPath: gms.map(_ => 'none'),
 
-      doorsApi: /** @type {NPC.DoorsApi} */  ({}),
+      doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       npcsApi: /** @type {NPC.NPCsApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
@@ -151,6 +157,8 @@ export default function NavDemo1(props) {
         />
       )}
 
+      {state.doorsApi.ready && <Debug gms={gms} doorsApi={state.doorsApi} currentHoleId={state.currentHoleId} />}
+
       <Doors
         gms={gms}
         wire={state.wire}
@@ -174,3 +182,50 @@ const rootCss = css`
     filter: invert(100%) brightness(55%) contrast(200%) sepia(0%);
   }
 `;
+
+/** @param {{ gms: Geomorph.UseGeomorphsItem[]; doorsApi: NPC.DoorsApi; currentHoleId: number }} props   */
+function Debug(props) {
+  return <>
+    {props.gms.map((gm, gmIndex) => {
+      const observable = props.doorsApi.getObservable(gmIndex);
+      return (
+        <div
+          key={gm.itemKey}
+          className="debug"
+          style={{
+            transform: gm.transformStyle,
+            transformOrigin: `${gm.gm.d.pngRect.x}px ${gm.gm.d.pngRect.y}px`,
+            position: 'absolute',
+          }}
+        >
+          {gm.gm.doors.map(({ poly, normal }, doorIndex) => {
+            if (observable.includes(doorIndex)) {
+              const sign = gm.roomGraph.getRoomDoorSign(props.currentHoleId, doorIndex) || 0;
+              const angle = Vect.from(normal).scale(-sign || 0).angle;
+              return (
+                <div
+                  key={doorIndex}
+                  style={{
+                    width: debugRadius * 2,
+                    height: debugRadius * 2,
+                    borderRadius: debugRadius,
+                    position: 'absolute',
+                    left: poly.center.x - debugRadius,
+                    top: poly.center.y - debugRadius,
+                    transform: `rotate(${angle}rad)`,
+                    backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
+                    // filter: 'invert(100%)',
+                  }}
+                />
+              );
+            } else {
+              return null;
+            }
+            })}
+        </div>
+      )
+    })}
+  </>;
+}
+
+const debugRadius = 4;

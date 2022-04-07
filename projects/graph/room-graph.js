@@ -68,6 +68,17 @@ export class RoomGraph extends BaseGraph {
   }
 
   /**
+   * @param {number} roomIndex The i^th room
+   * @param {number} doorIndex
+   */
+  getRoomDoorSign(roomIndex, doorIndex) {
+    const room = this.getRoomNode(roomIndex);
+    const door = this.getDoorNode(doorIndex);
+    const roomSuccIndex = /** @type {-1 | 0 | 1} */ (this.getSuccs(door).indexOf(room));
+    return roomSuccIndex === -1 ? null : door.roomSigns[roomSuccIndex];
+  }
+
+  /**
    * Given a 'room' node, find all other rooms connected via an open 'door' node.
    * We assume the undirected graph is bipartite i.e. rooms only connect to doors.
    * @param {Graph.RoomGraphNode} roomNode
