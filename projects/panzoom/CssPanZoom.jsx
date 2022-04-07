@@ -257,7 +257,7 @@ export default function CssPanZoom(props) {
 }
 
 /** Must divide 60 */
-const gridExtent = 60 * 30;
+const gridExtent = 60 * 60;
 
 const rootCss = css`
   width: 100%;
