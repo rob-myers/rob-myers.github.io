@@ -106,13 +106,8 @@ export default function Doors(props) {
           key={gm.itemKey}
           style={{
             transform: gm.transformStyle,
-            transformOrigin: `${gm.gm.d.pngRect.x}px ${gm.gm.d.pngRect.y}px`,
           }}
         >
-          {
-            // TODO since we use untransformed doors,
-            // maybe don't precompute transformed ones
-          }
           {gm.gm.doors.map(({ rect, angle, tags }, i) =>
             state.observable[gmIndex][i] &&
               <div

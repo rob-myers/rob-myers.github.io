@@ -16,10 +16,10 @@ import NPCs from "../npc/NPCs";
 // - ✅ Doors supports multiple transformed geomorphs
 // - ✅ fix door interference between multiple instances of g-301--bridge
 
-// - 🚧 avoid precomputing unused transformed geometry
-// - 🚧 precompute { holeIds: [infront, behind] } inside doors/windows
+// - ✅ avoid precomputing unused transformed geometry
 // - 🚧 simplify relationship:
 //      Geomorph.Layout -> Geomorph.GeomorphData -> Geomorph.UseGeomorphsItem
+// - 🚧 precompute { holeIds: [infront, behind] } inside doors/windows
 
 // - 🚧 can set next hole when adjacent to current
 // - 🚧 current state is [gm id, hole id]
@@ -42,7 +42,7 @@ export default function NavDemo1(props) {
   const { gms, gmGraph } = useGeomorphs([
     { layoutKey: 'g-301--bridge' },
     { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
-    { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 22 + 1200 + 600 + 22], },
+    { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
   const state = useMuState(() => {
@@ -125,6 +125,7 @@ export default function NavDemo1(props) {
             left: gm.gm.d.pngRect.x,
             top: gm.gm.d.pngRect.y,
             transform: `matrix(${gm.transform})`,
+            transformOrigin: `${-gm.gm.d.pngRect.x}px ${-gm.gm.d.pngRect.y}px`,
           }}
         />
       )}
@@ -149,6 +150,7 @@ export default function NavDemo1(props) {
             left: gm.gm.d.pngRect.x,
             top: gm.gm.d.pngRect.y,
             transform: `matrix(${gm.transform})`,
+            transformOrigin: `${-gm.gm.d.pngRect.x}px ${-gm.gm.d.pngRect.y}px`,
           }}
         />
       )}

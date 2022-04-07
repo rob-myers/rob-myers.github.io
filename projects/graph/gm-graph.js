@@ -53,9 +53,6 @@ export class GmGraph extends BaseGraph {
     
     // Each door node is connected to the door node it is identified with (if any)
     const globalEdges = gmItems.flatMap((srcItem, roomNodeId) => {
-      /**
-       * TODO fix the transformed rectangles we are comparing..
-       */
       // Detect geomorphs whose gridRects border current one
       const adjItems = gmItems.filter((otherItem, otherId) => otherId > roomNodeId && otherItem.gridRect.intersects(srcItem.gridRect));
       console.info('geomorph to geomorph:', srcItem, '-->', adjItems);
