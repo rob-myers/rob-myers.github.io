@@ -71,3 +71,14 @@ let points = pathDataToPolys(pathData, {tolerance:1, decimals:1});
 // console.log(JSON.stringify(points));
 console.log(JSON.stringify(points[0].filter((_, i) => i % 4 === 0).flatMap(x=>x).join(' ')));
 ```
+
+
+```sh
+# restrict PIDs (possibly including dead processes)
+ps aux | grep nvm | awk '{print $2}'
+
+# kill processes
+for pid in $( ps aux | grep nvm | awk '{print $2}' ); do
+  kill $pid
+done
+```
