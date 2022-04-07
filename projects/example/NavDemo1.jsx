@@ -42,13 +42,13 @@ export default function NavDemo1(props) {
   const { gms, gmGraph } = useGeomorphs([
     { layoutKey: 'g-301--bridge' },
     { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
-    { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 20 + 1200 + 600 + 20], },
+    { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 22 + 1200 + 600 + 22], },
   ]);
 
   const state = useMuState(() => {
     return {
       currentGmIndex: 0,
-      currentHoleId: 8,
+      currentHoleId: 2,
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
@@ -97,7 +97,10 @@ export default function NavDemo1(props) {
         const { roomGraph } = gm;
         const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
         const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
-        this.doorsApi.setObservableDoors(gmIndex, observableDoors.map(x => x.doorIndex));
+        gms.forEach((_, otherGmIndex) => this.doorsApi.setObservableDoors(
+          otherGmIndex,
+          gmIndex === otherGmIndex ? observableDoors.map(x => x.doorIndex) : []
+        ));
       },
     };
   }, [gms], {
@@ -114,10 +117,10 @@ export default function NavDemo1(props) {
       {gms.map(gm =>
         <img
           className="geomorph"
-          src={geomorphPngPath(gm.layoutKey)}
+          src={geomorphPngPath(gm.gm.key)}
           draggable={false}
-          width={gm.pngRect.width}
-          height={gm.pngRect.height}
+          width={gm.gm.d.pngRect.width}
+          height={gm.gm.d.pngRect.height}
           style={{
             left: gm.gm.d.pngRect.x,
             top: gm.gm.d.pngRect.y,
@@ -136,10 +139,10 @@ export default function NavDemo1(props) {
         <img
           key={gmIndex}
           className="geomorph-dark"
-          src={geomorphPngPath(gm.layoutKey)}
+          src={geomorphPngPath(gm.gm.key)}
           draggable={false}
-          width={gm.pngRect.width}
-          height={gm.pngRect.height}
+          width={gm.gm.d.pngRect.width}
+          height={gm.gm.d.pngRect.height}
           style={{
             clipPath: state.clipPath[gmIndex],
             WebkitClipPath: state.clipPath[gmIndex],
@@ -179,6 +182,19 @@ const rootCss = css`
 /** @param {{ gms: Geomorph.UseGeomorphsItem[]; doorsApi: NPC.DoorsApi; currentHoleId: number }} props   */
 function Debug(props) {
   return <>
+    {props.gms.map((gm, gmIndex) =>
+      <div
+        key={gmIndex}
+        style={{
+          position: 'absolute',
+          left: gm.gridRect.x,
+          top: gm.gridRect.y,
+          width: gm.gridRect.width,
+          height: gm.gridRect.height,
+          border: '2px red solid',
+        }}
+      />  
+    )}
     {props.gms.map((gm, gmIndex) => {
       const observable = props.doorsApi.getObservable(gmIndex);
       return (
@@ -195,6 +211,7 @@ function Debug(props) {
             if (observable.includes(doorIndex)) {
               const sign = gm.roomGraph.getRoomDoorSign(props.currentHoleId, doorIndex) || 0;
               const angle = Vect.from(normal).scale(-sign || 0).angle;
+              const position = poly.center.addScaledVector(normal, sign * 15);
               return (
                 <div
                   key={doorIndex}
@@ -203,8 +220,8 @@ function Debug(props) {
                     height: debugRadius * 2,
                     borderRadius: debugRadius,
                     position: 'absolute',
-                    left: poly.center.x - debugRadius,
-                    top: poly.center.y - debugRadius,
+                    left: position.x - debugRadius,
+                    top: position.y - debugRadius,
                     transform: `rotate(${angle}rad)`,
                     backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
                     // filter: 'invert(100%)',

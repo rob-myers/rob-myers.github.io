@@ -136,8 +136,8 @@ export default function Doors(props) {
           }
           <canvas
             ref={(el) => el && (state.canvas[gmIndex] = el)}
-            width={gm.pngRect.width}
-            height={gm.pngRect.height}
+            width={gm.gm.d.pngRect.width}
+            height={gm.gm.d.pngRect.height}
           />
         </div>
       ))}

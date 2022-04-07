@@ -121,11 +121,11 @@ declare namespace Graph {
     /** Index of `Geomorph.UseGeomorphsItem['hullDoors']` */
     hullDoorIndex: number;
     /**
-     * Recall that a door node is connected to exactly one room node.
+     * Recall that a door node is connected to exactly one gm node.
      * We compute the sign of the dot product of (a) the respective door's normal,
-     * (b) the direction from the door towards the respective room.
+     * (b) the direction from the door towards the respective gm.
      */
-    roomSign: -1 | 1;
+    gmSign: -1 | 1;
   }
 
   export type GmGraphNode = (

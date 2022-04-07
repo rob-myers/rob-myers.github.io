@@ -382,7 +382,8 @@ export const allLayoutKeys = keys(allLayoutKeysLookup);
  */
 export function geomorphDataToGeomorphsItem(gm, transform) {
   const matrix = new Mat(transform);
-  const pngRect = gm.d.pngRect.clone().applyMatrix(matrix);
+  const gridRect = (new Rect(0, 0, 1200, gm.d.pngRect.height > 1000 ? 1200 : 600)).applyMatrix(matrix);
+
   const doors = gm.doors.map((meta) => {
     const normal = matrix.transformPoint(Vect.from(meta.normal));
     return {
@@ -396,23 +397,14 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
     };
   });
 
-  const { a, b, c, d, e, f } = matrix.getInverseMatrix();
-
   /** @type {Geomorph.UseGeomorphsItem} */
   const output = {
-    layoutKey: gm.key,
-    doors,
-    holesWithDoors: gm.d.holesWithDoors.map(x => x.clone().applyMatrix(matrix)),
-    hullDoors: doors.filter(x => x.tags.includes('hull')),
-    hullOutline: gm.d.hullOutline.clone().applyMatrix(matrix),
-    inverseTransform: [a, b, c, d, e, f],
-    pngRect,
-    roomGraph: gm.d.roomGraph, // No need to clone or transform
+    itemKey: `${gm.key}-[${transform}]`,
+    gm,
     transform,
     transformStyle: `matrix(${transform})`,
-
-    gm,
-    itemKey: `${gm.key}-${transform}`,
+    gridRect,
+    roomGraph: gm.d.roomGraph, // No need to clone or transform
   };
 
   return output;

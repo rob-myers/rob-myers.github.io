@@ -35,14 +35,15 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
     const output = {
       ...layout,
       d: {
-        hullOutline: layout.hullPoly[0].removeHoles(),
-        pngRect: Rect.fromJson(layout.items[0].pngRect),
-        roomGraph,
         holesWithDoors,
         holeSwitches: layout.holes.map((poly) => {
           const found = switchPoints.find(p => poly.contains(p));
           return found || poly.rect.center;
         }),
+        hullDoors: layout.doors.filter(({ tags }) => tags.includes('hull')),
+        hullOutline: layout.hullPoly[0].removeHoles(),
+        pngRect: Rect.fromJson(layout.items[0].pngRect),
+        roomGraph,
         spawnPoints,
       },
     };

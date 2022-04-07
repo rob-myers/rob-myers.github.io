@@ -111,13 +111,14 @@ declare namespace Geomorph {
    export interface GeomorphData extends Geomorph.ParsedLayout {
     /** Derived computations */
     d: {
+      holesWithDoors: Poly[];
+      /** Switch in interior, else hole center */
+      holeSwitches: Vect[];
+      hullDoors: RichAngledRect<Poly>[];
       hullOutline: Poly;
       pngRect: Geom.Rect;
-      /** Switch in interior, falling back to hole center */
-      holeSwitches: Vect[];
-      spawnPoints: Vect[];
       roomGraph: Graph.RoomGraph;
-      holesWithDoors: Poly[];
+      spawnPoints: Vect[];
     };
   }
 
@@ -252,19 +253,20 @@ declare namespace Geomorph {
   }
 
   export interface UseGeomorphsItem {
-    layoutKey: LayoutKey;
-    doors: RichAngledRect<Poly>[];
-    holesWithDoors: Poly[];
-    /** Filtered transformed doors */
-    hullDoors: RichAngledRect<Poly>[];
-    hullOutline: Poly;
-    inverseTransform: [number, number, number, number, number, number];
-    pngRect: Geom.Rect;
-    roomGraph: Graph.RoomGraph;
+    /** `${gm.key}-[${transform}]` */
+    itemKey: string;
+
+    gm: Geomorph.GeomorphData;
     transform: [number, number, number, number, number, number];
     transformStyle: string;
-    gm: Geomorph.GeomorphData;
-    itemKey: string;
+
+    /**
+     * Sub rectangle of 600 * 600 grid
+     * - standard geomorphs have dimension 1200 * 1200
+     * - edge geomorphs have dimension 1200 * 600
+     */
+    gridRect: Geom.Rect;
+    roomGraph: Graph.RoomGraph;
   }
 
 }

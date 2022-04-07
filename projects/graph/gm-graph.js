@@ -1,4 +1,4 @@
-import { Rect } from "../geom";
+import { Mat, Rect } from "../geom";
 import { BaseGraph } from "./graph";
 
 /**
@@ -15,17 +15,18 @@ export class GmGraph extends BaseGraph {
 
     /** @type {Graph.GmGraphNode[]} */
     const nodes = [
-      // NOTE room nodes aligned to `gmItems`
+      // NOTE geomorph nodes aligned to `gmItems`
       ...gmItems.map(x => {
         /** @type {Graph.GmGraphNodeGm} */
-        const gmNode = { type: 'gm', gmKey: x.layoutKey, id: `gm-${x.layoutKey}-[${x.transform}]`, transform: x.transform  };
+        const gmNode = { type: 'gm', gmKey: x.gm.key, id: `gm-${x.gm.key}-[${x.transform}]`, transform: x.transform  };
         return gmNode;        
       }),
-      ...gmItems.flatMap(x => x.hullDoors.map((hullDoor, hullDoorIndex) => {
-        const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 10);
-        const roomSign = x.pngRect.contains(alongNormal) ? 1 : -1;
+      ...gmItems.flatMap(({ gm, transform }) => gm.d.hullDoors.map((hullDoor, hullDoorIndex) => {
+        const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
+        // We are detecting whether moving along normal we stay inside geomorph
+        const gmSign = gm.d.pngRect.contains(alongNormal) ? 1 : -1;
         /** @type {Graph.GmGraphNodeDoor} */
-        const doorNode = { type: 'door', gmKey: x.layoutKey, id: `door-${x.layoutKey}-[${x.transform}]-${hullDoorIndex}`, hullDoorIndex, transform: x.transform, roomSign };
+        const doorNode = { type: 'door', gmKey: gm.key, id: `door-${gm.key}-[${transform}]-${hullDoorIndex}`, hullDoorIndex, transform, gmSign };
         return doorNode;
       })
       ),
@@ -41,32 +42,38 @@ export class GmGraph extends BaseGraph {
 
     // Each gm node is connected to its door nodes (hull doors it has)
     /** @type {Graph.GmGraphEdgeOpts[]} */
-    const localEdges = gmItems.flatMap(x => {
-      const gmNodeKey = `gm-${x.layoutKey}-[${x.transform}]`;
-      return x.hullDoors.map((y, hullDoorIndex) => ({
+    const localEdges = gmItems.flatMap(({ gm, transform }) => {
+      const gmNodeKey = `gm-${gm.key}-[${transform}]`;
+      return gm.d.hullDoors.map((_, hullDoorIndex) => ({
         src: gmNodeKey,
-        dst: `door-${x.layoutKey}-[${x.transform}]-${hullDoorIndex}`,
+        dst: `door-${gm.key}-[${transform}]-${hullDoorIndex}`,
       }));
     });
 
+    
     // Each door node is connected to the door node it is identified with (if any)
     const globalEdges = gmItems.flatMap((srcItem, roomNodeId) => {
-      // Detect geomorphs which border with `x`
-      const adjItems = gmItems.filter((y, otherId) => otherId > roomNodeId && y.pngRect.intersects(srcItem.pngRect));
+      /**
+       * TODO fix the transformed rectangles we are comparing..
+       */
+      // Detect geomorphs whose gridRects border current one
+      const adjItems = gmItems.filter((otherItem, otherId) => otherId > roomNodeId && otherItem.gridRect.intersects(srcItem.gridRect));
       console.info('geomorph to geomorph:', srcItem, '-->', adjItems);
 
-      // For each hull door, detect if intersects ones from aligned geomorphs
-      return srcItem.hullDoors.flatMap((srcDoor, hullDoorIndex) => {
-        const srcDoorNodeId = `door-${srcItem.layoutKey}-[${srcItem.transform}]-${hullDoorIndex}`;
-        const srcRect = Rect.fromJson(srcDoor.rect);
-        const tmpRect = new Rect;
-        const pairs = adjItems.flatMap(item => item.hullDoors.map(door => /** @type {const} */ ([item, door])));
-        const matching = pairs.find(([_item, { rect: otherRect }]) => srcRect.intersects(tmpRect.setFromJson(otherRect)));
+      // For each hull door, detect intersection with aligned geomorph doors
+      // We must transform the respective geometry to check this
+      const tmpRect = new Rect;
+      return srcItem.gm.d.hullDoors.flatMap((srcDoor, hullDoorIndex) => {
+        const srcDoorNodeId = `door-${srcItem.gm.key}-[${srcItem.transform}]-${hullDoorIndex}`;
+        const matrix = new Mat(srcItem.transform);
+        const srcRect = Rect.fromJson(srcDoor.rect).applyMatrix(matrix);
+        const pairs = adjItems.flatMap(item => item.gm.d.hullDoors.map(door => /** @type {const} */ ([item, door])));
+        const matching = pairs.find(([_item, { rect: otherRect }]) => srcRect.intersects(tmpRect.setFromJson(otherRect).applyMatrix(matrix)));
         if (matching !== undefined) {
           const [dstItem, dstDoor] = matching;
-          const dstHullDoorIndex = dstItem.hullDoors.indexOf(dstDoor);
-          console.info('hull door to hull door:', srcItem, hullDoorIndex, '==>', dstItem, dstItem.hullDoors.indexOf(dstDoor))
-          const dstDoorNodeId = `door-${dstItem.layoutKey}-[${dstItem.transform}]-${dstHullDoorIndex}`;
+          const dstHullDoorIndex = dstItem.gm.d.hullDoors.indexOf(dstDoor);
+          console.info('hull door to hull door:', srcItem, hullDoorIndex, '==>', dstItem, dstItem.gm.d.hullDoors.indexOf(dstDoor))
+          const dstDoorNodeId = `door-${dstItem.gm.key}-[${dstItem.transform}]-${dstHullDoorIndex}`;
           return { src: srcDoorNodeId, dst: dstDoorNodeId };
         } else {
           return [];
