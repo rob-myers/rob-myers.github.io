@@ -255,18 +255,16 @@ declare namespace Geomorph {
   export interface UseGeomorphsItem {
     /** `${gm.key}-[${transform}]` */
     itemKey: string;
-
     gm: Geomorph.GeomorphData;
     transform: [number, number, number, number, number, number];
+    transformOrigin: string;
     transformStyle: string;
-
     /**
      * Sub rectangle of 600 * 600 grid
      * - standard geomorphs have dimension 1200 * 1200
      * - edge geomorphs have dimension 1200 * 600
      */
     gridRect: Geom.Rect;
-    roomGraph: Graph.RoomGraph;
   }
 
 }

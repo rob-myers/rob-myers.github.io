@@ -22,7 +22,7 @@ import NPCs from "../npc/NPCs";
 // - 🚧 precompute { holeIds: [infront, behind] } inside doors/windows
 
 // - 🚧 can set next hole when adjacent to current
-// - 🚧 current state is [gm id, hole id]
+// - ✅ current state is [gm id, hole id]
 // - 🚧 light propagates over geomorph boundary
 // - 🚧 GmGraph has windows
 
@@ -60,7 +60,7 @@ export default function NavDemo1(props) {
        */
       getAdjacentHoleIds() {
         const gmIndex = state.currentGmIndex;
-        const { roomGraph } = gms[gmIndex];
+        const { roomGraph } = gms[gmIndex].gm.d;
         const openDoorIds = state.doorsApi.getOpen(gmIndex);
         const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
         return roomGraph.getEnterableRooms(currentRoomNode, openDoorIds).map(({ holeIndex }) => holeIndex);
@@ -94,7 +94,7 @@ export default function NavDemo1(props) {
       updateObservableDoors() {
         const gmIndex = state.currentGmIndex;
         const gm = gms[gmIndex];
-        const { roomGraph } = gm;
+        const { roomGraph } = gm.gm.d;
         const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
         const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
         gms.forEach((_, otherGmIndex) => this.doorsApi.setObservableDoors(
@@ -124,8 +124,8 @@ export default function NavDemo1(props) {
           style={{
             left: gm.gm.d.pngRect.x,
             top: gm.gm.d.pngRect.y,
-            transform: `matrix(${gm.transform})`,
-            transformOrigin: `${-gm.gm.d.pngRect.x}px ${-gm.gm.d.pngRect.y}px`,
+            transform: gm.transformStyle,
+            transformOrigin: gm.transformOrigin,
           }}
         />
       )}
@@ -149,8 +149,8 @@ export default function NavDemo1(props) {
             WebkitClipPath: state.clipPath[gmIndex],
             left: gm.gm.d.pngRect.x,
             top: gm.gm.d.pngRect.y,
-            transform: `matrix(${gm.transform})`,
-            transformOrigin: `${-gm.gm.d.pngRect.x}px ${-gm.gm.d.pngRect.y}px`,
+            transform: gm.transformStyle,
+            transformOrigin: gm.transformOrigin,
           }}
         />
       )}
@@ -184,7 +184,7 @@ const rootCss = css`
 /** @param {{ gms: Geomorph.UseGeomorphsItem[]; doorsApi: NPC.DoorsApi; currentHoleId: number }} props   */
 function Debug(props) {
   return <>
-    {props.gms.map((gm, gmIndex) =>
+    {/* {props.gms.map((gm, gmIndex) =>
       <div
         key={gmIndex}
         style={{
@@ -196,7 +196,7 @@ function Debug(props) {
           border: '2px red solid',
         }}
       />  
-    )}
+    )} */}
     {props.gms.map((gm, gmIndex) => {
       const observable = props.doorsApi.getObservable(gmIndex);
       return (
@@ -211,7 +211,7 @@ function Debug(props) {
         >
           {gm.gm.doors.map(({ poly, normal }, doorIndex) => {
             if (observable.includes(doorIndex)) {
-              const sign = gm.roomGraph.getRoomDoorSign(props.currentHoleId, doorIndex) || 0;
+              const sign = gm.gm.d.roomGraph.getRoomDoorSign(props.currentHoleId, doorIndex) || 0;
               const angle = Vect.from(normal).scale(-sign || 0).angle;
               const position = poly.center.addScaledVector(normal, sign * 15);
               return (

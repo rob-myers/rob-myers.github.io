@@ -402,9 +402,9 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
     itemKey: `${gm.key}-[${transform}]`,
     gm,
     transform,
+    transformOrigin: `${-gm.d.pngRect.x}px ${-gm.d.pngRect.y}px`,
     transformStyle: `matrix(${transform})`,
     gridRect,
-    roomGraph: gm.d.roomGraph, // No need to clone or transform
   };
 
   return output;
