@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
-import { Mat, Poly, Vect } from "../geom";
+import { Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -19,7 +19,7 @@ import NPCs from "../npc/NPCs";
 // - ✅ avoid precomputing unused transformed geometry
 // - ✅ simplify relationship: Geomorph.Layout -> Geomorph.GeomorphData
 // - ✅ simplify relationship: Geomorph.GeomorphData -> Geomorph.UseGeomorphsItem
-// - 🚧 precompute { holeIds: [infront, behind] } inside doors/windows
+// - ✅ precompute { holeIds: [infront, behind] } inside doors/windows
 
 // - 🚧 can set next hole when adjacent to current
 // - ✅ current state is [gm id, hole id]
@@ -42,6 +42,8 @@ export default function NavDemo1(props) {
   const { gms, gmGraph } = useGeomorphs([
     { layoutKey: 'g-301--bridge' },
     { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
+    { layoutKey: 'g-302--xboat-repair-bay', transform: [1, 0, 0, 1, -1200, 600] },
+    { layoutKey: 'g-302--xboat-repair-bay', transform: [-1, 0, 0, 1, 1200 + 1200, 600] },
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
@@ -207,9 +209,9 @@ function Debug(props) {
             position: 'absolute',
           }}
         >
-          {gm.doors.map(({ poly, normal }, doorIndex) => {
+          {gm.doors.map(({ poly, normal, holeIds }, doorIndex) => {
             if (observable.includes(doorIndex)) {
-              const sign = gm.roomGraph.getRoomDoorSign(props.currentHoleId, doorIndex) || 0;
+              const sign = holeIds[0] === props.currentHoleId ? 1 : holeIds[1] === props.currentHoleId ? -1 : 0;
               const angle = Vect.from(normal).scale(-sign || 0).angle;
               const position = poly.center.addScaledVector(normal, sign * 15);
               return (

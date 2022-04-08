@@ -57,9 +57,8 @@ export default function LightsTest(props) {
 
           const doorLights = adjOpenDoorIds.map(doorIndex => {
             const door = doors[doorIndex];
-            const doorNode = roomGraph.getDoorNode(doorIndex);
-            const adjRoomNodes = roomGraph.getAdjacentRooms(doorNode);
-            const roomSign = roomGraph.getRoomSign(srcHoleId, doorNode);
+            const adjRoomNodes = roomGraph.getAdjacentRooms(roomGraph.getDoorNode(doorIndex));
+            const roomSign = door.holeIds[0] === srcHoleId ? 1 : door.holeIds[1] === srcHoleId ? -1 : null;
             if (roomSign === null) console.warn(`hole ${srcHoleId}: door ${doorIndex}: roomSign is null`);
             const lightPosition = door.poly.center.addScaledVector(door.normal, 20 * (roomSign || 0))
             const lightWalls = Poly.union(adjRoomNodes.map(x => holesWithDoors[x.holeIndex]))[0];
@@ -71,9 +70,8 @@ export default function LightsTest(props) {
           const adjWindowIds = roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
           const windowLights = adjWindowIds.map(windowIndex => {
             const window = windows[windowIndex];
-            const windowNode = roomGraph.getWindowNode(windowIndex);
-            const adjRoomNodes = roomGraph.getAdjacentRooms(windowNode);
-            const roomSign = roomGraph.getRoomSign(srcHoleId, windowNode);
+            const adjRoomNodes = roomGraph.getAdjacentRooms(roomGraph.getWindowNode(windowIndex));
+            const roomSign = window.holeIds[0] === srcHoleId ? 1 : window.holeIds[1] === srcHoleId ? -1 : null;
             if (roomSign === null) console.warn(`hole ${srcHoleId}: window ${windowIndex}: roomSign is null`);
             const lightPosition = window.poly.center.addScaledVector(window.normal, 60 * (roomSign || 0))
             const lightWalls = Poly.union(adjRoomNodes.map(x => holes[x.holeIndex]).concat(window.poly))[0];

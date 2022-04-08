@@ -56,27 +56,6 @@ export class RoomGraph extends BaseGraph {
   getRoomNode(roomIndex) {
     return /** @type {Graph.RoomGraphNodeRoom} */ (this.getNodeById(`room-${roomIndex}`));
   }
-  
-  /**
-   * @param {number} roomIndex The i^th room
-   * @param {Graph.RoomGraphNodeDoor | Graph.RoomGraphNodeWindow} doorOrWindowNode
-   */
-  getRoomSign(roomIndex, doorOrWindowNode) {
-    const room = this.getRoomNode(roomIndex);
-    const roomSuccIndex = /** @type {-1 | 0 | 1} */ (this.getSuccs(doorOrWindowNode).indexOf(room));
-    return roomSuccIndex === -1 ? null : doorOrWindowNode.roomSigns[roomSuccIndex];
-  }
-
-  /**
-   * @param {number} roomIndex The i^th room
-   * @param {number} doorIndex
-   */
-  getRoomDoorSign(roomIndex, doorIndex) {
-    const room = this.getRoomNode(roomIndex);
-    const door = this.getDoorNode(doorIndex);
-    const roomSuccIndex = /** @type {-1 | 0 | 1} */ (this.getSuccs(door).indexOf(room));
-    return roomSuccIndex === -1 ? null : door.roomSigns[roomSuccIndex];
-  }
 
   /**
    * Given a 'room' node, find all other rooms connected via an open 'door' node.
@@ -122,16 +101,16 @@ export class RoomGraph extends BaseGraph {
       })),
       ...doors.map((door, doorIndex) => {
         const alongNormal = door.poly.center.addScaledVector(door.normal, 10);
-        const roomSigns = doorsHoleIds[doorIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
+        // const roomSigns = doorsHoleIds[doorIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
         /** @type {Graph.RoomGraphNodeDoor} */
-        const doorNode = { id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex, roomSigns };
+        const doorNode = { id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex };
         return doorNode;
       }),
       ...windows.map((window, windowIndex) => {
         const alongNormal = window.poly.center.addScaledVector(window.normal, 10);
-        const roomSigns = windowsHoleIds[windowIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
+        // const roomSigns = windowsHoleIds[windowIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
         /** @type {Graph.RoomGraphNodeWindow} */
-        const windowNode = { id: `window-${windowIndex}`, type: /** @type {const} */ ('window'), windowIndex: windowIndex, roomSigns };
+        const windowNode = { id: `window-${windowIndex}`, type: /** @type {const} */ ('window'), windowIndex: windowIndex };
         return windowNode;
       }),
     ];

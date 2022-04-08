@@ -60,12 +60,6 @@ declare namespace Graph {
     id: string;
     /** Index of `Geomorph.Layout['doors']` */
     doorIndex: number;
-    /**
-     * This array is aligned with this node's successors (1 or 2 room nodes).
-     * We compute the sign of the dot product of (a) the respective door's normal,
-     * (b) the direction from the door towards the respective room.
-     */
-    roomSigns: (-1 | 1)[];
   }
 
   export interface RoomGraphNodeWindow {
@@ -74,12 +68,6 @@ declare namespace Graph {
     id: string;
     /** Index of `Geomorph.Layout['windows']` */
     windowIndex: number;
-    /**
-     * This array is aligned with this node's successors (1 or 2 room nodes).
-     * We compute the sign of the dot product of (a) the respective door's normal,
-     * (b) the direction from the door towards the respective room.
-     */
-    roomSigns: (-1 | 1)[];
   }
 
   export type RoomGraphNode = (
