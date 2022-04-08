@@ -66,7 +66,7 @@ export default function SvgNavDemo1(props) {
     >
       <g className={rootCss}>
 
-        {gm && <image {...gm.d.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
+        {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
         <g className="navtris">
           {!props.disabled && pf?.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>

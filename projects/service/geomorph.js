@@ -131,6 +131,7 @@ export async function createLayout(def, lookup, triangleService) {
   );
 
   const roomGraphJson = RoomGraph.fromHolesAndDoors(holes, doors, windows);
+  const roomGraph = RoomGraph.fromJson(roomGraphJson);
 
   return {
     key: def.key,
@@ -144,7 +145,7 @@ export async function createLayout(def, lookup, triangleService) {
     labels,
     navDecomp,
     navPoly,
-    roomGraph: roomGraphJson,
+    roomGraph,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doorPolys.concat(windowPolys), hullSym.hull),
@@ -204,7 +205,7 @@ export function serializeLayout({
     labels,
     navDecomp,
     navPoly: navPoly.map(x => x.geoJson),
-    roomGraph,
+    roomGraph: roomGraph.json(),
 
     hullPoly: hullPoly.map(x => x.geoJson),
     hullRect,
@@ -240,7 +241,7 @@ export function parseLayout({
     labels,
     navPoly: navPoly.map(Poly.from),
     navDecomp,
-    roomGraph,
+    roomGraph: RoomGraph.fromJson(roomGraph),
 
     hullPoly: hullPoly.map(Poly.from),
     hullRect,
@@ -382,27 +383,14 @@ export const allLayoutKeys = keys(allLayoutKeysLookup);
  */
 export function geomorphDataToGeomorphsItem(gm, transform) {
   const matrix = new Mat(transform);
-  const gridRect = (new Rect(0, 0, 1200, gm.d.pngRect.height > 1000 ? 1200 : 600)).applyMatrix(matrix);
-
-  const doors = gm.doors.map((meta) => {
-    const normal = matrix.transformPoint(Vect.from(meta.normal));
-    return {
-      ...meta,
-      poly: meta.poly.clone().applyMatrix(matrix),
-      // rect: Rect.fromJson(meta.rect).applyMatrix(matrix).json,
-      rect: meta.poly.clone().applyMatrix(matrix).rect.json,
-      normal: normal.json,
-      // TODO angle and line segs too?
-      angle: normal.angle - Math.PI/2,
-    };
-  });
+  const gridRect = (new Rect(0, 0, 1200, gm.pngRect.height > 1000 ? 1200 : 600)).applyMatrix(matrix);
 
   /** @type {Geomorph.UseGeomorphsItem} */
   const output = {
     itemKey: `${gm.key}-[${transform}]`,
     gm,
     transform,
-    transformOrigin: `${-gm.d.pngRect.x}px ${-gm.d.pngRect.y}px`,
+    transformOrigin: `${-gm.pngRect.x}px ${-gm.pngRect.y}px`,
     transformStyle: `matrix(${transform})`,
     gridRect,
   };

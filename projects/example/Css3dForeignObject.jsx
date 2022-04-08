@@ -49,7 +49,7 @@ export default withSize({ refreshMode: 'debounce' })(
                 setTimeout(() => state.onUpdate(/** @type {SVGSVGElement} */ (el.ownerSVGElement)));
               }
             }}>
-              <image {...gm.d.pngRect} href={geomorphPngPath(props.layoutKey)} />
+              <image {...gm.pngRect} href={geomorphPngPath(props.layoutKey)} />
               <ForeignObject gm={gm} />
             </g>
           )}
@@ -85,19 +85,19 @@ function ForeignObject({ gm }) {
   const { wallSegs, doorSegs, obstacleSegs } = React.useMemo(() => {
     return {
       wallSegs: gm.groups.walls.flatMap(poly =>
-        poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y).lineSegs
+        poly.translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs
       ),
       doorSegs: gm.doors.map(({ seg: [u, v] }) =>
-        [u, v].map(p => Vect.from(p).translate(-gm.d.pngRect.x, -gm.d.pngRect.y))
+        [u, v].map(p => Vect.from(p).translate(-gm.pngRect.x, -gm.pngRect.y))
       ),
       obstacleSegs: gm.groups.obstacles.flatMap(poly =>
-        poly.translate(-gm.d.pngRect.x, -gm.d.pngRect.y).lineSegs
+        poly.translate(-gm.pngRect.x, -gm.pngRect.y).lineSegs
       ),
     };
   }, [gm.groups.walls]);
 
   return (
-    <foreignObject xmlns="http://www.w3.org/1999/xhtml" {...gm.d.pngRect}>
+    <foreignObject xmlns="http://www.w3.org/1999/xhtml" {...gm.pngRect}>
       <div className={classNames("root-3d", threeDeeCss)}>
         {wallSegs.map(([v, u], i) => { // [v, u] fixes backface culling
           tempPoint.copy(u).sub(v);
@@ -194,8 +194,8 @@ function useDataUrls(gm) {
   return React.useMemo(() => {
     const canvas = document.createElement('canvas');
     const ctxt = /** @type {CanvasRenderingContext2D} */ (canvas.getContext('2d'));
-    [canvas.width, canvas.height] = [gm.d.pngRect.width, gm.d.pngRect.height];
-    ctxt.translate(-gm.d.pngRect.x, -gm.d.pngRect.y);
+    [canvas.width, canvas.height] = [gm.pngRect.width, gm.pngRect.height];
+    ctxt.translate(-gm.pngRect.x, -gm.pngRect.y);
 
     const walls = gm.groups.walls;
     ctxt.fillStyle = color.wallTop;

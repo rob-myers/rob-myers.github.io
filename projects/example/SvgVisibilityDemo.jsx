@@ -29,7 +29,7 @@ export default function SvgVisibilityDemoDemo(props) {
       dark
     >
       {data && <>
-        <image {...data.d.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
+        <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
         <Light init={init.lightA} walls={data.groups.walls} hull={data.hullPoly} />
         <Light init={init.lightB} walls={data.groups.walls} hull={data.hullPoly} />
       </>}

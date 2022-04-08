@@ -22,7 +22,7 @@ export default function SvgSvgNavGraph(props) {
       className={rootCss}
       dark
     >
-      {gm && <image {...gm.d.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />}
+      {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />}
 
       {pf && !props.disabled && <>
         {pf.zone.groups.map(nodes =>

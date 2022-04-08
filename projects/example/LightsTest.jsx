@@ -39,8 +39,9 @@ export default function LightsTest(props) {
 
       updateMasks(delayUpdate = 0) {
         const {
-          d: {pngRect, hullOutline, holesWithDoors, roomGraph},
           doors, windows, holes,
+          pngRect, hullOutline, holesWithDoors,
+          roomGraph,
         } = assertDefined(gm);
 
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
@@ -129,10 +130,10 @@ export default function LightsTest(props) {
           src={geomorphPngPath(layoutKey)}
           draggable={false}
           style={{
-            left: gm.d.pngRect.x,
-            top: gm.d.pngRect.y,
-            width: gm.d.pngRect.width,
-            height: gm.d.pngRect.height,
+            left: gm.pngRect.x,
+            top: gm.pngRect.y,
+            width: gm.pngRect.width,
+            height: gm.pngRect.height,
           }}
         />
 
@@ -141,10 +142,10 @@ export default function LightsTest(props) {
           src={geomorphPngPath(layoutKey)}
           draggable={false}
           style={{
-            left: gm.d.pngRect.x,
-            top: gm.d.pngRect.y,
-            width: gm.d.pngRect.width,
-            height: gm.d.pngRect.height,
+            left: gm.pngRect.x,
+            top: gm.pngRect.y,
+            width: gm.pngRect.width,
+            height: gm.pngRect.height,
             clipPath: state.clipPath,
             WebkitClipPath: state.clipPath,
           }}
@@ -154,7 +155,7 @@ export default function LightsTest(props) {
           className="light-toggles"
           onClick={state.onToggleLight}
         >
-          {gm.d.holeSwitches.map((center, holeIndex) => {
+          {gm.holeSwitches.map((center, holeIndex) => {
             return <div
               key={holeIndex}
               data-index={holeIndex}
@@ -222,17 +223,17 @@ function DebugGraph({ gm }) {
   return (
     <svg
       className="room-graph"
-      width={gm.d.pngRect.width}
-      height={gm.d.pngRect.height}
+      width={gm.pngRect.width}
+      height={gm.pngRect.height}
     >
-      {gm.d.roomGraph.nodesArray.map((node, i) =>
+      {gm.roomGraph.nodesArray.map((node, i) =>
         <circle
           key={i}
           stroke="rgba(200, 0, 0, 1)"
           fill="none"
           r={5}
           {...node.type === 'room'
-            && { cx: gm.d.holeSwitches[i].x, cy: gm.d.holeSwitches[i].y,  }}
+            && { cx: gm.holeSwitches[i].x, cy: gm.holeSwitches[i].y,  }}
           {...node.type === 'door'
             && { cx: gm.doors[node.doorIndex].poly.center.x, cy: gm.doors[node.doorIndex].poly.center.y }}
           {...node.type === 'window'
@@ -246,14 +247,14 @@ function DebugGraph({ gm }) {
             d={poly.svgPath}
           />
         )}
-        {gm.d.roomGraph.edgesArray
+        {gm.roomGraph.edgesArray
           .filter((x) => x.src.type === 'room' && x.dst.type === 'door')
           .map((edge) =>
             <line
               stroke="red"
-              x1={gm.d.holeSwitches[
+              x1={gm.holeSwitches[
                 /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).holeIndex].x}
-              y1={gm.d.holeSwitches[
+              y1={gm.holeSwitches[
                 /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).holeIndex].y}
               x2={gm.doors[
                 /** @type {Graph.RoomGraphNodeDoor} */ (edge.dst).doorIndex].poly.center.x}

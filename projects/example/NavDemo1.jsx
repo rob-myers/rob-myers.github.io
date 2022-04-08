@@ -60,7 +60,7 @@ export default function NavDemo1(props) {
        */
       getAdjacentHoleIds() {
         const gmIndex = state.currentGmIndex;
-        const { roomGraph } = gms[gmIndex].gm.d;
+        const { roomGraph } = gms[gmIndex].gm;
         const openDoorIds = state.doorsApi.getOpen(gmIndex);
         const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
         return roomGraph.getEnterableRooms(currentRoomNode, openDoorIds).map(({ holeIndex }) => holeIndex);
@@ -82,11 +82,11 @@ export default function NavDemo1(props) {
       updateClipPath() {
         const gmIndex = state.currentGmIndex;
         const gm = gms[gmIndex];
-        const { gm: { d: { hullOutline, holesWithDoors }} } = gm;
+        const { gm: { hullOutline, holesWithDoors } } = gm;
         const shownHoleIds = [state.currentHoleId].concat(state.getAdjacentHoleIds());
         const holePolys = shownHoleIds.map(i => holesWithDoors[i]);
         const maskPoly = Poly.cutOut(holePolys, [hullOutline])
-          .map(poly => poly.translate(-gm.gm.d.pngRect.x, -gm.gm.d.pngRect.y));
+          .map(poly => poly.translate(-gm.gm.pngRect.x, -gm.gm.pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         state.clipPath = state.clipPath.map(_ => 'none');
         state.clipPath[gmIndex] = `path('${svgPaths}')`;
@@ -94,7 +94,7 @@ export default function NavDemo1(props) {
       updateObservableDoors() {
         const gmIndex = state.currentGmIndex;
         const gm = gms[gmIndex];
-        const { roomGraph } = gm.gm.d;
+        const { roomGraph } = gm.gm;
         const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
         const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
         gms.forEach((_, otherGmIndex) => this.doorsApi.setObservableDoors(
@@ -119,11 +119,11 @@ export default function NavDemo1(props) {
           className="geomorph"
           src={geomorphPngPath(gm.gm.key)}
           draggable={false}
-          width={gm.gm.d.pngRect.width}
-          height={gm.gm.d.pngRect.height}
+          width={gm.gm.pngRect.width}
+          height={gm.gm.pngRect.height}
           style={{
-            left: gm.gm.d.pngRect.x,
-            top: gm.gm.d.pngRect.y,
+            left: gm.gm.pngRect.x,
+            top: gm.gm.pngRect.y,
             transform: gm.transformStyle,
             transformOrigin: gm.transformOrigin,
           }}
@@ -142,13 +142,13 @@ export default function NavDemo1(props) {
           className="geomorph-dark"
           src={geomorphPngPath(gm.gm.key)}
           draggable={false}
-          width={gm.gm.d.pngRect.width}
-          height={gm.gm.d.pngRect.height}
+          width={gm.gm.pngRect.width}
+          height={gm.gm.pngRect.height}
           style={{
             clipPath: state.clipPath[gmIndex],
             WebkitClipPath: state.clipPath[gmIndex],
-            left: gm.gm.d.pngRect.x,
-            top: gm.gm.d.pngRect.y,
+            left: gm.gm.pngRect.x,
+            top: gm.gm.pngRect.y,
             transform: gm.transformStyle,
             transformOrigin: gm.transformOrigin,
           }}
@@ -205,13 +205,13 @@ function Debug(props) {
           className="debug"
           style={{
             transform: gm.transformStyle,
-            transformOrigin: `${gm.gm.d.pngRect.x}px ${gm.gm.d.pngRect.y}px`,
+            transformOrigin: `${gm.gm.pngRect.x}px ${gm.gm.pngRect.y}px`,
             position: 'absolute',
           }}
         >
           {gm.gm.doors.map(({ poly, normal }, doorIndex) => {
             if (observable.includes(doorIndex)) {
-              const sign = gm.gm.d.roomGraph.getRoomDoorSign(props.currentHoleId, doorIndex) || 0;
+              const sign = gm.gm.roomGraph.getRoomDoorSign(props.currentHoleId, doorIndex) || 0;
               const angle = Vect.from(normal).scale(-sign || 0).angle;
               const position = poly.center.addScaledVector(normal, sign * 15);
               return (

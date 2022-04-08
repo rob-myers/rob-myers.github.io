@@ -57,7 +57,7 @@ declare namespace Geomorph {
    * The layout of a single geomorph, 
    * constructed from a `LayoutDef` and the `SymbolLookup`.
    */
-  export interface Layout<T> {
+  export interface Layout<T, U> {
     key: LayoutKey;
     id: number;
 
@@ -75,7 +75,7 @@ declare namespace Geomorph {
     /** A rich triangulation involving Steiner points */
     navDecomp: Geom.TriangulationJson;
     /** Connectivity graph involving holes and doors */
-    roomGraph: Graph.RoomGraphJson;
+    roomGraph: U;
 
     /** Should probably have exactly one polygon */
     hullPoly: T[];
@@ -102,24 +102,21 @@ declare namespace Geomorph {
     }[];
   }
   
-  export type ParsedLayout = Layout<Poly>;
-  export type LayoutJson = Layout<PolyJson>;
+  export type ParsedLayout = Layout<Poly, Graph.RoomGraph>;
+  export type LayoutJson = Layout<PolyJson, Graph.RoomGraphJson>;
 
   /**
    * Extension of Geomorph.ParsedLayout with derived data.
    */
    export interface GeomorphData extends Geomorph.ParsedLayout {
-    /** Derived computations */
-    d: {
-      holesWithDoors: Poly[];
-      /** Switch in interior, else hole center */
-      holeSwitches: Vect[];
-      hullDoors: RichAngledRect<Poly>[];
-      hullOutline: Poly;
-      pngRect: Geom.Rect;
-      roomGraph: Graph.RoomGraph;
-      spawnPoints: Vect[];
-    };
+     holesWithDoors: Poly[];
+     /** Switch in interior, else hole center */
+     holeSwitches: Vect[];
+     hullDoors: RichAngledRect<Poly>[];
+     hullOutline: Poly;
+     pngRect: Geom.Rect;
+     spawnPoints: Vect[];
+ 
   }
 
   /**

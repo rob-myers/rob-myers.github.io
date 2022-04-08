@@ -20,7 +20,7 @@ export default function SvgDoorsDemo(props) {
     >
       {data && <>
         <image
-          {...data.d.pngRect}
+          {...data.pngRect}
           className="geomorph"
           href={geomorphPngPath(props.layoutKey)}
         />
@@ -42,15 +42,15 @@ function ForeignObject({ gm }) {
   };
 
   return (
-    <foreignObject {...gm.d.pngRect} xmlns="http://www.w3.org/1999/xhtml">
+    <foreignObject {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
       <div onPointerUp={onClick}>
         {gm.doors.map(({ rect, angle }, i) =>
           <div
             className="door"
             data-index={i}
             style={{
-              left: rect.x - gm.d.pngRect.x,
-              top: rect.y - gm.d.pngRect.y,
+              left: rect.x - gm.pngRect.x,
+              top: rect.y - gm.pngRect.y,
               width: rect.width,
               height: rect.height,
               transformOrigin: 'top left',

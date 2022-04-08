@@ -52,7 +52,7 @@ export default function SvgStringPull(props) {
           }
         }}
       >
-        {gm && <image {...gm.d.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
+        {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
         {!props.disabled && pf?.zone.groups.map(nodes => nodes.map(({ vertexIds }) =>
           <polygon className="navtri" points={`${vertexIds.map(id => pf?.zone.vertices[id])}`} />
