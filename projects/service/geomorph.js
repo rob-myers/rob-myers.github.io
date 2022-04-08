@@ -124,10 +124,10 @@ export async function createLayout(def, lookup, triangleService) {
   const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
 
   const doors = groups.singles.filter(x => x.tags.includes('door'))
-    .map((x) => singleToConnectorRect(x)
+    .map((x) => singleToConnectorRect(x, holes)
   );
   const windows = groups.singles.filter(x => x.tags.includes('window'))
-    .map((x) => singleToConnectorRect(x)
+    .map((x) => singleToConnectorRect(x, holes)
   );
 
   const roomGraphJson = RoomGraph.fromHolesAndDoors(holes, doors, windows);
@@ -163,13 +163,24 @@ export async function createLayout(def, lookup, triangleService) {
 
 /**
  * @param {Geomorph.SvgGroupsSingle<Geom.Poly>} single 
+ * @param {Geom.Poly[]} holes 
  * @returns {Geomorph.ConnectorRect<Geom.Poly, Geom.Vect, Geom.Rect>}
  */
-function singleToConnectorRect(single) {
+function singleToConnectorRect(single, holes) {
   const { poly, tags } = single;
   const { angle, rect } = geom.polyToAngledRect(poly);
   const [u, v] = geom.getAngledRectSeg({ angle, rect });
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
+
+  const infront = poly.center.addScaledVector(normal, 10);
+  const behind = poly.center.addScaledVector(normal, -10);
+  /** @type {[null | number, null | number]} */
+  const connectorHoleIds = holes.reduce((agg, hole, holeId) => {
+    if (agg[0] === null && hole.contains(infront)) return [holeId, agg[1]];
+    if (agg[1] === null && hole.contains(behind)) return [agg[0], holeId];
+    return agg;
+  }, /** @type {[null | number, null | number]} */ ([null, null]));
+
   return {
     angle,
     rect: rect.precision(3),
@@ -177,6 +188,7 @@ function singleToConnectorRect(single) {
     tags,
     seg: [u.precision(3), v.precision(3)],
     normal: normal.precision(3),
+    holeIds: connectorHoleIds,
   };
 }
 

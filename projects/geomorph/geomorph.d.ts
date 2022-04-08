@@ -265,6 +265,11 @@ declare namespace Geomorph {
     seg: [V, V];
     normal: V;
     tags: string[];
+    /**
+     * `[hole id infront, hole id behind]`
+     * where _infront_ means `normal` is pointing towards it.
+     */
+    holeIds: [null | number, null | number];
   }
 
 }
