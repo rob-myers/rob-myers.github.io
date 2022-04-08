@@ -124,10 +124,10 @@ export async function createLayout(def, lookup, triangleService) {
   const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
 
   const doors = groups.singles.filter(x => x.tags.includes('door'))
-    .map((x) => singleToRichAngleRect(x)
+    .map((x) => singleToConnectorRect(x)
   );
   const windows = groups.singles.filter(x => x.tags.includes('window'))
-    .map((x) => singleToRichAngleRect(x)
+    .map((x) => singleToConnectorRect(x)
   );
 
   const roomGraphJson = RoomGraph.fromHolesAndDoors(holes, doors, windows);
@@ -163,21 +163,35 @@ export async function createLayout(def, lookup, triangleService) {
 
 /**
  * @param {Geomorph.SvgGroupsSingle<Geom.Poly>} single 
- * @returns {Geomorph.RichAngledRect<Geom.Poly>}
+ * @returns {Geomorph.ConnectorRect<Geom.Poly, Geom.Vect, Geom.Rect>}
  */
-function singleToRichAngleRect(single) {
+function singleToConnectorRect(single) {
   const { poly, tags } = single;
   const { angle, rect } = geom.polyToAngledRect(poly);
   const [u, v] = geom.getAngledRectSeg({ angle, rect });
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
   return {
     angle,
-    rect: rect.precision(3).json,
+    rect: rect.precision(3),
     poly,
     tags,
-    seg: [u.precision(3).json, v.precision(3).json],
-    normal: normal.precision(3).json,
+    seg: [u.precision(3), v.precision(3)],
+    normal: normal.precision(3),
   };
+}
+
+/**
+ * @param {Geomorph.ConnectorRect<Geom.GeoJsonPolygon, Geom.VectJson, Geom.RectJson>} x
+ * @returns {Geomorph.ConnectorRect<Geom.Poly, Geom.Vect, Geom.Rect>}
+ */
+function parseConnectRect(x) {
+  return {
+    ...x,
+    normal: Vect.from(x.normal),
+    poly: Poly.from(x.poly),
+    rect: Rect.fromJson(x.rect),
+    seg: [Vect.from(x.seg[0]), Vect.from(x.seg[1])],
+  }
 }
 
 /** @param {Geomorph.ParsedLayout} layout */
@@ -236,8 +250,8 @@ export function parseLayout({
     },
 
     holes: allHoles.map(Poly.from),
-    doors: doors.map((door) => ({ ...door, poly: Poly.from(door.poly) })),
-    windows: windows.map((x) => ({ ...x, poly: Poly.from(x.poly) })),
+    doors: doors.map(parseConnectRect),
+    windows: windows.map(parseConnectRect),
     labels,
     navPoly: navPoly.map(Poly.from),
     navDecomp,
@@ -371,13 +385,8 @@ const allLayoutKeysLookup = {
 export const allLayoutKeys = keys(allLayoutKeysLookup);
 
 /**
- * `GeomorphData`
- * - comes from `useGeomorph`
- * - wraps `ParsedLayout`
- *
- * `UseGeomorphsItem`
- * - comes from `useGeomorphs`
- * - wraps `GeomorphData` relative to a `transform`
+ * - `GeomorphData` extends `ParsedLayout` and comes from `useGeomorph`
+ * - `UseGeomorphsItem` extends `GeomorphData`, is relative to `transform` and comes from `useGeomorphs`
  * @param {Geomorph.GeomorphData} gm 
  * @param {[number, number, number, number, number, number]} transform 
  */

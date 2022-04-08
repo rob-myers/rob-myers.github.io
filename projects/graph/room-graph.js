@@ -102,8 +102,8 @@ export class RoomGraph extends BaseGraph {
 
   /**
   * @param {Geom.Poly[]} holes 
-  * @param {Geomorph.RichAngledRect<Poly>[]} doors 
-  * @param {Geomorph.RichAngledRect<Poly>[]} windows 
+  * @param {Geomorph.ParsedLayout['doors']} doors 
+  * @param {Geomorph.ParsedLayout['windows']} windows 
   * @returns {Graph.RoomGraphJson}
   */
   static fromHolesAndDoors(holes, doors, windows) {

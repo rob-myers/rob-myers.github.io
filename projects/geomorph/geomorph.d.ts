@@ -57,32 +57,32 @@ declare namespace Geomorph {
    * The layout of a single geomorph, 
    * constructed from a `LayoutDef` and the `SymbolLookup`.
    */
-  export interface Layout<T, U> {
+  export interface Layout<P, G, V, R> {
     key: LayoutKey;
     id: number;
 
     def: LayoutDef;
     /** Transformed and filtered groups */
-    groups: SvgGroups<T>;
+    groups: SvgGroups<P>;
 
     /** Correspond to 'rooms' and referenced in `roomGraph`. */
-    holes: T[];
-    doors: RichAngledRect<T>[];
-    windows: RichAngledRect<T>[];
+    holes: P[];
+    doors: ConnectorRect<P, V, R>[];
+    windows: ConnectorRect<P, V, R>[];
     labels: LayoutLabel[];
     /** The navigable area including doorways. */
-    navPoly: T[];
+    navPoly: P[];
     /** A rich triangulation involving Steiner points */
     navDecomp: Geom.TriangulationJson;
     /** Connectivity graph involving holes and doors */
-    roomGraph: U;
+    roomGraph: G;
 
     /** Should probably have exactly one polygon */
-    hullPoly: T[];
+    hullPoly: P[];
     /** Bounds of hull */
     hullRect: Geom.RectJson;
     /** Top of hull, sans windows/doors */
-    hullTop: T[];
+    hullTop: P[];
 
     /**
      * Symbol instances i.e. PNGs with transforms.
@@ -102,8 +102,8 @@ declare namespace Geomorph {
     }[];
   }
   
-  export type ParsedLayout = Layout<Poly, Graph.RoomGraph>;
-  export type LayoutJson = Layout<PolyJson, Graph.RoomGraphJson>;
+  export type ParsedLayout = Layout<Poly, Graph.RoomGraph, Geom.Vect, Geom.Rect>;
+  export type LayoutJson = Layout<PolyJson, Graph.RoomGraphJson, Geom.VectJson, Geom.RectJson>;
 
   /**
    * Geomorph.ParsedLayout with derived data.
@@ -113,7 +113,7 @@ declare namespace Geomorph {
      holesWithDoors: Poly[];
      /** Switch in interior, else hole center */
      holeSwitches: Vect[];
-     hullDoors: RichAngledRect<Poly>[];
+     hullDoors: ConnectorRect<Poly, Geom.Vect, Geom.Rect>[];
      hullOutline: Poly;
      pngRect: Geom.Rect;
      spawnPoints: Vect[];
@@ -260,10 +260,10 @@ declare namespace Geomorph {
     | 'window--007--0x2.4'
   );
 
-  interface RichAngledRect<T> extends Geom.AngledRect<Geom.RectJson> {
-    poly: T;
-    seg: [Geom.VectJson, Geom.VectJson];
-    normal: Geom.VectJson;
+  interface ConnectorRect<P, V, R> extends Geom.AngledRect<R> {
+    poly: P;
+    seg: [V, V];
+    normal: V;
     tags: string[];
   }
 
