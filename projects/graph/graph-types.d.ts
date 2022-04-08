@@ -89,10 +89,11 @@ declare namespace Graph {
   /** A transformed geomorph */
   export interface GmGraphNodeGm {
     type: 'gm';
-    /** `gm-${gmKey}-[${transform}]` */
-    id: string;
     /** Key of parent geomorph */
     gmKey: Geomorph.LayoutKey;
+    gmIndex: number;
+    /** `gm-${gmKey}-[${transform}]` */
+    id: string;
     /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
   }
@@ -104,16 +105,16 @@ declare namespace Graph {
     id: string;
     /** Key of parent geomorph */
     gmKey: Geomorph.LayoutKey;
+    gmIndex: number;
     /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
     /** Index of `Geomorph.UseGeomorphsItem['hullDoors']` */
     hullDoorIndex: number;
     /**
-     * Recall that a door node is connected to exactly one gm node.
-     * We compute the sign of the dot product of (a) the respective door's normal,
-     * (b) the direction from the door towards the respective gm.
+     * Is this door's parent geomorph in front of it?
+     * That is, is the door's normal facing it's parent?
      */
-    gmSign: -1 | 1;
+    gmInFront: boolean;
   }
 
   export type GmGraphNode = (
@@ -122,6 +123,8 @@ declare namespace Graph {
   );
 
   export type GmGraphEdgeOpts = BaseEdgeOpts;
+
+  export type GmGraph = import('./gm-graph').GmGraph;
 
   //#endregion
 

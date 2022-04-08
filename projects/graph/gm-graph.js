@@ -16,17 +16,16 @@ export class GmGraph extends BaseGraph {
     /** @type {Graph.GmGraphNode[]} */
     const nodes = [
       // NOTE geomorph nodes aligned to `gmItems`
-      ...gmItems.map(x => {
+      ...gmItems.map((x, gmIndex) => {
         /** @type {Graph.GmGraphNodeGm} */
-        const gmNode = { type: 'gm', gmKey: x.key, id: getGmNodeId(x.key, x.transform), transform: x.transform  };
+        const gmNode = { type: 'gm', gmKey: x.key, gmIndex, id: getGmNodeId(x.key, x.transform), transform: x.transform  };
         return gmNode;        
       }),
-      ...gmItems.flatMap(({ key: gmKey, hullDoors, transform, pngRect }) => hullDoors.map((hullDoor, hullDoorIndex) => {
+      ...gmItems.flatMap(({ key: gmKey, hullDoors, transform, pngRect }, gmIndex) => hullDoors.map((hullDoor, hullDoorIndex) => {
         const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
-        // We are detecting whether moving along normal we stay inside geomorph
-        const gmSign = pngRect.contains(alongNormal) ? 1 : -1;
+        const gmInFront = pngRect.contains(alongNormal);
         /** @type {Graph.GmGraphNodeDoor} */
-        const doorNode = { type: 'door', gmKey, id: getDoorNodeId(gmKey, transform, hullDoorIndex), hullDoorIndex, transform, gmSign };
+        const doorNode = { type: 'door', gmKey, gmIndex, id: getGmDoorNodeId(gmKey, transform, hullDoorIndex), hullDoorIndex, transform, gmInFront };
         return doorNode;
       })
       ),
@@ -46,7 +45,7 @@ export class GmGraph extends BaseGraph {
       const gmNodeKey = getGmNodeId(gmKey, transform);
       return hullDoors.map((_, hullDoorIndex) => ({
         src: gmNodeKey,
-        dst: getDoorNodeId(gmKey, transform, hullDoorIndex),
+        dst: getGmDoorNodeId(gmKey, transform, hullDoorIndex),
       }));
     });
     
@@ -58,18 +57,19 @@ export class GmGraph extends BaseGraph {
 
       // For each hull door, detect intersection with aligned geomorph doors
       // We must transform the respective geometry to check this
-      const tmpRect = new Rect;
-      return srcItem.hullDoors.flatMap((srcDoor, hullDoorIndex) => {
-        const srcDoorNodeId = getDoorNodeId(srcItem.key, srcItem.transform, hullDoorIndex);
-        const matrix = new Mat(srcItem.transform);
-        const srcRect = Rect.fromJson(srcDoor.rect).applyMatrix(matrix);
+      const [srcRect, dstRect] = [new Rect, new Rect];
+      const [srcMatrix, dstMatrix] = [new Mat, new Mat];
+      return srcItem.hullDoors.flatMap((srcDoor, hullDoorId) => {
+        const srcDoorNodeId = getGmDoorNodeId(srcItem.key, srcItem.transform, hullDoorId);
+        srcMatrix.setMatrixValue(srcItem.transform);
+        srcRect.copy(srcDoor.rect).applyMatrix(srcMatrix);
         const pairs = adjItems.flatMap(item => item.hullDoors.map(door => /** @type {const} */ ([item, door])));
-        const matching = pairs.find(([_item, { rect: otherRect }]) => srcRect.intersects(tmpRect.setFromJson(otherRect).applyMatrix(matrix)));
+        const matching = pairs.find(([{ transform }, { rect: otherRect }]) => srcRect.intersects(dstRect.copy(otherRect).applyMatrix(dstMatrix.setMatrixValue(transform))));
         if (matching !== undefined) {
           const [dstItem, dstDoor] = matching;
-          const dstHullDoorIndex = dstItem.hullDoors.indexOf(dstDoor);
-          console.info('hull door to hull door:', srcItem, hullDoorIndex, '==>', dstItem, dstItem.hullDoors.indexOf(dstDoor))
-          const dstDoorNodeId = getDoorNodeId(dstItem.key, dstItem.transform, dstHullDoorIndex);
+          const dstHullDoorId = dstItem.hullDoors.indexOf(dstDoor);
+          console.info('hull door to hull door:', srcItem, hullDoorId, '==>', dstItem, dstItem.hullDoors.indexOf(dstDoor))
+          const dstDoorNodeId = getGmDoorNodeId(dstItem.key, dstItem.transform, dstHullDoorId);
           return { src: srcDoorNodeId, dst: dstDoorNodeId };
         } else {
           return [];
@@ -92,7 +92,7 @@ export class GmGraph extends BaseGraph {
  * @param {Geomorph.LayoutKey} gmKey 
  * @param {[number, number, number, number, number, number]} transform 
  */
-function getGmNodeId(gmKey, transform) {
+export function getGmNodeId(gmKey, transform) {
   return `gm-${gmKey}-[${transform}]`;
 }
 
@@ -101,6 +101,6 @@ function getGmNodeId(gmKey, transform) {
  * @param {[number, number, number, number, number, number]} transform 
  * @param {number} hullDoorId 
  */
-function getDoorNodeId(gmKey, transform, hullDoorId) {
+export function getGmDoorNodeId(gmKey, transform, hullDoorId) {
   return `door-${gmKey}-[${transform}]-${hullDoorId}`;
 }
