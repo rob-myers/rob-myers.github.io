@@ -106,7 +106,8 @@ declare namespace Geomorph {
   export type LayoutJson = Layout<PolyJson, Graph.RoomGraphJson>;
 
   /**
-   * Extension of Geomorph.ParsedLayout with derived data.
+   * Geomorph.ParsedLayout with derived data.
+   * This is the type of useGeomorphData's data.
    */
    export interface GeomorphData extends Geomorph.ParsedLayout {
      holesWithDoors: Poly[];
@@ -116,7 +117,29 @@ declare namespace Geomorph {
      hullOutline: Poly;
      pngRect: Geom.Rect;
      spawnPoints: Vect[];
- 
+  }
+
+  export interface UseGeomorphsDefItem {
+    layoutKey: LayoutKey;
+    transform?: [number, number, number, number, number, number];
+  }
+
+  /**
+   * Geomorph.GeomorphData with an associated transform,
+   * and various induced data e.g. transformOrigin.
+   */
+  export interface UseGeomorphsItem extends Geomorph.GeomorphData {
+    /** `${gm.key}-[${transform}]` */
+    itemKey: string;
+    transform: [number, number, number, number, number, number];
+    transformOrigin: string;
+    transformStyle: string;
+    /**
+     * Sub rectangle of `600 * 600` grid
+     * - standard geomorphs have dimension `1200 * 1200`
+     * - edge geomorphs have dimension `1200 * 600`
+     */
+    gridRect: Geom.Rect;
   }
 
   /**
@@ -242,26 +265,6 @@ declare namespace Geomorph {
     seg: [Geom.VectJson, Geom.VectJson];
     normal: Geom.VectJson;
     tags: string[];
-  }
-
-  export interface UseGeomorphsDefItem {
-    layoutKey: LayoutKey;
-    transform?: [number, number, number, number, number, number];
-  }
-
-  export interface UseGeomorphsItem {
-    /** `${gm.key}-[${transform}]` */
-    itemKey: string;
-    gm: Geomorph.GeomorphData;
-    transform: [number, number, number, number, number, number];
-    transformOrigin: string;
-    transformStyle: string;
-    /**
-     * Sub rectangle of 600 * 600 grid
-     * - standard geomorphs have dimension 1200 * 1200
-     * - edge geomorphs have dimension 1200 * 600
-     */
-    gridRect: Geom.Rect;
   }
 
 }

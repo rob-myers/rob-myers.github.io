@@ -71,7 +71,7 @@ export default function Doors(props) {
         ctxt.fillStyle = '#555';
         ctxt.strokeStyle = '#00204b';
         const gm = props.gms[gmIndex];
-        gm.gm.doors.filter((_, i) => !state.observable[gmIndex][i])
+        gm.doors.filter((_, i) => !state.observable[gmIndex][i])
           .forEach(({ poly }) => {
             fillPolygon(ctxt, [poly]);
             ctxt.stroke();
@@ -108,7 +108,7 @@ export default function Doors(props) {
             transform: gm.transformStyle,
           }}
         >
-          {gm.gm.doors.map(({ rect, angle, tags }, i) =>
+          {gm.doors.map(({ rect, angle, tags }, i) =>
             state.observable[gmIndex][i] &&
               <div
                 key={i}
@@ -131,8 +131,8 @@ export default function Doors(props) {
           }
           <canvas
             ref={(el) => el && (state.canvas[gmIndex] = el)}
-            width={gm.gm.pngRect.width}
-            height={gm.gm.pngRect.height}
+            width={gm.pngRect.width}
+            height={gm.pngRect.height}
           />
         </div>
       ))}

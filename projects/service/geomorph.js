@@ -387,8 +387,8 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
 
   /** @type {Geomorph.UseGeomorphsItem} */
   const output = {
+    ...gm,
     itemKey: `${gm.key}-[${transform}]`,
-    gm,
     transform,
     transformOrigin: `${-gm.pngRect.x}px ${-gm.pngRect.y}px`,
     transformStyle: `matrix(${transform})`,

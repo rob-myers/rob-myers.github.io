@@ -18,15 +18,15 @@ export class GmGraph extends BaseGraph {
       // NOTE geomorph nodes aligned to `gmItems`
       ...gmItems.map(x => {
         /** @type {Graph.GmGraphNodeGm} */
-        const gmNode = { type: 'gm', gmKey: x.gm.key, id: getGmNodeId(x.gm.key, x.transform), transform: x.transform  };
+        const gmNode = { type: 'gm', gmKey: x.key, id: getGmNodeId(x.key, x.transform), transform: x.transform  };
         return gmNode;        
       }),
-      ...gmItems.flatMap(({ gm, transform }) => gm.hullDoors.map((hullDoor, hullDoorIndex) => {
+      ...gmItems.flatMap(({ key: gmKey, hullDoors, transform, pngRect }) => hullDoors.map((hullDoor, hullDoorIndex) => {
         const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
         // We are detecting whether moving along normal we stay inside geomorph
-        const gmSign = gm.pngRect.contains(alongNormal) ? 1 : -1;
+        const gmSign = pngRect.contains(alongNormal) ? 1 : -1;
         /** @type {Graph.GmGraphNodeDoor} */
-        const doorNode = { type: 'door', gmKey: gm.key, id: getDoorNodeId(gm.key, transform, hullDoorIndex), hullDoorIndex, transform, gmSign };
+        const doorNode = { type: 'door', gmKey, id: getDoorNodeId(gmKey, transform, hullDoorIndex), hullDoorIndex, transform, gmSign };
         return doorNode;
       })
       ),
@@ -42,11 +42,11 @@ export class GmGraph extends BaseGraph {
 
     // Each gm node is connected to its door nodes (hull doors it has)
     /** @type {Graph.GmGraphEdgeOpts[]} */
-    const localEdges = gmItems.flatMap(({ gm, transform }) => {
-      const gmNodeKey = getGmNodeId(gm.key, transform);
-      return gm.hullDoors.map((_, hullDoorIndex) => ({
+    const localEdges = gmItems.flatMap(({ key: gmKey, hullDoors, transform }) => {
+      const gmNodeKey = getGmNodeId(gmKey, transform);
+      return hullDoors.map((_, hullDoorIndex) => ({
         src: gmNodeKey,
-        dst: getDoorNodeId(gm.key, transform, hullDoorIndex),
+        dst: getDoorNodeId(gmKey, transform, hullDoorIndex),
       }));
     });
     
@@ -59,17 +59,17 @@ export class GmGraph extends BaseGraph {
       // For each hull door, detect intersection with aligned geomorph doors
       // We must transform the respective geometry to check this
       const tmpRect = new Rect;
-      return srcItem.gm.hullDoors.flatMap((srcDoor, hullDoorIndex) => {
-        const srcDoorNodeId = getDoorNodeId(srcItem.gm.key, srcItem.transform, hullDoorIndex);
+      return srcItem.hullDoors.flatMap((srcDoor, hullDoorIndex) => {
+        const srcDoorNodeId = getDoorNodeId(srcItem.key, srcItem.transform, hullDoorIndex);
         const matrix = new Mat(srcItem.transform);
         const srcRect = Rect.fromJson(srcDoor.rect).applyMatrix(matrix);
-        const pairs = adjItems.flatMap(item => item.gm.hullDoors.map(door => /** @type {const} */ ([item, door])));
+        const pairs = adjItems.flatMap(item => item.hullDoors.map(door => /** @type {const} */ ([item, door])));
         const matching = pairs.find(([_item, { rect: otherRect }]) => srcRect.intersects(tmpRect.setFromJson(otherRect).applyMatrix(matrix)));
         if (matching !== undefined) {
           const [dstItem, dstDoor] = matching;
-          const dstHullDoorIndex = dstItem.gm.hullDoors.indexOf(dstDoor);
-          console.info('hull door to hull door:', srcItem, hullDoorIndex, '==>', dstItem, dstItem.gm.hullDoors.indexOf(dstDoor))
-          const dstDoorNodeId = getDoorNodeId(dstItem.gm.key, dstItem.transform, dstHullDoorIndex);
+          const dstHullDoorIndex = dstItem.hullDoors.indexOf(dstDoor);
+          console.info('hull door to hull door:', srcItem, hullDoorIndex, '==>', dstItem, dstItem.hullDoors.indexOf(dstDoor))
+          const dstDoorNodeId = getDoorNodeId(dstItem.key, dstItem.transform, dstHullDoorIndex);
           return { src: srcDoorNodeId, dst: dstDoorNodeId };
         } else {
           return [];
