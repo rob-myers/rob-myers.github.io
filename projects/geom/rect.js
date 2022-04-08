@@ -110,12 +110,12 @@ export class Rect {
   /** @param {import('./mat').Mat} m */
   applyMatrix(m) {
     if (!m.isIdentity) {
-      const min = m.transformPoint(this.topLeft);
-      const max = m.transformPoint(this.bottomRight);
-      this.x = Math.min(min.x, max.x);
-      this.y = Math.min(min.y, max.y);
-      this.width = Math.max(min.x, max.x) - this.x;
-      this.height = Math.max(min.y, max.y) - this.y;
+      const p = m.transformPoint(this.topLeft);
+      const q = m.transformPoint(this.bottomRight);
+      this.x = Math.min(p.x, q.x);
+      this.y = Math.min(p.y, q.y);
+      this.width = Math.max(p.x, q.x) - this.x;
+      this.height = Math.max(p.y, q.y) - this.y;
     }
     return this;
   }

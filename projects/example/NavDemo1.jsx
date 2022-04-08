@@ -5,6 +5,7 @@ import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
+import { getGmDoorNodeId, getGmNodeId } from "../graph/gm-graph";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -160,6 +161,7 @@ export default function NavDemo1(props) {
       {state.doorsApi.ready && (
         <Debug
           gms={gms}
+          gmGraph={gmGraph}
           doorsApi={state.doorsApi}
           currentGmId={state.currentGmId}
           currentHoleId={state.currentHoleId}
@@ -202,12 +204,26 @@ function Debug(props) {
       onClick={({ target }) => {
         const gmIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-gm-index'));
         const doorIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-door-index'));
-        const { holeIds } = props.gms[gmIndex].doors[doorIndex];
-        const [otherHoleId] = holeIds.filter(id => id !== props.currentHoleId);
+        const gm = props.gms[gmIndex], door = gm.doors[doorIndex];
+        const [otherHoleId] = door.holeIds.filter(id => id !== props.currentHoleId);
         if (otherHoleId !== null) {
-          props.setHole(props.currentGmId, otherHoleId);
-        } else {
-          // TODO possibly move to adjacent geomorph
+          return props.setHole(props.currentGmId, otherHoleId);
+        }
+
+        const { gmGraph } = props;
+        const hullDoorId = gm.hullDoors.indexOf(door);
+        const gmNode = gmGraph.getNodeById(getGmNodeId(gm.key, gm.transform));
+        const doorNode = gmGraph.getNodeById(getGmDoorNodeId(gm.key, gm.transform, hullDoorId));
+        if (!doorNode) {
+          return;
+        }
+        const [otherGmNode] = gmGraph.getSuccs(doorNode).filter(x => x !== gmNode);
+        if (otherGmNode) {
+          /**
+           * TODO get other gmNode attached to door node otherGmNode
+           */
+          console.log('hull', {otherGmNode});
+          return props.setHole(otherGmNode.gmIndex, 0);
         }
       }}
     >
@@ -276,6 +292,7 @@ const debugRadius = 4;
 /**
  * @typedef DebugProps @type {object}
  * @property {Geomorph.UseGeomorphsItem[]} gms
+ * @property {Graph.GmGraph} gmGraph
  * @property {NPC.DoorsApi} doorsApi
  * @property {number} currentGmId
  * @property {number} currentHoleId
