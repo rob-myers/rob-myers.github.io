@@ -20,9 +20,9 @@ import NPCs from "../npc/NPCs";
 // - ✅ simplify relationship: Geomorph.Layout -> Geomorph.GeomorphData
 // - ✅ simplify relationship: Geomorph.GeomorphData -> Geomorph.UseGeomorphsItem
 // - ✅ precompute { holeIds: [infront, behind] } inside doors/windows
-
-// - 🚧 can set next hole when adjacent to current
 // - ✅ current state is [gm id, hole id]
+
+// - ✅ can set next hole when adjacent to current
 // - 🚧 light propagates over geomorph boundary
 // - 🚧 GmGraph has windows
 
@@ -37,7 +37,7 @@ import NPCs from "../npc/NPCs";
 /** @param {{ disabled?: boolean }} props */
 export default function NavDemo1(props) {
 
-  const update = useUpdate();
+  const render = useUpdate();
 
   const { gms, gmGraph } = useGeomorphs([
     { layoutKey: 'g-301--bridge' },
@@ -49,7 +49,7 @@ export default function NavDemo1(props) {
 
   const state = useMuState(() => {
     return {
-      currentGmIndex: 0,
+      currentGmId: 0,
       currentHoleId: 2,
       clipPath: gms.map(_ => 'none'),
 
@@ -61,7 +61,7 @@ export default function NavDemo1(props) {
        * TODO need adjacent holes from other geomorphs sometimes
        */
       getAdjacentHoleIds() {
-        const gmIndex = state.currentGmIndex;
+        const gmIndex = state.currentGmId;
         const { roomGraph } = gms[gmIndex];
         const openDoorIds = state.doorsApi.getOpen(gmIndex);
         const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
@@ -69,20 +69,22 @@ export default function NavDemo1(props) {
       },
       onChangeDeps() {
         if (gms.length) {// Initial and HMR update
-          state.updateClipPath();
-          state.updateObservableDoors();
-          update();
+          state.update();
           const sub = state.wire
             .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
             .subscribe((_) => {
-              state.updateClipPath();
-              update();
+              state.update(); // Technically needn't updateObservableDoors
             });
           return () => sub.unsubscribe();
         }
       },
+      update() {
+        state.updateClipPath();
+        state.updateObservableDoors();
+        render();
+      },
       updateClipPath() {
-        const gmIndex = state.currentGmIndex;
+        const gmIndex = state.currentGmId;
         const { hullOutline, holesWithDoors, pngRect } = gms[gmIndex];
         const shownHoleIds = [state.currentHoleId].concat(state.getAdjacentHoleIds());
         const holePolys = shownHoleIds.map(i => holesWithDoors[i]);
@@ -93,7 +95,7 @@ export default function NavDemo1(props) {
         state.clipPath[gmIndex] = `path('${svgPaths}')`;
       },
       updateObservableDoors() {
-        const gmIndex = state.currentGmIndex;
+        const gmIndex = state.currentGmId;
         const { roomGraph } = gms[gmIndex];
         const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
         const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
@@ -104,7 +106,7 @@ export default function NavDemo1(props) {
       },
     };
   }, [gms], {
-    equality: { currentGmIndex: true, currentHoleId: true },
+    equality: { currentGmId: true, currentHoleId: true },
   });
 
   return gms.length ? (
@@ -131,7 +133,7 @@ export default function NavDemo1(props) {
       )}
 
       <NPCs
-        onLoad={api => { state.npcsApi = api; update() }}
+        onLoad={api => { state.npcsApi = api; render() }}
         disabled={props.disabled}
         stageKey="stage-nav-demo-1"
       />
@@ -155,7 +157,19 @@ export default function NavDemo1(props) {
         />
       )}
 
-      {state.doorsApi.ready && <Debug gms={gms} doorsApi={state.doorsApi} currentHoleId={state.currentHoleId} />}
+      {state.doorsApi.ready && (
+        <Debug
+          gms={gms}
+          doorsApi={state.doorsApi}
+          currentGmId={state.currentGmId}
+          currentHoleId={state.currentHoleId}
+          setHole={(gmId, holeId) => {
+            [state.currentGmId, state.currentHoleId] = [gmId, holeId];
+            state.update();
+          }}
+          // outlines
+        />
+      )}
 
       <Doors
         gms={gms}
@@ -181,63 +195,90 @@ const rootCss = css`
   }
 `;
 
-/** @param {{ gms: Geomorph.UseGeomorphsItem[]; doorsApi: NPC.DoorsApi; currentHoleId: number }} props   */
+/** @param {DebugProps} props   */
 function Debug(props) {
-  return <>
-    {/* {props.gms.map((gm, gmIndex) =>
-      <div
-        key={gmIndex}
-        style={{
-          position: 'absolute',
-          left: gm.gridRect.x,
-          top: gm.gridRect.y,
-          width: gm.gridRect.width,
-          height: gm.gridRect.height,
-          border: '2px red solid',
-        }}
-      />  
-    )} */}
-    {props.gms.map((gm, gmIndex) => {
-      const observable = props.doorsApi.getObservable(gmIndex);
-      return (
+  return (
+    <div
+      onClick={({ target }) => {
+        const gmIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-gm-index'));
+        const doorIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-door-index'));
+        const { holeIds } = props.gms[gmIndex].doors[doorIndex];
+        const [otherHoleId] = holeIds.filter(id => id !== props.currentHoleId);
+        if (otherHoleId !== null) {
+          props.setHole(props.currentGmId, otherHoleId);
+        } else {
+          // TODO possibly move to adjacent geomorph
+        }
+      }}
+    >
+      {props.outlines && props.gms.map((gm, gmIndex) =>
         <div
-          key={gm.itemKey}
-          className="debug"
+          key={gmIndex}
           style={{
-            transform: gm.transformStyle,
-            transformOrigin: `${gm.pngRect.x}px ${gm.pngRect.y}px`,
             position: 'absolute',
+            left: gm.gridRect.x,
+            top: gm.gridRect.y,
+            width: gm.gridRect.width,
+            height: gm.gridRect.height,
+            border: '2px red solid',
           }}
-        >
-          {gm.doors.map(({ poly, normal, holeIds }, doorIndex) => {
-            if (observable.includes(doorIndex)) {
-              const sign = holeIds[0] === props.currentHoleId ? 1 : holeIds[1] === props.currentHoleId ? -1 : 0;
-              const angle = Vect.from(normal).scale(-sign || 0).angle;
-              const position = poly.center.addScaledVector(normal, sign * 15);
-              return (
-                <div
-                  key={doorIndex}
-                  style={{
-                    width: debugRadius * 2,
-                    height: debugRadius * 2,
-                    borderRadius: debugRadius,
-                    position: 'absolute',
-                    left: position.x - debugRadius,
-                    top: position.y - debugRadius,
-                    transform: `rotate(${angle}rad)`,
-                    backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
-                    // filter: 'invert(100%)',
-                  }}
-                />
-              );
-            } else {
-              return null;
-            }
-            })}
-        </div>
-      )
-    })}
-  </>;
+        />  
+      )}
+      {props.gms.map((gm, gmIndex) => {
+        const observable = props.doorsApi.getObservable(gmIndex);
+        return (
+          <div
+            key={gm.itemKey}
+            className="debug"
+            style={{
+              transform: gm.transformStyle,
+              transformOrigin: `${gm.pngRect.x}px ${gm.pngRect.y}px`,
+              position: 'absolute',
+            }}
+          >
+            {gm.doors.map(({ poly, normal, holeIds }, doorIndex) => {
+              if (observable.includes(doorIndex)) {
+                const sign = holeIds[0] === props.currentHoleId ? 1 : holeIds[1] === props.currentHoleId ? -1 : 0;
+                const angle = Vect.from(normal).scale(-sign || 0).angle;
+                const position = poly.center.addScaledVector(normal, sign * 15);
+                return (
+                  <div
+                    key={doorIndex}
+                    data-gm-index={gmIndex}
+                    data-door-index={doorIndex}
+                    style={{
+                      width: debugRadius * 2,
+                      height: debugRadius * 2,
+                      borderRadius: debugRadius,
+                      position: 'absolute',
+                      left: position.x - debugRadius,
+                      top: position.y - debugRadius,
+                      transform: `rotate(${angle}rad)`,
+                      backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
+                      cursor: 'pointer',
+                      // filter: 'invert(100%)',
+                    }}
+                  />
+                );
+              } else {
+                return null;
+              }
+              })}
+          </div>
+        )
+      })}
+    </div>
+  );
 }
 
 const debugRadius = 4;
+
+/**
+ * @typedef DebugProps @type {object}
+ * @property {Geomorph.UseGeomorphsItem[]} gms
+ * @property {NPC.DoorsApi} doorsApi
+ * @property {number} currentGmId
+ * @property {number} currentHoleId
+ * @property {(gmId: number, holeId: number) => void} setHole
+ * @property {boolean} [outlines]
+ */
