@@ -142,6 +142,8 @@ export default function Doors(props) {
 
 
 const rootCss = css`
+  position: absolute;
+
   canvas {
     position: absolute;
     pointer-events: none;
