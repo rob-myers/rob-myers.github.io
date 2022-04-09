@@ -22,12 +22,11 @@ export function assertDefined(value, valueName) {
  * https://github.com/Microsoft/TypeScript/issues/23405#issuecomment-873331031
  * @template T
  * @param {T} value
- * @param {string} [valueName]
  * @returns {T extends undefined | null ? never : T}
  */
- export function assertNonNull(value, valueName) {
-  if (value == null) {
-    throw new Error(`Encountered unexpected null or undefined value${valueName? ` for '${valueName}'` : ""}`);
+ export function assertNonNull(value, ensureNull = true) {
+  if (ensureNull && value == null) {
+    throw new Error(`Encountered unexpected null or undefined value`);
   }
   return /** @type {*} */ (value);
 }

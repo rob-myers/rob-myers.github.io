@@ -5,7 +5,7 @@ import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
-import { getGmDoorNodeId, getGmNodeId } from "../graph/gm-graph";
+import { assertNonNull } from "../service/generic";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -25,8 +25,9 @@ import NPCs from "../npc/NPCs";
 
 // - ✅ can set next hole when adjacent to current
 // - ✅ light propagates over geomorph boundary
-// - 🚧 adjacents propagates over geomorph boundary
-// - 🚧 use light polygons through doors
+// - 🚧 adjacents propagate over geomorph boundary
+// - 🚧 show light polygons through doors
+// - 🚧 show other doors intersecting light polygon, although cannot click
 // - 🚧 GmGraph has windows
 
 // TODO
@@ -60,15 +61,12 @@ export default function NavDemo1(props) {
       npcsApi: /** @type {NPC.NPCsApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
-      /**
-       * TODO need adjacent holes from other geomorphs sometimes
-       */
-      getAdjacentHoleIds() {
+      getEnterableHoleIds() {
         const gmIndex = state.currentGmId;
         const { roomGraph } = gms[gmIndex];
         const openDoorIds = state.doorsApi.getOpen(gmIndex);
-        const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
-        return roomGraph.getEnterableRooms(currentRoomNode, openDoorIds).map(({ holeIndex }) => holeIndex);
+        const currentHoleNode = roomGraph.nodesArray[state.currentHoleId];
+        return roomGraph.getEnterableRooms(currentHoleNode, openDoorIds).map(({ holeIndex }) => holeIndex);
       },
       onChangeDeps() {
         if (gms.length) {// Initial and HMR update
@@ -87,25 +85,46 @@ export default function NavDemo1(props) {
         render();
       },
       updateClipPath() {
-        const gmIndex = state.currentGmId;
-        const { hullOutline, holesWithDoors, pngRect } = gms[gmIndex];
-        const shownHoleIds = [state.currentHoleId].concat(state.getAdjacentHoleIds());
+        /**
+         * TODO use approach similar to `updateObservableDoors` here too
+         */
+
+        // maskPoly for current geomorph
+        const { hullOutline, holesWithDoors, pngRect } = gms[state.currentGmId];
+        const shownHoleIds = [state.currentHoleId].concat(state.getEnterableHoleIds());
         const holePolys = shownHoleIds.map(i => holesWithDoors[i]);
         const maskPoly = Poly.cutOut(holePolys, [hullOutline])
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));
+
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         state.clipPath = state.clipPath.map(_ => 'none');
-        state.clipPath[gmIndex] = `path('${svgPaths}')`;
+        state.clipPath[state.currentGmId] = `path('${svgPaths}')`;
       },
       updateObservableDoors() {
-        const gmIndex = state.currentGmId;
-        const { roomGraph } = gms[gmIndex];
+        // TODO 🚧 merge with below
+        const gmId = state.currentGmId;
+        const gm = gms[gmId]
+        const { roomGraph, doors, hullDoors } = gm;
         const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
-        const observableDoors = roomGraph.getAdjacentDoors(currentRoomNode);
+        const observableDoorIds = roomGraph.getAdjacentDoors(currentRoomNode).map(x => x.doorIndex);
         gms.forEach((_, otherGmIndex) => this.doorsApi.setObservableDoors(
           otherGmIndex,
-          gmIndex === otherGmIndex ? observableDoors.map(x => x.doorIndex) : []
+          gmId === otherGmIndex ? observableDoorIds : []
         ));
+        
+        /**
+         * TODO
+         * - ✅ get hull door ids adjacent to current hole
+         * - ✅ get { gmId, holeId, adjHullId } on other side of each hull door
+         * - ✅ this.doorsApi.setObservableDoors for each [gmId, adjHullId]
+         */
+        const adjHullDoorIds = roomGraph.getAdjacentHullDoorIds(gm, currentRoomNode);
+        const adjGmPairs = adjHullDoorIds.map(hullDoorId =>
+          assertNonNull(gmGraph.getAdjacentPair(gmId, hullDoorId), false)
+        ).filter(Boolean);
+        adjGmPairs.forEach(({ adjGmId, adjHullId }) => {
+          this.doorsApi.setObservableDoors(adjGmId, [adjHullId])
+        });
       },
     };
   }, [gms], {
@@ -204,28 +223,22 @@ function Debug(props) {
   return (
     <div
       onClick={({ target }) => {
-        const gmIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-gm-index'));
-        const doorIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-door-index'));
-        const gm = props.gms[gmIndex], door = gm.doors[doorIndex];
+        const gmId = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-gm-index'));
+        const doorId = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-door-index'));
+        const gm = props.gms[gmId]
+        const door = gm.doors[doorId];
+
         const [otherHoleId] = door.holeIds.filter(id => id !== props.currentHoleId);
-        if (otherHoleId !== null) {
+        if (otherHoleId !== null) {// `door` is not a hull door
           return props.setHole(props.currentGmId, otherHoleId);
         }
 
-        const { gmGraph } = props;
         const hullDoorId = gm.hullDoors.indexOf(door);
-        const gmNode = gmGraph.getNodeById(getGmNodeId(gm.key, gm.transform));
-        const doorNode = gmGraph.getNodeById(getGmDoorNodeId(gm.key, gm.transform, hullDoorId));
-        if (!doorNode) {
-          return;
-        }
-        const [otherDoorNode] = gmGraph.getSuccs(doorNode).filter(x => x !== gmNode);
-        if (otherDoorNode) {
-          // console.log({otherDoorNode});
-          const { gmIndex: dstGmIndex, hullDoorId: dstHullDoorId } = /** @type {Graph.GmGraphNodeDoor} */ (otherDoorNode);
-          const { holeIds } = props.gms[dstGmIndex].hullDoors[dstHullDoorId];
-          const dstHoleId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
-          return props.setHole(dstGmIndex, dstHoleId);
+        const pair = props.gmGraph.getAdjacentPair(gmId, hullDoorId);
+        if (pair) {
+          return props.setHole(pair.adjGmId, pair.holeId);
+        } else {
+          return console.info('hull door is isolated', gmId, hullDoorId);
         }
       }}
     >

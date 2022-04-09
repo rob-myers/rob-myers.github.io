@@ -17,6 +17,18 @@ export class RoomGraph extends BaseGraph {
     );
     return Array.from(doors);
   }
+  /**
+   * Given parent `gm` and some nodes, find adjacent _hull door ids_ (if any).
+   * @param {Geomorph.UseGeomorphsItem} gm
+   * @param {...Graph.RoomGraphNode} nodes
+   */
+  getAdjacentHullDoorIds(gm, ...nodes) {
+    return this.getAdjacentDoors(...nodes)
+      .flatMap(x => {
+        const door = gm.doors[x.doorIndex];
+        return door.holeIds.some(x => x === null) ? [gm.hullDoors.indexOf(door)] : [];
+      })
+  }
 
   /**
    * Given nodes, find all adjacent windows.

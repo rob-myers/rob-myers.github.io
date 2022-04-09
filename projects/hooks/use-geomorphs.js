@@ -35,7 +35,7 @@ export default function useGeomorphs(defs) {
       });
       return { gms: items, gmGraph: GmGraph.fromGmItems(items)  };
     } else {
-      return { gms: [], gmGraph: new GmGraph };
+      return { gms: [], gmGraph: new GmGraph([]) };
     }
   }, [ready]);
 }
