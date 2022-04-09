@@ -3008,20 +3008,7 @@
     "key": "fuel--010--2x4",
     "hull": [],
     "obstacles": [],
-    "walls": [
-      {
-        "type": "Polygon",
-        "coordinates": [
-          [
-            [-19, -19.5],
-            [1219, -19.5],
-            [1219, 619.5],
-            [-19, 619.5],
-            [-19, -19.5]
-          ]
-        ]
-      }
-    ],
+    "walls": [],
     "singles": [
       {
         "tags": ["label", "fuel"],
@@ -3029,10 +3016,19 @@
           "type": "Polygon",
           "coordinates": [[[550, 90], [550, 190], [650, 190], [650, 90]]]
         }
+      },
+      {
+        "tags": ["wall"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[-19, -19.5], [-19, 619.5], [1219, 619.5], [1219, -19.5]]
+          ]
+        }
       }
     ],
     "pngRect": {"x": -19, "y": -19.6, "width": 1238, "height": 639},
-    "lastModified": 1646839468361.243
+    "lastModified": 1649522664057.0493
   },
   "galley-and-mess-halls--006--2x4": {
     "key": "galley-and-mess-halls--006--2x4",

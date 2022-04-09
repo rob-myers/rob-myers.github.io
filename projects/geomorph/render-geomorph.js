@@ -53,9 +53,6 @@ export async function renderGeomorph(
     ctxt.strokeStyle = navStroke;
     ctxt.lineWidth = 0.5;
     drawTriangulation(ctxt, layout.navDecomp)
-    // Original approach
-    // const decomps = layout.navPoly.flatMap(x => x.qualityTriangulate());
-    // decomps.forEach(decomp => drawTriangulation(ctxt, decomp));
   }
 
   ctxt.lineJoin = 'round';
@@ -87,6 +84,13 @@ export async function renderGeomorph(
   });
   //#endregion
 
+  // Draw walls without drawing over windows
+  // We do this before PNGs, otherwise e.g. fuel will be obscured 
+  const { singles, obstacles, walls } = layout.groups;
+  const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
+  ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
+  fillPolygon(ctxt, wallsSansWindows);
+
   //#region symbol PNGs
   const innerItems = layout.items.slice(1);
   for (const { pngHref, pngRect, transformArray } of innerItems) {
@@ -100,18 +104,16 @@ export async function renderGeomorph(
   //#endregion
 
   //#region overlay
-  const { singles, obstacles, walls } = layout.groups;
-
   ctxt.fillStyle = obsColor;
   obsBounds && fillPolygon(ctxt, obstacles);
   ctxt.fillStyle = wallColor;
   wallBounds && fillPolygon(ctxt, walls);
   ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(ctxt, layout.hullTop);
-  // Draw walls without drawing them over windows
-  const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
-  ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
-  fillPolygon(ctxt, wallsSansWindows);
+  // // Draw walls without drawing them over windows
+  // const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
+  // ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
+  // fillPolygon(ctxt, wallsSansWindows);
 
   if (doors) {
     const doors = singlesToPolys(singles, 'door');
