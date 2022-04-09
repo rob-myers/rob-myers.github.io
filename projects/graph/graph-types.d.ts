@@ -109,7 +109,7 @@ declare namespace Graph {
     /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
     /** Index of `Geomorph.UseGeomorphsItem['hullDoors']` */
-    hullDoorIndex: number;
+    hullDoorId: number;
     /**
      * Is this door's parent geomorph in front of it?
      * That is, is the door's normal facing it's parent?

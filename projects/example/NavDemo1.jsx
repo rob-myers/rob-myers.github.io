@@ -24,7 +24,9 @@ import NPCs from "../npc/NPCs";
 // - ✅ current state is [gm id, hole id]
 
 // - ✅ can set next hole when adjacent to current
-// - 🚧 light propagates over geomorph boundary
+// - ✅ light propagates over geomorph boundary
+// - 🚧 adjacents propagates over geomorph boundary
+// - 🚧 use light polygons through doors
 // - 🚧 GmGraph has windows
 
 // TODO
@@ -217,13 +219,13 @@ function Debug(props) {
         if (!doorNode) {
           return;
         }
-        const [otherGmNode] = gmGraph.getSuccs(doorNode).filter(x => x !== gmNode);
-        if (otherGmNode) {
-          /**
-           * TODO get other gmNode attached to door node otherGmNode
-           */
-          console.log('hull', {otherGmNode});
-          return props.setHole(otherGmNode.gmIndex, 0);
+        const [otherDoorNode] = gmGraph.getSuccs(doorNode).filter(x => x !== gmNode);
+        if (otherDoorNode) {
+          // console.log({otherDoorNode});
+          const { gmIndex: dstGmIndex, hullDoorId: dstHullDoorId } = /** @type {Graph.GmGraphNodeDoor} */ (otherDoorNode);
+          const { holeIds } = props.gms[dstGmIndex].hullDoors[dstHullDoorId];
+          const dstHoleId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
+          return props.setHole(dstGmIndex, dstHoleId);
         }
       }}
     >
