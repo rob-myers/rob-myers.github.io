@@ -111,16 +111,12 @@ export class RoomGraph extends BaseGraph {
       ...holes.map((_, holeIndex) => ({
         id: `room-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex,
       })),
-      ...doors.map((door, doorIndex) => {
-        const alongNormal = door.poly.center.addScaledVector(door.normal, 10);
-        // const roomSigns = doorsHoleIds[doorIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
+      ...doors.map((_, doorIndex) => {
         /** @type {Graph.RoomGraphNodeDoor} */
         const doorNode = { id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex };
         return doorNode;
       }),
-      ...windows.map((window, windowIndex) => {
-        const alongNormal = window.poly.center.addScaledVector(window.normal, 10);
-        // const roomSigns = windowsHoleIds[windowIndex].map(holeId => holes[holeId].contains(alongNormal) ? 1 : -1);
+      ...windows.map((_, windowIndex) => {
         /** @type {Graph.RoomGraphNodeWindow} */
         const windowNode = { id: `window-${windowIndex}`, type: /** @type {const} */ ('window'), windowIndex: windowIndex };
         return windowNode;
@@ -131,13 +127,13 @@ export class RoomGraph extends BaseGraph {
     const roomGraphEdges = [
       ...doors.flatMap((_door, doorIndex) => {
         const holeIds = doorsHoleIds[doorIndex];
-        if ([1,2].includes(holeIds.length)) {// Hull door has 1, standard has 2
+        if ([1, 2].includes(holeIds.length)) {// Hull door has 1, standard has 2
           return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
             { src: `room-${holeId}`, dst: `door-${doorIndex}` },
             { dst: `room-${holeId}`, src: `door-${doorIndex}` },
           ]);
         } else {
-          console.warn(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
+          console.error(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
           return [];
         }
       }),
@@ -149,7 +145,7 @@ export class RoomGraph extends BaseGraph {
             { dst: `room-${holeId}`, src: `window-${windowIndex}` },
           ]);
         } else {
-          console.warn(`window ${windowIndex}: unexpected adjacent holes: ${holeIds}`)
+          console.error(`window ${windowIndex}: unexpected adjacent holes: ${holeIds}`)
           return [];
         }
       }),

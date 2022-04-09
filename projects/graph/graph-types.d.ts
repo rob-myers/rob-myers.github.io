@@ -108,6 +108,8 @@ declare namespace Graph {
     gmIndex: number;
     /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
+    /** Index of `Geomorph.UseGeomorphsItem['doors']` */
+    doorId: number;
     /** Index of `Geomorph.UseGeomorphsItem['hullDoors']` */
     hullDoorId: number;
     /**

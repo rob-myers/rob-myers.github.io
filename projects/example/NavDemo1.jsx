@@ -5,7 +5,6 @@ import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
-import { assertNonNull } from "../service/generic";
 import useUpdate from "../hooks/use-update";
 import useMuState from "../hooks/use-mu-state";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -44,17 +43,20 @@ export default function NavDemo1(props) {
   const render = useUpdate();
 
   const { gms, gmGraph } = useGeomorphs([
-    { layoutKey: 'g-301--bridge' },
+    { layoutKey: 'g-302--xboat-repair-bay' },
+    // // { layoutKey: 'g-301--bridge' },
     { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
-    { layoutKey: 'g-302--xboat-repair-bay', transform: [1, 0, 0, 1, -1200, 600] },
+    // // { layoutKey: 'g-302--xboat-repair-bay', transform: [1, 0, 0, 1, -1200, 600] },
     { layoutKey: 'g-302--xboat-repair-bay', transform: [-1, 0, 0, 1, 1200 + 1200, 600] },
-    { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
+    // // { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
   const state = useMuState(() => {
     return {
-      currentGmId: 0,
-      currentHoleId: 2,
+      // currentGmId: 0,
+      // currentHoleId: 22,
+      currentGmId: 1,
+      currentHoleId: 22,
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
@@ -92,7 +94,7 @@ export default function NavDemo1(props) {
         // maskPoly for current geomorph
         const { hullOutline, holesWithDoors, pngRect } = gms[state.currentGmId];
         const shownHoleIds = [state.currentHoleId].concat(state.getEnterableHoleIds());
-        const holePolys = shownHoleIds.map(i => holesWithDoors[i]);
+        const holePolys = shownHoleIds.map(i => holesWithDoors[i]).filter(Boolean);
         const maskPoly = Poly.cutOut(holePolys, [hullOutline])
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));
 
@@ -101,30 +103,16 @@ export default function NavDemo1(props) {
         state.clipPath[state.currentGmId] = `path('${svgPaths}')`;
       },
       updateObservableDoors() {
-        // TODO 🚧 merge with below
-        const gmId = state.currentGmId;
-        const gm = gms[gmId]
-        const { roomGraph, doors, hullDoors } = gm;
-        const currentRoomNode = roomGraph.nodesArray[state.currentHoleId];
-        const observableDoorIds = roomGraph.getAdjacentDoors(currentRoomNode).map(x => x.doorIndex);
-        gms.forEach((_, otherGmIndex) => this.doorsApi.setObservableDoors(
-          otherGmIndex,
-          gmId === otherGmIndex ? observableDoorIds : []
-        ));
-        
-        /**
-         * TODO
-         * - ✅ get hull door ids adjacent to current hole
-         * - ✅ get { gmId, holeId, adjHullId } on other side of each hull door
-         * - ✅ this.doorsApi.setObservableDoors for each [gmId, adjHullId]
-         */
-        const adjHullDoorIds = roomGraph.getAdjacentHullDoorIds(gm, currentRoomNode);
-        const adjGmPairs = adjHullDoorIds.map(hullDoorId =>
-          assertNonNull(gmGraph.getAdjacentPair(gmId, hullDoorId), false)
-        ).filter(Boolean);
-        adjGmPairs.forEach(({ adjGmId, adjHullId }) => {
-          this.doorsApi.setObservableDoors(adjGmId, [adjHullId])
+        const gm = gms[state.currentGmId]
+        const holeNode = gm.roomGraph.nodesArray[state.currentHoleId];
+        /** @type {number[][]} */
+        const nextObservable = gms.map(_ => []);
+        nextObservable[state.currentGmId] = gm.roomGraph.getAdjacentDoors(holeNode).map(x => x.doorIndex);
+        gm.roomGraph.getAdjacentHullDoorIds(gm, holeNode).map(hullDoorId => {
+          const pair = gmGraph.getAdjacentPair(state.currentGmId, hullDoorId);
+          pair && (nextObservable[pair.adjGmId] = [pair.adjDoorId]);
         });
+        gms.forEach((_, gmId) => this.doorsApi.setObservableDoors(gmId, nextObservable[gmId]));
       },
     };
   }, [gms], {
@@ -181,6 +169,7 @@ export default function NavDemo1(props) {
 
       {state.doorsApi.ready && (
         <Debug
+          outlines
           gms={gms}
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}
@@ -190,7 +179,6 @@ export default function NavDemo1(props) {
             [state.currentGmId, state.currentHoleId] = [gmId, holeId];
             state.update();
           }}
-          // outlines
         />
       )}
 

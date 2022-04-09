@@ -18,7 +18,7 @@ export class GmGraph extends BaseGraph {
   /**
    * @param {number} gmId 
    * @param {number} hullDoorId 
-   * @returns {null | { adjGmId: number; holeId: number; adjHullId: number }}
+   * @returns {null | { adjGmId: number; holeId: number; adjHullId: number; adjDoorId: number }}
    */
   getAdjacentPair(gmId, hullDoorId) {
     const gm = this.gms[gmId];
@@ -28,17 +28,17 @@ export class GmGraph extends BaseGraph {
       console.warn(`GmGraph: failed to find hull door node: ${getGmDoorNodeId(gm.key, gm.transform, hullDoorId)}`);
       return null;
     }
-    const [otherDoorNode] = this.getSuccs(doorNode).filter(x => x !== gmNode);
+    const otherDoorNode = /** @type {undefined | Graph.GmGraphNodeDoor} */ (this.getSuccs(doorNode).filter(x => x !== gmNode)[0]);
     if (!otherDoorNode) {
       console.info('GmGraph: hull door on boundary', doorNode);
       return null;
     }
     // `door` is a hull door and connected to another
     // console.log({otherDoorNode});
-    const { gmIndex: adjGmId, hullDoorId: dstHullDoorId } = /** @type {Graph.GmGraphNodeDoor} */ (otherDoorNode);
+    const { gmIndex: adjGmId, hullDoorId: dstHullDoorId, doorId } = otherDoorNode;
     const { holeIds } = this.gms[adjGmId].hullDoors[dstHullDoorId];
     const holeId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
-    return { adjGmId, holeId, adjHullId: /** @type {Graph.GmGraphNodeDoor} */ (otherDoorNode).hullDoorId };
+    return { adjGmId, holeId, adjHullId: otherDoorNode.hullDoorId, adjDoorId: doorId };
   }
 
   /**
@@ -52,14 +52,29 @@ export class GmGraph extends BaseGraph {
       // NOTE geomorph nodes aligned to `gmItems`
       ...gms.map((x, gmIndex) => {
         /** @type {Graph.GmGraphNodeGm} */
-        const gmNode = { type: 'gm', gmKey: x.key, gmIndex, id: getGmNodeId(x.key, x.transform), transform: x.transform  };
+        const gmNode = {
+          type: 'gm',
+          gmKey: x.key,
+          gmIndex,
+          id: getGmNodeId(x.key, x.transform),
+          transform: x.transform,
+        };
         return gmNode;        
       }),
-      ...gms.flatMap(({ key: gmKey, hullDoors, transform, pngRect }, gmIndex) => hullDoors.map((hullDoor, hullDoorId) => {
+      ...gms.flatMap(({ key: gmKey, hullDoors, transform, pngRect, doors }, gmIndex) => hullDoors.map((hullDoor, hullDoorId) => {
         const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
         const gmInFront = pngRect.contains(alongNormal);
         /** @type {Graph.GmGraphNodeDoor} */
-        const doorNode = { type: 'door', gmKey, gmIndex, id: getGmDoorNodeId(gmKey, transform, hullDoorId), hullDoorId, transform, gmInFront };
+        const doorNode = {
+          type: 'door',
+          gmKey,
+          gmIndex,
+          id: getGmDoorNodeId(gmKey, transform, hullDoorId),
+          doorId: doors.indexOf(hullDoor),
+          hullDoorId,
+          transform,
+          gmInFront,
+        };
         return doorNode;
       })
       ),
@@ -78,25 +93,32 @@ export class GmGraph extends BaseGraph {
     });
     
     // Each door node is connected to the door node it is identified with (if any)
-    const globalEdges = gms.flatMap((srcItem, roomNodeId) => {
-      // Detect geomorphs whose gridRects border current one
-      const adjItems = gms.filter((otherItem, otherId) => otherId > roomNodeId && otherItem.gridRect.intersects(srcItem.gridRect));
-      // console.info('geomorph to geomorph:', srcItem, '-->', adjItems);
-
-      // For each hull door, detect intersection with aligned geomorph doors
-      // We must transform the respective geometry to check this
+    const globalEdges = gms.flatMap((srcItem, gmId) => {
+      /**
+       * Detect geomorphs whose gridRects border current one.
+       * NOTE wasting some computation because relation is symmetric
+       */
+      const adjItems = gms.filter((dstItem, dstGmId) => dstGmId !== gmId && dstItem.gridRect.intersects(srcItem.gridRect));
+      console.info('geomorph to geomorph:', srcItem, '-->', adjItems);
+      /**
+       * For each hull door, detect any intersection with aligned geomorph hull doors.
+       * - We may assume every hull door is an axis-aligned rect.
+       * - However, `door.rect` is an "angled rect" i.e. may need to have angle applied,
+       *   or alteratively one can work with `door.poly` as we do below.
+       */
       const [srcRect, dstRect] = [new Rect, new Rect];
       const [srcMatrix, dstMatrix] = [new Mat, new Mat];
       return srcItem.hullDoors.flatMap((srcDoor, hullDoorId) => {
         const srcDoorNodeId = getGmDoorNodeId(srcItem.key, srcItem.transform, hullDoorId);
         srcMatrix.setMatrixValue(srcItem.transform);
-        srcRect.copy(srcDoor.rect).applyMatrix(srcMatrix);
+        srcRect.copy(srcDoor.poly.rect.applyMatrix(srcMatrix));
+
         const pairs = adjItems.flatMap(item => item.hullDoors.map(door => /** @type {const} */ ([item, door])));
-        const matching = pairs.find(([{ transform }, { rect: otherRect }]) => srcRect.intersects(dstRect.copy(otherRect).applyMatrix(dstMatrix.setMatrixValue(transform))));
+        const matching = pairs.find(([{ transform }, { poly }]) => srcRect.intersects(dstRect.copy(poly.rect.applyMatrix(dstMatrix.setMatrixValue(transform)))));
         if (matching !== undefined) {
           const [dstItem, dstDoor] = matching;
           const dstHullDoorId = dstItem.hullDoors.indexOf(dstDoor);
-          // console.info('hull door to hull door:', srcItem, hullDoorId, '==>', dstItem, dstItem.hullDoors.indexOf(dstDoor))
+          console.info('hull door to hull door:', srcItem, hullDoorId, '==>', dstItem, dstHullDoorId)
           const dstDoorNodeId = getGmDoorNodeId(dstItem.key, dstItem.transform, dstHullDoorId);
           return { src: srcDoorNodeId, dst: dstDoorNodeId };
         } else {
