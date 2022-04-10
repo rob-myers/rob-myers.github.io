@@ -10,6 +10,7 @@ import { geomorphDataToGeomorphsItem } from "../service/geomorph";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
 import useUpdate from "../hooks/use-update";
+import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 
@@ -18,16 +19,19 @@ export default function LightsTest(props) {
 
   const update = useUpdate();
 
-  const { data: gm } = useGeomorphData(layoutKey);
-  const gms = React.useMemo(() =>
-    gm ? [geomorphDataToGeomorphsItem(gm, [1, 0, 0, 1, 0, 0])] : []
-  , [gm]);
+  const { gms, gmGraph } = useGeomorphs([
+    { layoutKey: 'g-101--multipurpose' },
+  ]);
+
+  const gm = gms[0];
 
   const state = useMuState(() => {
     return {
       clipPath: 'none',
       doorsApi: /** @type {NPC.DoorsApi} */ ({}),
-      isHoleShown: /** @type {{ [holeIndex: string]: true }} */ ({}),
+      isHoleShown: /** @type {{ [holeIndex: string]: true }} */ ({
+        0: true,
+      }),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
@@ -47,7 +51,7 @@ export default function LightsTest(props) {
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
         const openDoorIds = state.doorsApi.getOpen(0);
 
-        // TODO 🚧 simplify below
+        // TODO 🚧 modularise below
         // lights through doors and windows
         const lightPolygons = rootHoleIds.flatMap((srcHoleId) => {
           const roomNode = roomGraph.nodesArray[srcHoleId];
@@ -102,7 +106,7 @@ export default function LightsTest(props) {
         }, delayUpdate);
       },
     };
-  }, [gm]);
+  }, [gm], { equality: { isHoleShown: true } });
 
   React.useEffect(() => {
     if (gm) {
@@ -125,7 +129,7 @@ export default function LightsTest(props) {
 
         <img
           className="geomorph"
-          src={geomorphPngPath(layoutKey)}
+          src={geomorphPngPath(gm.key)}
           draggable={false}
           style={{
             left: gm.pngRect.x,
@@ -137,7 +141,7 @@ export default function LightsTest(props) {
 
         <img
           className="geomorph-dark"
-          src={geomorphPngPath(layoutKey)}
+          src={geomorphPngPath(gm.key)}
           draggable={false}
           style={{
             left: gm.pngRect.x,
@@ -180,13 +184,6 @@ export default function LightsTest(props) {
     </CssPanZoom>
   );
 }
-
-/** @type {Geomorph.LayoutKey} */
-// const layoutKey = 'g-301--bridge';
-const layoutKey = 'g-101--multipurpose';
-// const layoutKey = 'g-102--research-deck';
-// const layoutKey = 'g-302--xboat-repair-bay';
-// const layoutKey = 'g-303--passenger-deck';
 
 const rootCss = css`
   img.geomorph-dark {
