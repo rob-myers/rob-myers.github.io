@@ -26,8 +26,7 @@ import NPCs from "../npc/NPCs";
 // - ✅ adjacents propagate over geomorph boundary
 // - ✅ light propagates over geomorph boundary
 // - 🚧 show light polygons through doors
-// - 🚧 show other doors intersecting light polygon, although cannot click
-// - 🚧 GmGraph has windows
+// - 🚧 show doors intersecting light polygon (cannot click)
 
 // TODO
 // - 🚧 spawn from TTY
@@ -46,14 +45,17 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge' },
     { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
     { layoutKey: 'g-302--xboat-repair-bay', transform: [1, 0, 0, 1, -1200, 600] },
+    { layoutKey: 'g-303--passenger-deck', transform: [1, 0, 0, -1, -1200, 1200 + 600] },
     { layoutKey: 'g-302--xboat-repair-bay', transform: [-1, 0, 0, 1, 1200 + 1200, 600] },
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
   const state = useMuState(() => {
     return {
-      gmId: 1,
-      holeId: 22,
+      gmId: 0,
+      holeId: 2,
+      // gmId: 1,
+      // holeId: 22,
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
@@ -85,8 +87,12 @@ export default function NavDemo1(props) {
       },
       updateClipPath() {
         const gm = gms[state.gmId]
-        const { hullOutline, holesWithDoors, pngRect } = gm;
+        const { hullOutline, holesWithDoors } = gm;
         const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
+
+        /**
+         * TODO maskPoly -> lightPoly
+         */
 
         // Compute maskPoly for current geomorph
         const shownHoleIds = [state.holeId].concat(state.getEnterableHoleIds());

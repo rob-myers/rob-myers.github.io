@@ -6,8 +6,6 @@ import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { assertDefined } from "../service/generic";
 import { geom } from "../service/geom";
-import { geomorphDataToGeomorphsItem } from "../service/geomorph";
-import useGeomorphData from "../hooks/use-geomorph-data";
 import useMuState from "../hooks/use-mu-state";
 import useUpdate from "../hooks/use-update";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -51,7 +49,10 @@ export default function LightsTest(props) {
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
         const openDoorIds = state.doorsApi.getOpen(0);
 
-        // TODO 🚧 modularise below
+        // TODO modularise below
+        // - ✅ getOpenDoorPolygon, getOpenWindowPolygon from GmGraph
+        // - 🚧 lightPosition from service/geomorph
+        // - 🚧 computeLightPolygon inside service/geomorph
         // lights through doors and windows
         const lightPolygons = rootHoleIds.flatMap((srcHoleId) => {
           const roomNode = roomGraph.nodesArray[srcHoleId];
@@ -61,11 +62,10 @@ export default function LightsTest(props) {
 
           const doorLights = adjOpenDoorIds.map(doorIndex => {
             const door = doors[doorIndex];
-            const adjRoomNodes = roomGraph.getAdjacentRooms(roomGraph.getDoorNode(doorIndex));
             const roomSign = door.holeIds[0] === srcHoleId ? 1 : door.holeIds[1] === srcHoleId ? -1 : null;
             if (roomSign === null) console.warn(`hole ${srcHoleId}: door ${doorIndex}: roomSign is null`);
             const lightPosition = door.poly.center.addScaledVector(door.normal, 20 * (roomSign || 0))
-            const lightWalls = Poly.union(adjRoomNodes.map(x => holesWithDoors[x.holeIndex]))[0];
+            const lightWalls = gmGraph.getOpenDoorPolygon(0, doorIndex);
             // TODO cache door triangulations earlier
             const triangs = closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
             return geom.lightPolygon(lightPosition, 1000, triangs, lightWalls);
@@ -74,11 +74,10 @@ export default function LightsTest(props) {
           const adjWindowIds = roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
           const windowLights = adjWindowIds.map(windowIndex => {
             const window = windows[windowIndex];
-            const adjRoomNodes = roomGraph.getAdjacentRooms(roomGraph.getWindowNode(windowIndex));
             const roomSign = window.holeIds[0] === srcHoleId ? 1 : window.holeIds[1] === srcHoleId ? -1 : null;
             if (roomSign === null) console.warn(`hole ${srcHoleId}: window ${windowIndex}: roomSign is null`);
             const lightPosition = window.poly.center.addScaledVector(window.normal, 60 * (roomSign || 0))
-            const lightWalls = Poly.union(adjRoomNodes.map(x => holes[x.holeIndex]).concat(window.poly))[0];
+            const lightWalls = gmGraph.getOpenWindowPolygon(0, windowIndex);
             return geom.lightPolygon(lightPosition, 1000, undefined, lightWalls);
           });
 

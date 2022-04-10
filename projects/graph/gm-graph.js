@@ -1,4 +1,4 @@
-import { Mat, Rect } from "../geom";
+import { Mat, Poly, Rect } from "../geom";
 import { BaseGraph } from "./graph";
 
 /**
@@ -39,6 +39,46 @@ export class GmGraph extends BaseGraph {
     const { holeIds } = this.gms[adjGmId].hullDoors[dstHullDoorId];
     const adjHoleId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
     return { adjGmId, adjHoleId, adjHullId: dstHullDoorId, adjDoorId };
+  }
+
+  /**
+   * Get union of holesWithDoors on either side of door,
+   * including connected hull doors.
+   * @param {number} gmIndex 
+   * @param {number} doorIndex 
+   */
+  getOpenDoorPolygon(gmIndex, doorIndex) {
+    const gm = this.gms[gmIndex];
+    const door = gm.doors[doorIndex];
+    const hullDoorIndex = gm.hullDoors.indexOf(door);
+    if (hullDoorIndex === -1) {
+      const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getDoorNode(doorIndex));
+      return Poly.union(adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]))[0];
+    }
+
+    const srcHoleId = /** @type {number} */ (door.holeIds.find(x => typeof x === 'number'));
+    const result = this.getAdjacentHoleCtxt(gmIndex, hullDoorIndex);
+    if (result) {
+      return Poly.union([gm.holesWithDoors[srcHoleId], this.gms[result.adjGmId].holesWithDoors[result.adjHoleId]])[0];
+    } else {
+      console.error(`GmGraph: getAdjacentHoleCtxt: failed to get context`, { gmIndex, doorIndex, hullDoorIndex });
+      return new Poly;
+    }
+  }
+
+  /**
+   * Get union of holesWithDoors on either side of windows.
+   * Currently windows cannot connect distinct geomorphs.
+   * @param {number} gmIndex 
+   * @param {number} windowIndex 
+   */
+  getOpenWindowPolygon(gmIndex, windowIndex) {
+    const gm = this.gms[gmIndex];
+    const window = gm.windows[windowIndex];
+    const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getWindowNode(windowIndex));
+    return Poly.union(
+      adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]).concat(window.poly)
+    )[0];
   }
 
   /**
