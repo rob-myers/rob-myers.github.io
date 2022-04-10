@@ -164,7 +164,7 @@ export async function createLayout(def, lookup, triangleService) {
 /**
  * @param {Geomorph.SvgGroupsSingle<Geom.Poly>} single 
  * @param {Geom.Poly[]} holes 
- * @returns {Geomorph.ConnectorRect<Geom.Poly, Geom.Vect, Geom.Rect>}
+ * @returns {Geomorph.ParsedConnectorRect}
  */
 function singleToConnectorRect(single, holes) {
   const { poly, tags } = single;
@@ -193,8 +193,8 @@ function singleToConnectorRect(single, holes) {
 }
 
 /**
- * @param {Geomorph.ConnectorRect<Geom.GeoJsonPolygon, Geom.VectJson, Geom.RectJson>} x
- * @returns {Geomorph.ConnectorRect<Geom.Poly, Geom.Vect, Geom.Rect>}
+ * @param {Geomorph.ConnectorRectJson} x
+ * @returns {Geomorph.ParsedConnectorRect}
  */
 function parseConnectRect(x) {
   return {
@@ -417,4 +417,17 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
   };
 
   return output;
+}
+
+/**
+ * 
+ * @param {Geomorph.ParsedConnectorRect} connector 
+ * @param {number} fromHoleId 
+ */
+export function computeLightPosition(connector, fromHoleId, lightOffset = 40) {
+  const roomSign = connector.holeIds[0] === fromHoleId ? 1 : connector.holeIds[1] === fromHoleId ? -1 : null;
+  if (roomSign === null) {
+    console.warn(`hole ${fromHoleId}: connector: `, connector ,`: roomSign is null`);
+  }
+  return connector.poly.center.addScaledVector(connector.normal, lightOffset * (roomSign || 0));
 }

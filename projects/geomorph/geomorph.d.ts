@@ -260,7 +260,7 @@ declare namespace Geomorph {
     | 'window--007--0x2.4'
   );
 
-  interface ConnectorRect<P, V, R> extends Geom.AngledRect<R> {
+  export interface ConnectorRect<P, V, R> extends Geom.AngledRect<R> {
     poly: P;
     seg: [V, V];
     normal: V;
@@ -271,5 +271,8 @@ declare namespace Geomorph {
      */
     holeIds: [null | number, null | number];
   }
+
+  type ParsedConnectorRect = ConnectorRect<Geom.Poly, Geom.Vect, Geom.Rect>;
+  type ConnectorRectJson = ConnectorRect<Geom.GeoJsonPolygon, Geom.VectJson, Geom.RectJson>;
 
 }
