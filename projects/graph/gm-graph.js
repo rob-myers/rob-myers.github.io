@@ -1,5 +1,7 @@
 import { Mat, Poly, Rect } from "../geom";
 import { BaseGraph } from "./graph";
+import { geom } from "../service/geom";
+import { computeLightPosition } from "../service/geomorph";
 
 /**
  * `GmGraph` is short for _Geomorph Graph_
@@ -79,6 +81,45 @@ export class GmGraph extends BaseGraph {
     return Poly.union(
       adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]).concat(window.poly)
     )[0];
+  }
+
+  /**
+   * TODO initially just repro LightsTest
+   * @param {number} gmIndex 
+   * @param {number} rootHoleId 
+   * @param {number[]} openDoorIds 
+   */
+  computeLightPolygons(gmIndex, rootHoleId, openDoorIds) {
+    const gm = this.gms[gmIndex];
+    const roomNode = gm.roomGraph.nodesArray[rootHoleId];
+    const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
+    // NOTE adjacent closed doors insufficient
+    const closedDoorPolys = gm.doors.flatMap((door, id) => !adjOpenDoorIds.includes(id) ? door.poly : []);
+
+    const doorLights = adjOpenDoorIds.map(doorIndex =>
+      geom.lightPolygon(
+        computeLightPosition(gm.doors[doorIndex], rootHoleId),
+        1000,
+        // TODO cache door triangulations earlier, or avoid triangles
+        closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate())),
+        this.getOpenDoorPolygon(gmIndex, doorIndex),
+      )
+    );
+    
+    const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
+    const windowLights = adjWindowIds.map(windowIndex =>
+      geom.lightPolygon(
+        computeLightPosition(gm.windows[windowIndex], rootHoleId),
+        1000,
+        undefined,
+        this.getOpenWindowPolygon(gmIndex, windowIndex),
+      )
+    );
+
+    return [
+      ...doorLights,
+      ...windowLights,
+    ];
   }
 
   /**

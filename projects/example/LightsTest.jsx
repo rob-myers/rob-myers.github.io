@@ -53,41 +53,11 @@ export default function LightsTest(props) {
         // TODO modularise below
         // - ✅ getOpenDoorPolygon, getOpenWindowPolygon from GmGraph
         // - ✅ lightPosition from service/geomorph
-        // - 🚧 computeLightPolygon inside service/geomorph
+        // - ✅ computeLightPolygon inside service/geomorph
         // lights through doors and windows
-        const lightPolygons = rootHoleIds.flatMap((srcHoleId) => {
-          const roomNode = roomGraph.nodesArray[srcHoleId];
-          const adjOpenDoorIds = roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
-          // NOTE adjacent closed doors insufficient
-          const closedDoorPolys = doors.flatMap((door, id) => !adjOpenDoorIds.includes(id) ? door.poly : []);
-
-          const doorLights = adjOpenDoorIds.map(doorIndex => {
-            const door = doors[doorIndex];
-            // TODO cache door triangulations earlier, or avoid triangles
-            const triangs = closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-            return geom.lightPolygon(
-              computeLightPosition(door, srcHoleId),
-              1000,
-              triangs,
-              gmGraph.getOpenDoorPolygon(0, doorIndex),
-            );
-          });
-          
-          const adjWindowIds = roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
-          const windowLights = adjWindowIds.map(windowIndex =>
-            geom.lightPolygon(
-              computeLightPosition(windows[windowIndex], srcHoleId),
-              1000,
-              undefined,
-              gmGraph.getOpenWindowPolygon(0, windowIndex),
-            )
-          );
-
-          return [
-            ...doorLights,
-            ...windowLights,
-          ];
-        });
+        const lightPolygons = rootHoleIds.flatMap((srcHoleId) =>
+          gmGraph.computeLightPolygons(0, srcHoleId, openDoorIds)
+        );
 
         const allHolePolys = rootHoleIds
           .map(id => holesWithDoors[id]) // Each root contribs holeWithDoor
