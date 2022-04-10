@@ -18,9 +18,9 @@ export class GmGraph extends BaseGraph {
   /**
    * @param {number} gmId 
    * @param {number} hullDoorId 
-   * @returns {null | { adjGmId: number; holeId: number; adjHullId: number; adjDoorId: number }}
+   * @returns {{ adjGmId: number; adjHoleId: number; adjHullId: number; adjDoorId: number } | null}
    */
-  getAdjacentPair(gmId, hullDoorId) {
+  getAdjacentHoleCtxt(gmId, hullDoorId) {
     const gm = this.gms[gmId];
     const gmNode = this.getNodeById(getGmNodeId(gm.key, gm.transform));
     const doorNode = this.getNodeById(getGmDoorNodeId(gm.key, gm.transform, hullDoorId));
@@ -35,10 +35,10 @@ export class GmGraph extends BaseGraph {
     }
     // `door` is a hull door and connected to another
     // console.log({otherDoorNode});
-    const { gmIndex: adjGmId, hullDoorId: dstHullDoorId, doorId } = otherDoorNode;
+    const { gmIndex: adjGmId, hullDoorId: dstHullDoorId, doorId: adjDoorId } = otherDoorNode;
     const { holeIds } = this.gms[adjGmId].hullDoors[dstHullDoorId];
-    const holeId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
-    return { adjGmId, holeId, adjHullId: otherDoorNode.hullDoorId, adjDoorId: doorId };
+    const adjHoleId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
+    return { adjGmId, adjHoleId, adjHullId: dstHullDoorId, adjDoorId };
   }
 
   /**

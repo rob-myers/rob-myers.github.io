@@ -24,10 +24,10 @@ export class RoomGraph extends BaseGraph {
    */
   getAdjacentHullDoorIds(gm, ...nodes) {
     return this.getAdjacentDoors(...nodes)
-      .flatMap(x => {
-        const door = gm.doors[x.doorIndex];
-        return door.holeIds.some(x => x === null) ? [gm.hullDoors.indexOf(door)] : [];
-      })
+      .map(node => /** @type {const} */ ([node, gm.doors[node.doorIndex]]))
+      .flatMap(([{ doorIndex }, door]) => door.holeIds.some(x => x === null)
+        ? { doorIndex, hullDoorIndex: gm.hullDoors.indexOf(door) } : []
+      );
   }
 
   /**
