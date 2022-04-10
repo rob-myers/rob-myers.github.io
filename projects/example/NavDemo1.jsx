@@ -23,8 +23,8 @@ import NPCs from "../npc/NPCs";
 // - ✅ current state is [gm id, hole id]
 
 // - ✅ can set next hole when adjacent to current
-// - ✅ light propagates over geomorph boundary
-// - 🚧 adjacents propagate over geomorph boundary
+// - ✅ adjacents propagate over geomorph boundary
+// - 🚧 light propagates over geomorph boundary
 // - 🚧 show light polygons through doors
 // - 🚧 show other doors intersecting light polygon, although cannot click
 // - 🚧 GmGraph has windows
@@ -43,20 +43,17 @@ export default function NavDemo1(props) {
   const render = useUpdate();
 
   const { gms, gmGraph } = useGeomorphs([
-    { layoutKey: 'g-302--xboat-repair-bay' },
-    // // { layoutKey: 'g-301--bridge' },
+    { layoutKey: 'g-301--bridge' },
     { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
-    // // { layoutKey: 'g-302--xboat-repair-bay', transform: [1, 0, 0, 1, -1200, 600] },
+    { layoutKey: 'g-302--xboat-repair-bay', transform: [1, 0, 0, 1, -1200, 600] },
     { layoutKey: 'g-302--xboat-repair-bay', transform: [-1, 0, 0, 1, 1200 + 1200, 600] },
-    // // { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
+    { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
   const state = useMuState(() => {
     return {
-      // currentGmId: 0,
-      // currentHoleId: 22,
-      currentGmId: 1,
-      currentHoleId: 22,
+      gmId: 1,
+      holeId: 22,
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
@@ -64,10 +61,10 @@ export default function NavDemo1(props) {
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
       getEnterableHoleIds() {
-        const gmIndex = state.currentGmId;
+        const gmIndex = state.gmId;
         const { roomGraph } = gms[gmIndex];
         const openDoorIds = state.doorsApi.getOpen(gmIndex);
-        const currentHoleNode = roomGraph.nodesArray[state.currentHoleId];
+        const currentHoleNode = roomGraph.nodesArray[state.holeId];
         return roomGraph.getEnterableRooms(currentHoleNode, openDoorIds).map(({ holeIndex }) => holeIndex);
       },
       onChangeDeps() {
@@ -88,35 +85,35 @@ export default function NavDemo1(props) {
       },
       updateClipPath() {
         /**
-         * TODO use approach similar to `updateObservableDoors` here too
+         * TODO approach similar to `updateObservableDoors`
          */
 
         // maskPoly for current geomorph
-        const { hullOutline, holesWithDoors, pngRect } = gms[state.currentGmId];
-        const shownHoleIds = [state.currentHoleId].concat(state.getEnterableHoleIds());
+        const { hullOutline, holesWithDoors, pngRect } = gms[state.gmId];
+        const shownHoleIds = [state.holeId].concat(state.getEnterableHoleIds());
         const holePolys = shownHoleIds.map(i => holesWithDoors[i]).filter(Boolean);
         const maskPoly = Poly.cutOut(holePolys, [hullOutline])
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));
 
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         state.clipPath = state.clipPath.map(_ => 'none');
-        state.clipPath[state.currentGmId] = `path('${svgPaths}')`;
+        state.clipPath[state.gmId] = `path('${svgPaths}')`;
       },
       updateObservableDoors() {
-        const gm = gms[state.currentGmId]
-        const holeNode = gm.roomGraph.nodesArray[state.currentHoleId];
+        const gm = gms[state.gmId]
+        const holeNode = gm.roomGraph.nodesArray[state.holeId];
         /** @type {number[][]} */
         const nextObservable = gms.map(_ => []);
-        nextObservable[state.currentGmId] = gm.roomGraph.getAdjacentDoors(holeNode).map(x => x.doorIndex);
+        nextObservable[state.gmId] = gm.roomGraph.getAdjacentDoors(holeNode).map(x => x.doorIndex);
         gm.roomGraph.getAdjacentHullDoorIds(gm, holeNode).map(hullDoorId => {
-          const pair = gmGraph.getAdjacentPair(state.currentGmId, hullDoorId);
+          const pair = gmGraph.getAdjacentPair(state.gmId, hullDoorId);
           pair && (nextObservable[pair.adjGmId] = [pair.adjDoorId]);
         });
         gms.forEach((_, gmId) => this.doorsApi.setObservableDoors(gmId, nextObservable[gmId]));
       },
     };
   }, [gms], {
-    equality: { currentGmId: true, currentHoleId: true },
+    equality: { gmId: true, holeId: true },
   });
 
   return gms.length ? (
@@ -173,10 +170,10 @@ export default function NavDemo1(props) {
           gms={gms}
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}
-          currentGmId={state.currentGmId}
-          currentHoleId={state.currentHoleId}
+          gmId={state.gmId}
+          holeId={state.holeId}
           setHole={(gmId, holeId) => {
-            [state.currentGmId, state.currentHoleId] = [gmId, holeId];
+            [state.gmId, state.holeId] = [gmId, holeId];
             state.update();
           }}
         />
@@ -185,6 +182,9 @@ export default function NavDemo1(props) {
       <Doors
         gms={gms}
         wire={state.wire}
+        /**
+         * TODO try state.update() and avoid useLayoutEffect in Doors
+         */
         onLoad={api => state.doorsApi = api}
       />
       
@@ -208,6 +208,9 @@ const rootCss = css`
 
 /** @param {DebugProps} props   */
 function Debug(props) {
+  const observable = props.doorsApi.getObservable(props.gmId);
+  const gm = props.gms[props.gmId];
+
   return (
     <div
       onClick={({ target }) => {
@@ -216,9 +219,9 @@ function Debug(props) {
         const gm = props.gms[gmId]
         const door = gm.doors[doorId];
 
-        const [otherHoleId] = door.holeIds.filter(id => id !== props.currentHoleId);
+        const [otherHoleId] = door.holeIds.filter(id => id !== props.holeId);
         if (otherHoleId !== null) {// `door` is not a hull door
-          return props.setHole(props.currentGmId, otherHoleId);
+          return props.setHole(props.gmId, otherHoleId);
         }
 
         const hullDoorId = gm.hullDoors.indexOf(door);
@@ -243,49 +246,43 @@ function Debug(props) {
           }}
         />  
       )}
-      {props.gms.map((gm, gmIndex) => {
-        const observable = props.doorsApi.getObservable(gmIndex);
-        return (
-          <div
-            key={gm.itemKey}
-            className="debug"
-            style={{
-              transform: gm.transformStyle,
-              transformOrigin: `${gm.pngRect.x}px ${gm.pngRect.y}px`,
-              position: 'absolute',
-            }}
-          >
-            {gm.doors.map(({ poly, normal, holeIds }, doorIndex) => {
-              if (observable.includes(doorIndex)) {
-                const sign = holeIds[0] === props.currentHoleId ? 1 : holeIds[1] === props.currentHoleId ? -1 : 0;
-                const angle = Vect.from(normal).scale(-sign || 0).angle;
-                const position = poly.center.addScaledVector(normal, sign * 15);
-                return (
-                  <div
-                    key={doorIndex}
-                    data-gm-index={gmIndex}
-                    data-door-index={doorIndex}
-                    style={{
-                      width: debugRadius * 2,
-                      height: debugRadius * 2,
-                      borderRadius: debugRadius,
-                      position: 'absolute',
-                      left: position.x - debugRadius,
-                      top: position.y - debugRadius,
-                      transform: `rotate(${angle}rad)`,
-                      backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
-                      cursor: 'pointer',
-                      // filter: 'invert(100%)',
-                    }}
-                  />
-                );
-              } else {
-                return null;
-              }
-              })}
-          </div>
-        )
-      })}
+      <div
+        key={gm.itemKey}
+        className="debug"
+        style={{
+          transform: gm.transformStyle,
+          position: 'absolute',
+        }}
+      >
+        {gm.doors.map(({ poly, normal, holeIds }, doorIndex) => {
+          if (observable.includes(doorIndex)) {
+            const sign = holeIds[0] === props.holeId ? 1 : -1;
+            const angle = Vect.from(normal).scale(-sign).angle;
+            const position = poly.center.addScaledVector(normal, sign * 15);
+            return (
+              <div
+                key={doorIndex}
+                data-gm-index={props.gmId}
+                data-door-index={doorIndex}
+                style={{
+                  width: debugRadius * 2,
+                  height: debugRadius * 2,
+                  borderRadius: debugRadius,
+                  position: 'absolute',
+                  left: position.x - debugRadius,
+                  top: position.y - debugRadius,
+                  transform: `rotate(${angle}rad)`,
+                  backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
+                  cursor: 'pointer',
+                  // filter: 'invert(100%)',
+                }}
+              />
+            );
+          } else {
+            return null;
+          }
+          })}
+      </div>
     </div>
   );
 }
@@ -297,8 +294,8 @@ const debugRadius = 4;
  * @property {Geomorph.UseGeomorphsItem[]} gms
  * @property {Graph.GmGraph} gmGraph
  * @property {NPC.DoorsApi} doorsApi
- * @property {number} currentGmId
- * @property {number} currentHoleId
+ * @property {number} gmId
+ * @property {number} holeId
  * @property {(gmId: number, holeId: number) => void} setHole
  * @property {boolean} [outlines]
  */
