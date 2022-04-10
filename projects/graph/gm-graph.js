@@ -84,7 +84,8 @@ export class GmGraph extends BaseGraph {
   }
 
   /**
-   * TODO initially just repro LightsTest
+   * TODO 🚧 returns { gmIndex: number; lightPolys: Poly[] }[]
+   * i.e. include bits from adjacent geomorphs via this.getOpenDoorPolygon
    * @param {number} gmIndex 
    * @param {number} rootHoleId 
    * @param {number[]} openDoorIds 

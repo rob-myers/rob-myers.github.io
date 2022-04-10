@@ -89,18 +89,18 @@ export default function NavDemo1(props) {
         const gm = gms[state.gmId]
         const { hullOutline, holesWithDoors } = gm;
         const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
+        const openDoorsIds = state.doorsApi.getOpen(state.gmId);
 
+        // Compute maskPoly for current geomorph
+        const holePolys = [holesWithDoors[state.holeId]]
+          .concat(gmGraph.computeLightPolygons(state.gmId, state.holeId, openDoorsIds))
+          .map(x => x.precision(3));
+        maskPolys[state.gmId] = Poly.cutOut(holePolys, [hullOutline]);
+        
         /**
          * TODO maskPoly -> lightPoly
          */
-
-        // Compute maskPoly for current geomorph
-        const shownHoleIds = [state.holeId].concat(state.getEnterableHoleIds());
-        const holePolys = shownHoleIds.map(i => holesWithDoors[i]).filter(Boolean);
-        maskPolys[state.gmId] = Poly.cutOut(holePolys, [hullOutline]);
-        
         // Compute maskPolys for adjacent geomorphs accessible via a hull door
-        const openDoorsIds = state.doorsApi.getOpen(state.gmId);
         const holeNode = gm.roomGraph.nodesArray[state.holeId];
         const adjCtxts = gm.roomGraph.getAdjacentHullDoorIds(gm, holeNode)
           .filter(x => openDoorsIds.includes(x.doorIndex)
