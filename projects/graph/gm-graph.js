@@ -70,7 +70,7 @@ export class GmGraph extends BaseGraph {
 
       return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjHoleId: result.adjHoleId, poly };
     } else {
-      console.error(`GmGraph: getAdjacentHoleCtxt: failed to get context`, { gmIndex, doorIndex, hullDoorIndex });
+      console.error(`GmGraph: getOpenDoorArea: failed to get context`, { gmIndex, doorIndex, hullDoorIndex });
       return null;
     }
   }
@@ -85,14 +85,10 @@ export class GmGraph extends BaseGraph {
     const gm = this.gms[gmIndex];
     const window = gm.windows[windowIndex];
     const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getWindowNode(windowIndex));
-    return Poly.union(
-      adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]).concat(window.poly)
-    )[0];
+    return Poly.union(adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]).concat(window.poly))[0];
   }
 
   /**
-   * TODO 🚧 clean this up
-   * =====================
    * @param {number} gmIndex 
    * @param {number} rootHoleId 
    * @param {number[]} openDoorIds 
@@ -101,39 +97,34 @@ export class GmGraph extends BaseGraph {
   computeLightPolygons(gmIndex, rootHoleId, openDoorIds) {
     const gm = this.gms[gmIndex];
     const roomNode = gm.roomGraph.nodesArray[rootHoleId];
+
     const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
-    
-    const doorLights = adjOpenDoorIds.flatMap(doorIndex => {
-      const area = this.getOpenDoorArea(gmIndex, doorIndex);
-      if (area) {
-        const doors = this.gms[area.gmIndex].doors;
-        const closedDoorPolys = doors.flatMap((door, id) => id !== area.doorIndex ? door.poly : []);
-        return {
-          gmIndex: area.gmIndex,
-          poly: geom.lightPolygon(
-            computeLightPosition(doors[area.doorIndex], area.adjHoleId??rootHoleId),
-            1000,
-            /**
-             * TODO replace by one line seg for each door
-             */
-            closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate())),
-            area.poly,
-          ),
-        };
-      } else {
-        return [];
-      }
+    const areas = adjOpenDoorIds.flatMap(doorIndex => this.getOpenDoorArea(gmIndex, doorIndex) || []);
+    const doorLights = areas.map((area) => {
+      const doors = this.gms[area.gmIndex].doors;
+      // NOTE needed e.g. when two doors adjoin a single hole
+      // TODO restrict to doors adjoining dst hole
+      const closedDoorSegs = doors.filter((_, id) => id !== area.doorIndex).map(x => x.seg);
+      return {
+        gmIndex: area.gmIndex,
+        poly: geom.lightPolygon({
+          // TODO avoid nullable `adjHoleId`
+          position: computeLightPosition(doors[area.doorIndex], area.adjHoleId??rootHoleId),
+          range: 1000,
+          exterior: area.poly,
+          extraSegs: closedDoorSegs,
+        }),
+      };
     });
     
     const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
     const windowLights = adjWindowIds.map(windowIndex => ({
       gmIndex,
-      poly: geom.lightPolygon(
-        computeLightPosition(gm.windows[windowIndex], rootHoleId),
-        1000,
-        undefined,
-        this.getOpenWindowPolygon(gmIndex, windowIndex),
-      ),
+      poly: geom.lightPolygon({
+        position: computeLightPosition(gm.windows[windowIndex], rootHoleId),
+        range: 1000,
+        exterior: this.getOpenWindowPolygon(gmIndex, windowIndex),
+      }),
     }));
 
     return [
@@ -200,7 +191,7 @@ export class GmGraph extends BaseGraph {
        * NOTE wasting some computation because relation is symmetric
        */
       const adjItems = gms.filter((dstItem, dstGmId) => dstGmId !== gmId && dstItem.gridRect.intersects(srcItem.gridRect));
-      console.info('geomorph to geomorph:', srcItem, '-->', adjItems);
+      // console.info('geomorph to geomorph:', srcItem, '-->', adjItems);
       /**
        * For each hull door, detect any intersection with aligned geomorph hull doors.
        * - We may assume every hull door is an axis-aligned rect.
@@ -219,7 +210,7 @@ export class GmGraph extends BaseGraph {
         if (matching !== undefined) {
           const [dstItem, dstDoor] = matching;
           const dstHullDoorId = dstItem.hullDoors.indexOf(dstDoor);
-          console.info('hull door to hull door:', srcItem, hullDoorId, '==>', dstItem, dstHullDoorId)
+          // console.info('hull door to hull door:', srcItem, hullDoorId, '==>', dstItem, dstHullDoorId)
           const dstDoorNodeId = getGmDoorNodeId(dstItem.key, dstItem.transform, dstHullDoorId);
           return { src: srcDoorNodeId, dst: dstDoorNodeId };
         } else {

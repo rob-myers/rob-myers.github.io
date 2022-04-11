@@ -26,7 +26,7 @@ import NPCs from "../npc/NPCs";
 // - ✅ adjacents propagate over geomorph boundary
 // - ✅ light propagates over geomorph boundary
 // - ✅ show light polygons through doors
-// - 🚧 cleanup approach above
+// - ✅ cleanup approach above
 // - 🚧 fix 2 hull doors issue
 // - 🤔 show doors intersecting light polygon (cannot click)
 
@@ -56,8 +56,10 @@ export default function NavDemo1(props) {
 
   const state = useMuState(() => {
     return {
-      gmId: 0,
-      holeId: 2,
+      gmId: 1,
+      holeId: 5,
+      // gmId: 0,
+      // holeId: 2,
       // holeId: 22,
       clipPath: gms.map(_ => 'none'),
 

@@ -131,8 +131,8 @@ function Light({ init, walls, hull }) {
     const hullOutline = hull[0].clone().removeHoles();
     if (hullOutline.contains(position)) {
       const polys = walls;
-      const triangs = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
-      return geom.lightPolygon(position, 2000, triangs);
+      const tris = polys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate()));
+      return geom.lightPolygon({position, range: 2000, tris});
     } else return new Poly;
   }, [position.x, position.y]);
 

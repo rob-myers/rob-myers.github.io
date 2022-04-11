@@ -150,14 +150,19 @@ class GeomService {
   }
 
   /**
-   * Compute light polygon.
-   * @param {Geom.Vect} pos Position of light.
-   * @param {number} range 
-   * @param {Geom.Poly[]} [tris] Triangles defining obstructions
-   * @param {Geom.Poly} [exterior] Simple polygon (i.e. ring) we are inside
-   * @returns 
+   * @typedef LightPolyDef @type {object}
+   * @property {Geom.Vect} position Position of light.
+   * @property {number} range 
+   * @property {Geom.Poly[]} [tris] Triangles defining obstructions
+   * @property {Geom.Poly} [exterior] Simple polygon (i.e. ring) we are inside
+   * @property {[Geom.Vect, Geom.Vect][]} [extraSegs] Line segs
    */
-  lightPolygon(pos, range, tris, exterior) {
+
+  /**
+   * Compute light polygon.
+   * @param {LightPolyDef} def
+   */
+  lightPolygon({ position: pos, range, tris, exterior, extraSegs }) {
     const lightBounds = new Rect(pos.x - range, pos.y - range, 2 * range, 2 * range);
     const closeTris = tris??[].filter(({ rect }) => lightBounds.intersects(rect));
     const points = new Set(closeTris
@@ -167,7 +172,10 @@ class GeomService {
     const allLineSegs = closeTris.reduce(
       (agg, { outline: [u, v, w] }) => agg.concat([[u, v], [v, w], [w, u]]),
       /** @type {[Geom.Vect, Geom.Vect][]} */ ([]),
-    ).concat(exterior?.lineSegs??[]);
+    ).concat(
+      exterior?.lineSegs??[],
+      extraSegs??[],
+    );
 
     // These will be unit directional vectors.
     const dir0 = Vect.zero;
