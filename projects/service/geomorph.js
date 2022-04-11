@@ -422,16 +422,13 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
 }
 
 /**
- * 
  * @param {Geomorph.ParsedConnectorRect} connector 
  * @param {number} fromHoleId 
  */
 export function computeLightPosition(connector, fromHoleId, lightOffset = 40) {
   const roomSign = connector.holeIds[0] === fromHoleId
     ? 1
-    : connector.holeIds[1] === fromHoleId
-      ? -1
-      : null;
+    : connector.holeIds[1] === fromHoleId ? -1 : null;
   if (roomSign === null) {
     console.warn(`hole ${fromHoleId}: connector: `, connector ,`: roomSign is null`);
   }

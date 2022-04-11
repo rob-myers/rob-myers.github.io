@@ -27,7 +27,8 @@ import NPCs from "../npc/NPCs";
 // - ✅ light propagates over geomorph boundary
 // - ✅ show light polygons through doors
 // - 🚧 cleanup approach above
-// - 🚧 show doors intersecting light polygon (cannot click)
+// - 🚧 fix 2 hull doors issue
+// - 🤔 show doors intersecting light polygon (cannot click)
 
 // TODO
 // - 🚧 spawn from TTY
@@ -50,6 +51,8 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-302--xboat-repair-bay', transform: [-1, 0, 0, 1, 1200 + 1200, 600] },
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
+
+  console.log(gmGraph)
 
   const state = useMuState(() => {
     return {
@@ -87,26 +90,20 @@ export default function NavDemo1(props) {
       },
       updateClipPath() {
         const gm = gms[state.gmId]
-        const { hullOutline, holesWithDoors } = gm;
         const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
         const openDoorsIds = state.doorsApi.getOpen(state.gmId);
 
+        // Compute light polygons for current geomorph and possibly adjacent ones
         const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.holeId, openDoorsIds);
-
-        // Compute maskPoly for current geomorph
-        const rootLightPolys = [holesWithDoors[state.holeId]]
-          .concat(lightPolys.filter(x => x.gmIndex === state.gmId).map(x => x.poly))
-          .map(x => x.precision(3));
-        maskPolys[state.gmId] = Poly.cutOut(rootLightPolys, [hullOutline]);
-        // Compute maskPolys for adjacent geomorphs accessible via a hull door
+        // Compute respective maskPolys
         gms.forEach((otherGm, otherGmId) => {
-          if (otherGm === gm) return;
           const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(3));
-          maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
+          maskPolys[otherGmId] = Poly.cutOut(polys.concat(
+            otherGm === gm ? gm.holesWithDoors[state.holeId] : []
+          ), [otherGm.hullOutline]);
         });
-
-        maskPolys.forEach((maskPoly, gmId) => {
-          // Offset from world coords because <img> top-left not at world origin
+        // Set the clip-paths
+        maskPolys.forEach((maskPoly, gmId) => {// <img> top-left needn't be at world origin
           maskPoly.forEach(poly => poly.translate(-gms[gmId].pngRect.x, -gms[gmId].pngRect.y));
           const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
           state.clipPath[gmId] = svgPaths.length ? `path('${svgPaths}')` : 'none';

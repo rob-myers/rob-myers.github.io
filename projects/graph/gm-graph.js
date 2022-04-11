@@ -45,12 +45,12 @@ export class GmGraph extends BaseGraph {
 
   /**
    * Get union of holesWithDoors on either side of door.
-   * In case of a hull door, we transform for use in other geomorph.
+   * In case of a hull door, we transform into other geomorph.
    * @param {number} gmIndex 
    * @param {number} doorIndex
    * @returns {null | { gmIndex: number; doorIndex: number; adjHoleId: null | number; poly: Geom.Poly }}
    */
-  getOpenDoorPoly(gmIndex, doorIndex) {
+  getOpenDoorArea(gmIndex, doorIndex) {
     const gm = this.gms[gmIndex];
     const door = gm.doors[doorIndex];
     const hullDoorIndex = gm.hullDoors.indexOf(door);
@@ -63,13 +63,12 @@ export class GmGraph extends BaseGraph {
     if (result) {
       const srcHoleId = /** @type {number} */ (door.holeIds.find(x => typeof x === 'number'));
       const otherGm = this.gms[result.adjGmId];
-      const poly = Poly.union([
-        gm.holesWithDoors[srcHoleId].clone().applyMatrix(gm.matrix),
-        otherGm.holesWithDoors[result.adjHoleId].clone().applyMatrix(otherGm.matrix),
+      const poly = Poly.union([// We transform poly from `gm` coords to `otherGm` coords
+        gm.holesWithDoors[srcHoleId].clone().applyMatrix(gm.matrix).applyMatrix(otherGm.inverseMatrix),
+        otherGm.holesWithDoors[result.adjHoleId],
       ])[0];
 
-      // We transform poly from world coords to `otherGm` coords
-      return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjHoleId: result.adjHoleId, poly: poly.applyMatrix(otherGm.inverseMatrix) };
+      return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjHoleId: result.adjHoleId, poly };
     } else {
       console.error(`GmGraph: getAdjacentHoleCtxt: failed to get context`, { gmIndex, doorIndex, hullDoorIndex });
       return null;
@@ -105,19 +104,20 @@ export class GmGraph extends BaseGraph {
     const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
     
     const doorLights = adjOpenDoorIds.flatMap(doorIndex => {
-      const openDoorPoly = this.getOpenDoorPoly(gmIndex, doorIndex);
-      if (openDoorPoly) {
-        const doors = this.gms[openDoorPoly.gmIndex].doors;
-        const altOpenDoorIds = openDoorPoly.gmIndex === gmIndex ? adjOpenDoorIds : [openDoorPoly.doorIndex];
-        const closedDoorPolys = doors.flatMap((door, id) => !altOpenDoorIds.includes(id) ? door.poly : []);
+      const area = this.getOpenDoorArea(gmIndex, doorIndex);
+      if (area) {
+        const doors = this.gms[area.gmIndex].doors;
+        const closedDoorPolys = doors.flatMap((door, id) => id !== area.doorIndex ? door.poly : []);
         return {
-          gmIndex: openDoorPoly.gmIndex,
+          gmIndex: area.gmIndex,
           poly: geom.lightPolygon(
-            computeLightPosition(doors[openDoorPoly.doorIndex], openDoorPoly.adjHoleId??rootHoleId),
+            computeLightPosition(doors[area.doorIndex], area.adjHoleId??rootHoleId),
             1000,
-            // TODO cache door triangulations earlier, or avoid triangles
+            /**
+             * TODO replace by one line seg for each door
+             */
             closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate())),
-            openDoorPoly.poly,
+            area.poly,
           ),
         };
       } else {
@@ -254,4 +254,8 @@ function getGmNodeId(gmKey, transform) {
  */
 function getGmDoorNodeId(gmKey, transform, hullDoorId) {
   return `door-${gmKey}-[${transform}]-${hullDoorId}`;
+}
+
+if (module.hot) {
+  module.hot.accept()
 }
