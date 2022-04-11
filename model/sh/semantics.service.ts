@@ -273,11 +273,11 @@ class SemanticsService {
     } catch (e) {
       const command = node.type === 'CallExpr' ? node.Args[0].string || 'unknown CallExpr' : node.type;
       const error = e instanceof ShError ? e : new ShError('', 1, e as Error);
-      // We suppress `run` in subprocesses for cleaner error messages
-      error.message = command === 'run' && node.meta.pid > 0
-        ? `${node.meta.stack.join(': ')}: ${(e as Error).message || e}`
-        : `${node.meta.stack.concat(command).join(': ')}: ${(e as Error).message || e}`;
-      sem.handleShError(node, e);
+      // Suppress `run` in subprocesses for cleaner error messages
+      if (node.meta.pid === 0 || !(command === 'run' || node.meta.stack.includes('run'))) {
+        error.message = `${node.meta.stack.concat(command).join(': ')}: ${(e as Error).message || e}`;
+        sem.handleShError(node, e);
+      }
     }
   }
 
