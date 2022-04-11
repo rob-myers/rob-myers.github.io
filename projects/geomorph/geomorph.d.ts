@@ -132,8 +132,12 @@ declare namespace Geomorph {
     /** `${gm.key}-[${transform}]` */
     itemKey: string;
     transform: [number, number, number, number, number, number];
+    /** For drawing inside <img>s */
     transformOrigin: string;
     transformStyle: string;
+    matrix: Geom.Mat;
+    inverseMatrix: Geom.Mat;
+
     /**
      * Sub rectangle of `600 * 600` grid
      * - standard geomorphs have dimension `1200 * 1200`

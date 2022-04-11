@@ -4,6 +4,7 @@ declare namespace Geom {
   export type Rect = import('.').Rect;
   export type Poly = import('.').Poly;
   export type Ray = import('.').Ray;
+  export type Mat = import('.').Mat;
   
   export type Coord = [number, number];
   export type Seg = { src: Vect; dst: Vect };

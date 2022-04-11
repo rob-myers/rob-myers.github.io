@@ -413,6 +413,8 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
     transform,
     transformOrigin: `${-gm.pngRect.x}px ${-gm.pngRect.y}px`,
     transformStyle: `matrix(${transform})`,
+    matrix,
+    inverseMatrix: matrix.getInverseMatrix(),
     gridRect,
   };
 
@@ -425,7 +427,11 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
  * @param {number} fromHoleId 
  */
 export function computeLightPosition(connector, fromHoleId, lightOffset = 40) {
-  const roomSign = connector.holeIds[0] === fromHoleId ? 1 : connector.holeIds[1] === fromHoleId ? -1 : null;
+  const roomSign = connector.holeIds[0] === fromHoleId
+    ? 1
+    : connector.holeIds[1] === fromHoleId
+      ? -1
+      : null;
   if (roomSign === null) {
     console.warn(`hole ${fromHoleId}: connector: `, connector ,`: roomSign is null`);
   }
