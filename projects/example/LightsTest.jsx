@@ -61,7 +61,7 @@ export default function LightsTest(props) {
 
         const allHolePolys = rootHoleIds
           .map(id => holesWithDoors[id]) // Each root contribs holeWithDoor
-          .concat(lightPolygons) // Each open door contribs a light polygon
+          .concat(lightPolygons.map(x => x.poly)) // Each open door contribs a light polygon
           .map(x => x.precision(3));
 
         const observableDoors = roomGraph.getAdjacentDoors(...rootHoleIds.map(id => roomGraph.nodesArray[id]));
