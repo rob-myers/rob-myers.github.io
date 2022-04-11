@@ -52,8 +52,6 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
-  console.log(gmGraph)
-
   const state = useMuState(() => {
     return {
       gmId: 1,
