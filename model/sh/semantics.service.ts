@@ -274,7 +274,7 @@ class SemanticsService {
       const command = node.type === 'CallExpr' ? node.Args[0].string || 'unknown CallExpr' : node.type;
       const error = e instanceof ShError ? e : new ShError('', 1, e as Error);
       // Suppress `run` in subprocesses for cleaner error messages
-      if (node.meta.pid === 0 || !(command === 'run' || node.meta.stack.includes('run'))) {
+      if (node.meta.pid === 0 || (command !== 'run' && !node.meta.stack.includes('run'))) {
         error.message = `${node.meta.stack.concat(command).join(': ')}: ${(e as Error).message || e}`;
         sem.handleShError(node, e);
       }

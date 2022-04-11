@@ -5,7 +5,7 @@ import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, preProcessRead } from './io/io.model';
 import useSession, { ProcessStatus } from 'store/session.store';
-import { computeNormalizedParts, createKillError as killError, normalizeAbsParts, resolveNormalized, resolvePath, ShError } from './sh.util';
+import { computeNormalizedParts, createKillError as killError, normalizeAbsParts, ProcessError, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
@@ -275,7 +275,7 @@ class CmdService {
           const func = Function('_', `return async function *generator ${args[0]}`);
           yield* func()(this.provideProcessCtxt(meta, args.slice(1)));
         } catch (e) {
-          throw e instanceof ShError
+          throw e instanceof ShError || e instanceof ProcessError
             ? e
             : new ShError('format: \`run {async_generator}\` e.g. run \'({ api:{read} }) { yield "foo"; yield await read(); }\'', 1);
         }
