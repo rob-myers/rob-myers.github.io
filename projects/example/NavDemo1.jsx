@@ -25,7 +25,8 @@ import NPCs from "../npc/NPCs";
 // - ✅ can set next hole when adjacent to current
 // - ✅ adjacents propagate over geomorph boundary
 // - ✅ light propagates over geomorph boundary
-// - 🚧 show light polygons through doors
+// - ✅ show light polygons through doors
+// - 🚧 cleanup approach above
 // - 🚧 show doors intersecting light polygon (cannot click)
 
 // TODO
@@ -54,7 +55,6 @@ export default function NavDemo1(props) {
     return {
       gmId: 0,
       holeId: 2,
-      // gmId: 1,
       // holeId: 22,
       clipPath: gms.map(_ => 'none'),
 
@@ -91,25 +91,19 @@ export default function NavDemo1(props) {
         const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
         const openDoorsIds = state.doorsApi.getOpen(state.gmId);
 
+        const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.holeId, openDoorsIds);
+
         // Compute maskPoly for current geomorph
-        const holePolys = [holesWithDoors[state.holeId]]
-          .concat(gmGraph.computeLightPolygons(state.gmId, state.holeId, openDoorsIds))
+        const rootLightPolys = [holesWithDoors[state.holeId]]
+          .concat(lightPolys.filter(x => x.gmIndex === state.gmId).map(x => x.poly))
           .map(x => x.precision(3));
-        maskPolys[state.gmId] = Poly.cutOut(holePolys, [hullOutline]);
-        
-        /**
-         * TODO maskPoly -> lightPoly
-         */
+        maskPolys[state.gmId] = Poly.cutOut(rootLightPolys, [hullOutline]);
         // Compute maskPolys for adjacent geomorphs accessible via a hull door
-        const holeNode = gm.roomGraph.nodesArray[state.holeId];
-        const adjCtxts = gm.roomGraph.getAdjacentHullDoorIds(gm, holeNode)
-          .filter(x => openDoorsIds.includes(x.doorIndex)
-        ).flatMap(({ hullDoorIndex }) => gmGraph.getAdjacentHoleCtxt(state.gmId, hullDoorIndex) || []);
-        // Technically, an adjacent geomorph could be accessible in multiple ways
-        gms.forEach((otherGm, otherGmId) => gm !== otherGm && (maskPolys[otherGmId] = Poly.cutOut(
-          adjCtxts.filter(x => x.adjGmId === otherGmId).map(x => otherGm.holesWithDoors[x.adjHoleId]),
-          [otherGm.hullOutline],
-        )));
+        gms.forEach((otherGm, otherGmId) => {
+          if (otherGm === gm) return;
+          const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(3));
+          maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
+        });
 
         maskPolys.forEach((maskPoly, gmId) => {
           // Offset from world coords because <img> top-left not at world origin
@@ -276,7 +270,7 @@ function Debug(props) {
           if (observable.includes(doorIndex)) {
             const sign = holeIds[0] === props.holeId ? 1 : -1;
             const angle = Vect.from(normal).scale(-sign).angle;
-            const position = poly.center.addScaledVector(normal, sign * 15);
+            const position = poly.center.addScaledVector(normal, sign * debugDoorOffset);
             return (
               <div
                 key={doorIndex}
@@ -305,6 +299,7 @@ function Debug(props) {
 }
 
 const debugRadius = 4;
+const debugDoorOffset = 15;
 
 /**
  * @typedef DebugProps @type {object}

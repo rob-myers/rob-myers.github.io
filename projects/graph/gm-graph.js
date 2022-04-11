@@ -44,27 +44,35 @@ export class GmGraph extends BaseGraph {
   }
 
   /**
-   * Get union of holesWithDoors on either side of door,
-   * including connected hull doors.
+   * Get union of holesWithDoors on either side of door.
+   * In case of a hull door, we transform for use in other geomorph.
    * @param {number} gmIndex 
-   * @param {number} doorIndex 
+   * @param {number} doorIndex
+   * @returns {null | { gmIndex: number; doorIndex: number; adjHoleId: null | number; poly: Geom.Poly }}
    */
-  getOpenDoorPolygon(gmIndex, doorIndex) {
+  getOpenDoorPoly(gmIndex, doorIndex) {
     const gm = this.gms[gmIndex];
     const door = gm.doors[doorIndex];
     const hullDoorIndex = gm.hullDoors.indexOf(door);
     if (hullDoorIndex === -1) {
       const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getDoorNode(doorIndex));
-      return Poly.union(adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]))[0];
+      return { gmIndex, doorIndex, adjHoleId: null, poly: Poly.union(adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]))[0]};
     }
 
-    const srcHoleId = /** @type {number} */ (door.holeIds.find(x => typeof x === 'number'));
     const result = this.getAdjacentHoleCtxt(gmIndex, hullDoorIndex);
     if (result) {
-      return Poly.union([gm.holesWithDoors[srcHoleId], this.gms[result.adjGmId].holesWithDoors[result.adjHoleId]])[0];
+      const srcHoleId = /** @type {number} */ (door.holeIds.find(x => typeof x === 'number'));
+      const otherGm = this.gms[result.adjGmId];
+      const poly = Poly.union([
+        gm.holesWithDoors[srcHoleId].clone().applyMatrix(gm.matrix),
+        otherGm.holesWithDoors[result.adjHoleId].clone().applyMatrix(otherGm.matrix),
+      ])[0];
+
+      // We transform poly from world coords to `otherGm` coords
+      return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjHoleId: result.adjHoleId, poly: poly.applyMatrix(otherGm.inverseMatrix) };
     } else {
       console.error(`GmGraph: getAdjacentHoleCtxt: failed to get context`, { gmIndex, doorIndex, hullDoorIndex });
-      return new Poly;
+      return null;
     }
   }
 
@@ -84,38 +92,49 @@ export class GmGraph extends BaseGraph {
   }
 
   /**
-   * TODO 🚧 returns { gmIndex: number; lightPolys: Poly[] }[]
-   * i.e. include bits from adjacent geomorphs via this.getOpenDoorPolygon
+   * TODO 🚧 clean this up
+   * =====================
    * @param {number} gmIndex 
    * @param {number} rootHoleId 
    * @param {number[]} openDoorIds 
+   * @returns {{ gmIndex: number; poly: Poly }[]}
    */
   computeLightPolygons(gmIndex, rootHoleId, openDoorIds) {
     const gm = this.gms[gmIndex];
     const roomNode = gm.roomGraph.nodesArray[rootHoleId];
     const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
-    // NOTE adjacent closed doors insufficient
-    const closedDoorPolys = gm.doors.flatMap((door, id) => !adjOpenDoorIds.includes(id) ? door.poly : []);
-
-    const doorLights = adjOpenDoorIds.map(doorIndex =>
-      geom.lightPolygon(
-        computeLightPosition(gm.doors[doorIndex], rootHoleId),
-        1000,
-        // TODO cache door triangulations earlier, or avoid triangles
-        closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate())),
-        this.getOpenDoorPolygon(gmIndex, doorIndex),
-      )
-    );
+    
+    const doorLights = adjOpenDoorIds.flatMap(doorIndex => {
+      const openDoorPoly = this.getOpenDoorPoly(gmIndex, doorIndex);
+      if (openDoorPoly) {
+        const doors = this.gms[openDoorPoly.gmIndex].doors;
+        const altOpenDoorIds = openDoorPoly.gmIndex === gmIndex ? adjOpenDoorIds : [openDoorPoly.doorIndex];
+        const closedDoorPolys = doors.flatMap((door, id) => !altOpenDoorIds.includes(id) ? door.poly : []);
+        return {
+          gmIndex: openDoorPoly.gmIndex,
+          poly: geom.lightPolygon(
+            computeLightPosition(doors[openDoorPoly.doorIndex], openDoorPoly.adjHoleId??rootHoleId),
+            1000,
+            // TODO cache door triangulations earlier, or avoid triangles
+            closedDoorPolys.flatMap(poly => geom.triangulationToPolys(poly.fastTriangulate())),
+            openDoorPoly.poly,
+          ),
+        };
+      } else {
+        return [];
+      }
+    });
     
     const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
-    const windowLights = adjWindowIds.map(windowIndex =>
-      geom.lightPolygon(
+    const windowLights = adjWindowIds.map(windowIndex => ({
+      gmIndex,
+      poly: geom.lightPolygon(
         computeLightPosition(gm.windows[windowIndex], rootHoleId),
         1000,
         undefined,
         this.getOpenWindowPolygon(gmIndex, windowIndex),
-      )
-    );
+      ),
+    }));
 
     return [
       ...doorLights,
