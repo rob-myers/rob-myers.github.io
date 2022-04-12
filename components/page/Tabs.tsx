@@ -217,8 +217,8 @@ const expandedCss = css`
   position: fixed;
   z-index: 20;
   top: 80px;
-  left: calc(max(5%, (100% - 800px) / 2));
-  width: calc(min(90%, 800px));
+  left: calc(max(5%, (100% - 1000px) / 2));
+  width: calc(min(90%, 1000px));
   height: calc(100% - 160px);
   border: var(--tabs-border-width) solid #444;
   @media(max-width: 600px) {
