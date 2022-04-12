@@ -30,7 +30,7 @@ Where does it take place?
   height="[400, 580]"
   enabled="true"
   tabs="[
-    { key: 'component', filepath: 'example/Images#redoubt-sketches' },
+    { type: 'component', filepath: 'example/Images#redoubt-sketches' },
   ]"
 ></div>
 
@@ -64,8 +64,8 @@ myFunc() {
   height="[500, 600]"
   show="2"
   tabs="[
-    { key: 'terminal', filepath: 'nav-demo-1', weight: 30 },
-    { key: 'component', filepath: 'example/LightsTest', weight: 70 },
+    { type: 'terminal', filepath: 'nav-demo-1', weight: 30 },
+    { type: 'component', filepath: 'example/LightsTest', weight: 70 },
   ]"
 ></div>
 
@@ -92,7 +92,7 @@ To makes things less abstract, here's a Traveller-based asset called a _geomorph
   class="tabs"
   name="geomorph-301-debug"
   height="400"
-  tabs="[{ key: 'component', filepath: 'example/Images#geomorph-301' }]"
+  tabs="[{ type: 'component', filepath: 'example/Images#geomorph-301' }]"
 ></div>
 
 We've recreated **Geomorph 301** (a.k.a. _Bridge_) from Robert Pearce's [Starship Geomorphs 2.0](http://travellerrpgblog.blogspot.com/2018/10/the-starship-geomorphs-book-if-finally.html),
@@ -123,7 +123,7 @@ There are respective CodeSandboxes i.e. [visibility](https://codesandbox.io/s/ro
   name="light-demo"
   height="340"
   tabs="[
-    // { key: 'component', filepath: 'example/SvgVisibilityDemo#301' },
-    { key: 'component', filepath: 'example/Css3dForeignObject#301' },
+    // { type: 'component', filepath: 'example/SvgVisibilityDemo#301' },
+    { type: 'component', filepath: 'example/Css3dForeignObject#301' },
   ]"
 ></div>

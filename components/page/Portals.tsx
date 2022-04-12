@@ -17,10 +17,14 @@ export default function Portals() {
     sessionKeys.forEach(sessionKey => useSession.api.persist(sessionKey));
   });
 
+  /**
+   * TODO ensure hooks in same order...
+   */
+
   return <>
     {items.map((state) => {
       const { key, meta, portal } = state;
-      switch (meta.key) {
+      switch (meta.type) {
         case 'code':
           return (
             <portals.InPortal key={key} node={portal}>

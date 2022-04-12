@@ -11,7 +11,7 @@ export function getTabInternalId(meta: TabMeta) {
 }
 
 function getTabName(meta: TabMeta) {
-  switch (meta.key) {
+  switch (meta.type) {
     case 'code':
     case 'component':
       return meta.filepath;
@@ -27,9 +27,9 @@ export function getTabsId(articleKey: string, tabsName: string) {
 }
 
 export type TabMeta = { idSuffix?: string; weight?: number; } & (
-  | { key: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
-  | { key: 'component'; filepath: ComponentFilepathKey; }
-  | { key: 'terminal'; /** Session identifier */ filepath: string; env?: Record<string, any>; }
+  | { type: 'code'; filepath: CodeFilepathKey; folds?: CodeMirror.Position[] }
+  | { type: 'component'; filepath: ComponentFilepathKey; }
+  | { type: 'terminal'; /** Session identifier */ filepath: string; env?: Record<string, any>; }
 );
 
 export function computeJsonModel(tabs: [TabMeta[], TabMeta[]]): IJsonModel {

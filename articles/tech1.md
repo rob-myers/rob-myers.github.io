@@ -56,9 +56,9 @@ Consider an example, a pan/zoomable grid (also [on CodeSandbox](https://codesand
   height="400"
   name="panzoom"
   tabs="[
-    { key: 'component', filepath: 'example/SvgPanZoomDemo' },
-    { key: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
-    { key: 'code', filepath: 'example/SvgPanZoomDemo.jsx' },
+    { type: 'component', filepath: 'example/SvgPanZoomDemo' },
+    { type: 'code', filepath: 'panzoom/PanZoom.jsx', folds: [{ line: 9, ch: 0 }] },
+    { type: 'code', filepath: 'example/SvgPanZoomDemo.jsx' },
   ]"
 ></div>
 
@@ -109,7 +109,7 @@ Here's a whirlwind overview.
   class="tabs"
   name="jsx-to-js"
   height="340"
-  tabs="[ { key: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
+  tabs="[ { type: 'code', filepath: 'example/jsx-to-js.jsx' } ]"
 ></div>
 
 <aside>
@@ -149,8 +149,8 @@ Take another look at _panzoom/PanZoom.jsx_.
   height="360"
   name="panzoom-again"
   tabs="[
-    { key: 'code', filepath: 'panzoom/PanZoom.jsx', idSuffix: '1' },
-    { key: 'code', filepath: 'geom/rect.js' },
+    { type: 'code', filepath: 'panzoom/PanZoom.jsx', idSuffix: '1' },
+    { type: 'code', filepath: 'geom/rect.js' },
   ]"
 ></div>
 

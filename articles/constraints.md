@@ -65,8 +65,8 @@ Try entering or copy-pasting the commands below. Mobile users may find copy-past
     name="terminal-demo"
     height="300"
     tabs="[
-      { key: 'terminal', filepath: 'test' },
-      { key: 'terminal', filepath: 'other' },
+      { type: 'terminal', filepath: 'test' },
+      { type: 'terminal', filepath: 'other' },
     ]"
   ></div>
 
