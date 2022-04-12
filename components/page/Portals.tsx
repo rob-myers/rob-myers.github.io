@@ -17,9 +17,14 @@ export default function Portals() {
     sessionKeys.forEach(sessionKey => useSession.api.persist(sessionKey));
   });
 
-  /**
-   * TODO ensure hooks in same order...
-   */
+  const [componentLookup, setComponentLookup] = React.useState<{ [filepath: string]: () => JSX.Element }>({});
+  React.useLayoutEffect(() => {
+    items.forEach(item => {
+      if (item.meta.type === 'component' && !componentLookup[item.meta.filepath]) {
+        getComponent(item.meta.filepath).then(func => setComponentLookup({ ...componentLookup, [item.meta.filepath]: func as any }));
+      }
+    });
+  }, [items]);
 
   return <>
     {items.map((state) => {
@@ -40,18 +45,11 @@ export default function Portals() {
             </portals.InPortal>
           );
         case 'component': {
-          const [component, setComponent] = React.useState<() => JSX.Element>();
-
-          React.useEffect(() => {
-            // setState(() => func) avoids setState(prev => next)
-            getComponent(meta.filepath).then(func => setComponent(() => func as any));
-          }, []);
-
-          return (
+          return Object.values(componentLookup).map(component => (
             <portals.InPortal key={key} node={portal}>
               {component && React.createElement(component)}
             </portals.InPortal>
-          );
+          ));
         }
         case 'terminal': {
           const defaultEnv: React.ComponentProps<typeof Terminal>['env'] = {
