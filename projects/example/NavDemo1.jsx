@@ -54,10 +54,10 @@ export default function NavDemo1(props) {
 
   const state = useMuState(() => {
     return {
-      gmId: 1,
-      holeId: 5,
-      // gmId: 0,
-      // holeId: 2,
+      gmId: 0,
+      holeId: 2,
+      // gmId: 1,
+      // holeId: 5,
       // holeId: 22,
       clipPath: gms.map(_ => 'none'),
 
@@ -119,7 +119,7 @@ export default function NavDemo1(props) {
           gmGraph.getAdjacentHoleCtxt(state.gmId, hullDoorIndex) || []
         ).forEach(({ adjGmId, adjDoorId }) => nextObservable[adjGmId] = [adjDoorId]);
 
-        gms.forEach((_, gmId) => this.doorsApi.setObservableDoors(gmId, nextObservable[gmId]));
+        gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextObservable[gmId]));
       },
     };
   }, [gms], {
@@ -191,10 +191,8 @@ export default function NavDemo1(props) {
 
       <Doors
         gms={gms}
+        gmGraph={gmGraph}
         wire={state.wire}
-        /**
-         * TODO try state.update() and avoid useLayoutEffect in Doors
-         */
         onLoad={api => state.doorsApi = api}
       />
       
@@ -218,14 +216,13 @@ const rootCss = css`
 
 /** @param {DebugProps} props   */
 function Debug(props) {
-  const observable = props.doorsApi.getObservable(props.gmId);
   const gm = props.gms[props.gmId];
+  const visDoorIds = props.doorsApi.getVisible(props.gmId);
 
   return (
     <div
       onClick={({ target }) => {
         const doorId = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-door-index'));
-        const gm = props.gms[props.gmId]
         const door = gm.doors[doorId];
 
         const [otherHoleId] = door.holeIds.filter(id => id !== props.holeId);
@@ -263,33 +260,30 @@ function Debug(props) {
           position: 'absolute',
         }}
       >
-        {gm.doors.map(({ poly, normal, holeIds }, doorIndex) => {
-          if (observable.includes(doorIndex)) {
-            const sign = holeIds[0] === props.holeId ? 1 : -1;
-            const angle = Vect.from(normal).scale(-sign).angle;
-            const position = poly.center.addScaledVector(normal, sign * debugDoorOffset);
-            return (
-              <div
-                key={doorIndex}
-                data-door-index={doorIndex}
-                style={{
-                  width: debugRadius * 2,
-                  height: debugRadius * 2,
-                  borderRadius: debugRadius,
-                  position: 'absolute',
-                  left: position.x - debugRadius,
-                  top: position.y - debugRadius,
-                  transform: `rotate(${angle}rad)`,
-                  backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
-                  cursor: 'pointer',
-                  // filter: 'invert(100%)',
-                }}
-              />
-            );
-          } else {
-            return null;
-          }
-          })}
+        {visDoorIds.map(doorId => {
+          const { poly, normal, holeIds } = gm.doors[doorId];
+          const sign = holeIds[0] === props.holeId ? 1 : -1;
+          const angle = Vect.from(normal).scale(-sign).angle;
+          const position = poly.center.addScaledVector(normal, sign * debugDoorOffset);
+          return (
+            <div
+              key={doorId}
+              data-door-index={doorId}
+              style={{
+                width: debugRadius * 2,
+                height: debugRadius * 2,
+                borderRadius: debugRadius,
+                position: 'absolute',
+                left: position.x - debugRadius,
+                top: position.y - debugRadius,
+                transform: `rotate(${angle}rad)`,
+                backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
+                cursor: 'pointer',
+                // filter: 'invert(100%)',
+              }}
+            />
+          );
+        })}
       </div>
     </div>
   );

@@ -65,7 +65,7 @@ export default function LightsTest(props) {
           .map(x => x.precision(3));
 
         const observableDoors = roomGraph.getAdjacentDoors(...rootHoleIds.map(id => roomGraph.nodesArray[id]));
-        this.doorsApi.setObservableDoors(0, observableDoors.map(x => x.doorIndex));
+        this.doorsApi.setVisible(0, observableDoors.map(x => x.doorIndex));
         const maskPoly = Poly.cutOut(allHolePolys, [hullOutline],)
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
@@ -145,6 +145,7 @@ export default function LightsTest(props) {
 
         <Doors
           gms={gms}
+          gmGraph={gmGraph}
           wire={state.wire}
           onLoad={api => state.doorsApi = api}
         />

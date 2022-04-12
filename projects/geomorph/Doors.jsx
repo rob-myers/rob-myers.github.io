@@ -19,15 +19,15 @@ export default function Doors(props) {
       get ready() {
         return true;
       },
-      getObservable(gmIndex) {
-        return Object.keys(state.observable[gmIndex]).map(Number);
+      getVisible(gmIndex) {
+        return Object.keys(state.visible[gmIndex]).map(Number);
       },
       getOpen(gmIndex) {
         return Object.keys(state.open[gmIndex]).map(Number);
       },
-      setObservableDoors(gmIndex, observableIds) {
-        state.observable[gmIndex] = observableIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
-        state.renderUnobservables(gmIndex);
+      setVisible(gmIndex, doorIds) {
+        state.visible[gmIndex] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
+        state.drawInvisibleInCanvas(gmIndex);
         update();
       },
     };
@@ -39,43 +39,50 @@ export default function Doors(props) {
       /** @type {{ [doorIndex: number]: true }[]} */
       open: props.gms.map(_ => ({})),
       /** @type {{ [doorIndex: number]: true }[]} */
-      observable: props.gms.map(_ => ({})),
+      visible: props.gms.map(_ => ({})),
+
       rootEl: /** @type {HTMLDivElement} */ ({}),
 
       /** @param {PointerEvent} e */
       onToggleDoor(e) {
         const gmIndex = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-index'));
-        const index = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-index'));
+        const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-index'));
+        const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-index'));
 
-        if (!state.observable[gmIndex][index]) {
+        if (!state.visible[gmIndex][doorId]) {
           return;
         }
 
-        if (state.open[gmIndex][index]) {
-          delete state.open[gmIndex][index]
+        const adjHull = hullDoorId !== -1
+          ? props.gmGraph.getAdjacentHoleCtxt(gmIndex, hullDoorId) : null;
+
+        if (state.open[gmIndex][doorId]) {
+          delete state.open[gmIndex][doorId]
+          adjHull && (delete state.open[adjHull.adjGmId][adjHull.adjDoorId]);
         } else {
-          state.open[gmIndex][index] = true;
+          state.open[gmIndex][doorId] = true;
+          adjHull && (state.open[adjHull.adjGmId][adjHull.adjDoorId] = true);
         }
-        props.wire.next({
-          gmIndex,
-          index,
-          key: state.open[gmIndex][index] ? 'opened-door' : 'closed-door',
-        });
-        state.renderUnobservables(gmIndex);
+        const key = state.open[gmIndex][doorId] ? 'opened-door' : 'closed-door';
+        props.wire.next({ gmIndex, index: doorId, key });
+        adjHull && props.wire.next({ gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId, key });
+
+        state.drawInvisibleInCanvas(gmIndex);
       },
       /** @param {number} gmIndex */
-      renderUnobservables(gmIndex) {
+      drawInvisibleInCanvas(gmIndex) {
         const canvas = state.canvas[gmIndex];
         const ctxt = assertNonNull(canvas.getContext('2d'));
         ctxt.clearRect(0, 0, canvas.width, canvas.height);
         ctxt.fillStyle = '#555';
         ctxt.strokeStyle = '#00204b';
         const gm = props.gms[gmIndex];
-        gm.doors.filter((_, i) => !state.observable[gmIndex][i])
-          .forEach(({ poly }) => {
+        gm.doors.forEach(({ poly }, i) => {
+          if (!state.visible[gmIndex][i]) {
             fillPolygon(ctxt, [poly]);
             ctxt.stroke();
-          });
+          }
+        });
       },
     };
   }, [props.gms]);
@@ -83,15 +90,14 @@ export default function Doors(props) {
   // Must useLayoutEffect because NavDemo1 onChangeDeps runs early (?)
   React.useLayoutEffect(() => {
     props.onLoad(state.api);
+    props.gms.forEach((_, gmIndex) => {// For HMR?
+      state.open[gmIndex] = state.open[gmIndex] || {};
+      state.visible[gmIndex] = state.visible[gmIndex] || {};
+    });
   }, []);
 
   React.useEffect(() => {
-    props.gms.forEach((_, gmIndex) => {
-      state.open[gmIndex] = state.open[gmIndex] || {};
-      state.observable[gmIndex] = state.observable[gmIndex] || {};
-      // TODO could also interchange/clear state.open[i]'s based on previous
-      props.gms.forEach((_, gmIndex) => state.renderUnobservables(gmIndex));
-    });
+    props.gms.forEach((_, gmIndex) => state.drawInvisibleInCanvas(gmIndex));
     state.rootEl.addEventListener('pointerup', state.onToggleDoor);
     return () => void state.rootEl.removeEventListener('pointerup', state.onToggleDoor);
   }, [props.gms]);
@@ -109,11 +115,12 @@ export default function Doors(props) {
           }}
         >
           {gm.doors.map(({ rect, angle, tags }, i) =>
-            state.observable[gmIndex][i] &&
+            state.visible[gmIndex][i] &&
               <div
                 key={i}
                 data-gm-index={gmIndex}
-                data-index={i}
+                data-door-index={i}
+                data-hull-door-index={gm.hullDoors.indexOf(gm.doors[i])}
                 className={classNames("door", {
                   open: state.open[gmIndex][i],
                   iris: tags.includes('iris'),

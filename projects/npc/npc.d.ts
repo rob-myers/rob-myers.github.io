@@ -59,16 +59,17 @@ declare namespace NPC {
 
   export interface DoorsProps {
     gms: Geomorph.UseGeomorphsItem[];
+    gmGraph: Graph.GmGraph;
     wire: NavWire;
     onLoad: (api: DoorsApi) => void;
   }
 
   export interface DoorsApi {
-    getObservable(gmIndex: number): number[];
+    getVisible(gmIndex: number): number[];
     /** Get ids of open doors */
     getOpen(gmIndex: number): number[];
     get ready(): boolean;
-    setObservableDoors(gmIndex: number, doorIds: number[]): void ;
+    setVisible(gmIndex: number, doorIds: number[]): void ;
   }
 
   export interface Stage {
