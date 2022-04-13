@@ -20,13 +20,13 @@ export default function Doors(props) {
         return true;
       },
       getVisible(gmIndex) {
-        return Object.keys(state.visible[gmIndex]).map(Number);
+        return Object.keys(state.vis[gmIndex]).map(Number);
       },
       getOpen(gmIndex) {
         return Object.keys(state.open[gmIndex]).map(Number);
       },
       setVisible(gmIndex, doorIds) {
-        state.visible[gmIndex] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
+        state.vis[gmIndex] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
         state.drawInvisibleInCanvas(gmIndex);
         update();
       },
@@ -39,7 +39,7 @@ export default function Doors(props) {
       /** @type {{ [doorIndex: number]: true }[]} */
       open: props.gms.map(_ => ({})),
       /** @type {{ [doorIndex: number]: true }[]} */
-      visible: props.gms.map(_ => ({})),
+      vis: props.gms.map(_ => ({})),
 
       rootEl: /** @type {HTMLDivElement} */ ({}),
 
@@ -49,7 +49,7 @@ export default function Doors(props) {
         const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-index'));
         const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-index'));
 
-        if (!state.visible[gmIndex][doorId]) {
+        if (!state.vis[gmIndex][doorId]) {
           return;
         }
 
@@ -78,7 +78,7 @@ export default function Doors(props) {
         ctxt.strokeStyle = '#00204b';
         const gm = props.gms[gmIndex];
         gm.doors.forEach(({ poly }, i) => {
-          if (!state.visible[gmIndex][i]) {
+          if (!state.vis[gmIndex][i]) {
             fillPolygon(ctxt, [poly]);
             ctxt.stroke();
           }
@@ -92,7 +92,7 @@ export default function Doors(props) {
     props.onLoad(state.api);
     props.gms.forEach((_, gmIndex) => {// For HMR?
       state.open[gmIndex] = state.open[gmIndex] || {};
-      state.visible[gmIndex] = state.visible[gmIndex] || {};
+      state.vis[gmIndex] = state.vis[gmIndex] || {};
     });
   }, []);
 
@@ -114,26 +114,39 @@ export default function Doors(props) {
             transform: gm.transformStyle,
           }}
         >
-          {gm.doors.map(({ rect, angle, tags }, i) =>
-            state.visible[gmIndex][i] &&
+          {gm.doors.map((door, i) =>
+            state.vis[gmIndex][i] &&
               <div
                 key={i}
-                data-gm-index={gmIndex}
-                data-door-index={i}
-                data-hull-door-index={gm.hullDoors.indexOf(gm.doors[i])}
                 className={classNames("door", {
                   open: state.open[gmIndex][i],
-                  iris: tags.includes('iris'),
+                  iris: door.tags.includes('iris'),
                 })}
                 style={{
-                  left: rect.x,
-                  top: rect.y,
-                  width: rect.width,
-                  height: rect.height,
-                  transform: `rotate(${angle}rad)`,
+                  left: door.rect.x,
+                  top: door.rect.y,
+                  width: door.rect.width,
+                  height: door.rect.height,
+                  transform: `rotate(${door.angle}rad)`,
                   transformOrigin: 'top left',
                 }}
-              />
+              >
+                <div
+                  className="door-touch-ui"
+                  data-gm-index={gmIndex}
+                  data-door-index={i}
+                  data-hull-door-index={gm.hullDoors.indexOf(door)}
+                  style={{
+                    position: 'absolute',
+                    left: `calc(50% - ${doorTouchRadius * 2}px)`,
+                    top: `calc(50% - ${doorTouchRadius}px)`,
+                    width: doorTouchRadius * 4,
+                    height: 20,
+                    background: 'rgba(100, 0, 0, 0.05)',
+                    borderRadius: doorTouchRadius,
+                  }}
+                />
+              </div>
             )
           }
           <canvas
@@ -147,7 +160,6 @@ export default function Doors(props) {
   );
 }
 
-
 const rootCss = css`
   position: absolute;
 
@@ -158,7 +170,12 @@ const rootCss = css`
 
   div.door {
     position: absolute;
-    cursor: pointer;
+    pointer-events: none;
+    
+    .door-touch-ui {
+      cursor: pointer;
+      pointer-events: all;
+    }
 
     &:not(.iris) {
       background: #fff;
@@ -183,3 +200,5 @@ const rootCss = css`
     }
   }
 `;
+
+const doorTouchRadius = 10;

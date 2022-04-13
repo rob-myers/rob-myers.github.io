@@ -289,8 +289,8 @@ function Debug(props) {
   );
 }
 
-const debugRadius = 4;
-const debugDoorOffset = 15;
+const debugRadius = 5;
+const debugDoorOffset = 18;
 
 /**
  * @typedef DebugProps @type {object}
