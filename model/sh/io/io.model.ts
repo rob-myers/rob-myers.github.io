@@ -95,11 +95,12 @@ export interface Device {
   /** Uid used to 'resolve' device */
   key: string;
   /**
-   * Read data from device.
-   * When eof is `true` we may assume no more data.
-   * Can specify that exactly one item is read.
+   * Read data from device
+   * - When eof is `true` we may assume no more data
+   * - Can specify that exactly one item is read
+   * - Can specify if data chunks are forwarded
    */
-  readData: (exactlyOne?: boolean) => Promise<ReadResult>;
+  readData: (exactlyOne?: boolean, chunks?: boolean) => Promise<ReadResult>;
   /** Write data to device. */
   writeData: (data: any) => Promise<void>;
   /** Query/inform device we have finished all writes. */

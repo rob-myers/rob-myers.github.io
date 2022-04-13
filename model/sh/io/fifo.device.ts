@@ -30,7 +30,7 @@ export class FifoDevice implements Device {
     this.buffer = [];
   }
 
-  public async readData(exactlyOnce?: boolean): Promise<ReadResult> {
+  public async readData(exactlyOnce?: boolean, chunks?: boolean): Promise<ReadResult> {
     this.readerStatus = this.readerStatus || FifoStatus.Connected;
 
     if (this.buffer.length) {
@@ -40,10 +40,13 @@ export class FifoDevice implements Device {
       if (exactlyOnce) {
         if (!isDataChunk(this.buffer[0])) {
           return { data: this.buffer.shift() };
+        } else if (chunks) {
+          return { data: this.buffer.shift() };
         } else if (this.buffer[0].items.length === 1) {
           return { data: this.buffer.shift()!.items[0] };
+        } else {
+          return { data: this.buffer[0].items.shift() };
         }
-        return { data: this.buffer[0].items.shift() };
       } else {
         return { data: this.buffer.shift() };
       }

@@ -24,8 +24,10 @@ export const preloadedFunctions = {
   map: `run '(ctxt) {
   let { api, args, datum } = ctxt
   const func = Function(\`return \${args[0]}\`)()
-  while ((datum = await api.read()) !== null)
-    yield func(datum, ctxt)
+  while ((datum = await api.read(true)) !== null) {
+    if (datum.__chunk__) yield { ...datum, items: datum.items.map(x => func(x, ctxt)) }
+    else yield func(datum, ctxt)
+  }
 }' "$@"`,
 
   poll: `run '({ api, args }) {

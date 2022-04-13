@@ -371,8 +371,8 @@ class CmdService {
        * Read once from stdin. We convert `{ eof: true }` to `null` for
        * easier assignment, but beware of other falsies.
        */
-      read: async () => {
-        const result = await this.readOnce(meta);
+      read: async (chunks = false) => {
+        const result = await this.readOnce(meta, chunks);
         return result?.eof ? null : result.data;
       },
 
@@ -437,6 +437,7 @@ class CmdService {
     meta: Sh.BaseMeta,
     /** Read exactly one item of data? */
     once = false,
+    chunks: boolean,
   ) {
     const process = useSession.api.getProcess(meta);
     const device = useSession.api.resolve(0, meta);
@@ -448,7 +449,7 @@ class CmdService {
     }
 
     let result = {} as ReadResult;
-    while (!(result = await device.readData(once)).eof) {
+    while (!(result = await device.readData(once, chunks)).eof) {
       if (result.data !== undefined) {
         yield result;
         if (once) break;
@@ -462,8 +463,8 @@ class CmdService {
    * If there is any real data we return `{ data }`,
    * otherwise we (possibly eventually) return `{ eof: true }`.
    */
-  private async readOnce(meta: Sh.BaseMeta): Promise<ReadResult> {
-    for await (const data of this.readLoop(meta, true)) {
+  private async readOnce(meta: Sh.BaseMeta, chunks: boolean): Promise<ReadResult> {
+    for await (const data of this.readLoop(meta, true, chunks)) {
       return data;
     }
     return { eof: true };
