@@ -58,6 +58,7 @@ export interface PortalState {
   key: string;
   meta: TabMeta;
   portal: HtmlPortalNode;
+  component?: ((props: { disabled?: boolean; }) => JSX.Element);
 }
 
 interface TabsState {
