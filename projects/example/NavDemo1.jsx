@@ -6,7 +6,7 @@ import { filter } from "rxjs/operators";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
-import useStateRef from "../hooks/use-mu-state";
+import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
@@ -27,7 +27,7 @@ import NPCs from "../npc/NPCs";
 // - ✅ light propagates over geomorph boundary
 // - ✅ show light polygons through doors
 // - ✅ cleanup approach above
-// - 🚧 fix 2 hull doors issue
+// - ✅ fix 2 hull doors issue
 // - 🤔 show doors intersecting light polygon (cannot click)
 
 // TODO
@@ -72,17 +72,6 @@ export default function NavDemo1(props) {
         const currentHoleNode = roomGraph.nodesArray[state.holeId];
         return roomGraph.getEnterableRooms(currentHoleNode, openDoorIds).map(({ holeIndex }) => holeIndex);
       },
-      onChangeDeps() {
-        if (gms.length) {// Initial and HMR update
-          state.update();
-          const sub = state.wire
-            .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
-            .subscribe((_) => {
-              state.update(); // Technically needn't updateObservableDoors
-            });
-          return () => sub.unsubscribe();
-        }
-      },
       update() {
         state.updateClipPath();
         state.updateObservableDoors();
@@ -122,9 +111,21 @@ export default function NavDemo1(props) {
         gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextObservable[gmId]));
       },
     };
-  }, [gms], {
+  }, {
     equality: { gmId: true, holeId: true },
   });
+
+  React.useEffect(() => {
+    if (gms.length) {
+      state.update();
+      const sub = state.wire
+        .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
+        .subscribe((_) => {
+          state.update(); // Technically needn't updateObservableDoors
+        });
+      return () => sub.unsubscribe();
+    }
+  }, [gms.length]);
 
   return gms.length ? (
     <CssPanZoom

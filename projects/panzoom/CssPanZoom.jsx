@@ -5,7 +5,7 @@ import React from 'react';
 import classNames from "classnames";
 import { css } from "goober";
 import { Vect } from "projects/geom";
-import useStateRef from "../hooks/use-mu-state";
+import useStateRef from "../hooks/use-state-ref";
 import useStage, { getCachedStage } from 'projects/hooks/use-stage';
 
 /** @param {React.PropsWithChildren<Props>} props */

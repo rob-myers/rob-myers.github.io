@@ -3,7 +3,7 @@ import { css } from "goober";
 import classNames from "classnames";
 import { assertNonNull } from "../service/generic";
 import { fillPolygon } from "../service/dom";
-import useStateRef from "../hooks/use-mu-state";
+import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 
 /**
@@ -85,7 +85,7 @@ export default function Doors(props) {
         });
       },
     };
-  }, [props.gms]);
+  });
 
   // Must useLayoutEffect because NavDemo1 onChangeDeps runs early (?)
   React.useLayoutEffect(() => {

@@ -8,12 +8,10 @@ import { equals } from '../service/generic';
  * together with dependencies and (crucially) better HMR.
  * @template State 
  * @param {() => State} initializer Should be side-effect free...
- * @param {any[]} [deps]
  * @param {{ equality?: TypeUtil.KeyedTrue<State>; }} [opts]
  */
 export default function useStateRef(
   initializer,
-  deps = [],
   opts = {},
 ) {
   const [state] = /**
@@ -22,7 +20,7 @@ export default function useStateRef(
     React.useState(initializer)
   );
 
-  React.useEffect(() => {
+  React.useMemo(() => {
     const changed = initializer.toString() !== state._prevFn;
 
     if (!state._prevFn) {
@@ -91,13 +89,7 @@ export default function useStateRef(
         }
       }
     }
-
-    const cleanup = state.onChangeDeps?.();
-    if (typeof cleanup === 'function') {
-      return cleanup;
-    }
-
-  }, deps);
+  }, []);
 
   return /** @type {State} */ (state);
 }

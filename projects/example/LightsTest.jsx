@@ -5,9 +5,7 @@ import { filter } from "rxjs/operators";
 import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { assertDefined } from "../service/generic";
-import { geom } from "../service/geom";
-import { computeLightPosition } from "../service/geomorph";
-import useStateRef from "../hooks/use-mu-state";
+import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
@@ -30,6 +28,7 @@ export default function LightsTest(props) {
       doorsApi: /** @type {NPC.DoorsApi} */ ({}),
       isHoleShown: /** @type {{ [holeIndex: string]: true }} */ ({
         0: true,
+        2: true,
       }),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
@@ -42,7 +41,6 @@ export default function LightsTest(props) {
 
       updateMasks(delayUpdate = 0) {
         const {
-          doors, windows, holes,
           pngRect, hullOutline, holesWithDoors,
           roomGraph,
         } = assertDefined(gm);
@@ -50,10 +48,6 @@ export default function LightsTest(props) {
         const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
         const openDoorIds = state.doorsApi.getOpen(0);
 
-        // TODO modularise below
-        // - ✅ getOpenDoorPolygon, getOpenWindowPolygon from GmGraph
-        // - ✅ lightPosition from service/geomorph
-        // - ✅ computeLightPolygon inside service/geomorph
         // lights through doors and windows
         const lightPolygons = rootHoleIds.flatMap((srcHoleId) =>
           gmGraph.computeLightPolygons(0, srcHoleId, openDoorIds)
@@ -77,7 +71,7 @@ export default function LightsTest(props) {
         }, delayUpdate);
       },
     };
-  }, [gm], { equality: { isHoleShown: true } });
+  }, { equality: { isHoleShown: true } });
 
   React.useEffect(() => {
     if (gm) {

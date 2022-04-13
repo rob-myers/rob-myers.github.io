@@ -1,7 +1,7 @@
 import { css } from 'goober';
 import classNames from 'classnames';
 import type { Session } from 'store/session.store';
-import useStateRef from 'projects/hooks/use-mu-state';
+import useStateRef from 'projects/hooks/use-state-ref';
 import useSessionStore from 'store/session.store';
 
 export function TouchHelperUI(props: {
