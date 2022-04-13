@@ -17,6 +17,17 @@ export default function Portals() {
     sessionKeys.forEach(sessionKey => useSession.api.persist(sessionKey));
   });
 
+  const [, setCount] = React.useState(0);
+  React.useLayoutEffect(() => {
+    items.forEach(async item => {
+      if (item.meta.key === 'component' && !item.component) {
+        const func = await getComponent(item.meta.filepath);
+        item.component = func;
+        setCount(x => ++x);
+      }
+    });
+  }, [items]);
+  
   return <>
     {items.map((state) => {
       const { key, meta, portal } = state;
@@ -36,16 +47,9 @@ export default function Portals() {
             </portals.InPortal>
           );
         case 'component': {
-          const [component, setComponent] = React.useState<() => JSX.Element>();
-
-          React.useEffect(() => {
-            // setState(() => func) avoids setState(prev => next)
-            getComponent(meta.filepath).then(func => setComponent(() => func as any));
-          }, []);
-
           return (
             <portals.InPortal key={key} node={portal}>
-              {component && React.createElement(component)}
+              {state.component && React.createElement(state.component)}
             </portals.InPortal>
           );
         }

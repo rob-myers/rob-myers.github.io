@@ -14,7 +14,7 @@ __Aim towards website release__.
 
 - 🚧 Understand why `useLayoutEffect` needed inside `Doors`
 - 🚧 Minimal repro of issue with renaming state variables e.g. `state.visible` -> `state.vis`
-- 🚧 Migrate `Portals` changes from react branch (improve hooks ordering)
+- ✅ Migrate `Portals` changes from react branch (improve hooks ordering)
 
 - ✅ spawn has format `spawn rob ["$( position )"]`
 - NavDemo1 has 2 or more geomorphs
