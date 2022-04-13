@@ -7,7 +7,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { assertDefined } from "../service/generic";
 import { geom } from "../service/geom";
 import { computeLightPosition } from "../service/geomorph";
-import useMuState from "../hooks/use-mu-state";
+import useStateRef from "../hooks/use-mu-state";
 import useUpdate from "../hooks/use-update";
 import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
@@ -24,7 +24,7 @@ export default function LightsTest(props) {
 
   const gm = gms[0];
 
-  const state = useMuState(() => {
+  const state = useStateRef(() => {
     return {
       clipPath: 'none',
       doorsApi: /** @type {NPC.DoorsApi} */ ({}),

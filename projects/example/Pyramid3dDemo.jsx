@@ -1,7 +1,7 @@
 import React from 'react';
 import { css } from "goober";
 import { Rect, Vect } from '../geom';
-import useMuState from '../hooks/use-mu-state';
+import useStateRef from '../hooks/use-mu-state';
 
 /**
  * TODO
@@ -11,7 +11,7 @@ import useMuState from '../hooks/use-mu-state';
 
 export default function Pyramid3dDemo() {
 
-  const state = useMuState(() => {
+  const state = useStateRef(() => {
 
     return {
       dragging: false,

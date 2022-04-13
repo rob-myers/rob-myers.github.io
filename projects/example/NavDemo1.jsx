@@ -6,7 +6,7 @@ import { filter } from "rxjs/operators";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
-import useMuState from "../hooks/use-mu-state";
+import useStateRef from "../hooks/use-mu-state";
 import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
@@ -52,7 +52,7 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
-  const state = useMuState(() => {
+  const state = useStateRef(() => {
     return {
       gmId: 0,
       holeId: 2,

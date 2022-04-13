@@ -9,7 +9,7 @@ import useSession, { Session } from 'store/session.store';
 import useOnResize from 'projects/hooks/use-on-resize';
 import { XTerm } from 'components/dynamic';
 import { TouchHelperUI } from './TouchHelperUi';
-import useMuState from 'projects/hooks/use-mu-state';
+import useStateRef from 'projects/hooks/use-mu-state';
 import useUpdate from 'projects/hooks/use-update';
 import { assertNonNull } from 'projects/service/generic';
 
@@ -17,7 +17,7 @@ export default function Terminal({ sessionKey, env }: Props) {
 
   const update = useUpdate();
 
-  const state = useMuState(() => ({
+  const state = useStateRef(() => ({
     offset: 0,
     xtermReady: false,
     isTouchDevice: canTouchDevice(),

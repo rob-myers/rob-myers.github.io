@@ -5,13 +5,13 @@ import React from 'react';
 import classNames from "classnames";
 import { css } from "goober";
 import { Vect } from "projects/geom";
-import useMuState from "../hooks/use-mu-state";
+import useStateRef from "../hooks/use-mu-state";
 import useStage, { getCachedStage } from 'projects/hooks/use-stage';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
 
-  const state = useMuState(() => {
+  const state = useStateRef(() => {
 
     return {
       root: /** @type {HTMLDivElement} */ ({}),

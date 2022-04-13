@@ -3,7 +3,7 @@ import { css } from "goober";
 import classNames from "classnames";
 import { assertNonNull } from "../service/generic";
 import { fillPolygon } from "../service/dom";
-import useMuState from "../hooks/use-mu-state";
+import useStateRef from "../hooks/use-mu-state";
 import useUpdate from "../hooks/use-update";
 
 /**
@@ -13,7 +13,7 @@ import useUpdate from "../hooks/use-update";
 export default function Doors(props) {
   const update = useUpdate();
 
-  const state = useMuState(() => {
+  const state = useStateRef(() => {
     /** @type {NPC.DoorsApi} */
     const api = {
       get ready() {

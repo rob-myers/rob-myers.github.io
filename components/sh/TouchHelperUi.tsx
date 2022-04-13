@@ -1,7 +1,7 @@
 import { css } from 'goober';
 import classNames from 'classnames';
 import type { Session } from 'store/session.store';
-import useMuState from 'projects/hooks/use-mu-state';
+import useStateRef from 'projects/hooks/use-mu-state';
 import useSessionStore from 'store/session.store';
 
 export function TouchHelperUI(props: {
@@ -9,7 +9,7 @@ export function TouchHelperUI(props: {
   session: Session;
 }) {
 
-  const state = useMuState(() => {
+  const state = useStateRef(() => {
     return {
       onClick(e: React.MouseEvent) {
         const target = e.target as HTMLElement;

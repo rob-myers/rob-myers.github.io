@@ -11,7 +11,7 @@ import { equals } from '../service/generic';
  * @param {any[]} [deps]
  * @param {{ equality?: TypeUtil.KeyedTrue<State>; }} [opts]
  */
-export default function useMuState(
+export default function useStateRef(
   initializer,
   deps = [],
   opts = {},
