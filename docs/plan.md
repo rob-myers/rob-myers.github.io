@@ -12,11 +12,6 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- 🚧 Understand why `useLayoutEffect` needed inside `Doors`
-- 🚧 Minimal repro of issue with renaming state variables e.g. `state.visible` -> `state.vis`
-- ✅ Migrate `Portals` changes from react branch (improve hooks ordering)
-- ✅ `seq 1000000 | map 'x => x + 1'` returns quickly
-
 - ✅ spawn has format `spawn rob ["$( position )"]`
 - NavDemo1 has 2 or more geomorphs
 - Stage can access spawnPoints from useGeomorphData
@@ -101,6 +96,11 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Understand why `useLayoutEffect` needed inside `Doors`
+- ✅ Fix HMR issue with renaming Door state variables e.g. `state.visible` -> `state.vis`
+  - Solution: change state.api -> { ...api, ...state }
+- ✅ Migrate `Portals` changes from react branch (improve hooks ordering)
+- ✅ `seq 1000000 | map 'x => x + 1'` returns quickly
 - ✅ fix pipeline semantics
   - do not terminate until all have terminated
   - terminate all if parent process killed

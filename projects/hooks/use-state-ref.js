@@ -30,7 +30,8 @@ export default function useStateRef(
        */
       state._prevFn = initializer.toString();
       state._prevInit = initializer();
-    } else if (changed) {// HMR and `initializer` has changed
+    } else if (changed) {
+      // console.log('HMR and `initializer` has changed');
       /**
        * Attempt to update state using new initializer:
        * - update all functions
@@ -39,6 +40,7 @@ export default function useStateRef(
        */
       const newInit = initializer();
       for (const [k, v] of Object.entries(newInit)) {
+        // console.log({ key: k })
         const key = /** @type {keyof State} */ (k);
         if (typeof v === 'function') {
           state[key] = v;
@@ -51,6 +53,7 @@ export default function useStateRef(
             set: Object.getOwnPropertyDescriptor(newInit, key)?.set,
           });
         } else if (!(k in state)) {
+          // console.log({ setting: [k, v] })
           state[key] = v;
         }
         /**
@@ -65,8 +68,11 @@ export default function useStateRef(
           state[key] = newInit[key];
         }
       }
-      for (const [k, v] of Object.entries(state)) {
-        if (!(k in newInit)) delete state[/** @type {keyof State} */ (k)];
+      for (const k of Object.keys(state)) {
+        if (!(k in newInit) && !['_prevFn', '_prevInit'].includes(k)) {
+          // console.log({ deleting: k })
+          delete state[/** @type {keyof State} */ (k)];
+        }
       }
       state._prevFn = initializer.toString();
       state._prevInit = newInit;

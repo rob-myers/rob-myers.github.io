@@ -33,7 +33,6 @@ export default function Doors(props) {
     };
 
     return {
-      api,
       /** @type {HTMLCanvasElement[]} */
       canvas: [],
       /** @type {{ [doorIndex: number]: true }[]} */
@@ -84,16 +83,14 @@ export default function Doors(props) {
           }
         });
       },
+
+      ...api, // Keeps things shallow for HMR
     };
   });
 
-  // Must useLayoutEffect because NavDemo1 onChangeDeps runs early (?)
-  React.useLayoutEffect(() => {
-    props.onLoad(state.api);
-    props.gms.forEach((_, gmIndex) => {// For HMR?
-      state.open[gmIndex] = state.open[gmIndex] || {};
-      state.vis[gmIndex] = state.vis[gmIndex] || {};
-    });
+  // TODO replace by useImperativeHandle?
+  React.useEffect(() => {
+    props.onLoad(state);
   }, []);
 
   React.useEffect(() => {
@@ -136,15 +133,6 @@ export default function Doors(props) {
                   data-gm-index={gmIndex}
                   data-door-index={i}
                   data-hull-door-index={gm.hullDoors.indexOf(door)}
-                  style={{
-                    position: 'absolute',
-                    left: `calc(50% - ${doorTouchRadius * 2}px)`,
-                    top: `calc(50% - ${doorTouchRadius}px)`,
-                    width: doorTouchRadius * 4,
-                    height: 20,
-                    background: 'rgba(100, 0, 0, 0.05)',
-                    borderRadius: doorTouchRadius,
-                  }}
                 />
               </div>
             )
@@ -159,6 +147,8 @@ export default function Doors(props) {
     </div>
   );
 }
+
+const doorTouchRadius = 10;
 
 const rootCss = css`
   position: absolute;
@@ -175,6 +165,13 @@ const rootCss = css`
     .door-touch-ui {
       cursor: pointer;
       pointer-events: all;
+      position: absolute;
+      left: calc(50% - ${doorTouchRadius * 2}px);
+      top: calc(50% - ${doorTouchRadius}px);
+      width: ${doorTouchRadius * 4}px;
+      height: 20px;
+      background: rgba(100, 0, 0, 0.1);
+      border-radius: ${doorTouchRadius}px;
     }
 
     &:not(.iris) {
@@ -200,5 +197,3 @@ const rootCss = css`
     }
   }
 `;
-
-const doorTouchRadius = 10;

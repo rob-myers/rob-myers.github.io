@@ -116,7 +116,7 @@ export default function NavDemo1(props) {
   });
 
   React.useEffect(() => {
-    if (gms.length) {
+    if (gms.length && state.doorsApi.ready) {
       state.update();
       const sub = state.wire
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
@@ -125,7 +125,7 @@ export default function NavDemo1(props) {
         });
       return () => sub.unsubscribe();
     }
-  }, [gms.length]);
+  }, [gms.length, state.doorsApi.ready]);
 
   return gms.length ? (
     <CssPanZoom
