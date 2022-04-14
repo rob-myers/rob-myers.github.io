@@ -103,7 +103,7 @@ export class GmGraph extends BaseGraph {
     const doorLights = areas.map((area) => {
       const doors = this.gms[area.gmIndex].doors;
       // NOTE needed e.g. when two doors adjoin a single hole
-      // TODO restrict to doors adjoining dst hole
+      // TODO restrict to doors adjacent to dst hole
       const closedDoorSegs = doors.filter((_, id) => id !== area.doorIndex).map(x => x.seg);
       return {
         gmIndex: area.gmIndex,

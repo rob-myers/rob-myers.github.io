@@ -96,6 +96,20 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Doors supports multiple transformed geomorphs
+- ✅ fix door interference between multiple instances of g-301--bridge
+- ✅ avoid precomputing unused transformed geometry
+- ✅ simplify relationship: Geomorph.Layout -> Geomorph.GeomorphData
+- ✅ simplify relationship: Geomorph.GeomorphData -> Geomorph.UseGeomorphsItem
+- ✅ precompute { holeIds: [infront, behind] } inside doors/windows
+- ✅ current state is [gm id, hole id]
+
+- ✅ can set next hole when adjacent to current
+- ✅ adjacents propagate over geomorph boundary
+- ✅ light propagates over geomorph boundary
+- ✅ show light polygons through doors
+- ✅ cleanup approach above
+- ✅ fix 2 hull doors issue
 - ✅ Understand why `useLayoutEffect` needed inside `Doors`
 - ✅ Fix HMR issue with renaming Door state variables e.g. `state.visible` -> `state.vis`
   - Solution: change state.api -> { ...api, ...state }

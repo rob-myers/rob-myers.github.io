@@ -1,18 +1,13 @@
 import { css } from "goober";
 import classNames from "classnames";
 import { Vect } from "../geom";
+import { assertDefined } from "../service/generic";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
-import { assertDefined } from "../service/generic";
 import { getCachedStage } from "../hooks/use-stage";
-/**
- * TODO
- * - better approach to NPCs.
- * - npcs register with stage
- */
 
 /** @param {NPC.NPCsProps} props */
-export default function NPCs(props) {
+export default function NPCsTest(props) {
 
   const update = useUpdate();
 
@@ -29,7 +24,7 @@ export default function NPCs(props) {
             el.style.left = `${api.def.position.x}px`;
             el.style.top = `${api.def.position.y}px`;
           } else {
-            console.error(`${NPCs.name}: npc not found for div.${Array.from(el.classList.values()).join('.')}`);
+            console.error(`${NPCsTest.name}: npc not found for div.${Array.from(el.classList.values()).join('.')}`);
           }
         }
       },
@@ -57,7 +52,7 @@ export default function NPCs(props) {
             });
           }
         } else {
-          console.error(`${NPCs.name}: cannot spawn into non-existent stage "${props.stageKey}"`);
+          console.error(`${NPCsTest.name}: cannot spawn into non-existent stage "${props.stageKey}"`);
         }
         update();
       },

@@ -10,33 +10,17 @@ import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
-import NPCs from "../npc/NPCs";
-
-// TODO
-// - ✅ Doors supports multiple transformed geomorphs
-// - ✅ fix door interference between multiple instances of g-301--bridge
-
-// - ✅ avoid precomputing unused transformed geometry
-// - ✅ simplify relationship: Geomorph.Layout -> Geomorph.GeomorphData
-// - ✅ simplify relationship: Geomorph.GeomorphData -> Geomorph.UseGeomorphsItem
-// - ✅ precompute { holeIds: [infront, behind] } inside doors/windows
-// - ✅ current state is [gm id, hole id]
-
-// - ✅ can set next hole when adjacent to current
-// - ✅ adjacents propagate over geomorph boundary
-// - ✅ light propagates over geomorph boundary
-// - ✅ show light polygons through doors
-// - ✅ cleanup approach above
-// - ✅ fix 2 hull doors issue
-// - 🤔 show doors intersecting light polygon (cannot click)
+import NPCsTest from "../npc/NPCs";
 
 // TODO
 // - 🚧 spawn from TTY
 //   - ✅ symbols have points tagged 'spawn'
 //   - ✅ implement spawn as shell function
-//   - default spawn to 1st (in hull or first symbol with a spawn point)
-//   - can specify point to spawn from
+//   - NPCs -> NPCsTest and create fresh NPCs
+//   - stage listens for stage.npcEvent "spawn" and creates NPC
+//   - NPCs triggered by new npc and shows it
 // - Andros is situated and lighting reacts
+// - 🤔 show doors intersecting light polygon (cannot click)
 
 /** @param {{ disabled?: boolean }} props */
 export default function NavDemo1(props) {
@@ -150,7 +134,7 @@ export default function NavDemo1(props) {
         />
       )}
 
-      <NPCs
+      <NPCsTest
         onLoad={api => { state.npcsApi = api; render() }}
         disabled={props.disabled}
         stageKey="stage-nav-demo-1"
