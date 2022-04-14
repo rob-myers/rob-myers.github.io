@@ -11,13 +11,14 @@ import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 import NPCsTest from "../npc/NPCs";
+import { GmGraph } from "projects/graph/gm-graph";
 
 // TODO
 // - 🚧 spawn from TTY
 //   - ✅ symbols have points tagged 'spawn'
 //   - ✅ implement spawn as shell function
-//   - NPCs -> NPCsTest and create fresh NPCs
-//   - stage listens for stage.npcEvent "spawn" and creates NPC
+//   - 🚧 NPCs -> NPCsTest and create fresh NPCs
+//   - 🚧 stage listens for stage.npcEvent "spawn" and creates NPC
 //   - NPCs triggered by new npc and shows it
 // - Andros is situated and lighting reacts
 // - 🤔 show doors intersecting light polygon (cannot click)
@@ -96,7 +97,8 @@ export default function NavDemo1(props) {
       },
     };
   }, {
-    equality: { gmId: true, holeId: true },
+    overwrite: { gmId: true, holeId: true },
+    deps: [gms, gmGraph],
   });
 
   React.useEffect(() => {

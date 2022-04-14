@@ -25,15 +25,7 @@ export default function useGeomorphs(defs) {
     && queries.every(x => x.data)
   );
 
-  /**
-   * `output`, `output.gms` and `output.gmGraph` are always the same objects,
-   * i.e. we mutate them when data from queries is ready.
-   */
-  const [output] = React.useState(() => ({
-    gms: /** @type {Geomorph.UseGeomorphsItem[]} */ ([]),
-    gmGraph: new GmGraph([]),
-  }));
-  React.useMemo(() => {
+  return React.useMemo(() => {
     if (ready) {
       const items = defs.map(def => {
         const queryIndex = layoutKeys.findIndex(y => y === def.layoutKey);
@@ -41,12 +33,9 @@ export default function useGeomorphs(defs) {
         const transform = def.transform || [1, 0, 0, 1, 0, 0];
         return geomorphDataToGeomorphsItem(data, transform);
       });
-      output.gms.length = 0;
-      output.gms.push(...items);
-      output.gmGraph.reset();
-      output.gmGraph.fromGmItems(items);
+      return { gms: items, gmGraph: GmGraph.fromGmItems(items) };
+    } else {
+      return { gms: [], gmGraph: new GmGraph([]) }
     }
   }, [ready]);
-
-  return output;
 }
