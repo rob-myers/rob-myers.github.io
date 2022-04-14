@@ -1,12 +1,79 @@
-declare namespace NPC {
 
+declare namespace NPC {
+  
+  import { KeyedLookup } from 'model/generic.model';
   import { Subject } from 'rxjs';
 
+  export interface Stage {
+    key: string;
+    /**
+     * - Keyboard events sent by `Stage`
+     * - Mouse events sent by `Stage`
+     */
+    event: Subject<
+      | StageNpcEvent
+      | StagePointerEvent
+    >;
+    /** The npcs on the stage */
+    npc: Record<string, NPC>;
+    cleanups: (() => void)[];
+  }
+  
+  type StagePointerEvent = {
+    /** Position on ground */
+    point: Geom.VectJson;
+  } & (
+    | { key: 'pointerdown' }
+    | { key: 'pointerup' }
+    | { key: 'pointerleave' }
+    | { key: 'pointermove' }
+  );
+
+  type StageNpcEvent = (
+    | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
+    | { key: 'spawned'; npcKey: string; at: Geom.VectJson; }
+  );
+
+  export interface NPC {
+    key: string;
+    position: Geom.VectJson;
+  }
+
   export interface NPCsProps {
-    onLoad: ((api: NPC.NPCsApi) => void);
     disabled?: boolean;
     stageKey: string;
+    onLoad: ((api: NPC.NPCsApi) => void);
   }
+
+  export type NavWire = import('rxjs').Subject<NPC.NavMessage>;
+
+  export type NavMessage = (
+    | DoorMessage
+  );
+
+  export interface DoorMessage {
+    key: 'opened-door' | 'closed-door';
+    gmIndex: number;
+    index: number;
+  }
+
+  export interface DoorsProps {
+    gms: Geomorph.UseGeomorphsItem[];
+    gmGraph: Graph.GmGraph;
+    wire: NavWire;
+    onLoad: (api: DoorsApi) => void;
+  }
+
+  export interface DoorsApi {
+    getVisible(gmIndex: number): number[];
+    /** Get ids of open doors */
+    getOpen(gmIndex: number): number[];
+    get ready(): boolean;
+    setVisible(gmIndex: number, doorIds: number[]): void ;
+  }
+
+  // OLD BELOW
+  ////////////
 
   export interface NPCsApi {
     apis: NPCApi[];
@@ -42,58 +109,6 @@ declare namespace NPC {
   export type AnimState = (
     | 'idle'
     | 'walk'
-  );
-
-  export type NavWire = import('rxjs').Subject<NPC.NavMessage>;
-
-  export type NavMessage = (
-    | DoorMessage
-  );
-
-  /** Fired when doors is opened-door/closed */
-  export interface DoorMessage {
-    key: 'opened-door' | 'closed-door';
-    gmIndex: number;
-    index: number;
-  }
-
-  export interface DoorsProps {
-    gms: Geomorph.UseGeomorphsItem[];
-    gmGraph: Graph.GmGraph;
-    wire: NavWire;
-    onLoad: (api: DoorsApi) => void;
-  }
-
-  export interface DoorsApi {
-    getVisible(gmIndex: number): number[];
-    /** Get ids of open doors */
-    getOpen(gmIndex: number): number[];
-    get ready(): boolean;
-    setVisible(gmIndex: number, doorIds: number[]): void ;
-  }
-
-  export interface Stage {
-    key: string;
-    /** Keyboard events sent by `Stage` */
-    npcEvent: Subject<StageNpcEvent>;
-    /** Mouse events sent by `Stage` */
-    ptrEvent: Subject<StagePointerEvent>;
-  }
-  
-  type StagePointerEvent = {
-    /** Position on ground */
-    point: Geom.VectJson;
-  } & (
-    | { key: 'pointerdown' }
-    | { key: 'pointerup' }
-    | { key: 'pointerleave' }
-    | { key: 'pointermove' }
-  );
-
-  type StageNpcEvent = {
-    npcKey: string;
-  } & (
-    | { key: 'spawn'; at: Geom.VectJson; }
   );
 
 }

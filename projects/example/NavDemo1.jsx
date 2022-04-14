@@ -11,7 +11,6 @@ import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
-import { gmGraph } from '../graph/gm-graph';
 
 // TODO
 // - 🚧 spawn from TTY

@@ -97,15 +97,7 @@ export default function CssPanZoom(props) {
             return;
           }
           if (props.stageKey) {
-            const dims = getDimensions(state.root);
-            const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
-            const point = matrix.transformPoint({ x: e.clientX - dims.parent.left, y: e.clientY - dims.parent.top });
-
-            const stage = getCachedStage(props.stageKey);
-            stage?.ptrEvent.next({
-              key: 'pointerup',
-              point: { x: point.x, y: point.y }
-            });
+            state.sendPointToStage(props.stageKey, e);
           }
           state.isPanning = false;
           state.origin = state.start.clientX = state.start.clientY = undefined;
@@ -137,6 +129,21 @@ export default function CssPanZoom(props) {
           state.parent.addEventListener('pointerleave', state.evt.pointerup);
           state.parent.addEventListener('pointercancel', state.evt.pointerup);
         }
+      },
+      /**
+       * @param {string} stageKey 
+       * @param {{ clientX: number; clientY: number; }} e 
+       */
+      sendPointToStage(stageKey, e) {
+        const dims = getDimensions(state.root);
+        const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
+        const point = matrix.transformPoint({ x: e.clientX - dims.parent.left, y: e.clientY - dims.parent.top });
+
+        const stage = getCachedStage(stageKey);
+        stage?.event.next({
+          key: 'pointerup',
+          point: { x: point.x, y: point.y }
+        });
       },
       updateView() {
         state.root.style.transform = `scale(${state.scale}) translate(${state.x}px, ${state.y}px)`;

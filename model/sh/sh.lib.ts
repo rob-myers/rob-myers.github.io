@@ -115,7 +115,7 @@ call '({args}) =>
     const process = api.getProcess();
     let [resolve, reject] = [(_) => {}, (_) => {}];
 
-    const sub = stage.ptrEvent.subscribe({
+    const sub = stage.event.subscribe({
       next: (e) => {// ProcessStatus.Running === 1
         if (e.key === "pointerup" && process.status === 1) {
           resolve({ x: e.point.x, y: e.point.y });
@@ -156,7 +156,7 @@ call '({args}) =>
     // TODO default to first spawnPoint from ... (?)
     const at = position || { x: 0, y: 0 }
 
-    stage.npcEvent.next({ npcKey, key: "spawn", at })
+    stage.event.next({ npcKey, key: "spawn", at })
   }' "$@"
 }`,
 };
