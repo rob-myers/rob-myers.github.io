@@ -85,7 +85,7 @@ export class GmGraph extends BaseGraph {
     const gm = this.gms[gmIndex];
     const window = gm.windows[windowIndex];
     const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getWindowNode(windowIndex));
-    return Poly.union(adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]).concat(window.poly))[0];
+    return Poly.union(adjRoomNodes.map(x => gm.holes[x.holeIndex]).concat(window.poly))[0];
   }
 
   /**
@@ -118,6 +118,10 @@ export class GmGraph extends BaseGraph {
     });
     
     const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
+    // const windowLights = adjWindowIds.map(windowIndex => ({
+    //   gmIndex,
+    //   poly: this.getOpenWindowPolygon(gmIndex, windowIndex),
+    // }));
     const windowLights = adjWindowIds.map(windowIndex => ({
       gmIndex,
       poly: geom.lightPolygon({
@@ -125,7 +129,7 @@ export class GmGraph extends BaseGraph {
         range: 1000,
         exterior: this.getOpenWindowPolygon(gmIndex, windowIndex),
       }),
-    }));
+    })).slice(0, 1);
 
     return [
       ...doorLights,
@@ -253,8 +257,4 @@ function getGmNodeId(gmKey, transform) {
  */
 function getGmDoorNodeId(gmKey, transform, hullDoorId) {
   return `door-${gmKey}-[${transform}]-${hullDoorId}`;
-}
-
-if (module.hot) {
-  module.hot.accept()
 }
