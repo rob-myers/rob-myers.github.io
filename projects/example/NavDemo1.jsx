@@ -10,16 +10,16 @@ import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
-import NPCsTest from "../npc/NPCs";
-import { GmGraph } from "projects/graph/gm-graph";
+import NPCs from "../npc/NPCs";
+import { gmGraph } from '../graph/gm-graph';
 
 // TODO
 // - 🚧 spawn from TTY
 //   - ✅ symbols have points tagged 'spawn'
 //   - ✅ implement spawn as shell function
-//   - 🚧 NPCs -> NPCsTest and create fresh NPCs
-//   - 🚧 stage listens for stage.npcEvent "spawn" and creates NPC
-//   - NPCs triggered by new npc and shows it
+//   - ✅ NPCs -> NPCsTest and create fresh NPCs
+//   - 🚧 Stage listens for stage.npcEvent "spawn" and creates NPC
+//   - 🚧 NPCs triggered by new npc and shows it
 // - Andros is situated and lighting reacts
 // - 🤔 show doors intersecting light polygon (cannot click)
 
@@ -41,6 +41,7 @@ export default function NavDemo1(props) {
     return {
       gmId: 0,
       holeId: 2,
+      // holeId: 16,
       // gmId: 1,
       // holeId: 5,
       // holeId: 22,
@@ -136,7 +137,7 @@ export default function NavDemo1(props) {
         />
       )}
 
-      <NPCsTest
+      <NPCs
         onLoad={api => { state.npcsApi = api; render() }}
         disabled={props.disabled}
         stageKey="stage-nav-demo-1"

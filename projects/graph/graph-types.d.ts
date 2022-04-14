@@ -126,7 +126,7 @@ declare namespace Graph {
 
   export type GmGraphEdgeOpts = BaseEdgeOpts;
 
-  export type GmGraph = import('./gm-graph').GmGraph;
+  export type GmGraph = import('./gm-graph').gmGraph;
 
   //#endregion
 

@@ -4,10 +4,11 @@ import { geom } from "../service/geom";
 import { computeLightPosition } from "../service/geomorph";
 
 /**
- * `GmGraph` is short for _Geomorph Graph_
+ * `gmGraph` is short for _Geomorph Graph_
+ * - _NOTE_ use lowercase __gmGraph__ to get react-refresh working!
  * @extends {BaseGraph<Graph.GmGraphNode, Graph.GmGraphEdgeOpts>}
  */
-export class GmGraph extends BaseGraph {
+export class gmGraph extends BaseGraph {
   /** @type {Geomorph.UseGeomorphsItem[]}  */
   gms;
 
@@ -129,7 +130,7 @@ export class GmGraph extends BaseGraph {
         range: 1000,
         exterior: this.getOpenWindowPolygon(gmIndex, windowIndex),
       }),
-    })).slice(0, 1);
+    }));
 
     return [
       ...doorLights,
@@ -141,7 +142,7 @@ export class GmGraph extends BaseGraph {
    * @param {Geomorph.UseGeomorphsItem[]} gms 
    */
   static fromGmItems(gms) {
-    const graph = new GmGraph([]);
+    const graph = new gmGraph([]);
     return graph.fromGmItems(gms);
   }
 

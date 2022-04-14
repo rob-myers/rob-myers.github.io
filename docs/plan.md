@@ -12,6 +12,11 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- ✅ HMR when edit class methods (GmGraph)
+  - bizarre: HMR/react-refresh works when classes start with lowercase letter!
+- `useImperativeHandle` rather than providing an api?
+- NavDemo1 init race condition?
+
 - ✅ spawn has format `spawn rob ["$( position )"]`
 - NavDemo1 has 2 or more geomorphs
 - Stage can access spawnPoints from useGeomorphData
