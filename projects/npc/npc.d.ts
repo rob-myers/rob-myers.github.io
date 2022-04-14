@@ -40,8 +40,8 @@ declare namespace NPC {
   }
 
   export interface NPCsProps {
-    disabled?: boolean;
     stageKey: string;
+    disabled?: boolean;
     onLoad: ((api: NPC.NPCsApi) => void);
   }
 

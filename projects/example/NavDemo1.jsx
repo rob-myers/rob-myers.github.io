@@ -17,7 +17,7 @@ import NPCs from "../npc/NPCs";
 //   - ✅ symbols have points tagged 'spawn'
 //   - ✅ implement spawn as shell function
 //   - ✅ NPCs -> NPCsTest and create fresh NPCs
-//   - 🚧 Stage listens for stage.npcEvent "spawn" and creates NPC
+//   - ✅ Stage listens for stage.npcEvent "spawn" and creates NPC
 //   - 🚧 NPCs triggered by new npc and shows it
 // - Andros is situated and lighting reacts
 // - 🤔 show doors intersecting light polygon (cannot click)

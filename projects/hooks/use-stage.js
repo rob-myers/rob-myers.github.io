@@ -3,24 +3,21 @@ import { Subject } from 'rxjs';
 import { getCached } from '../service/query-client';
 
 /**
- * Ensure stage `stageKey` (default `stage-default`)
+ * Ensure stage `stageKey` (default `stage-default`).
+ * - we ensure it is returned immediately.
+ * - useQuery makes the data visible in react-query dev tools
  * @param {string} [stageKey] 
  */
 export default function useStage(stageKey = 'stage-default') {
-  return useQuery(stageKey, () => {
-    /** @type {NPC.Stage} */
-    const stage = {
-      key: stageKey,
-      event: new Subject,
-      npc: {},
-      cleanups: [],
-    };
+  return /** @type {NPC.Stage} */ (/** @type {*} */ (useQuery(stageKey, () => {
+    const stage = ensureStage(stageKey);
     setupStage(stage);
     return stage;
   }, {
     keepPreviousData: true,
     staleTime: Infinity,
-  });
+    initialData: ensureStage(stageKey),
+  }).data));
 }
 
 /**
@@ -44,4 +41,19 @@ function setupStage(stage) {
   stage.cleanups.push(
     () => sub.unsubscribe(),
   );
+}
+
+/** @type {Record<string, NPC.Stage>} */
+const localStageLookup = {
+
+};
+
+/** @param {string} stageKey */
+function ensureStage(stageKey) {
+  return localStageLookup[stageKey] || (localStageLookup[stageKey] = {
+    key: stageKey,
+    event: new Subject,
+    npc: {},
+    cleanups: [],
+  });
 }
