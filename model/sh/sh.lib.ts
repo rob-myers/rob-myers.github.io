@@ -137,26 +137,26 @@ call '({args}) =>
 
   spawn: `{
   run '({ api, args, home }) {
-    const npcKey = args[0];
-    const position = api.safeJsonParse(args[1] || "null");
+    const npcKey = args[0]
+    const position = api.safeJsonParse(args[1] || "null")
     if (
       !npcKey
       || position === undefined
       || position && !(typeof position.x === "number" && typeof position.y === "number")
     ) {
-      api.throwError("format: \`spawn {key} [{vecJson}]\` e.g. spawn andros \'{"x":300,"y":120}\'");
+      api.throwError("format: \`spawn {key} [{vecJson}]\` e.g. spawn andros \'{"x":300,"y":120}\'")
     }
 
-    const stageKey = home.STAGE_KEY;
-    const stage = api.getCached(stageKey);
+    const stageKey = home.STAGE_KEY
+    const stage = api.getCached(stageKey)
     if (!stage) {
-      api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`);
+      api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`)
     }
 
     // TODO default to first spawnPoint from ... (?)
-    const at = position || { x: 0, y: 0 };
+    const at = position || { x: 0, y: 0 }
 
-    stage.npcEvent.next({ npcKey, key: "spawn", at });
+    stage.npcEvent.next({ npcKey, key: "spawn", at })
   }' "$@"
 }`,
 };
