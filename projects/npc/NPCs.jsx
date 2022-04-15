@@ -5,6 +5,7 @@ import { ensureWire } from "../service/emit.service";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
+
 // TODO further modularisation
 import npcJson from '../../public/npc/first-npc.json'
 
@@ -14,7 +15,7 @@ export default function NPCs(props) {
   const update = useUpdate();
 
   const nav = useGeomorphsNav(props.gmGraph, props.disabled);
-  console.log(nav);
+  // console.log(nav);
 
   const state = useStateRef(() => {
     return {

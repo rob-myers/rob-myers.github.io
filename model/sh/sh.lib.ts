@@ -100,16 +100,11 @@ call '({args}) =>
    */
   click: `{
   run '({ api, args, home }) {
-    const numClicks = args[0] === ""
-      ? Number.MAX_SAFE_INTEGER : Number(args[0])
+    const numClicks = args[0] === "" ? Number.MAX_SAFE_INTEGER : Number(args[0])
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [numberOfClicks]\`")
     }
-    const wireKey = home.WIRE_KEY
-    if (!(wireKey && typeof wireKey === "string")) {
-      api.throwError(\`home/WIRE_KEY must be a non-empty string\`)
-    }
-    const wire = api.ensureWire(wireKey)
+    const wire = api.getWire()
 
     const process = api.getProcess()
     let [resolve, reject] = [(_) => {}, (_) => {}]
@@ -148,14 +143,18 @@ call '({args}) =>
     // TODO better default position?
     const at = position || { x: 0, y: 0 }
 
-    const wireKey = home.WIRE_KEY
-    if (!(wireKey && typeof wireKey === "string")) {
-      api.throwError(\`home/WIRE_KEY must be a non-empty string\`)
-    }
-    const wire = api.ensureWire(wireKey)
+    const wire = api.getWire()
     wire.next({ key: "spawn", npcKey, at })
   }' "$@"
 }`,
+
+  nav: `{
+  run '() {
+    /**
+     * TODO
+     */
+  }' "$@"
+}`
 };
 
 export const preloadedVariables = {};

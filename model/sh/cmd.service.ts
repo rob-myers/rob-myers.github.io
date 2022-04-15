@@ -356,7 +356,14 @@ class CmdService {
 
   private provideProcessApi(meta: Sh.BaseMeta) {
     return {
-      ensureWire,
+      getWire: () => {
+        const { var: home } = useSession.api.getSession(meta.sessionKey);
+        const wireKey = home.WIRE_KEY;
+        if (!(typeof wireKey === 'string' && wireKey)) {
+          throwError(`home/WIRE_KEY must be a non-empty string`);
+        }
+        return ensureWire(wireKey);
+      },
 
       getKillError() {
         return killError(meta);

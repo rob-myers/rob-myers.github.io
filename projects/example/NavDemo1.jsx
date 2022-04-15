@@ -19,6 +19,7 @@ import NPCs from "../npc/NPCs";
 //   - ✅ NPCs -> NPCsTest and create fresh NPCs
 //   - ✅ NPCs listens for "spawn" event and creates NPC
 //   - ✅ NPCs ensures local pathfinding data
+//   - 🚧 can plot a local navpath
 //   - 🚧 can move NPC via shell function
 // - Andros is situated and lighting reacts
 // - 🤔 show doors intersecting light polygon (cannot click)
