@@ -61,6 +61,8 @@ export default function NPCs(props) {
   );
 }
 
+let spawnCount = 0;
+
 const rootCss = css`
   position: absolute;
   canvas {
@@ -72,12 +74,9 @@ const rootCss = css`
   }
 `;
 
-// TODO remove hard-coding
-const zoom = 2;
-const walkSteps = 3;
-const idleSteps = 1;
-const idleDim = new Vect(51, 26).scale(zoom);
-const walkDim = new Vect(49, 37).scale(zoom);
+// TODO further modularisation
+import npcJson from '../../public/npc/first-npc.json'
+const { animLookup: anim, zoom } = npcJson;
 
 const npcCss = css`
   .body {
@@ -89,19 +88,19 @@ const npcCss = css`
   }
   
   &.walk .body {
-    width: ${walkDim.x}px;
-    height: ${walkDim.y}px;
-    left: ${-walkDim.x/2}px;
-    top: ${-walkDim.y/2}px;
-    animation: walk 300ms steps(${walkSteps}) infinite;
+    width: ${anim.walk.aabb.width * zoom}px;
+    height: ${anim.walk.aabb.height * zoom}px;
+    left: ${-anim.walk.aabb.width * zoom * 0.5}px;
+    top: ${-anim.walk.aabb.height * zoom * 0.5}px;
+    animation: walk 300ms steps(${anim.walk.frames.length}) infinite;
     background: url('/npc/first-npc--walk.png');
   }
   &.idle .body {
-    width: ${idleDim.x}px;
-    height: ${idleDim.y}px;
-    left: ${-idleDim.x/2}px;
-    top: ${-idleDim.y/2}px;
-    animation: idle 2s steps(${idleSteps}) infinite;
+    width: ${anim.idle.aabb.width * zoom}px;
+    height: ${anim.idle.aabb.height * zoom}px;
+    left: ${-anim.idle.aabb.width * zoom * 0.5}px;
+    top: ${-anim.idle.aabb.height * zoom * 0.5}px;
+    animation: idle 2s steps(${anim.idle.frames.length}) infinite;
     background: url('/npc/first-npc--idle.png');
   }
 
@@ -111,12 +110,10 @@ const npcCss = css`
 
   @keyframes walk {
     from { background-position: 0px; }
-    to { background-position: ${-walkSteps * walkDim.x}px; }
+    to { background-position: ${-anim.walk.frames.length * anim.walk.aabb.width * zoom}px; }
   }
   @keyframes idle {
     from { background-position: 0px; }
-    to { background-position: ${-idleSteps * idleDim.x}px; }
+    to { background-position: ${-anim.idle.frames.length * anim.idle.aabb.width * zoom}px; }
   }
 `;
-
-let spawnCount = 0;
