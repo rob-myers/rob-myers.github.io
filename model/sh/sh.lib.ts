@@ -96,41 +96,40 @@ call '({args}) =>
 }`,
 
   /**
-   * Receive world position clicks from STAGE_KEY to stdin.
+   * Receive world position clicks from WIRE_KEY to stdin.
    */
   click: `{
   run '({ api, args, home }) {
     const numClicks = args[0] === ""
-      ? Number.MAX_SAFE_INTEGER
-      : Number(args[0]);
+      ? Number.MAX_SAFE_INTEGER : Number(args[0])
     if (!Number.isFinite(numClicks)) {
-      api.throwError("format: \`click [numberOfClicks]\`");
+      api.throwError("format: \`click [numberOfClicks]\`")
     }
-    const stageKey = home.STAGE_KEY;
-    const stage = api.getCached(stageKey);
-    if (!stage) {
-      api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`);
+    const wireKey = home.WIRE_KEY
+    if (!(wireKey && typeof wireKey === "string")) {
+      api.throwError(\`home/WIRE_KEY must be a non-empty string\`)
     }
+    const wire = api.ensureWire(wireKey)
 
-    const process = api.getProcess();
-    let [resolve, reject] = [(_) => {}, (_) => {}];
+    const process = api.getProcess()
+    let [resolve, reject] = [(_) => {}, (_) => {}]
 
-    const sub = stage.event.subscribe({
+    const sub = wire.subscribe({
       next: (e) => {// ProcessStatus.Running === 1
         if (e.key === "pointerup" && process.status === 1) {
-          resolve({ x: e.point.x, y: e.point.y });
+          resolve({ x: e.point.x, y: e.point.y })
         }
       },
     });
     process.cleanups.push(
       () => sub.unsubscribe(),
       () => reject(api.getKillError()),
-    );
+    )
 
     for (let i = 0; i < numClicks; i++) {
-      yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
+      yield await new Promise((res, rej) => [resolve, reject] = [res, rej])
     }
-    sub.unsubscribe();
+    sub.unsubscribe()
 
   }' "$@"
 }`,
@@ -146,17 +145,15 @@ call '({args}) =>
     ) {
       api.throwError("format: \`spawn {key} [{vecJson}]\` e.g. spawn andros \'{"x":300,"y":120}\'")
     }
-
-    const stageKey = home.STAGE_KEY
-    const stage = api.getCached(stageKey)
-    if (!stage) {
-      api.throwError(\`stage not found for STAGE_KEY "\${stageKey}"\`)
-    }
-
-    // TODO default to first spawnPoint from ... (?)
+    // TODO better default position?
     const at = position || { x: 0, y: 0 }
 
-    stage.event.next({ npcKey, key: "spawn", at })
+    const wireKey = home.WIRE_KEY
+    if (!(wireKey && typeof wireKey === "string")) {
+      api.throwError(\`home/WIRE_KEY must be a non-empty string\`)
+    }
+    const wire = api.ensureWire(wireKey)
+    wire.next({ key: "spawn", npcKey, at })
   }' "$@"
 }`,
 };

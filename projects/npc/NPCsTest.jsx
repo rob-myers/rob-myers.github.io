@@ -4,7 +4,6 @@ import { Vect } from "../geom";
 import { assertDefined } from "../service/generic";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
-import { getCachedStage } from "../hooks/use-stage";
 
 /** @param {NPC.NPCsProps} props */
 export default function NPCsTest(props) {
@@ -33,29 +32,29 @@ export default function NPCsTest(props) {
           state.root = el;
         }
       },
-      spawn(defs) {// TODO
-        const stage = getCachedStage(props.stageKey);
-        if (stage) {
-          console.log('spawning...', defs);
-          /**
-           * TODO
-           * - somehow register/unregister NPC with stage
-           * - prevent dups
-           */
-          state.apis = state.apis.filter(x => !defs.some(y => x.key === y.key));
-          for (const def of defs) {
-            state.apis.push({
-              key: def.key,
-              def,
-              animState: 'idle',
-              el: /** @type {*} */ ({}),
-            });
-          }
-        } else {
-          console.error(`${NPCsTest.name}: cannot spawn into non-existent stage "${props.stageKey}"`);
-        }
-        update();
-      },
+      // spawn(defs) {// TODO
+      //   const stage = getCachedStage(props.stageKey);
+      //   if (stage) {
+      //     console.log('spawning...', defs);
+      //     /**
+      //      * TODO
+      //      * - somehow register/unregister NPC with stage
+      //      * - prevent dups
+      //      */
+      //     state.apis = state.apis.filter(x => !defs.some(y => x.key === y.key));
+      //     for (const def of defs) {
+      //       state.apis.push({
+      //         key: def.key,
+      //         def,
+      //         animState: 'idle',
+      //         el: /** @type {*} */ ({}),
+      //       });
+      //     }
+      //   } else {
+      //     console.error(`${NPCsTest.name}: cannot spawn into non-existent stage "${props.stageKey}"`);
+      //   }
+      //   update();
+      // },
     };
     props.onLoad(output);
     return output;

@@ -4,9 +4,9 @@
 import React from 'react';
 import classNames from "classnames";
 import { css } from "goober";
-import { Vect } from "projects/geom";
+import { Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
-import useStage, { getCachedStage } from 'projects/hooks/use-stage';
+import { ensureWire } from '../service/emit.service';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
@@ -96,8 +96,8 @@ export default function CssPanZoom(props) {
           if (!state.isPanning) {
             return;
           }
-          if (props.stageKey) {
-            state.sendPointToStage(props.stageKey, e);
+          if (props.wireKey) {
+            state.sendPointOnWire(props.wireKey, e);
           }
           state.isPanning = false;
           state.origin = state.start.clientX = state.start.clientY = undefined;
@@ -131,16 +131,16 @@ export default function CssPanZoom(props) {
         }
       },
       /**
-       * @param {string} stageKey 
+       * @param {string} wireKey 
        * @param {{ clientX: number; clientY: number; }} e 
        */
-      sendPointToStage(stageKey, e) {
+      sendPointOnWire(wireKey, e) {
         const dims = getDimensions(state.root);
         const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
         const point = matrix.transformPoint({ x: e.clientX - dims.parent.left, y: e.clientY - dims.parent.top });
 
-        const stage = getCachedStage(stageKey);
-        stage?.event.next({
+        const wire = ensureWire(wireKey);
+        wire.next({
           key: 'pointerup',
           point: { x: point.x, y: point.y }
         });
@@ -238,8 +238,6 @@ export default function CssPanZoom(props) {
     };
   });
 
-  useStage(props.stageKey);
-
   React.useLayoutEffect(() => {
     if (props.zoom) {
       // state.root's 1st child lies at world origin
@@ -315,7 +313,7 @@ const backgroundCss = (props) => css`
  * @typedef Props @type {object}
  * @property {string} [className]
  * @property {boolean} [dark]
- * @property {string} [stageKey] Global identifier e.g. so shells can receive clicks.
+ * @property {string} [wireKey] Global identifier e.g. so shells can receive clicks.
  * @property {number} [zoom] Initial zoom factor
  */
 

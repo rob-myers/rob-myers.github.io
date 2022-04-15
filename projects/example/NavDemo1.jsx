@@ -115,7 +115,7 @@ export default function NavDemo1(props) {
 
   return gms.length ? (
     <CssPanZoom
-      stageKey="stage-nav-demo-1"
+      wireKey="wire-demo-1"
       dark
       className={rootCss}
       zoom={0.4}
@@ -139,7 +139,7 @@ export default function NavDemo1(props) {
       <NPCs
         onLoad={api => { state.npcsApi = api; render() }}
         disabled={props.disabled}
-        stageKey="stage-nav-demo-1"
+        wireKey="wire-demo-1"
       />
 
       {gms.map((gm, gmIndex) =>

@@ -9,7 +9,10 @@ import { computeNormalizedParts, createKillError as killError, normalizeAbsParts
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
-import { queryCache, getCached } from 'projects/service/query-client';
+
+// Connections to "outside" i.e. react-query, rxjs
+import { queryCache } from 'projects/service/query-client';
+import { ensureWire } from 'projects/service/emit.service';
 
 const commandKeys = {
   /** Change current key prefix */
@@ -353,7 +356,7 @@ class CmdService {
 
   private provideProcessApi(meta: Sh.BaseMeta) {
     return {
-      getCached,
+      ensureWire,
 
       getKillError() {
         return killError(meta);

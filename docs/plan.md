@@ -12,13 +12,12 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ HMR when edit class methods (GmGraph)
-  - bizarre: HMR/react-refresh works when classes start with lowercase letter!
+- ✅ replace "stage" with "wire"
 - `useImperativeHandle` rather than providing an api?
 - NavDemo1 init race condition?
 
 - ✅ spawn has format `spawn rob ["$( position )"]`
-- NavDemo1 has 2 or more geomorphs
+- ✅ NavDemo1 has 2 or more geomorphs
 - Stage can access spawnPoints from useGeomorphData
 
 - 🚧 `NavDemo1`
@@ -101,6 +100,11 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ HMR when edit class methods (GmGraph)
+  - bizarre: HMR/react-refresh works when classes start with lowercase letter!
+    > https://github.com/pmmmwh/react-refresh-webpack-plugin/blob/main/docs/TROUBLESHOOTING.md
+    > Ensure all exports within the indirect code path are not named in PascalCase. This will tell the Babel plugin to do nothing when it hits those files.
+    > In general, the PascalCase naming scheme should be reserved for React components only, and it doesn't really make sense for them to exist within non-React-rendering contexts.
 - ✅ Doors supports multiple transformed geomorphs
 - ✅ fix door interference between multiple instances of g-301--bridge
 - ✅ avoid precomputing unused transformed geometry

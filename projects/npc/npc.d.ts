@@ -1,25 +1,9 @@
 
 declare namespace NPC {
   
-  import { KeyedLookup } from 'model/generic.model';
   import { Subject } from 'rxjs';
-
-  export interface Stage {
-    key: string;
-    /**
-     * - Keyboard events sent by `Stage`
-     * - Mouse events sent by `Stage`
-     */
-    event: Subject<
-      | StageNpcEvent
-      | StagePointerEvent
-    >;
-    /** The npcs on the stage */
-    npc: Record<string, NPC>;
-    cleanups: (() => void)[];
-  }
   
-  type StagePointerEvent = {
+  type PointerEvent = {
     /** Position on ground */
     point: Geom.VectJson;
   } & (
@@ -29,7 +13,7 @@ declare namespace NPC {
     | { key: 'pointermove' }
   );
 
-  type StageNpcEvent = (
+  type NpcEvent = (
     | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
     | { key: 'spawned'; npcKey: string; at: Geom.VectJson; }
   );
@@ -40,7 +24,7 @@ declare namespace NPC {
   }
 
   export interface NPCsProps {
-    stageKey: string;
+    wireKey: string;
     disabled?: boolean;
     onLoad: ((api: NPC.NPCsApi) => void);
   }
@@ -80,7 +64,7 @@ declare namespace NPC {
     root: HTMLDivElement;
     npcRef: React.RefCallback<HTMLDivElement>;
     rootRef: React.RefCallback<HTMLDivElement>;
-    spawn(defs: NPCDef[]): void;
+    // spawn(defs: NPCDef[]): void;
   }
 
   export interface NPCApi {

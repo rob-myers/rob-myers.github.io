@@ -26,7 +26,6 @@ const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
   articles: {},
   portal: {},
-  stage: {},
   tabs: {},
 
   api: {

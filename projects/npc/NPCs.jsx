@@ -1,12 +1,12 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
-import useStage from "../hooks/use-stage";
+import { ensureWire } from "projects/service/emit.service";
 
 /** @param {NPC.NPCsProps} props */
 export default function NPCs(props) {
 
-  const stage = useStage(props.stageKey);
+  const wire = ensureWire(props.wireKey);
 
   return (
     <div className={classNames('npcs', rootCss)}>
