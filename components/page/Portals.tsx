@@ -55,7 +55,7 @@ export default function Portals() {
         }
         case 'terminal': {
           const defaultEnv: React.ComponentProps<typeof Terminal>['env'] = {
-            README: 'No environment was provided to this terminal.',
+            // README: 'No environment was provided to this terminal.',
           };
           return (
             <portals.InPortal key={key} node={portal}>

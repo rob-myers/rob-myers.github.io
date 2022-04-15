@@ -73,3 +73,7 @@ $ ps -a
 pid   ppid  pgid 
 0     0     0    ▶️  ps -a
 ```
+
+```sh
+spawn foo "$( click 1 )"
+```
