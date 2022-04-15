@@ -5,7 +5,7 @@ import { assertDefined } from "../service/generic";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 
-/** @param {NPC.NPCsProps} props */
+/** @param {NPC.NPCsPropsOld} props */
 export default function NPCsTest(props) {
 
   const update = useUpdate();

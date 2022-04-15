@@ -2,7 +2,14 @@
 declare namespace NPC {
   
   import { Subject } from 'rxjs';
+  import { Pathfinding } from '../pathfinding/Pathfinding';
   
+  export interface NPCsProps {
+    wireKey: string;
+    gmGraph: Graph.GmGraph;
+    disabled?: boolean;
+  }
+
   type PointerEvent = {
     /** Position on ground */
     point: Geom.VectJson;
@@ -27,12 +34,6 @@ declare namespace NPC {
     el: {
       root: HTMLDivElement;
     };
-  }
-
-  export interface NPCsProps {
-    wireKey: string;
-    disabled?: boolean;
-    onLoad: ((api: NPC.NPCsApi) => void);
   }
 
   export type NavWire = import('rxjs').Subject<NPC.NavMessage>;
@@ -62,8 +63,24 @@ declare namespace NPC {
     setVisible(gmIndex: number, doorIds: number[]): void ;
   }
 
+  export interface UseGeomorphsNav {
+    pfs: NPC.PfData[];
+  }
+
+  export interface PfData {
+    pathfinding: Pathfinding;
+    zone: Nav.Zone;
+  }
+
   // OLD BELOW
   ////////////
+
+  export interface NPCsPropsOld {
+    wireKey: string;
+    gmGraph: Graph.GmGraph;
+    disabled?: boolean;
+    onLoad: ((api: NPC.NPCsApi) => void);
+  }
 
   export interface NPCsApi {
     apis: NPCApi[];

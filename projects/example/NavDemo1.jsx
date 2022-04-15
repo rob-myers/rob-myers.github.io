@@ -18,7 +18,7 @@ import NPCs from "../npc/NPCs";
 //   - ✅ implement spawn as shell function
 //   - ✅ NPCs -> NPCsTest and create fresh NPCs
 //   - ✅ NPCs listens for "spawn" event and creates NPC
-//   - 🚧 NPCs ensures local pathfinding data
+//   - ✅ NPCs ensures local pathfinding data
 //   - 🚧 can move NPC via shell function
 // - Andros is situated and lighting reacts
 // - 🤔 show doors intersecting light polygon (cannot click)
@@ -138,9 +138,9 @@ export default function NavDemo1(props) {
       )}
 
       <NPCs
-        onLoad={api => { state.npcsApi = api; render() }}
-        disabled={props.disabled}
         wireKey="wire-demo-1"
+        gmGraph={gmGraph}
+        disabled={props.disabled}
       />
 
       {gms.map((gm, gmIndex) =>

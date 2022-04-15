@@ -1,15 +1,20 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
-import { Vect } from "../geom";
 import { ensureWire } from "../service/emit.service";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
+import useGeomorphsNav from "../hooks/use-geomorphs-nav";
+// TODO further modularisation
+import npcJson from '../../public/npc/first-npc.json'
 
 /** @param {NPC.NPCsProps} props */
 export default function NPCs(props) {
 
   const update = useUpdate();
+
+  const nav = useGeomorphsNav(props.gmGraph, props.disabled);
+  console.log(nav);
 
   const state = useStateRef(() => {
     return {
@@ -49,7 +54,7 @@ export default function NPCs(props) {
     <div className={classNames('npcs', rootCss)}>
       {Object.values(state.npc).map(npc => (
         <div
-          key={npc.instanceKey} // respawn will remount
+          key={npc.instanceKey} // Respawn remounts
           data-npc-key={npc.key}
           className={classNames('npc', npc.key, npc.spriteSheetState, npcCss)}
           ref={state.npcRef}            
@@ -74,8 +79,6 @@ const rootCss = css`
   }
 `;
 
-// TODO further modularisation
-import npcJson from '../../public/npc/first-npc.json'
 const { animLookup: anim, zoom } = npcJson;
 
 const npcCss = css`

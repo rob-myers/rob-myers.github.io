@@ -6,9 +6,9 @@ import { assertDefined } from "../service/generic";
  * @param {string} zoneKey 
  * @param {Geom.TriangulationJson | undefined} decomp
  * @param {boolean} [disabled]
- * @returns {import("react-query").UseQueryResult<PfData>}
+ * @returns {import("react-query").UseQueryResult<NPC.PfData>}
  */
- export default function usePathfinding(zoneKey, decomp, disabled) {
+export default function usePathfinding(zoneKey, decomp, disabled) {
   return useQuery(`pathfinding-${zoneKey}`, () => {
     const zone = Pathfinding.createZone(assertDefined(decomp));
     pathfinding.setZoneData(zoneKey, zone);
@@ -19,9 +19,3 @@ import { assertDefined } from "../service/generic";
     staleTime: Infinity,
   });
 }
-
-/**
- * @typedef PfData @type {object}
- * @property {Pathfinding} pathfinding
- * @property {Nav.Zone} zone
- */

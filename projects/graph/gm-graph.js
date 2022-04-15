@@ -12,10 +12,18 @@ export class gmGraph extends BaseGraph {
   /** @type {Geomorph.UseGeomorphsItem[]}  */
   gms;
 
+  /**
+   * @readonly
+   * @type {{ [gmKey in Geomorph.LayoutKey]?: Geomorph.GeomorphData }}
+   */
+  gmDataLookup;
+
   /** @param {Geomorph.UseGeomorphsItem[]} gms  */
   constructor(gms) {
     super();
     this.gms = gms;
+    // Technically, gms keyed by LayoutKey i.e. last instance
+    this.gmDataLookup = gms.reduce((agg, gm) => ({ ...agg, [gm.key]: gm }), {});
   }
 
   /**
@@ -142,7 +150,7 @@ export class gmGraph extends BaseGraph {
    * @param {Geomorph.UseGeomorphsItem[]} gms 
    */
   static fromGmItems(gms) {
-    const graph = new gmGraph([]);
+    const graph = new gmGraph(gms);
     return graph.fromGmItems(gms);
   }
 
@@ -150,8 +158,6 @@ export class gmGraph extends BaseGraph {
    * @param {Geomorph.UseGeomorphsItem[]} gms 
    */
   fromGmItems(gms) {
-    this.gms = gms;
-
     /** @type {Graph.GmGraphNode[]} */
     const nodes = [
       // NOTE geomorph nodes aligned to `gmItems`
