@@ -19,8 +19,10 @@ import NPCs from "../npc/NPCs";
 //   - ✅ NPCs -> NPCsTest and create fresh NPCs
 //   - ✅ NPCs listens for "spawn" event and creates NPC
 //   - ✅ NPCs ensures local pathfinding data
+//   - ✅ can get local navpath via shell function
 //   - 🚧 can plot a local navpath
-//   - 🚧 can move NPC via shell function
+//   - 🚧 navpath takes doors into account
+//   - 🚧 global navpath
 // - Andros is situated and lighting reacts
 // - 🤔 show doors intersecting light polygon (cannot click)
 
@@ -50,6 +52,7 @@ export default function NavDemo1(props) {
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       npcsApi: /** @type {NPC.NPCsApi} */ ({}),
+      panZoomApi: /** @type {PanZoom.CssExtApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
       getEnterableHoleIds() {
@@ -113,14 +116,15 @@ export default function NavDemo1(props) {
         });
       return () => sub.unsubscribe();
     }
-  }, [gms.length, state.doorsApi.ready]);
+  }, [gms, state.doorsApi.ready]);
 
   return gms.length ? (
     <CssPanZoom
-      wireKey="wire-demo-1"
-      dark
       className={rootCss}
       zoom={0.4}
+      dark
+      wireKey={wireKey}
+      onLoad={api => state.panZoomApi = api}
     >
       {gms.map(gm =>
         <img
@@ -139,9 +143,10 @@ export default function NavDemo1(props) {
       )}
 
       <NPCs
-        wireKey="wire-demo-1"
         gmGraph={gmGraph}
         disabled={props.disabled}
+        wireKey={wireKey}
+        panZoomApi={state.panZoomApi}
       />
 
       {gms.map((gm, gmIndex) =>
@@ -188,6 +193,8 @@ export default function NavDemo1(props) {
     </CssPanZoom>
   ) : null;
 }
+
+const wireKey = 'wire-demo-1';
 
 /** @param {Geomorph.GeomorphData} gm */
 const rootCss = css`

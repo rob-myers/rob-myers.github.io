@@ -12,7 +12,6 @@ import { ensureWire } from '../service/emit.service';
 export default function CssPanZoom(props) {
 
   const state = useStateRef(() => {
-
     return {
       root: /** @type {HTMLDivElement} */ ({}),
       parent: /** @type {HTMLDivElement} */ ({}),
@@ -103,6 +102,13 @@ export default function CssPanZoom(props) {
           state.origin = state.start.clientX = state.start.clientY = undefined;
         },
       },
+
+      /** @param {{ clientX: number; clientY: number; }} e */
+      getWorld(e) {
+        const dims = getDimensions(state.root);
+        const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
+        return matrix.transformPoint({ x: e.clientX - dims.parent.left, y: e.clientY - dims.parent.top });
+      },
       /**
        * @param {number} toX 
        * @param {number} toY 
@@ -131,19 +137,14 @@ export default function CssPanZoom(props) {
         }
       },
       /**
+       * Send world position of mouse/touch event
        * @param {string} wireKey 
        * @param {{ clientX: number; clientY: number; }} e 
        */
       sendPointOnWire(wireKey, e) {
-        const dims = getDimensions(state.root);
-        const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
-        const point = matrix.transformPoint({ x: e.clientX - dims.parent.left, y: e.clientY - dims.parent.top });
-
         const wire = ensureWire(wireKey);
-        wire.next({
-          key: 'pointerup',
-          point: { x: point.x, y: point.y }
-        });
+        const point = state.getWorld(e);
+        wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
       },
       updateView() {
         state.root.style.transform = `scale(${state.scale}) translate(${state.x}px, ${state.y}px)`;
@@ -238,9 +239,12 @@ export default function CssPanZoom(props) {
     };
   });
 
-  React.useLayoutEffect(() => {
-    if (props.zoom) {
-      // state.root's 1st child lies at world origin
+  React.useEffect(() => {
+    props.onLoad?.(state);
+  }, []);
+
+  React.useEffect(() => {
+    if (props.zoom) {// state.root's 1st child lies at world origin
       const { x: clientX, y: clientY } = state.root.children[0].getBoundingClientRect();
       state.zoomToPoint(props.zoom, { clientX, clientY });
     }
@@ -315,6 +319,7 @@ const backgroundCss = (props) => css`
  * @property {boolean} [dark]
  * @property {string} [wireKey] Global identifier e.g. so shells can receive clicks.
  * @property {number} [zoom] Initial zoom factor
+ * @property {(api: PanZoom.CssExtApi) => void} [onLoad]
  */
 
 /**

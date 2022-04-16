@@ -5,9 +5,10 @@ declare namespace NPC {
   import { Pathfinding } from '../pathfinding/Pathfinding';
   
   export interface NPCsProps {
-    wireKey: string;
-    gmGraph: Graph.GmGraph;
     disabled?: boolean;
+    gmGraph: Graph.GmGraph;
+    panZoomApi: PanZoom.CssExtApi;
+    wireKey: string;
   }
 
   type PointerEvent = {

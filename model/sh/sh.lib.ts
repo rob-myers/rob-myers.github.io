@@ -176,7 +176,7 @@ call '({args}) =>
         sub.unsubscribe();
       }
     });
-    wire.next({ key: "nav-req", npcKey })
+    wire.next({ key: "nav-req", npcKey, dst: position })
 
   }' "$@"
 }`

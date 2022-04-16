@@ -49,24 +49,20 @@ export default function NPCs(props) {
         };
         update();
       } else if (e.key === 'nav-req') {
-        // TODO 🚧 send local navpath
+        // TODO ✅ send local navpath
         const zoneKey = props.gmGraph.gms[0].key;
         const npc = state.npc[e.npcKey];
-        /**
-         * TODO 🚧 get current world position
-         * - CSSPanZoom: sendPointOnWire
-         * - expose as context?
-         */
-        const src = Vect.from(npc.el.root.getBoundingClientRect());
+        const { x: clientX, y: clientY } = Vect.from(npc.el.root.getBoundingClientRect());
+        const src = Vect.from(props.panZoomApi.getWorld({ clientX, clientY }));
         const groupId = pathfinding.getGroup(zoneKey, { x: src.x, y: src.y });
-        const path = groupId
+        const path = groupId !== null
           ? [src.clone()].concat(pathfinding.findPath(src, Vect.from(e.dst), zoneKey, groupId)?.path??[])
           : [];
         wire.next({ key: 'nav-res', npcKey: e.npcKey, path });
       }
     });
     return () => sub.unsubscribe();
-  }, []);
+  }, [props.panZoomApi]);
 
   return (
     <div className={classNames('npcs', rootCss)}>
