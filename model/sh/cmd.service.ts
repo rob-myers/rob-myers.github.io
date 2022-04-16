@@ -354,70 +354,81 @@ class CmdService {
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 
-  private provideProcessApi(meta: Sh.BaseMeta) {
-    return {
-      getWire: () => {
-        const { var: home } = useSession.api.getSession(meta.sessionKey);
-        const wireKey = home.WIRE_KEY;
-        if (!(typeof wireKey === 'string' && wireKey)) {
-          throwError(`home/WIRE_KEY must be a non-empty string`);
-        }
-        return ensureWire(wireKey);
-      },
+  private readonly processApi = {
+    /**
+     * This will be overwritten via Function.prototype.bind.
+     */
+    meta: {} as Sh.BaseMeta,
+    /**
+     * This will be overwritten via Function.prototype.bind.
+     */
+    parent: this,
 
-      getKillError() {
-        return killError(meta);
-      },
-
-      getProcess() {
-        return useSession.api.getProcess(meta);
-      },
+    getWire() {
+      const { var: home } = useSession.api.getSession(this.meta.sessionKey);
+      const wireKey = home.WIRE_KEY;
+      if (!(typeof wireKey === 'string' && wireKey)) {
+        throwError(`home/WIRE_KEY must be a non-empty string`);
+      }
+      return ensureWire(wireKey);
+    },
   
-      isTtyAt(fd = 0) {
-        return meta.fd[fd]?.startsWith('/dev/tty-');
-      },
-
-      /**
-       * Read once from stdin. We convert `{ eof: true }` to `null` for
-       * easier assignment, but beware of other falsies.
-       */
-      read: async (chunks = false) => {
-        const result = await this.readOnce(meta, chunks);
-        return result?.eof ? null : result.data;
-      },
-
-      /** TODO support pause/resume like command `sleep` */
-      sleep: (seconds: number) => new Promise<void>((resolve, reject) => {
+    getKillError() {
+      return killError(this.meta);
+    },
+  
+    getProcess() {
+      return useSession.api.getProcess(this.meta);
+    },
+  
+    isTtyAt(fd = 0) {
+      return this.meta.fd[fd]?.startsWith('/dev/tty-');
+    },
+  
+    /**
+     * Read once from stdin. We convert `{ eof: true }` to `null` for
+     * easier assignment, but beware of other falsies.
+     */
+     async read(chunks = false) {
+      const result = await this.parent.readOnce(this.meta, chunks);
+      return result?.eof ? null : result.data;
+    },
+  
+    /** TODO support pause/resume like command `sleep` */
+    sleep(seconds: number) {
+      return new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
-        useSession.api.addCleanup(meta, () => reject(killError(meta)));
-      }),
-
-      /** Provide same context with different args */
-      provideCtxt: (args: string[]) => this.provideProcessCtxt(meta, args),
-
-      /** js parse with string fallback */
-      parseJsArg,
-
-      /** Output 1, 2, ... at fixed intervals */
-      poll: async function* (args: string[]) {
-        const seconds = args.length ? parseFloat(parseJsonArg(args[0])) || 1 : 1;
-        const [delayMs, deferred] = [Math.max(seconds, 0.5) * 1000, new Deferred<void>()];
-        useSession.api.addCleanup(meta, () => deferred.resolve());
-        let count = 1;
-        while (true) {
-          yield count++;
-          await Promise.race([pause(delayMs), deferred.promise]);
-        }
-      },
-
-      pretty: prettySafe,
-
-      /** JSON.parse which returns `undefined` on parse error */
-      safeJsonParse,
-
-      throwError,
-    };
-  }
+        useSession.api.addCleanup(this.meta, () => reject(killError(this.meta)));
+      })
+    },
+  
+    /** Provide same context with different args */
+    provideCtxt(args: string[]) {
+      this.parent.provideProcessCtxt(this.meta, args)
+    },
+  
+    /** js parse with string fallback */
+    parseJsArg,
+  
+    /** Output 1, 2, ... at fixed intervals */
+    async *poll(args: string[]) {
+      const seconds = args.length ? parseFloat(parseJsonArg(args[0])) || 1 : 1;
+      const [delayMs, deferred] = [Math.max(seconds, 0.5) * 1000, new Deferred<void>()];
+      useSession.api.addCleanup(this.meta, () => deferred.resolve());
+      let count = 1;
+      while (true) {
+        yield count++;
+        await Promise.race([pause(delayMs), deferred.promise]);
+      }
+    },
+  
+    pretty: prettySafe,
+  
+    /** JSON.parse which returns `undefined` on parse error */
+    safeJsonParse,
+  
+    throwError,
+  };
 
   private provideProcessCtxt(meta: Sh.BaseMeta, posPositionals: string[] = []) {
     const session = useSession.api.getSession(meta.sessionKey);
@@ -426,7 +437,14 @@ class CmdService {
       cache: queryCache, 
     }, {
       get: (_, key) => {
-        if (key === 'api') return this.provideProcessApi(meta);
+        // if (key === 'api') return this.provideProcessApi(meta);
+        if (key === 'api') return new Proxy({}, {
+          get: ({}, key: keyof typeof this.processApi) => {
+            if (key === 'meta' || key === 'parent') return null
+            return this.processApi[key].bind({ meta, parent: this }) || null;
+          },
+          // TODO ownKeys (requires getOwnPropertyDescriptor)
+        });
         if (key === 'args') return posPositionals;
         return (_ as any)[key];
       },
