@@ -354,6 +354,11 @@ class CmdService {
     await ttyShell.spawn(cloned, { posPositionals: args.slice() });
   }
 
+  /**
+   * Constraints:
+   * - `this` must only refer to `meta` and `parent`.
+   * - also avoid `this.parent.processApi` 
+   */
   private readonly processApi = {
     /**
      * This will be overwritten via Function.prototype.bind.
@@ -384,27 +389,10 @@ class CmdService {
     isTtyAt(fd = 0) {
       return this.meta.fd[fd]?.startsWith('/dev/tty-');
     },
-  
-    /**
-     * Read once from stdin. We convert `{ eof: true }` to `null` for
-     * easier assignment, but beware of other falsies.
-     */
-     async read(chunks = false) {
-      const result = await this.parent.readOnce(this.meta, chunks);
-      return result?.eof ? null : result.data;
-    },
-  
-    /** TODO support pause/resume like command `sleep` */
-    sleep(seconds: number) {
-      return new Promise<void>((resolve, reject) => {
-        setTimeout(resolve, seconds * 1000);
-        useSession.api.addCleanup(this.meta, () => reject(killError(this.meta)));
-      })
-    },
-  
+
     /** Provide same context with different args */
-    provideCtxt(args: string[]) {
-      this.parent.provideProcessCtxt(this.meta, args)
+    provideCtxt(args: string[]): any {
+      return this.parent.provideProcessCtxt(this.meta, args)
     },
   
     /** js parse with string fallback */
@@ -423,6 +411,23 @@ class CmdService {
     },
   
     pretty: prettySafe,
+
+    /**
+     * Read once from stdin. We convert `{ eof: true }` to `null` for
+     * easier assignment, but beware of other falsies.
+     */
+     async read(chunks = false) {
+      const result = await this.parent.readOnce(this.meta, chunks);
+      return result?.eof ? null : result.data;
+    },
+  
+    /** TODO support pause/resume like command `sleep` */
+    sleep(seconds: number) {
+      return new Promise<void>((resolve, reject) => {
+        setTimeout(resolve, seconds * 1000);
+        useSession.api.addCleanup(this.meta, () => reject(killError(this.meta)));
+      })
+    },
   
     /** JSON.parse which returns `undefined` on parse error */
     safeJsonParse,
@@ -441,7 +446,7 @@ class CmdService {
         if (key === 'api') return new Proxy({}, {
           get: ({}, key: keyof typeof this.processApi) => {
             if (key === 'meta' || key === 'parent') return null
-            return this.processApi[key].bind({ meta, parent: this }) || null;
+            return this.processApi[key]?.bind({ meta, parent: this }) || null;
           },
           // TODO ownKeys (requires getOwnPropertyDescriptor)
         });
