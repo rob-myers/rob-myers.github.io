@@ -9,7 +9,7 @@ import { assertDefined } from "../service/generic";
  * @returns {import("react-query").UseQueryResult<NPC.PfData>}
  */
 export default function usePathfinding(zoneKey, decomp, disabled) {
-  return useQuery(`pathfinding-${zoneKey}`, () => {
+  return useQuery(zoneKeyToQueryKey(zoneKey), () => {
     const zone = Pathfinding.createZone(assertDefined(decomp));
     pathfinding.setZoneData(zoneKey, zone);
     return { pathfinding, zone };
@@ -18,4 +18,9 @@ export default function usePathfinding(zoneKey, decomp, disabled) {
     keepPreviousData: true,
     staleTime: Infinity,
   });
+}
+
+/** @param {string} zoneKey */
+function zoneKeyToQueryKey(zoneKey) {
+  return `pathfinding-${zoneKey}`;
 }

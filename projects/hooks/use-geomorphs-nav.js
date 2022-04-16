@@ -24,6 +24,7 @@ export default function useGeomorphsNav(g, disabled) {
   }, [g]);
 
   const queries = gmKeys.map(key => {
+    // Choose zoneKey to be geomorph key e.g. g-101--multipurpose
     return usePathfinding(key, g.gmDataLookup[key]?.navDecomp, disabled)
   });
   const ready = (

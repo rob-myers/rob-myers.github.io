@@ -2,6 +2,8 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 import { ensureWire } from "../service/emit.service";
+import { Vect } from "../geom";
+import { pathfinding } from "../pathfinding/Pathfinding";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
@@ -40,12 +42,27 @@ export default function NPCs(props) {
       if (e.key === 'spawn') {
         state.npc[e.npcKey] = {
           key: e.npcKey,
-          instanceKey: `${e.npcKey}-${++spawnCount}`,
+          uid: `${e.npcKey}-${++spawnCount}`,
           def: { key: e.npcKey, position: e.at },
           spriteSheetState: 'idle',
           el: { root: /** @type {HTMLDivElement} */ ({}) },
         };
         update();
+      } else if (e.key === 'nav-req') {
+        // TODO 🚧 send local navpath
+        const zoneKey = props.gmGraph.gms[0].key;
+        const npc = state.npc[e.npcKey];
+        /**
+         * TODO 🚧 get current world position
+         * - CSSPanZoom: sendPointOnWire
+         * - expose as context?
+         */
+        const src = Vect.from(npc.el.root.getBoundingClientRect());
+        const groupId = pathfinding.getGroup(zoneKey, { x: src.x, y: src.y });
+        const path = groupId
+          ? [src.clone()].concat(pathfinding.findPath(src, Vect.from(e.dst), zoneKey, groupId)?.path??[])
+          : [];
+        wire.next({ key: 'nav-res', npcKey: e.npcKey, path });
       }
     });
     return () => sub.unsubscribe();
@@ -55,7 +72,7 @@ export default function NPCs(props) {
     <div className={classNames('npcs', rootCss)}>
       {Object.values(state.npc).map(npc => (
         <div
-          key={npc.instanceKey} // Respawn remounts
+          key={npc.uid} // Respawn remounts
           data-npc-key={npc.key}
           className={classNames('npc', npc.key, npc.spriteSheetState, npcCss)}
           ref={state.npcRef}            

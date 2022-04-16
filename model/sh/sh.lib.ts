@@ -96,7 +96,8 @@ call '({args}) =>
 }`,
 
   /**
-   * Receive world position clicks from WIRE_KEY to stdin.
+   * Output world position clicks sent via WIRE_KEY.
+   * e.g. `click`, `click 1`
    */
   click: `{
   run '({ api, args, home }) {
@@ -129,10 +130,14 @@ call '({args}) =>
   }' "$@"
 }`,
 
+  /**
+   * Spawn a character at a position.
+   * e.g. `spawn andros "$( click 1 )"`
+   */
   spawn: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
-    const position = api.safeJsonParse(args[1] || "null")
+    const position = api.safeJsonParse(args[1])
     if (
       !npcKey
       || position === undefined
@@ -140,19 +145,39 @@ call '({args}) =>
     ) {
       api.throwError("format: \`spawn {key} [{vecJson}]\` e.g. spawn andros \'{"x":300,"y":120}\'")
     }
+
     // TODO better default position?
     const at = position || { x: 0, y: 0 }
-
     const wire = api.getWire()
     wire.next({ key: "spawn", npcKey, at })
   }' "$@"
 }`,
 
+  /**
+   * Request navpath to position for character via WIRE_KEY.
+   * e.g. `nav andros "$( click 1 )"'
+   */
   nav: `{
-  run '() {
-    /**
-     * TODO
-     */
+  run '({ api, args }) {
+    const npcKey = args[0]
+    const position = api.safeJsonParse(args[1])
+    if (
+      !npcKey
+      || position === undefined
+      || position && !(typeof position.x === "number" && typeof position.y === "number")
+    ) {
+      api.throwError("format: \`nav {key} [{vecJson}]\` e.g. nav andros \'{"x":300,"y":120}\'")
+    }
+
+    const wire = api.getWire()
+    const sub = wire.subscribe((e) => {
+      if (e.key === "nav-res") {
+        console.log({ e });
+        sub.unsubscribe();
+      }
+    });
+    wire.next({ key: "nav-req", npcKey })
+
   }' "$@"
 }`
 };
