@@ -11,7 +11,7 @@ export default function useGeomorphs(defs) {
 
   const [gmKeys, setLayoutKeys] = React.useState(() => defs.map(x => x.layoutKey));
 
-  React.useEffect(() => {
+  React.useMemo(() => {
     // Append unseen keys to layoutKeys i.e. monotonically increases
     const unseenKeys = defs.map(x => x.layoutKey).filter(x => !gmKeys.includes(x));
     if (unseenKeys.length) {
