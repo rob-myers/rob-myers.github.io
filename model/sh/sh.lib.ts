@@ -7,9 +7,10 @@ export const preloadedFunctions = {
 }' "$@"`,
 
   /** Execute a javascript function */
-  call: `run '({ args, api }) {
-  const func = Function(\`return \${args[0]}\`)()
-  yield await func(api.provideCtxt(args.slice(1)))
+  call: `run '(ctxt) {
+  const func = Function(\`return \${ctxt.args[0]}\`)()
+  ctxt.args = ctxt.args.slice(1)
+  yield await func(ctxt)
 }' "$@"`,
 
   /** Filter inputs */

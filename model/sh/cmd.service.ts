@@ -355,9 +355,7 @@ class CmdService {
   }
 
   /**
-   * Constraints:
-   * - `this` must only refer to `meta` and `parent`.
-   * - also avoid `this.parent.processApi` 
+   * NOTE `this` must only refer to `meta` and `parent`.
    */
   private readonly processApi = {
     /**
@@ -365,7 +363,7 @@ class CmdService {
      */
     meta: {} as Sh.BaseMeta,
     /**
-     * This will be overwritten via Function.prototype.bind.
+     * This will be rewritten via Function.prototype.bind.
      */
     parent: this,
 
@@ -389,11 +387,6 @@ class CmdService {
     isTtyAt(fd = 0) {
       return this.meta.fd[fd]?.startsWith('/dev/tty-');
     },
-
-    /** Provide same context with different args */
-    provideCtxt(args: string[]): any {
-      return this.parent.provideProcessCtxt(this.meta, args)
-    },
   
     /** js parse with string fallback */
     parseJsArg,
@@ -416,7 +409,7 @@ class CmdService {
      * Read once from stdin. We convert `{ eof: true }` to `null` for
      * easier assignment, but beware of other falsies.
      */
-     async read(chunks = false) {
+    async read(chunks = false) {
       const result = await this.parent.readOnce(this.meta, chunks);
       return result?.eof ? null : result.data;
     },
@@ -442,7 +435,6 @@ class CmdService {
       cache: queryCache, 
     }, {
       get: (_, key) => {
-        // if (key === 'api') return this.provideProcessApi(meta);
         if (key === 'api') return new Proxy({}, {
           get: ({}, key: keyof typeof this.processApi) => {
             if (key === 'meta' || key === 'parent') return null
@@ -452,6 +444,14 @@ class CmdService {
         });
         if (key === 'args') return posPositionals;
         return (_ as any)[key];
+      },
+      set: (_, key, value) => {
+        if (key === 'args') {// Assume `posPositionals` is fresh i.e. just sliced
+          posPositionals.length = 0;
+          posPositionals.push(...value);
+          return true;
+        }
+        return false;
       },
       deleteProperty(_target, _key) {
         return false;
