@@ -23,6 +23,21 @@ export default function NPCs(props) {
     return {
       /** @type {Record<string, NPC.NPC>} */
       npc: ({}),
+      /**
+       * @param {number} gmId 
+       * @param {Geom.VectJson} src
+       * @param {Geom.VectJson} dst 
+       */
+      getLocalNavPath(gmId, src, dst) {
+        const zoneKey = props.gmGraph.gms[gmId].key;
+        const groupId = pathfinding.getGroup(zoneKey, src);
+        if (groupId === null) {
+          return [];
+        } else {
+          const result = pathfinding.findPath(src, Vect.from(dst), zoneKey, groupId);
+          return result ? [Vect.from(src)].concat(result.path) : [];
+        }
+      },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(el) {
         if (el) {
@@ -46,19 +61,20 @@ export default function NPCs(props) {
           def: { key: e.npcKey, position: e.at },
           spriteSheetState: 'idle',
           el: { root: /** @type {HTMLDivElement} */ ({}) },
+          getPosition() {
+            const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
+            return Vect.from(props.panZoomApi.getWorld({ clientX, clientY }));
+          },
         };
         update();
       } else if (e.key === 'nav-req') {
-        // TODO ✅ send local navpath
-        const zoneKey = props.gmGraph.gms[0].key;
+        // TODO
+        // - ✅ send local navpath
+        // - ...
         const npc = state.npc[e.npcKey];
-        const { x: clientX, y: clientY } = Vect.from(npc.el.root.getBoundingClientRect());
-        const src = Vect.from(props.panZoomApi.getWorld({ clientX, clientY }));
-        const groupId = pathfinding.getGroup(zoneKey, { x: src.x, y: src.y });
-        const path = groupId !== null
-          ? [src.clone()].concat(pathfinding.findPath(src, Vect.from(e.dst), zoneKey, groupId)?.path??[])
-          : [];
-        wire.next({ key: 'nav-res', npcKey: e.npcKey, path });
+        const path = state.getLocalNavPath(0, npc.getPosition(), e.dst);
+        path.forEach(p => p.precision(3));
+        wire.next({ key: 'nav-res', npcKey: e.npcKey, path, req: e });
       }
     });
     return () => sub.unsubscribe();

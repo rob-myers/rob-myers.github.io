@@ -12,7 +12,6 @@ declare namespace NPC {
   }
 
   type PointerEvent = {
-    /** Position on ground */
     point: Geom.VectJson;
   } & (
     | { key: 'pointerdown' }
@@ -24,7 +23,7 @@ declare namespace NPC {
   type NpcEvent = (
     | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
     | { key: 'nav-req'; npcKey: string; dst: Geom.VectJson; }
-    | { key: 'nav-res'; npcKey: string; path: Geom.Vect[]; }
+    | { key: 'nav-res'; npcKey: string; path: Geom.Vect[]; req: (NpcEvent & { key: 'nav-req' }); }
   );
 
   export interface NPC {
@@ -37,6 +36,7 @@ declare namespace NPC {
     el: {
       root: HTMLDivElement;
     };
+    getPosition(): Geom.Vect;
   }
 
   export type NavWire = import('rxjs').Subject<NPC.NavMessage>;

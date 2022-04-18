@@ -170,13 +170,17 @@ call '({args}) =>
     }
 
     const wire = api.getWire()
-    const sub = wire.subscribe((e) => {
-      if (e.key === "nav-res") {
-        console.log({ e });
-        sub.unsubscribe();
-      }
-    });
-    wire.next({ key: "nav-req", npcKey, dst: position })
+    const resp = await new Promise(resolve => {
+      const navReq = { key: "nav-req", npcKey, dst: position }
+      const sub = wire.subscribe((e) => {
+        if (e.key === "nav-res" && e.req === navReq) {
+          sub.unsubscribe()
+          resolve(e)
+        }
+      });
+      wire.next(navReq)
+    })
+    yield resp.path
 
   }' "$@"
 }`
