@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 import { ensureWire } from "../service/emit.service";
-import { Vect } from "../geom";
+import { Rect, Vect } from "../geom";
 import { pathfinding } from "../pathfinding/Pathfinding";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -22,7 +22,9 @@ export default function NPCs(props) {
   const state = useStateRef(() => {
     return {
       /** @type {Record<string, NPC.NPC>} */
-      npc: ({}),
+      npc: {},
+      /** @type {Record<string, { path: Geom.Vect[]; aabb: Rect; }>} */
+      debugPath: {},
       /**
        * @param {number} gmId 
        * @param {Geom.VectJson} src
@@ -75,12 +77,16 @@ export default function NPCs(props) {
         const path = state.getLocalNavPath(0, npc.getPosition(), e.dst);
         path.forEach(p => p.precision(3));
         wire.next({ key: 'nav-res', npcKey: e.npcKey, path, req: e });
+      } else if (e.key === 'debug-path') {
+        const path = e.path.map(Vect.from);
+        state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
+        update();
       }
     });
     return () => sub.unsubscribe();
   }, [props.panZoomApi]);
 
-  return (
+  return <>
     <div className={classNames('npcs', rootCss)}>
       {Object.values(state.npc).map(npc => (
         <div
@@ -93,7 +99,8 @@ export default function NPCs(props) {
         </div>
       ))}
     </div>
-  );
+    <Debug debugPath={state.debugPath} />
+  </>;
 }
 
 let spawnCount = 0;
@@ -150,3 +157,31 @@ const npcCss = css`
     to { background-position: ${-anim.idle.frames.length * anim.idle.aabb.width * zoom}px; }
   }
 `;
+
+/**
+ * @param {{ debugPath: Record<string, { path: Geom.Vect[]; aabb: Rect; }> }} props 
+ */
+function Debug(props) {
+  return <>
+    {Object.entries(props.debugPath).map(([key, {path, aabb}]) => (
+    <svg
+      key={key}
+      className="debug-path"
+      width={aabb.width}
+      height={aabb.height}
+      style={{
+        position: 'absolute',
+        left: aabb.x,
+        top: aabb.y,
+      }}
+    >
+      <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
+        <polyline fill="none" stroke="blue" strokeWidth={2} points={`${path}`} />
+        {path.map(p => (
+          <circle fill="none" stroke="red" r={2.5} cx={p.x} cy={p.y} />
+        ))}
+      </g>
+    </svg>
+    ))}  
+  </>
+}

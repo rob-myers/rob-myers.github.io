@@ -24,6 +24,7 @@ declare namespace NPC {
     | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
     | { key: 'nav-req'; npcKey: string; dst: Geom.VectJson; }
     | { key: 'nav-res'; npcKey: string; path: Geom.Vect[]; req: (NpcEvent & { key: 'nav-req' }); }
+    | { key: 'debug-path'; path: Geom.VectJson[]; pathName: string }
   );
 
   export interface NPC {
