@@ -439,8 +439,3 @@ export function computeLightPosition(connector, fromHoleId, lightOffset = 40) {
   }
   return connector.poly.center.addScaledVector(connector.normal, lightOffset * (roomSign || 0));
 }
-
-/** @param {Nav.Zone} zone */
-export function createFloorGraph(zone) {
-
-}

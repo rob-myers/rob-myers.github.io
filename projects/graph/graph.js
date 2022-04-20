@@ -409,6 +409,7 @@ export class BaseGraph {
    * We assume serializable node has same type as graph node.
    * If not, we'll add a custom method e.g. `from`.
    * @param {Graph.GraphJson<Node, EdgeOpts>} json 
+   * @returns {this}
    */
   plainFrom(json) {
     const nodes = json.nodes.map(deepClone);
@@ -417,11 +418,4 @@ export class BaseGraph {
     return this;
   }
 
-  /**
-   * Must be reimplemented in subclasses.
-   * @param {Graph.BaseGraphJson} json 
-   */  
-  static fromJson(json) {
-    return (new BaseGraph).plainFrom(json);
-  }
 }

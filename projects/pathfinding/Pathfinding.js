@@ -6,6 +6,8 @@ import { Channel } from './Channel';
 import { Vect } from '../geom';
 import { Triangle } from './Triangle';
 
+// TODO 🚧  can also search for paths over a FloorGraph
+
 /**
  * Defines an instance of the pathfinding module, with one or more zones.
  */
@@ -13,30 +15,31 @@ export class Pathfinding {
 
   constructor () {
     /** @type {Record<string, Nav.Zone>} */
-    this.zones = ({});
+    this.zones = {};
 
     /**
      * @readonly
-     * @type {number}
+     * @type {500}
      */
     this.MAX_DIST_TO_SOME_CENTROID = 500;
 
     const temp = {
-      point: new Vect(0, 0),
+      point: new Vect,
       triangle: new Triangle,
-      endPoint: new Vect(0, 0),
+      endPoint: new Vect,
       closestNode: /** @type {null | Nav.GraphNode} */ (null),
-      closestPoint: new Vect(0, 0),
+      closestPoint: new Vect,
       closestDistance: Infinity,
     };
+
     /** @type {typeof temp} */
     this.temp = temp;
 
   }
 
   /**
-   * Clamps a step along the navmesh, given start and desired endpoint. May be
-   * used to constrain first-person / WASD controls.
+   * Clamps a step along the navmesh, given start and desired endpoint.
+   * May be used to constrain first-person / WASD controls.
    *
    * @param  {Vect} startRef
    * @param  {Vect} endRef Desired endpoint.
@@ -150,7 +153,7 @@ export class Pathfinding {
   }
 
   /**
-   * (Static) Builds a zone/node set from navigation mesh geometry.
+   * Builds a zone/node set from navigation mesh geometry.
    * @param  {Geom.TriangulationJson} tr
    * @return {Nav.Zone}
    */
@@ -257,13 +260,6 @@ export class Pathfinding {
       }
     }
     return null;
-  }
-
-  /**
-   * @param {string} zoneKey 
-   */
-  ready(zoneKey) {
-    return !!this.zones[zoneKey];
   }
 
   /**

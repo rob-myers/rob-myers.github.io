@@ -137,7 +137,7 @@ declare namespace Graph {
    */
   interface FloorGraphNodeGeneric<V> {
     type: 'tri';
-    /** `tri-${triIndex} */
+    /** `tri-${triId}-${grpId} */
     id: string;
 
     f: number;
@@ -152,7 +152,7 @@ declare namespace Graph {
     centroid: V;
   }
 
-  export type FloorGraphNode = FloorGraphNodeGeneric<Geom.VectJson>;
+  export type FloorGraphNode = FloorGraphNodeGeneric<Geom.Vect>;
 
   export type FloorGraphEdgeOpts = BaseEdgeOpts;
 
