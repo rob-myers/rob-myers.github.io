@@ -6,6 +6,7 @@ import { extractGeomsAt, hasTitle } from './cheerio';
 import { geom } from './geom';
 import { labelMeta } from '../geomorph/geomorph.model';
 import { RoomGraph } from '../graph/room-graph';
+import { Pathfinding } from '../pathfinding/Pathfinding';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -35,11 +36,11 @@ export async function createLayout(def, lookup, triangleService) {
     const restricted = singles
       .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m).precision(4) }))
       .filter(({ tags }) => {
-        if (item.doors && tags.includes('door'))
-          return tags.some(tag => /** @type {string[]} */ (item.doors).includes(tag));
-        else if (item.walls && tags.includes('wall'))
-          return tags.some(tag => /** @type {string[]} */ (item.walls).includes(tag));
-        return true;
+        return item.doors && tags.includes('door')
+          ? tags.some(tag => /** @type {string[]} */ (item.doors).includes(tag))
+          : (item.walls && tags.includes('wall'))
+            ? tags.some(tag => /** @type {string[]} */ (item.walls).includes(tag))
+            : true;
       });
     groups.singles.push(...restricted);
     groups.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
@@ -98,12 +99,16 @@ export async function createLayout(def, lookup, triangleService) {
    *   > `/Users/robmyers/coding/rob-myers.github.io/node_modules/triangle-wasm/triangle.out.js:9`
    */
   const navDecomp = triangleService
-    ? await triangleService.triangulate(navPoly, {
-      minAngle: 10,
-      // maxArea: 10000,
-      // maxSteiner: 300,
-    })
+    ? await triangleService.triangulate(navPoly,
+        {
+          minAngle: 10,
+          // maxArea: 10000,
+          // maxSteiner: 300,
+        }
+      )
     : { vs: [], tris: [] };
+
+  const navZone = Pathfinding.createZone(navDecomp);
 
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
@@ -143,8 +148,8 @@ export async function createLayout(def, lookup, triangleService) {
     doors,
     windows,
     labels,
-    navDecomp,
     navPoly,
+    navZone,
     roomGraph,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
@@ -209,7 +214,7 @@ function parseConnectRect(x) {
 /** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout({
   def, groups,
-  holes: allHoles, doors, windows, labels, navPoly, navDecomp, roomGraph,
+  holes: allHoles, doors, windows, labels, navPoly, navZone, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -229,8 +234,8 @@ export function serializeLayout({
     doors: doors.map((x) => ({ ...x, poly: x.poly.geoJson })),
     windows: windows.map((x) => ({ ...x, poly: x.poly.geoJson })),
     labels,
-    navDecomp,
     navPoly: navPoly.map(x => x.geoJson),
+    navZone,
     roomGraph: roomGraph.json(),
 
     hullPoly: hullPoly.map(x => x.geoJson),
@@ -245,7 +250,7 @@ export function serializeLayout({
 /** @param {Geomorph.LayoutJson} layout */
 export function parseLayout({
   def, groups,
-  holes: allHoles, doors, windows, labels, navPoly, navDecomp, roomGraph,
+  holes: allHoles, doors, windows, labels, navPoly, navZone, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -266,7 +271,7 @@ export function parseLayout({
     windows: windows.map(parseConnectRect),
     labels,
     navPoly: navPoly.map(Poly.from),
-    navDecomp,
+    navZone,
     roomGraph: RoomGraph.fromJson(roomGraph),
 
     hullPoly: hullPoly.map(Poly.from),

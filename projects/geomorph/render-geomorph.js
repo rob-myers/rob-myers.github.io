@@ -52,7 +52,8 @@ export async function renderGeomorph(
   if (navTris) {
     ctxt.strokeStyle = navStroke;
     ctxt.lineWidth = 0.5;
-    drawTriangulation(ctxt, layout.navDecomp)
+    // drawTriangulation(ctxt, layout.navDecomp)
+    drawTriangulation(ctxt, layout.navZone)
   }
 
   // Draw walls without drawing over e.g. fuel, and symbol PNGs

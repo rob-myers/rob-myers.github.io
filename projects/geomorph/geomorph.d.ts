@@ -72,8 +72,8 @@ declare namespace Geomorph {
     labels: LayoutLabel[];
     /** The navigable area including doorways. */
     navPoly: P[];
-    /** A rich triangulation involving Steiner points */
-    navDecomp: Geom.TriangulationJson;
+    /** Serializable navigation zone used for pathfinding */
+    navZone: Nav.Zone;
     /** Connectivity graph involving holes and doors */
     roomGraph: G;
 

@@ -184,12 +184,14 @@ export function setStyle(ctxt, fillStyle, strokeStyle, lineWidth) {
 
 /**
  * @param {CanvasRenderingContext2D} ctxt 
- * @param {Geom.TriangulationJson} decomp 
+ * @param {Nav.Zone} decomp 
  */
 export function drawTriangulation(ctxt, decomp) {
-	for (const triIds of decomp.tris) {
+	// Assume only one group
+	const { groups: { 0: tris }, vertices } = decomp;
+	for (const { vertexIds } of tris) {
 		ctxt.beginPath();
-		fillRing(ctxt, triIds.map(i => decomp.vs[i]), false);
+		fillRing(ctxt, vertexIds.map(i => vertices[i]), false);
 		ctxt.stroke();
 	}
 }

@@ -13,9 +13,12 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - Revisit navgraphs
-  - 🚧 Precompute Pathfinding navgraph on server
-  - Use an extension of BaseGraph (with double-edges)
+  - ✅ Precompute Pathfinding navgraph on server
+  - 🚧 Use an extension of BaseGraph (with double-edges)
   - Link them to doors
+
+- Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`,
+  Also tidy after refs to holeId and holeIndex.
 
 - ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
 - 🚧 NavDemo1 init race condition?

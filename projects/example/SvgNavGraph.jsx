@@ -12,7 +12,7 @@ import usePathfinding from "../hooks/use-pathfinding";
 export default function SvgSvgNavGraph(props) {
 
   const { data: gm } = useGeomorphData(props.layoutKey);
-  const { data: pf } = usePathfinding(props.layoutKey, gm?.navDecomp, props.disabled);
+  const { data: pf } = usePathfinding(props.layoutKey, gm?.navZone, props.disabled);
 
   return (
     <PanZoom
