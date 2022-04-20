@@ -17,7 +17,7 @@ import fs from 'fs';
 import path from 'path';
 import childProcess from 'child_process';
 import { nanoid } from 'nanoid';
-import { error, info } from './service';
+import { error, info } from '../../projects/service/log';
 
 const [,, srcDir] = process.argv;
 

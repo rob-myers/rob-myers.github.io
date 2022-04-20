@@ -1,5 +1,4 @@
 /// <reference path="./deps.d.ts"/>
-import chalk from "chalk";
 import { assertDefined } from "../../projects/service/generic";
 
 export const rootFilenameRegex = /^(\d+x\d+)(.*)\.png$/;
@@ -139,23 +138,4 @@ function normalizeChars(word) {
     .replace(/[ -]+/g, '-')
     .replace(/[^a-z0-9-]/g, '')
   ;
-}
-
-/**
- * @param  {...string} args 
- */
-export function error(...args) {
-  console.error(chalk.red(...args));
-}
-/**
- * @param  {...string} args 
- */
-export function info(...args) {
-  console.info(chalk.yellow(...args));
-}
-/**
- * @param  {...string} args 
- */
-export function warn(...args) {
-  console.info(chalk.grey(...args));
 }

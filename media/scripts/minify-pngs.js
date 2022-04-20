@@ -13,7 +13,7 @@
 import fs from 'fs';
 import path from 'path';
 import childProcess from 'child_process';
-import { error, info } from './service';
+import { error, info } from '../../projects/service/log';
 
 const [,, srcDir] = process.argv;
 if (!srcDir || !fs.existsSync(srcDir)) {

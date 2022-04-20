@@ -1,5 +1,6 @@
 import { Poly } from "../geom";
 import { BaseGraph } from "./graph";
+import { error } from "../service/log";
 
 /**
  * @extends {BaseGraph<Graph.RoomGraphNode, Graph.RoomGraphEdgeOpts>}
@@ -133,7 +134,7 @@ export class RoomGraph extends BaseGraph {
             { dst: `room-${holeId}`, src: `door-${doorIndex}` },
           ]);
         } else {
-          console.error(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
+          error(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
           return [];
         }
       }),
@@ -145,7 +146,7 @@ export class RoomGraph extends BaseGraph {
             { dst: `room-${holeId}`, src: `window-${windowIndex}` },
           ]);
         } else {
-          console.error(`window ${windowIndex}: unexpected adjacent holes: ${holeIds}`)
+          error(`window ${windowIndex}: unexpected adjacent holes: ${holeIds}`)
           return [];
         }
       }),

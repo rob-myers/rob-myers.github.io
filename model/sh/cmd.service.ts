@@ -12,7 +12,7 @@ import { TtyShell } from './tty.shell';
 
 // Connections to "outside" i.e. react-query, rxjs
 import { queryCache } from 'projects/service/query-client';
-import { ensureWire } from 'projects/service/emit.service';
+import { ensureWire } from 'projects/service/wire';
 
 const commandKeys = {
   /** Change current key prefix */

@@ -50,13 +50,11 @@ import {
   geomorphsFilenameRegex,
   symbolsFilenameRegex,
   altSymbolsFilenameRegex,
-  error,
-  info,
-  warn,
   smallCraftFilenameRegex,
   metaFromSmallCraftFilename,
 } from './service';
 import { writeAsJson } from '../../projects/service/file';
+import { error, info, warn } from '../../projects/service/log';
 
 const [,, inputType, srcDir, dstDir] = process.argv;
 

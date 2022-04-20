@@ -1,11 +1,7 @@
 import { Subject } from "rxjs";
 
-const wire = {} as {
-  [wireKey: string]: Subject<
-    | NPC.NpcEvent
-    | NPC.PointerEvent
-  >;
-};
+/** @type {{ [wireKey: string]: Subject<NPC.NpcEvent | NPC.PointerEvent> }} */
+const wire = {};
 
 export function ensureWire(wireKey = 'default-wire') {
   return (

@@ -6,9 +6,9 @@
  */
 import path from 'path';
 import fs from 'fs';
-import { error, info } from './service';
 import { parseNpc, renderNpcSpriteSheets } from '../../projects/service/npc';
 import { writeAsJson } from '../../projects/service/file';
+import { error } from '../../projects/service/log';
 
 const [,, npcName] = process.argv;
 const npcInputDir = 'media/npc'

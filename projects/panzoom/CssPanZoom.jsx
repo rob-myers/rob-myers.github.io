@@ -6,7 +6,7 @@ import classNames from "classnames";
 import { css } from "goober";
 import { Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
-import { ensureWire } from '../service/emit.service';
+import { ensureWire } from '../service/wire';
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {

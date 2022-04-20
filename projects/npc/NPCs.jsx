@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
-import { ensureWire } from "../service/emit.service";
+import { ensureWire } from "../service/wire";
 import { Rect, Vect } from "../geom";
 import { pathfinding } from "../pathfinding/Pathfinding";
 import useStateRef from "../hooks/use-state-ref";
