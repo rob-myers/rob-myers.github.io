@@ -6,8 +6,6 @@ import { Channel } from './Channel';
 import { Vect } from '../geom';
 import { Triangle } from './Triangle';
 
-// TODO 🚧  can also search for paths over a FloorGraph
-
 /**
  * Defines an instance of the pathfinding module, with one or more zones.
  */
@@ -116,11 +114,11 @@ export class Pathfinding {
       return null; // We can't find any node
     }
 
-    const nodePath = AStar.search(
+    const nodePath = /** @type {Nav.GraphNode[]} */ (AStar.search(
       /** @type {Nav.Graph} */ (nodes),
       closestNode,
       farthestNode
-    );
+    ));
 
     // We have the corridor, now pull the rope
     const channel = new Channel;
@@ -220,7 +218,6 @@ export class Pathfinding {
         }
       });
     }
-
 
     return /** @type {Nav.GraphNode} */ (closestNode);
   }

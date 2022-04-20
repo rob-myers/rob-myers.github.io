@@ -135,31 +135,45 @@ declare namespace Graph {
   /**
    * Based on `Nav.GraphNode`
    */
-  interface FloorGraphNodeGeneric<V> {
+  interface FloorGraphNodeBase {
     type: 'tri';
-    /** `tri-${triId}-${grpId} */
+    /** `tri-${index} */
     id: string;
-
-    f: number;
-    g: number;
-    h: number;
+    /**
+     * Index of this node in its parent array,
+     * originally `Nav.GraphNode[]`.
+     */
+    index: number;
+    portals: number[][];
+    vertexIds: number[];
+  }
+  
+  interface FloorGraphNodeJson extends FloorGraphNodeBase {
+    centroid: Geom.VectJson;
+  }
+  
+  interface FloorGraphNode extends FloorGraphNodeBase {
+    centroid: Geom.Vect;
+    // A* related
+    f?: number;
+    g?: number;
+    h?: number;
     cost: number;
     visited: boolean;
     closed: boolean;
-    parent: null | GraphNode;
-    portals: number[][];
-    vertexIds: number[];
-    centroid: V;
+    parent: null | FloorGraphNode;
+    // This info is already in edges, yet useful for `AStar`
+    neighbours: number[];
   }
-
-  export type FloorGraphNode = FloorGraphNodeGeneric<Geom.Vect>;
 
   export type FloorGraphEdgeOpts = BaseEdgeOpts;
 
   export type FloorGraphJson = GraphJson<
-    FloorGraphNodeGeneric<Geom.VectJson>,
+    FloorGraphNodeJson,
     FloorGraphEdgeOpts
-  >;
+  > & {
+    vectors: Geom.VectJson[]
+  };
 
   export type FloorGraph = import('./floor-graph').FloorGraph;
 

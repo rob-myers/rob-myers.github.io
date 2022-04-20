@@ -1,9 +1,11 @@
 import { BinaryHeap } from './BinaryHeap';
 import { Utils } from './Utils';
 
+/** @typedef GraphNode @type {Nav.GraphNode | Graph.FloorGraphNode} */
+
 export class AStar {
 
-  /** @param {Nav.Graph} graph */
+  /** @param {GraphNode[]} graph */
   static init (graph) {
     for (let x = 0; x < graph.length; x++) {
       //for(var x in graph) {
@@ -18,10 +20,10 @@ export class AStar {
     }
   }
 
-  /** @param {Nav.Graph} graph */
+  /** @param {GraphNode[]} graph */
   static cleanUp (graph) {
     for (let x = 0; x < graph.length; x++) {
-      const node = /** @type {Partial<Nav.GraphNode>} */ (graph[x]);
+      const node = /** @type {Partial<GraphNode>} */ (graph[x]);
       delete node.f;
       delete node.g;
       delete node.h;
@@ -34,17 +36,17 @@ export class AStar {
 
   static heap () {
     return new BinaryHeap(
-      /** @param {Nav.GraphNode} node */
+      /** @param {GraphNode} node */
       function (node) {
-        return node.f;
+        return /** @type {number} */ (node.f);
       }
     );
   }
 
   /**
-   * @param {Nav.Graph} graph 
-   * @param {Nav.GraphNode} start 
-   * @param {Nav.GraphNode} end 
+   * @param {GraphNode[]} graph 
+   * @param {GraphNode} start 
+   * @param {GraphNode} end 
    */
   static search (graph, start, end) {
     this.init(graph);
@@ -86,10 +88,10 @@ export class AStar {
 
         // The g score is the shortest distance from start to current node.
         // We need to check if the path we have arrived at this neighbour is the shortest one we have seen yet.
-        const gScore = currentNode.g + neighbour.cost;
+        const gScore = /** @type {number} */ (currentNode.g) + neighbour.cost;
         const beenVisited = neighbour.visited;
 
-        if (!beenVisited || gScore < neighbour.g) {
+        if (!beenVisited || gScore < /** @type {number} */ (neighbour.g)) {
 
           // Found an optimal (so far) path to this node.  Take score for node to see how good it is.
           neighbour.visited = true;
@@ -123,8 +125,8 @@ export class AStar {
   }
 
   /**
-   * @param {Nav.Graph} graph 
-   * @param {Nav.GraphNode} node 
+   * @param {GraphNode[]} graph 
+   * @param {GraphNode} node 
    */
   static neighbours (graph, node) {
     const ret = [];

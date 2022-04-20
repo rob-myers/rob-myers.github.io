@@ -149,7 +149,7 @@ export class gmGraph extends BaseGraph {
   /**
    * @param {Geomorph.UseGeomorphsItem[]} gms 
    */
-  static from(gms) {
+  static fromGms(gms) {
     const graph = new gmGraph(gms);
 
     /** @type {Graph.GmGraphNode[]} */
