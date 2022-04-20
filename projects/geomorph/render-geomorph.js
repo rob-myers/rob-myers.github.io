@@ -55,6 +55,13 @@ export async function renderGeomorph(
     drawTriangulation(ctxt, layout.navDecomp)
   }
 
+  // Draw walls without drawing over e.g. fuel, and symbol PNGs
+  // NOTE currently dark grey for debug
+  const { singles, obstacles, walls } = layout.groups;
+  const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
+  ctxt.fillStyle = 'rgba(50, 50, 50, 1)';
+  fillPolygon(ctxt, wallsSansWindows);
+
   ctxt.lineJoin = 'round';
   hullSym.singles.forEach(({ poly, tags }) => {
     if (tags.includes('label')) {
@@ -83,13 +90,6 @@ export async function renderGeomorph(
     }
   });
   //#endregion
-
-  // Draw walls without drawing over windows
-  // We do this before PNGs, otherwise e.g. fuel will be obscured 
-  const { singles, obstacles, walls } = layout.groups;
-  const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
-  ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
-  fillPolygon(ctxt, wallsSansWindows);
 
   //#region symbol PNGs
   const innerItems = layout.items.slice(1);
