@@ -34,8 +34,8 @@ declare namespace Graph {
     isConnected(src: Node, dst: Node): boolean;
     getNodeByid(nodeid: string): Node | null;
 
-    json(): GraphJson<Node, EdgeOpts>;
-    from(json: GraphJson<Node, EdgeOpts>): this;
+    plainJson(): GraphJson<Node, EdgeOpts>;
+    plainFrom(json: GraphJson<Node, EdgeOpts>): this;
   }
 
   export interface GraphJson<Node extends BaseNode, EdgeOpts extends BaseEdgeOpts> {
@@ -127,6 +127,41 @@ declare namespace Graph {
   export type GmGraphEdgeOpts = BaseEdgeOpts;
 
   export type GmGraph = import('./gm-graph').gmGraph;
+
+  //#endregion
+  
+  //#region FloorGraph
+
+  /**
+   * Based on `Nav.GraphNode`
+   */
+  interface FloorGraphNodeGeneric<V> {
+    type: 'tri';
+    /** `tri-${triIndex} */
+    id: string;
+
+    f: number;
+    g: number;
+    h: number;
+    cost: number;
+    visited: boolean;
+    closed: boolean;
+    parent: null | GraphNode;
+    portals: number[][];
+    vertexIds: number[];
+    centroid: V;
+  }
+
+  export type FloorGraphNode = FloorGraphNodeGeneric<Geom.VectJson>;
+
+  export type FloorGraphEdgeOpts = BaseEdgeOpts;
+
+  export type FloorGraphJson = GraphJson<
+    FloorGraphNodeGeneric<Geom.VectJson>,
+    FloorGraphEdgeOpts
+  >;
+
+  export type FloorGraph = import('./floor-graph').FloorGraph;
 
   //#endregion
 

@@ -390,8 +390,12 @@ export class BaseGraph {
     }
   }
 
-  /** @returns {Graph.GraphJson<Node, EdgeOpts>} */
-  json() {
+  /**
+   * We assume serializable node has same type as graph node.
+   * If not, we'll add a custom method e.g. `json`.
+   * @returns {Graph.GraphJson<Node, EdgeOpts>}
+   */
+  plainJson() {
     return {
       nodes: this.nodesArray.map(deepClone),
       edges: this.edgesArray.map(edge => /** @type {*} */ (
@@ -401,10 +405,12 @@ export class BaseGraph {
   }
   
   /**
-   * We assume graph is currently empty
+   * We assume graph is currently empty.
+   * We assume serializable node has same type as graph node.
+   * If not, we'll add a custom method e.g. `from`.
    * @param {Graph.GraphJson<Node, EdgeOpts>} json 
    */
-  from(json) {
+  plainFrom(json) {
     const nodes = json.nodes.map(deepClone);
     this.registerNodes(nodes);
     json.edges.forEach(def => this.registerEdge(def));
@@ -416,6 +422,6 @@ export class BaseGraph {
    * @param {Graph.BaseGraphJson} json 
    */  
   static fromJson(json) {
-    return (new BaseGraph).from(json);
+    return (new BaseGraph).plainFrom(json);
   }
 }

@@ -149,15 +149,9 @@ export class gmGraph extends BaseGraph {
   /**
    * @param {Geomorph.UseGeomorphsItem[]} gms 
    */
-  static fromGmItems(gms) {
+  static from(gms) {
     const graph = new gmGraph(gms);
-    return graph.fromGmItems(gms);
-  }
 
-  /**
-   * @param {Geomorph.UseGeomorphsItem[]} gms 
-   */
-  fromGmItems(gms) {
     /** @type {Graph.GmGraphNode[]} */
     const nodes = [
       // NOTE geomorph nodes aligned to `gmItems`
@@ -191,7 +185,7 @@ export class gmGraph extends BaseGraph {
       ),
     ];
 
-    this.registerNodes(nodes);
+    graph.registerNodes(nodes);
 
     // Each gm node is connected to its door nodes (hull doors it has)
     /** @type {Graph.GmGraphEdgeOpts[]} */
@@ -240,12 +234,12 @@ export class gmGraph extends BaseGraph {
 
     [...localEdges, ...globalEdges].forEach(({ src, dst }) => {
       if (src && dst) {
-        this.connect({ src, dst });
-        this.connect({ src: dst, dst: src });
+        graph.connect({ src, dst });
+        graph.connect({ src: dst, dst: src });
       }
     });
 
-    return this;
+    return graph;
   }
 }
 

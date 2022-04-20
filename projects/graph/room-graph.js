@@ -88,8 +88,8 @@ export class RoomGraph extends BaseGraph {
   /**
    * @param {Graph.RoomGraphJson} json 
    */  
-  static fromJson(json) {
-    return (new RoomGraph).from(json);
+  static from(json) {
+    return (new RoomGraph).plainFrom(json);
   }
 
   /**
@@ -98,7 +98,7 @@ export class RoomGraph extends BaseGraph {
   * @param {Geomorph.ParsedLayout['windows']} windows 
   * @returns {Graph.RoomGraphJson}
   */
-  static fromHolesAndDoors(holes, doors, windows) {
+  static json(holes, doors, windows) {
 
     /**
      * For each door, the respective adjacent hole ids.

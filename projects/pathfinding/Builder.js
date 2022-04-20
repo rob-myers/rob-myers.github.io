@@ -2,11 +2,12 @@ import { Utils } from './Utils';
 import { Vect } from '../geom';
 
 export class Builder {
+
   /**
    * Constructs groups from the given navigation mesh.
    * @param  {Geom.TriangulationJson} tr
    */
-  static buildZone (tr) {
+  static buildZone(tr) {
     const navMesh = this._buildNavigationMesh(tr);
     navMesh.vertices.forEach((v) => {
       v.x = Utils.roundNumber(v.x, 2);

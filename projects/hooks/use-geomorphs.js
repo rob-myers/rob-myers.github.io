@@ -33,7 +33,7 @@ export default function useGeomorphs(defs) {
         const transform = def.transform || [1, 0, 0, 1, 0, 0];
         return geomorphDataToGeomorphsItem(data, transform);
       });
-      return { gms: items, gmGraph: gmGraph.fromGmItems(items) };
+      return { gms: items, gmGraph: gmGraph.from(items) };
     } else {
       return { gms: [], gmGraph: new gmGraph([]) }
     }

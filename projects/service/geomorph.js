@@ -135,8 +135,8 @@ export async function createLayout(def, lookup, triangleService) {
     .map((x) => singleToConnectorRect(x, holes)
   );
 
-  const roomGraphJson = RoomGraph.fromHolesAndDoors(holes, doors, windows);
-  const roomGraph = RoomGraph.fromJson(roomGraphJson);
+  const roomGraphJson = RoomGraph.json(holes, doors, windows);
+  const roomGraph = RoomGraph.from(roomGraphJson);
 
   return {
     key: def.key,
@@ -236,7 +236,7 @@ export function serializeLayout({
     labels,
     navPoly: navPoly.map(x => x.geoJson),
     navZone,
-    roomGraph: roomGraph.json(),
+    roomGraph: roomGraph.plainJson(),
 
     hullPoly: hullPoly.map(x => x.geoJson),
     hullRect,
@@ -272,7 +272,7 @@ export function parseLayout({
     labels,
     navPoly: navPoly.map(Poly.from),
     navZone,
-    roomGraph: RoomGraph.fromJson(roomGraph),
+    roomGraph: RoomGraph.from(roomGraph),
 
     hullPoly: hullPoly.map(Poly.from),
     hullRect,
@@ -438,4 +438,9 @@ export function computeLightPosition(connector, fromHoleId, lightOffset = 40) {
     console.warn(`hole ${fromHoleId}: connector: `, connector ,`: roomSign is null`);
   }
   return connector.poly.center.addScaledVector(connector.normal, lightOffset * (roomSign || 0));
+}
+
+/** @param {Nav.Zone} zone */
+export function createFloorGraph(zone) {
+
 }
