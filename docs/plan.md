@@ -12,13 +12,20 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- Revisit navgraphs
+  - 🚧 Precompute Pathfinding navgraph on server
+  - Use an extension of BaseGraph (with double-edges)
+  - Link them to doors
+
+- ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
+- 🚧 NavDemo1 init race condition?
+  - maybe fixed by React.useEffect -> useMemo in useGeomorphs
 - ✅ replace "stage" with "wire"
 - `useImperativeHandle` rather than providing an api?
-- NavDemo1 init race condition?
 
 - ✅ spawn has format `spawn rob ["$( position )"]`
 - ✅ NavDemo1 has 2 or more geomorphs
-- Stage can access spawnPoints from useGeomorphData
+- ❌ Stage can access spawnPoints from useGeomorphData
 
 - 🚧 `NavDemo1`
   - ✅ Circle with heart-beat and breath
