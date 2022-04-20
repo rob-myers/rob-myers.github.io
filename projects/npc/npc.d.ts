@@ -72,7 +72,7 @@ declare namespace NPC {
   }
 
   export interface PfData {
-    pathfinding: Pathfinding;
+    floorGraph: Graph.FloorGraph;
     zone: Nav.Zone;
   }
 

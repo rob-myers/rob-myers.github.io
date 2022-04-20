@@ -1,6 +1,6 @@
+import { FloorGraph } from "projects/graph/floor-graph";
 import { useQuery } from "react-query";
-import { pathfinding, Pathfinding } from "../pathfinding/Pathfinding";
-import { assertDefined } from "../service/generic";
+import { pathfinding } from "../pathfinding/Pathfinding";
 
 /**
  * @param {string} zoneKey 
@@ -10,9 +10,13 @@ import { assertDefined } from "../service/generic";
  */
 export default function usePathfinding(zoneKey, navZone, disabled) {
   return useQuery(zoneKeyToQueryKey(zoneKey), () => {
-    const zone = assertDefined(navZone);
+    const zone = /** @type {Nav.Zone} */ (navZone);
     pathfinding.setZoneData(zoneKey, zone);
-    return { pathfinding, zone };
+
+    // TODO 🚧 test create FloorGraph
+    const floorGraph = FloorGraph.fromZone(zone);
+
+    return { zone, floorGraph };
   }, {
     enabled: !!navZone && !disabled,
     keepPreviousData: true,

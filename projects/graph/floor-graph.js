@@ -1,6 +1,8 @@
 import { Vect } from "../geom";
 import { BaseGraph } from "./graph";
 import { Utils } from "../pathfinding/Utils";
+import { AStar } from "../pathfinding/AStar";
+import { Channel } from "../pathfinding/Channel";
 
 /**
  * @extends {BaseGraph<Graph.FloorGraphNode, Graph.FloorGraphEdgeOpts>}
@@ -11,6 +13,38 @@ export class FloorGraph extends BaseGraph {
   vectors = [];
 
   /**
+   * https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
+   * @param {Geom.VectJson} src
+   * @param {Geom.VectJson} dst 
+   */
+  findPath(src, dst) {
+    const closestNode = this.getClosestNode(src);
+    const farthestNode = this.getClosestNode(dst);
+    if (!closestNode || !farthestNode) {
+      return null; // We can't find any node
+    }
+
+    const nodePath = /** @type {Graph.FloorGraphNode[]} */ (AStar.search(
+      this.nodesArray,
+      closestNode,
+      farthestNode
+    ));
+
+    const channel = this.computeStringPull(src, dst, nodePath);
+    const path = (/** @type {Geom.VectJson[]} */ (channel.path)).map(Vect.from);
+    
+    // Omit 1st point and discard adjacent repetitions
+    const normalised = path.slice(1).reduce((agg, p) => {
+      return agg.length && p.equals(agg[agg.length - 1])
+        ? agg
+        : agg.concat(p)
+    }, /** @type {Geom.Vect[]} */ ([]));
+
+    return { path: normalised, nodePath };
+  }
+
+  /**
+   * https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L78
    * Returns the closest node to the target position.
    * @param  {Geom.VectJson} position
    */
@@ -42,6 +76,19 @@ export class FloorGraph extends BaseGraph {
   }
 
   /**
+   * @private
+   * @param {Graph.FloorGraphNode} a 
+   * @param {Graph.FloorGraphNode} b
+   */
+  getPortalFromTo(a, b) {
+    for (let i = 0; i < a.neighbours.length; i++) {
+      if (a.neighbours[i] === b.index) {
+        return a.portals[i];
+      }
+    }
+  }
+
+  /**
    * We are casting various `Geom.Vect` as `Geom.VectJson`s
    * @returns {Graph.FloorGraphJson}
    */  
@@ -50,6 +97,32 @@ export class FloorGraph extends BaseGraph {
       ...this.plainJson(),
       vectors: this.vectors,
     };
+  }
+
+  /**
+   * @param {Geom.VectJson} src
+   * @param {Geom.VectJson} dst
+   * @param {Graph.FloorGraphNode[]} nodePath 
+   */
+  computeStringPull(src, dst, nodePath) {
+    // We have the corridor, now pull the rope
+    const channel = new Channel;
+    channel.push(src);
+    for (let i = 0; i < nodePath.length; i++) {
+      const polygon = nodePath[i];
+      const nextPolygon = nodePath[i + 1];
+
+      if (nextPolygon) {
+        const portals = /** @type {number[]} */ (this.getPortalFromTo(polygon, nextPolygon));
+        channel.push(
+          this.vectors[portals[0]],
+          this.vectors[portals[1]],
+        );
+      }
+    }
+    channel.push(dst);
+    channel.stringPull();
+    return channel;
   }
 
   /**

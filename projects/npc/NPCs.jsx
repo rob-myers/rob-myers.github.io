@@ -32,13 +32,12 @@ export default function NPCs(props) {
        */
       getLocalNavPath(gmId, src, dst) {
         const zoneKey = props.gmGraph.gms[gmId].key;
-        const groupId = pathfinding.getGroup(zoneKey, src);
-        if (groupId === null) {
-          return [];
-        } else {
-          const result = pathfinding.findPath(src, Vect.from(dst), zoneKey, groupId);
-          return result ? [Vect.from(src)].concat(result.path) : [];
-        }
+        const groupId = 0;
+        // TODO 🚧 use floorGraph.findPath
+        const {floorGraph} = nav.pfs[gmId]
+        // const groupId = pathfinding.getGroup(zoneKey, src);
+        const result = pathfinding.findPath(src, Vect.from(dst), zoneKey, groupId);
+        return result ? [Vect.from(src)].concat(result.path) : [];
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(el) {
@@ -51,7 +50,7 @@ export default function NPCs(props) {
         }
       },
     };
-  });
+  }, { deps: [nav] });
   
   React.useEffect(() => {
     const wire = ensureWire(props.wireKey);
