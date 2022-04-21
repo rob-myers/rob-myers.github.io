@@ -31,12 +31,8 @@ export default function NPCs(props) {
        * @param {Geom.VectJson} dst 
        */
       getLocalNavPath(gmId, src, dst) {
-        const zoneKey = props.gmGraph.gms[gmId].key;
-        const groupId = 0;
-        // TODO 🚧 use floorGraph.findPath
-        const {floorGraph} = nav.pfs[gmId]
-        // const groupId = pathfinding.getGroup(zoneKey, src);
-        const result = pathfinding.findPath(src, Vect.from(dst), zoneKey, groupId);
+        const pf = nav.pfs[gmId]
+        const result = pf.graph.findPath(src, dst);
         return result ? [Vect.from(src)].concat(result.path) : [];
       },
       /** @type {React.RefCallback<HTMLDivElement>} */

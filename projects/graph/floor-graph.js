@@ -162,7 +162,7 @@ export class FloorGraph extends BaseGraph {
       );
     }
 
-    graph.vectors = vertices;
+    graph.vectors = vertices.map(Vect.from);
 
     return graph;
   }

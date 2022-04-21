@@ -13,10 +13,10 @@ export default function usePathfinding(zoneKey, navZone, disabled) {
     const zone = /** @type {Nav.Zone} */ (navZone);
     pathfinding.setZoneData(zoneKey, zone);
 
-    // TODO 🚧 test create FloorGraph
-    const floorGraph = FloorGraph.fromZone(zone);
+    // TODO 🚧 move computation to json
+    const graph = FloorGraph.fromZone(zone);
 
-    return { zone, floorGraph };
+    return { graph };
   }, {
     enabled: !!navZone && !disabled,
     keepPreviousData: true,

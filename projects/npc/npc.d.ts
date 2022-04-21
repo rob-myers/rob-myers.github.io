@@ -72,8 +72,7 @@ declare namespace NPC {
   }
 
   export interface PfData {
-    floorGraph: Graph.FloorGraph;
-    zone: Nav.Zone;
+    graph: Graph.FloorGraph;
   }
 
   // OLD BELOW

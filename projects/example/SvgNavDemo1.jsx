@@ -69,14 +69,13 @@ export default function SvgNavDemo1(props) {
         {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
         <g className="navtris">
-          {!props.disabled && pf?.zone.groups.map(nodes => nodes.map(({ vertexIds}) =>
-            <polygon className="navtri" points={`${vertexIds.map(id => pf.zone.vertices[id])}`} />
-          ))}
+          {!props.disabled && pf?.graph.nodesArray.map(({ vertexIds }) =>
+            <polygon className="navtri" points={`${vertexIds.map(id => pf.graph.vectors[id])}`} />
+          )}
         </g>
 
         {pf && <NPCsTest defs={state.defs} onLoad={api => state.api = api} />}
 
-        {/* TESTING */}
         {gm && <Light init={state.testLight} walls={gm.groups.walls} hull={gm.hullPoly} />}
 
         <Messages
@@ -107,7 +106,7 @@ const rootCss = css`
     fill: transparent;
     &:hover {
       fill: rgba(0, 0, 0, 0.03);
-      stroke: #888;
+      stroke: #bbb;
     }
   }
 

@@ -25,8 +25,8 @@ export default function SvgSvgNavGraph(props) {
       {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />}
 
       {pf && !props.disabled && <>
-        {pf.zone.groups.map(nodes =>
-          nodes.map(({ id, centroid, neighbours }) => <g key={id}>
+        {pf.graph.nodesArray.map(({ id, centroid, neighbours }, _, nodes) =>
+          <g key={id}>
             {neighbours.map(id => (
               <line
                 className="edge"
@@ -36,27 +36,25 @@ export default function SvgSvgNavGraph(props) {
                 y2={nodes[id].centroid.y}
               />
             ))}
-          </g>)
+          </g>
         )}
 
-        {pf.zone.groups.map(nodes =>
-          nodes.map(({ vertexIds }) =>
-            <polygon
-              className="navtri"
-              points={`${vertexIds.map(id => pf.zone?.vertices[id])}`}
-            />
-        ))}
+        {pf.graph.nodesArray.map(({ vertexIds }) =>
+          <polygon
+            className="navtri"
+            points={`${vertexIds.map(id => pf.graph.vectors[id])}`}
+          />
+        )}
 
-        {pf.zone.groups.map(nodes =>
-          nodes.map(({ id, centroid }) =>
-            <circle
-              key={id}
-              className="node"
-              cx={centroid.x}
-              cy={centroid.y}
-              r={2}
-            />
-        ))}
+        {pf.graph.nodesArray.map(({ id, centroid }) =>
+          <circle
+            key={id}
+            className="node"
+            cx={centroid.x}
+            cy={centroid.y}
+            r={2}
+          />
+        )}
       </>
       }
     </PanZoom>

@@ -54,9 +54,9 @@ export default function SvgStringPull(props) {
       >
         {gm && <image {...gm.pngRect} className="geomorph" href={geomorphPngPath(layoutKey)} />}
 
-        {!props.disabled && pf?.zone.groups.map(nodes => nodes.map(({ vertexIds }) =>
-          <polygon className="navtri" points={`${vertexIds.map(id => pf?.zone.vertices[id])}`} />
-        ))}
+        {!props.disabled && pf?.graph.nodesArray.map(({ vertexIds }) =>
+          <polygon className="navtri" points={`${vertexIds.map(id => pf.graph.vectors[id])}`} />
+        )}
 
         {gm && <>
           <DraggableNode
@@ -91,17 +91,14 @@ const rootCss = css`
   border: 1px solid #555555;
   height: inherit;
 
-  image.geomorph {
+  /* image.geomorph, image.icon {
     filter: invert(100%);
-  }
-  image.icon {
-    filter: invert(100%);
-  }
+  } */
 
   polyline.navpath {
     fill: none;
     stroke: #083;
-    stroke-width: 4;
+    stroke-width: 2;
     stroke-dasharray: 8px;
     stroke-dashoffset: 16px;
   }
@@ -114,7 +111,7 @@ const rootCss = css`
   polygon.navtri {
     fill: transparent;
     &:hover {
-      stroke: #2b9900;
+      stroke: red;
     }
   }
 `;

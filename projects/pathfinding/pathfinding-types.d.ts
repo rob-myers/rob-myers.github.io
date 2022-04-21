@@ -27,7 +27,7 @@ declare namespace Nav {
   }
 
   export interface Zone {
-    vertices: Vect[];
+    vertices: VectJson[];
     groups: GraphNode[][];
   }
 
