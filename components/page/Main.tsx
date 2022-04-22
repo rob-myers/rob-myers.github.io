@@ -13,14 +13,11 @@ export default function Main({ children }: React.PropsWithChildren<{}>) {
 }
 
 export const rootCss = css`
-  max-width: 1024px;
+  max-width: 1280px;
   width: 100%;
 
-  padding: 40px 64px;
-  @media(max-width: 1024px) {
-    padding: 32px 0 32px 40px;
-    margin: 0;
-  }
+  padding: 32px 0 32px 40px;
+  margin: 0;
   @media(max-width: 600px) {
     padding: 0;
   }

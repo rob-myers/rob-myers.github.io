@@ -53,7 +53,7 @@ const articleCss = css`
   
   padding: 64px 164px 96px 164px;
   @media(max-width: 1024px) {
-    padding: 64px 128px 64px 128px;
+    padding: 64px 48px;
   }
   @media(max-width: 600px) {
     padding: 8px 12px;
