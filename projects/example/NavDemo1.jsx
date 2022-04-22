@@ -187,7 +187,7 @@ export default function NavDemo1(props) {
         gms={gms}
         gmGraph={gmGraph}
         wire={state.wire}
-        onLoad={api => state.doorsApi = api}
+        onLoad={api => { state.doorsApi = api; render(); }}
       />
       
     </CssPanZoom>
