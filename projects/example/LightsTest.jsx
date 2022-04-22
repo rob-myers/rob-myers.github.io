@@ -71,7 +71,7 @@ export default function LightsTest(props) {
         }, delayUpdate);
       },
     };
-  }, { overwrite: { isHoleShown: true } });
+  }, { overwrite: { isHoleShown: true }, deps: [gm] });
 
   React.useEffect(() => {
     if (gm) {
