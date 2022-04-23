@@ -16,7 +16,7 @@ export default function useStateRef(
   opts = {},
 ) {
     const [state] = /**
-      @type {[State & { _prevFn?: string; _prevInit?: State; onChangeDeps?: () => void; }, any]}
+      @type {[State & { _prevFn?: string; _prevInit?: State; }, any]}
     */ (
       React.useState(initializer)
     );

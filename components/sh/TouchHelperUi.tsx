@@ -1,3 +1,4 @@
+import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
 import type { Session } from 'store/session.store';
@@ -32,17 +33,18 @@ export function TouchHelperUI(props: {
         } 
         xterm.xterm.focus();
       },
-      onChangeDeps() {
-        const { xterm } = props.session.ttyShell;
-        if (!localStorage.getItem(localStorageKey)) {
-          // force lowercase by default on touch device
-          localStorage.setItem(localStorageKey, 'true');
-        }
-        xterm.forceLowerCase = localStorage.getItem(localStorageKey) === 'true';
-        return () => xterm.forceLowerCase = false;
-      },
     };
   });
+  
+  React.useEffect(() => {
+    const { xterm } = props.session.ttyShell;
+    if (!localStorage.getItem(localStorageKey)) {
+      // force lowercase by default on touch device
+      localStorage.setItem(localStorageKey, 'true');
+    }
+    xterm.forceLowerCase = localStorage.getItem(localStorageKey) === 'true';
+    return () => void (xterm.forceLowerCase = false);
+  }, []);
 
   return (
     <div
