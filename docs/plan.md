@@ -14,13 +14,13 @@ __Aim towards website release__.
 
 - Revisit navgraphs
   - ✅ Precompute pathfinding navgraph on server
-  - 🚧 Use an extension of BaseGraph (with double-edges)
+  - Use an extension of BaseGraph (with double-edges)
     - ✅ Define `FloorGraph` and `FloorGraph.from`
     - ✅ Extend approach of Pathfinding to FloorGraph datatype
     - ✅ Compute FloorGraph in geomorph json
     - ✅ Go back to navZone in json because _much smaller_
     - ✅ Clean away unnecessary code e.g. `Pathfinding`
-  - Link them to doors
+    - 🚧 Link them to doors
 
 - Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.
 - Remove: refs to holeId and holeIndex.

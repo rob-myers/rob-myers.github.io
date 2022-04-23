@@ -1,11 +1,12 @@
 import { BinaryHeap } from './BinaryHeap';
 import { Utils } from './Utils';
 
-/** @typedef GraphNode @type {Nav.GraphNode | Graph.FloorGraphNode} */
+// NOTE could replace `Graph.FloorGraphNode` by original
+// `Nav.Node` and things will still work
 
 export class AStar {
 
-  /** @param {GraphNode[]} graph */
+  /** @param {Graph.FloorGraphNode[]} graph */
   static init (graph) {
     for (let x = 0; x < graph.length; x++) {
       //for(var x in graph) {
@@ -20,10 +21,10 @@ export class AStar {
     }
   }
 
-  /** @param {GraphNode[]} graph */
+  /** @param {Graph.FloorGraphNode[]} graph */
   static cleanUp (graph) {
     for (let x = 0; x < graph.length; x++) {
-      const node = /** @type {Partial<GraphNode>} */ (graph[x]);
+      const node = /** @type {Partial<Graph.FloorGraphNode>} */ (graph[x]);
       delete node.f;
       delete node.g;
       delete node.h;
@@ -36,7 +37,7 @@ export class AStar {
 
   static heap () {
     return new BinaryHeap(
-      /** @param {GraphNode} node */
+      /** @param {Graph.FloorGraphNode} node */
       function (node) {
         return /** @type {number} */ (node.f);
       }
@@ -44,9 +45,9 @@ export class AStar {
   }
 
   /**
-   * @param {GraphNode[]} graph 
-   * @param {GraphNode} start 
-   * @param {GraphNode} end 
+   * @param {Graph.FloorGraphNode[]} graph 
+   * @param {Graph.FloorGraphNode} start 
+   * @param {Graph.FloorGraphNode} end 
    */
   static search (graph, start, end) {
     this.init(graph);
@@ -125,8 +126,8 @@ export class AStar {
   }
 
   /**
-   * @param {GraphNode[]} graph 
-   * @param {GraphNode} node 
+   * @param {Graph.FloorGraphNode[]} graph 
+   * @param {Graph.FloorGraphNode} node 
    */
   static neighbours (graph, node) {
     const ret = [];

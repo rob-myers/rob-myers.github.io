@@ -162,7 +162,11 @@ declare namespace Graph {
     visited: boolean;
     closed: boolean;
     parent: null | FloorGraphNode;
-    // This info is already in edges, yet useful for `AStar`
+    /**
+     * This info is already in edges, yet used by `AStar`.
+     * We could remove it, but prefer to leave `AStar` as is,
+     * recalling it originally comes from three-pathfinding.
+     */
     neighbours: number[];
   }
 
