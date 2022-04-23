@@ -140,16 +140,18 @@ export async function createLayout(def, lookup, triangleService) {
    */
   const navZone = Builder.buildZone(navDecomp);
 
-  // TODO 🚧 link doors and triangles
-  // TODO 🚧 door seg vs triangle using geom.lineSegIntersectsPolygon
+  // TODO ✅ link doors and triangles
+  // TODO ✅ store relationship somehow
+  /** @type {number[][]}} */
+  const doorNodeIds = [];
   const navNodes = navZone.groups[0];
   const tempTri = new Poly;
   doors.forEach(({ seg: [u, v] }, doorId) => {
     navNodes.forEach((node, nodeId) => {
       tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid])
-      const intersects = geom.lineSegIntersectsPolygon(u, v, tempTri);
-      if (intersects) {
-        console.log({ doorId, nodeId })
+      if (geom.lineSegIntersectsPolygon(u, v, tempTri)) {
+        (doorNodeIds[doorId] = doorNodeIds[doorId] || []).push(nodeId);
+        // console.log({ doorId, nodeId })
       }
     })
   });
@@ -169,6 +171,7 @@ export async function createLayout(def, lookup, triangleService) {
     labels,
     navPoly,
     navZone,
+    doorNodeIds: doorNodeIds,
     roomGraph,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
@@ -233,7 +236,7 @@ function parseConnectRect(x) {
 /** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout({
   def, groups,
-  holes: allHoles, doors, windows, labels, navPoly, navZone, roomGraph,
+  holes: allHoles, doors, windows, labels, navPoly, navZone, doorNodeIds: doorIdToNodeIds, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -255,6 +258,7 @@ export function serializeLayout({
     labels,
     navPoly: navPoly.map(x => x.geoJson),
     navZone,
+    doorNodeIds: doorIdToNodeIds,
     roomGraph: roomGraph.plainJson(),
 
     hullPoly: hullPoly.map(x => x.geoJson),
@@ -269,7 +273,7 @@ export function serializeLayout({
 /** @param {Geomorph.LayoutJson} layout */
 export function parseLayout({
   def, groups,
-  holes: allHoles, doors, windows, labels, navPoly, navZone, roomGraph,
+  holes: allHoles, doors, windows, labels, navPoly, navZone, doorNodeIds: doorIdToNodeIds, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -291,6 +295,7 @@ export function parseLayout({
     labels,
     navPoly: navPoly.map(Poly.from),
     navZone,
+    doorNodeIds: doorIdToNodeIds,
     roomGraph: RoomGraph.from(roomGraph),
 
     hullPoly: hullPoly.map(Poly.from),

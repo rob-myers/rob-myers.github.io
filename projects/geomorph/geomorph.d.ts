@@ -74,6 +74,8 @@ declare namespace Geomorph {
     navPoly: P[];
     /** Serializable navigation zone used for pathfinding */
     navZone: Nav.Zone;
+    /** Doors index to indices in `navZone.nodes`  */
+    doorNodeIds: number[][];
     /** Connectivity graph involving holes and doors */
     roomGraph: G;
 

@@ -3,6 +3,7 @@ import { Poly, Rect, Vect } from '../geom';
 class GeomService {
 
   /**
+   * https://github.com/davidfig/intersects/blob/master/line-polygon.js
    * Does line segment intersect polygon, __ignoring holes__
    * @param {Geom.VectJson} u 
    * @param {Geom.VectJson} v 
