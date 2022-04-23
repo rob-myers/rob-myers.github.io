@@ -3,6 +3,48 @@ import { Poly, Rect, Vect } from '../geom';
 class GeomService {
 
   /**
+   * Does line segment intersect polygon, __ignoring holes__
+   * @param {Geom.VectJson} u 
+   * @param {Geom.VectJson} v 
+   * @param {Geom.Poly} polygon Only outline taken into consideration
+   * @param {number} [tolerance] 
+   */
+  lineSegIntersectsPolygon(u, v, polygon, tolerance) {
+    const points = polygon.outline
+    const length = points.length
+  
+    // check if first point is inside the shape (this covers if the line is completely enclosed by the shape)
+    if (polygon.outlineContains(u, tolerance)) {
+      return true
+    }
+
+    // check for intersections for all of the sides
+    for (let i = 0; i < length; i ++) {
+      const j = (i + 1) % length
+      // Originally https://github.com/davidfig/intersects/blob/9fba4c88dcf28998ced7df7c6e744646eac1917d/line-line.js#L23
+      if (geom.getLineSegsIntersection(u, v, points[i], points[j]) !== null) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
+   * https://github.com/davidfig/intersects/blob/master/line-point.js
+   * @param {Geom.Vect} u 
+   * @param {Geom.Vect} v 
+   * @param {Geom.Vect} p 
+   * @param {number} [tolerance] Default 1
+   * @returns 
+   */
+  lineSegIntersectsPoint(u, v, p, tolerance = 1) {
+    tolerance = tolerance || 1
+    return Math.abs(
+      u.distanceToSquared(v) - (u.distanceToSquared(p) + v.distanceToSquared(p))
+    ) <= tolerance;
+  }
+
+  /**
    * Get segment through center along 'x+'.
    * @param {Geom.AngledRect<Geom.Rect>} _ 
    */
@@ -85,10 +127,10 @@ class GeomService {
    *
    * If they intersect, return lambda in [0, 1] s.t. intersection is
    * `p0 + (p1 - p0) * lambda`, else return null.
-   * @param {Vect} p0
-   * @param {Vect} p1
-   * @param {Vect} q0
-   * @param {Vect} q1
+   * @param {Geom.VectJson} p0
+   * @param {Geom.VectJson} p1
+   * @param {Geom.VectJson} q0
+   * @param {Geom.VectJson} q1
    */
   getLineSegsIntersection(p0, p1, q0, q1) {
     let dpx = p1.x - p0.x,

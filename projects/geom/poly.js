@@ -155,6 +155,40 @@ export class Poly {
   }
 
   /**
+   * https://github.com/davidfig/intersects/blob/master/polygon-point.js
+   * polygon-point collision
+   * based on https://stackoverflow.com/a/17490923/1955997
+   * @param {Geom.VectJson} p point
+   * @param {number} [tolerance] maximum distance of point to polygon's edges that triggers collision (see pointLine)
+   */
+  outlineContains(p, tolerance = 0.1) {
+    const points = this.outline;
+    const length = points.length
+    let c = false
+    let i, j
+    for (i = 0, j = length - 1; i < length; i++) {
+      if (
+        (points[i].y > p.y) !== (points[j].y > p.y)
+        &&
+        (p.x < (points[j].x - points[i].x) * (p.y - points[i].y) / (points[j].y - points[i].y) + points[i].x)
+      ) {
+        c = !c
+      }
+      j = i
+    }
+    if (c) {
+      return true
+    }
+    for (i = 0; i < length; i++) {
+      tempPoint1.copy(i === length - 1 ? points[0] : points[i + 1])
+      if (geom.lineSegIntersectsPoint(points[i], tempPoint1, tempPoint2.copy(p), tolerance)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  /**
    * Create a new inset or outset version of this polygon,
    * by cutting/unioning quads.
    * - assume outer points have anticlockwise orientation.
@@ -425,4 +459,5 @@ export class Poly {
   
 }
 
-const tempPoint = new Vect;
+const tempPoint1 = new Vect;
+const tempPoint2 = new Vect;
