@@ -1,7 +1,6 @@
 import React from "react";
 import { css } from "goober";
 import { Vect } from "../../geom";
-import { pathfinding } from '../../pathfinding/Pathfinding';
 import DraggableNode from "./DraggableNode";
 import { getInternalNpcApi, navNodeRadius } from "./npc-internals";
 import DraggableRay from "./DraggableRay";
@@ -12,8 +11,6 @@ export default function NPCsTest(props) {
   const [state] = React.useState(() => {
     
     const { defs } = props;
-    const groupIds = defs.map(def => pathfinding.getGroup(def.zoneKey, def.src)); // Assume zones exist
-    groupIds.forEach((x, i) => x === null && console.warn(`NPC: ${defs[i].key}: init.src: ${defs[i].src.x}, ${defs[i].src.y}: no group found`));
 
     // Each NPC has an API
     const apis = defs.map((def, i) => {
@@ -34,7 +31,7 @@ export default function NPCsTest(props) {
         move: /** @type {Animation} */ ({}),
         look: /** @type {Animation} */ ({}),
         geom: { animPath: [], navPath: [], navPathPolys: [] },
-        aux: { groupId: groupIds[i], count: 0, edges: [], elens: [], sofars: [], total: 0, angs: [] },
+        aux: { count: 0, edges: [], elens: [], sofars: [], total: 0, angs: [] },
 
         getPosition() {
           // https://stackoverflow.com/a/4976554/2917822

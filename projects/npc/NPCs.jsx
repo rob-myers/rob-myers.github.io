@@ -3,7 +3,6 @@ import classNames from "classnames";
 import { css } from "goober";
 import { ensureWire } from "../service/wire";
 import { Rect, Vect } from "../geom";
-import { pathfinding } from "../pathfinding/Pathfinding";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";

@@ -4,13 +4,13 @@ import classNames from "classnames";
 
 import * as defaults from "./defaults";
 import { Rect, Vect } from "../geom";
-import { pathfinding } from '../pathfinding/Pathfinding';
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "./svg-nav-demo/DraggableNode";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
+import useStateRef from "../hooks/use-state-ref";
 
 /** @param {{ disabled?: boolean }} props */
 export default function SvgStringPull(props) {
@@ -21,7 +21,7 @@ export default function SvgStringPull(props) {
   const { data: gm } = useGeomorphData(layoutKey);
   const { data: pf } = usePathfinding(zoneKey, gm?.navZone, props.disabled);
 
-  const [state] = React.useState(() => ({
+  const state = useStateRef(() => ({
     rootEl: /** @type {SVGGElement} */ ({}),
     pathEl: /** @type {null | SVGPolylineElement} */ (null),
 
@@ -30,16 +30,15 @@ export default function SvgStringPull(props) {
     path: /** @type {Vect[]} */ ([]),
 
     updatePath: () => {
-      const groupId = pathfinding.getGroup(zoneKey, state.source);
-      if (groupId !== null) {
+      if (pf) {
         state.path = [state.source.clone()].concat(
-          pathfinding.findPath(state.source, state.target, zoneKey, groupId)?.path || []
+          pf.graph.findPath(state.source, state.target)?.path || []
         );
         state.pathEl = state.pathEl || state.rootEl.querySelector('polyline.navpath');
         state.pathEl?.setAttribute('points', `${state.path}`);
       }
     },
-  }));
+  }), { deps: [pf] });
 
   return (
     <PanZoom gridBounds={defaults.gridBounds} initViewBox={defaults.initViewBox} maxZoom={6}>

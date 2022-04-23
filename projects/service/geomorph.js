@@ -6,7 +6,7 @@ import { extractGeomsAt, hasTitle } from './cheerio';
 import { geom } from './geom';
 import { labelMeta } from '../geomorph/geomorph.model';
 import { RoomGraph } from '../graph/room-graph';
-import { Pathfinding } from '../pathfinding/Pathfinding';
+import { Builder } from '../pathfinding/Builder';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -109,7 +109,7 @@ export async function createLayout(def, lookup, triangleService) {
     : { vs: [], tris: [] };
 
   // Computed using approach from three-pathfinding
-  const navZone = Pathfinding.createZone(navDecomp);
+  const navZone = Builder.buildZone(navDecomp);
 
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');

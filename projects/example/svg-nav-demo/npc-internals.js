@@ -1,5 +1,6 @@
+import { zoneKeyToQueryKey } from "projects/hooks/use-pathfinding";
+import { getCached } from "projects/service/query-client";
 import { Poly, Vect } from "../../geom";
-import { pathfinding } from '../../pathfinding/Pathfinding';
 
 /**
  * @param {NPCTest.NPCApi} api
@@ -142,9 +143,6 @@ export function getInternalNpcApi(api) {
     },
 
     shouldCancelNavDrag(curr, next, type) {
-      if (pathfinding.getGroup(def.zoneKey, next) === null) {
-        return true; // NOTE currently permit ends to lie in distinct groups
-      }
       const dragging = curr.distanceTo(next) >= 20;
       const npcPos = api.getPosition();
       const other = type === 'src' ? api.dstApi.getPosition() : api.srcApi.getPosition();
@@ -186,16 +184,10 @@ export function getInternalNpcApi(api) {
     },
 
     updateNavPath(dst) {
-      const dstGroupId = pathfinding.getGroup(def.zoneKey, dst);
-      if (dstGroupId === null) {
-        return console.warn(`computeNavPath: dst: ${dst.x}, ${dst.y}: no group found`);
-      } else if (dstGroupId !== api.aux.groupId) {
-        // NOTE props.init.groupId never changes
-        return console.warn(`computeNavPath: (src, dst) have different groupIds: (${api.aux.groupId}, ${dstGroupId})`);
-      }
-
       const npcPos = api.getPosition();
-      const computedPath = (pathfinding.findPath(npcPos, dst, def.zoneKey, api.aux.groupId)?.path || []);
+      /** @type {NPC.PfData} */
+      const pf = (getCached(zoneKeyToQueryKey(def.zoneKey)));
+      const computedPath = pf?.graph.findPath(npcPos, dst)?.path || [];
       computedPath.forEach(p => p.precision(2));
       api.geom.navPath = ([Vect.from(npcPos)].concat(computedPath));
       api.geom.animPath = api.geom.navPath.slice(); // Same initially

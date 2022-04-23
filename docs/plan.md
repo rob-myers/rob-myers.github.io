@@ -19,7 +19,7 @@ __Aim towards website release__.
     - ✅ Extend approach of Pathfinding to FloorGraph datatype
     - ✅ Compute FloorGraph in geomorph json
     - ✅ Go back to navZone in json because _much smaller_
-    - 🚧 Clean away unnecessary code e.g. `Pathfinding`?
+    - ✅ Clean away unnecessary code e.g. `Pathfinding`
   - Link them to doors
 
 - Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.

@@ -39,8 +39,6 @@ declare namespace NPCTest {
       navPathPolys: Geom.Poly[];
     };
     readonly aux: {
-      /** Group id of navpath  */
-      readonly groupId: null | number;
       /** How many times has a new animation been created? */
       count: number;
       edges: ({ p: Geom.Vect; q: Geom.Vect })[];

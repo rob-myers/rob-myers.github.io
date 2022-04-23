@@ -2,7 +2,6 @@
 declare namespace NPC {
   
   import { Subject } from 'rxjs';
-  import { Pathfinding } from '../pathfinding/Pathfinding';
   
   export interface NPCsProps {
     disabled?: boolean;

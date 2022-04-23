@@ -1,6 +1,5 @@
 import { FloorGraph } from "projects/graph/floor-graph";
 import { useQuery } from "react-query";
-import { pathfinding } from "../pathfinding/Pathfinding";
 
 /**
  * @param {string} zoneKey 
@@ -24,6 +23,6 @@ export default function usePathfinding(zoneKey, navZone, disabled) {
 }
 
 /** @param {string} zoneKey */
-function zoneKeyToQueryKey(zoneKey) {
+export function zoneKeyToQueryKey(zoneKey) {
   return `pathfinding-${zoneKey}`;
 }
