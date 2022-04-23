@@ -108,9 +108,6 @@ export async function createLayout(def, lookup, triangleService) {
       )
     : { vs: [], tris: [] };
 
-  // Computed using approach from three-pathfinding
-  const navZone = Builder.buildZone(navDecomp);
-
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
   measurer.font = labelMeta.font;
@@ -135,6 +132,27 @@ export async function createLayout(def, lookup, triangleService) {
   const windows = groups.singles.filter(x => x.tags.includes('window'))
     .map((x) => singleToConnectorRect(x, holes)
   );
+
+  /**
+   * - Compute navZone as in three-pathfinding
+   * - In browser we'll use it to create a FloorGraph
+   * - We expect it to have exactly one group
+   */
+  const navZone = Builder.buildZone(navDecomp);
+
+  // TODO 🚧 link doors and triangles
+  // TODO 🚧 door seg vs triangle using geom.lineSegIntersectsPolygon
+  const navNodes = navZone.groups[0];
+  const tempTri = new Poly;
+  doors.forEach(({ seg: [u, v] }, doorId) => {
+    navNodes.forEach((node, nodeId) => {
+      tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid])
+      const intersects = geom.lineSegIntersectsPolygon(u, v, tempTri);
+      if (intersects) {
+        console.log({ doorId, nodeId })
+      }
+    })
+  });
 
   const roomGraphJson = RoomGraph.json(holes, doors, windows);
   const roomGraph = RoomGraph.from(roomGraphJson);
