@@ -11,12 +11,11 @@ import { pathfinding } from "../pathfinding/Pathfinding";
 export default function usePathfinding(zoneKey, navZone, disabled) {
   return useQuery(zoneKeyToQueryKey(zoneKey), () => {
     const zone = /** @type {Nav.Zone} */ (navZone);
-    pathfinding.setZoneData(zoneKey, zone);
+    // pathfinding.setZoneData(zoneKey, zone);
 
-    // TODO 🚧 move computation to json
-    const graph = FloorGraph.fromZone(zone);
-
-    return { graph };
+    // Don't FloorGraph.from(json) because
+    // FloorGraphJson much larger than Nav.Zone.
+    return { graph : FloorGraph.fromZone(zone) };
   }, {
     enabled: !!navZone && !disabled,
     keepPreviousData: true,

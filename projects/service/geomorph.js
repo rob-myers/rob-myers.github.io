@@ -108,6 +108,7 @@ export async function createLayout(def, lookup, triangleService) {
       )
     : { vs: [], tris: [] };
 
+  // Computed using approach from three-pathfinding
   const navZone = Pathfinding.createZone(navDecomp);
 
   // Labels

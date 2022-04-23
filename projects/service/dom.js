@@ -184,11 +184,10 @@ export function setStyle(ctxt, fillStyle, strokeStyle, lineWidth) {
 
 /**
  * @param {CanvasRenderingContext2D} ctxt 
- * @param {Nav.Zone} decomp 
+ * @param {Nav.Zone} navZone 
  */
-export function drawTriangulation(ctxt, decomp) {
-	// Assume only one group
-	const { groups: { 0: tris }, vertices } = decomp;
+export function drawTriangulation(ctxt, navZone) {
+	const { groups: { 0: tris }, vertices } = navZone;
 	for (const { vertexIds } of tris) {
 		ctxt.beginPath();
 		fillRing(ctxt, vertexIds.map(i => vertices[i]), false);

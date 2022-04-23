@@ -89,13 +89,12 @@ export class FloorGraph extends BaseGraph {
   }
 
   /**
-   * We are casting various `Geom.Vect` as `Geom.VectJson`s
    * @returns {Graph.FloorGraphJson}
    */  
   json() {
     return {
       ...this.plainJson(),
-      vectors: this.vectors,
+      vectors: this.vectors.map(p => p.json),
     };
   }
 
