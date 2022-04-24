@@ -30,8 +30,16 @@ export default function NPCs(props) {
        * @param {Geom.VectJson} dst 
        */
       getLocalNavPath(gmId, src, dst) {
-        const pf = nav.pfs[gmId]
-        const result = pf.graph.findPath(src, dst);
+        const pf = nav.pfs[gmId];
+        // TODO ✅ provide closed nodes context
+        // TODO 🚧 compute step-by-step rather than each time
+        const {doorNodeIds} = pf.graph;
+        const nodeClosed = /** @type {Record<number, true>} */ ({})
+        props.doorsApi.getClosed(gmId).forEach(doorId => {
+          doorNodeIds[doorId].forEach(nodeId => nodeClosed[nodeId] = true);
+        });
+
+        const result = pf.graph.findPath(src, dst, nodeClosed);
         return result ? [Vect.from(src)].concat(result.path) : [];
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
@@ -45,7 +53,7 @@ export default function NPCs(props) {
         }
       },
     };
-  }, { deps: [nav] });
+  }, { deps: [nav, props.doorsApi] });
   
   React.useEffect(() => {
     const wire = ensureWire(props.wireKey);
@@ -67,8 +75,9 @@ export default function NPCs(props) {
         // TODO
         // - ✅ send local navpath
         // - ...
+        const gmId = 0; // TODO
         const npc = state.npc[e.npcKey];
-        const path = state.getLocalNavPath(0, npc.getPosition(), e.dst);
+        const path = state.getLocalNavPath(gmId, npc.getPosition(), e.dst);
         path.forEach(p => p.precision(3));
         wire.next({ key: 'nav-res', npcKey: e.npcKey, path, req: e });
       } else if (e.key === 'debug-path') {

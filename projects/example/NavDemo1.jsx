@@ -20,8 +20,8 @@ import NPCs from "../npc/NPCs";
 //   - ✅ NPCs listens for "spawn" event and creates NPC
 //   - ✅ NPCs ensures local pathfinding data
 //   - ✅ can get local navpath via shell function
-//   - 🚧 can plot a local navpath
-//   - 🚧 navpath takes doors into account
+//   - ✅ can plot a local navpath
+//   - ✅ navpath takes doors into account
 //   - 🚧 global navpath
 // - Andros is situated and lighting reacts
 // - 🤔 show doors intersecting light polygon (cannot click)
@@ -143,10 +143,11 @@ export default function NavDemo1(props) {
       )}
 
       <NPCs
-        gmGraph={gmGraph}
         disabled={props.disabled}
-        wireKey={wireKey}
+        doorsApi={state.doorsApi}
+        gmGraph={gmGraph}
         panZoomApi={state.panZoomApi}
+        wireKey={wireKey}
       />
 
       {gms.map((gm, gmIndex) =>

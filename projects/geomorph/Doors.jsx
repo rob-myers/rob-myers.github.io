@@ -19,11 +19,15 @@ export default function Doors(props) {
       get ready() {
         return true;
       },
-      getVisible(gmIndex) {
-        return Object.keys(state.vis[gmIndex]).map(Number);
+      getClosed(gmIndex) {
+        const open = state.open[gmIndex];
+        return props.gms[gmIndex].doors.map((_, i) => i).filter(i => !open[i]);
       },
       getOpen(gmIndex) {
         return Object.keys(state.open[gmIndex]).map(Number);
+      },
+      getVisible(gmIndex) {
+        return Object.keys(state.vis[gmIndex]).map(Number);
       },
       setVisible(gmIndex, doorIds) {
         state.vis[gmIndex] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});

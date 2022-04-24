@@ -7,6 +7,7 @@ declare namespace NPC {
     disabled?: boolean;
     gmGraph: Graph.GmGraph;
     panZoomApi: PanZoom.CssExtApi;
+    doorsApi: NPC.DoorsApi;
     wireKey: string;
   }
 
@@ -60,6 +61,7 @@ declare namespace NPC {
 
   export interface DoorsApi {
     getVisible(gmIndex: number): number[];
+    getClosed(gmIndex: number): number[];
     /** Get ids of open doors */
     getOpen(gmIndex: number): number[];
     get ready(): boolean;

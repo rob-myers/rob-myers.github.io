@@ -30,11 +30,6 @@ declare namespace Nav {
     vertices: VectJson[];
     groups: GraphNode[][];
   }
-  
-  export interface ZoneWithMeta extends Zone {
-    /** Aligned to `Geomorph.Layout['doors']` */
-    doorNodeIds: number[][];
-  }
 
   export interface Group {
     id: number;
@@ -42,6 +37,20 @@ declare namespace Nav {
     vertexIds: number[];
     centroid: Vect;
     portals: any[]; // ?
+  }
+
+  export interface ZoneWithMeta extends Zone {
+    /** Aligned to `Geomorph.Layout['doors']` */
+    doorNodeIds: number[][];
+  }
+
+  export interface SearchContext {
+    graph: Graph.FloorGraph;
+    /**
+     * Node indices known to be closed (i.e. not traversable),
+     * e.g. because they correspond to a closed door.
+     */
+    nodeClosed: Record<number, true>;
   }
 
 }

@@ -12,6 +12,16 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- Story:
+  - Anapanasati training
+  - 5 watchers as Janic hindrances
+
+- Can move NPC along navpath
+- Speech bubbles
+- change `sh.lib`
+  - `spawn`, `click`, `nav` are from Terminal specified script.
+  - base functions are also from Terminal specified script
+
 - Revisit navgraphs
   - ✅ Precompute pathfinding navgraph on server
   - Use an extension of BaseGraph (with double-edges)
@@ -20,10 +30,15 @@ __Aim towards website release__.
     - ✅ Compute FloorGraph in geomorph json
     - ✅ Go back to navZone in json because _much smaller_
     - ✅ Clean away unnecessary code e.g. `Pathfinding`
-    - 🚧 Link them to doors
+    - ✅ Link them to doors
+    - ✅ AStar takes account of doors
+    - 🚧 Start global navpaths assuming global convexity
+    - AStar nodeClosed computed step-by-step
 
-- Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.
-- Remove: refs to holeId and holeIndex.
+- Clean
+  - Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.
+  - Remove: refs to holeId and holeIndex.
+  - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
 
 - ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
 - 🚧 NavDemo1 init race condition?

@@ -18,23 +18,24 @@ export class FloorGraph extends BaseGraph {
    * https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
    * @param {Geom.VectJson} src
    * @param {Geom.VectJson} dst 
+   * @param {Nav.SearchContext['nodeClosed']} [nodeClosed]
    */
-  findPath(src, dst) {
+  findPath(src, dst, nodeClosed = {}) {
     const closestNode = this.getClosestNode(src);
     const farthestNode = this.getClosestNode(dst);
     if (!closestNode || !farthestNode) {
       return null; // We can't find any node
     }
 
-    // TODO 🚧 provide FloorGraph and context:
-    // GeomorphDataInstance, gmIndex, doorsApi
-
     const nodePath = AStar.search(
-      this,
-      // this.nodesArray,
+      { graph: this, nodeClosed },
       closestNode,
       farthestNode
     );
+
+    if (nodePath.length === 0) {
+      return null; // No path possible e.g. due to nodeClosed
+    }
 
     const channel = this.computeStringPull(src, dst, nodePath);
     const path = (/** @type {Geom.VectJson[]} */ (channel.path)).map(Vect.from);
