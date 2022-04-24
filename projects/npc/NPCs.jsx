@@ -44,12 +44,17 @@ export default function NPCs(props) {
         }
       },
       /**
+       * Must transform to local coords and then back.
        * @param {number} gmId 
        * @param {Geom.VectJson} src
        * @param {Geom.VectJson} dst 
        */
       getLocalNavPath(gmId, src, dst) {
+        const gm = props.gmGraph.gms[gmId];
         const pf = nav.pfs[gmId];
+        const localSrc = gm.inverseMatrix.transformPoint(Vect.from(src));
+        const localDst = gm.inverseMatrix.transformPoint(Vect.from(dst));
+
         // TODO ✅ provide closed nodes context
         // TODO 🚧 compute step-by-step rather than each time
         const {doorNodeIds} = pf.graph;
@@ -58,10 +63,11 @@ export default function NPCs(props) {
           doorNodeIds[doorId].forEach(nodeId => nodeClosed[nodeId] = true);
         });
 
-        const result = pf.graph.findPath(src, dst, nodeClosed);
-        return result
-          ? [Vect.from(src)].concat(result.path).map(p => p.precision(2))
+        const result = pf.graph.findPath(localSrc, localDst, nodeClosed);
+        const output = result
+          ? [Vect.from(localSrc)].concat(result.path)
           : [];
+        return output.map(p => gm.matrix.transformPoint(p).precision(2));
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(el) {
