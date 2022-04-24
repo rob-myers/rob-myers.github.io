@@ -24,17 +24,25 @@ __Aim towards website release__.
 
 - Revisit navgraphs
   - ✅ Precompute pathfinding navgraph on server
-  - Use an extension of BaseGraph (with double-edges)
-    - ✅ Define `FloorGraph` and `FloorGraph.from`
-    - ✅ Extend approach of Pathfinding to FloorGraph datatype
-    - ✅ Compute FloorGraph in geomorph json
-    - ✅ Go back to navZone in json because _much smaller_
-    - ✅ Clean away unnecessary code e.g. `Pathfinding`
-    - ✅ Link them to doors
-    - ✅ AStar takes account of doors
-    - 🚧 Start global navpaths assuming global convexity
-    - AStar nodeClosed computed step-by-step
-    - Local nav path should avoid going outside navmesh
+  - ✅ Use an extension of BaseGraph (with double-edges)
+  - ✅ Define `FloorGraph` and `FloorGraph.from`
+  - ✅ Extend approach of Pathfinding to FloorGraph datatype
+  - ✅ Compute FloorGraph in geomorph json
+  - ✅ Go back to navZone in json because _much smaller_
+  - ✅ Clean away unnecessary code e.g. `Pathfinding`
+  - ✅ Link them to doors
+  - ✅ AStar takes account of doors
+  - 🚧 Clarify "Global nav path strategy"
+    ```
+    Line "src -> dst" induces global path modulo edge geomorphs?
+
+    1. SW favours {W,S} or {S,W} dependent on if more west/south
+    2. Once edge is chosen, favour closer open door (straight line)
+    3. By construction (?) some edge can be taken; either never deadlocks
+    ```
+  - 🚧 Global navpaths
+  - AStar nodeClosed computed step-by-step
+  - Local nav path should avoid going outside navmesh
 
 - Clean
   - Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.

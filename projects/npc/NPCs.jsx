@@ -31,15 +31,17 @@ export default function NPCs(props) {
       getGlobalNavPath(src, dst) {
         const {gms} = props.gmGraph
         const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
-        const dstGmId = gms.findIndex(x => x.gridRect.contains(src));
+        const dstGmId = gms.findIndex(x => x.gridRect.contains(dst));
         console.log({ srcGmId, dstGmId })
         if (srcGmId === -1 || dstGmId === -1) {
           return [];
         } else if (srcGmId === dstGmId) {
           return state.getLocalNavPath(srcGmId, src, dst);
+        } else {
+          // TODO 🚧 global strategy
+          // TODO 🚧 join paths together
+          return [];
         }
-        // TODO 🚧 global convexity + hull door open + join paths together
-        return [];
       },
       /**
        * @param {number} gmId 
