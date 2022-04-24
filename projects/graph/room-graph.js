@@ -20,7 +20,7 @@ export class RoomGraph extends BaseGraph {
   }
   /**
    * Given parent `gm` and some nodes, find adjacent _hull door ids_ (if any).
-   * @param {Geomorph.UseGeomorphsItem} gm
+   * @param {Geomorph.GeomorphDataInstance} gm
    * @param {...Graph.RoomGraphNode} nodes
    */
   getAdjacentHullDoorIds(gm, ...nodes) {

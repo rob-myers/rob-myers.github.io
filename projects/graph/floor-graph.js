@@ -11,6 +11,8 @@ export class FloorGraph extends BaseGraph {
 
   /** @type {Geom.Vect[]} */
   vectors = [];
+  /** @type {number[][]} */
+  doorNodeIds = [];
 
   /**
    * https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
@@ -24,11 +26,15 @@ export class FloorGraph extends BaseGraph {
       return null; // We can't find any node
     }
 
-    const nodePath = /** @type {Graph.FloorGraphNode[]} */ (AStar.search(
-      this.nodesArray,
+    // TODO 🚧 provide FloorGraph and context:
+    // GeomorphDataInstance, gmIndex, doorsApi
+
+    const nodePath = AStar.search(
+      this,
+      // this.nodesArray,
       closestNode,
       farthestNode
-    ));
+    );
 
     const channel = this.computeStringPull(src, dst, nodePath);
     const path = (/** @type {Geom.VectJson[]} */ (channel.path)).map(Vect.from);
@@ -95,6 +101,7 @@ export class FloorGraph extends BaseGraph {
     return {
       ...this.plainJson(),
       vectors: this.vectors.map(p => p.json),
+      doorNodeIds: this.doorNodeIds,
     };
   }
 
@@ -127,7 +134,7 @@ export class FloorGraph extends BaseGraph {
   /**
    * We assume `zone` has exactly one group,
    * i.e. floor of geomorph (sans doors) is connected.
-   * @param {Nav.Zone} zone
+   * @param {Nav.ZoneWithMeta} zone
    * @returns {Graph.FloorGraph}
    */
   static fromZone(zone) {
@@ -162,17 +169,19 @@ export class FloorGraph extends BaseGraph {
     }
 
     graph.vectors = vertices.map(Vect.from);
+    graph.doorNodeIds = zone.doorNodeIds;
 
     return graph;
   }
 
   /**
+   * Unused because `Graph.FloorGraphJson` larger than `Nav.Zone`.
    * @param {Graph.FloorGraphJson} json
    * @returns {Graph.FloorGraph}
    */  
   static from(json) {
     const graph = new FloorGraph;
-    const { nodes, edges, vectors } = json;
+    const { nodes, edges, vectors, doorNodeIds } = json;
 
     for (const node of nodes) {
       graph.registerNode({
@@ -202,6 +211,7 @@ export class FloorGraph extends BaseGraph {
     }
 
     graph.vectors = vectors.map(Vect.from);
+    graph.doorNodeIds = doorNodeIds;
 
     return graph;
   }

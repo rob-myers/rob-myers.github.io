@@ -9,7 +9,7 @@ import { computeLightPosition } from "../service/geomorph";
  * @extends {BaseGraph<Graph.GmGraphNode, Graph.GmGraphEdgeOpts>}
  */
 export class gmGraph extends BaseGraph {
-  /** @type {Geomorph.UseGeomorphsItem[]}  */
+  /** @type {Geomorph.GeomorphDataInstance[]}  */
   gms;
 
   /**
@@ -18,7 +18,7 @@ export class gmGraph extends BaseGraph {
    */
   gmDataLookup;
 
-  /** @param {Geomorph.UseGeomorphsItem[]} gms  */
+  /** @param {Geomorph.GeomorphDataInstance[]} gms  */
   constructor(gms) {
     super();
     this.gms = gms;
@@ -147,7 +147,7 @@ export class gmGraph extends BaseGraph {
   }
 
   /**
-   * @param {Geomorph.UseGeomorphsItem[]} gms 
+   * @param {Geomorph.GeomorphDataInstance[]} gms 
    */
   static fromGms(gms) {
     const graph = new gmGraph(gms);

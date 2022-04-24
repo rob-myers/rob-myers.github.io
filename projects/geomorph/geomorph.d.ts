@@ -73,9 +73,7 @@ declare namespace Geomorph {
     /** The navigable area including doorways. */
     navPoly: P[];
     /** Serializable navigation zone used for pathfinding */
-    navZone: Nav.Zone;
-    /** Doors index to indices in `navZone.nodes`  */
-    doorNodeIds: number[][];
+    navZone: Nav.ZoneWithMeta;
     /** Connectivity graph involving holes and doors */
     roomGraph: G;
 
@@ -130,7 +128,7 @@ declare namespace Geomorph {
    * Geomorph.GeomorphData with an associated transform,
    * and various induced data e.g. transformOrigin.
    */
-  export interface UseGeomorphsItem extends Geomorph.GeomorphData {
+  export interface GeomorphDataInstance extends Geomorph.GeomorphData {
     /** `${gm.key}-[${transform}]` */
     itemKey: string;
     transform: [number, number, number, number, number, number];

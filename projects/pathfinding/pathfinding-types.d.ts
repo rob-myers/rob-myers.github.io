@@ -30,6 +30,11 @@ declare namespace Nav {
     vertices: VectJson[];
     groups: GraphNode[][];
   }
+  
+  export interface ZoneWithMeta extends Zone {
+    /** Aligned to `Geomorph.Layout['doors']` */
+    doorNodeIds: number[][];
+  }
 
   export interface Group {
     id: number;

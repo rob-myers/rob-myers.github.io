@@ -134,24 +134,21 @@ export async function createLayout(def, lookup, triangleService) {
   );
 
   /**
-   * - Compute navZone as in three-pathfinding
-   * - In browser we'll use it to create a FloorGraph
-   * - We expect it to have exactly one group
+   * Compute navZone using method from three-pathfinding.
+   * In browser we'll use it to create a FloorGraph.
+   * We expect it to have exactly one group.
    */
-  const navZone = Builder.buildZone(navDecomp);
+  const navZone = buildZoneWithMeta(navDecomp);
 
-  // TODO ✅ link doors and triangles
-  // TODO ✅ store relationship somehow
-  /** @type {number[][]}} */
-  const doorNodeIds = [];
+  // Attach metadata to navZone
   const navNodes = navZone.groups[0];
   const tempTri = new Poly;
   doors.forEach(({ seg: [u, v] }, doorId) => {
     navNodes.forEach((node, nodeId) => {
       tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid])
       if (geom.lineSegIntersectsPolygon(u, v, tempTri)) {
-        (doorNodeIds[doorId] = doorNodeIds[doorId] || []).push(nodeId);
-        // console.log({ doorId, nodeId })
+        // console.log({ doorId, nodeId });
+        (navZone.doorNodeIds[doorId] = navZone.doorNodeIds[doorId] || []).push(nodeId);
       }
     })
   });
@@ -171,7 +168,6 @@ export async function createLayout(def, lookup, triangleService) {
     labels,
     navPoly,
     navZone,
-    doorNodeIds: doorNodeIds,
     roomGraph,
     
     hullPoly: hullSym.hull.map(x => x.clone()),
@@ -236,7 +232,7 @@ function parseConnectRect(x) {
 /** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout({
   def, groups,
-  holes: allHoles, doors, windows, labels, navPoly, navZone, doorNodeIds: doorIdToNodeIds, roomGraph,
+  holes: allHoles, doors, windows, labels, navPoly, navZone, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -258,7 +254,6 @@ export function serializeLayout({
     labels,
     navPoly: navPoly.map(x => x.geoJson),
     navZone,
-    doorNodeIds: doorIdToNodeIds,
     roomGraph: roomGraph.plainJson(),
 
     hullPoly: hullPoly.map(x => x.geoJson),
@@ -273,7 +268,7 @@ export function serializeLayout({
 /** @param {Geomorph.LayoutJson} layout */
 export function parseLayout({
   def, groups,
-  holes: allHoles, doors, windows, labels, navPoly, navZone, doorNodeIds: doorIdToNodeIds, roomGraph,
+  holes: allHoles, doors, windows, labels, navPoly, navZone, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -295,7 +290,6 @@ export function parseLayout({
     labels,
     navPoly: navPoly.map(Poly.from),
     navZone,
-    doorNodeIds: doorIdToNodeIds,
     roomGraph: RoomGraph.from(roomGraph),
 
     hullPoly: hullPoly.map(Poly.from),
@@ -427,7 +421,7 @@ export const allLayoutKeys = keys(allLayoutKeysLookup);
 
 /**
  * - `GeomorphData` extends `ParsedLayout` and comes from `useGeomorph`
- * - `UseGeomorphsItem` extends `GeomorphData`, is relative to `transform` and comes from `useGeomorphs`
+ * - `GeomorphDataInstance` extends `GeomorphData`, is relative to `transform` and comes from `useGeomorphs`
  * @param {Geomorph.GeomorphData} gm 
  * @param {[number, number, number, number, number, number]} transform 
  */
@@ -435,7 +429,7 @@ export function geomorphDataToGeomorphsItem(gm, transform) {
   const matrix = new Mat(transform);
   const gridRect = (new Rect(0, 0, 1200, gm.pngRect.height > 1000 ? 1200 : 600)).applyMatrix(matrix);
 
-  /** @type {Geomorph.UseGeomorphsItem} */
+  /** @type {Geomorph.GeomorphDataInstance} */
   const output = {
     ...gm,
     itemKey: `${gm.key}-[${transform}]`,
@@ -462,4 +456,15 @@ export function computeLightPosition(connector, fromHoleId, lightOffset = 40) {
     console.warn(`hole ${fromHoleId}: connector: `, connector ,`: roomSign is null`);
   }
   return connector.poly.center.addScaledVector(connector.normal, lightOffset * (roomSign || 0));
+}
+
+/**
+ * @param {Geom.TriangulationJson} navDecomp
+ * @returns {Nav.ZoneWithMeta}
+ */
+export function buildZoneWithMeta(navDecomp) {
+  return {
+    ...Builder.buildZone(navDecomp),
+    doorNodeIds: [],
+  };
 }

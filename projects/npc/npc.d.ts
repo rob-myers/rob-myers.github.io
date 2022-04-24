@@ -52,7 +52,7 @@ declare namespace NPC {
   }
 
   export interface DoorsProps {
-    gms: Geomorph.UseGeomorphsItem[];
+    gms: Geomorph.GeomorphDataInstance[];
     gmGraph: Graph.GmGraph;
     wire: NavWire;
     onLoad: (api: DoorsApi) => void;

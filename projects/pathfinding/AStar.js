@@ -1,16 +1,14 @@
 import { BinaryHeap } from './BinaryHeap';
 import { Utils } from './Utils';
 
-// NOTE could replace `Graph.FloorGraphNode` by original
-// `Nav.Node` and things will still work
-
 export class AStar {
 
-  /** @param {Graph.FloorGraphNode[]} graph */
+  /** @param {Graph.FloorGraph} graph */
   static init (graph) {
-    for (let x = 0; x < graph.length; x++) {
+    const nodes = graph.nodesArray;
+    for (let x = 0; x < nodes.length; x++) {
       //for(var x in graph) {
-      const node = graph[x];
+      const node = nodes[x];
       node.f = 0;
       node.g = 0;
       node.h = 0;
@@ -45,13 +43,14 @@ export class AStar {
   }
 
   /**
-   * @param {Graph.FloorGraphNode[]} graph 
+   * @param {Graph.FloorGraph} graph 
    * @param {Graph.FloorGraphNode} start 
    * @param {Graph.FloorGraphNode} end 
    */
   static search (graph, start, end) {
     this.init(graph);
     //heuristic = heuristic || astar.manhattan;
+    const nodes = graph.nodesArray;
 
     const openHeap = this.heap();
     openHeap.push(start);
@@ -77,7 +76,7 @@ export class AStar {
       currentNode.closed = true;
 
       // Find all neighbours for the current node. Optionally find diagonal neighbours as well (false by default).
-      const neighbours = this.neighbours(graph, currentNode);
+      const neighbours = this.neighbours(nodes, currentNode);
 
       for (let i = 0, il = neighbours.length; i < il; i++) {
         const neighbour = neighbours[i];

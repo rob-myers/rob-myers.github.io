@@ -3,13 +3,13 @@ import { useQuery } from "react-query";
 
 /**
  * @param {string} zoneKey 
- * @param {Nav.Zone | undefined} navZone
+ * @param {Nav.ZoneWithMeta | undefined} navZone
  * @param {boolean} [disabled]
  * @returns {import("react-query").UseQueryResult<NPC.PfData>}
  */
 export default function usePathfinding(zoneKey, navZone, disabled) {
   return useQuery(zoneKeyToQueryKey(zoneKey), () => {
-    const zone = /** @type {Nav.Zone} */ (navZone);
+    const zone = /** @type {Nav.ZoneWithMeta} */ (navZone);
     // pathfinding.setZoneData(zoneKey, zone);
 
     // Don't FloorGraph.from(json) because

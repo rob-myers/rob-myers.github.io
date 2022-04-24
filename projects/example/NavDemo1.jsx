@@ -290,7 +290,7 @@ const debugDoorOffset = 18;
 
 /**
  * @typedef DebugProps @type {object}
- * @property {Geomorph.UseGeomorphsItem[]} gms
+ * @property {Geomorph.GeomorphDataInstance[]} gms
  * @property {Graph.GmGraph} gmGraph
  * @property {NPC.DoorsApi} doorsApi
  * @property {number} gmId

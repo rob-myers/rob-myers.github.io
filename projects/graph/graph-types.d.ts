@@ -108,9 +108,9 @@ declare namespace Graph {
     gmIndex: number;
     /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
-    /** Index of `Geomorph.UseGeomorphsItem['doors']` */
+    /** Index of `Geomorph.GeomorphDataInstance['doors']` */
     doorId: number;
-    /** Index of `Geomorph.UseGeomorphsItem['hullDoors']` */
+    /** Index of `Geomorph.GeomorphDataInstance['hullDoors']` */
     hullDoorId: number;
     /**
      * Is this door's parent geomorph in front of it?
@@ -176,7 +176,8 @@ declare namespace Graph {
     FloorGraphNodeJson,
     FloorGraphEdgeOpts
   > & {
-    vectors: Geom.VectJson[]
+    vectors: Geom.VectJson[];
+    doorNodeIds: number[][];
   };
 
   export type FloorGraph = import('./floor-graph').FloorGraph;
