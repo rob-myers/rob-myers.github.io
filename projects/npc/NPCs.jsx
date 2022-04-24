@@ -25,6 +25,23 @@ export default function NPCs(props) {
       /** @type {Record<string, { path: Geom.Vect[]; aabb: Rect; }>} */
       debugPath: {},
       /**
+       * @param {Geom.VectJson} src
+       * @param {Geom.VectJson} dst 
+       */
+      getGlobalNavPath(src, dst) {
+        const {gms} = props.gmGraph
+        const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
+        const dstGmId = gms.findIndex(x => x.gridRect.contains(src));
+        console.log({ srcGmId, dstGmId })
+        if (srcGmId === -1 || dstGmId === -1) {
+          return [];
+        } else if (srcGmId === dstGmId) {
+          return state.getLocalNavPath(srcGmId, src, dst);
+        }
+        // TODO 🚧 global convexity + hull door open + join paths together
+        return [];
+      },
+      /**
        * @param {number} gmId 
        * @param {Geom.VectJson} src
        * @param {Geom.VectJson} dst 
@@ -40,7 +57,9 @@ export default function NPCs(props) {
         });
 
         const result = pf.graph.findPath(src, dst, nodeClosed);
-        return result ? [Vect.from(src)].concat(result.path) : [];
+        return result
+          ? [Vect.from(src)].concat(result.path).map(p => p.precision(2))
+          : [];
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(el) {
@@ -72,14 +91,11 @@ export default function NPCs(props) {
         };
         update();
       } else if (e.key === 'nav-req') {
-        // TODO
-        // - ✅ send local navpath
-        // - ...
-        const gmId = 0; // TODO
         const npc = state.npc[e.npcKey];
-        const path = state.getLocalNavPath(gmId, npc.getPosition(), e.dst);
-        path.forEach(p => p.precision(3));
+        // TODO 🚧 send global navpath(s)
+        const path = state.getGlobalNavPath(npc.getPosition(), e.dst);
         wire.next({ key: 'nav-res', npcKey: e.npcKey, path, req: e });
+
       } else if (e.key === 'debug-path') {
         const path = e.path.map(Vect.from);
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };

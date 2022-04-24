@@ -34,6 +34,7 @@ __Aim towards website release__.
     - ✅ AStar takes account of doors
     - 🚧 Start global navpaths assuming global convexity
     - AStar nodeClosed computed step-by-step
+    - Local nav path should avoid going outside navmesh
 
 - Clean
   - Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.
@@ -44,7 +45,7 @@ __Aim towards website release__.
 - 🚧 NavDemo1 init race condition?
   - maybe fixed by React.useEffect -> useMemo in useGeomorphs
 - ✅ replace "stage" with "wire"
-- `useImperativeHandle` rather than providing an api?
+- 🤔 `useImperativeHandle` rather than providing an api?
 
 - ✅ spawn has format `spawn rob ["$( position )"]`
 - ✅ NavDemo1 has 2 or more geomorphs
@@ -63,8 +64,7 @@ __Aim towards website release__.
       - `<NPCs>` has stageKey `nav-demo-1`, registering Andros
     - script needs access to NavMesh
       - access pathfinding from `use-query` cache
-  - TTY script restrict navpath from Andros to lit area
-  - Can move Andros along navpath
+  -  🤔 TTY script restrict navpath from Andros to lit area
   - Andros is __situated__
   - `NavDemo1` has other NPCs
 
