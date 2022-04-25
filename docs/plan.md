@@ -32,7 +32,10 @@ __Aim towards website release__.
   - ✅ Clean away unnecessary code e.g. `Pathfinding`
   - ✅ Link them to doors
   - ✅ AStar takes account of doors
-  - 🚧 Clarify "Global nav path strategy"
+  - ✅ Local navpaths go through doors
+    - Break into multiple paths and doorIndex
+    - Consumer will decide strategy
+  - 🚧 Clarify/implement "Global nav path strategy"
     ```
     Line "src -> dst" induces global path modulo edge geomorphs?
 
@@ -43,6 +46,7 @@ __Aim towards website release__.
   - 🚧 Global navpaths
   - AStar nodeClosed computed step-by-step
   - Local nav path should avoid going outside navmesh
+  - `nav` receives multiple paths and doorIds
 
 - Clean
   - Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.

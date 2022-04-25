@@ -55,19 +55,16 @@ export default function NPCs(props) {
         const localSrc = gm.inverseMatrix.transformPoint(Vect.from(src));
         const localDst = gm.inverseMatrix.transformPoint(Vect.from(dst));
 
-        // TODO ✅ provide closed nodes context
-        // TODO 🚧 compute step-by-step rather than each time
-        const {doorNodeIds} = pf.graph;
-        const nodeClosed = /** @type {Record<number, true>} */ ({})
-        props.doorsApi.getClosed(gmId).forEach(doorId => {
-          doorNodeIds[doorId].forEach(nodeId => nodeClosed[nodeId] = true);
-        });
+        const result = pf.graph.findPath(localSrc, localDst);
 
-        const result = pf.graph.findPath(localSrc, localDst, nodeClosed);
-        const output = result
-          ? [Vect.from(localSrc)].concat(result.path)
-          : [];
-        return output.map(p => gm.matrix.transformPoint(p).precision(2));
+        if (result) {
+          // Just join them together for the moment...
+          return [Vect.from(localSrc)]
+            .concat(result.normalisedPaths.flatMap(x => x))
+            .map(p => gm.matrix.transformPoint(p).precision(2));
+        } else {
+          return [];
+        }
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(el) {

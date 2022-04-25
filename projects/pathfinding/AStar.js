@@ -3,9 +3,9 @@ import { Utils } from './Utils';
 
 export class AStar {
 
-  /** @param {Nav.SearchContext} ctxt */
-  static init (ctxt) {
-    const nodes = ctxt.graph.nodesArray;
+  /** @param {Graph.FloorGraph} graph  */
+  static init (graph) {
+    const nodes = graph.nodesArray;
     for (let x = 0; x < nodes.length; x++) {
       //for(var x in graph) {
       const node = nodes[x];
@@ -14,7 +14,7 @@ export class AStar {
       node.h = 0;
       node.cost = 1.0;
       node.visited = false;
-      node.closed = ctxt.nodeClosed[x] || false;
+      node.closed = false;
       node.parent = null;
     }
   }
@@ -43,14 +43,14 @@ export class AStar {
   }
 
   /**
-   * @param {Nav.SearchContext} ctxt 
+   * @param {Graph.FloorGraph} graph 
    * @param {Graph.FloorGraphNode} start 
    * @param {Graph.FloorGraphNode} end 
    */
-  static search (ctxt, start, end) {
-    this.init(ctxt);
+  static search (graph, start, end) {
+    this.init(graph);
     //heuristic = heuristic || astar.manhattan;
-    const nodes = ctxt.graph.nodesArray;
+    const nodes = graph.nodesArray;
 
     const openHeap = this.heap();
     openHeap.push(start);
