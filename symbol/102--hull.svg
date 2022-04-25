@@ -19,28 +19,28 @@
   <g style="pointer-events: none; visibility: hidden;">
     <title>singles</title>
     <rect x="-6" y="250.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
-      <title>door door-w-n hull</title>
+      <title>door hull</title>
     </rect>
     <rect x="-6" y="850.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
-      <title>door door-w-s hull</title>
+      <title>door hull</title>
     </rect>
     <rect x="1194" y="250.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
-      <title>door door-e-n hull</title>
+      <title>door hull</title>
     </rect>
     <rect x="1194" y="850.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
-      <title>door door-e-s hull</title>
+      <title>door hull</title>
     </rect>
     <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 934.299988, -992)">
-      <title>door door-n-e hull</title>
+      <title>door hull</title>
     </rect>
     <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 334.299988, -992)">
-      <title>door door-n-w hull</title>
+      <title>door hull</title>
     </rect>
     <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 934.299988, 208)">
-      <title>door door-s-e hull</title>
+      <title>door hull</title>
     </rect>
     <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 334.299988, 208)">
-      <title>door door-s-w hull</title>
+      <title>door hull</title>
     </rect>
     <rect x="260" y="254" width="9" height="46" style="stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 426.792786, 95.699898)">
       <title>door iris</title>
