@@ -105,18 +105,21 @@ declare namespace Graph {
     id: string;
     /** Key of parent geomorph */
     gmKey: Geomorph.LayoutKey;
+    /** Index of parent geomorph instance in its respective array */
     gmIndex: number;
     /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
-    /** Index of `Geomorph.GeomorphDataInstance['doors']` */
+    /** Index of `Geomorph.GeomorphData['doors']` */
     doorId: number;
-    /** Index of `Geomorph.GeomorphDataInstance['hullDoors']` */
+    /** Index of `Geomorph.GeomorphData['hullDoors']` */
     hullDoorId: number;
     /**
      * Is this door's parent geomorph in front of it?
      * That is, is the door's normal facing it's parent?
      */
     gmInFront: boolean;
+    /** Direction it faces in world coords */
+    direction: null | Geom.Direction;
   }
 
   export type GmGraphNode = (

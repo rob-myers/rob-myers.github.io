@@ -133,6 +133,11 @@ export async function createLayout(def, lookup, triangleService) {
     .map((x) => singleToConnectorRect(x, holes)
   );
 
+  const hullRect = Rect.from(...hullSym.hull.concat(doorPolys).map(x => x.rect));
+  doors.filter(x => x.tags.includes('hull')).forEach(door => {
+    extendHullDoorTags(door, hullRect);
+  })
+
   /**
    * Compute navZone using method from three-pathfinding.
    * In browser we'll use it to create a FloorGraph.
@@ -172,7 +177,7 @@ export async function createLayout(def, lookup, triangleService) {
     
     hullPoly: hullSym.hull.map(x => x.clone()),
     hullTop: Poly.cutOut(doorPolys.concat(windowPolys), hullSym.hull),
-    hullRect: Rect.from(...hullSym.hull.concat(doorPolys).map(x => x.rect)),
+    hullRect,
 
     items: symbols.map(/** @returns {Geomorph.ParsedLayout['items'][0]} */  (sym, i) => ({
       key: sym.key,
@@ -213,6 +218,18 @@ function singleToConnectorRect(single, holes) {
     normal: normal.precision(3),
     holeIds: connectorHoleIds,
   };
+}
+
+/**
+ * @param {Geomorph.ParsedConnectorRect} door 
+ * @param {Geom.Rect} hullRect 
+ */
+function extendHullDoorTags(door, hullRect) {
+  const bounds = door.poly.rect;
+  if (bounds.y === hullRect.y) door.tags.push('hull-n');
+  else if (bounds.right === hullRect.right) door.tags.push('hull-e');
+  else if (bounds.bottom === hullRect.bottom) door.tags.push('hull-s');
+  else if (bounds.x === hullRect.x) door.tags.push('hull-w');
 }
 
 /**
@@ -425,7 +442,7 @@ export const allLayoutKeys = keys(allLayoutKeysLookup);
  * @param {Geomorph.GeomorphData} gm 
  * @param {[number, number, number, number, number, number]} transform 
  */
-export function geomorphDataToGeomorphsItem(gm, transform) {
+export function geomorphDataToInstance(gm, transform) {
   const matrix = new Mat(transform);
   const gridRect = (new Rect(0, 0, 1200, gm.pngRect.height > 1000 ? 1200 : 600)).applyMatrix(matrix);
 

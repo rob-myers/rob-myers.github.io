@@ -1,7 +1,7 @@
 import React from "react";
 import { assertDefined } from "../service/generic";
 import { gmGraph } from "../graph/gm-graph";
-import { geomorphDataToGeomorphsItem } from "../service/geomorph";
+import { geomorphDataToInstance } from "../service/geomorph";
 import useGeomorphData from "./use-geomorph-data";
 
 /**
@@ -31,7 +31,7 @@ export default function useGeomorphs(defs) {
         const queryIndex = gmKeys.findIndex(y => y === def.layoutKey);
         const data = assertDefined(queries[queryIndex].data)
         const transform = def.transform || [1, 0, 0, 1, 0, 0];
-        return geomorphDataToGeomorphsItem(data, transform);
+        return geomorphDataToInstance(data, transform);
       });
       return { gms: items, gmGraph: gmGraph.fromGms(items) };
     } else {

@@ -48,4 +48,5 @@ declare namespace Geom {
     angle: number;
   }
 
+  export type Direction = 'n' | 'e' | 's' | 'w';
 }

@@ -3,6 +3,26 @@ import { Poly, Rect, Vect } from '../geom';
 class GeomService {
 
   /**
+   * @param {Vect} p 
+   * @returns {['e', 's'] | ['s', 'e'] | ['e', 'n'] | ['n', 'e'] | ['w', 's'] | ['s', 'w'] | ['w', 'n'] | ['n', 'w']}
+   */
+  compassPoints(p) {
+    if (p.x > 0) {
+      if (p.y > 0) {
+        return p.x > p.y ? (['e', 's']) : ['s', 'e'];
+      } else {
+        return p.x > p.y ? ['e', 'n'] : ['n', 'e'];
+      }
+    } else {
+      if (p.y > 0) {
+        return -p.x > p.y ? ['w', 's'] : ['s', 'w'];
+      } else {
+        return -p.x > -p.y ? ['w', 'n'] : ['n', 'w'];
+      }
+    }
+  }
+
+  /**
    * https://github.com/davidfig/intersects/blob/master/line-polygon.js
    * Does line segment intersect polygon, __ignoring holes__
    * @param {Geom.VectJson} u 
@@ -173,6 +193,32 @@ class GeomService {
   }
 
   /**
+   * @param {Geom.Direction} direction : ;
+   * @param {0 | 1 | 2 | 3} delta 
+   * @returns {Geom.Direction}
+   */
+  getDeltaDirection(direction, delta) {
+    return directions[(directions.indexOf(direction) + delta) % 4];
+  }
+  
+  /**
+   * @param {Geom.Direction} direction : ;
+   * @param {'x' | 'y'} axis 
+   * @returns {Geom.Direction}
+   */
+  getFlippedDirection(direction, axis) {
+    if (axis === 'x') {
+      if (direction === 'n') return 's';
+      if (direction === 'e' || direction === 'w') return direction;
+      else return 'n';
+    } else {
+      if (direction === 'n' || direction === 's') return direction;
+      if (direction === 'e') return 'w';
+      else return 'e';
+    }
+  }
+
+  /**
    * Join disjoint triangulations
    * @param {Geom.Triangulation[]} triangulations 
    * @returns {Geom.Triangulation}
@@ -334,5 +380,7 @@ class GeomService {
 
 const tempVect = new Vect;
 const tempVect2 = new Vect;
+
+export const directions = /** @type {const} */ (['n', 'e', 's', 'w']);
 
 export const geom = new GeomService;

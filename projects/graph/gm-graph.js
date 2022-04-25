@@ -1,7 +1,8 @@
-import { Mat, Poly, Rect } from "../geom";
+import { Mat, Poly, Rect, Vect } from "../geom";
 import { BaseGraph } from "./graph";
 import { geom } from "../service/geom";
 import { computeLightPosition } from "../service/geomorph";
+import { error } from "../service/log";
 
 /**
  * `gmGraph` is short for _Geomorph Graph_
@@ -9,10 +10,12 @@ import { computeLightPosition } from "../service/geomorph";
  * @extends {BaseGraph<Graph.GmGraphNode, Graph.GmGraphEdgeOpts>}
  */
 export class gmGraph extends BaseGraph {
+
   /** @type {Geomorph.GeomorphDataInstance[]}  */
   gms;
 
   /**
+   * Actually `gms` keyed by LayoutKey i.e. last instance.
    * @readonly
    * @type {{ [gmKey in Geomorph.LayoutKey]?: Geomorph.GeomorphData }}
    */
@@ -22,8 +25,61 @@ export class gmGraph extends BaseGraph {
   constructor(gms) {
     super();
     this.gms = gms;
-    // Technically, gms keyed by LayoutKey i.e. last instance
     this.gmDataLookup = gms.reduce((agg, gm) => ({ ...agg, [gm.key]: gm }), {});
+  }
+
+  /**
+   * TODO 🚧 verify
+   * Assume `transform` is non-singular and [±1, ±1, ±1, ±1, x, y]
+   * @param {Geomorph.ConnectorRect<Poly, Vect, Rect>} hullDoor
+   * @param {number} hullDoorId
+   * @param {[number, number, number, number, number, number]} transform
+   * @returns {null | Geom.Direction}
+   */
+  static computeHullDoorDirection(hullDoor, hullDoorId, transform) {
+    const found = hullDoor.tags.find(x => /^hull\-[nesw]$/.test(x));
+    if (found) {
+      const direction = /** @type {'n' | 'e' | 's' | 'w'} */ (found.slice(-1));
+      const ime1 = { x: transform[0], y: transform[1] };
+      
+      let nextDirection = /** @type {null | Geom.Direction} */ (null);
+      if (ime1.x === 1) nextDirection = direction;
+      else if (ime1.y === 1) nextDirection = geom.getDeltaDirection(direction, 1);
+      else if (ime1.x === -1) nextDirection = geom.getDeltaDirection(direction, 2);
+      else if (ime1.y === -1) nextDirection = geom.getDeltaDirection(direction, 3);
+
+      const determinant = transform[0] * transform[3] - transform[1] * transform[2];
+      if (nextDirection) {
+        if (determinant < 0) {// Reflection
+          if (ime1.x === 1) {
+            return geom.getFlippedDirection(nextDirection, 'x')
+          } else {
+            return  geom.getFlippedDirection(nextDirection, 'y')
+          }
+        }
+        return nextDirection;
+      }
+    }
+    error(`hullDoor ${hullDoorId}: expected tag "hull-{n,e,s,w}" in hull door`);
+    return null;
+  }
+
+  /**
+   * @param {Geom.VectJson} src
+   * @param {Geom.VectJson} dst 
+   */
+  findPath(src, dst) {
+    let gmId = this.gms.findIndex(x => x.gridRect.contains(src));
+    const dstGmId = this.gms.findIndex(x => x.gridRect.contains(dst));
+    const direction = Vect.from(dst).sub(src);
+    
+    while (gmId !== dstGmId) {
+      const sides = geom.compassPoints(direction);
+      // TODO 🚧 given "gm instance" how do we know which sides are connected?
+      break;
+    }
+
+    // console.log({ srcGmId, dstGmId, compassPnts })
   }
 
   /**
@@ -169,6 +225,8 @@ export class gmGraph extends BaseGraph {
       ...gms.flatMap(({ key: gmKey, hullDoors, transform, pngRect, doors }, gmIndex) => hullDoors.map((hullDoor, hullDoorId) => {
         const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
         const gmInFront = pngRect.contains(alongNormal);
+        const direction = this.computeHullDoorDirection(hullDoor, hullDoorId, transform);
+
         /** @type {Graph.GmGraphNodeDoor} */
         const doorNode = {
           type: 'door',
@@ -179,6 +237,7 @@ export class gmGraph extends BaseGraph {
           hullDoorId,
           transform,
           gmInFront,
+          direction,
         };
         return doorNode;
       })
