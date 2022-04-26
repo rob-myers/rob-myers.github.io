@@ -1,7 +1,7 @@
 import { Mat, Poly, Rect, Vect } from "../geom";
 import { BaseGraph } from "./graph";
 import { geom } from "../service/geom";
-import { computeLightPosition } from "../service/geomorph";
+import { computeLightPosition, directionChars } from "../service/geomorph";
 import { error } from "../service/log";
 
 /**
@@ -39,7 +39,8 @@ export class gmGraph extends BaseGraph {
   static computeHullDoorDirection(hullDoor, hullDoorId, transform) {
     const found = hullDoor.tags.find(x => /^hull\-[nesw]$/.test(x));
     if (found) {
-      const direction = /** @type {'n' | 'e' | 's' | 'w'} */ (found.slice(-1));
+      const dirChar = /** @type {typeof directionChars[*]} */ (found.slice(-1));
+      const direction = /** @type {Geom.Direction} */ (directionChars.indexOf(dirChar));
       const ime1 = { x: transform[0], y: transform[1] };
       
       let nextDirection = /** @type {null | Geom.Direction} */ (null);
@@ -48,19 +49,22 @@ export class gmGraph extends BaseGraph {
       else if (ime1.x === -1) nextDirection = geom.getDeltaDirection(direction, 2);
       else if (ime1.y === -1) nextDirection = geom.getDeltaDirection(direction, 3);
 
-      const determinant = transform[0] * transform[3] - transform[1] * transform[2];
-      if (nextDirection) {
+      if (nextDirection !== null) {
+        const determinant = transform[0] * transform[3] - transform[1] * transform[2];
         if (determinant < 0) {// Reflection
           if (ime1.x === 1) {
             return geom.getFlippedDirection(nextDirection, 'x')
           } else {
-            return  geom.getFlippedDirection(nextDirection, 'y')
+            return geom.getFlippedDirection(nextDirection, 'y')
           }
+        } else {
+          return nextDirection;
         }
-        return nextDirection;
       }
+      error(`hullDoor ${hullDoorId}: ${found}: failed to parse transform "${transform}"`);
+    } else {
+      error(`hullDoor ${hullDoorId}: expected tag "hull-{n,e,s,w}" in hull door`);
     }
-    error(`hullDoor ${hullDoorId}: expected tag "hull-{n,e,s,w}" in hull door`);
     return null;
   }
 

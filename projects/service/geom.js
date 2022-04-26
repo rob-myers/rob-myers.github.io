@@ -198,7 +198,7 @@ class GeomService {
    * @returns {Geom.Direction}
    */
   getDeltaDirection(direction, delta) {
-    return directions[(directions.indexOf(direction) + delta) % 4];
+    return /** @type {Geom.Direction} */ ((direction + delta) % 4);
   }
   
   /**
@@ -207,14 +207,14 @@ class GeomService {
    * @returns {Geom.Direction}
    */
   getFlippedDirection(direction, axis) {
-    if (axis === 'x') {
-      if (direction === 'n') return 's';
-      if (direction === 'e' || direction === 'w') return direction;
-      else return 'n';
-    } else {
-      if (direction === 'n' || direction === 's') return direction;
-      if (direction === 'e') return 'w';
-      else return 'e';
+    if (axis === 'x') {// Flip n/s i.e. 0/2
+      return direction % 2 === 0
+        ? /** @type {Geom.Direction} */ (2 - direction)
+        : direction;
+    } else {// Flip e/w i.e. 1/3
+      return direction % 2 === 1
+        ? /** @type {Geom.Direction} */ (4 - direction)
+        : direction;
     }
   }
 
@@ -380,7 +380,5 @@ class GeomService {
 
 const tempVect = new Vect;
 const tempVect2 = new Vect;
-
-export const directions = /** @type {const} */ (['n', 'e', 's', 'w']);
 
 export const geom = new GeomService;

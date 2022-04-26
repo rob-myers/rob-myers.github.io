@@ -485,3 +485,8 @@ export function buildZoneWithMeta(navDecomp) {
     doorNodeIds: [],
   };
 }
+
+/**
+ * Aligned to `Geom.Direction`.
+ */
+export const directionChars = /** @type {const} */ (['n', 'e', 's', 'w']);
