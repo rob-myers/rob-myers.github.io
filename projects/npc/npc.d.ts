@@ -76,6 +76,11 @@ declare namespace NPC {
     graph: Graph.FloorGraph;
   }
 
+  export interface GlobalNavItem {
+    src: { gmId: number; hullDoorId: number; exit: Geom.Vect };
+    dst: { gmId: number; hullDoorId: number; entry: Geom.Vect };
+  }
+
   // OLD BELOW
   ////////////
 

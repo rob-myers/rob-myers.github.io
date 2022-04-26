@@ -35,12 +35,13 @@ export default function NPCs(props) {
         if (srcGmId === -1 || dstGmId === -1) {
           return [];
         } else if (srcGmId === dstGmId) {
+          // TODO use general format
           return state.getLocalNavPath(srcGmId, src, dst);
         } else {
-          // TODO 🚧 global strategy
-          // TODO 🚧 join paths together
+          // Compute global strategy
           const gmIdsPath = props.gmGraph.findPath(src, dst)
-          console.log({ gmIdsPath });
+          console.log(gmIdsPath);
+          // TODO 🚧 compute local paths too
           return [];
         }
       },

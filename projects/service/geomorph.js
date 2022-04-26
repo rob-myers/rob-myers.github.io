@@ -200,10 +200,11 @@ function singleToConnectorRect(single, holes) {
   const [u, v] = geom.getAngledRectSeg({ angle, rect });
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
 
-  const infront = poly.center.addScaledVector(normal, 10);
-  const behind = poly.center.addScaledVector(normal, -10);
+  const infront = poly.center.addScaledVector(normal, 10).precision(2);
+  const behind = poly.center.addScaledVector(normal, -10).precision(2);
+
   /** @type {[null | number, null | number]} */
-  const connectorHoleIds = holes.reduce((agg, hole, holeId) => {
+  const holeIds = holes.reduce((agg, hole, holeId) => {
     if (agg[0] === null && hole.contains(infront)) return [holeId, agg[1]];
     if (agg[1] === null && hole.contains(behind)) return [agg[0], holeId];
     return agg;
@@ -216,7 +217,11 @@ function singleToConnectorRect(single, holes) {
     tags,
     seg: [u.precision(3), v.precision(3)],
     normal: normal.precision(3),
-    holeIds: connectorHoleIds,
+    holeIds,
+    entries: [
+      holeIds[0] === null ? null : infront,
+      holeIds[1] === null ? null : behind,
+    ],
   };
 }
 
@@ -243,6 +248,10 @@ function parseConnectRect(x) {
     poly: Poly.from(x.poly),
     rect: Rect.fromJson(x.rect),
     seg: [Vect.from(x.seg[0]), Vect.from(x.seg[1])],
+    entries: [
+      x.entries[0] ? Vect.from(x.entries[0]) : null,
+      x.entries[1] ? Vect.from(x.entries[1]) : null,
+    ],
   }
 }
 

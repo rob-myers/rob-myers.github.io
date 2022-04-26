@@ -13,19 +13,28 @@ export class gmGraph extends BaseGraph {
 
   /** @type {Geomorph.GeomorphDataInstance[]}  */
   gms;
-  
+
   /**
-   * Actually `gms` keyed by LayoutKey i.e. last instance.
+   * Technically for each `key` we provide the last `gms` with this `key`.
+   * All such items have the same underlying `Geomorph.GeomorphData`.
    * @readonly
    * @type {{ [gmKey in Geomorph.LayoutKey]?: Geomorph.GeomorphData }}
    */
   gmDataLookup;
+
+  /**
+   * World coordinates of entrypoint to hull door nodes.
+   * Must be computed manually i.e. whenever a door node is added.
+   * @type {Map<Graph.GmGraphNodeDoor, Geom.Vect>}
+   */
+  entry;
 
   /** @param {Geomorph.GeomorphDataInstance[]} gms  */
   constructor(gms) {
     super();
     this.gms = gms;
     this.gmDataLookup = gms.reduce((agg, gm) => ({ ...agg, [gm.key]: gm }), {});
+    this.entry = new Map;
   }
 
   /**
@@ -84,8 +93,9 @@ export class gmGraph extends BaseGraph {
       return null;
     }
     
-    const gmIdsPath = /** @type {{ gmId: number, hullDoorId: number }[]} */ ([]);
-    const currSrc = Vect.from(src), tempVect = new Vect, direction = Vect.from(dst).sub(src);
+    const gmIdsPath = /** @type {NPC.GlobalNavItem[]} */ ([]);
+    const currSrc = Vect.from(src);
+    const direction = Vect.from(dst).sub(src);
     let gmId = srcGmId;
 
     while (gmId !== dstGmId) {
@@ -95,11 +105,9 @@ export class gmGraph extends BaseGraph {
       );
 
       const closest = doorNodes.reduce((agg, doorNode) => {
-        const gm = this.gms[gmId];
-        // TODO center instead of seg[0]
-        const v = gm.matrix.transformPoint(tempVect.copy(gm.doors[doorNode.doorId].seg[0]));
-        const d = currSrc.distanceToSquared(v); // Must clone `v` or can lose info
-        if (!agg.node || d < agg.d) return { d, v: v.clone(), node: doorNode };
+        const v = this.getDoorEntry(doorNode);
+        const d = currSrc.distanceToSquared(v);
+        if (!agg.node || d < agg.d) return { d, v, node: doorNode };
         return agg;
       }, /** @type {{ d: number; v: Vect; node?: Graph.GmGraphNodeDoor }} */ ({ d: Infinity, v: new Vect }));
 
@@ -109,9 +117,11 @@ export class gmGraph extends BaseGraph {
           error(`global nav: ${gmId} ${closest.node.id} has no adjacent door`);
           return null;
         } // Update state
-        gmIdsPath.push({ gmId, hullDoorId: closest.node.hullDoorId });
+        gmIdsPath.push({
+          src: { gmId, hullDoorId: closest.node.hullDoorId, exit: closest.v },
+          dst: { gmId: adjDoorNode.gmIndex, hullDoorId: adjDoorNode.hullDoorId, entry: this.getDoorEntry(adjDoorNode) },
+        });
         gmId = adjDoorNode.gmIndex;
-        gmIdsPath.push({ gmId, hullDoorId: adjDoorNode.hullDoorId, });
         currSrc.copy(closest.v);
         direction.copy(dst).sub(currSrc);
       } else {
@@ -119,6 +129,7 @@ export class gmGraph extends BaseGraph {
         return null;
       }
     }
+
     return gmIdsPath;
   }
 
@@ -168,6 +179,11 @@ export class gmGraph extends BaseGraph {
     return { adjGmId, adjHoleId, adjHullId: dstHullDoorId, adjDoorId };
   }
 
+  /** @param {Graph.GmGraphNodeDoor} doorNode */
+  getDoorEntry(doorNode) {
+    return /** @type {Geom.Vect} */ (this.entry.get(doorNode));
+  }
+  
   /**
    * @param {string} nodeId 
    */
@@ -270,6 +286,7 @@ export class gmGraph extends BaseGraph {
   }
 
   /**
+   * The only way a gmGraph is constructed.
    * @param {Geomorph.GeomorphDataInstance[]} gms 
    */
   static fromGms(gms) {
@@ -277,9 +294,7 @@ export class gmGraph extends BaseGraph {
 
     /** @type {Graph.GmGraphNode[]} */
     const nodes = [
-      /**
-       * NOTE geomorph nodes aligned to `gms`
-       */
+      // NOTE geomorph nodes are aligned to `gms` for easy access
       ...gms.map((x, gmIndex) => {
         /** @type {Graph.GmGraphNodeGm} */
         const gmNode = {
@@ -307,7 +322,7 @@ export class gmGraph extends BaseGraph {
           transform,
           gmInFront,
           direction,
-          sealed: true, // Overwritten below
+          sealed: true, // Overwritten further below
         };
         return doorNode;
       })
@@ -315,6 +330,14 @@ export class gmGraph extends BaseGraph {
     ];
 
     graph.registerNodes(nodes);
+    // Compute `graph.entry`
+    nodes.forEach(node => {
+      if (node.type === 'door') {
+        const { matrix, doors } = gms[node.gmIndex];
+        const entry = /** @type {Geom.Vect} */ (doors[node.doorId].entries.find(Boolean));
+        graph.entry.set(node, matrix.transformPoint(entry.clone()));
+      }
+    });
 
     // Each gm node is connected to its door nodes (hull doors it has)
     /** @type {Graph.GmGraphEdgeOpts[]} */
@@ -354,7 +377,7 @@ export class gmGraph extends BaseGraph {
           const dstHullDoorId = dstItem.hullDoors.indexOf(dstDoor);
           // console.info('hull door to hull door:', srcItem, hullDoorId, '==>', dstItem, dstHullDoorId)
           const dstDoorNodeId = getGmDoorNodeId(dstItem.key, dstItem.transform, dstHullDoorId);
-          // Door nodes with global edges are not sealed
+          // NOTE door nodes with global edges are not sealed
           graph.getDoorNode(srcDoorNodeId).sealed = false;
           return { src: srcDoorNodeId, dst: dstDoorNodeId };
         } else {

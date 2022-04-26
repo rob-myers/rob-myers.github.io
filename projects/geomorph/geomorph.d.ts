@@ -272,8 +272,15 @@ declare namespace Geomorph {
     /**
      * `[hole id infront, hole id behind]`
      * where _infront_ means `normal` is pointing towards it.
+     * Hull doors have exactly one non-null entry.
      */
     holeIds: [null | number, null | number];
+    /**
+     * Aligned to `holeIds` i.e. `[null | infront, null | behind]`
+     * where _infront_ means `normal` is pointing towards it.
+     * Hull doors have exactly one non-null entry.
+     */
+    entries: [null | V, null | V];
   }
 
   type ParsedConnectorRect = ConnectorRect<Geom.Poly, Geom.Vect, Geom.Rect>;
