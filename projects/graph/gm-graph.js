@@ -15,12 +15,12 @@ export class gmGraph extends BaseGraph {
   gms;
 
   /**
-   * Technically for each `key` we provide the last `gms` with this `key`.
+   * Technically for each `key` we provide the last item of `gms` with this `key`.
    * All such items have the same underlying `Geomorph.GeomorphData`.
    * @readonly
    * @type {{ [gmKey in Geomorph.LayoutKey]?: Geomorph.GeomorphData }}
    */
-  gmDataLookup;
+  gmData;
 
   /**
    * World coordinates of entrypoint to hull door nodes.
@@ -33,7 +33,7 @@ export class gmGraph extends BaseGraph {
   constructor(gms) {
     super();
     this.gms = gms;
-    this.gmDataLookup = gms.reduce((agg, gm) => ({ ...agg, [gm.key]: gm }), {});
+    this.gmData = gms.reduce((agg, gm) => ({ ...agg, [gm.key]: gm }), {});
     this.entry = new Map;
   }
 
@@ -149,7 +149,6 @@ export class gmGraph extends BaseGraph {
   getConnectedDoorsBySide(gmId, sideDir) {
     const gmNode = /** @type {Graph.GmGraphNodeGm} */ (this.nodesArray[gmId]);
     const doorNodes = /** @type {Graph.GmGraphNodeDoor[]} */ (this.getSuccs(gmNode));
-    console.log({ preFilteredDoorNodes: doorNodes })
     return doorNodes.filter(x => !x.sealed && x.direction === sideDir);
   }
 
