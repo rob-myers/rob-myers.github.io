@@ -264,11 +264,10 @@ export class gmGraph extends BaseGraph {
       };
     });
     
-    const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode).map(x => x.windowIndex);
-    // const windowLights = adjWindowIds.map(windowIndex => ({
-    //   gmIndex,
-    //   poly: this.getOpenWindowPolygon(gmIndex, windowIndex),
-    // }));
+    const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode)
+      // Exclude frosted windows
+      .filter(x => !gm.windows[x.windowIndex].tags.includes('frosted'))
+      .map(x => x.windowIndex);
     const windowLights = adjWindowIds.map(windowIndex => ({
       gmIndex,
       poly: geom.lightPolygon({

@@ -1002,7 +1002,7 @@
         }
       },
       {
-        "tags": ["window"],
+        "tags": ["window", "frosted"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -3073,7 +3073,7 @@
           [[718.4, 360.4], [718.4, 372.8], [540, 372.8], [540, 360.4]]
         ]
       },
-      "tags": ["window"],
+      "tags": ["window", "frosted"],
       "seg": [{"x": 718.4, "y": 366.6}, {"x": 540, "y": 366.6}],
       "normal": {"x": 0, "y": -1},
       "holeIds": [11, 16],

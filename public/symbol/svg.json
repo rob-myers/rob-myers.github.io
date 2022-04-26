@@ -2142,7 +2142,7 @@
         }
       },
       {
-        "tags": ["window"],
+        "tags": ["window", "frosted"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -2467,7 +2467,7 @@
       }
     ],
     "pngRect": {"x": -19, "y": -69, "width": 2439, "height": 2790},
-    "lastModified": 1649075972275.9756
+    "lastModified": 1650986292708.5627
   },
   "console--018--1x1": {
     "key": "console--018--1x1",
