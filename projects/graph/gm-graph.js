@@ -84,8 +84,8 @@ export class gmGraph extends BaseGraph {
       return null;
     }
     
-    const gmIdsPath = [srcGmId];
-    const localSrc = Vect.from(src), closestVect = new Vect, direction = Vect.from(dst).sub(src);
+    const gmIdsPath = /** @type {{ gmId: number, hullDoorId: number }[]} */ ([]);
+    const currSrc = Vect.from(src), tempVect = new Vect, direction = Vect.from(dst).sub(src);
     let gmId = srcGmId;
 
     while (gmId !== dstGmId) {
@@ -93,32 +93,41 @@ export class gmGraph extends BaseGraph {
       const doorNodes = sides.flatMap(sideDir =>
         this.getConnectedDoorsBySide(gmId, sideDir)
       );
-      // console.log({ doorNodes });
+
       const closest = doorNodes.reduce((agg, doorNode) => {
         const gm = this.gms[gmId];
-        // TODO center instead of seg[0]?
-        const v = gm.matrix.transformPoint(closestVect.copy(gm.doors[doorNode.doorId].seg[0]));
-        const d = localSrc.distanceToSquared(v);
-        if (!agg.node || d < agg.d) return { d, v, node: doorNode };
+        // TODO center instead of seg[0]
+        const v = gm.matrix.transformPoint(tempVect.copy(gm.doors[doorNode.doorId].seg[0]));
+        const d = currSrc.distanceToSquared(v); // Must clone `v` or can lose info
+        if (!agg.node || d < agg.d) return { d, v: v.clone(), node: doorNode };
         return agg;
       }, /** @type {{ d: number; v: Vect; node?: Graph.GmGraphNodeDoor }} */ ({ d: Infinity, v: new Vect }));
+
       if (closest.node) {
-        const adjDoorNode = this.getSuccs(closest.node).find(x => x.type === 'door');
+        const adjDoorNode = this.getAdjacentDoor(closest.node);
         if (!adjDoorNode || adjDoorNode.gmIndex === gmId) {
           error(`global nav: ${gmId} ${closest.node.id} has no adjacent door`);
           return null;
         } // Update state
+        gmIdsPath.push({ gmId, hullDoorId: closest.node.hullDoorId });
         gmId = adjDoorNode.gmIndex;
-        gmIdsPath.push(gmId);
-        localSrc.copy(closest.v);
-        direction.copy(dst).sub(localSrc);
+        gmIdsPath.push({ gmId, hullDoorId: adjDoorNode.hullDoorId, });
+        currSrc.copy(closest.v);
+        direction.copy(dst).sub(currSrc);
       } else {
         error(`global nav: ${gmId} ${sides}: no closest node`);
         return null;
       }
     }
-    // console.log({ srcGmId, dstGmId, gmIdsPath });
     return gmIdsPath;
+  }
+
+  /**
+   * @param {Graph.GmGraphNode} node 
+   */
+  getAdjacentDoor(node) {
+    const doorNode = this.getSuccs(node).find(x => x.type === 'door');
+    return doorNode ? /** @type {Graph.GmGraphNodeDoor} */ (doorNode) : null
   }
 
   /**
@@ -129,6 +138,7 @@ export class gmGraph extends BaseGraph {
   getConnectedDoorsBySide(gmId, sideDir) {
     const gmNode = /** @type {Graph.GmGraphNodeGm} */ (this.nodesArray[gmId]);
     const doorNodes = /** @type {Graph.GmGraphNodeDoor[]} */ (this.getSuccs(gmNode));
+    console.log({ preFilteredDoorNodes: doorNodes })
     return doorNodes.filter(x => !x.sealed && x.direction === sideDir);
   }
 
