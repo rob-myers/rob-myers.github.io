@@ -42,24 +42,28 @@ export class gmGraph extends BaseGraph {
       const dirChar = /** @type {typeof directionChars[*]} */ (found.slice(-1));
       const direction = /** @type {Geom.Direction} */ (directionChars.indexOf(dirChar));
       const ime1 = { x: transform[0], y: transform[1] };
+      const ime2 = { x: transform[2], y: transform[3] };
       
-      let nextDirection = /** @type {null | Geom.Direction} */ (null);
-      if (ime1.x === 1) nextDirection = direction;
-      else if (ime1.y === 1) nextDirection = geom.getDeltaDirection(direction, 1);
-      else if (ime1.x === -1) nextDirection = geom.getDeltaDirection(direction, 2);
-      else if (ime1.y === -1) nextDirection = geom.getDeltaDirection(direction, 3);
-
-      if (nextDirection !== null) {
-        const determinant = transform[0] * transform[3] - transform[1] * transform[2];
-        if (determinant < 0) {// Reflection
-          if (ime1.x === 1) {
-            return geom.getFlippedDirection(nextDirection, 'x')
-          } else {
-            return geom.getFlippedDirection(nextDirection, 'y')
-          }
-        } else {
-          return nextDirection;
-        }
+      if (ime1.x === 1) {// (1, 0)
+        if (ime2.y === 1) // (1, 0, 0, 1)
+          return direction;
+        if (ime2.y === -1) // (1, 0, 0, -1)
+          return geom.getFlippedDirection(direction, 'x');
+      } else if (ime1.y === 1) {// (0, 1)
+        if (ime2.x === 1) // (0, 1, 1, 0)
+          return geom.getFlippedDirection(geom.getDeltaDirection(direction, 2), 'y'); 
+        if (ime1.x === -1) // (0, 1, -1, 0)
+          return geom.getDeltaDirection(direction, 1);
+      } else if (ime1.x === -1) {// (-1, 0)
+        if (ime2.y === 1) // (-1, 0, 0, 1)
+          return geom.getFlippedDirection(direction, 'y');
+        if (ime2.y === -1) // (-1, 0, 0, -1)
+          return geom.getDeltaDirection(direction, 2);
+      } else if (ime1.y === -1) {// (0, -1)
+        if (ime2.x === 1) // (0, -1, 1, 0)
+          return geom.getDeltaDirection(direction, 3);
+        if (ime2.x === -1) // (0, -1, -1, 0)
+          return geom.getFlippedDirection(geom.getDeltaDirection(direction, 3), 'y');
       }
       error(`hullDoor ${hullDoorId}: ${found}: failed to parse transform "${transform}"`);
     } else {
