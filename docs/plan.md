@@ -44,8 +44,11 @@ __Aim towards website release__.
     3. By construction (?) some edge can be taken; either never deadlocks
     ```
   - 🚧 Global navpaths
-  - AStar nodeClosed computed step-by-step
-  - Local nav path should avoid going outside navmesh
+  - ❌ AStar nodeClosed computed step-by-step
+  - local nav path issues
+    - should avoid going outside navmesh
+    - through doors can be messy (see pic)
+    - ✅ isn't right if src and dst in same triangle
   - `nav` receives multiple paths and doorIds
 
 - Clean

@@ -49,6 +49,9 @@ export class FloorGraph extends BaseGraph {
     }
 
     const nodePath = AStar.search(this, closestNode, farthestNode);
+    if (nodePath.length === 0 && closestNode === farthestNode) {
+      nodePath.push(closestNode); // Fix when src, dst in same triangle
+    }
 
     // Split path by door nodes
     const doorIds = /** @type {number[]} */ ([]);
@@ -64,7 +67,8 @@ export class FloorGraph extends BaseGraph {
       return agg;
     }, /** @type {Graph.FloorGraphNode[][]} */ ([]));
 
-    if (nodePaths[nodePaths.length - 1]?.length === 0) nodePaths.pop();
+    if (nodePaths[nodePaths.length - 1]?.length === 0)
+      nodePaths.pop(); // Fix trailing empty array when end at doorway
 
     const pulledPaths = nodePaths.map((nodePath, index) => {
       const pathSrc = index === 0 ? src : nodePath[0].centroid;
@@ -76,7 +80,9 @@ export class FloorGraph extends BaseGraph {
     // Omit 1st point and discard adjacent repetitions
     // TODO why repetitions?
     const normalisedPaths = pulledPaths.map((pulledPath, i) => {
-      return (i ? pulledPath : pulledPath.slice(1)).reduce((agg, p) =>
+      return (
+        i ? pulledPath : pulledPath.slice(1)
+      ).reduce((agg, p) =>
         agg.length && p.equals(agg[agg.length - 1]) ? agg : agg.concat(p)
       , /** @type {Geom.Vect[]} */ ([]));
     });
