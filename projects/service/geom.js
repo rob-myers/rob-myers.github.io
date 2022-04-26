@@ -4,20 +4,20 @@ class GeomService {
 
   /**
    * @param {Vect} p 
-   * @returns {['e', 's'] | ['s', 'e'] | ['e', 'n'] | ['n', 'e'] | ['w', 's'] | ['s', 'w'] | ['w', 'n'] | ['n', 'w']}
+   * @returns {[Geom.Direction, Geom.Direction]}
    */
   compassPoints(p) {
     if (p.x > 0) {
       if (p.y > 0) {
-        return p.x > p.y ? (['e', 's']) : ['s', 'e'];
+        return p.x > p.y ? ([1, 2]) : [2, 1]; // { 'e', 's' }
       } else {
-        return p.x > p.y ? ['e', 'n'] : ['n', 'e'];
+        return p.x > p.y ? [1, 0] : [0, 1]; // { 'e', 'n' }
       }
     } else {
       if (p.y > 0) {
-        return -p.x > p.y ? ['w', 's'] : ['s', 'w'];
+        return -p.x > p.y ? [3, 2] : [2, 3]; // { 'w', 's' }
       } else {
-        return -p.x > -p.y ? ['w', 'n'] : ['n', 'w'];
+        return -p.x > -p.y ? [3, 0] : [0, 3]; // { 'w', 'n' }
       }
     }
   }

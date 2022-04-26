@@ -32,7 +32,6 @@ export default function NPCs(props) {
         const {gms} = props.gmGraph
         const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
         const dstGmId = gms.findIndex(x => x.gridRect.contains(dst));
-        console.log({ srcGmId, dstGmId })
         if (srcGmId === -1 || dstGmId === -1) {
           return [];
         } else if (srcGmId === dstGmId) {
@@ -40,6 +39,8 @@ export default function NPCs(props) {
         } else {
           // TODO 🚧 global strategy
           // TODO 🚧 join paths together
+          const gmIdsPath = props.gmGraph.findPath(src, dst)
+          console.log({ gmIdsPath });
           return [];
         }
       },

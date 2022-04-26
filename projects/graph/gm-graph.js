@@ -6,14 +6,14 @@ import { error } from "../service/log";
 
 /**
  * `gmGraph` is short for _Geomorph Graph_
- * - _NOTE_ use lowercase __gmGraph__ to get react-refresh working!
+ * - _NOTE_ use lowercase __gmGraph__ to get (p)react-(p)refresh working!
  * @extends {BaseGraph<Graph.GmGraphNode, Graph.GmGraphEdgeOpts>}
  */
 export class gmGraph extends BaseGraph {
 
   /** @type {Geomorph.GeomorphDataInstance[]}  */
   gms;
-
+  
   /**
    * Actually `gms` keyed by LayoutKey i.e. last instance.
    * @readonly
@@ -73,21 +73,63 @@ export class gmGraph extends BaseGraph {
   }
 
   /**
+   * TODO 🚧 test
    * @param {Geom.VectJson} src
    * @param {Geom.VectJson} dst 
    */
   findPath(src, dst) {
-    let gmId = this.gms.findIndex(x => x.gridRect.contains(src));
+    const srcGmId = this.gms.findIndex(x => x.gridRect.contains(src));
     const dstGmId = this.gms.findIndex(x => x.gridRect.contains(dst));
-    const direction = Vect.from(dst).sub(src);
+    if (srcGmId === -1 || dstGmId === -1) {
+      return null;
+    }
     
+    const gmIdsPath = [srcGmId];
+    const localSrc = Vect.from(src), closestVect = new Vect, direction = Vect.from(dst).sub(src);
+    let gmId = srcGmId;
+
     while (gmId !== dstGmId) {
       const sides = geom.compassPoints(direction);
-      // TODO 🚧 given "gm instance" how do we know which sides are connected?
-      break;
+      const doorNodes = sides.flatMap(sideDir =>
+        this.getConnectedDoorsBySide(gmId, sideDir)
+      );
+      // console.log({ doorNodes });
+      const closest = doorNodes.reduce((agg, doorNode) => {
+        const gm = this.gms[gmId];
+        // TODO center instead of seg[0]?
+        const v = gm.matrix.transformPoint(closestVect.copy(gm.doors[doorNode.doorId].seg[0]));
+        const d = localSrc.distanceToSquared(v);
+        if (!agg.node || d < agg.d) return { d, v, node: doorNode };
+        return agg;
+      }, /** @type {{ d: number; v: Vect; node?: Graph.GmGraphNodeDoor }} */ ({ d: Infinity, v: new Vect }));
+      if (closest.node) {
+        const adjDoorNode = this.getSuccs(closest.node).find(x => x.type === 'door');
+        if (!adjDoorNode || adjDoorNode.gmIndex === gmId) {
+          error(`global nav: ${gmId} ${closest.node.id} has no adjacent door`);
+          return null;
+        } // Update state
+        gmId = adjDoorNode.gmIndex;
+        gmIdsPath.push(gmId);
+        localSrc.copy(closest.v);
+        direction.copy(dst).sub(localSrc);
+      } else {
+        error(`global nav: ${gmId} ${sides}: no closest node`);
+        return null;
+      }
     }
+    // console.log({ srcGmId, dstGmId, gmIdsPath });
+    return gmIdsPath;
+  }
 
-    // console.log({ srcGmId, dstGmId, compassPnts })
+  /**
+   * Get door nodes connecting `gms[gmId]` on side `sideDir`.
+   * @param {number} gmId 
+   * @param {Geom.Direction} sideDir 
+   */
+  getConnectedDoorsBySide(gmId, sideDir) {
+    const gmNode = /** @type {Graph.GmGraphNodeGm} */ (this.nodesArray[gmId]);
+    const doorNodes = /** @type {Graph.GmGraphNodeDoor[]} */ (this.getSuccs(gmNode));
+    return doorNodes.filter(x => !x.sealed && x.direction === sideDir);
   }
 
   /**
@@ -114,6 +156,13 @@ export class gmGraph extends BaseGraph {
     const { holeIds } = this.gms[adjGmId].hullDoors[dstHullDoorId];
     const adjHoleId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
     return { adjGmId, adjHoleId, adjHullId: dstHullDoorId, adjDoorId };
+  }
+
+  /**
+   * @param {string} nodeId 
+   */
+  getDoorNode(nodeId) {
+    return /** @type {Graph.GmGraphNodeDoor} */ (this.getNodeById(nodeId));
   }
 
   /**
@@ -218,7 +267,9 @@ export class gmGraph extends BaseGraph {
 
     /** @type {Graph.GmGraphNode[]} */
     const nodes = [
-      // NOTE geomorph nodes aligned to `gmItems`
+      /**
+       * NOTE geomorph nodes aligned to `gms`
+       */
       ...gms.map((x, gmIndex) => {
         /** @type {Graph.GmGraphNodeGm} */
         const gmNode = {
@@ -246,6 +297,7 @@ export class gmGraph extends BaseGraph {
           transform,
           gmInFront,
           direction,
+          sealed: true, // Overwritten below
         };
         return doorNode;
       })
@@ -292,6 +344,8 @@ export class gmGraph extends BaseGraph {
           const dstHullDoorId = dstItem.hullDoors.indexOf(dstDoor);
           // console.info('hull door to hull door:', srcItem, hullDoorId, '==>', dstItem, dstHullDoorId)
           const dstDoorNodeId = getGmDoorNodeId(dstItem.key, dstItem.transform, dstHullDoorId);
+          // Door nodes with global edges are not sealed
+          graph.getDoorNode(srcDoorNodeId).sealed = false;
           return { src: srcDoorNodeId, dst: dstDoorNodeId };
         } else {
           return [];
