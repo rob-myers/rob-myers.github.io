@@ -60,29 +60,35 @@ export class FloorGraph extends BaseGraph {
 
     // Split path by door nodes
     /** Aligned to `nodePaths` */
-    const doorIds = /** @type {number[]} */ ([]);
+    const nodePathMetas = /** @type {{ doorId: number; srcRoomId: number; dstRoomId: number }[]} */ ([]);
     const nodePaths = nodePath.reduce((agg, node) => {
-      if (this.nodeToMeta[node.index].doorId === -1) {
+      const meta = this.nodeToMeta[node.index];
+      if (meta.doorId === -1) {
         agg.length ? agg[agg.length - 1].push(node) : agg.push([node]);
       } else {
-        if (doorIds[doorIds.length - 1] !== this.nodeToMeta[node.index].doorId) {
+        const lastSeen = nodePathMetas[nodePathMetas.length - 1];
+        if (!lastSeen || lastSeen.doorId !== meta.doorId) {// lastSeen undefined or new meta.doorId
           agg.push([]);
-          doorIds.push(this.nodeToMeta[node.index].doorId);
+          nodePathMetas.push({ doorId: meta.doorId, srcRoomId: meta.roomId, dstRoomId: meta.roomId, });
+        } else if (meta.doorId === lastSeen.doorId ) {
+          lastSeen.dstRoomId = meta.roomId; // Should overwrite on exit door
         }
       }
       return agg;
     }, /** @type {Graph.FloorGraphNode[][]} */ ([]));
 
+    console.log({nodePathMetas});
+
     if (nodePaths[nodePaths.length - 1]?.length === 0)
       nodePaths.pop(); // Fix trailing empty array when end at doorway
 
-    const pulledPaths = nodePaths.map((nodePath, index) => {
+    const pulledPaths = nodePaths.map((nodePath, pathId) => {
       // TODO 🚧 use door.entries instead
       // TODO 🚧 what is srcHoleId and dstHoleId?
       // - precompute, where triangle must share 2 points with hole
-      const door = this.gm.doors[doorIds[index]]
-      const pathSrc = index === 0 ? src : nodePath[0].centroid;
-      const pathDst = index === nodePaths.length - 1 ? dst : nodePath[nodePath.length - 1].centroid;
+      // const door = this.gm.doors[nodePathMetas[pathId].doorId]; // ISSUE
+      const pathSrc = pathId === 0 ? src : nodePath[0].centroid;
+      const pathDst = pathId === nodePaths.length - 1 ? dst : nodePath[nodePath.length - 1].centroid;
       const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
       return path.map(Vect.from);
     });
@@ -97,7 +103,7 @@ export class FloorGraph extends BaseGraph {
       , /** @type {Geom.Vect[]} */ ([]));
     });
 
-    return { normalisedPaths, nodePaths, doorIds }
+    return { normalisedPaths, nodePaths, nodePathMetas }
   }
 
   /**
