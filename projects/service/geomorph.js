@@ -98,14 +98,8 @@ export async function createLayout(def, lookup, triangleService) {
    * - Errors thrown by other code seems to trigger error at:
    *   > `/Users/robmyers/coding/rob-myers.github.io/node_modules/triangle-wasm/triangle.out.js:9`
    */
-  const navDecomp = triangleService
-    ? await triangleService.triangulate(navPoly,
-        {
-          minAngle: 10,
-          // maxArea: 10000,
-          // maxSteiner: 300,
-        }
-      )
+  const navDecomp = triangleService // maxArea: 10000, maxSteiner: 300,
+    ? await triangleService.triangulate(navPoly, { minAngle: 10 })
     : { vs: [], tris: [] };
 
   // Labels
@@ -136,26 +130,15 @@ export async function createLayout(def, lookup, triangleService) {
   const hullRect = Rect.from(...hullSym.hull.concat(doorPolys).map(x => x.rect));
   doors.filter(x => x.tags.includes('hull')).forEach(door => {
     extendHullDoorTags(door, hullRect);
-  })
+  });
 
   /**
-   * Compute navZone using method from three-pathfinding.
-   * In browser we'll use it to create a FloorGraph.
+   * Compute navZone using method from three-pathfinding,
+   * also attaching `doorNodeIds` and `roomNodeIds`.
+   * In the browser we'll use it to create a `FloorGraph`.
    * We expect it to have exactly one group.
    */
-  const navZone = buildZoneWithMeta(navDecomp);
-
-  // Attach metadata to navZone
-  const navNodes = navZone.groups[0];
-  const tempTri = new Poly;
-  doors.forEach(({ seg: [u, v] }, doorId) => {
-    navNodes.forEach((node, nodeId) => {
-      tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid])
-      if (geom.lineSegIntersectsPolygon(u, v, tempTri)) {
-        (navZone.doorNodeIds[doorId] = navZone.doorNodeIds[doorId] || []).push(nodeId);
-      }
-    })
-  });
+  const navZone = buildZoneWithMeta(navDecomp, doors, holes);
 
   const roomGraphJson = RoomGraph.json(holes, doors, windows);
   const roomGraph = RoomGraph.from(roomGraphJson);
@@ -488,12 +471,42 @@ export function computeLightPosition(connector, fromHoleId, lightOffset = 20) {
 
 /**
  * @param {Geom.TriangulationJson} navDecomp
+ * @param {Geomorph.ParsedConnectorRect[]} doors
+ * @param {Geom.Poly[]} holes
  * @returns {Nav.ZoneWithMeta}
  */
-export function buildZoneWithMeta(navDecomp) {
+export function buildZoneWithMeta(navDecomp, doors, holes) {
+  const navZone = Builder.buildZone(navDecomp);
+  const navNodes = navZone.groups[0];
+
+  // Attach `doorNodeIds` to navZone
+  const doorNodeIds = /** @type {number[][]} */ ([]);
+  const tempTri = new Poly;
+  doors.forEach(({ seg: [u, v] }, doorId) => {
+    doorNodeIds[doorId] = [];
+    navNodes.forEach((node, nodeId) => {
+      tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid]);
+      if (geom.lineSegIntersectsPolygon(u, v, tempTri)) {
+        doorNodeIds[doorId].push(nodeId);
+      }
+    });
+  });
+
+  // Attach `roomNodeIds` to navZone
+  const roomNodeIds = /** @type {number[][]} */ ([]);
+  holes.forEach((poly, roomId) => {
+    roomNodeIds[roomId] = [];
+    navNodes.forEach((node, nodeId) => {
+      if (node.vertexIds.filter(id => poly.outlineContains(navZone.vertices[id])).length >= 2) {
+        roomNodeIds[roomId].push(nodeId);
+      }
+    });
+  });
+
   return {
-    ...Builder.buildZone(navDecomp),
-    doorNodeIds: [],
+    ...navZone,
+    doorNodeIds,
+    roomNodeIds,
   };
 }
 

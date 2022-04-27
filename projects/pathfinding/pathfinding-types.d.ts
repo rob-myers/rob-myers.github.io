@@ -42,6 +42,8 @@ declare namespace Nav {
   export interface ZoneWithMeta extends Zone {
     /** Aligned to `Geomorph.Layout['doors']` */
     doorNodeIds: number[][];
+    /** Aligned to `Geomorph.Layout['doors']` */
+    roomNodeIds: number[][];
   }
 
   export interface SearchContext {

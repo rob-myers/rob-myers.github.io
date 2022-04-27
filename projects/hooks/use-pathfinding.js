@@ -3,20 +3,17 @@ import { useQuery } from "react-query";
 
 /**
  * @param {string} zoneKey 
- * @param {Nav.ZoneWithMeta | undefined} navZone
+ * @param {Geomorph.GeomorphData | undefined} gm
  * @param {boolean} [disabled]
  * @returns {import("react-query").UseQueryResult<NPC.PfData>}
  */
-export default function usePathfinding(zoneKey, navZone, disabled) {
+export default function usePathfinding(zoneKey, gm, disabled) {
   return useQuery(zoneKeyToQueryKey(zoneKey), () => {
-    const zone = /** @type {Nav.ZoneWithMeta} */ (navZone);
-    // pathfinding.setZoneData(zoneKey, zone);
-
-    // Don't FloorGraph.from(json) because
-    // FloorGraphJson much larger than Nav.Zone.
-    return { graph : FloorGraph.fromZone(zone) };
+    return {
+      graph : FloorGraph.fromZone(/** @type {Geomorph.GeomorphData} */ (gm))
+    };
   }, {
-    enabled: !!navZone && !disabled,
+    enabled: !!gm && !disabled,
     keepPreviousData: true,
     staleTime: Infinity,
   });

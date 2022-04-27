@@ -39,7 +39,7 @@ export default function SvgNavDemo1(props) {
   }));
 
   const { data: gm } = useGeomorphData(layoutKey);
-  const { data: pf } = usePathfinding(layoutKey, gm?.navZone, props.disabled);
+  const { data: pf } = usePathfinding(layoutKey, gm, props.disabled);
 
   React.useEffect(() => {
     if (!pf) {

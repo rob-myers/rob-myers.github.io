@@ -25,7 +25,7 @@ export default function useGeomorphsNav(g, disabled) {
 
   const queries = gmKeys.map(key => {
     // Choose zoneKey to be geomorph key e.g. g-101--multipurpose
-    return usePathfinding(key, g.gmData[key]?.navZone, disabled)
+    return usePathfinding(key, g.gmData[key], disabled)
   });
   const ready = (
     g.gms.every(x => gmKeys.includes(x.key)) 

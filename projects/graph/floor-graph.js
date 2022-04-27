@@ -9,35 +9,40 @@ import { Channel } from "../pathfinding/Channel";
  */
 export class FloorGraph extends BaseGraph {
 
+  /** @type {Geomorph.GeomorphData} */
+  gm;
   /** @type {Geom.Vect[]} */
   vectors;
-  /** @type {number[][]}  */
-  doorNodeIds;
   /**
-   * Inverse of `doorNodeIds`,
-   * assuming no nav node touches > 1 door.
-   * @type {Record<number, number>}
+   * Inverse of `doorNodeIds` and `roomToNodeIds`.
+   * - We assume no nav node touches > 1 door.
+   * - We assume no triangle resides in > 1 room.
+   * @type {Record<number, { doorId: number; roomId: number }>}
    */
-  nodeToDoorId;
+  nodeToMeta;
 
   /**
-   * 
-   * @param {typeof this['vectors']} vectors 
-   * @param {typeof this['doorNodeIds']} doorNodeIds 
+   * @param {Geomorph.GeomorphData} gm 
    */
-  constructor(vectors, doorNodeIds) {
+  constructor(gm) {
     super();
 
-    this.vectors = vectors;
-    this.doorNodeIds = doorNodeIds;
-    this.nodeToDoorId = doorNodeIds.reduce((agg, nodeIds, doorId) => {
-      nodeIds.forEach(id => agg[id] = doorId)
-      return agg;
-    }, /** @type {typeof this['nodeToDoorId']} */ ({}));
+    this.gm = gm;
+    this.vectors = gm.navZone.vertices.map(Vect.from);
+
+    // Compute `this.nodeToMeta`
+    const preNavNodes = gm.navZone.groups[0];
+    this.nodeToMeta = preNavNodes.map((_) => ({ doorId: -1, roomId: -1 }));
+    gm.navZone.doorNodeIds.forEach((nodeIds, doorId) => {
+      nodeIds.forEach(nodeId => this.nodeToMeta[nodeId].doorId = doorId);
+    });
+    gm.navZone.roomNodeIds.forEach((nodeIds, roomId) => {
+      nodeIds.forEach(nodeId => this.nodeToMeta[nodeId].roomId = roomId);
+    });
   }
 
   /**
-   * https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
+   * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
    * @param {Geom.VectJson} src
    * @param {Geom.VectJson} dst 
    */
@@ -54,14 +59,15 @@ export class FloorGraph extends BaseGraph {
     }
 
     // Split path by door nodes
+    /** Aligned to `nodePaths` */
     const doorIds = /** @type {number[]} */ ([]);
     const nodePaths = nodePath.reduce((agg, node) => {
-      if (this.nodeToDoorId[node.index] === undefined) {
+      if (this.nodeToMeta[node.index].doorId === -1) {
         agg.length ? agg[agg.length - 1].push(node) : agg.push([node]);
       } else {
-        if (doorIds[doorIds.length - 1] !== this.nodeToDoorId[node.index]) {
-          doorIds.push(this.nodeToDoorId[node.index]);
+        if (doorIds[doorIds.length - 1] !== this.nodeToMeta[node.index].doorId) {
           agg.push([]);
+          doorIds.push(this.nodeToMeta[node.index].doorId);
         }
       }
       return agg;
@@ -71,6 +77,10 @@ export class FloorGraph extends BaseGraph {
       nodePaths.pop(); // Fix trailing empty array when end at doorway
 
     const pulledPaths = nodePaths.map((nodePath, index) => {
+      // TODO 🚧 use door.entries instead
+      // TODO 🚧 what is srcHoleId and dstHoleId?
+      // - precompute, where triangle must share 2 points with hole
+      const door = this.gm.doors[doorIds[index]]
       const pathSrc = index === 0 ? src : nodePath[0].centroid;
       const pathDst = index === nodePaths.length - 1 ? dst : nodePath[nodePath.length - 1].centroid;
       const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
@@ -136,17 +146,6 @@ export class FloorGraph extends BaseGraph {
   }
 
   /**
-   * @returns {Graph.FloorGraphJson}
-   */  
-  json() {
-    return {
-      ...this.plainJson(),
-      vectors: this.vectors.map(p => p.json),
-      doorNodeIds: this.doorNodeIds,
-    };
-  }
-
-  /**
    * @param {Geom.VectJson} src
    * @param {Geom.VectJson} dst
    * @param {Graph.FloorGraphNode[]} nodePath 
@@ -173,17 +172,16 @@ export class FloorGraph extends BaseGraph {
   }
 
   /**
-   * We assume `zone` has exactly one group,
+   * We assume `gm.navZone` has exactly one group,
    * i.e. floor of geomorph (sans doors) is connected.
-   * @param {Nav.ZoneWithMeta} zone
+   * @param {Geomorph.GeomorphData} gm
    * @returns {Graph.FloorGraph}
    */
-  static fromZone(zone) {
+  static fromZone(gm) {
+    const zone = gm.navZone;
+
     const { groups: [navNodes], vertices } = zone;
-    const graph = new FloorGraph(
-      vertices.map(Vect.from),
-      zone.doorNodeIds,
-    );
+    const graph = new FloorGraph(gm);
 
     for (const [nodeId, node] of Object.entries(navNodes)) {
       graph.registerNode({
@@ -210,48 +208,6 @@ export class FloorGraph extends BaseGraph {
       neighbourIds.forEach(nhbrNodeId =>
         graph.registerEdge({ src: graphNodeId, dst: nhbrNodeId })
       );
-    }
-
-    return graph;
-  }
-
-  /**
-   * Unused because `Graph.FloorGraphJson` larger than `Nav.Zone`.
-   * @param {Graph.FloorGraphJson} json
-   * @returns {Graph.FloorGraph}
-   */  
-  static from(json) {
-    const { nodes, edges, vectors, doorNodeIds } = json;
-    const graph = new FloorGraph(
-      vectors.map(Vect.from),
-      doorNodeIds,
-    );
-
-    for (const node of nodes) {
-      graph.registerNode({
-        type: 'tri',
-        id: node.id,
-        index: node.index,
-        vertexIds: node.vertexIds.slice(),
-        portals: node.portals.map(x => x.slice()),
-
-        cost: 1,
-        visited: false,
-        closed: false,
-        parent: null,
-        centroid: Vect.from(node.centroid),
-
-        neighbours: [], // Mutated below
-      });
-    }
-
-    for (const edge of edges) {
-      graph.registerEdge(edge);
-    }
-
-    for (const jsonNode of nodes) {
-      const node = /** @type {Graph.FloorGraphNode} */ (graph.getNodeById(jsonNode.id));
-      node.neighbours = graph.getSuccs(node).map(({ index }) => index);
     }
 
     return graph;

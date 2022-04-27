@@ -19,7 +19,7 @@ export default function SvgStringPull(props) {
   const layoutKey = 'g-301--bridge';
   const zoneKey = layoutKey;
   const { data: gm } = useGeomorphData(layoutKey);
-  const { data: pf } = usePathfinding(zoneKey, gm?.navZone, props.disabled);
+  const { data: pf } = usePathfinding(zoneKey, gm, props.disabled);
 
   const state = useStateRef(() => ({
     rootEl: /** @type {SVGGElement} */ ({}),

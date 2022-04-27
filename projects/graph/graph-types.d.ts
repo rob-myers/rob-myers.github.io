@@ -180,13 +180,8 @@ declare namespace Graph {
 
   export type FloorGraphEdgeOpts = BaseEdgeOpts;
 
-  export type FloorGraphJson = GraphJson<
-    FloorGraphNodeJson,
-    FloorGraphEdgeOpts
-  > & {
-    vectors: Geom.VectJson[];
-    doorNodeIds: number[][];
-  };
+  /** We use Nav.Zone instead. */
+  export type FloorGraphJson = never;
 
   export type FloorGraph = import('./floor-graph').FloorGraph;
 
