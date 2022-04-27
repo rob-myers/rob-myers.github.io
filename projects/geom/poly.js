@@ -82,7 +82,7 @@ export class Poly {
     return { outer, inner };
   }
 
-  /** @param {Vect} delta */
+  /** @param {Geom.VectJson} delta */
   add(delta) {
     return this.translate(delta.x, delta.y);
   }
