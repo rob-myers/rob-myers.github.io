@@ -58,9 +58,9 @@ export class FloorGraph extends BaseGraph {
       nodePath.push(closestNode); // Fix when src, dst in same triangle
     }
 
+    // One fewer than `nodePaths`
+    const nodePathMetas = /** @type {NPC.LocalNavItem[]} */ ([]);
     // Split path by door nodes
-    /** Aligned to `nodePaths` */
-    const nodePathMetas = /** @type {{ doorId: number; srcRoomId: number; dstRoomId: number }[]} */ ([]);
     const nodePaths = nodePath.reduce((agg, node) => {
       const meta = this.nodeToMeta[node.index];
       if (meta.doorId === -1) {
@@ -69,26 +69,34 @@ export class FloorGraph extends BaseGraph {
         const lastSeen = nodePathMetas[nodePathMetas.length - 1];
         if (!lastSeen || lastSeen.doorId !== meta.doorId) {// lastSeen undefined or new meta.doorId
           agg.push([]);
-          nodePathMetas.push({ doorId: meta.doorId, srcRoomId: meta.roomId, dstRoomId: meta.roomId, });
-        } else if (meta.doorId === lastSeen.doorId ) {
+          const door = this.gm.doors[meta.doorId];
+          const entry = /** @type {Geom.Vect} */ (door.holeIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
+          nodePathMetas.push({
+            doorId: meta.doorId,
+            srcRoomId: meta.roomId,
+            dstRoomId: meta.roomId,
+            entry,
+            exit: entry,
+          });
+        } else if (meta.doorId === lastSeen.doorId && meta.roomId !== lastSeen.dstRoomId) {
           lastSeen.dstRoomId = meta.roomId; // Should overwrite on exit door
+          const door = this.gm.doors[meta.doorId];
+          lastSeen.exit = /** @type {Geom.Vect} */ (door.holeIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
         }
       }
       return agg;
     }, /** @type {Graph.FloorGraphNode[][]} */ ([]));
 
-    console.log({nodePathMetas});
-
     if (nodePaths[nodePaths.length - 1]?.length === 0)
       nodePaths.pop(); // Fix trailing empty array when end at doorway
+    
+    console.log({ nodePaths, nodePathMetas});
 
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
-      // TODO 🚧 use door.entries instead
-      // TODO 🚧 what is srcHoleId and dstHoleId?
-      // - precompute, where triangle must share 2 points with hole
-      // const door = this.gm.doors[nodePathMetas[pathId].doorId]; // ISSUE
-      const pathSrc = pathId === 0 ? src : nodePath[0].centroid;
-      const pathDst = pathId === nodePaths.length - 1 ? dst : nodePath[nodePath.length - 1].centroid;
+      // const pathSrc = pathId === 0 ? src : nodePath[0].centroid;
+      // const pathDst = pathId === nodePaths.length - 1 ? dst : nodePath[nodePath.length - 1].centroid;
+      const pathSrc = pathId === 0 ? src : nodePathMetas[pathId - 1].exit;
+      const pathDst = pathId === nodePaths.length - 1 ? dst : nodePathMetas[pathId].entry;
       const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
       return path.map(Vect.from);
     });

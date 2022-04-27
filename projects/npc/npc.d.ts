@@ -81,6 +81,14 @@ declare namespace NPC {
     dst: { gmId: number; hullDoorId: number; entry: Geom.Vect };
   }
 
+  export interface LocalNavItem {
+    doorId: number;
+    srcRoomId: number;
+    dstRoomId: number;
+    entry: Geom.Vect;
+    exit: Geom.Vect;
+  }
+
   // OLD BELOW
   ////////////
 
