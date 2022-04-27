@@ -98,8 +98,12 @@ export async function createLayout(def, lookup, triangleService) {
    * - Errors thrown by other code seems to trigger error at:
    *   > `/Users/robmyers/coding/rob-myers.github.io/node_modules/triangle-wasm/triangle.out.js:9`
    */
-  const navDecomp = triangleService // maxArea: 10000, maxSteiner: 300,
-    ? await triangleService.triangulate(navPoly, { minAngle: 10 })
+  const navDecomp = triangleService
+    ? await triangleService.triangulate(navPoly, {
+        minAngle: 10,
+        // maxSteiner: 300,
+        // maxArea: 750,
+      })
     : { vs: [], tris: [] };
 
   // Labels
@@ -185,8 +189,8 @@ function singleToConnectorRect(single, holes) {
   const [u, v] = geom.getAngledRectSeg({ angle, rect });
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
 
-  const infront = poly.center.addScaledVector(normal, 20).precision(2);
-  const behind = poly.center.addScaledVector(normal, -20).precision(2);
+  const infront = poly.center.addScaledVector(normal, doorEntryDelta).precision(2);
+  const behind = poly.center.addScaledVector(normal, -doorEntryDelta).precision(2);
 
   /** @type {[null | number, null | number]} */
   const holeIds = holes.reduce((agg, hole, holeId) => {
@@ -514,3 +518,5 @@ export function buildZoneWithMeta(navDecomp, doors, holes) {
  * Aligned to `Geom.Direction`.
  */
 export const directionChars = /** @type {const} */ (['n', 'e', 's', 'w']);
+
+const doorEntryDelta = 10;
