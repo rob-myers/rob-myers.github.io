@@ -266,7 +266,12 @@ export class gmGraph extends BaseGraph {
     
     const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode)
       // Exclude frosted windows
-      .filter(x => !gm.windows[x.windowIndex].tags.includes('frosted'))
+      .filter(x => {
+        const connector = gm.windows[x.windowIndex];
+        if (connector.tags.includes('frosted')) return false;
+        if (connector.tags.includes('one-way') && connector.holeIds[0] !== rootHoleId) return false;
+        return true;
+      })
       .map(x => x.windowIndex);
     const windowLights = adjWindowIds.map(windowIndex => ({
       gmIndex,

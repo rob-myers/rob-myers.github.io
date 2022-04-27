@@ -152,7 +152,6 @@ export async function createLayout(def, lookup, triangleService) {
     navNodes.forEach((node, nodeId) => {
       tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid])
       if (geom.lineSegIntersectsPolygon(u, v, tempTri)) {
-        // console.log({ doorId, nodeId });
         (navZone.doorNodeIds[doorId] = navZone.doorNodeIds[doorId] || []).push(nodeId);
       }
     })
@@ -196,12 +195,15 @@ export async function createLayout(def, lookup, triangleService) {
  */
 function singleToConnectorRect(single, holes) {
   const { poly, tags } = single;
-  const { angle, rect } = geom.polyToAngledRect(poly);
+  const { angle, rect } = poly.outline.length === 4
+    ? geom.polyToAngledRect(poly)
+    // For curved windows we simply use aabb
+    : { rect: poly.rect, angle: 0 };
   const [u, v] = geom.getAngledRectSeg({ angle, rect });
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
 
-  const infront = poly.center.addScaledVector(normal, 10).precision(2);
-  const behind = poly.center.addScaledVector(normal, -10).precision(2);
+  const infront = poly.center.addScaledVector(normal, 20).precision(2);
+  const behind = poly.center.addScaledVector(normal, -20).precision(2);
 
   /** @type {[null | number, null | number]} */
   const holeIds = holes.reduce((agg, hole, holeId) => {
@@ -471,13 +473,13 @@ export function geomorphDataToInstance(gm, transform) {
 }
 
 /**
+ * Lockers in bridge--042--8x9 need ~20.
  * @param {Geomorph.ParsedConnectorRect} connector 
  * @param {number} fromHoleId 
  */
-export function computeLightPosition(connector, fromHoleId, lightOffset = 40) {
+export function computeLightPosition(connector, fromHoleId, lightOffset = 20) {
   const roomSign = connector.holeIds[0] === fromHoleId
-    ? 1
-    : connector.holeIds[1] === fromHoleId ? -1 : null;
+    ? 1 : connector.holeIds[1] === fromHoleId ? -1 : null;
   if (roomSign === null) {
     console.warn(`hole ${fromHoleId}: connector: `, connector ,`: roomSign is null`);
   }

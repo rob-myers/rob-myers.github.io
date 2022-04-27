@@ -45,6 +45,9 @@ __Aim towards website release__.
     ```
   - 🚧 Global navpaths
   - ❌ AStar nodeClosed computed step-by-step
+  - ✅ curved windows can produce strange light
+       we introduced `one-way` (like `frosted`) to avoid
+       outside from control room seeing more than inside
   - local nav path issues
     - should avoid going outside navmesh
     - through doors can be messy (see pic)
