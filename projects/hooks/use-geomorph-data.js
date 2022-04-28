@@ -14,14 +14,14 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
       .then(x => x.json()).then(parseLayout);
 
     const roomGraph = layout.roomGraph;
-    const holesWithDoors = roomGraph.nodesArray
+    const roomsWithDoors = roomGraph.nodesArray
       .filter(node => node.type === 'room')
-      .map((node, holeIndex) => {
+      .map((node, roomNodeId) => {
         const doors = roomGraph.getEdgesFrom(node)
           .flatMap(({ dst }) =>
             dst.type === 'door' ? layout.doors[dst.doorIndex].poly : []
-          ); // Assume nodes aligned with holes...
-        return Poly.union([layout.holes[holeIndex], ...doors])[0];
+          ); // Assume room nodes aligned with rooms
+        return Poly.union([layout.rooms[roomNodeId], ...doors])[0];
       });
 
     const switchPoints = layout.groups.singles
@@ -33,8 +33,8 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...layout,
-      holesWithDoors,
-      holeSwitches: layout.holes.map((poly) => {
+      roomsWithDoors: roomsWithDoors,
+      roomSwitches: layout.rooms.map((poly) => {
         const found = switchPoints.find(p => poly.contains(p));
         return found || poly.rect.center;
       }),

@@ -174,8 +174,8 @@ export class gmGraph extends BaseGraph {
     // `door` is a hull door and connected to another
     // console.log({otherDoorNode});
     const { gmIndex: adjGmId, hullDoorId: dstHullDoorId, doorId: adjDoorId } = otherDoorNode;
-    const { holeIds } = this.gms[adjGmId].hullDoors[dstHullDoorId];
-    const adjRoomId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
+    const { roomIds } = this.gms[adjGmId].hullDoors[dstHullDoorId];
+    const adjRoomId = /** @type {number} */ (roomIds.find(x => typeof x === 'number'));
     return { adjGmId, adjRoomId, adjHullId: dstHullDoorId, adjDoorId };
   }
 
@@ -192,7 +192,7 @@ export class gmGraph extends BaseGraph {
   }
 
   /**
-   * Get union of holesWithDoors on either side of door.
+   * Get union of roomsWithDoors on either side of door.
    * In case of a hull door, we transform into other geomorph.
    * @param {number} gmIndex 
    * @param {number} doorIndex
@@ -204,16 +204,16 @@ export class gmGraph extends BaseGraph {
     const hullDoorIndex = gm.hullDoors.indexOf(door);
     if (hullDoorIndex === -1) {
       const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getDoorNode(doorIndex));
-      return { gmIndex, doorIndex, adjRoomId: null, poly: Poly.union(adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]))[0]};
+      return { gmIndex, doorIndex, adjRoomId: null, poly: Poly.union(adjRoomNodes.map(x => gm.roomsWithDoors[x.roomId]))[0]};
     }
 
     const result = this.getAdjacentRoomCtxt(gmIndex, hullDoorIndex);
     if (result) {
-      const srcRoomId = /** @type {number} */ (door.holeIds.find(x => typeof x === 'number'));
+      const srcRoomId = /** @type {number} */ (door.roomIds.find(x => typeof x === 'number'));
       const otherGm = this.gms[result.adjGmId];
       const poly = Poly.union([// We transform poly from `gm` coords to `otherGm` coords
-        gm.holesWithDoors[srcRoomId].clone().applyMatrix(gm.matrix).applyMatrix(otherGm.inverseMatrix),
-        otherGm.holesWithDoors[result.adjRoomId],
+        gm.roomsWithDoors[srcRoomId].clone().applyMatrix(gm.matrix).applyMatrix(otherGm.inverseMatrix),
+        otherGm.roomsWithDoors[result.adjRoomId],
       ])[0];
 
       return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjRoomId: result.adjRoomId, poly };
@@ -224,16 +224,16 @@ export class gmGraph extends BaseGraph {
   }
 
   /**
-   * Get union of holesWithDoors on either side of windows.
+   * Get union of window with rooms on either side of window.
    * Currently windows cannot connect distinct geomorphs.
-   * @param {number} gmIndex 
-   * @param {number} windowIndex 
+   * @param {number} gmId 
+   * @param {number} windowId 
    */
-  getOpenWindowPolygon(gmIndex, windowIndex) {
-    const gm = this.gms[gmIndex];
-    const window = gm.windows[windowIndex];
-    const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getWindowNode(windowIndex));
-    return Poly.union(adjRoomNodes.map(x => gm.holes[x.holeIndex]).concat(window.poly))[0];
+  getOpenWindowPolygon(gmId, windowId) {
+    const gm = this.gms[gmId];
+    const window = gm.windows[windowId];
+    const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getWindowNode(windowId));
+    return Poly.union(adjRoomNodes.map(x => gm.rooms[x.roomId]).concat(window.poly))[0];
   }
 
   /**
@@ -269,7 +269,7 @@ export class gmGraph extends BaseGraph {
       .filter(x => {
         const connector = gm.windows[x.windowIndex];
         if (connector.tags.includes('frosted')) return false;
-        if (connector.tags.includes('one-way') && connector.holeIds[0] !== rootRoomId) return false;
+        if (connector.tags.includes('one-way') && connector.roomIds[0] !== rootRoomId) return false;
         return true;
       })
       .map(x => x.windowIndex);

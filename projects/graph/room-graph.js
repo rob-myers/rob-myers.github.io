@@ -26,7 +26,7 @@ export class RoomGraph extends BaseGraph {
   getAdjacentHullDoorIds(gm, ...nodes) {
     return this.getAdjacentDoors(...nodes)
       .map(node => /** @type {const} */ ([node, gm.doors[node.doorIndex]]))
-      .flatMap(([{ doorIndex }, door]) => door.holeIds.some(x => x === null)
+      .flatMap(([{ doorIndex }, door]) => door.roomIds.some(x => x === null)
         ? { doorIndex, hullDoorIndex: gm.hullDoors.indexOf(door) } : []
       );
   }
@@ -94,24 +94,24 @@ export class RoomGraph extends BaseGraph {
   }
 
   /**
-  * @param {Geom.Poly[]} holes 
+  * @param {Geom.Poly[]} rooms 
   * @param {Geomorph.ParsedLayout['doors']} doors 
   * @param {Geomorph.ParsedLayout['windows']} windows 
   * @returns {Graph.RoomGraphJson}
   */
-  static json(holes, doors, windows) {
+  static json(rooms, doors, windows) {
 
     /**
-     * For each door, the respective adjacent hole ids.
+     * For each door, the respective adjacent room ids.
      * Each array will be aligned with the respective door node's successors.
      */
-    const doorsHoleIds = doors.map(door => holes.flatMap((hole, i) => Poly.union([hole, door.poly]).length === 1 ? i : []));
-    const windowsHoleIds = windows.map(window => holes.flatMap((hole, i) => Poly.union([hole, window.poly]).length === 1 ? i : []));
+    const doorsRoomIds = doors.map(door => rooms.flatMap((room, i) => Poly.union([room, door.poly]).length === 1 ? i : []));
+    const windowsRoomIds = windows.map(window => rooms.flatMap((room, i) => Poly.union([room, window.poly]).length === 1 ? i : []));
 
     /** @type {Graph.RoomGraphNode[]} */
     const roomGraphNodes = [
-      ...holes.map((_, holeIndex) => ({
-        id: `room-${holeIndex}`, type: /** @type {const} */ ('room'), holeIndex,
+      ...rooms.map((_, roomId) => ({
+        id: `room-${roomId}`, type: /** @type {const} */ ('room'), roomId,
       })),
       ...doors.map((_, doorIndex) => {
         /** @type {Graph.RoomGraphNodeDoor} */
@@ -128,26 +128,26 @@ export class RoomGraph extends BaseGraph {
     /** @type {Graph.RoomGraphEdgeOpts[]} */
     const roomGraphEdges = [
       ...doors.flatMap((_door, doorIndex) => {
-        const holeIds = doorsHoleIds[doorIndex];
-        if ([1, 2].includes(holeIds.length)) {// Hull door has 1, standard has 2
-          return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
-            { src: `room-${holeId}`, dst: `door-${doorIndex}` },
-            { dst: `room-${holeId}`, src: `door-${doorIndex}` },
+        const roomIds = doorsRoomIds[doorIndex];
+        if ([1, 2].includes(roomIds.length)) {// Hull door has 1, standard has 2
+          return roomIds.flatMap(roomId => [// undirected, so 2 directed edges
+            { src: `room-${roomId}`, dst: `door-${doorIndex}` },
+            { dst: `room-${roomId}`, src: `door-${doorIndex}` },
           ]);
         } else {
-          error(`door ${doorIndex}: unexpected adjacent holes: ${holeIds}`)
+          error(`door ${doorIndex}: unexpected adjacent rooms: ${roomIds}`)
           return [];
         }
       }),
       ...windows.flatMap((_window, windowIndex) => {
-        const holeIds = windowsHoleIds[windowIndex];
-        if ([1,2].includes(holeIds.length)) {// Hull window has 1, standard has 2
-          return holeIds.flatMap(holeId => [// undirected, so 2 directed edges
-            { src: `room-${holeId}`, dst: `window-${windowIndex}` },
-            { dst: `room-${holeId}`, src: `window-${windowIndex}` },
+        const roomIds = windowsRoomIds[windowIndex];
+        if ([1,2].includes(roomIds.length)) {// Hull window has 1, standard has 2
+          return roomIds.flatMap(roomId => [// undirected, so 2 directed edges
+            { src: `room-${roomId}`, dst: `window-${windowIndex}` },
+            { dst: `room-${roomId}`, src: `window-${windowIndex}` },
           ]);
         } else {
-          error(`window ${windowIndex}: unexpected adjacent holes: ${holeIds}`)
+          error(`window ${windowIndex}: unexpected adjacent rooms: ${roomIds}`)
           return [];
         }
       }),

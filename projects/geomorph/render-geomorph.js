@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { Poly, Vect } from "../geom";
 import { labelMeta } from './geomorph.model';
+import { error } from "../service/log";
 import { singlesToPolys } from '../service/geomorph';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service/dom';
 
@@ -44,7 +45,7 @@ export async function renderGeomorph(
     const hullOutline = hullSym.hull[0].outline;
     fillRing(ctxt, hullOutline);
   } else {
-    console.error(chalk.red('hull walls must: exist, be connected, have a hole'));
+    error('hull walls must exist, be connected, and have a hole');
   }
 
   ctxt.fillStyle = navColor;

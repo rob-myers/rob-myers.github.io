@@ -49,10 +49,10 @@ declare namespace Graph {
 
   export interface RoomGraphNodeRoom {
     type: 'room';
-    /** `room-${holeIndex} */
+    /** `room-${roomId} */
     id: string;
-    /** Index of `Geomorph.Layout['holes']` */
-    holeIndex: number;
+    /** Index of `Geomorph.Layout['rooms']` */
+    roomId: number;
   }
   export interface RoomGraphNodeDoor {
     type: 'door';

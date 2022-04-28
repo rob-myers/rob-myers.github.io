@@ -2886,7 +2886,7 @@
       }
     ]
   },
-  "holes": [
+  "rooms": [
     {
       "type": "Polygon",
       "coordinates": [
@@ -3312,7 +3312,7 @@
       "tags": ["door", "hull", "hull-w"],
       "seg": [{"x": 0, "y": 250.7}, {"x": 0, "y": 348.7}],
       "normal": {"x": -1, "y": 0},
-      "holeIds": [null, 0],
+      "roomIds": [null, 0],
       "entries": [null, {"x": 10, "y": 299.7}]
     },
     {
@@ -3325,7 +3325,7 @@
       "tags": ["door", "hull", "hull-w"],
       "seg": [{"x": 0, "y": 850.7}, {"x": 0, "y": 948.7}],
       "normal": {"x": -1, "y": 0},
-      "holeIds": [null, 4],
+      "roomIds": [null, 4],
       "entries": [null, {"x": 10, "y": 899.7}]
     },
     {
@@ -3340,7 +3340,7 @@
       "tags": ["door", "hull", "hull-e"],
       "seg": [{"x": 1200, "y": 250.7}, {"x": 1200, "y": 348.7}],
       "normal": {"x": -1, "y": 0},
-      "holeIds": [22, null],
+      "roomIds": [22, null],
       "entries": [{"x": 1190, "y": 299.7}, null]
     },
     {
@@ -3355,7 +3355,7 @@
       "tags": ["door", "hull", "hull-e"],
       "seg": [{"x": 1200, "y": 850.7}, {"x": 1200, "y": 948.7}],
       "normal": {"x": -1, "y": 0},
-      "holeIds": [25, null],
+      "roomIds": [25, null],
       "entries": [{"x": 1190, "y": 899.7}, null]
     },
     {
@@ -3368,7 +3368,7 @@
       "tags": ["door", "hull", "hull-n"],
       "seg": [{"x": 949, "y": 0}, {"x": 851, "y": 0}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [null, 22],
+      "roomIds": [null, 22],
       "entries": [null, {"x": 900, "y": 10}]
     },
     {
@@ -3381,7 +3381,7 @@
       "tags": ["door", "hull", "hull-n"],
       "seg": [{"x": 349, "y": 0}, {"x": 251, "y": 0}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [null, 0],
+      "roomIds": [null, 0],
       "entries": [null, {"x": 300, "y": 10}]
     },
     {
@@ -3394,7 +3394,7 @@
       "tags": ["door", "hull", "hull-s"],
       "seg": [{"x": 950, "y": 1200}, {"x": 852, "y": 1200}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [25, null],
+      "roomIds": [25, null],
       "entries": [{"x": 901, "y": 1190}, null]
     },
     {
@@ -3407,7 +3407,7 @@
       "tags": ["door", "hull", "hull-s"],
       "seg": [{"x": 349, "y": 1200}, {"x": 251, "y": 1200}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [4, null],
+      "roomIds": [4, null],
       "entries": [{"x": 300, "y": 1190}, null]
     },
     {
@@ -3427,7 +3427,7 @@
       "tags": ["door", "iris"],
       "seg": [{"x": 232.793, "y": 360.2}, {"x": 186.793, "y": 360.2}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [0, 5],
+      "roomIds": [0, 5],
       "entries": [{"x": 209.79, "y": 350.2}, {"x": 209.79, "y": 370.2}]
     },
     {
@@ -3442,7 +3442,7 @@
       "tags": ["door", "iris"],
       "seg": [{"x": 232.493, "y": 840.5}, {"x": 186.493, "y": 840.5}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [5, 4],
+      "roomIds": [5, 4],
       "entries": [{"x": 209.49, "y": 830.5}, {"x": 209.49, "y": 850.5}]
     },
     {
@@ -3457,7 +3457,7 @@
       "tags": ["door", "iris"],
       "seg": [{"x": 1012.493, "y": 840.5}, {"x": 966.493, "y": 840.5}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [5, 25],
+      "roomIds": [5, 25],
       "entries": [{"x": 989.49, "y": 830.5}, {"x": 989.49, "y": 850.5}]
     },
     {
@@ -3472,7 +3472,7 @@
       "tags": ["door", "iris"],
       "seg": [{"x": 1012.493, "y": 360.5}, {"x": 966.493, "y": 360.5}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [22, 5],
+      "roomIds": [22, 5],
       "entries": [{"x": 989.49, "y": 350.5}, {"x": 989.49, "y": 370.5}]
     },
     {
@@ -3487,7 +3487,7 @@
       "tags": ["door"],
       "seg": [{"x": 594.493, "y": 540.5}, {"x": 548.493, "y": 540.5}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [14, 5],
+      "roomIds": [14, 5],
       "entries": [{"x": 571.49, "y": 530.5}, {"x": 571.49, "y": 550.5}]
     },
     {
@@ -3502,7 +3502,7 @@
       "tags": ["door"],
       "seg": [{"x": 650.493, "y": 540.5}, {"x": 604.493, "y": 540.5}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [14, 5],
+      "roomIds": [14, 5],
       "entries": [{"x": 627.49, "y": 530.5}, {"x": 627.49, "y": 550.5}]
     },
     {
@@ -3517,7 +3517,7 @@
       "tags": ["door"],
       "seg": [{"x": 594.493, "y": 660.5}, {"x": 548.493, "y": 660.5}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [5, 15],
+      "roomIds": [5, 15],
       "entries": [{"x": 571.49, "y": 650.5}, {"x": 571.49, "y": 670.5}]
     },
     {
@@ -3532,7 +3532,7 @@
       "tags": ["door"],
       "seg": [{"x": 650.493, "y": 660.5}, {"x": 604.493, "y": 660.5}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [5, 15],
+      "roomIds": [5, 15],
       "entries": [{"x": 627.49, "y": 650.5}, {"x": 627.49, "y": 670.5}]
     },
     {
@@ -3547,7 +3547,7 @@
       "tags": ["door"],
       "seg": [{"x": 488, "y": 240}, {"x": 532, "y": 240}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [14, 8],
+      "roomIds": [14, 8],
       "entries": [{"x": 510, "y": 250}, {"x": 510, "y": 230}]
     },
     {
@@ -3562,7 +3562,7 @@
       "tags": ["door"],
       "seg": [{"x": 608, "y": 240}, {"x": 652, "y": 240}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [14, 16],
+      "roomIds": [14, 16],
       "entries": [{"x": 630, "y": 250}, {"x": 630, "y": 230}]
     },
     {
@@ -3577,7 +3577,7 @@
       "tags": ["door"],
       "seg": [{"x": 480, "y": 354}, {"x": 480, "y": 306}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [14, 9],
+      "roomIds": [14, 9],
       "entries": [{"x": 490, "y": 330}, {"x": 470, "y": 330}]
     },
     {
@@ -3592,7 +3592,7 @@
       "tags": ["door"],
       "seg": [{"x": 720, "y": 306}, {"x": 720, "y": 354}],
       "normal": {"x": -1, "y": 0},
-      "holeIds": [14, 20],
+      "roomIds": [14, 20],
       "entries": [{"x": 710, "y": 330}, {"x": 730, "y": 330}]
     },
     {
@@ -3605,7 +3605,7 @@
       "tags": ["door"],
       "seg": [{"x": 180, "y": 472}, {"x": 180, "y": 428}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [5, 1],
+      "roomIds": [5, 1],
       "entries": [{"x": 190, "y": 450}, {"x": 170, "y": 450}]
     },
     {
@@ -3620,7 +3620,7 @@
       "tags": ["door", "w"],
       "seg": [{"x": 351.82, "y": 540}, {"x": 307.82, "y": 540}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [6, 5],
+      "roomIds": [6, 5],
       "entries": [{"x": 329.82, "y": 530}, {"x": 329.82, "y": 550}]
     },
     {
@@ -3635,7 +3635,7 @@
       "tags": ["door"],
       "seg": [{"x": 532, "y": 420}, {"x": 488, "y": 420}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [14, 10],
+      "roomIds": [14, 10],
       "entries": [{"x": 510, "y": 410}, {"x": 510, "y": 430}]
     },
     {
@@ -3650,7 +3650,7 @@
       "tags": ["door"],
       "seg": [{"x": 712, "y": 420}, {"x": 668, "y": 420}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [14, 17],
+      "roomIds": [14, 17],
       "entries": [{"x": 690, "y": 410}, {"x": 690, "y": 430}]
     },
     {
@@ -3665,7 +3665,7 @@
       "tags": ["door"],
       "seg": [{"x": 952, "y": 540}, {"x": 908, "y": 540}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [23, 5],
+      "roomIds": [23, 5],
       "entries": [{"x": 930, "y": 530}, {"x": 930, "y": 550}]
     },
     {
@@ -3678,7 +3678,7 @@
       "tags": ["door"],
       "seg": [{"x": 1020, "y": 472}, {"x": 1020, "y": 428}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [26, 5],
+      "roomIds": [26, 5],
       "entries": [{"x": 1030, "y": 450}, {"x": 1010, "y": 450}]
     },
     {
@@ -3691,7 +3691,7 @@
       "tags": ["door"],
       "seg": [{"x": 180, "y": 548}, {"x": 180, "y": 592}],
       "normal": {"x": -1, "y": 0},
-      "holeIds": [2, 5],
+      "roomIds": [2, 5],
       "entries": [{"x": 170, "y": 570}, {"x": 190, "y": 570}]
     },
     {
@@ -3704,7 +3704,7 @@
       "tags": ["door"],
       "seg": [{"x": 180, "y": 606}, {"x": 180, "y": 650}],
       "normal": {"x": -1, "y": 0},
-      "holeIds": [2, 5],
+      "roomIds": [2, 5],
       "entries": [{"x": 170, "y": 628}, {"x": 190, "y": 628}]
     },
     {
@@ -3719,7 +3719,7 @@
       "tags": ["door"],
       "seg": [{"x": 120, "y": 600.18}, {"x": 120, "y": 556.18}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [2, 3],
+      "roomIds": [2, 3],
       "entries": [{"x": 130, "y": 578.18}, {"x": 110, "y": 578.18}]
     },
     {
@@ -3734,7 +3734,7 @@
       "tags": ["door", "w"],
       "seg": [{"x": 307.82, "y": 660}, {"x": 351.82, "y": 660}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [7, 5],
+      "roomIds": [7, 5],
       "entries": [{"x": 329.82, "y": 670}, {"x": 329.82, "y": 650}]
     },
     {
@@ -3749,7 +3749,7 @@
       "tags": ["door"],
       "seg": [{"x": 487.82, "y": 780}, {"x": 531.82, "y": 780}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [15, 11],
+      "roomIds": [15, 11],
       "entries": [{"x": 509.82, "y": 790}, {"x": 509.82, "y": 770}]
     },
     {
@@ -3764,7 +3764,7 @@
       "tags": ["door"],
       "seg": [{"x": 668.18, "y": 780}, {"x": 712.18, "y": 780}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [15, 18],
+      "roomIds": [15, 18],
       "entries": [{"x": 690.18, "y": 790}, {"x": 690.18, "y": 770}]
     },
     {
@@ -3779,7 +3779,7 @@
       "tags": ["door"],
       "seg": [{"x": 480, "y": 892.18}, {"x": 480, "y": 848.18}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [15, 12],
+      "roomIds": [15, 12],
       "entries": [{"x": 490, "y": 870.18}, {"x": 470, "y": 870.18}]
     },
     {
@@ -3794,7 +3794,7 @@
       "tags": ["door"],
       "seg": [{"x": 720, "y": 848.18}, {"x": 720, "y": 892.18}],
       "normal": {"x": -1, "y": 0},
-      "holeIds": [15, 21],
+      "roomIds": [15, 21],
       "entries": [{"x": 710, "y": 870.18}, {"x": 730, "y": 870.18}]
     },
     {
@@ -3807,7 +3807,7 @@
       "tags": ["door"],
       "seg": [{"x": 180, "y": 772}, {"x": 180, "y": 728}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [5, 2],
+      "roomIds": [5, 2],
       "entries": [{"x": 190, "y": 750}, {"x": 170, "y": 750}]
     },
     {
@@ -3822,7 +3822,7 @@
       "tags": ["door"],
       "seg": [{"x": 908, "y": 660}, {"x": 952, "y": 660}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [24, 5],
+      "roomIds": [24, 5],
       "entries": [{"x": 930, "y": 670}, {"x": 930, "y": 650}]
     },
     {
@@ -3837,7 +3837,7 @@
       "tags": ["door"],
       "seg": [{"x": 1020, "y": 652.18}, {"x": 1020, "y": 608.18}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [27, 5],
+      "roomIds": [27, 5],
       "entries": [{"x": 1030, "y": 630.18}, {"x": 1010, "y": 630.18}]
     },
     {
@@ -3852,7 +3852,7 @@
       "tags": ["door"],
       "seg": [{"x": 1020, "y": 592.18}, {"x": 1020, "y": 548.18}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [27, 5],
+      "roomIds": [27, 5],
       "entries": [{"x": 1030, "y": 570.18}, {"x": 1010, "y": 570.18}]
     },
     {
@@ -3865,7 +3865,7 @@
       "tags": ["door"],
       "seg": [{"x": 1020, "y": 772}, {"x": 1020, "y": 728}],
       "normal": {"x": 1, "y": 0},
-      "holeIds": [28, 5],
+      "roomIds": [28, 5],
       "entries": [{"x": 1030, "y": 750}, {"x": 1010, "y": 750}]
     },
     {
@@ -3880,7 +3880,7 @@
       "tags": ["door", "w"],
       "seg": [{"x": 488.18, "y": 960}, {"x": 532.18, "y": 960}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [13, 15],
+      "roomIds": [13, 15],
       "entries": [{"x": 510.18, "y": 970}, {"x": 510.18, "y": 950}]
     },
     {
@@ -3895,7 +3895,7 @@
       "tags": ["door", "w"],
       "seg": [{"x": 667.82, "y": 960}, {"x": 711.82, "y": 960}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [19, 15],
+      "roomIds": [19, 15],
       "entries": [{"x": 689.82, "y": 970}, {"x": 689.82, "y": 950}]
     }
   ],
@@ -3912,7 +3912,7 @@
       "tags": ["window"],
       "seg": [{"x": 510.6, "y": 659.9}, {"x": 449.2, "y": 659.9}],
       "normal": {"x": 0, "y": -1},
-      "holeIds": [5, 11],
+      "roomIds": [5, 11],
       "entries": [{"x": 479.9, "y": 649.9}, {"x": 479.9, "y": 669.9}]
     },
     {
@@ -3927,7 +3927,7 @@
       "tags": ["window"],
       "seg": [{"x": 689.4, "y": 659.9}, {"x": 750.8, "y": 659.9}],
       "normal": {"x": 0, "y": 1},
-      "holeIds": [18, 5],
+      "roomIds": [18, 5],
       "entries": [{"x": 720.1, "y": 669.9}, {"x": 720.1, "y": 649.9}]
     }
   ],
@@ -14024,35 +14024,35 @@
   },
   "roomGraph": {
     "nodes": [
-      {"id": "room-0", "type": "room", "holeIndex": 0},
-      {"id": "room-1", "type": "room", "holeIndex": 1},
-      {"id": "room-2", "type": "room", "holeIndex": 2},
-      {"id": "room-3", "type": "room", "holeIndex": 3},
-      {"id": "room-4", "type": "room", "holeIndex": 4},
-      {"id": "room-5", "type": "room", "holeIndex": 5},
-      {"id": "room-6", "type": "room", "holeIndex": 6},
-      {"id": "room-7", "type": "room", "holeIndex": 7},
-      {"id": "room-8", "type": "room", "holeIndex": 8},
-      {"id": "room-9", "type": "room", "holeIndex": 9},
-      {"id": "room-10", "type": "room", "holeIndex": 10},
-      {"id": "room-11", "type": "room", "holeIndex": 11},
-      {"id": "room-12", "type": "room", "holeIndex": 12},
-      {"id": "room-13", "type": "room", "holeIndex": 13},
-      {"id": "room-14", "type": "room", "holeIndex": 14},
-      {"id": "room-15", "type": "room", "holeIndex": 15},
-      {"id": "room-16", "type": "room", "holeIndex": 16},
-      {"id": "room-17", "type": "room", "holeIndex": 17},
-      {"id": "room-18", "type": "room", "holeIndex": 18},
-      {"id": "room-19", "type": "room", "holeIndex": 19},
-      {"id": "room-20", "type": "room", "holeIndex": 20},
-      {"id": "room-21", "type": "room", "holeIndex": 21},
-      {"id": "room-22", "type": "room", "holeIndex": 22},
-      {"id": "room-23", "type": "room", "holeIndex": 23},
-      {"id": "room-24", "type": "room", "holeIndex": 24},
-      {"id": "room-25", "type": "room", "holeIndex": 25},
-      {"id": "room-26", "type": "room", "holeIndex": 26},
-      {"id": "room-27", "type": "room", "holeIndex": 27},
-      {"id": "room-28", "type": "room", "holeIndex": 28},
+      {"id": "room-0", "type": "room", "roomId": 0},
+      {"id": "room-1", "type": "room", "roomId": 1},
+      {"id": "room-2", "type": "room", "roomId": 2},
+      {"id": "room-3", "type": "room", "roomId": 3},
+      {"id": "room-4", "type": "room", "roomId": 4},
+      {"id": "room-5", "type": "room", "roomId": 5},
+      {"id": "room-6", "type": "room", "roomId": 6},
+      {"id": "room-7", "type": "room", "roomId": 7},
+      {"id": "room-8", "type": "room", "roomId": 8},
+      {"id": "room-9", "type": "room", "roomId": 9},
+      {"id": "room-10", "type": "room", "roomId": 10},
+      {"id": "room-11", "type": "room", "roomId": 11},
+      {"id": "room-12", "type": "room", "roomId": 12},
+      {"id": "room-13", "type": "room", "roomId": 13},
+      {"id": "room-14", "type": "room", "roomId": 14},
+      {"id": "room-15", "type": "room", "roomId": 15},
+      {"id": "room-16", "type": "room", "roomId": 16},
+      {"id": "room-17", "type": "room", "roomId": 17},
+      {"id": "room-18", "type": "room", "roomId": 18},
+      {"id": "room-19", "type": "room", "roomId": 19},
+      {"id": "room-20", "type": "room", "roomId": 20},
+      {"id": "room-21", "type": "room", "roomId": 21},
+      {"id": "room-22", "type": "room", "roomId": 22},
+      {"id": "room-23", "type": "room", "roomId": 23},
+      {"id": "room-24", "type": "room", "roomId": 24},
+      {"id": "room-25", "type": "room", "roomId": 25},
+      {"id": "room-26", "type": "room", "roomId": 26},
+      {"id": "room-27", "type": "room", "roomId": 27},
+      {"id": "room-28", "type": "room", "roomId": 28},
       {"id": "door-0", "type": "door", "doorIndex": 0},
       {"id": "door-1", "type": "door", "doorIndex": 1},
       {"id": "door-2", "type": "door", "doorIndex": 2},

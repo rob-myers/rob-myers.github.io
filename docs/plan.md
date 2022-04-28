@@ -47,7 +47,7 @@ __Aim towards website release__.
        we introduced `one-way` (like `frosted`) to avoid
        outside from control room seeing more than inside
   - local nav path issues
-    - precompute room navpoly
+    - precompute room navpoly i.e. navpoly restricted to room with doors
     - 🤔 string-pull poor quality but reverse is great
     - 🤔 avoid going outside navmesh
     - ✅ use connector.entries instead of centroids of nav nodes
@@ -55,9 +55,9 @@ __Aim towards website release__.
   - `nav` receives multiple paths and doorIds
 
 - Clean
-  - Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.
+  - ✅ Rename `holes` -> `rooms` etc.
   - Remove: refs to holeId and holeIndex.
-  - Rooms can themselves have holes (originally from hullPolys[i] for i ≥ 1)
+  - Rooms can themselves have holes (from hullPolys[i] for i ≥ 1)
   - Saw empty holeId in 301 i.e. `15`
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tag `one-way-reverse` too (particularly for curved window whose rect is fixed)

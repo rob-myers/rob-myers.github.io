@@ -75,7 +75,7 @@ export default function NavDemo1(props) {
         gms.forEach((otherGm, otherGmId) => {
           const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(3));
           maskPolys[otherGmId] = Poly.cutOut(polys.concat(
-            otherGm === gm ? gm.holesWithDoors[state.roomId] : []
+            otherGm === gm ? gm.roomsWithDoors[state.roomId] : []
           ), [otherGm.hullOutline]);
         });
         // Set the clip-paths
@@ -175,9 +175,9 @@ export default function NavDemo1(props) {
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}
           gmId={state.gmId}
-          holeId={state.roomId}
-          setHole={(gmId, holeId) => {
-            [state.gmId, state.roomId] = [gmId, holeId];
+          roomId={state.roomId}
+          setRoom={(gmId, roomId) => {
+            [state.gmId, state.roomId] = [gmId, roomId];
             state.update();
           }}
         />
@@ -239,15 +239,15 @@ function Debug(props) {
         const doorId = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-door-index'));
         const door = gm.doors[doorId];
 
-        const [otherHoleId] = door.holeIds.filter(id => id !== props.holeId);
-        if (otherHoleId !== null) {// `door` is not a hull door
-          return props.setHole(props.gmId, otherHoleId);
+        const [otherRoomId] = door.roomIds.filter(id => id !== props.roomId);
+        if (otherRoomId !== null) {// `door` is not a hull door
+          return props.setRoom(props.gmId, otherRoomId);
         }
 
         const hullDoorId = gm.hullDoors.indexOf(door);
         const ctxt = props.gmGraph.getAdjacentRoomCtxt(props.gmId, hullDoorId);
         if (ctxt) {
-          props.setHole(ctxt.adjGmId, ctxt.adjRoomId);
+          props.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
         } else {
           console.info('hull door is isolated', props.gmId, hullDoorId);
         }
@@ -274,8 +274,8 @@ function Debug(props) {
         }}
       >
         {visDoorIds.map(doorId => {
-          const { poly, normal, holeIds } = gm.doors[doorId];
-          const sign = holeIds[0] === props.holeId ? 1 : -1;
+          const { poly, normal, roomIds } = gm.doors[doorId];
+          const sign = roomIds[0] === props.roomId ? 1 : -1;
           const angle = Vect.from(normal).scale(-sign).angle;
           const position = poly.center.addScaledVector(normal, sign * debugDoorOffset);
           return (
@@ -322,8 +322,8 @@ function Debug(props) {
  * @property {Graph.GmGraph} gmGraph
  * @property {NPC.DoorsApi} doorsApi
  * @property {number} gmId
- * @property {number} holeId
- * @property {(gmId: number, holeId: number) => void} setHole
+ * @property {number} roomId
+ * @property {(gmId: number, roomId: number) => void} setRoom
  * @property {boolean} [outlines]
  * @property {boolean} [windows]
  */

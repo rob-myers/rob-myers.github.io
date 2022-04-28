@@ -41,7 +41,7 @@ export default function LightsTest(props) {
 
       updateMasks(delayUpdate = 0) {
         const {
-          pngRect, hullOutline, holesWithDoors,
+          pngRect, hullOutline, roomsWithDoors,
           roomGraph,
         } = assertDefined(gm);
 
@@ -54,7 +54,7 @@ export default function LightsTest(props) {
         );
 
         const allRoomPolys = rootRoomIds
-          .map(id => holesWithDoors[id]) // Each root contribs holeWithDoor
+          .map(id => roomsWithDoors[id]) // Each root contribs holeWithDoor
           .concat(lightPolygons.map(x => x.poly)) // Each open door contribs a light polygon
           .map(x => x.precision(2));
 
@@ -77,7 +77,7 @@ export default function LightsTest(props) {
     if (gm) {
       // Ensure consistency on switch geomorphs
       for (const roomId of Object.keys(state.roomShown).map(Number)) {
-        if (!gm.holes[roomId]) delete state.roomShown[roomId];
+        if (!gm.rooms[roomId]) delete state.roomShown[roomId];
       }
       // Initial update
       state.updateMasks();
@@ -122,7 +122,7 @@ export default function LightsTest(props) {
           className="light-toggles"
           onClick={state.onToggleLight}
         >
-          {gm.holeSwitches.map((center, roomId) => {
+          {gm.roomSwitches.map((center, roomId) => {
             return <div
               key={roomId}
               data-index={roomId}
@@ -194,14 +194,14 @@ function DebugGraph({ gm }) {
           fill="none"
           r={5}
           {...node.type === 'room'
-            && { cx: gm.holeSwitches[i].x, cy: gm.holeSwitches[i].y,  }}
+            && { cx: gm.roomSwitches[i].x, cy: gm.roomSwitches[i].y,  }}
           {...node.type === 'door'
             && { cx: gm.doors[node.doorIndex].poly.center.x, cy: gm.doors[node.doorIndex].poly.center.y }}
           {...node.type === 'window'
             && { cx: gm.doors[node.windowIndex].poly.center.x, cy: gm.windows[node.windowIndex].poly.center.y }}
         />
         )}
-        {gm.holes.map((poly) =>
+        {gm.rooms.map((poly) =>
           <path
             fill="none"
             stroke="yellow"
@@ -213,10 +213,10 @@ function DebugGraph({ gm }) {
           .map((edge) =>
             <line
               stroke="red"
-              x1={gm.holeSwitches[
-                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).holeIndex].x}
-              y1={gm.holeSwitches[
-                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).holeIndex].y}
+              x1={gm.roomSwitches[
+                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].x}
+              y1={gm.roomSwitches[
+                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].y}
               x2={gm.doors[
                 /** @type {Graph.RoomGraphNodeDoor} */ (edge.dst).doorIndex].poly.center.x}
               y2={gm.doors[

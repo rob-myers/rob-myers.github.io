@@ -65,8 +65,8 @@ declare namespace Geomorph {
     /** Transformed and filtered groups */
     groups: SvgGroups<P>;
 
-    /** Correspond to 'rooms' and referenced in `roomGraph`. */
-    holes: P[];
+    /** Arise from holes in hull polygon and referenced in `roomGraph`. */
+    rooms: P[];
     doors: ConnectorRect<P, V, R>[];
     windows: ConnectorRect<P, V, R>[];
     labels: LayoutLabel[];
@@ -74,7 +74,7 @@ declare namespace Geomorph {
     navPoly: P[];
     /** Serializable navigation zone used for pathfinding */
     navZone: Nav.ZoneWithMeta;
-    /** Connectivity graph involving holes and doors */
+    /** Connectivity graph involving rooms and doors */
     roomGraph: G;
 
     /** Should probably have exactly one polygon */
@@ -110,9 +110,9 @@ declare namespace Geomorph {
    * This is the type of useGeomorphData's data.
    */
    export interface GeomorphData extends Geomorph.ParsedLayout {
-     holesWithDoors: Poly[];
-     /** Switch in interior, else hole center */
-     holeSwitches: Vect[];
+     roomsWithDoors: Poly[];
+     /** Switch in interior, otherwise we'll default to room's center */
+     roomSwitches: Vect[];
      hullDoors: ConnectorRect<Poly, Geom.Vect, Geom.Rect>[];
      hullOutline: Poly;
      pngRect: Geom.Rect;
@@ -270,14 +270,14 @@ declare namespace Geomorph {
     normal: V;
     tags: string[];
     /**
-     * `[hole id infront, hole id behind]`
-     * where _infront_ means `normal` is pointing towards it.
+     * `[id of room infront, id of room behind]`
+     * where a room is *infront* if `normal` is pointing towards it.
      * Hull doors have exactly one non-null entry.
      */
-    holeIds: [null | number, null | number];
+    roomIds: [null | number, null | number];
     /**
-     * Aligned to `holeIds` i.e. `[null | infront, null | behind]`
-     * where _infront_ means `normal` is pointing towards it.
+     * Aligned to `roomIds` i.e. `[null | id of room infront, null | id of room behind]`
+     * where a room is *infront* if `normal` is pointing towards it.
      * Hull doors have exactly one non-null entry.
      */
     entries: [null | V, null | V];

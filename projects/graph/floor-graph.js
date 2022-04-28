@@ -70,7 +70,7 @@ export class FloorGraph extends BaseGraph {
         if (!lastSeen || lastSeen.doorId !== meta.doorId) {// lastSeen undefined or new meta.doorId
           agg.push([]);
           const door = this.gm.doors[meta.doorId];
-          const entry = /** @type {Geom.Vect} */ (door.holeIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
+          const entry = /** @type {Geom.Vect} */ (door.roomIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
           nodePathMetas.push({
             doorId: meta.doorId,
             srcRoomId: meta.roomId,
@@ -81,7 +81,7 @@ export class FloorGraph extends BaseGraph {
         } else if (meta.doorId === lastSeen.doorId && meta.roomId !== lastSeen.dstRoomId) {
           lastSeen.dstRoomId = meta.roomId; // Should overwrite on exit door
           const door = this.gm.doors[meta.doorId];
-          lastSeen.exit = /** @type {Geom.Vect} */ (door.holeIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
+          lastSeen.exit = /** @type {Geom.Vect} */ (door.roomIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
         }
       }
       return agg;

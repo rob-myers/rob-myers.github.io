@@ -122,13 +122,13 @@ export async function createLayout(def, lookup, triangleService) {
     });
 
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys));
-  const holes = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
+  const rooms = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
 
   const doors = groups.singles.filter(x => x.tags.includes('door'))
-    .map((x) => singleToConnectorRect(x, holes)
+    .map((x) => singleToConnectorRect(x, rooms)
   );
   const windows = groups.singles.filter(x => x.tags.includes('window'))
-    .map((x) => singleToConnectorRect(x, holes)
+    .map((x) => singleToConnectorRect(x, rooms)
   );
 
   const hullRect = Rect.from(...hullSym.hull.concat(doorPolys).map(x => x.rect));
@@ -142,9 +142,9 @@ export async function createLayout(def, lookup, triangleService) {
    * In the browser we'll use it to create a `FloorGraph`.
    * We expect it to have exactly one group.
    */
-  const navZone = buildZoneWithMeta(navDecomp, doors, holes);
+  const navZone = buildZoneWithMeta(navDecomp, doors, rooms);
 
-  const roomGraphJson = RoomGraph.json(holes, doors, windows);
+  const roomGraphJson = RoomGraph.json(rooms, doors, windows);
   const roomGraph = RoomGraph.from(roomGraphJson);
 
   return {
@@ -153,7 +153,7 @@ export async function createLayout(def, lookup, triangleService) {
     def,
     groups,
 
-    holes,
+    rooms,
     doors,
     windows,
     labels,
@@ -177,10 +177,10 @@ export async function createLayout(def, lookup, triangleService) {
 
 /**
  * @param {Geomorph.SvgGroupsSingle<Geom.Poly>} single 
- * @param {Geom.Poly[]} holes 
+ * @param {Geom.Poly[]} rooms 
  * @returns {Geomorph.ParsedConnectorRect}
  */
-function singleToConnectorRect(single, holes) {
+function singleToConnectorRect(single, rooms) {
   const { poly, tags } = single;
   const { angle, rect } = poly.outline.length === 4
     ? geom.polyToAngledRect(poly)
@@ -193,9 +193,9 @@ function singleToConnectorRect(single, holes) {
   const behind = poly.center.addScaledVector(normal, -doorEntryDelta).precision(2);
 
   /** @type {[null | number, null | number]} */
-  const holeIds = holes.reduce((agg, hole, holeId) => {
-    if (agg[0] === null && hole.contains(infront)) return [holeId, agg[1]];
-    if (agg[1] === null && hole.contains(behind)) return [agg[0], holeId];
+  const roomIds = rooms.reduce((agg, room, roomId) => {
+    if (agg[0] === null && room.contains(infront)) return [roomId, agg[1]];
+    if (agg[1] === null && room.contains(behind)) return [agg[0], roomId];
     return agg;
   }, /** @type {[null | number, null | number]} */ ([null, null]));
 
@@ -206,10 +206,10 @@ function singleToConnectorRect(single, holes) {
     tags,
     seg: [u.precision(3), v.precision(3)],
     normal: normal.precision(3),
-    holeIds,
+    roomIds: roomIds,
     entries: [
-      holeIds[0] === null ? null : infront,
-      holeIds[1] === null ? null : behind,
+      roomIds[0] === null ? null : infront,
+      roomIds[1] === null ? null : behind,
     ],
   };
 }
@@ -247,7 +247,7 @@ function parseConnectRect(x) {
 /** @param {Geomorph.ParsedLayout} layout */
 export function serializeLayout({
   def, groups,
-  holes: allHoles, doors, windows, labels, navPoly, navZone, roomGraph,
+  rooms, doors, windows, labels, navPoly, navZone, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -263,7 +263,7 @@ export function serializeLayout({
       walls: groups.walls.map(x => x.geoJson),
     },
 
-    holes: allHoles.map(x => x.geoJson),
+    rooms: rooms.map(x => x.geoJson),
     doors: doors.map((x) => ({ ...x, poly: x.poly.geoJson })),
     windows: windows.map((x) => ({ ...x, poly: x.poly.geoJson })),
     labels,
@@ -283,7 +283,7 @@ export function serializeLayout({
 /** @param {Geomorph.LayoutJson} layout */
 export function parseLayout({
   def, groups,
-  holes: allHoles, doors, windows, labels, navPoly, navZone, roomGraph,
+  rooms, doors, windows, labels, navPoly, navZone, roomGraph,
   hullPoly, hullRect, hullTop,
   items,
 }) {
@@ -299,7 +299,7 @@ export function parseLayout({
       walls: groups.walls.map(Poly.from),
     },
 
-    holes: allHoles.map(Poly.from),
+    rooms: rooms.map(Poly.from),
     doors: doors.map(parseConnectRect),
     windows: windows.map(parseConnectRect),
     labels,
@@ -462,13 +462,13 @@ export function geomorphDataToInstance(gm, transform) {
 /**
  * Lockers in bridge--042--8x9 need ~20.
  * @param {Geomorph.ParsedConnectorRect} connector 
- * @param {number} fromHoleId 
+ * @param {number} srcRoomId 
  */
-export function computeLightPosition(connector, fromHoleId, lightOffset = 20) {
-  const roomSign = connector.holeIds[0] === fromHoleId
-    ? 1 : connector.holeIds[1] === fromHoleId ? -1 : null;
+export function computeLightPosition(connector, srcRoomId, lightOffset = 20) {
+  const roomSign = connector.roomIds[0] === srcRoomId
+    ? 1 : connector.roomIds[1] === srcRoomId ? -1 : null;
   if (roomSign === null) {
-    console.warn(`hole ${fromHoleId}: connector: `, connector ,`: roomSign is null`);
+    console.warn(`room ${srcRoomId}: connector: `, connector ,`: roomSign is null`);
   }
   return connector.poly.center.addScaledVector(connector.normal, lightOffset * (roomSign || 0));
 }
@@ -476,10 +476,10 @@ export function computeLightPosition(connector, fromHoleId, lightOffset = 20) {
 /**
  * @param {Geom.TriangulationJson} navDecomp
  * @param {Geomorph.ParsedConnectorRect[]} doors
- * @param {Geom.Poly[]} holes
+ * @param {Geom.Poly[]} rooms
  * @returns {Nav.ZoneWithMeta}
  */
-export function buildZoneWithMeta(navDecomp, doors, holes) {
+export function buildZoneWithMeta(navDecomp, doors, rooms) {
   const navZone = Builder.buildZone(navDecomp);
   const navNodes = navZone.groups[0];
 
@@ -498,7 +498,7 @@ export function buildZoneWithMeta(navDecomp, doors, holes) {
 
   // Attach `roomNodeIds` to navZone
   const roomNodeIds = /** @type {number[][]} */ ([]);
-  holes.forEach((poly, roomId) => {
+  rooms.forEach((poly, roomId) => {
     roomNodeIds[roomId] = [];
     navNodes.forEach((node, nodeId) => {
       if (node.vertexIds.filter(id => poly.outlineContains(navZone.vertices[id])).length >= 2) {
