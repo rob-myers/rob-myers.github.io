@@ -56,11 +56,13 @@ __Aim towards website release__.
 
 - Clean
   - ✅ Rename `holes` -> `rooms` etc.
-  - Remove: refs to holeId and holeIndex.
-  - Rooms can themselves have holes (from hullPolys[i] for i ≥ 1)
+  - ✅ Remove: refs to holeId and holeIndex.
+  - ✅ Rooms can themselves have holes (from allWalls[i] where i ≥ 1)
+    - ✅ Examples: 101, 102, 302
+    - ✅ Important for _visibility ray casts_
   - Saw empty holeId in 301 i.e. `15`
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
-  - Support window tag `one-way-reverse` too (particularly for curved window whose rect is fixed)
+  - Support window tags `dark-infront` and `dark-behind` instead of `one-way`
 
 - ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
 - 🚧 NavDemo1 init race condition?

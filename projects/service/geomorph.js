@@ -7,6 +7,7 @@ import { geom } from './geom';
 import { labelMeta } from '../geomorph/geomorph.model';
 import { RoomGraph } from '../graph/room-graph';
 import { Builder } from '../pathfinding/Builder';
+import { warn } from './log';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -121,8 +122,20 @@ export async function createLayout(def, lookup, triangleService) {
       return { text, center, rect, padded };
     });
 
+  // Rooms (induced by all walls)
   const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys));
-  const rooms = allWalls.flatMap(x => x.holes.map(ring => new Poly(ring)));
+  allWalls.sort((a, b) => a.rect.area > b.rect.area ? -1 : 1); // Descending by area
+  const rooms = allWalls[0].holes.map(ring => new Poly(ring));
+  // Finally, internal pillars are converted into holes inside room
+  allWalls.slice(1).forEach(pillar => {
+    const witness = pillar.outline[0];
+    const room = rooms.find(x => x.contains(witness));
+    if (room) {// We ignore any holes in pillar
+      room.holes.push(pillar.outline);
+    } else {
+      warn(`${def.key}: pillar ${JSON.stringify(pillar.rect.json)} does not reside in any room`);
+    }
+  });
 
   const doors = groups.singles.filter(x => x.tags.includes('door'))
     .map((x) => singleToConnectorRect(x, rooms)
