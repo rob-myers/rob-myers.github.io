@@ -56,8 +56,11 @@ export async function renderGeomorph(
     drawTriangulation(ctxt, layout.navZone)
   }
 
-  // Draw walls without drawing over e.g. fuel, and symbol PNGs
-  // NOTE currently dark grey for debug
+  /**
+   * Draw walls without drawing over e.g. fuel and symbol PNGs.
+   * Without this some walls look worse, particularly when inverted.
+   * NOTE currently dark grey for debug
+   */
   const { singles, obstacles, walls } = layout.groups;
   const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
   ctxt.fillStyle = 'rgba(50, 50, 50, 1)';
