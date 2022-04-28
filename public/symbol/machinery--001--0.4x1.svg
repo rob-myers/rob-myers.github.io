@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 300 120" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <bx:grid x="0" y="0" width="300" height="300"/>
+  </defs>
+  <g style="">
+    <title>background</title>
+    <image width="320" height="139" x="-10" y="-9.5" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUAAAACLCAQAAAC6wYjiAAAABGdBTUEAALGPC/xhBQAAAAJiS0dEAP+Hj8y/AAAAB3RJTUUH5QkMFS0KF4kvMgAABDlJREFUeNrt3W1uG0cQhOFZwTfy/Y+gM9E/VpSpT+58VvX0+wRIgkAwe6prh4xkJEdRuj39ikM63y6Mc17/ws/D8Jk1siA5r3qx9jh0M0cULuf5LzIykrWTxxI055m//KxIVs0fReicZ/3CK0KZfwp/4XOesbq1ocw8ibctch69Nk0os07ja5ucR65MG8qME3naKudR6/IIZfSp/GyX84hVeYUy7lxutsy5f1GOsYw6m5NNc+5bkm8oI07nY+Oce1bkHkv/CT1snXP7emLE0ndGB5vn3LacOKH0nFIvQc4tq4kWS/tJtVLkXL+WmLG0nVUpSc61S4kbS8tpddLkXLeS2LHUn1clUc41C5kSy+sP//zvjBerPbFGqpyvr2NoLK9VXz04JO8KJsv56jIGxVIXyEcD4/GtYLqcr61iQCw9kTwaFI9nBRPmfGUR3bGMCuW/7ngcC5gy5+eL6IxlfCh3neG4VTBpzlMLOC+Uu65wvCqYNOdnS2iOZX4op00qmDbn31dgH8upIxyPCibOeUIB14Zyao4mcAH3yPm3BYSJ5dQYjr6CqXP+Of5gsZQStILJc34ZOZg2Fv3rZznnyNf/6elveC7VsZyank7dHZg+5+9vwLCx+MxxCTmPegt2iaVxljC//26/nI9rXzZ8lMka3iAC/MeKd8x5wA3oF4vnTDueqX+mr8995XPpGMup+ulceweScyml+wb0jWUv++b8uYBhPo4/Z700cn7TdQNar7h+PttS7JxzRwHdY9nF3jl/LKDtHdDK9A4k53fNN2CU5zLKnNHnb53zsYDbPZcNVmRAzg8ZNN6AUZ7LaLNGnr1t1qG/HQuo9f+70hVvDJGey1PVd+vn/kSEnO+OUrgBIdZQwHjPJTP7znwvIP9mtgY5f1J9A0Z8LitZlCRLzmk+AyZYqIXanNMUEJ4qCxj5Hok0e6RZ+2Y/C2jxqScBcv6Ct+DvUJQ1bpUFjPzGEEmmnFPdgBWLvU35I4maByhVAeGHAkKKAkKKAkLqpfBNB+jcuAEhRQEhRQEh9cInQChV3ICZfkCklCvnZG/BuZarcz3nZAWEGwoIKQoIqcsF3OXTk/s53OcbLeEN6Lxi59nmSFhA3zW7zjVTygJ6rtpxpvn+qAdQeS2d/xv64dPklLaApWReu4+kb8FwQQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhRQEhdZSbegRkxg0IKQoIKQoIKQoIKQoIKQoIKQoIKQoIKQoIKQoIKQoIqaMUfhoMHW5ASFFASB2lFN6EoXIcb39DBbHecb8BS6GCWO14/9MbKoh1jg9/eUcJMd9D6/4BS1LsT2ZJH0MAAAAldEVYdGRhdGU6Y3JlYXRlADIwMjEtMDktMTJUMjE6NDU6MDkrMDA6MDA6YZHyAAAAJXRFWHRkYXRlOm1vZGlmeQAyMDIxLTA5LTEyVDIxOjQ1OjA5KzAwOjAwSzwpTgAAAABJRU5ErkJggg=="/>
+  </g>
+  <g style="">
+    <title>walls</title>
+    <path d="M 20 -9.5 L 280 -9.5 L 310 20 L 310 129.5 L -10 129.5 L -10 30 L 20 -9.5 Z" style="stroke: rgb(0, 0, 0); fill: rgba(0, 0, 255, 0.533);"/>
+  </g>
+</svg>

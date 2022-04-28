@@ -224,6 +224,7 @@ declare namespace Geomorph {
     | 'lounge--009--2x3'
     | 'lounge--015--2x4'
     | 'low-berth--003--1x1'
+    | 'machinery--001--0.4x1'
     | 'machinery--020--1x1.6'
     | 'machinery--065--1.8x1.8'
     | 'machinery--091--1.6x1.8'
