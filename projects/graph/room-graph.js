@@ -71,6 +71,7 @@ export class RoomGraph extends BaseGraph {
   }
 
   /**
+   * __UNUSED__
    * Given a 'room' node, find all other rooms connected via an open 'door' node.
    * We assume the undirected graph is bipartite i.e. rooms only connect to doors.
    * @param {Graph.RoomGraphNode} roomNode

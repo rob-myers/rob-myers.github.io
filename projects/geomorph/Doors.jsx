@@ -57,7 +57,7 @@ export default function Doors(props) {
         }
 
         const adjHull = hullDoorId !== -1
-          ? props.gmGraph.getAdjacentHoleCtxt(gmIndex, hullDoorId) : null;
+          ? props.gmGraph.getAdjacentRoomCtxt(gmIndex, hullDoorId) : null;
 
         if (state.open[gmIndex][doorId]) {
           delete state.open[gmIndex][doorId]

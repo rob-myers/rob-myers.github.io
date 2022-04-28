@@ -155,27 +155,28 @@ export class gmGraph extends BaseGraph {
   /**
    * @param {number} gmId 
    * @param {number} hullDoorId 
-   * @returns {{ adjGmId: number; adjHoleId: number; adjHullId: number; adjDoorId: number } | null}
+   * @returns {{ adjGmId: number; adjRoomId: number; adjHullId: number; adjDoorId: number } | null}
    */
-  getAdjacentHoleCtxt(gmId, hullDoorId) {
+  getAdjacentRoomCtxt(gmId, hullDoorId) {
     const gm = this.gms[gmId];
-    const gmNode = this.getNodeById(getGmNodeId(gm.key, gm.transform));
-    const doorNode = this.getNodeById(getGmDoorNodeId(gm.key, gm.transform, hullDoorId));
+    const gmNode = this.nodesArray[gmId];
+    const doorNodeId = getGmDoorNodeId(gm.key, gm.transform, hullDoorId);
+    const doorNode = this.getNodeById(doorNodeId);
     if (!doorNode) {
-      console.warn(`GmGraph: failed to find hull door node: ${getGmDoorNodeId(gm.key, gm.transform, hullDoorId)}`);
+      console.error(`GmGraph: failed to find hull door node: ${doorNodeId}`);
       return null;
     }
-    const otherDoorNode = /** @type {undefined | Graph.GmGraphNodeDoor} */ (this.getSuccs(doorNode).filter(x => x !== gmNode)[0]);
+    const otherDoorNode = /** @type {undefined | Graph.GmGraphNodeDoor} */ (this.getSuccs(doorNode).find(x => x !== gmNode));
     if (!otherDoorNode) {
-      console.info('GmGraph: hull door on boundary', doorNode);
+      console.info(`GmGraph hull door: ${doorNodeId} on boundary`);
       return null;
     }
     // `door` is a hull door and connected to another
     // console.log({otherDoorNode});
     const { gmIndex: adjGmId, hullDoorId: dstHullDoorId, doorId: adjDoorId } = otherDoorNode;
     const { holeIds } = this.gms[adjGmId].hullDoors[dstHullDoorId];
-    const adjHoleId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
-    return { adjGmId, adjHoleId, adjHullId: dstHullDoorId, adjDoorId };
+    const adjRoomId = /** @type {number} */ (holeIds.find(x => typeof x === 'number'));
+    return { adjGmId, adjRoomId, adjHullId: dstHullDoorId, adjDoorId };
   }
 
   /** @param {Graph.GmGraphNodeDoor} doorNode */
@@ -195,7 +196,7 @@ export class gmGraph extends BaseGraph {
    * In case of a hull door, we transform into other geomorph.
    * @param {number} gmIndex 
    * @param {number} doorIndex
-   * @returns {null | { gmIndex: number; doorIndex: number; adjHoleId: null | number; poly: Geom.Poly }}
+   * @returns {null | { gmIndex: number; doorIndex: number; adjRoomId: null | number; poly: Geom.Poly }}
    */
   getOpenDoorArea(gmIndex, doorIndex) {
     const gm = this.gms[gmIndex];
@@ -203,19 +204,19 @@ export class gmGraph extends BaseGraph {
     const hullDoorIndex = gm.hullDoors.indexOf(door);
     if (hullDoorIndex === -1) {
       const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getDoorNode(doorIndex));
-      return { gmIndex, doorIndex, adjHoleId: null, poly: Poly.union(adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]))[0]};
+      return { gmIndex, doorIndex, adjRoomId: null, poly: Poly.union(adjRoomNodes.map(x => gm.holesWithDoors[x.holeIndex]))[0]};
     }
 
-    const result = this.getAdjacentHoleCtxt(gmIndex, hullDoorIndex);
+    const result = this.getAdjacentRoomCtxt(gmIndex, hullDoorIndex);
     if (result) {
-      const srcHoleId = /** @type {number} */ (door.holeIds.find(x => typeof x === 'number'));
+      const srcRoomId = /** @type {number} */ (door.holeIds.find(x => typeof x === 'number'));
       const otherGm = this.gms[result.adjGmId];
       const poly = Poly.union([// We transform poly from `gm` coords to `otherGm` coords
-        gm.holesWithDoors[srcHoleId].clone().applyMatrix(gm.matrix).applyMatrix(otherGm.inverseMatrix),
-        otherGm.holesWithDoors[result.adjHoleId],
+        gm.holesWithDoors[srcRoomId].clone().applyMatrix(gm.matrix).applyMatrix(otherGm.inverseMatrix),
+        otherGm.holesWithDoors[result.adjRoomId],
       ])[0];
 
-      return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjHoleId: result.adjHoleId, poly };
+      return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjRoomId: result.adjRoomId, poly };
     } else {
       console.error(`GmGraph: getOpenDoorArea: failed to get context`, { gmIndex, doorIndex, hullDoorIndex });
       return null;
@@ -237,26 +238,25 @@ export class gmGraph extends BaseGraph {
 
   /**
    * @param {number} gmIndex 
-   * @param {number} rootHoleId 
+   * @param {number} rootRoomId 
    * @param {number[]} openDoorIds 
    * @returns {{ gmIndex: number; poly: Poly }[]}
    */
-  computeLightPolygons(gmIndex, rootHoleId, openDoorIds) {
+  computeLightPolygons(gmIndex, rootRoomId, openDoorIds) {
     const gm = this.gms[gmIndex];
-    const roomNode = gm.roomGraph.nodesArray[rootHoleId];
+    const roomNode = gm.roomGraph.nodesArray[rootRoomId];
 
     const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
     const areas = adjOpenDoorIds.flatMap(doorIndex => this.getOpenDoorArea(gmIndex, doorIndex) || []);
     const doorLights = areas.map((area) => {
       const doors = this.gms[area.gmIndex].doors;
-      // NOTE needed e.g. when two doors adjoin a single hole
-      // TODO restrict to doors adjacent to dst hole
+      // NOTE needed when 2 doors adjoin a single room e.g. side-by-side double-doors
+      // TODO restrict to doors adjacent to dst room
       const closedDoorSegs = doors.filter((_, id) => id !== area.doorIndex).map(x => x.seg);
       return {
         gmIndex: area.gmIndex,
-        poly: geom.lightPolygon({
-          // TODO avoid nullable `adjHoleId`
-          position: computeLightPosition(doors[area.doorIndex], area.adjHoleId??rootHoleId),
+        poly: geom.lightPolygon({// TODO avoid nullable `adjRoomId`
+          position: computeLightPosition(doors[area.doorIndex], area.adjRoomId??rootRoomId),
           range: 1000,
           exterior: area.poly,
           extraSegs: closedDoorSegs,
@@ -269,14 +269,14 @@ export class gmGraph extends BaseGraph {
       .filter(x => {
         const connector = gm.windows[x.windowIndex];
         if (connector.tags.includes('frosted')) return false;
-        if (connector.tags.includes('one-way') && connector.holeIds[0] !== rootHoleId) return false;
+        if (connector.tags.includes('one-way') && connector.holeIds[0] !== rootRoomId) return false;
         return true;
       })
       .map(x => x.windowIndex);
     const windowLights = adjWindowIds.map(windowIndex => ({
       gmIndex,
       poly: geom.lightPolygon({
-        position: computeLightPosition(gm.windows[windowIndex], rootHoleId),
+        position: computeLightPosition(gm.windows[windowIndex], rootRoomId),
         range: 1000,
         exterior: this.getOpenWindowPolygon(gmIndex, windowIndex),
       }),
@@ -309,26 +309,27 @@ export class gmGraph extends BaseGraph {
         };
         return gmNode;        
       }),
-      ...gms.flatMap(({ key: gmKey, hullDoors, transform, pngRect, doors }, gmIndex) => hullDoors.map((hullDoor, hullDoorId) => {
-        const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
-        const gmInFront = pngRect.contains(alongNormal);
-        const direction = this.computeHullDoorDirection(hullDoor, hullDoorId, transform);
+      ...gms.flatMap(({ key: gmKey, hullDoors, transform, pngRect, doors }, gmIndex) =>
+        hullDoors.map((hullDoor, hullDoorId) => {
+          const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
+          const gmInFront = pngRect.contains(alongNormal);
+          const direction = this.computeHullDoorDirection(hullDoor, hullDoorId, transform);
 
-        /** @type {Graph.GmGraphNodeDoor} */
-        const doorNode = {
-          type: 'door',
-          gmKey,
-          gmIndex,
-          id: getGmDoorNodeId(gmKey, transform, hullDoorId),
-          doorId: doors.indexOf(hullDoor),
-          hullDoorId,
-          transform,
-          gmInFront,
-          direction,
-          sealed: true, // Overwritten further below
-        };
-        return doorNode;
-      })
+          /** @type {Graph.GmGraphNodeDoor} */
+          const doorNode = {
+            type: 'door',
+            gmKey,
+            gmIndex,
+            id: getGmDoorNodeId(gmKey, transform, hullDoorId),
+            doorId: doors.indexOf(hullDoor),
+            hullDoorId,
+            transform,
+            gmInFront,
+            direction,
+            sealed: true, // Overwritten further below
+          };
+          return doorNode;
+        })
       ),
     ];
 

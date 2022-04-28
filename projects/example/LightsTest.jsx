@@ -26,7 +26,7 @@ export default function LightsTest(props) {
     return {
       clipPath: 'none',
       doorsApi: /** @type {NPC.DoorsApi} */ ({}),
-      isHoleShown: /** @type {{ [holeIndex: string]: true }} */ ({
+      roomShown: /** @type {{ [roomId: number]: true }} */ ({
         0: true,
         2: true,
       }),
@@ -35,7 +35,7 @@ export default function LightsTest(props) {
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
       onToggleLight({ target }) {
         const dataIndex = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-index'));
-        dataIndex in state.isHoleShown ? delete state.isHoleShown[dataIndex] : state.isHoleShown[dataIndex] = true;
+        dataIndex in state.roomShown ? delete state.roomShown[dataIndex] : state.roomShown[dataIndex] = true;
         state.updateMasks();
       },
 
@@ -45,22 +45,22 @@ export default function LightsTest(props) {
           roomGraph,
         } = assertDefined(gm);
 
-        const rootHoleIds = Object.keys(state.isHoleShown).map(Number);
+        const rootRoomIds = Object.keys(state.roomShown).map(Number);
         const openDoorIds = state.doorsApi.getOpen(0);
 
         // lights through doors and windows
-        const lightPolygons = rootHoleIds.flatMap((srcHoleId) =>
-          gmGraph.computeLightPolygons(0, srcHoleId, openDoorIds)
+        const lightPolygons = rootRoomIds.flatMap((srcRoomId) =>
+          gmGraph.computeLightPolygons(0, srcRoomId, openDoorIds)
         );
 
-        const allHolePolys = rootHoleIds
+        const allRoomPolys = rootRoomIds
           .map(id => holesWithDoors[id]) // Each root contribs holeWithDoor
           .concat(lightPolygons.map(x => x.poly)) // Each open door contribs a light polygon
-          .map(x => x.precision(3));
+          .map(x => x.precision(2));
 
-        const observableDoors = roomGraph.getAdjacentDoors(...rootHoleIds.map(id => roomGraph.nodesArray[id]));
+        const observableDoors = roomGraph.getAdjacentDoors(...rootRoomIds.map(id => roomGraph.nodesArray[id]));
         this.doorsApi.setVisible(0, observableDoors.map(x => x.doorIndex));
-        const maskPoly = Poly.cutOut(allHolePolys, [hullOutline],)
+        const maskPoly = Poly.cutOut(allRoomPolys, [hullOutline],)
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
         update();
@@ -71,13 +71,13 @@ export default function LightsTest(props) {
         }, delayUpdate);
       },
     };
-  }, { overwrite: { isHoleShown: true }, deps: [gm] });
+  }, { overwrite: { roomShown: true }, deps: [gm] });
 
   React.useEffect(() => {
     if (gm) {
       // Ensure consistency on switch geomorphs
-      for (const holeId of Object.keys(state.isHoleShown).map(Number)) {
-        if (!gm.holes[holeId]) delete state.isHoleShown[holeId];
+      for (const roomId of Object.keys(state.roomShown).map(Number)) {
+        if (!gm.holes[roomId]) delete state.roomShown[roomId];
       }
       // Initial update
       state.updateMasks();
@@ -122,16 +122,16 @@ export default function LightsTest(props) {
           className="light-toggles"
           onClick={state.onToggleLight}
         >
-          {gm.holeSwitches.map((center, holeIndex) => {
+          {gm.holeSwitches.map((center, roomId) => {
             return <div
-              key={holeIndex}
-              data-index={holeIndex}
+              key={roomId}
+              data-index={roomId}
               className="toggle"
               style={{
                 left: center.x - 5,
                 top: center.y - 5,
-                borderColor: state.isHoleShown[holeIndex] ? '#5f5' : 'rgba(200, 0, 0, 0.3)',
-                outline: state.isHoleShown[holeIndex] ? '1px solid black' : '1px solid rgba(255, 255, 255, 0.5)',
+                borderColor: state.roomShown[roomId] ? '#5f5' : 'rgba(200, 0, 0, 0.3)',
+                outline: state.roomShown[roomId] ? '1px solid black' : '1px solid rgba(255, 255, 255, 0.5)',
               }}
             />
           })}

@@ -45,13 +45,13 @@ export default function NavDemo1(props) {
   const state = useStateRef(() => {
     return {
       gmId: 0,
-      holeId: 2,
-      // holeId: 16,
+      roomId: 2,
+      // roomId: 16,
       // gmId: 1,
-      // holeId: 5,
-      // holeId: 22,
+      // roomId: 5,
+      // roomId: 22,
       // gmId: 3,
-      // holeId: 26,   
+      // roomId: 26,   
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
@@ -59,16 +59,9 @@ export default function NavDemo1(props) {
       panZoomApi: /** @type {PanZoom.CssExtApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
-      getEnterableHoleIds() {
-        const gmIndex = state.gmId;
-        const { roomGraph } = gms[gmIndex];
-        const openDoorIds = state.doorsApi.getOpen(gmIndex);
-        const currentHoleNode = roomGraph.nodesArray[state.holeId];
-        return roomGraph.getEnterableRooms(currentHoleNode, openDoorIds).map(({ holeIndex }) => holeIndex);
-      },
       update() {
         state.updateClipPath();
-        state.updateObservableDoors();
+        state.updateVisibleDoors();
         render();
       },
       updateClipPath() {
@@ -77,12 +70,12 @@ export default function NavDemo1(props) {
         const openDoorsIds = state.doorsApi.getOpen(state.gmId);
 
         // Compute light polygons for current geomorph and possibly adjacent ones
-        const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.holeId, openDoorsIds);
+        const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.roomId, openDoorsIds);
         // Compute respective maskPolys
         gms.forEach((otherGm, otherGmId) => {
           const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(3));
           maskPolys[otherGmId] = Poly.cutOut(polys.concat(
-            otherGm === gm ? gm.holesWithDoors[state.holeId] : []
+            otherGm === gm ? gm.holesWithDoors[state.roomId] : []
           ), [otherGm.hullOutline]);
         });
         // Set the clip-paths
@@ -92,21 +85,22 @@ export default function NavDemo1(props) {
           state.clipPath[gmId] = svgPaths.length ? `path('${svgPaths}')` : 'none';
         });
       },
-      updateObservableDoors() {
+      updateVisibleDoors() {
         const gm = gms[state.gmId]
-        const holeNode = gm.roomGraph.nodesArray[state.holeId];
-        const nextObservable = /** @type {number[][]} */ (gms.map(_ => []));
+        const roomNode = gm.roomGraph.nodesArray[state.roomId];
 
-        nextObservable[state.gmId] = gm.roomGraph.getAdjacentDoors(holeNode).map(x => x.doorIndex);
-        gm.roomGraph.getAdjacentHullDoorIds(gm, holeNode).flatMap(({ hullDoorIndex }) =>
-          gmGraph.getAdjacentHoleCtxt(state.gmId, hullDoorIndex) || []
-        ).forEach(({ adjGmId, adjDoorId }) => nextObservable[adjGmId] = [adjDoorId]);
+        /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
+        const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
+        nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex);
+        gm.roomGraph.getAdjacentHullDoorIds(gm, roomNode).flatMap(({ hullDoorIndex }) =>
+          gmGraph.getAdjacentRoomCtxt(state.gmId, hullDoorIndex) || []
+        ).forEach(({ adjGmId, adjDoorId }) => nextVis[adjGmId] = [adjDoorId]);
 
-        gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextObservable[gmId]));
+        gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextVis[gmId]));
       },
     };
   }, {
-    overwrite: { gmId: true, holeId: true },
+    overwrite: { gmId: true, roomId: true },
     deps: [gms, gmGraph],
   });
 
@@ -181,9 +175,9 @@ export default function NavDemo1(props) {
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}
           gmId={state.gmId}
-          holeId={state.holeId}
+          holeId={state.roomId}
           setHole={(gmId, holeId) => {
-            [state.gmId, state.holeId] = [gmId, holeId];
+            [state.gmId, state.roomId] = [gmId, holeId];
             state.update();
           }}
         />
@@ -251,9 +245,9 @@ function Debug(props) {
         }
 
         const hullDoorId = gm.hullDoors.indexOf(door);
-        const ctxt = props.gmGraph.getAdjacentHoleCtxt(props.gmId, hullDoorId);
+        const ctxt = props.gmGraph.getAdjacentRoomCtxt(props.gmId, hullDoorId);
         if (ctxt) {
-          props.setHole(ctxt.adjGmId, ctxt.adjHoleId);
+          props.setHole(ctxt.adjGmId, ctxt.adjRoomId);
         } else {
           console.info('hull door is isolated', props.gmId, hullDoorId);
         }
