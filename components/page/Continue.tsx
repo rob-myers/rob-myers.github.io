@@ -63,7 +63,8 @@ const width = 140;
 const rootCss = css`
   position: absolute;
   right: ${width}px;
-  z-index: 3;
+  /** Same as Nav, so on top */
+  z-index: 7;
   top: -8px;
 
   @media(max-width: 1024px) { top: 8px; }
