@@ -481,7 +481,8 @@ export function computeLightPosition(connector, srcRoomId, lightOffset = 20) {
  */
 export function buildZoneWithMeta(navDecomp, doors, rooms) {
   const navZone = Builder.buildZone(navDecomp);
-  const navNodes = navZone.groups[0];
+  // If invoked browser-side, no triangulation hence no navNodes
+  const navNodes = navZone.groups[0] || [];
 
   // Attach `doorNodeIds` to navZone
   const doorNodeIds = /** @type {number[][]} */ ([]);

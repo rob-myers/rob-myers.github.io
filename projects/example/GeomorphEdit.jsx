@@ -41,7 +41,7 @@ export default function GeomorphDemo() {
 
 /** @param {{ def: Geomorph.LayoutDef; transform?: string }} _ */
 function Geomorph({ def, transform }) {
-  const { data: gm } = useQuery(`layout: ${def.key}`, () => computeLayout(def));
+  const { data: gm, error } = useQuery(`layout: ${def.key}`, async () => computeLayout(def));
 
   return gm ? (
     <g className={classNames("geomorph", def.key)} transform={transform}>

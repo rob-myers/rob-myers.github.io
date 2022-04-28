@@ -1,5 +1,5 @@
 import { Utils } from './Utils';
-import { Vect } from '../geom';
+import { Vect } from '../geom/vect';
 
 export class Builder {
 
