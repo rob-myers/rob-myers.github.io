@@ -40,6 +40,8 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
+  // gmGraph && console.log(gmGraph)
+
   const state = useStateRef(() => {
     return {
       gmId: 0,
@@ -48,6 +50,8 @@ export default function NavDemo1(props) {
       // gmId: 1,
       // holeId: 5,
       // holeId: 22,
+      // gmId: 3,
+      // holeId: 26,   
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
@@ -172,6 +176,7 @@ export default function NavDemo1(props) {
       {state.doorsApi.ready && (
         <Debug
           // outlines
+          // windows
           gms={gms}
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}
@@ -196,6 +201,8 @@ export default function NavDemo1(props) {
 }
 
 const wireKey = 'wire-demo-1';
+const debugRadius = 5;
+const debugDoorOffset = 18;
 
 /** @param {Geomorph.GeomorphData} gm */
 const rootCss = css`
@@ -207,11 +214,27 @@ const rootCss = css`
     filter: brightness(80%);
   }
   img.geomorph-dark {
-    filter: invert(100%) brightness(55%) contrast(200%) sepia(0%);
+    filter: invert(100%) brightness(55%) contrast(200%) sepia(0%) hue-rotate(0deg);
   }
+
+  div.debug {
+    position: absolute;
+    div.debug-door {
+      cursor: pointer;
+      position: absolute;
+      background-image: url('/icon/solid_arrow-circle-right.svg');
+      border-radius: ${debugRadius}px;
+    }
+    div.debug-window {
+      position: absolute;
+      background: #0000ff40;
+      border: 1px solid white;
+    }
+  }
+
 `;
 
-/** @param {DebugProps} props   */
+/** @param {DebugProps} props Debug current geomorph */
 function Debug(props) {
   const gm = props.gms[props.gmId];
   const visDoorIds = props.doorsApi.getVisible(props.gmId);
@@ -254,7 +277,6 @@ function Debug(props) {
         className="debug"
         style={{
           transform: gm.transformStyle,
-          position: 'absolute',
         }}
       >
         {visDoorIds.map(doorId => {
@@ -266,17 +288,31 @@ function Debug(props) {
             <div
               key={doorId}
               data-door-index={doorId}
+              className="debug-door"
               style={{
-                width: debugRadius * 2,
-                height: debugRadius * 2,
-                borderRadius: debugRadius,
-                position: 'absolute',
                 left: position.x - debugRadius,
                 top: position.y - debugRadius,
+                width: debugRadius * 2,
+                height: debugRadius * 2,
                 transform: `rotate(${angle}rad)`,
-                backgroundImage: "url('/icon/solid_arrow-circle-right.svg')",
-                cursor: 'pointer',
                 // filter: 'invert(100%)',
+              }}
+            />
+          );
+        })}
+
+        {props.windows && gm.windows.map(({ rect, angle }, i) => {
+          return (
+            <div
+              key={`window-${i}`}
+              className="debug-window"
+              style={{
+                left: rect.x,
+                top: rect.y,
+                width: rect.width,
+                height: rect.height,
+                transform: `rotate(${angle}rad)`,
+                transformOrigin: 'top left',
               }}
             />
           );
@@ -285,9 +321,6 @@ function Debug(props) {
     </div>
   );
 }
-
-const debugRadius = 5;
-const debugDoorOffset = 18;
 
 /**
  * @typedef DebugProps @type {object}
@@ -298,4 +331,5 @@ const debugDoorOffset = 18;
  * @property {number} holeId
  * @property {(gmId: number, holeId: number) => void} setHole
  * @property {boolean} [outlines]
+ * @property {boolean} [windows]
  */
