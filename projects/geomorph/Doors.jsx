@@ -78,7 +78,7 @@ export default function Doors(props) {
         const ctxt = assertNonNull(canvas.getContext('2d'));
         ctxt.clearRect(0, 0, canvas.width, canvas.height);
         ctxt.fillStyle = '#555';
-        ctxt.strokeStyle = '#00204b';
+        ctxt.strokeStyle = '#aaa';
         const gm = props.gms[gmIndex];
         gm.doors.forEach(({ poly }, i) => {
           if (!state.vis[gmIndex][i]) {
