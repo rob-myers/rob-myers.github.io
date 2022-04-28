@@ -35,29 +35,32 @@ __Aim towards website release__.
   - ✅ Local navpaths go through doors
     - Break into multiple paths and doorIndex
     - Consumer will decide strategy
-  - 🚧 Clarify/implement "Global nav path strategy"
+  - ✅ Clarify "Global nav path strategy"
     ```
-    Line "src -> dst" induces global path modulo edge geomorphs?
-
-    1. SW favours {W,S} or {S,W} dependent on if more west/south
-    2. Once edge is chosen, favour closer open door (straight line)
-    3. By construction (?) some edge can be taken; either never deadlocks
+    Line "src -> dst" induces global path
+    1. Detect direction e.g. SW, and choose closest open door (straight line)
+    2. By construction some edge can be taken; never deadlock
     ```
-  - 🚧 Global navpaths
+  - 🚧 Implement global navpaths
   - ❌ AStar nodeClosed computed step-by-step
   - ✅ curved windows can produce strange light
        we introduced `one-way` (like `frosted`) to avoid
        outside from control room seeing more than inside
   - local nav path issues
-    - should avoid going outside navmesh
-    - through doors can be messy (see pic)
-    - ✅ isn't right if src and dst in same triangle
+    - precompute room navpoly
+    - 🤔 string-pull poor quality but reverse is great
+    - 🤔 avoid going outside navmesh
+    - ✅ use connector.entries instead of centroids of nav nodes
+    - ✅ works when src and dst in same triangle
   - `nav` receives multiple paths and doorIds
 
 - Clean
   - Rename: `holes` -> `rooms`, `holesWithDoors` -> `roomsWithDoors`.
   - Remove: refs to holeId and holeIndex.
+  - Rooms can themselves have holes (originally from hullPolys[i] for i ≥ 1)
+  - Saw empty holeId in 301 i.e. `15`
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
+  - Support window tag `one-way-reverse` too (particularly for curved window whose rect is fixed)
 
 - ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
 - 🚧 NavDemo1 init race condition?
