@@ -25,8 +25,8 @@ export class RoomGraph extends BaseGraph {
    */
   getAdjacentHullDoorIds(gm, ...nodes) {
     return this.getAdjacentDoors(...nodes)
-      .map(node => /** @type {const} */ ([node, gm.doors[node.doorIndex]]))
-      .flatMap(([{ doorIndex }, door]) => door.roomIds.some(x => x === null)
+      .map(node => /** @type {const} */ ([node, gm.doors[node.doorId]]))
+      .flatMap(([{ doorId: doorIndex }, door]) => door.roomIds.some(x => x === null)
         ? { doorIndex, hullDoorIndex: gm.hullDoors.indexOf(door) } : []
       );
   }
@@ -79,7 +79,7 @@ export class RoomGraph extends BaseGraph {
    */
   getEnterableRooms(roomNode, openDoorIds) {
     return this.getSuccs(roomNode)
-      .filter(node => node.type === 'door' && openDoorIds.includes(node.doorIndex))
+      .filter(node => node.type === 'door' && openDoorIds.includes(node.doorId))
       .flatMap(doorNode => this.getSuccs(doorNode))
       .filter(/** @returns {other is Graph.RoomGraphNodeRoom} */
         (other) => other.id !== roomNode.id && other.type === 'room'
@@ -115,7 +115,7 @@ export class RoomGraph extends BaseGraph {
       })),
       ...doors.map((_, doorIndex) => {
         /** @type {Graph.RoomGraphNodeDoor} */
-        const doorNode = { id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorIndex };
+        const doorNode = { id: `door-${doorIndex}`, type: /** @type {const} */ ('door'), doorId: doorIndex };
         return doorNode;
       }),
       ...windows.map((_, windowIndex) => {

@@ -73,7 +73,7 @@ export default function NavDemo1(props) {
         const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.roomId, openDoorsIds);
         // Compute respective maskPolys
         gms.forEach((otherGm, otherGmId) => {
-          const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(3));
+          const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
           maskPolys[otherGmId] = Poly.cutOut(polys.concat(
             otherGm === gm ? gm.roomsWithDoors[state.roomId] : []
           ), [otherGm.hullOutline]);
@@ -91,7 +91,7 @@ export default function NavDemo1(props) {
 
         /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
         const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
-        nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex);
+        nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorId);
         gm.roomGraph.getAdjacentHullDoorIds(gm, roomNode).flatMap(({ hullDoorIndex }) =>
           gmGraph.getAdjacentRoomCtxt(state.gmId, hullDoorIndex) || []
         ).forEach(({ adjGmId, adjDoorId }) => nextVis[adjGmId] = [adjDoorId]);

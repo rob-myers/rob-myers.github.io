@@ -15,7 +15,7 @@ export class gmGraph extends BaseGraph {
   gms;
 
   /**
-   * Technically for each `key` we provide the last item of `gms` with this `key`.
+   * Technically, for each `key` we provide the last item of `gms` with this `key`.
    * All such items have the same underlying `Geomorph.GeomorphData`.
    * @readonly
    * @type {{ [gmKey in Geomorph.LayoutKey]?: Geomorph.GeomorphData }}
@@ -24,7 +24,6 @@ export class gmGraph extends BaseGraph {
 
   /**
    * World coordinates of entrypoint to hull door nodes.
-   * Must be computed manually i.e. whenever a door node is added.
    * @type {Map<Graph.GmGraphNodeDoor, Geom.Vect>}
    */
   entry;
@@ -237,17 +236,19 @@ export class gmGraph extends BaseGraph {
   }
 
   /**
-   * @param {number} gmIndex 
+   * @param {number} gmId 
    * @param {number} rootRoomId 
    * @param {number[]} openDoorIds 
    * @returns {{ gmIndex: number; poly: Poly }[]}
    */
-  computeLightPolygons(gmIndex, rootRoomId, openDoorIds) {
-    const gm = this.gms[gmIndex];
+  computeLightPolygons(gmId, rootRoomId, openDoorIds) {
+    const gm = this.gms[gmId];
     const roomNode = gm.roomGraph.nodesArray[rootRoomId];
 
-    const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorIndex).filter(id => openDoorIds.includes(id));
-    const areas = adjOpenDoorIds.flatMap(doorIndex => this.getOpenDoorArea(gmIndex, doorIndex) || []);
+    const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode)
+      .map(x => x.doorId).filter(id => openDoorIds.includes(id));
+    const areas = adjOpenDoorIds
+      .flatMap(doorId => this.getOpenDoorArea(gmId, doorId) || []);
     const doorLights = areas.map((area) => {
       const doors = this.gms[area.gmIndex].doors;
       // NOTE needed when 2 doors adjoin a single room e.g. side-by-side double-doors
@@ -265,20 +266,21 @@ export class gmGraph extends BaseGraph {
     });
     
     const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode)
-      // Exclude frosted windows
-      .filter(x => {
-        const connector = gm.windows[x.windowIndex];
+    .filter(x => {
+      const connector = gm.windows[x.windowIndex];
+        // Frosted windows opaque
         if (connector.tags.includes('frosted')) return false;
+        // One-way mirror
         if (connector.tags.includes('one-way') && connector.roomIds[0] !== rootRoomId) return false;
         return true;
       })
       .map(x => x.windowIndex);
     const windowLights = adjWindowIds.map(windowIndex => ({
-      gmIndex,
+      gmIndex: gmId,
       poly: geom.lightPolygon({
         position: computeLightPosition(gm.windows[windowIndex], rootRoomId),
         range: 1000,
-        exterior: this.getOpenWindowPolygon(gmIndex, windowIndex),
+        exterior: this.getOpenWindowPolygon(gmId, windowIndex),
       }),
     }));
 

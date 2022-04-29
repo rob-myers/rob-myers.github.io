@@ -111,8 +111,11 @@ declare namespace Geomorph {
    */
    export interface GeomorphData extends Geomorph.ParsedLayout {
      roomsWithDoors: Poly[];
-     /** Switch in interior, otherwise we'll default to room's center */
-     roomSwitches: Vect[];
+     /**
+      * Aligned to `rooms`, where switch from meta point in interior,
+      * else default to room's center.
+      */
+     roomsSwitch: Vect[];
      hullDoors: ConnectorRect<Poly, Geom.Vect, Geom.Rect>[];
      hullOutline: Poly;
      pngRect: Geom.Rect;

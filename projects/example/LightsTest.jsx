@@ -59,7 +59,7 @@ export default function LightsTest(props) {
           .map(x => x.precision(2));
 
         const observableDoors = roomGraph.getAdjacentDoors(...rootRoomIds.map(id => roomGraph.nodesArray[id]));
-        this.doorsApi.setVisible(0, observableDoors.map(x => x.doorIndex));
+        this.doorsApi.setVisible(0, observableDoors.map(x => x.doorId));
         const maskPoly = Poly.cutOut(allRoomPolys, [hullOutline],)
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
@@ -122,7 +122,7 @@ export default function LightsTest(props) {
           className="light-toggles"
           onClick={state.onToggleLight}
         >
-          {gm.roomSwitches.map((center, roomId) => {
+          {gm.roomsSwitch.map((center, roomId) => {
             return <div
               key={roomId}
               data-index={roomId}
@@ -194,9 +194,9 @@ function DebugGraph({ gm }) {
           fill="none"
           r={5}
           {...node.type === 'room'
-            && { cx: gm.roomSwitches[i].x, cy: gm.roomSwitches[i].y,  }}
+            && { cx: gm.roomsSwitch[i].x, cy: gm.roomsSwitch[i].y,  }}
           {...node.type === 'door'
-            && { cx: gm.doors[node.doorIndex].poly.center.x, cy: gm.doors[node.doorIndex].poly.center.y }}
+            && { cx: gm.doors[node.doorId].poly.center.x, cy: gm.doors[node.doorId].poly.center.y }}
           {...node.type === 'window'
             && { cx: gm.doors[node.windowIndex].poly.center.x, cy: gm.windows[node.windowIndex].poly.center.y }}
         />
@@ -213,14 +213,14 @@ function DebugGraph({ gm }) {
           .map((edge) =>
             <line
               stroke="red"
-              x1={gm.roomSwitches[
+              x1={gm.roomsSwitch[
                 /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].x}
-              y1={gm.roomSwitches[
+              y1={gm.roomsSwitch[
                 /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].y}
               x2={gm.doors[
-                /** @type {Graph.RoomGraphNodeDoor} */ (edge.dst).doorIndex].poly.center.x}
+                /** @type {Graph.RoomGraphNodeDoor} */ (edge.dst).doorId].poly.center.x}
               y2={gm.doors[
-                /** @type {Graph.RoomGraphNodeDoor} */  (edge.dst).doorIndex].poly.center.y}
+                /** @type {Graph.RoomGraphNodeDoor} */  (edge.dst).doorId].poly.center.y}
             />
         )}
     </svg>

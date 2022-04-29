@@ -59,7 +59,7 @@ declare namespace Graph {
     /** `door-${doorIndex} */
     id: string;
     /** Index of `Geomorph.Layout['doors']` */
-    doorIndex: number;
+    doorId: number;
   }
 
   export interface RoomGraphNodeWindow {

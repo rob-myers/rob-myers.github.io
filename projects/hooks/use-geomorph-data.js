@@ -19,7 +19,7 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
       .map((node, roomNodeId) => {
         const doors = roomGraph.getEdgesFrom(node)
           .flatMap(({ dst }) =>
-            dst.type === 'door' ? layout.doors[dst.doorIndex].poly : []
+            dst.type === 'door' ? layout.doors[dst.doorId].poly : []
           ); // Assume room nodes aligned with rooms
         return Poly.union([layout.rooms[roomNodeId], ...doors])[0];
       });
@@ -34,7 +34,7 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
     const output = {
       ...layout,
       roomsWithDoors: roomsWithDoors,
-      roomSwitches: layout.rooms.map((poly) => {
+      roomsSwitch: layout.rooms.map((poly) => {
         const found = switchPoints.find(p => poly.contains(p));
         return found || poly.rect.center;
       }),
