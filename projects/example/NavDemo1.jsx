@@ -76,9 +76,8 @@ export default function NavDemo1(props) {
         // Compute respective maskPolys
         gms.forEach((otherGm, otherGmId) => {
           const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
-          if (otherGm === gm) {// Lights for current geomorph includes _current room_ without holes
-            const sansHoles = new Poly(gm.roomsWithDoors[state.roomId].outline);
-            maskPolys[otherGmId] = Poly.cutOut(polys.concat(sansHoles), [otherGm.hullOutline]);
+          if (otherGm === gm) {// Lights for current geomorph includes _current room_
+            maskPolys[otherGmId] = Poly.cutOut(polys.concat(gm.roomsWithDoors[state.roomId]), [otherGm.hullOutline]);
           } else {
             maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
           }
