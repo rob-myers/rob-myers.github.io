@@ -203,8 +203,8 @@ export class gmGraph extends BaseGraph {
     const hullDoorId = gm.hullDoors.indexOf(door);
     if (hullDoorId === -1) {
       const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getDoorNode(doorId));
-      // const adjRoomsSansHoles = adjRoomNodes.map(x => new Poly(gm.roomsWithDoors[x.roomId].outline));
       const adjRooms = adjRoomNodes.map(x => gm.roomsWithDoors[x.roomId]);
+      // const adjRoomsSansHoles = adjRoomNodes.map(x => new Poly(gm.roomsWithDoors[x.roomId].outline));
       return { gmIndex: gmId, doorIndex: doorId, adjRoomId: null, poly: Poly.union(adjRooms)[0] };
     }
 
@@ -212,11 +212,11 @@ export class gmGraph extends BaseGraph {
     if (result) {
       const srcRoomId = /** @type {number} */ (door.roomIds.find(x => typeof x === 'number'));
       const otherGm = this.gms[result.adjGmId];
-      // const otherGmRoom = otherGm.roomsWithDoors[result.adjRoomId];
-      const otherGmRoomSansHoles = new Poly(otherGm.roomsWithDoors[result.adjRoomId].outline);
+      const otherGmRoom = otherGm.roomsWithDoors[result.adjRoomId];
+      // const otherGmRoomSansHoles = new Poly(otherGm.roomsWithDoors[result.adjRoomId].outline);
       const poly = Poly.union([// We transform poly from `gm` coords to `otherGm` coords
         gm.roomsWithDoors[srcRoomId].clone().applyMatrix(gm.matrix).applyMatrix(otherGm.inverseMatrix),
-        otherGmRoomSansHoles,
+        otherGmRoom,
       ])[0];
 
       return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjRoomId: result.adjRoomId, poly };
@@ -262,7 +262,7 @@ export class gmGraph extends BaseGraph {
         gmIndex: area.gmIndex,
         poly: geom.lightPolygon({// TODO avoid nullable `adjRoomId` (?)
           position: computeLightPosition(doors[area.doorIndex], area.adjRoomId??rootRoomId),
-          range: 1000,
+          range: 2000,
           exterior: area.poly,
           extraSegs: closedDoorSegs,
         }),

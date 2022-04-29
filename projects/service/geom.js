@@ -254,9 +254,9 @@ class GeomService {
   lightPolygon({ position: pos, range, tris, exterior, extraSegs }) {
     const lightBounds = new Rect(pos.x - range, pos.y - range, 2 * range, 2 * range);
     const closeTris = tris??[].filter(({ rect }) => lightBounds.intersects(rect));
-    const points = new Set(closeTris
-        .reduce((agg, { outline }) => agg.concat(outline), /** @type {Geom.Vect[]} */ ([]))
-        .concat(exterior?.outline??[]),
+    const points = new Set(
+      closeTris.reduce((agg, { outline }) => agg.concat(outline), /** @type {Geom.Vect[]} */ ([]))
+        .concat(exterior?.allPoints??[]),
     );
     const allLineSegs = closeTris.reduce(
       (agg, { outline: [u, v, w] }) => agg.concat([[u, v], [v, w], [w, u]]),
@@ -280,10 +280,12 @@ class GeomService {
     const deltas = [];
 
     for (const point of points) {
+      // Project 3 rays from `pos`
       dir1.copy(point).sub(pos).normalize();
       dir0.copy(dir1).rotate(-0.001);
       dir2.copy(dir1).rotate(+0.001);
       dist0 = dist1 = dist2 = range;
+      // Detect how far each ray propagates without hitting a line segment
       allLineSegs.forEach(([q0, q1]) => {
         d = this.getLineLineSegIntersect(pos, dir0, q0, q1);
         if (d !== null && d >= 0 && d < dist0) {
@@ -298,6 +300,7 @@ class GeomService {
           dist2 = d;
         }
       });
+      // Append to unsorted light polygon
       deltas.push(
         dir0.clone().scale(dist0),
         dir1.clone().scale(dist1),
