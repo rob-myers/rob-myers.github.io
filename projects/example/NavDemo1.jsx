@@ -228,9 +228,11 @@ const rootCss = css`
       position: absolute;
       background: #0000ff40;
       border: 1px solid white;
+      pointer-events: none;
     }
     svg.room-nav {
       path.nav-poly {
+        pointer-events: none;
         fill: rgba(255, 0, 0, 0.1);
         stroke: blue;
       }
@@ -249,8 +251,9 @@ function Debug(props) {
   return (
     <div
       onClick={({ target }) => {
-        const doorId = Number((/** @type {HTMLElement} */ (target)).getAttribute('data-door-index'));
-        const door = gm.doors[doorId];
+        const doorIdAttr = (/** @type {HTMLElement} */ (target)).getAttribute('data-debug-door-index');
+        if (doorIdAttr === null) return;
+        const door = gm.doors[Number(doorIdAttr)];
 
         const [otherRoomId] = door.roomIds.filter(id => id !== props.roomId);
         if (otherRoomId !== null) {// `door` is not a hull door
@@ -313,7 +316,7 @@ function Debug(props) {
           return (
             <div
               key={doorId}
-              data-door-index={doorId}
+              data-debug-door-index={doorId}
               className="debug-door"
               style={{
                 left: position.x - debugRadius,

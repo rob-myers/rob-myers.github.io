@@ -48,7 +48,9 @@ export default function Doors(props) {
 
       /** @param {PointerEvent} e */
       onToggleDoor(e) {
-        const gmIndex = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-index'));
+        const gmIndexAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-index');
+        if (gmIndexAttr === null) return;
+        const gmIndex = Number(gmIndexAttr);
         const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-index'));
         const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-index'));
 
@@ -78,6 +80,7 @@ export default function Doors(props) {
         const ctxt = assertNonNull(canvas.getContext('2d'));
         ctxt.clearRect(0, 0, canvas.width, canvas.height);
         ctxt.fillStyle = '#555';
+        // ctxt.strokeStyle = '#00204b';
         ctxt.strokeStyle = '#aaa';
         const gm = props.gms[gmIndex];
         gm.doors.forEach(({ poly }, i) => {
