@@ -42,7 +42,10 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
       hullOutline: layout.hullPoly[0].removeHoles(),
       pngRect: Rect.fromJson(layout.items[0].pngRect),
       spawnPoints,
+      lazy: /** @type {*} */ (null),
     };
+
+    output.lazy = createLazyProxy(output);
 
     return output;
   }, {
@@ -50,4 +53,34 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
     cacheTime: Infinity,
     .../** @type {*} */ (useQueryOpts),
   });
+}
+
+/**
+ * Create a proxy for lazy computations
+ * @param {Geomorph.GeomorphData} gm
+ */
+function createLazyProxy(gm) {
+  const root = {
+    roomNavPoly: /** @type {{ [roomId: number]: Geom.Poly[] }} */ ({}),
+  };
+
+  const roomNavPolyProxy = new Proxy({}, {
+    get(_, key) {
+      if (typeof key !== 'string') return;
+      const roomId = Number(key);
+      if (gm.roomsWithDoors[roomId] && !root.roomNavPoly[roomId]) {
+        root.roomNavPoly[roomId] = Poly.intersect(gm.navPoly, [gm.roomsWithDoors[roomId]]);
+      }
+      return root.roomNavPoly[roomId];
+    }
+  });
+
+  return new Proxy(root, {
+    /** @param {keyof typeof root} key */
+    get(_, key) {
+      if (key === 'roomNavPoly') {
+        return roomNavPolyProxy;
+      }
+    },
+  })
 }

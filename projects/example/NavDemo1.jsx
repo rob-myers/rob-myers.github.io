@@ -44,14 +44,14 @@ export default function NavDemo1(props) {
 
   const state = useStateRef(() => {
     return {
-      // gmId: 0,
-      // roomId: 2,
+      gmId: 0,
+      roomId: 2,
       // roomId: 16,
       // gmId: 1,
       // roomId: 5,
       // roomId: 22,
-      gmId: 2,
-      roomId: 2,
+      // gmId: 2,
+      // roomId: 2,
       // gmId: 3,
       // roomId: 26,   
       clipPath: gms.map(_ => 'none'),

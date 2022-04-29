@@ -110,16 +110,23 @@ declare namespace Geomorph {
    * This is the type of useGeomorphData's data.
    */
    export interface GeomorphData extends Geomorph.ParsedLayout {
-     roomsWithDoors: Poly[];
-     /**
-      * Aligned to `rooms`, where switch from meta point in interior,
-      * else default to room's center.
-      */
-     roomsSwitch: Vect[];
-     hullDoors: ConnectorRect<Poly, Geom.Vect, Geom.Rect>[];
-     hullOutline: Poly;
-     pngRect: Geom.Rect;
-     spawnPoints: Vect[];
+    roomsWithDoors: Poly[];
+    /**
+    * Aligned to `rooms`, where switch from meta point in interior,
+    * else default to room's center.
+    */
+    roomsSwitch: Vect[];
+    hullDoors: ConnectorRect<Poly, Geom.Vect, Geom.Rect>[];
+    hullOutline: Poly;
+    pngRect: Geom.Rect;
+    spawnPoints: Vect[];
+
+    /** Proxy for lazy cached data */
+    lazy: {
+      roomNavPoly: {
+        [roomId: number]: Poly[];
+      };
+    };
   }
 
   export interface UseGeomorphsDefItem {
@@ -140,11 +147,10 @@ declare namespace Geomorph {
     transformStyle: string;
     matrix: Geom.Mat;
     inverseMatrix: Geom.Mat;
-
     /**
-     * Sub rectangle of `600 * 600` grid
-     * - standard geomorphs have dimension `1200 * 1200`
-     * - edge geomorphs have dimension `1200 * 600`
+     * Sub-rectangle of `600 * 600` grid
+     * - "Standard Geomorphs" are `1200 * 1200`
+     * - "Edge Geomorphs" are `1200 * 600`
      */
     gridRect: Geom.Rect;
   }
