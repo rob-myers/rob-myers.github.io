@@ -58,13 +58,15 @@ export async function renderGeomorph(
 
   /**
    * Draw walls without drawing over e.g. fuel and symbol PNGs.
-   * Without this some walls look worse, particularly when inverted.
-   * NOTE currently dark grey for debug
+   * - without this some walls look worse, particularly when inverted.
+   * - currently dark grey for debug?.
+   * - do not draw holes i.e. restrict to largest polygon in wallsSansWindows
    */
   const { singles, obstacles, walls } = layout.groups;
   const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
+  wallsSansWindows.sort((a, b) => a.rect.area > b.rect.area ? -1 : 1); // Desc by area
   ctxt.fillStyle = 'rgba(50, 50, 50, 1)';
-  fillPolygon(ctxt, wallsSansWindows);
+  fillPolygon(ctxt, wallsSansWindows.slice(0, 1));
 
   ctxt.lineJoin = 'round';
   hullSym.singles.forEach(({ poly, tags }) => {
