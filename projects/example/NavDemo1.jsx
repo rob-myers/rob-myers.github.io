@@ -44,12 +44,14 @@ export default function NavDemo1(props) {
 
   const state = useStateRef(() => {
     return {
-      gmId: 0,
-      roomId: 2,
+      // gmId: 0,
+      // roomId: 2,
       // roomId: 16,
       // gmId: 1,
       // roomId: 5,
       // roomId: 22,
+      gmId: 2,
+      roomId: 2,
       // gmId: 3,
       // roomId: 26,   
       clipPath: gms.map(_ => 'none'),
@@ -74,9 +76,12 @@ export default function NavDemo1(props) {
         // Compute respective maskPolys
         gms.forEach((otherGm, otherGmId) => {
           const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
-          maskPolys[otherGmId] = Poly.cutOut(polys.concat(
-            otherGm === gm ? gm.roomsWithDoors[state.roomId] : []
-          ), [otherGm.hullOutline]);
+          if (otherGm === gm) {// Lights for current geomorph includes _current room_ without holes
+            const sansHoles = new Poly(gm.roomsWithDoors[state.roomId].outline);
+            maskPolys[otherGmId] = Poly.cutOut(polys.concat(sansHoles), [otherGm.hullOutline]);
+          } else {
+            maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
+          }
         });
         // Set the clip-paths
         maskPolys.forEach((maskPoly, gmId) => {// <img> top-left needn't be at world origin

@@ -15,7 +15,7 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
 
     const roomGraph = layout.roomGraph;
     const roomsWithDoors = roomGraph.nodesArray
-      .filter(node => node.type === 'room')
+      .filter(node => node.type === 'room') // Aligned to `rooms`
       .map((node, roomNodeId) => {
         const doors = roomGraph.getEdgesFrom(node)
           .flatMap(({ dst }) =>

@@ -193,31 +193,35 @@ export class gmGraph extends BaseGraph {
   /**
    * Get union of roomsWithDoors on either side of door.
    * In case of a hull door, we transform into other geomorph.
-   * @param {number} gmIndex 
-   * @param {number} doorIndex
+   * @param {number} gmId 
+   * @param {number} doorId
    * @returns {null | { gmIndex: number; doorIndex: number; adjRoomId: null | number; poly: Geom.Poly }}
    */
-  getOpenDoorArea(gmIndex, doorIndex) {
-    const gm = this.gms[gmIndex];
-    const door = gm.doors[doorIndex];
-    const hullDoorIndex = gm.hullDoors.indexOf(door);
-    if (hullDoorIndex === -1) {
-      const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getDoorNode(doorIndex));
-      return { gmIndex, doorIndex, adjRoomId: null, poly: Poly.union(adjRoomNodes.map(x => gm.roomsWithDoors[x.roomId]))[0]};
+  getOpenDoorArea(gmId, doorId) {
+    const gm = this.gms[gmId];
+    const door = gm.doors[doorId];
+    const hullDoorId = gm.hullDoors.indexOf(door);
+    if (hullDoorId === -1) {
+      const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getDoorNode(doorId));
+      // const adjRoomsSansHoles = adjRoomNodes.map(x => new Poly(gm.roomsWithDoors[x.roomId].outline));
+      const adjRooms = adjRoomNodes.map(x => gm.roomsWithDoors[x.roomId]);
+      return { gmIndex: gmId, doorIndex: doorId, adjRoomId: null, poly: Poly.union(adjRooms)[0] };
     }
 
-    const result = this.getAdjacentRoomCtxt(gmIndex, hullDoorIndex);
+    const result = this.getAdjacentRoomCtxt(gmId, hullDoorId);
     if (result) {
       const srcRoomId = /** @type {number} */ (door.roomIds.find(x => typeof x === 'number'));
       const otherGm = this.gms[result.adjGmId];
+      // const otherGmRoom = otherGm.roomsWithDoors[result.adjRoomId];
+      const otherGmRoomSansHoles = new Poly(otherGm.roomsWithDoors[result.adjRoomId].outline);
       const poly = Poly.union([// We transform poly from `gm` coords to `otherGm` coords
         gm.roomsWithDoors[srcRoomId].clone().applyMatrix(gm.matrix).applyMatrix(otherGm.inverseMatrix),
-        otherGm.roomsWithDoors[result.adjRoomId],
+        otherGmRoomSansHoles,
       ])[0];
 
       return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjRoomId: result.adjRoomId, poly };
     } else {
-      console.error(`GmGraph: getOpenDoorArea: failed to get context`, { gmIndex, doorIndex, hullDoorIndex });
+      console.error(`GmGraph: getOpenDoorArea: failed to get context`, { gmIndex: gmId, doorIndex: doorId, hullDoorIndex: hullDoorId });
       return null;
     }
   }
@@ -251,12 +255,12 @@ export class gmGraph extends BaseGraph {
       .flatMap(doorId => this.getOpenDoorArea(gmId, doorId) || []);
     const doorLights = areas.map((area) => {
       const doors = this.gms[area.gmIndex].doors;
-      // NOTE needed when 2 doors adjoin a single room e.g. side-by-side double-doors
-      // TODO restrict to doors adjacent to dst room
+      // TODO restrict to fewer doors
+      // Needed when 2 doors adjoin a single room e.g. double-doors
       const closedDoorSegs = doors.filter((_, id) => id !== area.doorIndex).map(x => x.seg);
       return {
         gmIndex: area.gmIndex,
-        poly: geom.lightPolygon({// TODO avoid nullable `adjRoomId`
+        poly: geom.lightPolygon({// TODO avoid nullable `adjRoomId` (?)
           position: computeLightPosition(doors[area.doorIndex], area.adjRoomId??rootRoomId),
           range: 1000,
           exterior: area.poly,
