@@ -3,6 +3,7 @@ import { BaseGraph } from "./graph";
 import { Utils } from "../pathfinding/Utils";
 import { AStar } from "../pathfinding/AStar";
 import { Channel } from "../pathfinding/Channel";
+import { geom } from "../service/geom";
 
 /**
  * @extends {BaseGraph<Graph.FloorGraphNode, Graph.FloorGraphEdgeOpts>}
@@ -43,8 +44,8 @@ export class FloorGraph extends BaseGraph {
 
   /**
    * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
-   * @param {Geom.VectJson} src
-   * @param {Geom.VectJson} dst 
+   * @param {Geom.VectJson} src in geomorph local coords
+   * @param {Geom.VectJson} dst in geomorph local coords
    */
   findPath(src, dst) {
     const closestNode = this.getClosestNode(src);
@@ -99,14 +100,13 @@ export class FloorGraph extends BaseGraph {
       const pathSrc = pathId === 0 ? src : transitions[pathId - 1].exit;
       const pathDst = pathId === nodePaths.length - 1 ? dst : transitions[pathId].entry;
 
-      // TODO 🚧 try local raycast
-      // TODO fix case where roomNavPoly.length > 1
-      const roomId = pathId === 0 ? this.nodeToMeta[closestNode.index].roomId : transitions[pathId - 1].srcRoomId;
+      // TODO fix cases where roomNavPoly.length > 1
+      const roomId = pathId === 0 ? this.nodeToMeta[closestNode.index].roomId : transitions[pathId - 1].dstRoomId;
       const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
-      const directPath = roomNavPoly.some(poly => {
-        // TODO check if line seg [pathSrc, pathDst] intersects some line seg in `poly`s outline
-      });
+      const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly[0]);
+      if (directPath) return [Vect.from(pathSrc), Vect.from(pathDst)];
 
+      // Apply "simple stupid funnel algorithm"
       const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
       return path.map(Vect.from);
     });

@@ -47,8 +47,9 @@ __Aim towards website release__.
        we introduced `one-way` (like `frosted`) to avoid
        outside from control room seeing more than inside
   - local nav path issues
-    - precompute room navpoly i.e. navpoly restricted to room with doors
-    - 🤔 string-pull poor quality but reverse is great
+    - ✅ lazily precompute room navpolys restricted to roomWithDoors
+    - ✅ initial room ray cast avoids some string pull issues
+    - 🤔 seen string-pull of poor quality whose reverse is good
     - 🤔 avoid going outside navmesh
     - ✅ use connector.entries instead of centroids of nav nodes
     - ✅ works when src and dst in same triangle
@@ -60,9 +61,10 @@ __Aim towards website release__.
   - ✅ Rooms can themselves have holes (from allWalls[i] where i ≥ 1)
     - ✅ Examples: 101, 102, 302
     - ✅ Important for _visibility ray casts_
-  - Saw empty holeId in 301 i.e. `15`
+  - 🤔 Saw empty holeId in 301 i.e. `15`
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tags `dark-infront` and `dark-behind` instead of `one-way`
+  - Move light computations into `lazy` i.e. reuse
 
 - ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
 - 🚧 NavDemo1 init race condition?

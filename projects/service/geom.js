@@ -1,6 +1,6 @@
 import { Poly, Rect, Vect } from '../geom';
 
-class GeomService {
+class geomService {
 
   /**
    * @param {Vect} p 
@@ -24,7 +24,8 @@ class GeomService {
 
   /**
    * https://github.com/davidfig/intersects/blob/master/line-polygon.js
-   * Does line segment intersect polygon, __ignoring holes__
+   * Does line segment intersect polygon?
+   * - we ignore holes
    * @param {Geom.VectJson} u 
    * @param {Geom.VectJson} v 
    * @param {Geom.Poly} polygon Only outline taken into consideration
@@ -48,6 +49,33 @@ class GeomService {
       }
     }
     return false
+  }
+
+  /**
+   * @param {Geom.VectJson} u 
+   * @param {Geom.VectJson} v 
+   * @param {Geom.Poly} polygon
+   */
+  lineSegCrossesPolygon(u, v, { outline, holes }) {
+    if (this.lineSegCrossesRing(u, v, outline)) return true;
+    return holes.some(hole => this.lineSegCrossesRing(u, v, hole));
+  }
+
+  /**
+   * @param {Geom.VectJson} u 
+   * @param {Geom.VectJson} v 
+   * @param {Geom.VectJson[]} ring
+   */
+  lineSegCrossesRing(u, v, ring) {
+    if (ring.length === 0) return false;
+    let u1 = ring[ring.length - 1];
+    for (const v1 of ring) {
+      if (this.getLineSegsIntersection(u, v, u1, v1) !== null) {
+        return true;
+      }
+      u1 = v1;
+    }
+    return false;
   }
 
   /**
@@ -82,10 +110,10 @@ class GeomService {
    * 2. `lambda x. p1 + x * d1`.
    *
    * If they intersect non-degenerately return solution of (1), else `null`.
-   * @param {Vect} p0
-   * @param {Vect} d0
-   * @param {Vect} p1
-   * @param {Vect} d1
+   * @param {Geom.VectJson} p0
+   * @param {Geom.VectJson} d0
+   * @param {Geom.VectJson} p1
+   * @param {Geom.VectJson} d1
    * @returns {number | null}
    */
   getLinesIntersect(p0, d0, p1, d1) {
@@ -146,8 +174,8 @@ class GeomService {
    * - p0 -- p1
    * - q0 -- q1
    *
-   * If they intersect, return lambda in [0, 1] s.t. intersection is
-   * `p0 + (p1 - p0) * lambda`, else return null.
+   * If they intersect, return `lambda` in [0, 1] s.t. intersection is
+   * `p0 + (p1 - p0) * lambda`, else return `null`.
    * @param {Geom.VectJson} p0
    * @param {Geom.VectJson} p1
    * @param {Geom.VectJson} q0
@@ -325,7 +353,7 @@ class GeomService {
   }
 
   /**
-   * Convert a polygonal rectangle back into a Rect with angle.
+   * Convert a polygonal rectangle back into a `Rect` and `angle`.
    * We ensure the width is greater than or equal to the height.
    * @param {Geom.Poly} poly
    * @returns {Geom.AngledRect<Geom.Rect>}
@@ -384,4 +412,4 @@ class GeomService {
 const tempVect = new Vect;
 const tempVect2 = new Vect;
 
-export const geom = new GeomService;
+export const geom = new geomService;
