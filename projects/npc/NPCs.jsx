@@ -190,24 +190,24 @@ const npcCss = css`
 function Debug(props) {
   return <>
     {Object.entries(props.debugPath).map(([key, {path, aabb}]) => (
-    <svg
-      key={key}
-      className="debug-path"
-      width={aabb.width}
-      height={aabb.height}
-      style={{
-        position: 'absolute',
-        left: aabb.x,
-        top: aabb.y,
-      }}
-    >
-      <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
-        <polyline fill="none" stroke="blue" strokeWidth={2} points={`${path}`} />
-        {path.map(p => (
-          <circle fill="none" stroke="red" r={2.5} cx={p.x} cy={p.y} />
-        ))}
-      </g>
-    </svg>
+      <svg
+        key={key}
+        className="debug-path"
+        width={aabb.width}
+        height={aabb.height}
+        style={{
+          position: 'absolute',
+          left: aabb.x,
+          top: aabb.y,
+        }}
+      >
+        <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
+          <polyline fill="none" stroke="blue" strokeWidth={2} points={`${path}`} />
+          {path.map(p => (
+            <circle fill="none" stroke="red" r={2.5} cx={p.x} cy={p.y} />
+          ))}
+        </g>
+      </svg>
     ))}  
   </>
 }

@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
-import { Poly, Vect } from "../geom";
+import { Poly, Rect, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -175,6 +175,7 @@ export default function NavDemo1(props) {
         <Debug
           // outlines
           // windows
+          localNav
           gms={gms}
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}
@@ -228,6 +229,12 @@ const rootCss = css`
       background: #0000ff40;
       border: 1px solid white;
     }
+    svg.room-nav {
+      path.nav-poly {
+        fill: rgba(255, 0, 0, 0.1);
+        stroke: blue;
+      }
+    }
   }
 
 `;
@@ -236,6 +243,8 @@ const rootCss = css`
 function Debug(props) {
   const gm = props.gms[props.gmId];
   const visDoorIds = props.doorsApi.getVisible(props.gmId);
+  const roomNavPoly = gm.lazy.roomNavPoly[props.roomId];
+  const roomNavAabb = Rect.from(...roomNavPoly.map(x => x.rect));
 
   return (
     <div
@@ -277,6 +286,25 @@ function Debug(props) {
           transform: gm.transformStyle,
         }}
       >
+        {props.localNav && (
+          <svg
+            className="room-nav"
+            width={roomNavAabb.width}
+            height={roomNavAabb.height}
+            style={{
+              position: 'absolute',
+              left: roomNavAabb.x,
+              top: roomNavAabb.y,
+            }}
+          >
+            <g style={{ transform: `translate(${-roomNavAabb.x}px, ${-roomNavAabb.y}px)` }}>
+              {roomNavPoly.map((poly, key) => (
+                <path className="nav-poly" key={key} d={poly.svgPath} />
+              ))}
+            </g>
+          </svg>
+        )}
+
         {visDoorIds.map(doorId => {
           const { poly, normal, roomIds } = gm.doors[doorId];
           const sign = roomIds[0] === props.roomId ? 1 : -1;
@@ -315,6 +343,7 @@ function Debug(props) {
             />
           );
         })}
+
       </div>
     </div>
   );
@@ -330,4 +359,5 @@ function Debug(props) {
  * @property {(gmId: number, roomId: number) => void} setRoom
  * @property {boolean} [outlines]
  * @property {boolean} [windows]
+ * @property {boolean} [localNav]
  */

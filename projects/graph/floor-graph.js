@@ -55,23 +55,24 @@ export class FloorGraph extends BaseGraph {
 
     const nodePath = AStar.search(this, closestNode, farthestNode);
     if (nodePath.length === 0 && closestNode === farthestNode) {
-      nodePath.push(closestNode); // Fix when src, dst in same triangle
+      // Ensure a non-empty nodePath when src and dst in same triangle
+      nodePath.push(closestNode);
     }
 
     // One fewer than `nodePaths`
-    const nodePathMetas = /** @type {NPC.LocalNavItem[]} */ ([]);
+    const transitions = /** @type {NPC.LocalNavItem[]} */ ([]);
     // Split path by door nodes
     const nodePaths = nodePath.reduce((agg, node) => {
       const meta = this.nodeToMeta[node.index];
       if (meta.doorId === -1) {
         agg.length ? agg[agg.length - 1].push(node) : agg.push([node]);
       } else {
-        const lastSeen = nodePathMetas[nodePathMetas.length - 1];
+        const lastSeen = transitions[transitions.length - 1];
         if (!lastSeen || lastSeen.doorId !== meta.doorId) {// lastSeen undefined or new meta.doorId
           agg.push([]);
           const door = this.gm.doors[meta.doorId];
           const entry = /** @type {Geom.Vect} */ (door.roomIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
-          nodePathMetas.push({
+          transitions.push({
             doorId: meta.doorId,
             srcRoomId: meta.roomId,
             dstRoomId: meta.roomId,
@@ -90,13 +91,22 @@ export class FloorGraph extends BaseGraph {
     if (nodePaths[nodePaths.length - 1]?.length === 0)
       nodePaths.pop(); // Fix trailing empty array when end at doorway
     
-    console.log({ nodePaths, nodePathMetas});
+    console.log({ nodePaths, transitions });
 
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
       // const pathSrc = pathId === 0 ? src : nodePath[0].centroid;
       // const pathDst = pathId === nodePaths.length - 1 ? dst : nodePath[nodePath.length - 1].centroid;
-      const pathSrc = pathId === 0 ? src : nodePathMetas[pathId - 1].exit;
-      const pathDst = pathId === nodePaths.length - 1 ? dst : nodePathMetas[pathId].entry;
+      const pathSrc = pathId === 0 ? src : transitions[pathId - 1].exit;
+      const pathDst = pathId === nodePaths.length - 1 ? dst : transitions[pathId].entry;
+
+      // TODO 🚧 try local raycast
+      // TODO fix case where roomNavPoly.length > 1
+      const roomId = pathId === 0 ? this.nodeToMeta[closestNode.index].roomId : transitions[pathId - 1].srcRoomId;
+      const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
+      const directPath = roomNavPoly.some(poly => {
+        // TODO check if line seg [pathSrc, pathDst] intersects some line seg in `poly`s outline
+      });
+
       const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
       return path.map(Vect.from);
     });
@@ -111,7 +121,7 @@ export class FloorGraph extends BaseGraph {
       , /** @type {Geom.Vect[]} */ ([]));
     });
 
-    return { normalisedPaths, nodePaths, nodePathMetas }
+    return { normalisedPaths, nodePaths, nodePathMetas: transitions }
   }
 
   /**
