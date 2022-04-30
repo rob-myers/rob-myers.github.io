@@ -274,6 +274,10 @@ class SemanticsService {
       const command = node.type === 'CallExpr' ? node.Args[0].string || 'unknown CallExpr' : node.type;
       const error = e instanceof ShError ? e : new ShError('', 1, e as Error);
       error.message = `${node.meta.stack.concat(command).join(': ')}: ${(e as Error).message || e}`;
+      if (command === 'run' && node.meta.stack.length === 0) {
+        // When directly using `run`, append helpful error message
+        error.message += `\n\rformat \`run {async_generator}\` e.g. run \'({ api:{read} }) { yield "foo"; yield await read(); }\'`;
+      }
       sem.handleShError(node, e);
     }
   }

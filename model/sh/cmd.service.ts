@@ -278,9 +278,12 @@ class CmdService {
           const func = Function('_', `return async function *generator ${args[0]}`);
           yield* func()(this.provideProcessCtxt(meta, args.slice(1)));
         } catch (e) {
-          throw e instanceof ShError || e instanceof ProcessError
-            ? e
-            : new ShError('format: \`run {async_generator}\` e.g. run \'({ api:{read} }) { yield "foo"; yield await read(); }\'', 1);
+          if (e instanceof ProcessError || e instanceof ShError) {
+            throw e;
+          } else {
+            console.error(e); // Provide JS stack
+            throw new ShError(`${e}`, 1);
+          }
         }
         break;
       }

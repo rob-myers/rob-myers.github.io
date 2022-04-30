@@ -17,10 +17,12 @@ __Aim towards website release__.
   - 5 watchers as Janic hindrances
 
 - Can move NPC along navpath
+  - 🤔 prevent NPC moving through closed door?
 - Speech bubbles
 - change `sh.lib`
   - `spawn`, `click`, `nav` are from Terminal specified script.
   - base functions are also from Terminal specified script
+- ✅ Better errors when command using `run` fails
 
 - Revisit navgraphs
   - ✅ Precompute pathfinding navgraph on server
@@ -42,7 +44,6 @@ __Aim towards website release__.
     2. By construction some edge can be taken; never deadlock
     ```
   - 🚧 Implement global navpaths
-  - ❌ AStar nodeClosed computed step-by-step
   - ✅ curved windows can produce strange light
        we introduced `one-way` (like `frosted`) to avoid
        outside from control room seeing more than inside
@@ -67,8 +68,8 @@ __Aim towards website release__.
   - Move light computations into `lazy` i.e. reuse
 
 - ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
-- 🚧 NavDemo1 init race condition?
-  - maybe fixed by React.useEffect -> useMemo in useGeomorphs
+- ✅ NavDemo1 init race condition?
+  - fixed by useEffect -> useMemo in useGeomorphs and doorsApi setup triggers render
 - ✅ replace "stage" with "wire"
 - 🤔 `useImperativeHandle` rather than providing an api?
 
