@@ -28,7 +28,7 @@ export default function NPCs(props) {
       /**
        * @param {Geom.VectJson} src
        * @param {Geom.VectJson} dst
-       * @returns {null | { paths: Geom.Vect[][]; gmEdges: NPC.NavGmTransition[]  }}
+       * @returns {null | { paths: Geom.Vect[][]; edges: NPC.NavGmTransition[] }}
        */
       getGlobalNavPath(src, dst) {
         const {gms} = props.gmGraph
@@ -40,7 +40,7 @@ export default function NPCs(props) {
         } else if (srcGmId === dstGmId) {
           return {
             paths: [state.getLocalNavPath(srcGmId, src, dst)],
-            gmEdges: [],
+            edges: [],
           };
         } else {
           // Compute global strategy
@@ -49,8 +49,8 @@ export default function NPCs(props) {
             error(`getGlobalNavPath: gmGraph.findPath not found: ${JSON.stringify(src)} -> ${JSON.stringify(dst)}`);
             return null;
           }
-          console.log({gmEdges});
-          // TODO 🚧 compute local paths too
+          // console.log({gmEdges});
+
           const paths = /** @type {Geom.Vect[][]} */ ([]);
           for (let k = 0; k < gmEdges.length + 1; k++) {
             if (k === 0) {
@@ -63,7 +63,7 @@ export default function NPCs(props) {
           }
           return {
             paths,
-            gmEdges,
+            edges: gmEdges,
           };
         }
       },
@@ -121,11 +121,10 @@ export default function NPCs(props) {
         update();
       } else if (e.key === 'nav-req') {
         const npc = state.npc[e.npcKey];
-        // TODO 🚧 send global navpath(s)
         const result = state.getGlobalNavPath(npc.getPosition(), e.dst);
         // TEMP 🚧 just join paths together
-        const path = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
-        wire.next({ key: 'nav-res', npcKey: e.npcKey, path, req: e });
+        // const path = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
+        wire.next({ key: 'nav-res', req: e, res: result });
 
       } else if (e.key === 'debug-path') {
         const path = e.path.map(Vect.from);

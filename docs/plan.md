@@ -16,45 +16,12 @@ __Aim towards website release__.
   - Anapanasati training
   - 5 watchers as Janic hindrances
 
-- Can move NPC along navpath
+- 🚧 Can move NPC along navpath
   - 🤔 prevent NPC moving through closed door?
 - Speech bubbles
-- change `sh.lib`
+- reorg `sh.lib`
   - `spawn`, `click`, `nav` are from Terminal specified script.
   - base functions are also from Terminal specified script
-- ✅ Better errors when command using `run` fails
-
-- Revisit navgraphs
-  - ✅ Precompute pathfinding navgraph on server
-  - ✅ Use an extension of BaseGraph (with double-edges)
-  - ✅ Define `FloorGraph` and `FloorGraph.from`
-  - ✅ Extend approach of Pathfinding to FloorGraph datatype
-  - ✅ Compute FloorGraph in geomorph json
-  - ✅ Go back to navZone in json because _much smaller_
-  - ✅ Clean away unnecessary code e.g. `Pathfinding`
-  - ✅ Link them to doors
-  - ✅ AStar takes account of doors
-  - ✅ Local navpaths go through doors
-    - Break into multiple paths and doorIndex
-    - Consumer will decide strategy
-  - ✅ Clarify "Global nav path strategy"
-    ```
-    Line "src -> dst" induces global path
-    1. Detect direction e.g. SW, and choose closest open door (straight line)
-    2. By construction some edge can be taken; never deadlock
-    ```
-  - ✅ Implement global navpaths
-  - ✅ curved windows can produce strange light
-       we introduced `one-way` (like `frosted`) to avoid
-       outside from control room seeing more than inside
-  - local nav path issues
-    - ✅ lazily precompute room navpolys restricted to roomWithDoors
-    - ✅ initial room ray cast avoids some string pull issues
-    - 🤔 seen string-pull of poor quality whose reverse is good
-    - 🤔 avoid going outside navmesh
-    - ✅ use connector.entries instead of centroids of nav nodes
-    - ✅ works when src and dst in same triangle
-  - 🚧 `nav` receives multiple paths and doorIds
 
 - Clean
   - ✅ Rename `holes` -> `rooms` etc.
@@ -156,6 +123,38 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Better errors when command using `run` fails
+- ✅ Revisit navgraphs
+  - ✅ Precompute pathfinding navgraph on server
+  - ✅ Use an extension of BaseGraph (with double-edges)
+  - ✅ Define `FloorGraph` and `FloorGraph.from`
+  - ✅ Extend approach of Pathfinding to FloorGraph datatype
+  - ✅ Compute FloorGraph in geomorph json
+  - ✅ Go back to navZone in json because _much smaller_
+  - ✅ Clean away unnecessary code e.g. `Pathfinding`
+  - ✅ Link them to doors
+  - ✅ AStar takes account of doors
+  - ✅ Local navpaths go through doors
+    - Break into multiple paths and doorIndex
+    - Consumer will decide strategy
+  - ✅ Clarify "Global nav path strategy"
+    ```
+    Line "src -> dst" induces global path
+    1. Detect direction e.g. SW, and choose closest open door (straight line)
+    2. By construction some edge can be taken; never deadlock
+    ```
+  - ✅ Implement global navpaths
+  - ✅ curved windows can produce strange light
+       we introduced `one-way` (like `frosted`) to avoid
+       outside from control room seeing more than inside
+  - local nav path issues
+    - ✅ lazily precompute room navpolys restricted to roomWithDoors
+    - ✅ initial room ray cast avoids some string pull issues
+    - 🤔 seen string-pull of poor quality whose reverse is good
+    - 🤔 avoid going outside navmesh
+    - ✅ use connector.entries instead of centroids of nav nodes
+    - ✅ works when src and dst in same triangle
+  - ✅ `nav` receives `{ paths, edges }`
 - ✅ HMR when edit class methods (GmGraph)
   - bizarre: HMR/react-refresh works when classes start with lowercase letter!
     > https://github.com/pmmmwh/react-refresh-webpack-plugin/blob/main/docs/TROUBLESHOOTING.md

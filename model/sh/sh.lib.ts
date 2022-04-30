@@ -171,18 +171,21 @@ call '({args}) =>
     }
 
     const wire = api.getWire()
-    const resp = await new Promise(resolve => {
+    const res = await new Promise(resolve => {
       const navReq = { key: "nav-req", npcKey, dst: position }
       const sub = wire.subscribe((e) => {
         if (e.key === "nav-res" && e.req === navReq) {
           sub.unsubscribe()
-          resolve(e)
+          resolve(e.res)
         }
       });
       wire.next(navReq)
     })
-    yield resp.path
+    yield res
 
+    // TEST DEBUG
+    const path = (res?.paths??[]).reduce((agg, item) => agg.concat(item), []);
+    wire.next({ key: "debug-path", pathName: "foo", path })
   }' "$@"
 }`
 };
