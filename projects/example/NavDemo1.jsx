@@ -175,7 +175,7 @@ export default function NavDemo1(props) {
         <Debug
           // outlines
           // windows
-          localNav
+          // localNav
           gms={gms}
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}

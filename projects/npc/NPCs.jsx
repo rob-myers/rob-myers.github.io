@@ -35,7 +35,7 @@ export default function NPCs(props) {
         if (srcGmId === -1 || dstGmId === -1) {
           return [];
         } else if (srcGmId === dstGmId) {
-          // TODO use general format
+          // TODO 🚧 use general format
           return state.getLocalNavPath(srcGmId, src, dst);
         } else {
           // Compute global strategy
