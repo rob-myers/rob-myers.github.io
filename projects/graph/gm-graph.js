@@ -103,9 +103,10 @@ export class gmGraph extends BaseGraph {
         this.getConnectedDoorsBySide(gmId, sideDir)
       );
 
+      // Choose doorway whose exit is closest to final destination
       const closest = doorNodes.reduce((agg, doorNode) => {
         const v = this.getDoorEntry(doorNode);
-        const d = currSrc.distanceToSquared(v);
+        const d = v.distanceToSquared(dst);
         if (!agg.node || d < agg.d) return { d, v, node: doorNode };
         return agg;
       }, /** @type {{ d: number; v: Vect; node?: Graph.GmGraphNodeDoor }} */ ({ d: Infinity, v: new Vect }));
