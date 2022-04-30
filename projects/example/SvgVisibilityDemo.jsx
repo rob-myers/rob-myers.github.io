@@ -17,7 +17,7 @@ export default function SvgVisibilityDemoDemo(props) {
 
   const [init] = React.useState(() => ({
     lightA: new Vect(205, 385),
-    lightB: new Vect(930, 385),
+    lightB: new Vect(1000, 400),
   }));
 
   return (
@@ -26,7 +26,6 @@ export default function SvgVisibilityDemoDemo(props) {
       initViewBox={defaults.initViewBox}
       maxZoom={6}
       className={classNames(rootCss, props.disabled && 'disabled')}
-      dark
     >
       {data && <>
         <image {...data.pngRect} className="geomorph" href={geomorphPngPath(props.layoutKey)} />
@@ -68,16 +67,16 @@ function Light({ init, walls, hull }) {
 
 const rootCss = css`
   image {
-    filter: contrast(200%) invert(100%);
+    filter: contrast(120%);
   }
 
   path.light {
-    fill: red;
-    animation: fadein 1s infinite alternate;
+    fill: blue;
+    animation: fadein 2s infinite alternate;
     
     @keyframes fadein {
       from { opacity: 0; }
-      to { opacity: 0.4; }
+      to { opacity: 0.6; }
     }
   }
   &.disabled path.light {
