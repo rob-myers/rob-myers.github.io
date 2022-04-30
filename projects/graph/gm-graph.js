@@ -92,7 +92,7 @@ export class gmGraph extends BaseGraph {
       return null;
     }
     
-    const gmIdsPath = /** @type {NPC.GlobalNavItem[]} */ ([]);
+    const gmIdsPath = /** @type {NPC.NavGmTransition[]} */ ([]);
     const currSrc = Vect.from(src);
     const direction = Vect.from(dst).sub(src);
     let gmId = srcGmId;

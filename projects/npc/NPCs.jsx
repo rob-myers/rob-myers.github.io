@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 import { ensureWire } from "../service/wire";
+import { error } from "../service/log";
 import { Rect, Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -26,30 +27,51 @@ export default function NPCs(props) {
       debugPath: {},
       /**
        * @param {Geom.VectJson} src
-       * @param {Geom.VectJson} dst 
+       * @param {Geom.VectJson} dst
+       * @returns {null | { paths: Geom.Vect[][]; gmEdges: NPC.NavGmTransition[]  }}
        */
       getGlobalNavPath(src, dst) {
         const {gms} = props.gmGraph
         const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
         const dstGmId = gms.findIndex(x => x.gridRect.contains(dst));
         if (srcGmId === -1 || dstGmId === -1) {
-          return [];
+          error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`);
+          return null;
         } else if (srcGmId === dstGmId) {
-          // TODO 🚧 use general format
-          return state.getLocalNavPath(srcGmId, src, dst);
+          return {
+            paths: [state.getLocalNavPath(srcGmId, src, dst)],
+            gmEdges: [],
+          };
         } else {
           // Compute global strategy
-          const gmIdsPath = props.gmGraph.findPath(src, dst)
-          console.log(gmIdsPath);
+          const gmEdges = props.gmGraph.findPath(src, dst);
+          if (!gmEdges) {
+            error(`getGlobalNavPath: gmGraph.findPath not found: ${JSON.stringify(src)} -> ${JSON.stringify(dst)}`);
+            return null;
+          }
+          console.log({gmEdges});
           // TODO 🚧 compute local paths too
-          return [];
+          const paths = /** @type {Geom.Vect[][]} */ ([]);
+          for (let k = 0; k < gmEdges.length + 1; k++) {
+            if (k === 0) {
+              paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].src.exit);
+            } else if (k === gmEdges.length) {
+              paths[k] = state.getLocalNavPath(dstGmId, gmEdges[gmEdges.length - 1].dst.entry, dst);
+            } else {
+              paths[k] = state.getLocalNavPath(srcGmId, gmEdges[k - 1].dst.entry, gmEdges[k].src.exit);
+            }
+          }
+          return {
+            paths,
+            gmEdges,
+          };
         }
       },
       /**
        * Must transform to local coords and then back.
        * @param {number} gmId 
-       * @param {Geom.VectJson} src
-       * @param {Geom.VectJson} dst 
+       * @param {Geom.VectJson} src World coords
+       * @param {Geom.VectJson} dst World coords
        */
       getLocalNavPath(gmId, src, dst) {
         const gm = props.gmGraph.gms[gmId];
@@ -100,7 +122,9 @@ export default function NPCs(props) {
       } else if (e.key === 'nav-req') {
         const npc = state.npc[e.npcKey];
         // TODO 🚧 send global navpath(s)
-        const path = state.getGlobalNavPath(npc.getPosition(), e.dst);
+        const result = state.getGlobalNavPath(npc.getPosition(), e.dst);
+        // TEMP 🚧 just join paths together
+        const path = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
         wire.next({ key: 'nav-res', npcKey: e.npcKey, path, req: e });
 
       } else if (e.key === 'debug-path') {
