@@ -1,7 +1,7 @@
 import { Mat, Poly, Rect, Vect } from "../geom";
 import { BaseGraph } from "./graph";
-import { geom } from "../service/geom";
-import { computeLightPosition, directionChars } from "../service/geomorph";
+import { geom, directionChars } from "../service/geom";
+import { computeLightPosition } from "../service/geomorph";
 import { error } from "../service/log";
 
 /**

@@ -14,7 +14,7 @@ import { createCanvas, loadImage } from 'canvas';
 import getOpts from 'getopts';
 
 import svgJson from '../../public/symbol/svg.json';
-import layoutDefs from '../../projects/geomorph/layouts';
+import layoutDefs from '../../projects/geomorph/geomorph-layouts';
 import { createLayout, deserializeSvgJson, serializeLayout } from '../../projects/service/geomorph';
 import { renderGeomorph } from '../../projects/geomorph/render-geomorph';
 import { triangle } from '../../projects/service/triangle';

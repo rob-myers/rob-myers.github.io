@@ -1,8 +1,7 @@
-import chalk from "chalk";
 import { Poly, Vect } from "../geom";
 import { labelMeta } from './geomorph.model';
 import { error } from "../service/log";
-import { singlesToPolys } from '../service/geomorph';
+import { singlesToPolys } from '../geomorph/geomorph.model';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service/dom';
 
 /**

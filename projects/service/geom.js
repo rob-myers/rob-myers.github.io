@@ -413,3 +413,9 @@ const tempVect = new Vect;
 const tempVect2 = new Vect;
 
 export const geom = new geomService;
+
+/**
+ * Aligned to `Geom.Direction`.
+ */
+ export const directionChars = /** @type {const} */ (['n', 'e', 's', 'w']);
+ 

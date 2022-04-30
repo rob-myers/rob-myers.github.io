@@ -1,10 +1,9 @@
 import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { createCanvas } from 'canvas';
-import { keys } from './generic';
 import { Poly, Rect, Mat, Vect } from '../geom';
 import { extractGeomsAt, hasTitle } from './cheerio';
 import { geom } from './geom';
-import { labelMeta } from '../geomorph/geomorph.model';
+import { doorEntryDelta, filterSingles, labelMeta, singlesToPolys } from '../geomorph/geomorph.model';
 import { RoomGraph } from '../graph/room-graph';
 import { Builder } from '../pathfinding/Builder';
 import { warn } from './log';
@@ -189,6 +188,18 @@ export async function createLayout(def, lookup, triangleService) {
 }
 
 /**
+ * @param {Geomorph.ParsedConnectorRect} door 
+ * @param {Geom.Rect} hullRect 
+ */
+ function extendHullDoorTags(door, hullRect) {
+  const bounds = door.poly.rect;
+  if (bounds.y === hullRect.y) door.tags.push('hull-n');
+  else if (bounds.right === hullRect.right) door.tags.push('hull-e');
+  else if (bounds.bottom === hullRect.bottom) door.tags.push('hull-s');
+  else if (bounds.x === hullRect.x) door.tags.push('hull-w');
+}
+
+/**
  * @param {Geomorph.SvgGroupsSingle<Geom.Poly>} single 
  * @param {Geom.Poly[]} rooms 
  * @returns {Geomorph.ParsedConnectorRect}
@@ -227,17 +238,6 @@ function singleToConnectorRect(single, rooms) {
   };
 }
 
-/**
- * @param {Geomorph.ParsedConnectorRect} door 
- * @param {Geom.Rect} hullRect 
- */
-function extendHullDoorTags(door, hullRect) {
-  const bounds = door.poly.rect;
-  if (bounds.y === hullRect.y) door.tags.push('hull-n');
-  else if (bounds.right === hullRect.right) door.tags.push('hull-e');
-  else if (bounds.bottom === hullRect.bottom) door.tags.push('hull-s');
-  else if (bounds.x === hullRect.x) door.tags.push('hull-w');
-}
 
 /**
  * @param {Geomorph.ConnectorRectJson} x
@@ -357,22 +357,6 @@ export function parseStarshipSymbol(symbolName, svgContents, lastModified) {
 }
 
 /**
- * @param {{ tags: string[]; poly: Poly }[]} singles 
- * @param {string} tag Restrict to singles with this tags
- */
-export function singlesToPolys(singles, tag) {
-  return  filterSingles(singles, tag).map(x => x.poly);
-}
-
-/**
- * @param {{ tags: string[]; poly: Poly }[]} singles 
- * @param {string} tag Restrict to singles with this tags
- */
-function filterSingles(singles, tag) {
-  return singles.filter(x => x.tags.includes(tag));
-}
-
-/**
  * @param {Geomorph.ParsedSymbol<Poly>} parsed
  * @returns {Geomorph.ParsedSymbol<Geom.GeoJsonPolygon>}
  */
@@ -435,17 +419,6 @@ function extractPngOffset(api, topNodes) {
 function toJsons(polys) {
   return polys.map(x => x.geoJson);
 }
-
-/** @type {Record<Geomorph.LayoutKey, true>} */
-const allLayoutKeysLookup = {
-  "g-101--multipurpose": true,
-  "g-102--research-deck": true,
-  "g-301--bridge": true,
-  "g-302--xboat-repair-bay": true,
-  "g-303--passenger-deck": true,
-};
-
-export const allLayoutKeys = keys(allLayoutKeysLookup);
 
 /**
  * - `GeomorphData` extends `ParsedLayout` and comes from `useGeomorph`
@@ -528,9 +501,3 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
   };
 }
 
-/**
- * Aligned to `Geom.Direction`.
- */
-export const directionChars = /** @type {const} */ (['n', 'e', 's', 'w']);
-
-const doorEntryDelta = 10;

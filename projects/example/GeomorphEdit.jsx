@@ -14,9 +14,9 @@ import classNames from "classnames";
 import { Rect } from "../geom";
 import { loadImage } from "../service/dom";
 import { geom } from "../service/geom";
-import { labelMeta } from "../geomorph/geomorph.model";
-import { createLayout, deserializeSvgJson, singlesToPolys } from "../service/geomorph";
-import layoutDefs from "../geomorph/layouts";
+import { labelMeta, singlesToPolys } from "../geomorph/geomorph.model";
+import { createLayout, deserializeSvgJson } from "../service/geomorph";
+import layoutDefs from "../geomorph/geomorph-layouts";
 import { renderGeomorph } from "../geomorph/render-geomorph";
 import * as defaults from "./defaults";
 import svgJson from 'public/symbol/svg.json'; // CodeSandbox?

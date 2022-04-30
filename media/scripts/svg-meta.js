@@ -19,7 +19,7 @@ import { keys } from '../../projects/service/generic';
 import { createLayout, deserializeSvgJson, parseStarshipSymbol, serializeLayout, serializeSymbol } from '../../projects/service/geomorph';
 import { triangle } from '../../projects/service/triangle';
 import { writeAsJson } from '../../projects/service/file';
-import layoutDefs from '../../projects/geomorph/layouts';
+import layoutDefs from '../../projects/geomorph/geomorph-layouts';
 
 const publicDir = path.resolve(__dirname, '../../public');
 const symbolsDir = path.resolve(publicDir, 'symbol');
