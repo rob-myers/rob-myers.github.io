@@ -56,9 +56,9 @@ export default function NPCs(props) {
             if (k === 0) {
               paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].src.exit);
             } else if (k === gmEdges.length) {
-              paths[k] = state.getLocalNavPath(dstGmId, gmEdges[gmEdges.length - 1].dst.entry, dst);
+              paths[k] = state.getLocalNavPath(dstGmId, gmEdges[k - 1].dst.entry, dst);
             } else {
-              paths[k] = state.getLocalNavPath(srcGmId, gmEdges[k - 1].dst.entry, gmEdges[k].src.exit);
+              paths[k] = state.getLocalNavPath(gmEdges[k - 1].dst.gmId, gmEdges[k - 1].dst.entry, gmEdges[k].src.exit);
             }
           }
           return {
