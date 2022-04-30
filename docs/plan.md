@@ -43,7 +43,7 @@ __Aim towards website release__.
     1. Detect direction e.g. SW, and choose closest open door (straight line)
     2. By construction some edge can be taken; never deadlock
     ```
-  - 🚧 Implement global navpaths
+  - ✅ Implement global navpaths
   - ✅ curved windows can produce strange light
        we introduced `one-way` (like `frosted`) to avoid
        outside from control room seeing more than inside
@@ -54,7 +54,7 @@ __Aim towards website release__.
     - 🤔 avoid going outside navmesh
     - ✅ use connector.entries instead of centroids of nav nodes
     - ✅ works when src and dst in same triangle
-  - `nav` receives multiple paths and doorIds
+  - 🚧 `nav` receives multiple paths and doorIds
 
 - Clean
   - ✅ Rename `holes` -> `rooms` etc.

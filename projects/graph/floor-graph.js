@@ -3,6 +3,7 @@ import { BaseGraph } from "./graph";
 import { Utils } from "../pathfinding/Utils";
 import { AStar } from "../pathfinding/AStar";
 import { Channel } from "../pathfinding/Channel";
+import { warn } from "../service/log";
 import { geom } from "../service/geom";
 
 /**
@@ -101,8 +102,14 @@ export class FloorGraph extends BaseGraph {
       const pathSrc = pathId === 0 ? src : roomEdges[pathId - 1].exit;
       const pathDst = pathId === nodePaths.length - 1 ? dst : roomEdges[pathId].entry;
 
-      // TODO fix cases where roomNavPoly.length > 1
-      const roomId = pathId === 0 ? this.nodeToMeta[closestNode.index].roomId : roomEdges[pathId - 1].dstRoomId;
+      let roomId = pathId === 0 ? this.nodeToMeta[closestNode.index].roomId : roomEdges[pathId - 1].dstRoomId;
+      if (roomId === -1) {
+        // NOTE hull doors handled in useGeomorphData, but src/dst could be in a doorway
+        roomId = this.gm.roomsWithDoors.findIndex(x => x.outlineContains(pathSrc));
+        warn(`FloorGraph ${this.gm.key}: navNode ${closestNode.index} lacks associated roomId (using ${roomId})`);
+      }
+
+      // TODO prevent roomNavPoly.length > 1
       const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
       const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly[0]);
       if (directPath) return [Vect.from(pathSrc), Vect.from(pathDst)];

@@ -1,6 +1,7 @@
 import { useQuery } from "react-query";
 import { geomorphJsonPath } from "../geomorph/geomorph.model";
 import { Poly, Rect } from "../geom";
+import { warn } from "../service/log";
 import { parseLayout } from "../service/geomorph";
 
 /**
@@ -33,7 +34,7 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...layout,
-      roomsWithDoors: roomsWithDoors,
+      roomsWithDoors,
       roomsSwitch: layout.rooms.map((poly) => {
         const found = switchPoints.find(p => poly.contains(p));
         return found || poly.rect.center;
@@ -46,6 +47,7 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
     };
 
     output.lazy = createLazyProxy(output);
+    extendRoomNodeIds(output);
 
     return output;
   }, {
@@ -83,4 +85,24 @@ function createLazyProxy(gm) {
       }
     },
   })
+}
+
+/**
+ * For each nav node inside a hull doorway,
+ * add its id to its respective (unique) room.
+ * @param {Geomorph.GeomorphData} gm
+ */
+function extendRoomNodeIds(gm) {
+  // 
+  gm.navZone.doorNodeIds.forEach((navNodeIds, doorId) => {
+    const door = gm.doors[doorId];
+    if (gm.hullDoors.includes(door)) {
+      const roomId = /** @type {number} */ (door.roomIds.find(Boolean));
+      if (Number.isFinite(roomId)) {
+        gm.navZone.roomNodeIds[roomId].push(...navNodeIds);
+      } else {
+        warn(`extendRoomNodeIds: ${gm.key} (hull) door ${doorId} has empty roomIds`);
+      }
+    }
+  });
 }

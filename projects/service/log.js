@@ -10,11 +10,11 @@ import chalk from "chalk";
  * @param  {...string} args 
  */
 export function info(...args) {
-  console.info(chalk.yellow(...args));
+  console.log(`INFO`, chalk.yellow(...args));
 }
 /**
  * @param  {...string} args 
  */
 export function warn(...args) {
-  console.info(chalk.grey(...args));
+  console.log(`WARN`, chalk.blueBright(...args));
 }
