@@ -1,5 +1,5 @@
 import { Poly, Vect } from "../geom";
-import { labelMeta } from './geomorph.model';
+import { filterSingles, labelMeta } from './geomorph.model';
 import { error } from "../service/log";
 import { singlesToPolys } from '../geomorph/geomorph.model';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service/dom';
@@ -56,16 +56,15 @@ export async function renderGeomorph(
   }
 
   /**
-   * Draw walls without drawing over e.g. fuel and symbol PNGs.
-   * - without this some walls look worse, particularly when inverted.
-   * - currently dark grey for debug?.
-   * - do not draw holes i.e. restrict to largest polygon in wallsSansWindows
+   * Fill walls
+   * - without this some walls look worse, particularly when inverted
+   * - do not fill windows, or walls tagged with no-fill
+   * - currently dark grey for debug?
    */
   const { singles, obstacles, walls } = layout.groups;
-  const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
-  wallsSansWindows.sort((a, b) => a.rect.area > b.rect.area ? -1 : 1); // Desc by area
+  const wallsToFill = Poly.cutOut(singlesToPolys(singles, 'window', ['wall', 'no-fill']), walls);
   ctxt.fillStyle = 'rgba(50, 50, 50, 1)';
-  fillPolygon(ctxt, wallsSansWindows.slice(0, 1));
+  fillPolygon(ctxt, wallsToFill);
 
   ctxt.lineJoin = 'round';
   hullSym.singles.forEach(({ poly, tags }) => {

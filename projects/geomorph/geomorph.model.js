@@ -23,16 +23,18 @@ export const labelMeta = {
 
 /**
  * @param {{ tags: string[]; poly: Geom.Poly }[]} singles 
- * @param {string} tag Restrict to singles with this tag
+ * @param {...(string | string[])} tagOrTags Restrict to singles with any/all of these tags
  */
-export function singlesToPolys(singles, tag) {
-  return filterSingles(singles, tag).map(x => x.poly);
+export function singlesToPolys(singles, ...tagOrTags) {
+  return filterSingles(singles, ...tagOrTags).map(x => x.poly);
 }
 
 /**
  * @param {{ tags: string[]; poly: Geom.Poly }[]} singles 
- * @param {string} tag Restrict to singles with this tag
+ * @param {...(string | string[])} tagOrTags Restrict to singles with any/all of these tags
  */
-export function filterSingles(singles, tag) {
-  return singles.filter(x => x.tags.includes(tag));
+export function filterSingles(singles, ...tagOrTags) {
+  return singles.filter(x => tagOrTags.some(spec =>
+    Array.isArray(spec) ? spec.every(tag => x.tags.includes(tag)) : x.tags.includes(spec))
+  );
 }
