@@ -61,10 +61,8 @@ export function literal({ Value, parent }: Sh.Lit): string[] {
   /**
    * Remove at most one '\\\n'; can arise interactively in quotes,
    * see https://github.com/mvdan/sh/issues/321.
-   * Escape square brackets for npm module `braces`.
    */
-  const value = Value.replace(/\\\n/, '')
-    .replace(/\[/g, '\\[').replace(/\]/g, '\\]');
+  const value = Value.replace(/\\\n/, '');
 
   if (parent.type === 'DblQuoted') {
     // Double quotes: escape only ", \, $, `, no brace-expansion.
@@ -77,7 +75,8 @@ export function literal({ Value, parent }: Sh.Lit): string[] {
     return [value.replace(/\\(.|$)/g, '$1')];
   }
   // Otherwise escape everything and apply brace-expansion.
-  return braces(value, bracesOpts);
+  // We escape square brackets for npm module `braces`.
+  return braces(value.replace(/\[/g, '\\[').replace(/\]/g, '\\]'), bracesOpts);
 }
 
 export function singleQuotes({ Dollar: interpret, Value }: Sh.SglQuoted) {
