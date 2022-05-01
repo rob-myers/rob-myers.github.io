@@ -14,14 +14,22 @@ __Aim towards website release__.
 
 - Story:
   - Anapanasati training
-  - 5 watchers as Janic hindrances
+  - 5 watchers as Jhanic hindrances
 
-- 🚧 Can move NPC along navpath
-  - 🤔 prevent NPC moving through closed door?
-- Speech bubbles
+- Can move NPC along navpath
+  - ✅ translate previous API
+  - ✅ actuated via shell function `move`
+  - 🚧 can turn too (not look)
+
+- 🚧 Andros is situated
+  - Can only move to point within lit area
+  - Can only toggle doors when avatar close
+  - When avatar moves through doorway, lighting changes
+- Can toggle NPC speech bubbles
 - reorg `sh.lib`
   - `spawn`, `click`, `nav` are from Terminal specified script.
   - base functions are also from Terminal specified script
+- mobile-friendly command links (session must be open)
 
 - Clean
   - ✅ Rename `holes` -> `rooms` etc.
@@ -32,7 +40,7 @@ __Aim towards website release__.
   - 🤔 Saw empty holeId in 301 i.e. `15`
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tags `dark-infront` and `dark-behind` instead of `one-way`
-  - Move light computations into `lazy` i.e. reuse
+  - Move light polygon computations into `lazy` i.e. reuse
 
 - ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
 - ✅ NavDemo1 init race condition?

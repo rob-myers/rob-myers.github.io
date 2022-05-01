@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { css } from "goober";
 import { ensureWire } from "../service/wire";
 import { error } from "../service/log";
-import { Rect, Vect } from "../geom";
+import { Poly, Rect, Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
@@ -95,19 +95,24 @@ export default function NPCs(props) {
        * @param {Geom.VectJson[]} path 
        */
       moveNpcAlongPath(npc, path) {
-        /**
-         * TODO 🚧
-         */
+        // TODO 🚧
+        npc.origPath = path.map(Vect.from);
+        npc.animPath = npc.origPath.slice();
+        npc.updateAnimAux();
+        npc.followNavPath();
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(rootEl) {
-        if (rootEl) {
+        if (rootEl) {// NPC mounted
           const npcKey = /** @type {string} */ (rootEl.getAttribute('data-npc-key'));
           const npc = state.npc[npcKey];
           npc.el.root = rootEl;
           npc.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
           npc.el.root.style.transform = `translate(${npc.def.position.x}px, ${npc.def.position.y}px)`;
           npc.el.body.style.transform = `rotate(${npc.def.angle}rad) scale(${npcScale})`;
+          // TODO can start moving on mount
+          // npc.updateAnimAux();
+          // npc.followNavPath();
         }
       },
     };
@@ -115,17 +120,19 @@ export default function NPCs(props) {
   
   React.useEffect(() => {
     const wire = ensureWire(props.wireKey);
+
     const sub = wire.subscribe((e) => {
       if (e.key === 'spawn') {
-        state.npc[e.npcKey] = {
+        /** @type {NPC.NPC} */
+        const npc = {
           key: e.npcKey,
           uid: `${e.npcKey}-${++spawnCount}`,
           def: {
             key: e.npcKey,
             position: e.at,
-            angle: Math.PI/4, // TEMP
+            angle: Math.PI/4, // TEMP 🚧
+            paused: !!props.disabled,
           },
-          spriteSheetState: 'idle',
           el: {
             root: /** @type {HTMLDivElement} */ ({}),
             body: /** @type {HTMLDivElement} */ ({}),
@@ -133,6 +140,41 @@ export default function NPCs(props) {
           anim: {
             root: new Animation,
             body: new Animation,
+          },
+          animPath: [],
+          aux: {
+            angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0,
+          },
+          origPath: [],
+          spriteSheetState: 'idle',
+
+          followNavPath() {
+            const { aux } = this;
+            if (this.animPath.length <= 1 || aux.total === 0) {
+              return; // Already finished
+            }
+            
+            const wasPaused = this.anim.root.playState === 'paused';
+            this.anim.root = this.el.root.animate(
+              // NOTE need ≥ 2 frames for polyfill
+              this.animPath.flatMap((p, i) => [
+                {
+                  offset: aux.sofars[i] / aux.total,
+                  transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || aux.angs[i] || 0}rad)`,
+                },
+                {
+                  offset: aux.sofars[i] / aux.total,
+                  transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
+                },
+              ]),
+              { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
+            );
+            // anim.root.addEventListener('finish', this.onFinishMove);
+      
+            if (wasPaused || (aux.count === 0 && this.def.paused)) {
+              this.pause();
+            }
+            aux.count++;
           },
           getAngle() {
             const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);
@@ -142,7 +184,29 @@ export default function NPCs(props) {
             const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
             return Vect.from(props.panZoomApi.getWorld({ clientX, clientY }));
           },
+          pause() {
+            if (this.anim.body.playState === 'running') {
+              this.anim.body.pause();
+            }
+          },
+          updateAnimAux() {
+            const { animPath, aux } = this;
+            aux.edges = animPath.map((p, i) => ({ p, q: animPath[i + 1] })).slice(0, -1);
+            aux.angs = aux.edges.map(e => Number(Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2)));
+            aux.elens = aux.edges.map(({ p, q }) => Number(p.distanceTo(q).toFixed(2)));
+            aux.navPathPolys = aux.edges.map(e => {
+              const normal = e.q.clone().sub(e.p).rotate(Math.PI/2).normalize(0.01);
+              return new Poly([e.p.clone().add(normal), e.q.clone().add(normal), e.q.clone().sub(normal), e.p.clone().sub(normal)]);
+            });
+            const reduced = aux.elens.reduce((agg, length) => {
+              agg.total += length;
+              agg.sofars.push(agg.sofars[agg.sofars.length - 1] + length);
+              return agg;
+            }, { sofars: [0], total: 0 });
+            [aux.sofars, aux.total] = [reduced.sofars, reduced.total];
+          },
         };
+        state.npc[e.npcKey] = npc;
         update();
       } else if (e.key === 'nav-req') {
         const npc = state.npc[e.npcKey];
@@ -158,6 +222,7 @@ export default function NPCs(props) {
         update();
       }
     });
+
     return () => sub.unsubscribe();
   }, [props.panZoomApi]);
 
