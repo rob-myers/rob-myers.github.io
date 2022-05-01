@@ -90,12 +90,22 @@ export default function NPCs(props) {
           return [];
         }
       },
+      /**
+       * @param {NPC.NPC} npc 
+       * @param {Geom.VectJson[]} path 
+       */
+      moveNpcAlongPath(npc, path) {
+        /**
+         * TODO 🚧
+         */
+      },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(el) {
         if (el) {
           const npcKey = /** @type {string} */ (el.getAttribute('data-npc-key'));
           const npc = state.npc[npcKey];
           npc.el.root = el;
+          npc.el.body = /** @type {HTMLDivElement} */ (el.childNodes[0]);
           el.style.left = `${npc.def.position.x}px`;
           el.style.top = `${npc.def.position.y}px`;
         }
@@ -112,7 +122,10 @@ export default function NPCs(props) {
           uid: `${e.npcKey}-${++spawnCount}`,
           def: { key: e.npcKey, position: e.at },
           spriteSheetState: 'idle',
-          el: { root: /** @type {HTMLDivElement} */ ({}) },
+          el: {
+            root: /** @type {HTMLDivElement} */ ({}),
+            body: /** @type {HTMLDivElement} */ ({}),
+          },
           getPosition() {
             const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
             return Vect.from(props.panZoomApi.getWorld({ clientX, clientY }));
@@ -122,10 +135,11 @@ export default function NPCs(props) {
       } else if (e.key === 'nav-req') {
         const npc = state.npc[e.npcKey];
         const result = state.getGlobalNavPath(npc.getPosition(), e.dst);
-        // TEMP 🚧 just join paths together
-        // const path = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
         wire.next({ key: 'nav-res', req: e, res: result });
-
+      } else if (e.key === 'move-req') {
+        const npc = state.npc[e.npcKey];
+        const result = state.moveNpcAlongPath(npc, e.path);
+        wire.next({ key: 'move-res', req: e, res: result });
       } else if (e.key === 'debug-path') {
         const path = e.path.map(Vect.from);
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
@@ -139,7 +153,7 @@ export default function NPCs(props) {
     <div className={classNames('npcs', rootCss)}>
       {Object.values(state.npc).map(npc => (
         <div
-          key={npc.uid} // Respawn remounts
+          key={npc.uid} // So respawn remounts
           data-npc-key={npc.key}
           className={classNames('npc', npc.key, npc.spriteSheetState, npcCss)}
           ref={state.npcRef}            
