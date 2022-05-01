@@ -8,12 +8,14 @@ import useSiteStore from 'store/site.store';
 import { Layout } from 'components/dynamic';
 import { TabsOverlay, LoadingOverlay } from './TabsOverlay';
 import useUpdate from 'projects/hooks/use-update';
+import useStateRef from 'projects/hooks/use-state-ref';
 
 export default function Tabs(props: Props) {
 
   const update = useUpdate();
+  const expandedStorageKey = `expanded@tab-${props.id}`;
 
-  const [state] = React.useState(() => ({
+  const state = useStateRef(() => ({
     enabled: !!props.initEnabled,
     /** Initially `'black'`; afterwards always in `['faded', 'clear']` */
     colour: 'black' as 'black' | 'faded' | 'clear',
@@ -42,8 +44,13 @@ export default function Tabs(props: Props) {
     },
     toggleExpand() {
       state.expanded = !state.expanded;
-      if (!state.enabled && state.expanded) {// Disable
-        state.toggleEnabled();
+      if (state.expanded) {
+        localStorage.setItem(expandedStorageKey, 'true');
+        if (!state.enabled) {// Auto-enable on expand
+          state.toggleEnabled();
+        }
+      } else {
+        localStorage.removeItem(expandedStorageKey);
       }
       update();
     },
@@ -54,8 +61,9 @@ export default function Tabs(props: Props) {
       }
     },
     onModalBgPress() {
-      state.expanded = false;
-      update();
+      if (state.expanded) {
+        state.toggleExpand();
+      }
     },
     preventTouch(e: React.TouchEvent) {
       e.preventDefault();
@@ -64,6 +72,9 @@ export default function Tabs(props: Props) {
 
   React.useEffect(() => {// Initially trigger CSS animation
     state.colour = state.enabled ? 'clear' : 'faded';
+    if (localStorage.getItem(expandedStorageKey) === 'true') {
+      state.expanded = true;
+    }
     update();
   }, []);
 
