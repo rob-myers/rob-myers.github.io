@@ -40,7 +40,8 @@ export default function Doors(props) {
       /** @type {HTMLCanvasElement[]} */
       canvas: [],
       /** @type {{ [doorIndex: number]: true }[]} */
-      open: props.gms.map(_ => ({})),
+      open: props.gms.map((_, gmId) => (props.initOpen[gmId] || [])
+        .reduce((agg, doorId) => ({ ...agg, [doorId]: true }), {})),
       /** @type {{ [doorIndex: number]: true }[]} */
       vis: props.gms.map(_ => ({})),
 
@@ -91,9 +92,11 @@ export default function Doors(props) {
         });
       },
 
-      ...api, // Keeps things shallow for HMR
+      ...api, // Keep things shallow for HMR
     };
   });
+
+  console.log(state.open);
 
   // TODO replace by useImperativeHandle?
   React.useEffect(() => {

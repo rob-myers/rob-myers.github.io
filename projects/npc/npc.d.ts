@@ -60,6 +60,7 @@ declare namespace NPC {
     gms: Geomorph.GeomorphDataInstance[];
     gmGraph: Graph.GmGraph;
     wire: NavWire;
+    initOpen: { [gmId: number]: number[] }
     onLoad: (api: DoorsApi) => void;
   }
 

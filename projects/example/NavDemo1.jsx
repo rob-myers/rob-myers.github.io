@@ -12,20 +12,6 @@ import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
 
-// TODO
-// - 🚧 spawn from TTY
-//   - ✅ symbols have points tagged 'spawn'
-//   - ✅ implement spawn as shell function
-//   - ✅ NPCs -> NPCsTest and create fresh NPCs
-//   - ✅ NPCs listens for "spawn" event and creates NPC
-//   - ✅ NPCs ensures local pathfinding data
-//   - ✅ can get local navpath via shell function
-//   - ✅ can plot a local navpath
-//   - ✅ navpath takes doors into account
-//   - 🚧 global navpath
-// - Andros is situated and lighting reacts
-// - 🤔 show doors intersecting light polygon (cannot click)
-
 /** @param {{ disabled?: boolean }} props */
 export default function NavDemo1(props) {
 
@@ -44,16 +30,18 @@ export default function NavDemo1(props) {
 
   const state = useStateRef(() => {
     return {
-      gmId: 0,
-      roomId: 2,
-      // roomId: 16,
-      // gmId: 1,
-      // roomId: 5,
-      // roomId: 22,
-      // gmId: 2,
-      // roomId: 2,
-      // gmId: 3,
-      // roomId: 26,   
+      // gmId: 0, roomId: 2,
+      gmId: 0, roomId: 9,
+      // gmId: 0, roomId: 15, // ISSUE
+      // gmId: 1, roomId: 5,
+      // gmId: 1, roomId: 22,
+      // gmId: 2, roomId: 2,
+      // gmId: 3, roomId: 26,
+      /**
+       * TODO better way to know door id?
+       * TODO better way to know room id?
+       */
+      initOpen: { 0: [24] },
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
@@ -176,6 +164,7 @@ export default function NavDemo1(props) {
           // outlines
           // windows
           // localNav
+          showIds
           gms={gms}
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}
@@ -192,6 +181,7 @@ export default function NavDemo1(props) {
         gms={gms}
         gmGraph={gmGraph}
         wire={state.wire}
+        initOpen={state.initOpen}
         onLoad={api => { state.doorsApi = api; render(); }}
       />
       
@@ -213,24 +203,38 @@ const rootCss = css`
     filter: brightness(80%);
   }
   img.geomorph-dark {
-    filter: invert(100%) brightness(55%) contrast(200%) sepia(0%) hue-rotate(0deg);
+    filter: invert(100%) brightness(55%) contrast(200%) brightness(100%);
+    /* opacity: 0.6; */
   }
 
   div.debug {
     position: absolute;
-    div.debug-door {
+    div.debug-door-arrow {
       cursor: pointer;
       position: absolute;
       background-image: url('/icon/solid_arrow-circle-right.svg');
       border-radius: ${debugRadius}px;
+    }
+    div.debug-door-id-icon, div.debug-room-id-icon {
+      position: absolute;
+      background: black;
+      color: white;
+      font-size: 10px;
+      line-height: 1;
+      border: 1px solid black;
+    }
+    div.debug-room-id-icon {
+      color: #4f4;
     }
     div.debug-window {
       position: absolute;
       background: #0000ff40;
       border: 1px solid white;
       pointer-events: none;
+      transform-origin: top left;
     }
-    svg.room-nav {
+    svg.debug-room-nav {
+      position: absolute;
       path.nav-poly {
         pointer-events: none;
         fill: rgba(255, 0, 0, 0.1);
@@ -291,11 +295,10 @@ function Debug(props) {
       >
         {props.localNav && (
           <svg
-            className="room-nav"
+            className="debug-room-nav"
             width={roomNavAabb.width}
             height={roomNavAabb.height}
             style={{
-              position: 'absolute',
               left: roomNavAabb.x,
               top: roomNavAabb.y,
             }}
@@ -309,15 +312,16 @@ function Debug(props) {
         )}
 
         {visDoorIds.map(doorId => {
-          const { poly, normal, roomIds } = gm.doors[doorId];
+          const { poly, normal, roomIds, seg } = gm.doors[doorId];
           const sign = roomIds[0] === props.roomId ? 1 : -1;
           const angle = Vect.from(normal).scale(-sign).angle;
           const position = poly.center.addScaledVector(normal, sign * debugDoorOffset);
-          return (
+          const right = seg[1];
+          return <>
             <div
               key={doorId}
               data-debug-door-index={doorId}
-              className="debug-door"
+              className="debug-door-arrow"
               style={{
                 left: position.x - debugRadius,
                 top: position.y - debugRadius,
@@ -327,8 +331,26 @@ function Debug(props) {
                 // filter: 'invert(100%)',
               }}
             />
-          );
+            {props.showIds && (
+              <div
+                key={doorId}
+                className="debug-door-id-icon"
+                style={{ left: right.x, top: right.y + 4 }}
+              >
+                {doorId}
+              </div>
+            )}
+          </>;
         })}
+
+        {props.showIds && (
+          <div
+            className="debug-room-id-icon"
+            style={{ left: roomNavAabb.x, top: roomNavAabb.cy }}
+          >
+            {props.roomId}
+          </div>
+        )}
 
         {props.windows && gm.windows.map(({ rect, angle }, i) => {
           return (
@@ -341,7 +363,6 @@ function Debug(props) {
                 width: rect.width,
                 height: rect.height,
                 transform: `rotate(${angle}rad)`,
-                transformOrigin: 'top left',
               }}
             />
           );
@@ -363,4 +384,5 @@ function Debug(props) {
  * @property {boolean} [outlines]
  * @property {boolean} [windows]
  * @property {boolean} [localNav]
+ * @property {boolean} [showIds]
  */
