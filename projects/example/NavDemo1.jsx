@@ -219,7 +219,7 @@ const rootCss = css`
       position: absolute;
       background: black;
       color: white;
-      font-size: 10px;
+      font-size: 8px;
       line-height: 1;
       border: 1px solid black;
     }
@@ -312,19 +312,19 @@ function Debug(props) {
         )}
 
         {visDoorIds.map(doorId => {
-          const { poly, normal, roomIds, seg } = gm.doors[doorId];
+          const { poly, normal, roomIds } = gm.doors[doorId];
           const sign = roomIds[0] === props.roomId ? 1 : -1;
           const angle = Vect.from(normal).scale(-sign).angle;
-          const position = poly.center.addScaledVector(normal, sign * debugDoorOffset);
-          const right = seg[1];
+          const arrowPos = poly.center.addScaledVector(normal, sign * debugDoorOffset);
+          const idIconPos = poly.center.addScaledVector(normal, -sign * debugDoorOffset);
           return <>
             <div
               key={doorId}
               data-debug-door-index={doorId}
               className="debug-door-arrow"
               style={{
-                left: position.x - debugRadius,
-                top: position.y - debugRadius,
+                left: arrowPos.x - debugRadius,
+                top: arrowPos.y - debugRadius,
                 width: debugRadius * 2,
                 height: debugRadius * 2,
                 transform: `rotate(${angle}rad)`,
@@ -333,9 +333,9 @@ function Debug(props) {
             />
             {props.showIds && (
               <div
-                key={doorId}
+                key="icon"
                 className="debug-door-id-icon"
-                style={{ left: right.x, top: right.y + 4 }}
+                style={{ left: idIconPos.x, top: idIconPos.y - 4 }}
               >
                 {doorId}
               </div>
@@ -346,7 +346,7 @@ function Debug(props) {
         {props.showIds && (
           <div
             className="debug-room-id-icon"
-            style={{ left: roomNavAabb.x, top: roomNavAabb.cy }}
+            style={{ left: roomNavAabb.x, top: roomNavAabb.bottom }}
           >
             {props.roomId}
           </div>
