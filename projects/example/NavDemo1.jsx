@@ -203,7 +203,7 @@ const rootCss = css`
     filter: brightness(80%);
   }
   img.geomorph-dark {
-    filter: invert(100%) brightness(55%) contrast(200%) brightness(100%);
+    filter: invert(100%) brightness(55%) contrast(200%) brightness(60%);
     /* opacity: 0.6; */
   }
 

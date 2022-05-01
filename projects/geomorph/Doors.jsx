@@ -82,7 +82,7 @@ export default function Doors(props) {
         ctxt.clearRect(0, 0, canvas.width, canvas.height);
         ctxt.fillStyle = '#555';
         // ctxt.strokeStyle = '#00204b';
-        ctxt.strokeStyle = '#aaa';
+        ctxt.strokeStyle = '#777';
         const gm = props.gms[gmIndex];
         gm.doors.forEach(({ poly }, i) => {
           if (!state.vis[gmIndex][i]) {
@@ -95,8 +95,6 @@ export default function Doors(props) {
       ...api, // Keep things shallow for HMR
     };
   });
-
-  console.log(state.open);
 
   // TODO replace by useImperativeHandle?
   React.useEffect(() => {
