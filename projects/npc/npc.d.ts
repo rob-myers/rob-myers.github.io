@@ -48,6 +48,12 @@ declare namespace NPC {
       root: HTMLDivElement;
       body: HTMLDivElement;
     };
+    anim: {
+      root: Animation;
+      body: Animation;
+    };
+    /** Radians */
+    getAngle(): number;
     getPosition(): Geom.Vect;
   }
 
@@ -141,6 +147,7 @@ declare namespace NPC {
   export interface NPCDef {
     key: string;
     position: Geom.VectJson;
+    angle: number;
     // zoneKey: string;
     // /** Initially paused? */
     // paused: boolean;
@@ -149,7 +156,6 @@ declare namespace NPC {
     // /** Initial target */
     // dst: Geom.VectJson;
     // /** Initial angle */
-    // angle: number;
   }
 
   export type AnimState = (

@@ -100,14 +100,14 @@ export default function NPCs(props) {
          */
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
-      npcRef(el) {
-        if (el) {
-          const npcKey = /** @type {string} */ (el.getAttribute('data-npc-key'));
+      npcRef(rootEl) {
+        if (rootEl) {
+          const npcKey = /** @type {string} */ (rootEl.getAttribute('data-npc-key'));
           const npc = state.npc[npcKey];
-          npc.el.root = el;
-          npc.el.body = /** @type {HTMLDivElement} */ (el.childNodes[0]);
-          el.style.left = `${npc.def.position.x}px`;
-          el.style.top = `${npc.def.position.y}px`;
+          npc.el.root = rootEl;
+          npc.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
+          npc.el.root.style.transform = `translate(${npc.def.position.x}px, ${npc.def.position.y}px)`;
+          npc.el.body.style.transform = `rotate(${npc.def.angle}rad) scale(${npcScale})`;
         }
       },
     };
@@ -120,11 +120,23 @@ export default function NPCs(props) {
         state.npc[e.npcKey] = {
           key: e.npcKey,
           uid: `${e.npcKey}-${++spawnCount}`,
-          def: { key: e.npcKey, position: e.at },
+          def: {
+            key: e.npcKey,
+            position: e.at,
+            angle: Math.PI/4, // TEMP
+          },
           spriteSheetState: 'idle',
           el: {
             root: /** @type {HTMLDivElement} */ ({}),
             body: /** @type {HTMLDivElement} */ ({}),
+          },
+          anim: {
+            root: new Animation,
+            body: new Animation,
+          },
+          getAngle() {
+            const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);
+            return Math.atan2(matrix.m12, matrix.m11);
           },
           getPosition() {
             const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
@@ -180,6 +192,7 @@ const rootCss = css`
 `;
 
 const { animLookup: anim, zoom } = npcJson;
+const npcScale = 0.18;
 
 const npcCss = css`
   .body {
