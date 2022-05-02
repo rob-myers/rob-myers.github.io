@@ -19,7 +19,8 @@ __Aim towards website release__.
 - Can move NPC along navpath
   - ✅ translate previous API
   - ✅ actuated via shell function `move`
-  - 🚧 can turn too (not look)
+  - ✅ turn correctly (not look)
+  - play walk animation
 
 - 🚧 Andros is situated
   - Can only move to point within lit area

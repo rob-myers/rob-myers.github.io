@@ -76,8 +76,20 @@ pid   ppid  pgid
 
 ```sh
 spawn foo "$( click 1 )"
+# then click where to spawn "foo" (or Ctrl-C to cancel)
+nav foo "$( click 1 )"
+# then click where to navigate "foo" (or Ctrl-C to cancel)
+{"paths":[[{"x":185.7,"y":394.86},{"x":209,"y":369.6},{"x":209,"y":349.6},{"x":220,"y":346},{"x":254,"y":346},{"x":299,"y":590}],[{"x":300,"y":610},{"x":303.39,"y":791.45}]],"edges":[{"src":{"gmId":0,"hullDoorId":2,"exit":{"x":299,"y":590}},"dst":{"gmId":1,"hullDoorId":5,"entry":{"x":300,"y":610}}}]}
 
-echo '[{"x":185.08,"y":395.57},{"x":209,"y":369.6},{"x":209,"y":349.6},{"x":350,"y":270},{"x":370,"y":270},{"x":493.8,"y":286.4},{"x":495.65,"y":286.85},{"x":551.89,"y":305.89}]' |
-  map 'x => JSON.parse(x).reverse()' >foo
-move foo $foo
+# Get path through 1st geomorph
+nav foo "$( click 1 )" | map 'x => x.paths[0]'
+# Get path through all geomorphs (ignoring if doors closed)
+nav foo "$( click 1 )" | map 'x => x.paths.reduce((agg, path) => agg.concat(path), [])'
+
+# save a global path
+nav foo "$( click 1 )" | map 'x => x.paths.reduce((agg, path) => agg.concat(path), [])' >myPath
+myPath
+[{"x":185.7,"y":394.86},{"x":209,"y":369.6},{"x":209,"y":349.6},{"x":297.61,"y":283.22}]
+# move along it
+move foo "$myPath"
 ```

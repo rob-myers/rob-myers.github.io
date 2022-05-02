@@ -142,6 +142,7 @@ export default function LightsTest(props) {
           gmGraph={gmGraph}
           wire={state.wire}
           onLoad={api => state.doorsApi = api}
+          initOpen={{}}
         />
 
         {/* <DebugGraph gm={gm} /> */}

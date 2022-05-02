@@ -109,8 +109,8 @@ export default function NPCs(props) {
           npc.el.root = rootEl;
           npc.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
           npc.el.root.style.transform = `translate(${npc.def.position.x}px, ${npc.def.position.y}px)`;
-          npc.el.body.style.transform = `rotate(${npc.def.angle}rad) scale(${npcScale})`;
-          // TODO can start moving on mount
+          npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
+          // TODO can move on mount
           // npc.updateAnimAux();
           // npc.followNavPath();
         }
@@ -226,21 +226,28 @@ export default function NPCs(props) {
     return () => sub.unsubscribe();
   }, [props.panZoomApi]);
 
-  return <>
-    <div className={classNames('npcs', rootCss)}>
+  return (
+    <div
+      className={classNames('npcs', rootCss)}
+    >
+      <Debug
+        debugPath={state.debugPath}
+      />
+
       {Object.values(state.npc).map(npc => (
         <div
-          key={npc.uid} // So respawn remounts
+          key={npc.uid} // So, respawn remounts
           data-npc-key={npc.key}
           className={classNames('npc', npc.key, npc.spriteSheetState, npcCss)}
           ref={state.npcRef}            
         >
-          <div className={classNames('body', npc.key, 'no-select')} />
+          <div
+            className={classNames('body', npc.key, 'no-select')}
+          />
         </div>
       ))}
     </div>
-    <Debug debugPath={state.debugPath} />
-  </>;
+  );
 }
 
 let spawnCount = 0;
@@ -258,14 +265,16 @@ const rootCss = css`
 
 const { animLookup: anim, zoom } = npcJson;
 const npcScale = 0.18;
+/** Ensure NPC is facing along +ve x axis */
+const npcOffsetAngleDeg = 90;
 
 const npcCss = css`
   .body {
     cursor: pointer;
     position: absolute;
-    transform: scale(0.18);
     pointer-events: all;
     filter: grayscale(100%);
+    /* transform: scale(0.18) rotate(90deg); */
   }
   
   &.walk .body {
