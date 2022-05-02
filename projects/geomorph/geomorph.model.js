@@ -38,3 +38,10 @@ export function filterSingles(singles, ...tagOrTags) {
     Array.isArray(spec) ? spec.every(tag => x.tags.includes(tag)) : x.tags.includes(spec))
   );
 }
+
+/** Kept here to avoid reset on HMR */
+export function getSpawnCount() {
+  return ++spawnCount;
+}
+
+let spawnCount = 0;

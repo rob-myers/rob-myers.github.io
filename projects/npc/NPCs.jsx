@@ -123,10 +123,6 @@ export default function NPCs(props) {
   React.useEffect(() => {
     const wire = ensureWire(props.wireKey);
 
-    // TODO 🚧 on HMR, refresh each npc in state.npc
-    console.log(state.npc);
-    // const oldNpcs = Object.values(state.npc);
-
     const sub = wire.subscribe((e) => {
       if (e.key === 'spawn') {
         state.npc[e.npcKey] = createNpc(e.npcKey, e.at, { panZoomApi: props.panZoomApi, update, disabled: props.disabled });
@@ -144,6 +140,12 @@ export default function NPCs(props) {
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
         update();
       }
+    });
+
+    // On HMR, refresh each npc via remount
+    Object.values(state.npc).forEach(npc => {
+      delete state.npc[npc.key];
+      wire.next({ key: 'spawn', npcKey: npc.key, at: npc.getPosition() });
     });
 
     return () => sub.unsubscribe();
@@ -181,8 +183,6 @@ export default function NPCs(props) {
     </div>
   );
 }
-
-let spawnCount = 0;
 
 const rootCss = css`
   position: absolute;

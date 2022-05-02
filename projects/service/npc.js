@@ -5,6 +5,7 @@ import path from 'path';
 import { Poly, Vect } from '../geom';
 import { extractGeomsAt, extractMetas, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
+import { getSpawnCount } from '../geomorph/geomorph.model';
 
 /**
  * @param {ServerTypes.ParsedNpc} parsed 
@@ -117,7 +118,7 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
   /** @type {NPC.NPC} */
   const npc = {
     key: npcKey,
-    uid: `${npcKey}-${++spawnCount}`,
+    uid: `${npcKey}-${getSpawnCount()}`,
     def: {
       key: npcKey,
       position: at,
@@ -202,6 +203,5 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
   return npc;
 }
 
-let spawnCount = 0;
 /** Scale up how long it should take to move along navpath */
 const animScaleFactor = 15;
