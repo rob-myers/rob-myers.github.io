@@ -199,7 +199,8 @@ const { animLookup: anim, zoom } = npcJson;
 /** Scale the sprites */
 const npcScale = 0.18;
 /** Ensure NPC faces along positive x-axis */
-const npcOffsetAngleDeg = 90;
+// const npcOffsetAngleDeg = 90;
+const npcOffsetAngleDeg = 0;
 const spriteSheets = keys(anim);
 
 const npcCss = css`
@@ -211,34 +212,54 @@ const npcCss = css`
     /* transform: scale(0.18) rotate(90deg); */
   }
   
-  &.walk .body {
+  /* &.walk .body {
     width: ${anim.walk.aabb.width * zoom}px;
     height: ${anim.walk.aabb.height * zoom}px;
     left: ${-anim.walk.aabb.width * zoom * 0.5}px;
     top: ${-anim.walk.aabb.height * zoom * 0.5}px;
     animation: walk 0.45s steps(${anim.walk.frames.length}) infinite;
     background: url('/npc/first-npc--walk.png');
+  } */
+  &.walk .body {
+    width: ${128 * 1}px;
+    height: ${128 * 1}px;
+    left: ${-128 * 1 * 0.5}px;
+    top: ${-128 * 1 * 0.5}px;
+    animation: walk 0.45s steps(${10}) infinite;
+    background: url('/npc/guard1_walk.png');
   }
-  &.idle .body {
+  /* &.idle .body {
     width: ${anim.idle.aabb.width * zoom}px;
     height: ${anim.idle.aabb.height * zoom}px;
     left: ${-anim.idle.aabb.width * zoom * 0.5}px;
     top: ${-anim.idle.aabb.height * zoom * 0.5}px;
     animation: idle 2s steps(${anim.idle.frames.length}) infinite;
     background: url('/npc/first-npc--idle.png');
+  } */
+  &.idle .body {
+    width: ${128 * 1}px;
+    height: ${128 * 1}px;
+    left: ${-128 * 1 * 0.5}px;
+    top: ${-128 * 1 * 0.5}px;
+    /* animation: idle 2s steps(${1}) infinite; */
+    background: url('/npc/guard1_walk.png');
   }
 
   &.disabled .body {
     animation-play-state: paused;
   }
 
-  @keyframes walk {
+  /* @keyframes walk {
     from { background-position: 0px; }
     to { background-position: ${-anim.walk.frames.length * anim.walk.aabb.width * zoom}px; }
+  } */
+  @keyframes walk {
+    from { background-position: 0px; }
+    to { background-position: ${-10 * 128 * 1}px; }
   }
   @keyframes idle {
     from { background-position: 0px; }
-    to { background-position: ${-anim.idle.frames.length * anim.idle.aabb.width * zoom}px; }
+    to { background-position: ${-anim.idle.frames.length * 128 * zoom}px; }
   }
 `;
 

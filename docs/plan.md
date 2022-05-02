@@ -21,7 +21,14 @@ __Aim towards website release__.
   - ✅ actuated via shell function `move`
   - ✅ turn correctly (not look)
   - ✅ play walk animation when moving
-  - 🚧 can pause/resume
+  - ✅ NPC refreshes with HMR
+  - can pause/resume
+
+- 🚧 Improve look of first-npc
+  - ✅ try 10 frame walk cycle
+    > https://mymblemoments.files.wordpress.com/2014/02/guard1_walk.png
+  - 🚧 better anim time e.g. `(aux.total / 50) * 1000` if `50 wu/s`
+  - 🚧 draw our own simplified 10 frame version
 
 - 🚧 Andros is situated
   - Can only move to point within lit area
@@ -70,9 +77,6 @@ __Aim towards website release__.
   -  🤔 TTY script restrict navpath from Andros to lit area
   - Andros is __situated__
   - `NavDemo1` has other NPCs
-
-- 🚧 Improve the look of first-npc
-  - try robotic hard edge look first
 
 - start using `yarn inspect` as in BFF for server side debug
 
