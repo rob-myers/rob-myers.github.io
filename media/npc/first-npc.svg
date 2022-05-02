@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg viewBox="0 0 52 36" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-  <g style="">
+  <g style="visibility: hidden;">
     <title>idle</title>
     <g style="pointer-events: none;">
       <title>npc-1</title>
@@ -24,31 +24,10 @@
       </ellipse>
     </g>
   </g>
-  <g transform="matrix(1, 0, 0, 1, -1, 0)" style="visibility: hidden;">
+  <g transform="matrix(1, 0, 0, 1, -1, 0)" style="">
     <title>walk</title>
     <g style="">
       <title>npc-1</title>
-      <ellipse style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; fill: rgb(0, 255, 0); stroke-width: 0.5px;" cx="34.283" cy="11.094" rx="2.543" ry="4.334">
-        <title>foot-r</title>
-      </ellipse>
-      <ellipse style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; fill: rgb(0, 255, 0); stroke-width: 0.5px;" cx="14.283" cy="11.094" rx="2.543" ry="4.334">
-        <title>foot-l</title>
-      </ellipse>
-      <path d="M 48.906 16.715 C 48.906 22.672 39.294 27.928 25.891 27.928 C 12.488 27.928 1.593 24.404 1.593 18.447 C 1.593 12.49 12.562 8.539 25.965 8.539 C 39.368 8.539 48.906 10.758 48.906 16.715 Z" style="stroke: rgb(0, 0, 0); fill-opacity: 0.9;" transform="matrix(0.999847, 0.017476, -0.017476, 0.999847, 0.322512, -0.438486)">
-        <title>body</title>
-      </path>
-      <ellipse style="fill: rgb(255, 255, 255); fill-opacity: 0.9;" transform="matrix(0.981298, -0.192495, 0.192495, 0.981298, -461.086931, 46.676881)" cx="482.933" cy="64.706" rx="12.082" ry="11.097">
-        <title>body-hole</title>
-      </ellipse>
-      <path d="M 35.338 17.202 C 35.338 23.332 30.722 28.301 25.028 28.301 C 19.334 28.301 14.718 23.332 14.718 17.202 C 14.718 11.072 19.334 6.103 25.028 6.103 C 30.722 6.103 35.338 11.072 35.338 17.202 Z" style="fill-opacity: 0.5; stroke-opacity: 0.5; stroke-width: 0.25px; fill: rgb(244, 212, 255); stroke: rgb(0, 0, 0);">
-        <title>head</title>
-      </path>
-      <ellipse style="stroke-width: 0.35px; fill: rgb(230, 167, 72); stroke: rgb(203, 126, 12);" cx="25.028" cy="18.202" rx="10.31" ry="11.099">
-        <title>hair</title>
-      </ellipse>
-    </g>
-    <g style="">
-      <title>npc-2</title>
       <ellipse style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; fill: rgb(0, 255, 0); stroke-width: 0.5px;" cx="13.064" cy="32.06" rx="2.692" ry="1.912">
         <title>foot-l</title>
       </ellipse>
@@ -84,7 +63,7 @@
       </ellipse>
     </g>
     <g style="">
-      <title>npc-3</title>
+      <title>npc-2</title>
       <ellipse style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; fill: rgb(0, 255, 0); stroke-width: 0.5px;" cx="15.952" cy="6.815" rx="2.692" ry="2.312">
         <title>foot-l</title>
       </ellipse>

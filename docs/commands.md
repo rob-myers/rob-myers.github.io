@@ -92,4 +92,7 @@ myPath
 [{"x":185.7,"y":394.86},{"x":209,"y":369.6},{"x":209,"y":349.6},{"x":297.61,"y":283.22}]
 # move along it
 move foo "$myPath"
+# reverse it, and move back
+myPath | map 'x => x.reverse()'
+move foo "$myPath"
 ```

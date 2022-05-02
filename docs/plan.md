@@ -20,7 +20,8 @@ __Aim towards website release__.
   - ✅ translate previous API
   - ✅ actuated via shell function `move`
   - ✅ turn correctly (not look)
-  - play walk animation
+  - ✅ play walk animation when moving
+  - 🚧 can pause/resume
 
 - 🚧 Andros is situated
   - Can only move to point within lit area

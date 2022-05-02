@@ -1,6 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
+import { keys } from "../service/generic";
 import { ensureWire } from "../service/wire";
 import { error } from "../service/log";
 import { Poly, Rect, Vect } from "../geom";
@@ -95,11 +96,11 @@ export default function NPCs(props) {
        * @param {Geom.VectJson[]} path 
        */
       moveNpcAlongPath(npc, path) {
-        // TODO 🚧
         npc.origPath = path.map(Vect.from);
         npc.animPath = npc.origPath.slice();
         npc.updateAnimAux();
         npc.followNavPath();
+        update();
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(rootEl) {
@@ -146,7 +147,7 @@ export default function NPCs(props) {
             angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0,
           },
           origPath: [],
-          spriteSheetState: 'idle',
+          spriteSheet: 'idle',
 
           followNavPath() {
             const { aux } = this;
@@ -167,10 +168,12 @@ export default function NPCs(props) {
                   transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
                 },
               ]),
-              { duration: aux.total * 15, direction: 'normal', fill: 'forwards' },
+              { duration: aux.total * animScaleFactor, direction: 'normal', fill: 'forwards' },
             );
-            // anim.root.addEventListener('finish', this.onFinishMove);
-      
+            
+            this.spriteSheet = 'walk';
+            this.anim.root.addEventListener('finish', () => { this.spriteSheet = 'idle'; update(); });
+
             if (wasPaused || (aux.count === 0 && this.def.paused)) {
               this.pause();
             }
@@ -229,6 +232,14 @@ export default function NPCs(props) {
   return (
     <div
       className={classNames('npcs', rootCss)}
+      onClick={(e) => {// Toggle animation Debug
+        if (e.target instanceof HTMLDivElement && e.target.classList.contains('body')) {
+          const npcKey = /** @type {string} */ (e.target.getAttribute('data-npc-key'));
+          const npc = state.npc[npcKey];
+          npc.spriteSheet = spriteSheets[(spriteSheets.indexOf(npc.spriteSheet) + 1) % spriteSheets.length];
+          update();
+        }
+      }}
     >
       <Debug
         debugPath={state.debugPath}
@@ -237,12 +248,13 @@ export default function NPCs(props) {
       {Object.values(state.npc).map(npc => (
         <div
           key={npc.uid} // So, respawn remounts
+          ref={state.npcRef}
+          className={classNames('npc', npc.key, npc.spriteSheet, npcCss)}
           data-npc-key={npc.key}
-          className={classNames('npc', npc.key, npc.spriteSheetState, npcCss)}
-          ref={state.npcRef}            
         >
           <div
             className={classNames('body', npc.key, 'no-select')}
+            data-npc-key={npc.key}
           />
         </div>
       ))}
@@ -264,9 +276,13 @@ const rootCss = css`
 `;
 
 const { animLookup: anim, zoom } = npcJson;
+/** Scale the sprites */
 const npcScale = 0.18;
-/** Ensure NPC is facing along +ve x axis */
+/** Ensure NPC faces along positive x-axis */
 const npcOffsetAngleDeg = 90;
+/** Scale up how long it should take to move along navpath */
+const animScaleFactor = 20;
+const spriteSheets = keys(anim);
 
 const npcCss = css`
   .body {
@@ -282,7 +298,7 @@ const npcCss = css`
     height: ${anim.walk.aabb.height * zoom}px;
     left: ${-anim.walk.aabb.width * zoom * 0.5}px;
     top: ${-anim.walk.aabb.height * zoom * 0.5}px;
-    animation: walk 300ms steps(${anim.walk.frames.length}) infinite;
+    animation: walk 0.45s steps(${anim.walk.frames.length}) infinite;
     background: url('/npc/first-npc--walk.png');
   }
   &.idle .body {

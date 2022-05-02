@@ -50,7 +50,7 @@ declare namespace NPC {
     };
 
     //#region mutable
-    spriteSheetState: 'idle' | 'walk';
+    spriteSheet: 'idle' | 'walk';
     origPath: Geom.Vect[];
     /** Initially `origPath` but may change on pause/unpause */
     animPath: Geom.Vect[];

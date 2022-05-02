@@ -4,6 +4,7 @@
  * Examples:
  * - yarn render-npc first-npc
  */
+/// <reference path="./deps.d.ts"/>
 import path from 'path';
 import fs from 'fs';
 import { parseNpc, renderNpcSpriteSheets } from '../../projects/service/npc';
