@@ -54,8 +54,12 @@ export class TtyXterm {
 
   constructor(
     public xterm: Terminal,
-    private sessionKey: string,
-    private io: ShellIo<MessageFromXterm, MessageFromShell>,
+    private session: {
+      key: string;
+      io: ShellIo<MessageFromXterm, MessageFromShell>;
+      /** Write last interactive value to `home/_` */
+      rememberLastValue: (msg: any) => void;
+    },
   ) {
     this.input = '';
     this.cursor = 0;
@@ -76,10 +80,10 @@ export class TtyXterm {
      */
     // this.xterm.onData((data) => document.body.append('DATA: ' + data));
     this.xterm.onData(this.handleXtermInput.bind(this));
-    this.io.handleWriters(this.onMessage.bind(this));
+    this.session.io.handleWriters(this.onMessage.bind(this));
 
     this.xterm.writeln(
-      `${ansiWhite}Connected to session ${ansiBlue}${this.sessionKey}${ansiReset}`);
+      `${ansiWhite}Connected to session ${ansiBlue}${this.session.key}${ansiReset}`);
     this.clearInput();
     this.cursorRow = 2;
   }
@@ -439,9 +443,12 @@ export class TtyXterm {
 
   private onMessage(msg: MessageFromShell | string) {
     if (typeof msg === 'string') {
-      return this.queueCommands(msg.split('\n')
-        .map(line => ({ key: 'line', line: `${ansiWhite}${line}${ansiReset}` })));
+      const lines = msg.split('\n');
+      const commands = lines.map(line => ({ key: 'line' as const, line: `${ansiWhite}${line}${ansiReset}` }));
+      this.session.rememberLastValue(lines[lines.length - 1]);
+      return this.queueCommands(commands);
     } else if (msg === null) {
+      this.session.rememberLastValue(null);
       return this.queueCommands([{ key: 'line', line: `${ansiYellow}null${ansiReset}` }]);
     } else if (msg === undefined) {
       return;
@@ -506,6 +513,7 @@ export class TtyXterm {
             key: 'line',
             line: `${ansiYellow}${safeStringify(msg)}${ansiReset}`,
           }]);
+          this.session.rememberLastValue(msg);
         }
       }
     }
@@ -527,7 +535,7 @@ export class TtyXterm {
   }
 
   public reqHistoryLine(dir: -1 | 1) {
-    this.io.writeToReaders({
+    this.session.io.writeToReaders({
       key: 'req-history-line',
       historyIndex: this.historyIndex + dir,
     });
@@ -611,7 +619,7 @@ export class TtyXterm {
     this.historyIndex = -1;
     this.preHistory = '';
 
-    this.io.writeToReaders({
+    this.session.io.writeToReaders({
       key: 'send-line',
       line: this.input,
     });
@@ -629,7 +637,7 @@ export class TtyXterm {
     // Immediately forget any pending output
     this.commandBuffer.length = 0;
     // Reset controlling process
-    this.io.writeToReaders({ key: 'send-kill-sig' });
+    this.session.io.writeToReaders({ key: 'send-kill-sig' });
   }
 
   /**

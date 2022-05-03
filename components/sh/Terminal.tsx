@@ -38,7 +38,11 @@ export default function Terminal({ sessionKey, env }: Props) {
         <XTerm
           onMount={(xterm) => {// `xterm` is an xterm.js instance
             const session = assertNonNull(state.session);
-            const ttyXterm = new TtyXterm(xterm, session.key, session.ttyIo);
+            const ttyXterm = new TtyXterm(xterm, {
+              key: session.key,
+              io: session.ttyIo,
+              rememberLastValue: (msg) => session.var._ = msg,
+            });
             ttyXterm.initialise();
             session.ttyShell.initialise(ttyXterm);
             state.xtermReady = true;
