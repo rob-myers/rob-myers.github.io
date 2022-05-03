@@ -544,8 +544,7 @@
               "stroke-width": "0.5px",
               "fill": "rgb(85, 85, 85)",
               "fill-opacity": "0.8",
-              "pointer-events": "none",
-              "visibility": "visible"
+              "pointer-events": "none"
             },
             "tagName": "path",
             "d": "M 109.286 51.248 L 111.843 55.13 L 111.996 62.371 L 96.779 62.426 L 98.235 51.604 L 109.286 51.248 Z"
@@ -559,8 +558,7 @@
               "stroke-opacity": "0.5",
               "stroke-width": "0.5px",
               "fill": "rgb(85, 85, 85)",
-              "pointer-events": "none",
-              "visibility": "visible"
+              "pointer-events": "none"
             },
             "tagName": "path",
             "d": "M 60.013 48.113 L 60.013 28.713 L 45.464 28.713 L 44.757 31.426 L 28.457 30.283 L 27.172 33.224 L 26.775 41.538 L 48.767 50.246 L 60.013 48.113 Z"
@@ -573,8 +571,7 @@
               "stroke-width": "0.5px",
               "fill": "rgb(85, 85, 85)",
               "fill-opacity": "0.8",
-              "pointer-events": "none",
-              "visibility": "visible"
+              "pointer-events": "none"
             },
             "tagName": "path",
             "d": "M 27.337 70.516 L 27.662 82.971 L 24.65 82.762 L 21.63 80.139 L 21.548 71.099 L 27.337 70.516 Z"
@@ -587,8 +584,7 @@
               "stroke-opacity": "0.5",
               "stroke-width": "0.5px",
               "pointer-events": "none",
-              "fill": "rgb(85, 85, 85)",
-              "visibility": "visible"
+              "fill": "rgb(85, 85, 85)"
             },
             "tagName": "path",
             "d": "M 62 63.8 L 62 83.2 L 42.519 84.708 L 31.322 84.889 L 27.318 82.95 L 26.971 69.845 L 31.674 68.321 L 41.53 67.817 L 42.464 63.726 L 62 63.8 Z"
@@ -600,8 +596,7 @@
               "stroke-opacity": "0.5",
               "stroke-width": "0.5px",
               "fill": "rgb(0, 0, 255)",
-              "pointer-events": "none",
-              "visibility": "visible"
+              "pointer-events": "none"
             },
             "tagName": "path",
             "d": "M 69.502 30.815 C 73.233 36.602 70.126 40.574 68.093 40.574 C 67.075 40.574 53.316 42.611 45.783 43.437 C 42.69 43.777 39.101 41.82 39.101 41.82 C 39.101 41.82 31.933 36.122 31.933 34.763 C 31.933 32.441 32.263 28.59 36.021 25.82 C 39.756 23.068 61.712 24.721 62.725 24.721 C 63.656 24.721 66.349 25.925 69.502 30.815 Z"
@@ -615,8 +610,7 @@
               "stroke-width": "0.5px",
               "pointer-events": "none",
               "fill": "rgb(243, 194, 243)",
-              "fill-opacity": "0.5",
-              "visibility": "visible"
+              "fill-opacity": "0.5"
             },
             "tagName": "path",
             "d": "M 63.489 98.553 L 70.13 93.557 L 74.16 102.301 L 65.183 109.756 L 63.18 106.214 L 63.489 98.553 Z"
@@ -628,8 +622,7 @@
               "stroke-opacity": "0.5",
               "stroke-width": "0.5px",
               "fill": "rgb(0, 0, 255)",
-              "pointer-events": "none",
-              "visibility": "visible"
+              "pointer-events": "none"
             },
             "tagName": "path",
             "d": "M 88.152 95.493 L 83.568 85.295 L 74.535 84.951 C 74.535 84.951 45.953 82.306 45.953 85.411 C 45.953 87.733 52.371 94.687 56.129 97.457 C 59.864 100.209 67.727 100.972 68.74 100.972 C 69.196 100.972 68.837 101.499 74.116 100.471 C 79.619 99.398 88.152 95.493 88.152 95.493 Z"
@@ -648,7 +641,6 @@
               "stroke": "rgb(0, 0, 0)",
               "stroke-width": "0.5px",
               "fill-opacity": "0.6",
-              "visibility": "visible",
               "pointer-events": "none"
             },
             "tagName": "path",
@@ -667,7 +659,6 @@
             "style": {
               "stroke": "rgb(0, 0, 0)",
               "pointer-events": "none",
-              "visibility": "visible",
               "fill-opacity": "0.8"
             },
             "tagName": "path",
@@ -681,7 +672,6 @@
               "stroke": "rgb(0, 0, 0)",
               "fill": "rgb(244, 212, 255)",
               "stroke-width": "0.25px",
-              "visibility": "visible",
               "pointer-events": "none"
             },
             "tagName": "ellipse",
@@ -697,11 +687,179 @@
               "fill-opacity": "0.5",
               "stroke": "rgb(0, 0, 0)",
               "stroke-width": "0.25px",
-              "visibility": "visible",
               "pointer-events": "none"
             },
             "tagName": "path",
             "d": "M 78.593 63.901 C 78.593 72.07 72.106 78.693 64.103 78.693 C 56.1 78.693 53.255 73.558 53.255 65.389 C 53.255 57.22 56.1 49.109 64.103 49.109 C 72.106 49.109 78.593 55.732 78.593 63.901 Z"
+          }
+        ],
+        [
+          {
+            "tags": ["foot-l"],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.5px",
+              "fill": "rgb(85, 85, 85)",
+              "fill-opacity": "0.8",
+              "pointer-events": "none",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 98.397 53.115 L 101.69 55.562 L 101.808 62.671 L 90.857 62.674 L 90.79 53.483 L 98.397 53.115 Z"
+          },
+          {
+            "tags": ["leg-l"],
+            "transform": [-1, 0, 0, -1, 125.012513, 92.712888],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.5px",
+              "fill": "rgb(85, 85, 85)",
+              "pointer-events": "none",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 60.013 48.113 L 60.013 28.713 L 45.464 28.713 L 45.33 29.269 L 34.132 29.19 L 34.491 39.051 L 47.805 47.219 L 48.767 50.246 L 60.013 48.113 Z"
+          },
+          {
+            "tags": ["foot-r"],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.5px",
+              "fill": "rgb(85, 85, 85)",
+              "fill-opacity": "0.8",
+              "pointer-events": "none",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 25.681 69.078 L 24.922 81.37 L 18.97 81.523 L 16.665 79.867 L 16.621 69.415 L 25.681 69.078 Z"
+          },
+          {
+            "tags": ["leg-r"],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.5px",
+              "pointer-events": "none",
+              "fill": "rgb(85, 85, 85)",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 62 63.8 L 62 83.2 L 42.716 83.475 L 27.152 83.329 L 24.935 81.579 L 25.413 68.833 L 27.316 67.963 L 41.53 67.817 L 42.464 63.726 L 62 63.8 Z"
+          },
+          {
+            "tags": ["arm-l"],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.5px",
+              "fill": "rgb(0, 0, 255)",
+              "pointer-events": "none",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 69.502 30.815 C 73.233 36.602 70.126 40.574 68.093 40.574 C 67.075 40.574 53.316 42.611 45.783 43.437 C 42.69 43.777 40.385 42.444 40.385 42.444 C 40.385 42.444 37.833 37.702 37.833 36.343 C 37.833 34.021 36.755 30.742 40.513 27.972 C 44.248 25.22 62.482 24.304 63.495 24.304 C 64.426 24.304 66.349 25.925 69.502 30.815 Z"
+          },
+          {
+            "tags": ["hand-r"],
+            "transform": [-1, 0, 0, -1, 158.055, 188.134003],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.5px",
+              "pointer-events": "none",
+              "fill": "rgb(243, 194, 243)",
+              "fill-opacity": "0.5",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 68.831 95.495 L 74.552 92.436 L 76.796 100.889 L 70.346 105.042 L 68.191 102.546 L 68.831 95.495 Z"
+          },
+          {
+            "tags": ["arm-r"],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-opacity": "0.5",
+              "stroke-width": "0.5px",
+              "fill": "rgb(0, 0, 255)",
+              "pointer-events": "none",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 83.546 95.489 L 80.799 85.548 L 74.535 86.034 C 74.535 86.034 45.953 82.306 45.953 85.411 C 45.953 87.733 52.371 94.687 56.129 97.457 C 59.864 100.209 67.727 100.972 68.74 100.972 C 69.196 100.972 68.837 101.499 74.116 100.471 C 79.619 99.398 83.546 95.489 83.546 95.489 Z"
+          },
+          {
+            "tags": ["chest"],
+            "transform": [
+              0.07869,
+              0.996899,
+              -0.996899,
+              0.07869,
+              119.493907,
+              -3.741005
+            ],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-width": "0.5px",
+              "fill-opacity": "0.6",
+              "pointer-events": "none",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 82.223 74.845 C 72.191 83.134 53.524 82.07 43.188 74.162 C 37.114 69.515 35.154 55.892 36.835 52.653 C 40.413 45.76 48.257 46.617 48.257 46.617 C 48.257 46.617 58.222 44.8 63.25 44.981 C 69.007 45.188 75.783 45.575 81.394 48.055 C 83.396 48.94 84.173 49.837 87.531 53.133 C 89.158 54.729 88.338 69.792 82.223 74.845 Z"
+          },
+          {
+            "tags": ["shoulders"],
+            "transform": [
+              0.996287,
+              -0.086089,
+              0.086089,
+              0.996287,
+              -5.241301,
+              5.215904
+            ],
+            "style": {
+              "stroke": "rgb(0, 0, 0)",
+              "pointer-events": "none",
+              "visibility": "visible",
+              "fill-opacity": "0.8"
+            },
+            "tagName": "path",
+            "d": "M 73.403 43.997 C 72.938 46.718 70.654 70.433 71.902 84.795 C 72.085 86.899 71.528 93.267 71.134 95.125 C 69.614 102.291 66.537 101.966 61.728 101.55 C 51.038 100.625 45.527 92.752 41.732 86.548 C 37.937 80.344 42.751 45.687 43.636 41.573 C 44.995 35.257 52.257 27.273 59.246 25.74 C 64.03 24.691 67.68 24.77 71.753 26.993 C 74.41 28.443 76.584 31.998 76.328 36.341 C 76.14 39.528 73.562 43.069 73.403 43.997 Z"
+          },
+          {
+            "tags": ["head"],
+            "transform": [-1, 0, 0, -1, 0, 0],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "fill": "rgb(244, 212, 255)",
+              "stroke-width": "0.25px",
+              "pointer-events": "none",
+              "visibility": "visible"
+            },
+            "tagName": "ellipse",
+            "cx": -66.745,
+            "cy": -63.901,
+            "rx": 14.49,
+            "ry": 14.792
+          },
+          {
+            "tags": ["hair"],
+            "transform": [-1, 0, 0, -1, 129.848003, 127.802002],
+            "style": {
+              "fill-opacity": "0.5",
+              "stroke": "rgb(0, 0, 0)",
+              "stroke-width": "0.25px",
+              "pointer-events": "none",
+              "visibility": "visible"
+            },
+            "tagName": "path",
+            "d": "M 77.593 63.901 C 77.593 72.07 71.106 78.693 63.103 78.693 C 55.1 78.693 52.255 73.558 52.255 65.389 C 52.255 57.22 55.1 49.109 63.103 49.109 C 71.106 49.109 77.593 55.732 77.593 63.901 Z"
           }
         ]
       ]
