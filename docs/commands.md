@@ -91,8 +91,23 @@ nav foo "$( click 1 )" | map 'x => x.paths.reduce((agg, path) => agg.concat(path
 myPath
 [{"x":185.7,"y":394.86},{"x":209,"y":369.6},{"x":209,"y":349.6},{"x":297.61,"y":283.22}]
 # move along it
-move foo "$myPath"
+walk foo "$myPath"
 # reverse it, and move back
 myPath | map 'x => x.reverse()'
-move foo "$myPath"
+walk foo "$myPath"
+```
+
+```sh
+cd
+spawn foo $( click 1 )
+nav foo $( click 1 )
+_
+{"paths":[[{"x":89.07,"y": ...
+_/paths/0
+[{"x":89.07,"y":311.26},{"x":254,"y":346},{"x":299,"y":590}]
+_
+[{"x":89.07,"y":311.26},{"x":254,"y":346},{"x":299,"y":590}]
+walk foo $_
+_ | map 'x => x.reverse()'
+walk foo $( _ )
 ```

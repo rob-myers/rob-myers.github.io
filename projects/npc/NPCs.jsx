@@ -197,7 +197,7 @@ const rootCss = css`
 
 const { animLookup: anim, zoom } = npcJson;
 /** Scale the sprites */
-const npcScale = 0.18;
+const npcScale = 0.3;
 /** Ensure NPC faces along positive x-axis */
 // const npcOffsetAngleDeg = 90;
 const npcOffsetAngleDeg = 0;

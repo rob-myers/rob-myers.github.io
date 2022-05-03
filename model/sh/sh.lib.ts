@@ -190,10 +190,10 @@ call '({args}) =>
 }`,
 
   /**
-   * More an npc along a path via WIRE_KEY.
-   * e.g. `move andros "[$( click 1 ), $( click 1 )]"'
+   * Move an npc along a path via WIRE_KEY.
+   * e.g. `walk andros "[$( click 1 ), $( click 1 )]"'
    */
-  move: `{
+  walk: `{
   run '({ api, args }) {
     const npcKey = args[0]
     const path = api.safeJsonParse(args[1])
@@ -202,7 +202,7 @@ call '({args}) =>
       || !Array.isArray(path)
       || !path.every(p => p && typeof p.x === "number" && typeof p.y === "number")
     ) {
-      api.throwError("format: \`move {key} [{vecJson},...,{vecJson}]\` e.g. move andros \\"[$( click 1 ), $( click 1 )]\\"")
+      api.throwError("format: \`walk {key} [{vecJson},...,{vecJson}]\` e.g. walk andros \\"[$( click 1 ), $( click 1 )]\\"")
     }
 
     // TODO wait for response, and provide NPC api?
