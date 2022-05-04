@@ -41,16 +41,16 @@
     <g style="visibility: hidden;">
       <title>npc-1</title>
       <path d="M 61 44.8 L 61 64.2 L 41.569 64.094 L 34.682 60.232 L 34.476 50.851 L 41.464 44.726 L 61 44.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 61 63.8 L 61 83.2 L 41.569 83.094 L 41.464 63.726 L 61 63.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 71.652 26.993 C 75.383 32.78 71.462 39.936 71.462 39.936 C 71.462 39.936 43.563 45.526 43.563 40.897 C 43.563 38.575 49.41 31.536 53.168 28.766 C 56.903 26.014 58.621 24.657 59.634 24.657 C 60.565 24.657 68.499 22.103 71.652 26.993 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 71.324 98.99 C 75.055 93.203 74.687 86.401 72.654 86.401 C 70.621 86.401 43.563 80.934 43.563 85.563 C 43.563 87.885 49.41 94.924 53.168 97.694 C 56.903 100.446 62.447 100.962 63.46 100.962 C 64.391 100.962 68.171 103.88 71.324 98.99 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 81.223 74.845 C 71.191 83.134 52.524 82.07 42.188 74.162 C 36.114 69.515 34.059 54.043 35.801 52.126 C 41.024 46.378 47.308 45.961 47.308 45.961 C 47.308 45.961 57.222 44.8 62.25 44.981 C 68.007 45.188 79.285 47.902 79.285 47.902 C 79.285 47.902 81.942 48.104 85.3 51.4 C 86.927 52.996 87.338 69.792 81.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.01447, 0.999895, -0.999895, 0.01447, 122.663403, 1.105447)">
         <title>chest</title>
@@ -68,19 +68,19 @@
     <g style="visibility: hidden;">
       <title>npc-2</title>
       <path d="M 60.013 48.113 L 60.013 28.713 L 40.582 28.819 L 33.695 32.681 L 33.489 42.062 L 46.471 48.256 L 60.013 48.113 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" transform="matrix(-1, 0, 0, -1, 125.012513, 92.712888)" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 62 63.8 L 62 83.2 L 42.519 84.708 L 35.854 80.289 L 35.529 73.145 L 42.464 63.726 L 62 63.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 71.229 29.103 C 74.96 34.89 72.509 40.137 70.476 40.137 C 69.458 40.137 55.161 43.197 47.628 44.023 C 40.116 44.848 37.242 39.454 37.242 37.143 C 37.242 34.821 37.553 32.192 41.311 29.422 C 45.046 26.67 61.712 24.721 62.725 24.721 C 63.656 24.721 68.076 24.213 71.229 29.103 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 80.984 88.557 L 80.411 99.577 L 77.071 98.36 L 77.472 89.663 L 80.984 88.557 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(243, 194, 243); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 158.055, 188.134003)">
-        <title>hand-r</title>
+        <title>hand right</title>
       </path>
       <path d="M 77.012 99.691 L 77.644 88.557 C 77.644 88.557 43.563 80.934 43.563 85.563 C 43.563 87.885 49.41 94.924 53.168 97.694 C 56.903 100.446 62.447 100.962 63.46 100.962 C 64.391 100.962 77.012 99.691 77.012 99.691 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 81.223 74.845 C 71.191 83.134 52.524 82.07 42.188 74.162 C 36.114 69.515 34.059 54.043 35.801 52.126 C 41.024 46.378 47.308 45.961 47.308 45.961 C 47.308 45.961 57.222 44.8 62.25 44.981 C 68.007 45.188 79.285 47.902 79.285 47.902 C 79.285 47.902 81.942 48.104 85.3 51.4 C 86.927 52.996 87.338 69.792 81.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.01447, 0.999895, -0.999895, 0.01447, 122.663403, 1.105447)">
         <title>chest</title>
@@ -98,25 +98,25 @@
     <g style="visibility: hidden;">
       <title>npc-3</title>
       <path d="M 100.75 53.445 L 100.772 61.28 L 91.657 61.088 L 91.899 51.621 L 98.703 51.694 L 100.75 53.445 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-l</title>
+        <title>foot left</title>
       </path>
       <path d="M 60.013 48.113 L 60.013 28.713 L 45.464 28.713 L 44.757 31.426 L 33.483 31.558 L 33.04 41.624 L 46.471 48.256 L 60.013 48.113 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" transform="matrix(-1, 0, 0, -1, 125.012513, 92.712888)" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 31.198 70.461 L 31.154 83.361 L 28.699 82.54 L 26.317 81.526 L 26.341 72.545 L 28.069 70.23 L 31.198 70.461 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-r</title>
+        <title>foot right</title>
       </path>
       <path d="M 62 63.8 L 62 83.2 L 42.519 84.708 L 32.479 84.37 L 29.899 82.093 L 30.17 71.56 L 32.621 68.943 L 40.362 69.192 L 42.464 63.726 L 62 63.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 71.222 29.209 C 74.953 34.996 72.702 40.027 70.669 40.027 C 69.651 40.027 53.316 42.611 45.783 43.437 C 38.271 44.262 35.55 38.398 35.55 36.087 C 35.55 33.765 35.993 31.099 39.751 28.329 C 43.486 25.577 61.712 24.721 62.725 24.721 C 63.656 24.721 68.069 24.319 71.222 29.209 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 68.228 94.334 L 72.856 91.428 L 76.106 100.686 L 69.833 104.815 L 67.01 100.069 L 68.228 94.334 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(243, 194, 243); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 158.055, 188.134003)">
-        <title>hand-r</title>
+        <title>hand right</title>
       </path>
       <path d="M 85.48 96.758 L 81.535 86.82 C 81.535 86.82 43.563 80.934 43.563 85.563 C 43.563 87.885 49.41 94.924 53.168 97.694 C 56.903 100.446 62.447 100.962 63.46 100.962 C 63.916 100.962 68.837 101.499 74.116 100.471 C 79.619 99.398 85.48 96.758 85.48 96.758 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 82.223 74.845 C 72.191 83.134 53.524 82.07 43.188 74.162 C 37.114 69.515 35.059 54.043 36.801 52.126 C 42.024 46.378 48.308 45.961 48.308 45.961 C 48.308 45.961 58.222 44.8 63.25 44.981 C 69.007 45.188 80.285 47.902 80.285 47.902 C 80.285 47.902 82.942 48.104 86.3 51.4 C 87.927 52.996 88.338 69.792 82.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.07869, 0.996899, -0.996899, 0.07869, 119.493907, -3.741005)">
         <title>chest</title>
@@ -134,25 +134,25 @@
     <g style="visibility: hidden;">
       <title>npc-4</title>
       <path d="M 109.286 51.248 L 111.843 55.13 L 111.996 62.371 L 96.779 62.426 L 98.235 51.604 L 109.286 51.248 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-l</title>
+        <title>foot left</title>
       </path>
       <path d="M 60.013 48.113 L 60.013 28.713 L 45.464 28.713 L 44.757 31.426 L 28.457 30.283 L 27.172 33.224 L 26.775 41.538 L 48.767 50.246 L 60.013 48.113 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" transform="matrix(-1, 0, 0, -1, 125.012513, 92.712888)" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 27.337 70.516 L 27.662 82.971 L 24.65 82.762 L 21.63 80.139 L 21.548 71.099 L 27.337 70.516 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-r</title>
+        <title>foot right</title>
       </path>
       <path d="M 62 63.8 L 62 83.2 L 42.519 84.708 L 31.322 84.889 L 27.318 82.95 L 26.971 69.845 L 31.674 68.321 L 41.53 67.817 L 42.464 63.726 L 62 63.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 69.502 30.815 C 73.233 36.602 70.126 40.574 68.093 40.574 C 67.075 40.574 53.316 42.611 45.783 43.437 C 42.69 43.777 39.101 41.82 39.101 41.82 C 39.101 41.82 31.933 36.122 31.933 34.763 C 31.933 32.441 32.263 28.59 36.021 25.82 C 39.756 23.068 61.712 24.721 62.725 24.721 C 63.656 24.721 66.349 25.925 69.502 30.815 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 63.489 98.553 L 70.13 93.557 L 74.16 102.301 L 65.183 109.756 L 63.18 106.214 L 63.489 98.553 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(243, 194, 243); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 158.055, 188.134003)">
-        <title>hand-r</title>
+        <title>hand right</title>
       </path>
       <path d="M 88.152 95.493 L 83.568 85.295 L 74.535 84.951 C 74.535 84.951 45.953 82.306 45.953 85.411 C 45.953 87.733 52.371 94.687 56.129 97.457 C 59.864 100.209 67.727 100.972 68.74 100.972 C 69.196 100.972 68.837 101.499 74.116 100.471 C 79.619 99.398 88.152 95.493 88.152 95.493 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 82.223 74.845 C 72.191 83.134 53.524 82.07 43.188 74.162 C 37.114 69.515 34.827 57.028 36.508 53.789 C 40.086 46.896 49.009 46.425 49.009 46.425 C 49.009 46.425 58.222 44.8 63.25 44.981 C 69.007 45.188 75.783 45.575 81.394 48.055 C 83.396 48.94 83.204 48.808 86.562 52.104 C 88.189 53.7 88.338 69.792 82.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.07869, 0.996899, -0.996899, 0.07869, 119.493907, -3.741005)">
         <title>chest</title>
@@ -170,25 +170,25 @@
     <g style="visibility: hidden;">
       <title>npc-5</title>
       <path d="M 98.397 53.115 L 101.69 55.562 L 101.808 62.671 L 90.857 62.674 L 90.79 53.483 L 98.397 53.115 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-l</title>
+        <title>foot left</title>
       </path>
       <path d="M 60.013 48.113 L 60.013 28.713 L 45.464 28.713 L 45.33 29.269 L 34.132 29.19 L 34.491 39.051 L 47.805 47.219 L 48.767 50.246 L 60.013 48.113 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" transform="matrix(-1, 0, 0, -1, 125.012513, 92.712888)" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 25.681 69.078 L 24.922 81.37 L 18.97 81.523 L 16.665 79.867 L 16.621 69.415 L 25.681 69.078 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-r</title>
+        <title>foot right</title>
       </path>
       <path d="M 62 63.8 L 62 83.2 L 42.716 83.475 L 27.152 83.329 L 24.935 81.579 L 25.413 68.833 L 27.316 67.963 L 41.53 67.817 L 42.464 63.726 L 62 63.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 69.502 30.815 C 73.233 36.602 70.126 40.574 68.093 40.574 C 67.075 40.574 53.316 42.611 45.783 43.437 C 42.69 43.777 40.385 42.444 40.385 42.444 C 40.385 42.444 37.833 37.702 37.833 36.343 C 37.833 34.021 36.755 30.742 40.513 27.972 C 44.248 25.22 62.482 24.304 63.495 24.304 C 64.426 24.304 66.349 25.925 69.502 30.815 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 68.831 95.495 L 74.552 92.436 L 76.796 100.889 L 70.346 105.042 L 68.191 102.546 L 68.831 95.495 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(243, 194, 243); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 158.055, 188.134003)">
-        <title>hand-r</title>
+        <title>hand right</title>
       </path>
       <path d="M 83.546 95.489 L 80.799 85.548 L 74.535 86.034 C 74.535 86.034 45.953 82.306 45.953 85.411 C 45.953 87.733 52.371 94.687 56.129 97.457 C 59.864 100.209 67.727 100.972 68.74 100.972 C 69.196 100.972 68.837 101.499 74.116 100.471 C 79.619 99.398 83.546 95.489 83.546 95.489 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 82.223 74.845 C 72.191 83.134 53.524 82.07 43.188 74.162 C 37.114 69.515 35.154 55.892 36.835 52.653 C 40.413 45.76 48.257 46.617 48.257 46.617 C 48.257 46.617 58.222 44.8 63.25 44.981 C 69.007 45.188 75.783 45.575 81.394 48.055 C 83.396 48.94 84.173 49.837 87.531 53.133 C 89.158 54.729 88.338 69.792 82.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.07869, 0.996899, -0.996899, 0.07869, 119.493907, -3.741005)">
         <title>chest</title>
@@ -206,16 +206,16 @@
     <g style="visibility: hidden;" transform="matrix(1, 0, 0, -1, 1, 126.754478)">
       <title>npc-6</title>
       <path d="M 61 44.8 L 61 64.2 L 36.536 59.805 L 35.456 58.07 L 35.655 46.695 L 40.926 46.14 L 61 44.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 61 63.8 L 61 83.2 L 41.569 83.094 L 41.464 63.726 L 61 63.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 72.052 28.527 C 75.783 34.314 71.462 39.936 71.462 39.936 C 71.462 39.936 43.031 45.67 43.031 41.041 C 43.031 38.719 49.41 31.536 53.168 28.766 C 56.903 26.014 60.63 25.025 61.643 25.025 C 62.574 25.025 68.899 23.637 72.052 28.527 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 71.324 98.99 C 75.055 93.203 71.717 86.734 69.684 86.734 C 67.651 86.734 43.563 80.934 43.563 85.563 C 43.563 87.885 49.41 94.924 53.168 97.694 C 56.903 100.446 62.447 100.962 63.46 100.962 C 64.391 100.962 68.171 103.88 71.324 98.99 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 81.223 74.845 C 71.191 83.134 52.524 82.07 42.188 74.162 C 36.114 69.515 34.059 54.043 35.801 52.126 C 41.024 46.378 48.687 46.471 48.687 46.471 C 48.687 46.471 57.222 44.8 62.25 44.981 C 68.007 45.188 79.285 47.902 79.285 47.902 C 79.285 47.902 81.942 48.104 85.3 51.4 C 86.927 52.996 87.338 69.792 81.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.01447, 0.999895, -0.999895, 0.01447, 122.663403, 1.105447)">
         <title>chest</title>
@@ -233,22 +233,22 @@
     <g style="visibility: hidden;" transform="matrix(1, 0, 0, -1, 0, 127.754478)">
       <title>npc-7</title>
       <path d="M 60.013 48.113 L 60.013 28.713 L 40.582 28.819 L 34.18 33.866 L 34.271 43.585 L 43.697 49.792 L 60.013 48.113 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" transform="matrix(-1, 0, 0, -1, 125.012513, 92.712888)" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 34.876 80.653 L 35.129 66.645 L 30.637 66.635 L 30.185 77.438 L 34.876 80.653 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-r</title>
+        <title>foot right</title>
       </path>
       <path d="M 62 63.8 L 62 83.2 L 42.519 84.708 L 36.465 82.759 L 33.888 80.112 L 34.715 65.498 L 41.602 65.817 L 62 63.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 71.229 29.103 C 74.96 34.89 72.509 40.137 70.476 40.137 C 69.458 40.137 56.929 45.453 49.396 46.279 C 41.884 47.104 42.077 45.639 42.077 43.328 C 42.077 41.006 43.137 38.241 46.895 35.471 C 50.63 32.719 58.499 27.203 59.512 27.203 C 60.443 27.203 68.076 24.213 71.229 29.103 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 81.465 91.313 L 83.173 101.072 L 80.856 103.539 L 78.111 97.316 L 78.181 94.71 L 81.465 91.313 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(243, 194, 243); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 158.055, 188.134003)">
-        <title>hand-r</title>
+        <title>hand right</title>
       </path>
       <path d="M 76.423 97.006 L 74.861 87.179 C 74.861 87.179 43.563 80.934 43.563 85.563 C 43.563 87.885 47.791 96.385 51.549 99.155 C 55.284 101.907 65.908 103.346 66.921 103.346 C 67.852 103.346 76.423 97.006 76.423 97.006 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 81.223 74.845 C 71.191 83.134 52.524 82.07 42.188 74.162 C 36.114 69.515 33.038 54.7 34.78 52.783 C 40.003 47.035 43.048 47.199 47.816 46.269 C 52.794 45.298 57.222 44.8 62.25 44.981 C 68.007 45.188 78.105 45.946 78.105 45.946 C 78.105 45.946 82.284 46.934 85.642 50.23 C 87.269 51.826 87.338 69.792 81.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.01447, 0.999895, -0.999895, 0.01447, 122.663403, 1.105447)">
         <title>chest</title>
@@ -266,25 +266,25 @@
     <g style="visibility: hidden;" transform="matrix(1, 0, 0, -1, 0, 127.674347)">
       <title>npc-8</title>
       <path d="M 101.75 51.445 L 101.772 59.28 L 92.657 59.088 L 92.899 49.621 L 99.703 49.694 L 101.75 51.445 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-l</title>
+        <title>foot left</title>
       </path>
       <path d="M 60.929 45.988 L 60.929 26.588 L 46.38 26.588 L 45.673 29.301 L 34.399 29.433 L 33.956 39.499 L 47.387 46.131 L 60.929 45.988 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" transform="matrix(-1, 0, 0, -1, 126.928926, 88.587917)" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 31.198 67.461 L 31.154 80.361 L 28.699 79.54 L 26.317 78.526 L 26.341 69.545 L 28.069 67.23 L 31.198 67.461 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-r</title>
+        <title>foot right</title>
       </path>
       <path d="M 62 60.8 L 62 80.2 L 42.519 81.708 L 32.479 81.37 L 29.899 79.093 L 30.17 68.56 L 32.621 65.943 L 40.362 66.192 L 42.464 60.726 L 62 60.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 70.812 30.786 C 74.543 36.573 72.702 39.027 70.669 39.027 C 69.651 39.027 53.111 41.51 45.578 42.336 C 38.066 43.161 35.485 39.912 35.485 37.601 C 35.485 35.279 35.059 30.626 38.817 27.856 C 42.552 25.104 60.59 26.142 61.603 26.142 C 62.534 26.142 67.659 25.896 70.812 30.786 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 68.228 94.334 L 72.856 91.428 L 76.106 100.686 L 69.833 104.815 L 67.01 100.069 L 68.228 94.334 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(243, 194, 243); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 158.055, 188.134003)">
-        <title>hand-r</title>
+        <title>hand right</title>
       </path>
       <path d="M 85.48 96.758 L 81.535 86.82 C 81.535 86.82 43.563 80.934 43.563 85.563 C 43.563 87.885 49.41 94.924 53.168 97.694 C 56.903 100.446 62.447 100.962 63.46 100.962 C 63.916 100.962 68.837 101.499 74.116 100.471 C 79.619 99.398 85.48 96.758 85.48 96.758 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 82.223 74.845 C 72.191 83.134 53.524 82.07 43.188 74.162 C 37.114 69.515 36.647 55.22 38.167 52.687 C 42.164 46.028 48.308 45.961 48.308 45.961 C 48.308 45.961 58.222 44.8 63.25 44.981 C 69.007 45.188 80.285 47.902 80.285 47.902 C 80.285 47.902 82.942 48.104 86.3 51.4 C 87.927 52.996 88.338 69.792 82.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.07869, 0.996899, -0.996899, 0.07869, 119.493907, -3.741005)">
         <title>chest</title>
@@ -302,25 +302,25 @@
     <g style="visibility: hidden;" transform="matrix(1, 0, 0, -1, 0, 126.582626)">
       <title>npc-9</title>
       <path d="M 109.286 48.248 L 111.843 52.13 L 111.996 59.371 L 96.779 59.426 L 98.235 48.604 L 109.286 48.248 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-l</title>
+        <title>foot left</title>
       </path>
       <path d="M 58.751 41.382 L 58.751 21.982 L 44.202 21.982 L 43.495 24.695 L 27.195 23.552 L 25.91 26.493 L 25.589 36.296 L 39.942 40.338 L 58.751 41.382 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" transform="matrix(-1, 0, 0, -1, 123.750743, 82.981795)" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 27.337 66.516 L 27.662 78.971 L 24.65 78.762 L 21.63 76.139 L 21.548 67.099 L 27.337 66.516 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-r</title>
+        <title>foot right</title>
       </path>
       <path d="M 62 59.8 L 62 79.2 L 42.519 80.708 L 31.322 80.889 L 27.318 78.95 L 26.971 65.845 L 31.674 64.321 L 41.53 63.817 L 42.464 59.726 L 62 59.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 69.502 30.815 C 73.233 36.602 70.126 40.574 68.093 40.574 C 67.075 40.574 53.316 42.611 45.783 43.437 C 42.69 43.777 39.101 41.82 39.101 41.82 C 39.101 41.82 31.933 36.122 31.933 34.763 C 31.933 32.441 32.263 28.59 36.021 25.82 C 39.756 23.068 61.712 24.721 62.725 24.721 C 63.656 24.721 66.349 25.925 69.502 30.815 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 63.489 98.553 L 70.13 93.557 L 74.16 102.301 L 65.183 109.756 L 63.18 106.214 L 63.489 98.553 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(243, 194, 243); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 158.055, 188.134003)">
-        <title>hand-r</title>
+        <title>hand right</title>
       </path>
       <path d="M 88.152 95.493 L 83.568 85.295 L 74.535 84.951 C 74.535 84.951 45.953 82.306 45.953 85.411 C 45.953 87.733 52.371 94.687 56.129 97.457 C 59.864 100.209 67.727 100.972 68.74 100.972 C 69.196 100.972 68.837 101.499 74.116 100.471 C 79.619 99.398 88.152 95.493 88.152 95.493 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 82.223 74.845 C 72.191 83.134 53.524 82.07 43.188 74.162 C 37.114 69.515 34.827 57.028 36.508 53.789 C 40.086 46.896 49.009 46.425 49.009 46.425 C 49.009 46.425 58.222 44.8 63.25 44.981 C 69.007 45.188 75.783 45.575 81.394 48.055 C 83.396 48.94 83.204 48.808 86.562 52.104 C 88.189 53.7 88.338 69.792 82.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.07869, 0.996899, -0.996899, 0.07869, 119.493907, -3.741005)">
         <title>chest</title>
@@ -338,25 +338,25 @@
     <g style="visibility: hidden;" transform="matrix(1, 0, 0, -1, 0, 125.73954)">
       <title>npc-10</title>
       <path d="M 92.397 47.115 L 95.69 49.562 L 95.808 56.671 L 84.857 56.674 L 84.79 47.483 L 92.397 47.115 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-l</title>
+        <title>foot left</title>
       </path>
       <path d="M 54.134 38.382 L 54.134 18.982 L 39.585 18.982 L 39.451 19.538 L 28.253 19.459 L 28.612 29.32 L 41.926 37.488 L 42.888 40.515 L 54.134 38.382 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" transform="matrix(-1, 0, 0, -1, 113.133625, 76.981795)" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 25.681 65.078 L 24.922 77.37 L 18.97 77.523 L 16.665 75.867 L 16.621 65.415 L 25.681 65.078 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
-        <title>foot-r</title>
+        <title>foot right</title>
       </path>
       <path d="M 62 59.8 L 62 79.2 L 42.716 79.475 L 27.152 79.329 L 24.935 77.579 L 25.413 64.833 L 27.316 63.963 L 41.53 63.817 L 42.464 59.726 L 62 59.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 69.502 32.815 C 73.233 38.602 70.126 42.574 68.093 42.574 C 67.075 42.574 53.316 44.611 45.783 45.437 C 42.69 45.777 40.385 44.444 40.385 44.444 C 40.385 44.444 37.833 39.702 37.833 38.343 C 37.833 36.021 36.755 32.742 40.513 29.972 C 44.248 27.22 62.482 26.304 63.495 26.304 C 64.426 26.304 66.349 27.925 69.502 32.815 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 81.899 87.151 L 87.62 84.092 L 89.864 92.545 L 83.414 96.698 L 81.259 94.202 L 81.899 87.151 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(243, 194, 243); fill-opacity: 0.5;" transform="matrix(-1, 0, 0, -1, 171.123001, 180.790001)">
-        <title>hand-r</title>
+        <title>hand right</title>
       </path>
       <path d="M 83.546 96.489 L 80.799 86.548 L 74.535 87.034 C 74.535 87.034 45.953 83.306 45.953 86.411 C 45.953 88.733 52.371 95.687 56.129 98.457 C 59.864 101.209 67.727 101.972 68.74 101.972 C 69.196 101.972 68.837 102.499 74.116 101.471 C 79.619 100.398 83.546 96.489 83.546 96.489 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 82.223 74.845 C 72.191 83.134 53.524 82.07 43.188 74.162 C 37.114 69.515 35.154 55.892 36.835 52.653 C 40.413 45.76 48.257 46.617 48.257 46.617 C 48.257 46.617 58.222 44.8 63.25 44.981 C 69.007 45.188 75.783 45.575 81.394 48.055 C 83.396 48.94 84.173 49.837 87.531 53.133 C 89.158 54.729 88.338 69.792 82.223 74.845 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.07869, 0.996899, -0.996899, 0.07869, 119.493907, -3.741005)">
         <title>chest</title>
