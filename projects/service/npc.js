@@ -9,13 +9,18 @@ import { getSpawnCount } from '../geomorph/geomorph.model';
 
 /**
  * @param {ServerTypes.ParsedNpc} parsed 
- * @param {string} npcOutputDir 
- * @param {number} [zoom] 
+ * @param {string} outputDir 
+ * @param {{ zoom?: number; animNames?: string[] }} [opts]
  */
-export function renderNpcSpriteSheets(parsed, npcOutputDir, zoom = 1) {
-  for (const anim of Object.values(parsed.animLookup)) {
+export function renderNpcSpriteSheets(parsed, outputDir, opts = {}) {
+  const {
+    zoom = 1,
+    animNames = Object.keys(parsed.animLookup),
+  } = opts;
+  const anims = Object.values(parsed.animLookup).filter(x => animNames.includes(x.animName))
+  for (const anim of anims) {
     const canvas = drawAnimSpriteSheet(anim, zoom);
-    const outputPath = path.resolve(npcOutputDir, `${parsed.npcName}--${anim.animName}.png`);
+    const outputPath = path.resolve(outputDir, `${parsed.npcName}--${anim.animName}.png`);
     saveCanvasAsFile(canvas, outputPath);
   }
 }
