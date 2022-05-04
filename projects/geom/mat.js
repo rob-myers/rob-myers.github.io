@@ -74,6 +74,20 @@ export class Mat {
 		return Math.abs(this.determinant) >= 1e-14
 	}
 
+  /**
+   * Multiply this matrix (left) against param matrix (right).
+   * @param {[number, number, number, number, number, number]} _
+   */
+  preMultiply([a, b, c, d, e, f]) {
+    const ma = this.a * a + this.c * b + this.e * 0;
+    const mb = this.b * a + this.d * b + this.f * 0;
+    const mc = this.a * c + this.c * d + this.e * 0;
+    const md = this.b * c + this.d * d + this.f * 0;
+    const me = this.a * e + this.c * f + this.e * 1;
+    const mf = this.b * e + this.d * f + this.f * 1;
+    return this.feedFromArray([ma, mb, mc, md, me, mf]);
+  }
+
   setIdentity() {
     this.a = 1;
     this.b = 0;

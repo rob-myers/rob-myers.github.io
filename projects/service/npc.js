@@ -6,6 +6,7 @@ import { Poly, Vect } from '../geom';
 import { extractDeepMetas, extractGeomsAt, extractMetas, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
 import { getSpawnCount } from '../geomorph/geomorph.model';
+import { warn } from './log';
 
 /**
  * @param {ServerTypes.ParsedNpc} parsed 
@@ -85,8 +86,9 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
 
   const metaGeoms = extractGeomsAt($, topNodes, 'meta');
   const boundsGeoms = metaGeoms.filter(x => x._ownTags[1] === 'bounds');
+  const symbolLookup = extractDefSymbols($, topNodes);
   const animMetas = boundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect }));
-  console.log('FOUND:', { animMetas });
+  console.log('FOUND:', { animMetas, symbolLookup });
 
   return {
     npcName,
@@ -95,7 +97,7 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
         [animName]: {
           animName,
           aabb,
-          frames: extractNpcFrames($, topNodes, animName),
+          frames: extractNpcFrames($, topNodes, animName, symbolLookup),
         },
       }), /** @type {ServerTypes.ParsedNpc['animLookup']} */ ({})),
     zoom,
@@ -105,17 +107,46 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
 /**
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
- * @param {string} title
  */
-function extractNpcFrames(api, topNodes, title) {
-  /** The group named `title` (e.g. `"walk"`), itself containing group of frames, named e.g. `"npc-1"`, `"npc-2"`, ... */
+function extractDefSymbols(api, topNodes) {
+  const svgDefs = topNodes.find(x => x.type === 'tag' && x.name === 'defs');
+  const svgSymbols = api(svgDefs).children('symbol').toArray();
+  
+  const lookup = svgSymbols.reduce((agg, el) => {
+    const id = el.attribs.id;
+    const title = api(el).children('title').text() || null;
+    if (id !== title) {
+      warn(`saw symbol with id "${id}" and distinct title "${title}"`);
+    }
+    // NOTE symbol should have top-level group(s)
+    agg[id] = api(el).children('g').toArray();
+    return agg;
+  }, /** @type {Record<string, Element[]>} */ ({}));
+
+  return lookup;
+}
+
+/**
+ * @param {CheerioAPI} api Cheerio
+ * @param {Element[]} topNodes Topmost children of <svg>
+ * @param {string} title Title of <g> to extract
+ * @param {Record<string, Element[]>} symbolLookup
+ */
+function extractNpcFrames(api, topNodes, title, symbolLookup) {
+  /**
+   * The group named `title` (e.g. `"walk"`), itself containing
+   * groups of frames named e.g. `"npc-1"`, `"npc-2"`, ...
+   */
   const animGroup = topNodes.find(x => hasTitle(api, x, title));
   /** The groups inside the group `animGroup` named. The first one might be named `"npc-1"` */
   const groups = /** @type {Element[]} */ (animGroup?.children??[]).filter(x => x.name === 'g');
 
-  const output = /** @type {ServerTypes.GeomTagMeta[][]} */ ([]);
-  for (const group of groups) output.push(extractDeepMetas(api, group));
-  return output;
+  /**
+   * TODO 🚧 support <symbol> and <use>
+   */
+  return groups.map((group) =>
+    extractDeepMetas(api, symbolLookup, group)
+  );
 }
 
 /**

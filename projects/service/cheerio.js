@@ -1,6 +1,7 @@
 import { CheerioAPI, Element } from 'cheerio';
 import { svgPathToPolygon } from './dom';
 import { Poly, Rect, Mat } from '../geom';
+import { warn } from './log';
 
 /**
  * - Test if node has child <title>{title}</title>,
@@ -77,33 +78,38 @@ export function extractMetas(api, parent) {
 }
 
 /**
- * Extract rect, path and ellipse deeply, prepending parent tags
+ * Extract rect, path, ellipse modulo <g> and <use>.
+ * We prepend parent tags.
  * @param {CheerioAPI} api
+ * @param {Record<string, Element[]>} symbolLookup
  * @param {Element} parent
  * @return {ServerTypes.GeomTagMeta[]}
  */
-export function extractDeepMetas(api, parent) {
-  const children = api(parent).children('rect, path, ellipse, g').toArray();
-  return children.flatMap(x => extractMeta(api, x));
+export function extractDeepMetas(api, symbolLookup, parent) {
+  const children = api(parent).children('rect, path, ellipse, g, use').toArray();
+  return children.flatMap(x => extractMeta(api, x, { symbolLookup }));
 }
 
 /**
  * @param {CheerioAPI} api
  * @param {Element} el
- * @param {string[]} [prependTags]
+ * @param {{ symbolLookup?: Record<string, Element[]>; prependTags?: string[]; transform?: [number, number, number, number, number, number] }} [ctxt]
  * @returns {ServerTypes.GeomTagMeta | ServerTypes.GeomTagMeta[]}
  */
-function extractMeta(api, el, prependTags) {
+function extractMeta(api, el, ctxt) {
   const { tagName, attribs: a } = el;
   const title = api(el).children('title').text() || null;
+
   const tags = title ? title.split(' ') : [];
-  prependTags && tags.unshift(...prependTags);
-  // DOMMatrix not available server-side
+  ctxt?.prependTags && tags.unshift(...ctxt.prependTags);
+
+  // NOTE DOMMatrix not available server-side
   // const m = new DOMMatrix(a.transform);
   const m = new Mat(a.transform);
-  const transform = a.transform
-    ? /** @type {[number, number, number, number, number, number]} */ ([m.a, m.b, m.c, m.d, m.e, m.f])
-    : undefined;
+  ctxt?.transform && m.preMultiply(ctxt.transform);
+  const transform = m.isIdentity
+    ? undefined
+    : /** @type {[number, number, number, number, number, number]} */ ([m.a, m.b, m.c, m.d, m.e, m.f]);
 
   const style = (a.style??'').split(/;\s?/).map(x => x.split(/:\s?/)).reduce((agg, [k, v]) => ({ ...agg, [k]: v }), {});
 
@@ -114,11 +120,18 @@ function extractMeta(api, el, prependTags) {
   } else if (tagName === 'ellipse') {
     return { tags, transform, style, tagName: 'ellipse', cx: Number(a.cx || 0), cy: Number(a.cy || 0), rx: Number(a.rx || 0), ry: Number(a.ry || 0) };
   } else if (tagName === 'g') {
-    // NOTE currently ignore `style` and `transform` on <g>
+    // NOTE currently ignore `style` on <g>
     const children = api(el).children('rect, path, ellipse, g').toArray();
-    return children.flatMap(x => extractMeta(api, x, tags));
+    return children.flatMap(x => extractMeta(api, x, { symbolLookup: ctxt?.symbolLookup, prependTags: tags, transform }));
+  } else if (tagName === 'use') {
+    const symbolId = el.attribs.href.slice('#'.length);
+    if (ctxt?.symbolLookup?.[symbolId]) {
+      return ctxt.symbolLookup[symbolId].flatMap(el => extractMeta(api, el, { symbolLookup: ctxt?.symbolLookup, prependTags: tags, transform }));
+    } else {
+      warn(`extractMeta: symbol #${symbolId} not found`);
+    }
   } else {
-    console.warn('extractMeta: unexpected tagName:', tagName, a);
+    warn(`extractMeta: unexpected tagName: "${tagName}"`);
   }
   return [];
 }
