@@ -1,6 +1,7 @@
 /// <reference path="./deps.d.ts"/>
 /**
  * yarn render-npc {npc-name}
+ * yarn render-npc {npc-name} {anim-name-0} ...
  * 
  * Examples:
  * - yarn render-npc first-npc
@@ -16,7 +17,7 @@ const [,, npcName, ...animNames] = process.argv;
 const npcInputDir = 'media/npc'
 const npcSvgFilepath = path.resolve(npcInputDir, npcName + '.svg');
 if (!npcName || !fs.existsSync(npcSvgFilepath)) {
-  error(`error: usage: yarn render-npc {npc-name} [{anim-name}] where
+  error(`error: usage: yarn render-npc {npc-name} {...anim-name-0} ... where
     - media/npc/{npc-name}.svg exists
   `);
   process.exit(1);

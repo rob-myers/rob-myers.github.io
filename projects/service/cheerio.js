@@ -71,20 +71,33 @@ function extractGeom(api, el) {
  * @param {Element} parent
  * @return {ServerTypes.GeomTagMeta[]}
  */
- export function extractMetas(api, parent) {
+export function extractMetas(api, parent) {
   const children = api(parent).children('rect, path, ellipse').toArray();
   return children.flatMap(x => extractMeta(api, x)??[]);
 }
 
 /**
+ * Extract rect, path and ellipse deeply, prepending parent tags
+ * @param {CheerioAPI} api
+ * @param {Element} parent
+ * @return {ServerTypes.GeomTagMeta[]}
+ */
+export function extractDeepMetas(api, parent) {
+  const children = api(parent).children('rect, path, ellipse, g').toArray();
+  return children.flatMap(x => extractMeta(api, x));
+}
+
+/**
  * @param {CheerioAPI} api
  * @param {Element} el
- * @returns {undefined | ServerTypes.GeomTagMeta}
+ * @param {string[]} [prependTags]
+ * @returns {ServerTypes.GeomTagMeta | ServerTypes.GeomTagMeta[]}
  */
-function extractMeta(api, el) {
+function extractMeta(api, el, prependTags) {
   const { tagName, attribs: a } = el;
   const title = api(el).children('title').text() || null;
   const tags = title ? title.split(' ') : [];
+  prependTags && tags.unshift(...prependTags);
   // DOMMatrix not available server-side
   // const m = new DOMMatrix(a.transform);
   const m = new Mat(a.transform);
@@ -100,7 +113,12 @@ function extractMeta(api, el) {
     return { tags, transform, style, tagName: 'path', d: a.d };
   } else if (tagName === 'ellipse') {
     return { tags, transform, style, tagName: 'ellipse', cx: Number(a.cx || 0), cy: Number(a.cy || 0), rx: Number(a.rx || 0), ry: Number(a.ry || 0) };
+  } else if (tagName === 'g') {
+    // NOTE currently ignore `style` and `transform` on <g>
+    const children = api(el).children('rect, path, ellipse, g').toArray();
+    return children.flatMap(x => extractMeta(api, x, tags));
   } else {
     console.warn('extractMeta: unexpected tagName:', tagName, a);
   }
+  return [];
 }

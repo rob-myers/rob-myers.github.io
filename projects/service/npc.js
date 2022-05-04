@@ -3,7 +3,7 @@ import { Image, createCanvas, Canvas } from 'canvas';
 import path from 'path';
 
 import { Poly, Vect } from '../geom';
-import { extractGeomsAt, extractMetas, hasTitle } from './cheerio';
+import { extractDeepMetas, extractGeomsAt, extractMetas, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
 import { getSpawnCount } from '../geomorph/geomorph.model';
 
@@ -86,13 +86,18 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
   const metaGeoms = extractGeomsAt($, topNodes, 'meta');
   const boundsGeoms = metaGeoms.filter(x => x._ownTags[1] === 'bounds');
   const animMetas = boundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect }));
-  console.log('found', { animMetas });
+  console.log('FOUND:', { animMetas });
 
   return {
     npcName,
-    animLookup: animMetas.reduce((agg, { animName, aabb }) => ({ ...agg,
-      [animName]: { animName, aabb, frames: extractNpcFrames($, topNodes, animName) },
-    }), /** @type {ServerTypes.ParsedNpc['animLookup']} */ ({})),
+    animLookup: animMetas
+      .reduce((agg, { animName, aabb }) => ({ ...agg,
+        [animName]: {
+          animName,
+          aabb,
+          frames: extractNpcFrames($, topNodes, animName),
+        },
+      }), /** @type {ServerTypes.ParsedNpc['animLookup']} */ ({})),
     zoom,
   };
 }
@@ -103,18 +108,18 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
  * @param {string} title
  */
 function extractNpcFrames(api, topNodes, title) {
-  /** The group containing groups of frames */
+  /** The group named `title` (e.g. `"walk"`), itself containing group of frames, named e.g. `"npc-1"`, `"npc-2"`, ... */
   const animGroup = topNodes.find(x => hasTitle(api, x, title));
-  /** The groups inside the group `animGroup` */
+  /** The groups inside the group `animGroup` named. The first one might be named `"npc-1"` */
   const groups = /** @type {Element[]} */ (animGroup?.children??[]).filter(x => x.name === 'g');
 
   const output = /** @type {ServerTypes.GeomTagMeta[][]} */ ([]);
-  for (const group of groups) output.push(extractMetas(api, group));
+  for (const group of groups) output.push(extractDeepMetas(api, group));
   return output;
 }
 
 /**
- * TODO 🚧 deps needs rethink
+ * TODO 🚧 deps needs rethink?
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 
  * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssExtApi; update: () => void }} deps
