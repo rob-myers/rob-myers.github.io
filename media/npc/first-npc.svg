@@ -5,19 +5,19 @@
   </defs>
   <g style="visibility: hidden;">
     <title>idle</title>
-    <g style="">
+    <g style="visibility: visible;">
       <title>npc-1</title>
       <path d="M 60 44.8 L 60 64.2 L 40.569 64.094 L 40.464 44.726 L 60 44.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); pointer-events: none;" bx:origin="1.094 0.906">
-        <title>leg-l</title>
+        <title>leg left</title>
       </path>
       <path d="M 60 63.8 L 60 83.2 L 40.569 83.094 L 40.464 63.726 L 60 63.8 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; pointer-events: none; fill: rgb(85, 85, 85);" bx:origin="1.094 0.906">
-        <title>leg-r</title>
+        <title>leg right</title>
       </path>
       <path d="M 73.757 27.592 C 77.488 33.379 73.687 40.059 71.654 40.059 C 69.621 40.059 42.563 45.526 42.563 40.897 C 42.563 38.575 48.41 31.536 52.168 28.766 C 55.903 26.014 61.447 25.498 62.46 25.498 C 63.391 25.498 70.604 22.702 73.757 27.592 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-l</title>
+        <title>arm left</title>
       </path>
       <path d="M 73.757 98.868 C 77.488 93.081 73.687 86.401 71.654 86.401 C 69.621 86.401 42.563 80.934 42.563 85.563 C 42.563 87.885 48.41 94.924 52.168 97.694 C 55.903 100.446 61.447 100.962 62.46 100.962 C 63.391 100.962 70.604 103.758 73.757 98.868 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(0, 0, 255); pointer-events: none;">
-        <title>arm-r</title>
+        <title>arm right</title>
       </path>
       <path d="M 80.075 74.799 C 70.043 83.088 51.376 82.024 41.04 74.116 C 34.966 69.469 32.911 53.997 34.653 52.08 C 39.876 46.332 46.16 45.915 46.16 45.915 C 46.16 45.915 56.074 44.754 61.102 44.935 C 66.859 45.142 78.137 47.856 78.137 47.856 C 78.137 47.856 80.794 48.058 84.152 51.354 C 85.779 52.95 86.19 69.746 80.075 74.799 Z" style="stroke: rgb(0, 0, 0); stroke-width: 0.5px; fill-opacity: 0.6; pointer-events: none;" transform="matrix(0.01447, 0.999895, -0.999895, 0.01447, 121.633866, 2.25406)">
         <title>chest</title>
@@ -25,12 +25,15 @@
       <path d="M 71.193 45.781 C 69.548 47.998 67.392 68.574 68.64 82.936 C 68.823 85.04 69.426 91.476 69.032 93.334 C 67.512 100.5 64.866 101.625 60.057 101.209 C 49.367 100.284 43.193 90.748 39.398 84.544 C 35.603 78.34 40.237 47.595 41.122 43.481 C 42.481 37.165 53.855 23.986 61.01 23.986 C 67.733 23.986 67.432 24.652 71.794 26.234 C 76.128 27.806 72.962 43.397 71.193 45.781 Z" style="stroke: rgb(0, 0, 0); pointer-events: none; fill-opacity: 0.8;" transform="matrix(0.996287, -0.086089, 0.086089, 0.996287, -4.280137, 5.791421)">
         <title>shoulders</title>
       </path>
-      <ellipse style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(244, 212, 255); stroke-width: 0.25px; pointer-events: none;" cx="-66.745" cy="-63.901" rx="14.49" ry="14.792" transform="matrix(-1, 0, 0, -1, 0, 0)">
+      <g>
         <title>head</title>
-      </ellipse>
-      <path d="M 77.593 63.901 C 77.593 72.07 71.106 78.693 63.103 78.693 C 55.1 78.693 52.255 73.558 52.255 65.389 C 52.255 57.22 55.1 49.109 63.103 49.109 C 71.106 49.109 77.593 55.732 77.593 63.901 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-width: 0.25px; pointer-events: none;" transform="matrix(-1, 0, 0, -1, 129.848003, 127.802002)">
-        <title>hair</title>
-      </path>
+        <ellipse style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(244, 212, 255); stroke-width: 0.25px; pointer-events: none;" cx="-66.745" cy="-63.901" rx="14.49" ry="14.792" transform="matrix(-1, 0, 0, -1, 0, 0)">
+          <title>face</title>
+        </ellipse>
+        <path d="M 77.593 63.901 C 77.593 72.07 71.106 78.693 63.103 78.693 C 55.1 78.693 52.255 73.558 52.255 65.389 C 52.255 57.22 55.1 49.109 63.103 49.109 C 71.106 49.109 77.593 55.732 77.593 63.901 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-width: 0.25px; pointer-events: none;" transform="matrix(-1, 0, 0, -1, 129.848003, 127.802002)">
+          <title>hair</title>
+        </path>
+      </g>
     </g>
   </g>
   <g transform="matrix(1, 0, 0, 1, -1, 0)" style="">
@@ -332,7 +335,7 @@
         <title>hair</title>
       </path>
     </g>
-    <g style="" transform="matrix(1, 0, 0, -1, 0, 125.73954)">
+    <g style="visibility: hidden;" transform="matrix(1, 0, 0, -1, 0, 125.73954)">
       <title>npc-10</title>
       <path d="M 92.397 47.115 L 95.69 49.562 L 95.808 56.671 L 84.857 56.674 L 84.79 47.483 L 92.397 47.115 Z" style="stroke: rgb(0, 0, 0); stroke-opacity: 0.5; stroke-width: 0.5px; fill: rgb(85, 85, 85); fill-opacity: 0.8; pointer-events: none;" bx:origin="1.094 0.906">
         <title>foot-l</title>
