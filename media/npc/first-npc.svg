@@ -27,10 +27,10 @@
       </path>
       <g>
         <title>head</title>
-        <ellipse style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(244, 212, 255); stroke-width: 0.25px; pointer-events: none;" cx="-66.745" cy="-63.901" rx="14.49" ry="14.792" transform="matrix(-1, 0, 0, -1, 0, 0)">
+        <path d="M 52.255 63.901 C 52.255 55.732 58.742 49.109 66.745 49.109 C 74.748 49.109 81.235 55.732 81.235 63.901 C 81.235 72.07 74.748 78.693 66.745 78.693 C 58.742 78.693 52.255 72.07 52.255 63.901 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(244, 212, 255); stroke-width: 0.25px;">
           <title>face</title>
-        </ellipse>
-        <path d="M 77.593 63.901 C 77.593 72.07 71.106 78.693 63.103 78.693 C 55.1 78.693 52.255 73.558 52.255 65.389 C 52.255 57.22 55.1 49.109 63.103 49.109 C 71.106 49.109 77.593 55.732 77.593 63.901 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-width: 0.25px; pointer-events: none;" transform="matrix(-1, 0, 0, -1, 129.848003, 127.802002)">
+        </path>
+        <path d="M 52.255 63.901 C 52.255 55.732 58.742 49.109 66.745 49.109 C 74.748 49.109 77.593 54.244 77.593 62.413 C 77.593 70.582 74.748 78.693 66.745 78.693 C 58.742 78.693 52.255 72.07 52.255 63.901 Z" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); stroke-width: 0.25px;">
           <title>hair</title>
         </path>
       </g>
