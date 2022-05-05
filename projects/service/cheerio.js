@@ -104,9 +104,9 @@ function extractMeta(api, el, ctxt) {
   ctxt?.prependTags && tags.unshift(...ctxt.prependTags);
 
   // NOTE DOMMatrix not available server-side
-  // const m = new DOMMatrix(a.transform);
   const m = new Mat(a.transform);
   ctxt?.transform && m.preMultiply(ctxt.transform);
+  m.precision(3);
   const transform = m.isIdentity
     ? undefined
     : /** @type {[number, number, number, number, number, number]} */ ([m.a, m.b, m.c, m.d, m.e, m.f]);

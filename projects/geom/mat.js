@@ -75,8 +75,22 @@ export class Mat {
 	}
 
   /**
+   * @param {number} dp decimal places
+   */
+  precision(dp) {
+    this.feedFromArray([
+      Number(this.a.toFixed(dp)),
+      Number(this.b.toFixed(dp)),
+      Number(this.c.toFixed(dp)),
+      Number(this.d.toFixed(dp)),
+      Number(this.e.toFixed(dp)),
+      Number(this.f.toFixed(dp)),
+    ]);
+  }
+
+  /**
    * Multiply this matrix (left) against param matrix (right).
-   * @param {[number, number, number, number, number, number]} _
+   * @param {SixTuple} _
    */
   preMultiply([a, b, c, d, e, f]) {
     const ma = this.a * a + this.c * b + this.e * 0;
@@ -102,7 +116,7 @@ export class Mat {
     if (typeof source === 'string') {
       const transform = source
         .slice('matrix('.length, -')'.length).split(',').map(Number);
-      return this.feedFromArray(transform);
+      return this.feedFromArray( /** @type {SixTuple} */ (transform));
     } else if (!source) {
       return this;
     } else if (Array.isArray(source)) {
@@ -138,7 +152,7 @@ export class Mat {
     return v;
   }
 
-  /** @param {number[]} _ */
+  /** @param {SixTuple} _ */
   feedFromArray([a, b, c, d, e, f]) {
     this.a = a;
     this.b = b;
