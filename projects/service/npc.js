@@ -88,7 +88,7 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
   const boundsGeoms = metaGeoms.filter(x => x._ownTags[1] === 'bounds');
   const symbolLookup = extractDefSymbols($, topNodes);
   const animMetas = boundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect }));
-  console.log('FOUND:', { animMetas, symbolLookup });
+  console.log('parseNpc found:', { animMetas, symbolLookup });
 
   return {
     npcName,
@@ -118,7 +118,7 @@ function extractDefSymbols(api, topNodes) {
     if (id !== title) {
       warn(`saw symbol with id "${id}" and distinct title "${title}"`);
     }
-    // NOTE symbol should have top-level group(s)
+    // NOTE symbol must have top-level group(s)
     agg[id] = api(el).children('g').toArray();
     return agg;
   }, /** @type {Record<string, Element[]>} */ ({}));
@@ -135,18 +135,16 @@ function extractDefSymbols(api, topNodes) {
 function extractNpcFrames(api, topNodes, title, symbolLookup) {
   /**
    * The group named `title` (e.g. `"walk"`), itself containing
-   * groups of frames named e.g. `"npc-1"`, `"npc-2"`, ...
+   * groups of frames named e.g. `"npc-1"`, `"npc-2"`, etc.
    */
   const animGroup = topNodes.find(x => hasTitle(api, x, title));
-  /** The groups inside the group `animGroup` named. The first one might be named `"npc-1"` */
-  const groups = /** @type {Element[]} */ (animGroup?.children??[]).filter(x => x.name === 'g');
-
   /**
-   * TODO 🚧 support <symbol> and <use>
+   * The groups inside the group named `animGroup`.
+   * The 1st one might be named `"npc-1"`.
    */
-  return groups.map((group) =>
-    extractDeepMetas(api, symbolLookup, group)
-  );
+  const groups = /** @type {Element[]} */ (animGroup?.children??[])
+    .filter(x => x.name === 'g');
+  return groups.map((group) => extractDeepMetas(api, symbolLookup, group));
 }
 
 /**
