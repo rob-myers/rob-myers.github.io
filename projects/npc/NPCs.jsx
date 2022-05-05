@@ -194,7 +194,7 @@ const rootCss = css`
 import npcJson from '../../public/npc/first-npc.json'
 const { animLookup: anim, zoom } = npcJson;
 /** Scale the sprites */
-const npcScale = 0.15;
+const npcScale = 0.18;
 /** Ensure NPC faces along positive x-axis */
 // const npcOffsetAngleDeg = 90;
 const npcOffsetAngleDeg = 0;
@@ -205,7 +205,7 @@ const npcCss = css`
     cursor: pointer;
     position: absolute;
     pointer-events: all;
-    filter: grayscale(100%);
+    filter: grayscale(100%) contrast(120%) brightness(80%);
     /* transform: scale(0.18) rotate(90deg); */
   }
   

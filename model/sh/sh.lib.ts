@@ -185,7 +185,7 @@ call '({args}) =>
 
     // TEST DEBUG
     const path = (res?.paths??[]).reduce((agg, item) => agg.concat(item), []);
-    wire.next({ key: "debug-path", pathName: "foo", path })
+    wire.next({ key: "debug-path", pathName: "test-" + npcKey, path })
   }' "$@"
 }`,
 
