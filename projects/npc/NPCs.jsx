@@ -214,7 +214,7 @@ const npcCss = css`
     height: ${anim.walk.aabb.height * zoom}px;
     left: ${-anim.walk.aabb.width * zoom * 0.5}px;
     top: ${-anim.walk.aabb.height * zoom * 0.5}px;
-    animation: walk 0.45s steps(${anim.walk.frames.length}) infinite;
+    animation: walk 0.625s steps(${anim.walk.frames.length}) infinite;
     background: url('/npc/first-npc--walk.png');
   }
   /* &.walk .body {
