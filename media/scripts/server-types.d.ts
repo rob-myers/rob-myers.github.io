@@ -33,7 +33,12 @@ declare namespace ServerTypes {
   export interface NpcAnim {
     animName: string;
     aabb: Geom.Rect;
-    frames: GeomTagMeta[][];
+    frames: NpcAnimFrame[];
+  }
+
+  export interface NpcAnimFrame {
+    transform: [number, number, number, number, number, number];
+    geoms: GeomTagMeta[];
   }
 
   export interface ParsedNpc {

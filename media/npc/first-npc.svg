@@ -357,18 +357,18 @@
       <title>guard1_walk-offset</title>
     </image>
   </g>
-  <g style="visibility: hidden;" transform="matrix(1, 0, 0, 1, -1, 0)">
+  <g style="">
     <title>meta</title>
-    <rect x="65" y="64" width="2" height="2" style="fill: rgb(255, 0, 0); pointer-events: none;">
+    <rect x="64" y="64" width="2" height="2" style="fill: rgb(255, 0, 0); pointer-events: none;">
       <title>idle origin</title>
     </rect>
-    <rect x="65" y="64" width="2" height="2" style="fill: rgb(255, 0, 0); pointer-events: none;">
+    <rect x="64" y="64" width="2" height="2" style="fill: rgb(255, 0, 0); pointer-events: none;">
       <title>walk origin</title>
     </rect>
-    <rect x="1" width="128" height="128" style="fill: none; stroke: rgb(255, 0, 0); stroke-width: 0.25px; pointer-events: none;">
+    <rect x="0" width="128" height="128" style="fill: none; stroke: rgb(255, 0, 0); stroke-width: 0.25px; pointer-events: none;">
       <title>idle bounds</title>
     </rect>
-    <rect x="1" width="128" height="128" style="fill: none; stroke: rgb(255, 0, 0); stroke-width: 0.25px; pointer-events: none;">
+    <rect x="0" width="128" height="128" style="fill: none; stroke: rgb(255, 0, 0); stroke-width: 0.25px; pointer-events: none;">
       <title>walk bounds</title>
     </rect>
   </g>

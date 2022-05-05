@@ -138,6 +138,11 @@ export class Mat {
     ]);
   }
 
+  /** @returns {SixTuple} */
+  toArray() {
+    return [this.a, this.b, this.c, this.d, this.e, this.f];
+  }
+
   /**
    * Transform point, mutating it.
    * @template {Geom.VectJson} T

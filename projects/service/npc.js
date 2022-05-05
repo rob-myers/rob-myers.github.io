@@ -47,12 +47,14 @@ function drawAnimSpriteSheet(anim, zoom = 1) {
  * Render by recreating an SVG and assigning as Image src.
  * Permits complex SVG <path>s, non-trivial to draw directly into canvas.
  * @param {ServerTypes.NpcAnim} anim 
- * @param {number} frame 0-based frame index
+ * @param {number} frameId 0-based frame index
  * @param {Canvas} canvas 
  * @param {number} [zoom] 
  */
-function drawFrameAt(anim, frame, canvas, zoom = 1) {
-  const svgItems = anim.frames[frame].map(item => {
+function drawFrameAt(anim, frameId, canvas, zoom = 1) {
+  const frame = anim.frames[frameId];
+
+  const svgItems = frame.geoms.map(item => {
     const style = Object.entries(item.style).map(x => x.join(': ')).join(';');
     const transform = item.transform ? `matrix(${item.transform})` : '';
     if (item.tagName === 'ellipse') {
@@ -66,9 +68,12 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
 
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="${anim.aabb.toString()}" width="${anim.aabb.width * zoom}" height="${anim.aabb.height * zoom}">
-      ${svgItems.join('\n    ')}
+      <g transform="matrix(${frame.transform})">
+        ${svgItems.join('\n' + ' '.repeat(6))}
+      </g>
     </svg>
   `;
+
   const image = new Image;
   image.src = Buffer.from(svg, 'utf-8');
   canvas.getContext('2d').drawImage(image, 0, 0);
@@ -86,14 +91,14 @@ function drawFrameAt(anim, frame, canvas, zoom = 1) {
 
   const metaGeoms = extractGeomsAt($, topNodes, 'meta');
   const boundsGeoms = metaGeoms.filter(x => x._ownTags[1] === 'bounds');
-  const symbolLookup = extractDefSymbols($, topNodes);
   const animMetas = boundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect }));
+  const symbolLookup = extractDefSymbols($, topNodes);
   console.log('parseNpc found:', { animMetas, symbolLookup });
 
   return {
     npcName,
     animLookup: animMetas
-      .reduce((agg, { animName, aabb }) => ({ ...agg,
+      .reduce((agg, { animName, aabb,  }) => ({ ...agg,
         [animName]: {
           animName,
           aabb,
@@ -131,6 +136,7 @@ function extractDefSymbols(api, topNodes) {
  * @param {Element[]} topNodes Topmost children of <svg>
  * @param {string} title Title of <g> to extract
  * @param {Record<string, Element[]>} symbolLookup
+ * @returns {ServerTypes.NpcAnimFrame[]}
  */
 function extractNpcFrames(api, topNodes, title, symbolLookup) {
   /**
@@ -144,7 +150,10 @@ function extractNpcFrames(api, topNodes, title, symbolLookup) {
    */
   const groups = /** @type {Element[]} */ (animGroup?.children??[])
     .filter(x => x.name === 'g');
-  return groups.map((group) => extractDeepMetas(api, symbolLookup, group));
+
+  return groups.map((group) =>
+    extractDeepMetas(api, symbolLookup, group)
+  );
 }
 
 /**

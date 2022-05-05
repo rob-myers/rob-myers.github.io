@@ -79,15 +79,18 @@ export function extractMetas(api, parent) {
 
 /**
  * Extract rect, path, ellipse modulo <g> and <use>.
- * We prepend parent tags.
  * @param {CheerioAPI} api
  * @param {Record<string, Element[]>} symbolLookup
- * @param {Element} parent
- * @return {ServerTypes.GeomTagMeta[]}
+ * @param {Element} parentFrame A <g> containing frame's graphics.
+ * @returns {ServerTypes.NpcAnimFrame}
  */
-export function extractDeepMetas(api, symbolLookup, parent) {
-  const children = api(parent).children('rect, path, ellipse, g, use').toArray();
-  return children.flatMap(x => extractMeta(api, x, { symbolLookup }));
+export function extractDeepMetas(api, symbolLookup, parentFrame) {
+  const children = api(parentFrame).children('rect, path, ellipse, g, use').toArray();
+  return {
+    geoms: children.flatMap(x => extractMeta(api, x, { symbolLookup })),
+    // NOTE concerning `parentFrame` transform...
+    transform: new Mat(parentFrame.attribs.transform).toArray(),
+  };
 }
 
 /**
@@ -107,9 +110,7 @@ function extractMeta(api, el, ctxt) {
   const m = new Mat(a.transform);
   ctxt?.transform && m.preMultiply(ctxt.transform);
   m.precision(3);
-  const transform = m.isIdentity
-    ? undefined
-    : /** @type {[number, number, number, number, number, number]} */ ([m.a, m.b, m.c, m.d, m.e, m.f]);
+  const transform = m.isIdentity ? undefined : m.toArray();
 
   const style = (a.style??'').split(/;\s?/).map(x => x.split(/:\s?/)).reduce((agg, [k, v]) => ({ ...agg, [k]: v }), {});
 
