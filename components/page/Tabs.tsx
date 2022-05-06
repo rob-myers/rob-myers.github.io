@@ -27,8 +27,9 @@ export default function Tabs(props: Props) {
     toggleEnabled() {
       state.enabled = !state.enabled;
       state.colour = state.colour === 'clear' ? 'faded' : 'clear';
-      // Disable triggers minimize
-      if (!state.enabled) state.expanded = false;
+      if (!state.enabled && state.expanded) {
+        state.toggleExpand(); // Disable triggers minimize
+      }
 
       const tabs = useSiteStore.getState().tabs[props.id];
       if (tabs) {
