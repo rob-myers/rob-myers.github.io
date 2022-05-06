@@ -124,10 +124,12 @@ export default function NPCs(props) {
         update();
       } else if (e.key === 'nav-req') {
         const npc = state.npc[e.npcKey];
+        if (!npc) throw Error(`npc "${e.npcKey}" does not exist`);
         const result = state.getGlobalNavPath(npc.getPosition(), e.dst);
         wire.next({ key: 'nav-res', req: e, res: result });
       } else if (e.key === 'move-req') {
         const npc = state.npc[e.npcKey];
+        if (!npc) throw Error(`npc "${e.npcKey}" does not exist`);
         const result = state.moveNpcAlongPath(npc, e.path);
         wire.next({ key: 'move-res', req: e, res: result });
       } else if (e.key === 'debug-path') {
@@ -205,7 +207,7 @@ const npcCss = css`
     cursor: pointer;
     position: absolute;
     pointer-events: all;
-    filter: grayscale(100%) contrast(120%) brightness(80%);
+    filter: grayscale(100%) brightness(180%);
     /* transform: scale(0.18) rotate(90deg); */
   }
   
