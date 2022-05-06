@@ -12,6 +12,7 @@ export type State = {
   articleKey: null | ArticleKey;
   /** <Article>s on current page */
   articles: KeyedLookup<ArticleState>;
+  navOpen: boolean;
   /** Site-wide portals, corresponding to individual tabs */
   portal: KeyedLookup<PortalState>;
   /** <Tabs> on current page */
@@ -25,6 +26,7 @@ export type State = {
 const useStore = create<State>(devtools((set, get) => ({
   articleKey: null,
   articles: {},
+  navOpen: false,
   portal: {},
   tabs: {},
 

@@ -4,10 +4,11 @@ import classNames from 'classnames';
 import { css } from 'goober';
 
 import useSiteStore from 'store/site.store';
+import { cssName } from '../css-names';
 import NavItems from './NavItems';
 
 export default function Nav() {
-  const [navOpen, setNavOpen] = React.useState(false);
+  const navOpen = useSiteStore(x => x.navOpen);
 
   React.useEffect(() => {
     // Detect currently viewed article
@@ -19,16 +20,18 @@ export default function Nav() {
   return (
     <>
       <nav
-        className={classNames(navCss, navOpen ? 'open' : 'closed')}
+        className={classNames(cssName.navMain, navCss, navOpen ? cssName.navMainOpen : cssName.navMainClosed)}
         onClick={(e) => {
           e.stopPropagation();
           if (e.target instanceof HTMLAnchorElement) return;
-          setNavOpen(!navOpen);
+          useSiteStore.setState({ navOpen: !navOpen });
         }}
       >
         <div className="article-overlay" />
         <div className="handle">
-          <div className="icon">{navOpen ? '<' : '>'}</div>
+          <div className="icon">
+            {navOpen ? '<' : '>'}
+          </div>
         </div>
         <NavItems/>
       </nav>
@@ -38,7 +41,7 @@ export default function Nav() {
         onClick={(e) => {
           e.stopPropagation();
           if (e.target instanceof HTMLAnchorElement) return;
-          setNavOpen(!navOpen);
+          useSiteStore.setState({ navOpen: !navOpen });
         }}
       />
 

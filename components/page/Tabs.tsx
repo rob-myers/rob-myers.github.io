@@ -17,7 +17,9 @@ export default function Tabs(props: Props) {
 
   const state = useStateRef(() => ({
     enabled: !!props.initEnabled,
-    /** Initially `'black'`; afterwards always in `['faded', 'clear']` */
+    /**
+     * Initially `'black'`, and afterwards always in `['faded', 'clear']`
+     */
     colour: 'black' as 'black' | 'faded' | 'clear',
     expanded: false,
     contentDiv: undefined as undefined | HTMLDivElement,
@@ -25,6 +27,8 @@ export default function Tabs(props: Props) {
     toggleEnabled() {
       state.enabled = !state.enabled;
       state.colour = state.colour === 'clear' ? 'faded' : 'clear';
+      // Disable triggers minimize
+      if (!state.enabled) state.expanded = false;
 
       const tabs = useSiteStore.getState().tabs[props.id];
       if (tabs) {
@@ -37,11 +41,11 @@ export default function Tabs(props: Props) {
         tabKeys.forEach(key => portalLookup[key].portal.setPortalProps({ disabled: !state.enabled }));
         // Other tab portals may not exist yet, so we record in `tabs` too
         tabs.disabled = !state.enabled;
-        // In small viewport, disable triggers minimize
-        if (!state.enabled && window.matchMedia('(max-width: 600px)').matches)
-          state.expanded = false;
       } else {
-        console.warn(`Tabs not found for id "${props.id}". Expected Markdown syntax <div class="tabs" name="my-identifier" ...>`);
+        console.warn(
+          `Tabs not found for id "${props.id}". ` +
+          `Expected Markdown syntax <div class="tabs" name="my-identifier" ...>`
+        );
       }
 
       update();
@@ -76,8 +80,14 @@ export default function Tabs(props: Props) {
 
   React.useEffect(() => {// Initially trigger CSS animation
     state.colour = state.enabled ? 'clear' : 'faded';
+
     if (localStorage.getItem(expandedStorageKey) === 'true') {
-      state.expanded = true;
+      if (!useSiteStore.getState().navOpen) {
+        state.expanded = true;
+        location.href = `#${props.id}`;
+      } else {// Ignore maximise if menu open (just navigated to page)
+        localStorage.removeItem(expandedStorageKey);
+      }
     }
     update();
   }, []);

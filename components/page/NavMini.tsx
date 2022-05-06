@@ -1,6 +1,8 @@
 import { css } from "goober";
+import classNames from "classnames";
 import { articlesMeta, getArticleHref } from "articles/index";
 import useSiteStore from "store/site.store";
+import { cssName } from "../css-names";
 import Link from "./Link";
 import { barHeight } from "./Nav";
 
@@ -10,7 +12,7 @@ export default function NavMini() {
   const next = meta?.next ? articlesMeta[meta.next] : null;
 
   return meta?.index ? (
-    <nav className={rootCss}>
+    <nav className={classNames(cssName.navMini, rootCss)}>
       <ul>
         <li>
           <Link href={getArticleHref(prev || meta)} backward>
