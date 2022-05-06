@@ -167,7 +167,7 @@ call '({args}) =>
       || position === undefined
       || position && !(typeof position.x === "number" && typeof position.y === "number")
     ) {
-      api.throwError("format: \`nav {key} [{vecJson}]\` e.g. nav andros \'{"x":300,"y":120}\'")
+      api.throwError("format: \`nav {npc-key} [{vec}]\` e.g. nav andros \'{"x":300,"y":120}\'")
     }
 
     const wire = api.getWire()
@@ -202,7 +202,7 @@ call '({args}) =>
       || !Array.isArray(path)
       || !path.every(p => p && typeof p.x === "number" && typeof p.y === "number")
     ) {
-      api.throwError("format: \`walk {key} [{vec},...,{vec}]\` e.g.\\n\\r- walk andros \\"[$( click 1 ), $( click 1 )]\\"\\n\\r- myPath | walk foo")
+      api.throwError("format: \`walk {npc-key} [{vec},...,{vec}]\` e.g.\\n\\r- walk andros \\"[$( click 1 ), $( click 1 )]\\"\\n\\r- myPath | walk andros")
     }
 
     // TODO wait for response, and provide NPC api?
