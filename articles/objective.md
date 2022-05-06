@@ -44,7 +44,7 @@ What distinguishes it?
 > We've already mentioned we'll use standard web development techniques.
 > Additionally, we'll use a [browser-based terminal](https://www.npmjs.com/package/xterm), running our own _interactive shell_.
 > We'll use it to spawn NPCs, request nav-paths, run scripts, and execute long-running processes.
-> You can use this CLI to run the demos, inspect internal state, and implement your own behaviours.
+> You can also use this CLI to run the demos, inspect internal state, and implement your own behaviours.
 
 __TODO__
  a meaningful example 🚧
