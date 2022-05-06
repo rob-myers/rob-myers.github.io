@@ -196,13 +196,13 @@ call '({args}) =>
   walk: `{
   run '({ api, args }) {
     const npcKey = args[0]
-    const path = api.safeJsonParse(args[1])
+    const path = api.safeJsonParse(args[1]) || !api.isTtyAt(0) && await api.read()
     if (
       !npcKey
       || !Array.isArray(path)
       || !path.every(p => p && typeof p.x === "number" && typeof p.y === "number")
     ) {
-      api.throwError("format: \`walk {key} [{vecJson},...,{vecJson}]\` e.g. walk andros \\"[$( click 1 ), $( click 1 )]\\"")
+      api.throwError("format: \`walk {key} [{vec},...,{vec}]\` e.g.\\n\\r- walk andros \\"[$( click 1 ), $( click 1 )]\\"\\n\\r- myPath | walk foo")
     }
 
     // TODO wait for response, and provide NPC api?
@@ -210,6 +210,12 @@ call '({args}) =>
     wire.next({ key: "move-req", npcKey, path })
     // console.log({ path })
   }' "$@"    
+}`,
+
+  go: `{
+  nav $1 $(click 1) |
+    map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
+    walk $1
 }`
 };
 
