@@ -1,10 +1,9 @@
 ## Objective
 
 We are going to create a **video game**.
-Unusually, we'll 
-(a) describe the process in detail,
-(b) use everyday web development techniques,
-(c) focus on Game AI.
+Unusually,
+(a) we'll describe the process in detail,
+(b) we'll use everyday web development techniques.
 
 What kind of game?
 > A [top-down](https://en.wikipedia.org/wiki/Video_game_graphics#Top-down_perspective) adventure game.
@@ -17,7 +16,7 @@ Where does it take place?
 
   _The Night Land_ (1912) was written by [William Hope Hodgson](https://en.wikipedia.org/wiki/William_Hope_Hodgson).
   His _Last Redoubt_ had 1,320 cities and the same number of floors.
-  We assume these 1000 + 320 cities span 125 + 64 = 189 floors, and are built from ancient interconnected space vehicles.
+  We instead assume these 1000 + 320 cities span 125 + 64 = 189 floors, and are built from ancient interconnected space vehicles.
   
   Some concept art will clarify things.
 
@@ -34,18 +33,18 @@ Where does it take place?
   ]"
 ></div>
 
-How will the game be made?
-> We'll use everyday web dev techniques,
-> avoiding game-centric technology like WebGL and physics engines.
-> Our approach is relevant to a wide audience i.e. web developers.
+OK, but how will you make the game?
+> Using standard web dev techniques, emphasizing the declarative nature of HTML and CSS
+> rather than JavaScript driven game-loops.
+> We shall avoid game-centric technology like WebGL and physics engines.
+> Then our approach is relevant to a wide audience i.e. web developers.
 
 What distinguishes it?
-> The world is awash with beautiful games.
-> Beautiful, yes, but also somewhat shallow.
-> Failing the former we'll overcome the latter via rich Game AI (NPC behaviour).
-> We'll implement it **interactively** using a browser-based terminal.
-
-<!-- > We won't use clunky behaviour editors or rigid task-based programming patterns. -->
+> We'll build an adventure game on this website, step by step, blog by blog.
+> We've already mentioned we'll use standard web development techniques.
+> Additionally, we'll use a [browser-based terminal](https://www.npmjs.com/package/xterm), running our own _interactive shell_.
+> We'll use it to spawn NPCs, request nav-paths, run scripts, and execute long-running processes.
+> You can use this CLI to run the demos, inspect internal state, and implement your own behaviours.
 
 __TODO__
  a meaningful example 🚧
