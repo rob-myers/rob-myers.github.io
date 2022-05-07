@@ -39,11 +39,12 @@ __Aim towards website release__.
   - ✅ use in `NavDemo1`
   - ✅ keep head still (like original anim)
   - 🚧 graphical improvements
-    - head style
+    - ✅ head style
     - shading details (too flat)
     - drop shadow
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
+
 
 - 🚧 Andros is situated
   - Can only move to point within lit area
@@ -63,6 +64,9 @@ __Aim towards website release__.
     - ✅ Examples: 101, 102, 302
     - ✅ Important for _visibility ray casts_
   - 🤔 Saw empty holeId in 301 i.e. `15`
+  - BUG render-npc cannot deal with nested transforms
+    - g.transform inside a use
+    - maybe saw another example for g.transform of frame
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tags `dark-front` and `dark-back` instead of `one-way`
   - Move light polygon computations into `lazy` i.e. reuse

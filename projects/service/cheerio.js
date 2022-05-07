@@ -88,7 +88,6 @@ export function extractDeepMetas(api, symbolLookup, parentFrame) {
   const children = api(parentFrame).children('rect, path, ellipse, g, use').toArray();
   return {
     geoms: children.flatMap(x => extractMeta(api, x, { symbolLookup })),
-    // NOTE concerning `parentFrame` transform...
     transform: new Mat(parentFrame.attribs.transform).toArray(),
   };
 }

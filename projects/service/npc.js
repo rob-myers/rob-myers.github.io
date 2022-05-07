@@ -18,7 +18,9 @@ export function renderNpcSpriteSheets(parsed, outputDir, opts = {}) {
     zoom = 1,
     animNames = Object.keys(parsed.animLookup),
   } = opts;
-  const anims = Object.values(parsed.animLookup).filter(x => animNames.includes(x.animName))
+
+  const anims = Object.values(parsed.animLookup).filter(x => animNames.includes(x.animName));
+
   for (const anim of anims) {
     const canvas = drawAnimSpriteSheet(anim, zoom);
     const outputPath = path.resolve(outputDir, `${parsed.npcName}--${anim.animName}.png`);
@@ -61,6 +63,7 @@ function drawFrameAt(anim, frameId, canvas, zoom = 1) {
       return `<ellipse cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" style="${style}" transform="${transform}" />`;
     } else if (item.tagName === 'path') {
       return `<path d="${item.d}" style="${style}" transform="${transform}" />`;
+      // return `<path data-tags="${item.tags}" d="${item.d}" style="${style}" transform="${transform}" />`;
     } else if (item.tagName === 'rect') {
       return `<rect x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" style="${style}" transform="${transform}" />`;
     }

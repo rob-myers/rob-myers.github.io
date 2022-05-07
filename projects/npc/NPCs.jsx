@@ -220,7 +220,7 @@ const npcCss = css`
     cursor: pointer;
     position: absolute;
     pointer-events: all;
-    filter: grayscale(100%) brightness(180%);
+    filter: grayscale(100%) brightness(140%);
     /* transform: scale(0.18) rotate(90deg); */
   }
   
