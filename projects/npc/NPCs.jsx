@@ -97,9 +97,9 @@ export default function NPCs(props) {
       isPointLegal(p) {
         const gmId = props.gmGraph.gms.findIndex(x => x.gridRect.contains(p));
         if (gmId === -1) return false;
-        const {navPoly} = props.gmGraph.gms[gmId];
-        // TODO navPoly should be a single polygon?
-        return navPoly.some(poly => poly.contains(p));
+        const { navPoly, inverseMatrix } = props.gmGraph.gms[gmId];
+        const localPoint = inverseMatrix.transformPoint(Vect.from(p));
+        return navPoly.some(poly => poly.contains(localPoint));
       },
       /**
        * @param {NPC.NPC} npc 
@@ -131,18 +131,22 @@ export default function NPCs(props) {
 
     const sub = wire.subscribe((e) => {
       if (e.key === 'spawn') {
-        if (!state.isPointLegal(e.at)) throw Error(`${JSON.stringify(e.at)}: cannot spawn outside navPoly`);
+        if (!state.isPointLegal(e.at))
+          throw Error(`${JSON.stringify(e.at)}: cannot spawn outside navPoly`);
         state.npc[e.npcKey] = createNpc(e.npcKey, e.at, { panZoomApi: props.panZoomApi, update, disabled: props.disabled });
         update();
       } else if (e.key === 'nav-req') {
-        if (!state.isPointLegal(e.dst)) throw Error(`${JSON.stringify(e.dst)}: cannot navigate outside navPoly`);
+        if (!state.isPointLegal(e.dst))
+          throw Error(`${JSON.stringify(e.dst)}: cannot navigate outside navPoly`);
         const npc = state.npc[e.npcKey];
-        if (!npc) throw Error(`npc "${e.npcKey}" does not exist`);
+        if (!npc)
+          throw Error(`npc "${e.npcKey}" does not exist`);
         const result = state.getGlobalNavPath(npc.getPosition(), e.dst);
         wire.next({ key: 'nav-res', req: e, res: result });
       } else if (e.key === 'move-req') {
         const npc = state.npc[e.npcKey];
-        if (!npc) throw Error(`npc "${e.npcKey}" does not exist`);
+        if (!npc)
+          throw Error(`npc "${e.npcKey}" does not exist`);
         const result = state.moveNpcAlongPath(npc, e.path);
         wire.next({ key: 'move-res', req: e, res: result });
       } else if (e.key === 'debug-path') {
