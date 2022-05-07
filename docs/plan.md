@@ -13,23 +13,23 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - Blog
-  - 🚧 Revisit first page
+  - ✅ Revisit first page
+  - "1st meaningful example"
+    - `NavDemo1`+ TTY + __NOT SITUATED__
+    - spawn, navigate, show navpaths, move along local navpath
+    - doors (freely toggled)
+    - lighting (room context set manually)
+    - Tab portals can move down page (?)
   - Revisit second page
+    - Discuss constraints as before
+    - Intro __SITUATED__
   - Story
     - Anapanasati training
     - 5 watchers as Jhanic hindrances
 
-- Can move NPC along navpath
-  - ✅ translate previous API
-  - ✅ actuated via shell function `move`
-  - ✅ turn correctly (not look)
-  - ✅ play walk animation when moving
-  - ✅ NPC refreshes with HMR
-  - ✅ fix bug going through wall
-  - ✅ prevent going outside navmesh
-    - ✅ cannot spawn outside navmesh
-    - ✅ cannot nav to outside navmesh
-  - can pause/resume
+- Can pause/resume NPC
+
+- 🚧 Investigate migration to Gatsby
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
@@ -41,7 +41,7 @@ __Aim towards website release__.
   - 🚧 graphical improvements
     - ✅ head style
     - 🚧 details: hands + feet
-    - details: texture like Hotline Miami
+    - details: body has texture
     - drop shadow
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
@@ -72,16 +72,6 @@ __Aim towards website release__.
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tags `dark-front` and `dark-back` instead of `one-way`
   - Move light polygon computations into `lazy` i.e. reuse
-
-- ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
-- ✅ NavDemo1 init race condition?
-  - fixed by useEffect -> useMemo in useGeomorphs and doorsApi setup triggers render
-- ✅ replace "stage" with "wire"
-- 🤔 `useImperativeHandle` rather than providing an api?
-
-- ✅ spawn has format `spawn rob ["$( position )"]`
-- ✅ NavDemo1 has 2 or more geomorphs
-- ❌ Stage can access spawnPoints from useGeomorphData
 
 - 🚧 `NavDemo1`
   - ✅ Circle with heart-beat and breath
@@ -159,6 +149,23 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- Can move NPC along navpath
+  - ✅ translate previous API
+  - ✅ actuated via shell function `move`
+  - ✅ turn correctly (not look)
+  - ✅ play walk animation when moving
+  - ✅ NPC refreshes with HMR
+  - ✅ fix bug going through wall
+  - ✅ prevent going outside navmesh
+    - ✅ cannot spawn outside navmesh
+    - ✅ cannot nav to outside navmesh
+- ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
+- ✅ NavDemo1 init race condition?
+  - fixed by useEffect -> useMemo in useGeomorphs and doorsApi setup triggers render
+- ✅ replace "stage" with "wire"
+- ✅ spawn has format `spawn rob ["$( position )"]`
+- ✅ NavDemo1 has 2 or more geomorphs
+- ❌ Stage can access spawnPoints from useGeomorphData
 - ✅ `go` provides faster way to `spawn`, `nav` and then `walk`
 - ✅ Better errors when command using `run` fails
 - ✅ Revisit navgraphs

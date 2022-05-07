@@ -111,7 +111,7 @@ export default function NavDemo1(props) {
   return gms.length ? (
     <CssPanZoom
       className={rootCss}
-      zoom={0.4}
+      zoom={1}
       dark
       wireKey={wireKey}
       onLoad={api => state.panZoomApi = api}
