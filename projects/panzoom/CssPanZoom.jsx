@@ -244,7 +244,9 @@ export default function CssPanZoom(props) {
   }, []);
 
   React.useEffect(() => {
-    if (props.zoom) {// state.root's 1st child lies at world origin
+    // Only initially zoom on first mount (avoids zoom on HMR)
+    if (props.zoom && state.scale === props.zoom) {
+      // NOTE `state.root`.children[0] lies at world origin
       const { x: clientX, y: clientY } = state.root.children[0].getBoundingClientRect();
       state.zoomToPoint(props.zoom, { clientX, clientY });
     }
@@ -292,14 +294,17 @@ const rootCss = css`
       top: ${-gridExtent}px;
       width: ${2 * gridExtent}px;
       height: ${2 * gridExtent}px;
-      background-image:
-        linear-gradient(to right, rgba(200, 200, 200, 0.1) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
     }
     .small-grid {
-      background-size: 10px 10px;
-    }
-    .large-grid {
+      background-image:
+        linear-gradient(to right, rgba(200, 200, 200, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
+        background-size: 10px 10px;
+      }
+      .large-grid {
+      background-image:
+        linear-gradient(to right, rgba(200, 200, 200, 0.35) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(200, 200, 200, 0.35) 1px, transparent 1px);
       background-size: 60px 60px;
     }
     .origin {
