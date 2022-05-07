@@ -12,9 +12,12 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- Story:
-  - Anapanasati training
-  - 5 watchers as Jhanic hindrances
+- Blog
+  - 🚧 Revisit first page
+  - Revisit second page
+  - Story
+    - Anapanasati training
+    - 5 watchers as Jhanic hindrances
 
 - Can move NPC along navpath
   - ✅ translate previous API
@@ -22,20 +25,33 @@ __Aim towards website release__.
   - ✅ turn correctly (not look)
   - ✅ play walk animation when moving
   - ✅ NPC refreshes with HMR
+  - ✅ fix bug going through wall
+  - ✅ prevent going outside navmesh
+    - ✅ cannot spawn outside navmesh
+    - ✅ cannot nav to outside navmesh
   - can pause/resume
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
     > https://mymblemoments.files.wordpress.com/2014/02/guard1_walk.png
-  - 🚧 better anim time e.g. `(aux.total / 50) * 1000` if `50 wu/s`
-  - 🚧 draw our own simplified 10 frame version
+  - ✅ draw our own simplified 10 frame version
+  - ✅ use head symbol in our walk anim
+  - ✅ use in `NavDemo1`
+  - ✅ keep head still (like original anim)
+  - 🚧 graphical improvements
+    - head style
+    - shading details (too flat)
+    - drop shadow
+  - 🚧 anim time defined via anim meta
+    e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
 - 🚧 Andros is situated
   - Can only move to point within lit area
   - Can only toggle doors when avatar close
   - When avatar moves through doorway, lighting changes
+
 - Can toggle NPC speech bubbles
-- reorg `sh.lib`
+- Reorg `sh.lib`
   - `spawn`, `click`, `nav` are from Terminal specified script.
   - base functions are also from Terminal specified script
 - mobile-friendly command links (session must be open)
@@ -48,7 +64,7 @@ __Aim towards website release__.
     - ✅ Important for _visibility ray casts_
   - 🤔 Saw empty holeId in 301 i.e. `15`
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
-  - Support window tags `dark-infront` and `dark-behind` instead of `one-way`
+  - Support window tags `dark-front` and `dark-back` instead of `one-way`
   - Move light polygon computations into `lazy` i.e. reuse
 
 - ✅ Decided on "global convexity" i.e. edge geomorphs only on edges
@@ -82,7 +98,7 @@ __Aim towards website release__.
 
 - 🤔 NPCs have label
   - NPCs label tracks them as they move
-- user can only move npcs via terminal e.g. `click`...
+- ✅ user can only move npcs via terminal e.g. `click`...
 - ❌ maybe consider shadows and door shadows (doors can fade)
 - can pause it
 - can write script manually or continually `look`ing
@@ -137,6 +153,7 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ `go` provides faster way to `spawn`, `nav` and then `walk`
 - ✅ Better errors when command using `run` fails
 - ✅ Revisit navgraphs
   - ✅ Precompute pathfinding navgraph on server

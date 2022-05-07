@@ -91,6 +91,17 @@ export default function NPCs(props) {
         }
       },
       /**
+       * Does `p` lie inside some geomorph's navmesh?
+       * @param {Geom.VectJson} p
+       */
+      isPointLegal(p) {
+        const gmId = props.gmGraph.gms.findIndex(x => x.gridRect.contains(p));
+        if (gmId === -1) return false;
+        const {navPoly} = props.gmGraph.gms[gmId];
+        // TODO navPoly should be a single polygon?
+        return navPoly.some(poly => poly.contains(p));
+      },
+      /**
        * @param {NPC.NPC} npc 
        * @param {Geom.VectJson[]} path 
        */
@@ -120,9 +131,11 @@ export default function NPCs(props) {
 
     const sub = wire.subscribe((e) => {
       if (e.key === 'spawn') {
+        if (!state.isPointLegal(e.at)) throw Error(`${JSON.stringify(e.at)}: cannot spawn outside navPoly`);
         state.npc[e.npcKey] = createNpc(e.npcKey, e.at, { panZoomApi: props.panZoomApi, update, disabled: props.disabled });
         update();
       } else if (e.key === 'nav-req') {
+        if (!state.isPointLegal(e.dst)) throw Error(`${JSON.stringify(e.dst)}: cannot navigate outside navPoly`);
         const npc = state.npc[e.npcKey];
         if (!npc) throw Error(`npc "${e.npcKey}" does not exist`);
         const result = state.getGlobalNavPath(npc.getPosition(), e.dst);

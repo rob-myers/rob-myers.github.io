@@ -9,6 +9,19 @@ import { geom } from '../service/geom';
 export class Poly {
 
   /**
+   * @private
+   * @type {undefined | Poly[]}
+   * Avoid costly recomputation when no mutation.
+   */
+  _triangulation;
+  /**
+   * @private
+   * @type {undefined | [number, number, number][]}
+   * Often preserved under mutation.
+   */
+   _triangulationIds;
+
+  /**
    * @param {Vect[]} outline
    * @param {Vect[][]} holes
    */
@@ -82,6 +95,14 @@ export class Poly {
     return { outer, inner };
   }
 
+  get triangulation() {
+    if (!this._triangulation) {
+      this.fastTriangulate();
+      // this.qualityTriangulate();
+    }
+    return /** @type {Poly[]} */ (this._triangulation);
+  }
+
   /** @param {Geom.VectJson} delta */
   add(delta) {
     return this.translate(delta.x, delta.y);
@@ -117,8 +138,29 @@ export class Poly {
     if (!m.isIdentity) {
       this.outline = this.outline.map(p => m.transformPoint(p));
       this.holes.forEach(hole => hole.map(p => m.transformPoint(p)));
+      this.clearCache(true);
     }
     return this;
+  }
+
+  /**
+   * @private
+   * @param {[number, number, number][]} indexTriples 
+   */
+  cache(indexTriples) {
+    this._triangulationIds = indexTriples;
+    this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
+  }
+  
+  /**
+   * @private
+   */
+  clearCache(clearAll = false) {
+    if (clearAll) {
+      this._triangulationIds = this._triangulation = undefined;
+    } else if (this._triangulationIds?.length) {
+      this._triangulation = this.triangleIdsToPolys(this._triangulationIds);
+    }
   }
 
   /**
@@ -150,8 +192,10 @@ export class Poly {
     if (!this.rect.contains(point)) {
       return false;
     }
-    const tr = this.fastTriangulate(); // TODO optionally use cache?
-    return tr.tris.some(t => Poly.pointInTriangle(point, tr.vs[t[0]], tr.vs[t[1]], tr.vs[t[2]]));
+    // NOTE `this.triangulation` uses cache
+    return this.triangulation.some(t =>
+      Poly.pointInTriangle(point, t.outline[0], t.outline[1], t.outline[2])
+    );
   }
 
   /**
@@ -262,6 +306,7 @@ export class Poly {
           : agg,
       /** @type {[number, number, number][]} */ ([]),
     );
+    this.cache(indexTriples);
     return { vs: this.allPoints, tris: indexTriples };
   }
 
@@ -384,6 +429,7 @@ export class Poly {
         .map(t => /** @type {[VWithId, VWithId, VWithId]} */ ([t.getPoint(0), t.getPoint(1), t.getPoint(2)]))
         .map(([u, v, w]) => /** @type {[number, number, number]} */ ([u.id, v.id, w.id]));
       
+      this.cache(tris);
       return { vs: this.allPoints, tris };
     } catch (e) {
       console.error('Quality triangulation failed, falling back to earcut');
@@ -399,11 +445,13 @@ export class Poly {
   precision(dp) {
     this.outline.forEach(p => p.precision(dp));
     this.holes.forEach(hole => hole.forEach(p => p.precision(dp)));
+    this.clearCache();
     return this;
   }
 
   removeHoles() {
     this.holes = [];
+    this.clearCache(true);
     return this;
   }
 
@@ -417,6 +465,7 @@ export class Poly {
   round() {
     this.outline.forEach(p => p.round());
     this.holes.forEach(h => h.forEach(p => p.round()));
+    this.clearCache();
     return this;
   }
 
@@ -424,6 +473,7 @@ export class Poly {
   scale(scalar) {
     this.outline.forEach(p => p.scale(scalar));
     this.holes.forEach(h => h.forEach(p => p.scale(scalar)));
+    this.clearCache();
     return this;
   }
 
@@ -443,7 +493,17 @@ export class Poly {
   translate(dx, dy) {
     this.outline.forEach(p => p.translate(dx, dy));
     this.holes.forEach(h => h.forEach(p => p.translate(dx, dy)));
+    this.clearCache();
     return this;
+  }
+  
+  /**
+   * Construct union of polygons.
+   * @param {[number, number, number][]} triIds 
+   */
+  triangleIdsToPolys(triIds) {
+    const ps = this.allPoints;
+    return triIds.map(([u, v, w]) => new Poly([ ps[u], ps[v], ps[w] ]));
   }
 
   /**

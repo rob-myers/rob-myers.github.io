@@ -114,7 +114,7 @@ call '({args}) =>
     const sub = wire.subscribe({
       next: (e) => {// ProcessStatus.Running === 1
         if (e.key === "pointerup" && process.status === 1) {
-          resolve({ x: e.point.x, y: e.point.y })
+          resolve({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) })
         }
       },
     });
@@ -144,7 +144,7 @@ call '({args}) =>
       || position === undefined
       || position && !(typeof position.x === "number" && typeof position.y === "number")
     ) {
-      api.throwError("format: \`spawn {key} [{vecJson}]\` e.g. spawn andros \'{"x":300,"y":120}\'")
+      api.throwError("format: \`spawn {key} [{vec}]\` e.g. spawn andros \'{"x":300,"y":120}\'")
     }
 
     // TODO better default position?
@@ -212,6 +212,7 @@ call '({args}) =>
   }' "$@"    
 }`,
 
+  // TEMP simplification
   go: `{
   nav $1 $(click 1) |
     map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
