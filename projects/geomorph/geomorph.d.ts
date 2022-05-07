@@ -123,8 +123,9 @@ declare namespace Geomorph {
 
     /** Proxy for lazy cached data */
     lazy: {
+      /** If multiple nav polys, this is the largest one  */
       roomNavPoly: {
-        [roomId: number]: Poly[];
+        [roomId: number]: Poly;
       };
     };
   }

@@ -4,7 +4,7 @@ import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
-import { Poly, Rect, Vect } from "../geom";
+import { Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -235,6 +235,7 @@ const rootCss = css`
     }
     svg.debug-room-nav {
       position: absolute;
+      pointer-events: none;
       path.nav-poly {
         pointer-events: none;
         fill: rgba(255, 0, 0, 0.1);
@@ -250,7 +251,7 @@ function Debug(props) {
   const gm = props.gms[props.gmId];
   const visDoorIds = props.doorsApi.getVisible(props.gmId);
   const roomNavPoly = gm.lazy.roomNavPoly[props.roomId];
-  const roomNavAabb = Rect.from(...roomNavPoly.map(x => x.rect));
+  const roomNavAabb = roomNavPoly.rect;
 
   return (
     <div
@@ -304,9 +305,7 @@ function Debug(props) {
             }}
           >
             <g style={{ transform: `translate(${-roomNavAabb.x}px, ${-roomNavAabb.y}px)` }}>
-              {roomNavPoly.map((poly, key) => (
-                <path className="nav-poly" key={key} d={poly.svgPath} />
-              ))}
+              <path className="nav-poly" d={roomNavPoly.svgPath} />
             </g>
           </svg>
         )}

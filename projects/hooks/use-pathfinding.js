@@ -1,4 +1,4 @@
-import { FloorGraph } from "projects/graph/floor-graph";
+import { floorGraph } from "projects/graph/floor-graph";
 import { useQuery } from "react-query";
 
 /**
@@ -10,7 +10,7 @@ import { useQuery } from "react-query";
 export default function usePathfinding(zoneKey, gm, disabled) {
   return useQuery(zoneKeyToQueryKey(zoneKey), () => {
     return {
-      graph : FloorGraph.fromZone(/** @type {Geomorph.GeomorphData} */ (gm))
+      graph : floorGraph.fromZone(/** @type {Geomorph.GeomorphData} */ (gm))
     };
   }, {
     enabled: !!gm && !disabled,

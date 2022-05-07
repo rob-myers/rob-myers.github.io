@@ -63,7 +63,7 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
  */
 function createLazyProxy(gm) {
   const root = {
-    roomNavPoly: /** @type {{ [roomId: number]: Geom.Poly[] }} */ ({}),
+    roomNavPoly: /** @type {{ [roomId: number]: Geom.Poly }} */ ({}),
   };
 
   const roomNavPolyProxy = new Proxy({}, {
@@ -71,7 +71,11 @@ function createLazyProxy(gm) {
       if (typeof key !== 'string') return;
       const roomId = Number(key);
       if (gm.roomsWithDoors[roomId] && !root.roomNavPoly[roomId]) {
-        root.roomNavPoly[roomId] = Poly.intersect(gm.navPoly, [gm.roomsWithDoors[roomId]]);
+        // Intersect navPoly with roomWithDoors and take largest disconnected component,
+        // i.e. assume smaller polys are unwanted artifacts
+        const intersection = Poly.intersect(gm.navPoly, [gm.roomsWithDoors[roomId]]);
+        intersection.sort((a, b) => a.rect.area > b.rect.area ? -1 : 1);
+        root.roomNavPoly[roomId] = intersection[0];
       }
       return root.roomNavPoly[roomId];
     }

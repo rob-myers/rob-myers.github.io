@@ -183,7 +183,7 @@ declare namespace Graph {
   /** We use Nav.Zone instead. */
   export type FloorGraphJson = never;
 
-  export type FloorGraph = import('./floor-graph').FloorGraph;
+  export type FloorGraph = import('./floor-graph').floorGraph;
 
   //#endregion
 

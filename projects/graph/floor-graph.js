@@ -9,7 +9,7 @@ import { geom } from "../service/geom";
 /**
  * @extends {BaseGraph<Graph.FloorGraphNode, Graph.FloorGraphEdgeOpts>}
  */
-export class FloorGraph extends BaseGraph {
+export class floorGraph extends BaseGraph {
 
   /** @type {Geomorph.GeomorphData} */
   gm;
@@ -109,10 +109,11 @@ export class FloorGraph extends BaseGraph {
         warn(`FloorGraph ${this.gm.key}: navNode ${closestNode.index} lacks associated roomId (using ${roomId})`);
       }
 
-      // TODO prevent roomNavPoly.length > 1
       const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
-      const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly[0]);
-      if (directPath) return [Vect.from(pathSrc), Vect.from(pathDst)];
+      const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
+      if (directPath) {
+        return [Vect.from(pathSrc), Vect.from(pathDst)];
+      }
 
       // Apply "simple stupid funnel algorithm"
       const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
@@ -213,7 +214,7 @@ export class FloorGraph extends BaseGraph {
     const zone = gm.navZone;
 
     const { groups: [navNodes], vertices } = zone;
-    const graph = new FloorGraph(gm);
+    const graph = new floorGraph(gm);
 
     for (const [nodeId, node] of Object.entries(navNodes)) {
       graph.registerNode({
