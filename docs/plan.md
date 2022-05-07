@@ -40,7 +40,8 @@ __Aim towards website release__.
   - ✅ keep head still (like original anim)
   - 🚧 graphical improvements
     - ✅ head style
-    - shading details (too flat)
+    - 🚧 details: hands + feet
+    - details: texture like Hotline Miami
     - drop shadow
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
@@ -67,6 +68,7 @@ __Aim towards website release__.
   - BUG render-npc cannot deal with nested transforms
     - g.transform inside a use
     - maybe saw another example for g.transform of frame
+  - navPoly should be a single polygon?
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tags `dark-front` and `dark-back` instead of `one-way`
   - Move light polygon computations into `lazy` i.e. reuse
