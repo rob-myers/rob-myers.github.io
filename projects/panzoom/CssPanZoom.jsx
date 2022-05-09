@@ -8,6 +8,11 @@ import { Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
 import { ensureWire } from '../service/wire';
 
+/**
+ * TODO 🚧
+ * - support override i.e. transition to specific transform
+ */
+
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
 
@@ -182,36 +187,16 @@ export default function CssPanZoom(props) {
         // Instead of thinking of operating on the panzoom element,
         // think of operating on the area inside the panzoom
         // element's parent
-        // Subtract padding and border
+        // We assume parent has no padding/margin/border
         const effectiveArea = {
-          width:
-            dims.parent.width -
-            dims.parent.padding.left -
-            dims.parent.padding.right -
-            dims.parent.border.left -
-            dims.parent.border.right,
-          height:
-            dims.parent.height -
-            dims.parent.padding.top -
-            dims.parent.padding.bottom -
-            dims.parent.border.top -
-            dims.parent.border.bottom
-        }
+          width: dims.parent.width,
+          height: dims.parent.height,
+        };
     
         // Adjust the clientX/clientY to ignore the area
         // outside the effective area
-        let clientX =
-          point.clientX -
-          dims.parent.left -
-          dims.parent.padding.left -
-          dims.parent.border.left -
-          dims.elem.margin.left
-        let clientY =
-          point.clientY -
-          dims.parent.top -
-          dims.parent.padding.top -
-          dims.parent.border.top -
-          dims.elem.margin.top
+        let clientX = point.clientX;
+        let clientY = point.clientY;
     
         // Convert the mouse point from it's position over the
         // effective area before the scale to the position
@@ -405,6 +390,7 @@ function removePointer(pointers, event) {
 
 /**
  * Dimensions used in containment and focal point zooming
+ * We assume `parent` has no padding/margin/border
  * @param {HTMLElement} elem
  */
  function getDimensions(elem) {
@@ -423,8 +409,6 @@ function removePointer(pointers, event) {
       bottom: rectElem.bottom,
       left: rectElem.left,
       right: rectElem.right,
-      margin: getBoxStyle(elem, 'margin', style),
-      border: getBoxStyle(elem, 'border', style)
     },
     parent: {
       style: parentStyle,
@@ -434,35 +418,6 @@ function removePointer(pointers, event) {
       bottom: rectParent.bottom,
       left: rectParent.left,
       right: rectParent.right,
-      padding: getBoxStyle(parent, 'padding', parentStyle),
-      border: getBoxStyle(parent, 'border', parentStyle)
     }
   }
-}
-
-/**
- * @param {HTMLElement | SVGElement} elem 
- * @param {string} name 
- * @param {CSSStyleDeclaration} [style] 
- * @returns 
- */
-function getBoxStyle(elem, name, style = window.getComputedStyle(elem)) {
-  // Support: FF 68+
-  // Firefox requires specificity for border
-  const suffix = name === 'border' ? 'Width' : ''
-  return {
-    left: getCSSNum(`${name}Left${suffix}`, style),
-    right: getCSSNum(`${name}Right${suffix}`, style),
-    top: getCSSNum(`${name}Top${suffix}`, style),
-    bottom: getCSSNum(`${name}Bottom${suffix}`, style)
-  }
-}
-
-/**
- * @param {string} name
- * @param {CSSStyleDeclaration} style
- */
-function getCSSNum(name, style) {
-  // return parseFloat(style[getPrefixedName(name) as any]) || 0
-  return parseFloat(style[/** @type {*} */ (name)]) || 0
 }
