@@ -15,19 +15,22 @@ __Aim towards website release__.
 - Blog
   - ✅ Revisit first page
   - "1st meaningful example"
-    - `NavDemo1`+ TTY + __NOT SITUATED__
-    - spawn, navigate, show navpaths, move along local navpath
-    - doors (freely toggled)
-    - lighting (room context set manually)
+    - `NavDemo1`+ TTY + __SITUATED__
     - Tab portals can move down page (?)
   - Revisit second page
     - Discuss constraints as before
-    - Intro __SITUATED__
+    - Decompose __SITUATED__
+    - spawn, navigate, show navpaths, move along local navpath
   - Story
     - Anapanasati training
     - 5 watchers as Jhanic hindrances
 
-- Can pause/resume NPC
+
+- 🚧 Andros is situated
+  - 🚧 CSSPanZoom returns to andros
+  - Can only move to point within lit area
+  - Cannot close door when Andros will go through it
+  - When avatar moves through doorway, lighting changes
 
 - 🚧 Investigate migration to Gatsby
 
@@ -46,13 +49,8 @@ __Aim towards website release__.
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
-
-- 🚧 Andros is situated
-  - Can only move to point within lit area
-  - Can only toggle doors when avatar close
-  - When avatar moves through doorway, lighting changes
-
 - Can toggle NPC speech bubbles
+- Can pause/resume NPC
 - Reorg `sh.lib`
   - `spawn`, `click`, `nav` are from Terminal specified script.
   - base functions are also from Terminal specified script
