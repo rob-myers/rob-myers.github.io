@@ -76,7 +76,7 @@ export default function CssPanZoom(props) {
             const diff = getDistance(state.pointers) - state.start.distance
             const step = 3 * state.opts.step;
             const toScale = Math.min(Math.max(((diff * step) / 80 + state.start.scale), state.opts.minScale), state.opts.maxScale);
-            state.zoomToPoint(toScale, current);
+            state.zoomToClient(toScale, current);
           } else {
             // Panning during pinch zoom can cause issues
             // because the zoom has not always rendered in time
@@ -157,17 +157,17 @@ export default function CssPanZoom(props) {
       /**
        * NOTE could reintroduce opt `animate`
        * @param {number} toScale 
-       * @param {{ focal?: Geom.VectJson }} opts 
+       * @param {{ focalClient?: Geom.VectJson }} opts 
        */
       zoom(toScale, opts) {
         toScale = Math.min(Math.max(toScale, state.opts.minScale), state.opts.maxScale);
         let toX = state.x, toY = state.y
     
-        if (opts.focal) {
+        if (opts.focalClient) {
           // The difference between the point after the scale and the point before the scale
           // plus the current translation after the scale
           // neutralized to no scale (as the transform scale will apply to the translation)
-          const focal = opts.focal
+          const focal = opts.focalClient
           toX = (focal.x / toScale - focal.x / state.scale + state.x * toScale) / toScale
           toY = (focal.y / toScale - focal.y / state.scale + state.y * toScale) / toScale
         }
@@ -181,7 +181,7 @@ export default function CssPanZoom(props) {
        * @param {number} toScale 
        * @param {{ clientX: number; clientY: number }} point 
        */
-      zoomToPoint(toScale, point) {
+      zoomToClient(toScale, point) {
         const dims = getDimensions(state.root);
     
         // Instead of thinking of operating on the panzoom element,
@@ -206,7 +206,25 @@ export default function CssPanZoom(props) {
           y: (clientY / effectiveArea.height) * (effectiveArea.height * toScale)
         }
     
-        return state.zoom(toScale, { focal });
+        return state.zoom(toScale, { focalClient: focal });
+      },
+      /**
+       * TODO
+       * - test this works ✅
+       * - can output transform and transition to it 🚧
+       * - explain meaning of this transform
+       * @param {number} toScale 
+       * @param {Geom.VectJson} point 
+       */
+      zoomToWorld(toScale, point) {
+        const { width, height } = state.parent.getBoundingClientRect();
+        const center = tempPoint1.copy(point).scale(toScale);
+        // NOTE (x, y, scale) are s.t. transform is `scale(scale) translate(x, y)`
+        state.x = width/2 - center.x;
+        state.y = height/2 - center.y;
+        state.scale = 1;
+        // TODO unravel
+        state.zoom(toScale, { focalClient: { x: toScale * (state.x), y: toScale * (state.y) } });
       },
       /**
        * @param {WheelEvent} event 
@@ -219,26 +237,15 @@ export default function CssPanZoom(props) {
         const delta = event.deltaY === 0 && event.deltaX ? event.deltaX : event.deltaY
         const wheel = delta < 0 ? 1 : -1
         const toScale = Math.min(Math.max(state.scale * Math.exp((wheel * state.opts.step) / 3), state.opts.minScale), state.opts.maxScale);
-        return state.zoomToPoint(toScale, event);
+        return state.zoomToClient(toScale, event);
       }
     };
   }, { deeper: ['evt'] });
 
   React.useEffect(() => {
     props.onLoad?.(state);
-    /**
-     * Apply initial zoom and centering.
-     * (x, y, scale) are s.t. transform is `scale(scale) translate(x, y)`
-     * TODO explain meaning of this transform
-     */
-    const { width, height } = state.parent.getBoundingClientRect();
-    const zoom = props.initZoom || 1;
-    const center = Vect.from(props.initCenter || { x: 0, y: 0 });
-    center.scale(zoom);
-    state.x = width/2 - center.x;
-    state.y = height/2 - center.y;
-    state.scale = 1;
-    state.zoom(zoom, { focal: { x: zoom * (state.x), y: zoom * (state.y) } });
+    // Apply initial zoom and centering.
+    state.zoomToWorld(props.initZoom || 1, props.initCenter || { x: 0, y: 0 });
   }, []);
 
   return (
@@ -426,3 +433,5 @@ function removePointer(pointers, event) {
     }
   }
 }
+
+const tempPoint1 = new Vect;

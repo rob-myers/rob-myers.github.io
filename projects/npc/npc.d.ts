@@ -35,6 +35,7 @@ declare namespace NPC {
         res: null | { paths: Geom.Vect[][]; edges: NPC.NavGmTransition[] };
       }
     | { key: 'debug-path'; path: Geom.VectJson[]; pathName: string }
+    | { key: 'view'; zoom: number; at: Geom.VectJson }
   );
 
   export interface NPC {

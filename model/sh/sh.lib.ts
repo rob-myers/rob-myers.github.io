@@ -212,12 +212,23 @@ call '({args}) =>
   }' "$@"    
 }`,
 
-  // TEMP simplification
+  // TODO currently a simplification
   go: `{
   nav $1 $(click 1) |
     map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
     walk $1
-}`
+}`,
+
+  // TODO validation
+  view: `{
+  run '({ api, args }) {
+    const zoom = Number(args[0])
+    const at = api.safeJsonParse(args[1])
+    // TODO validation
+    const wire = api.getWire()
+    wire.next({ key: "view", zoom, at })
+  }' "$@"
+}`,
 };
 
 export const preloadedVariables = {};

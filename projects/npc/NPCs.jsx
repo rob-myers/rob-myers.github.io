@@ -153,6 +153,8 @@ export default function NPCs(props) {
         const path = e.path.map(Vect.from);
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
         update();
+      } else if (e.key === 'view') {
+        props.panZoomApi.zoomToWorld(e.zoom, e.at);
       }
     });
 
