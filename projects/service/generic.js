@@ -53,8 +53,9 @@ export function equals(x, y, depth = 0) {
   } else if (isPlainObject(x)) {
     return Object.keys(x).every((key) => equals(x[key], y[key]), depth + 1)
       && Object.keys(x).length === Object.keys(y).length;
+  } else {
+    return x === y;
   }
-  return x === y;
 }
 
 /**
@@ -62,7 +63,7 @@ export function equals(x, y, depth = 0) {
  * @param {*} value 
  * @returns 
  */
- export default function isPlainObject(value) {
+ export function isPlainObject(value) {
 	if (Object.prototype.toString.call(value) !== '[object Object]') {
 		return false;
 	}

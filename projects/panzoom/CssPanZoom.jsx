@@ -133,12 +133,12 @@ export default function CssPanZoom(props) {
         if (el) {
           state.root = el;
           state.parent = /** @type {*} */ (el.parentElement);
-          state.parent.addEventListener('wheel', state.evt.wheel);
-          state.parent.addEventListener('pointerdown', state.evt.pointerdown);
-          state.parent.addEventListener('pointermove', state.evt.pointermove);
-          state.parent.addEventListener('pointerup', state.evt.pointerup);
-          state.parent.addEventListener('pointerleave', state.evt.pointerup);
-          state.parent.addEventListener('pointercancel', state.evt.pointerup);
+          state.parent.addEventListener('wheel', e => state.evt.wheel(e));
+          state.parent.addEventListener('pointerdown', e => state.evt.pointerdown(e));
+          state.parent.addEventListener('pointermove', e => state.evt.pointermove(e));
+          state.parent.addEventListener('pointerup', e => state.evt.pointerup(e));
+          state.parent.addEventListener('pointerleave', e => state.evt.pointerup(e));
+          state.parent.addEventListener('pointercancel', e => state.evt.pointerup(e));
         }
       },
       /**
@@ -222,7 +222,7 @@ export default function CssPanZoom(props) {
         return state.zoomToPoint(toScale, event);
       }
     };
-  });
+  }, { deeper: ['evt'] });
 
   React.useEffect(() => {
     props.onLoad?.(state);
