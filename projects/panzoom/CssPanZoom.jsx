@@ -23,6 +23,7 @@ export default function CssPanZoom(props) {
       opts: { minScale: 0.05, maxScale: 10, step: 0.025 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       isPanning: false,
+      locked: false,
       x: 0,
       y: 0,
       scale: 1,
@@ -37,10 +38,12 @@ export default function CssPanZoom(props) {
       evt: {
         /** @param {WheelEvent} e */
         wheel(e) {
+          if (state.locked) return;
           state.zoomWithWheel(e);
         },
         /** @param {PointerEvent} e */
         pointerdown(e) {
+          if (state.locked) return;
           // e.preventDefault();
           ensurePointer(state.pointers, e);
           state.isPanning = true;
@@ -61,6 +64,7 @@ export default function CssPanZoom(props) {
             state.origin === undefined
             || state.start.clientX === undefined
             || state.start.clientY === undefined
+            || state.locked
           ) {
             return
           }
@@ -90,6 +94,7 @@ export default function CssPanZoom(props) {
         },
         /** @param {PointerEvent} e */
         pointerup(e) {
+          if (state.locked) return;
           // e.preventDefault();
           /**
            * NOTE: don't remove all pointers.
@@ -209,22 +214,26 @@ export default function CssPanZoom(props) {
         return state.zoom(toScale, { focalClient: focal });
       },
       /**
-       * TODO
-       * - test this works ✅
-       * - can output transform and transition to it 🚧
-       * - explain meaning of this transform
        * @param {number} toScale 
        * @param {Geom.VectJson} point 
        */
-      zoomToWorld(toScale, point) {
+      zoomToWorld(toScale, point, lockMs = 0) {
         const { width, height } = state.parent.getBoundingClientRect();
         const center = tempPoint1.copy(point).scale(toScale);
-        // NOTE (x, y, scale) are s.t. transform is `scale(scale) translate(x, y)`
+        // (x, y, scale) are s.t. transform is `scale(scale) translate(x, y)`
         state.x = width/2 - center.x;
         state.y = height/2 - center.y;
         state.scale = 1;
-        // TODO unravel
         state.zoom(toScale, { focalClient: { x: toScale * (state.x), y: toScale * (state.y) } });
+
+        if (lockMs > 0) {
+          state.locked = true;
+          state.root.style.transition = `transform ${lockMs}ms ease`;
+          setTimeout(() => {
+            state.locked = false;
+            state.root.style.transition = '';
+          }, lockMs);
+        }
       },
       /**
        * @param {WheelEvent} event 
@@ -282,6 +291,7 @@ const rootCss = css`
     touch-action: none;
     /** @panzoom/panzoom uses 50% 50% instead */
     transform-origin: 0 0;
+    /* transition: transform 1s ease; */
     
     .small-grid, .large-grid {
       position: absolute;

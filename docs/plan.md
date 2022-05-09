@@ -25,6 +25,7 @@ __Aim towards website release__.
     - Anapanasati training
     - 5 watchers as Jhanic hindrances
 
+- ✅ Can zoom to point with animation
 
 - 🚧 Andros is situated
   - 🚧 CSSPanZoom returns to andros
