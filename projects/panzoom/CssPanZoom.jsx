@@ -20,17 +20,17 @@ export default function CssPanZoom(props) {
     return {
       root: /** @type {HTMLDivElement} */ ({}),
       parent: /** @type {HTMLDivElement} */ ({}),
-      opts: { minScale: 0.05, maxScale: 10, step: 0.1 },
+      opts: { minScale: 0.05, maxScale: 10, step: 0.025 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       isPanning: false,
       x: 0,
       y: 0,
-      scale: props.zoom || 1,
+      scale: 1,
       origin: /** @type {Vect | undefined} */ (undefined),
       start: {
         clientX: /** @type {number | undefined} */ (0),
         clientY: /** @type {number | undefined} */ (0),
-        scale: props.zoom || 1,
+        scale: 1,
         distance: 0,
       },
 
@@ -226,16 +226,20 @@ export default function CssPanZoom(props) {
 
   React.useEffect(() => {
     props.onLoad?.(state);
+    /**
+     * Apply initial zoom and centering.
+     * (x, y, scale) are s.t. transform is `scale(scale) translate(x, y)`
+     * TODO explain meaning of this transform
+     */
+    const { width, height } = state.parent.getBoundingClientRect();
+    const zoom = props.initZoom || 1;
+    const center = Vect.from(props.initCenter || { x: 0, y: 0 });
+    center.scale(zoom);
+    state.x = width/2 - center.x;
+    state.y = height/2 - center.y;
+    state.scale = 1;
+    state.zoom(zoom, { focal: { x: zoom * (state.x), y: zoom * (state.y) } });
   }, []);
-
-  React.useEffect(() => {
-    // Only initially zoom on first mount (avoids zoom on HMR)
-    if (props.zoom && state.scale === props.zoom) {
-      // NOTE `state.root`.children[0] lies at world origin
-      const { x: clientX, y: clientY } = state.root.children[0].getBoundingClientRect();
-      state.zoomToPoint(props.zoom, { clientX, clientY });
-    }
-  }, [props.zoom]);
 
   return (
     <div className={classNames("panzoom-parent", rootCss, backgroundCss(props))}>
@@ -308,7 +312,8 @@ const backgroundCss = (props) => css`
  * @property {string} [className]
  * @property {boolean} [dark]
  * @property {string} [wireKey] Global identifier e.g. so shells can receive clicks.
- * @property {number} [zoom] Initial zoom factor
+ * @property {number} [initZoom] e.g. `1`
+ * @property {Geom.VectJson} [initCenter]
  * @property {(api: PanZoom.CssExtApi) => void} [onLoad]
  */
 
