@@ -219,14 +219,22 @@ call '({args}) =>
     walk $1
 }`,
 
-  // TODO validation
   view: `{
   run '({ api, args }) {
-    const zoom = Number(args[0])
-    const at = api.safeJsonParse(args[1])
-    // TODO validation
+    const zoom = args.find(x => Number(x) && Number.isFinite(Number(x)))
+    const position = args.map(x => api.safeJsonParse(x))
+      .find(p => p && typeof p.x === "number" && typeof p.y === "number")
+
+    console.log({ zoom, position })
+    if (
+      !(args.length === 1 && (zoom || position)) &&
+      !(args.length === 2 && zoom && position)
+    ) {
+      api.throwError("format: \`view [{zoom}] [{vec}]\` e.g. view 1.5 \\u0027{\\"x\\":0,\\"y\\":0}\\u0027")
+    }
+
     const wire = api.getWire()
-    wire.next({ key: "view", zoom, at })
+    wire.next({ key: "view", zoom, at: position })
   }' "$@"
 }`,
 };

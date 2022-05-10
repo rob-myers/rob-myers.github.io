@@ -15,7 +15,7 @@ export default function CssPanZoom(props) {
     return {
       root: /** @type {HTMLDivElement} */ ({}),
       parent: /** @type {HTMLDivElement} */ ({}),
-      opts: { minScale: 0.05, maxScale: 10, step: 0.025 },
+      opts: { minScale: 0.05, maxScale: 10, step: 0.05 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       isPanning: false,
       x: 0,
@@ -110,8 +110,14 @@ export default function CssPanZoom(props) {
       /** @param {{ clientX: number; clientY: number; }} e */
       getWorld(e) {
         const dims = getDimensions(state.root);
+        // TODO we control `transform` so can do this more efficiently
         const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
         return matrix.transformPoint({ x: e.clientX - dims.parent.left, y: e.clientY - dims.parent.top });
+      },
+      getWorldAtCenter() {
+        const dims = getDimensions(state.root);
+        const matrix = new DOMMatrixReadOnly(window.getComputedStyle(state.root).transform).inverse();
+        return matrix.transformPoint({ x: dims.parent.width/2, y: dims.parent.height/2 });
       },
       /**
        * @param {number} toX 
@@ -161,14 +167,13 @@ export default function CssPanZoom(props) {
           state.root.style.transition = `transform 100ms linear`;
           window.setTimeout(() => state.transitionTimeoutId === 0
             && (state.root.style.transition = '')
-          , 1000);
+          , 500);
         }
       },
       updateView() {
         state.root.style.transform = `scale(${state.scale}) translate(${state.x}px, ${state.y}px)`;
       },
       /**
-       * NOTE could reintroduce opt `animate`
        * @param {number} toScale 
        * @param {{ focalClient?: Geom.VectJson }} opts 
        */
@@ -188,47 +193,36 @@ export default function CssPanZoom(props) {
         state.y = toY;
         state.scale = toScale;
         state.updateView();
-        // Originally there was a return value
       },
       /**
        * @param {number} toScale 
        * @param {{ clientX: number; clientY: number }} point 
        */
       zoomToClient(toScale, point) {
-        const dims = getDimensions(state.root);
-    
-        // Instead of thinking of operating on the panzoom element,
-        // think of operating on the area inside the panzoom
-        // element's parent
-        // We assume parent has no padding/margin/border
-        const effectiveArea = {
-          width: dims.parent.width,
-          height: dims.parent.height,
-        };
-    
-        // Adjust the clientX/clientY to ignore the area
-        // outside the effective area
-        let clientX = point.clientX;
-        let clientY = point.clientY;
+        // Adjust the clientX/clientY to ignore the area outside the effective area
+        const { left, top } = state.parent.getBoundingClientRect();
+        let clientX = point.clientX - left;
+        let clientY = point.clientY - top;
     
         // Convert the mouse point from it's position over the
         // effective area before the scale to the position
         // over the effective area after the scale.
-        const focal = {
-          x: (clientX / effectiveArea.width) * (effectiveArea.width * toScale),
-          y: (clientY / effectiveArea.height) * (effectiveArea.height * toScale)
-        }
-    
-        return state.zoom(toScale, { focalClient: focal });
+        return state.zoom(toScale, { focalClient: { x: clientX * toScale, y: clientY * toScale } });
       },
       /**
-       * @param {number} toScale 
-       * @param {Geom.VectJson} point 
+       * @param {number} [toScale] 
+       * @param {Geom.VectJson} [worldPoint] 
        */
-      zoomToWorld(toScale, point, transitionMs = 0) {
-        const { width, height } = state.parent.getBoundingClientRect();
-        const center = tempPoint1.copy(point).scale(toScale);
+      zoomToWorld(toScale, worldPoint, transitionMs = 0) {
+        toScale = toScale || state.scale;
+
+        // TODO if no point get world point at center
+        const center = worldPoint
+          ? tempPoint1.copy(worldPoint).scale(toScale)
+          : tempPoint1.copy(state.getWorldAtCenter()).scale(toScale);
+        
         // (x, y, scale) are s.t. transform is `scale(scale) translate(x, y)`
+        const { width, height } = state.parent.getBoundingClientRect();
         state.x = width/2 - center.x;
         state.y = height/2 - center.y;
         state.scale = 1;
@@ -248,9 +242,9 @@ export default function CssPanZoom(props) {
         // or it conflicts with regular page scroll
         event.preventDefault();
         // Normalize to deltaX in case shift modifier is used on Mac
-        const delta = event.deltaY === 0 && event.deltaX ? event.deltaX : event.deltaY
-        const wheel = delta < 0 ? 1 : -1
-        const toScale = Math.min(Math.max(state.scale * Math.exp((wheel * state.opts.step) / 3), state.opts.minScale), state.opts.maxScale);
+        const delta = event.deltaY === 0 && event.deltaX ? event.deltaX : event.deltaY;
+        const wheel = delta < 0 ? 1 : -1;
+        const toScale = Math.min(Math.max(state.scale * Math.exp((wheel * state.opts.step * 0.25) / 3), state.opts.minScale), state.opts.maxScale);
         return state.zoomToClient(toScale, event);
       }
     };
