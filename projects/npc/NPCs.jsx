@@ -154,7 +154,7 @@ export default function NPCs(props) {
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
         update();
       } else if (e.key === 'view') {
-        props.panZoomApi.zoomToWorld(e.zoom, e.at, 1000);
+        props.panZoomApi.zoomToWorld(e.zoom, e.at, 2000);
       }
     });
 

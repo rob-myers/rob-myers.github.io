@@ -4,14 +4,9 @@
 import React from 'react';
 import classNames from "classnames";
 import { css } from "goober";
-import { Vect } from "../geom";
-import useStateRef from "../hooks/use-state-ref";
+import { Mat, Vect } from "../geom";
 import { ensureWire } from '../service/wire';
-
-/**
- * TODO 🚧
- * - support override i.e. transition to specific transform
- */
+import useStateRef from "../hooks/use-state-ref";
 
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
@@ -23,27 +18,27 @@ export default function CssPanZoom(props) {
       opts: { minScale: 0.05, maxScale: 10, step: 0.025 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       isPanning: false,
-      locked: false,
       x: 0,
       y: 0,
       scale: 1,
       origin: /** @type {Vect | undefined} */ (undefined),
       start: {
-        clientX: /** @type {number | undefined} */ (0),
-        clientY: /** @type {number | undefined} */ (0),
+        clientX: /** @type {number | undefined} */ (undefined),
+        clientY: /** @type {number | undefined} */ (undefined),
         scale: 1,
         distance: 0,
       },
+      transitionTimeoutId: 0,
 
       evt: {
         /** @param {WheelEvent} e */
         wheel(e) {
-          if (state.locked) return;
+          state.clearTransition();
           state.zoomWithWheel(e);
         },
         /** @param {PointerEvent} e */
         pointerdown(e) {
-          if (state.locked) return;
+          state.clearTransition();
           // e.preventDefault();
           ensurePointer(state.pointers, e);
           state.isPanning = true;
@@ -64,7 +59,6 @@ export default function CssPanZoom(props) {
             state.origin === undefined
             || state.start.clientX === undefined
             || state.start.clientY === undefined
-            || state.locked
           ) {
             return
           }
@@ -94,7 +88,6 @@ export default function CssPanZoom(props) {
         },
         /** @param {PointerEvent} e */
         pointerup(e) {
-          if (state.locked) return;
           // e.preventDefault();
           /**
            * NOTE: don't remove all pointers.
@@ -110,6 +103,7 @@ export default function CssPanZoom(props) {
           }
           state.isPanning = false;
           state.origin = state.start.clientX = state.start.clientY = undefined;
+          state.clearTransition();
         },
       },
 
@@ -155,6 +149,20 @@ export default function CssPanZoom(props) {
         const wire = ensureWire(wireKey);
         const point = state.getWorld(e);
         wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
+      },
+      clearTransition() {
+        if (state.transitionTimeoutId !== 0) {
+          window.clearTimeout(state.transitionTimeoutId);
+          state.transitionTimeoutId = 0;
+          // We assume computed `state.root.transform` has form
+          // `matrix(scale, 0, scale, k, x, y)`
+          [this.scale, , , , this.x, this.y] = window.getComputedStyle(state.root)
+            .transform.slice('matrix('.length, -')'.length).split(',').map(Number);
+          state.root.style.transition = `transform 100ms linear`;
+          window.setTimeout(() => state.transitionTimeoutId === 0
+            && (state.root.style.transition = '')
+          , 1000);
+        }
       },
       updateView() {
         state.root.style.transform = `scale(${state.scale}) translate(${state.x}px, ${state.y}px)`;
@@ -217,7 +225,7 @@ export default function CssPanZoom(props) {
        * @param {number} toScale 
        * @param {Geom.VectJson} point 
        */
-      zoomToWorld(toScale, point, lockMs = 0) {
+      zoomToWorld(toScale, point, transitionMs = 0) {
         const { width, height } = state.parent.getBoundingClientRect();
         const center = tempPoint1.copy(point).scale(toScale);
         // (x, y, scale) are s.t. transform is `scale(scale) translate(x, y)`
@@ -226,13 +234,10 @@ export default function CssPanZoom(props) {
         state.scale = 1;
         state.zoom(toScale, { focalClient: { x: toScale * (state.x), y: toScale * (state.y) } });
 
-        if (lockMs > 0) {
-          state.locked = true;
-          state.root.style.transition = `transform ${lockMs}ms ease`;
-          setTimeout(() => {
-            state.locked = false;
-            state.root.style.transition = '';
-          }, lockMs);
+        state.clearTransition();
+        if (transitionMs > 0) {
+          state.root.style.transition = `transform ${transitionMs}ms ease`;
+          state.transitionTimeoutId = window.setTimeout(() => state.clearTransition(), transitionMs);
         }
       },
       /**

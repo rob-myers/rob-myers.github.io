@@ -20,18 +20,28 @@ __Aim towards website release__.
   - Revisit second page
     - Discuss constraints as before
     - Decompose __SITUATED__
-    - spawn, navigate, show navpaths, move along local navpath
-  - Story
-    - Anapanasati training
-    - 5 watchers as Jhanic hindrances
+- Story
+  - Anapanasati training
+  - 5 watchers as Jhanic hindrances
 
-- ✅ Can zoom to point with animation
 
 - 🚧 Andros is situated
   - 🚧 CSSPanZoom returns to andros
   - Can only move to point within lit area
   - Cannot close door when Andros will go through it
   - When avatar moves through doorway, lighting changes
+
+- ✅ Can zoom to point with animation
+- ✅ Interruptible zoom without lock
+  - `matrix(a, b, c, d, e, f)` -> `scale(k) translate(x, y)`
+  - `scale(k) translate(x, y)` = `matrix(k, 0, 0, k, x, y)`
+- 🚧 Reorg `sh.lib`
+  - base functions are also from Terminal specified script
+  - `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
+  - `view` -> `pan`, `zoom` 
+  - shell function periodically panzooms to npc
+  - script spawns andros and periodically panzooms back to him
+  
 
 - 🚧 Investigate migration to Gatsby
 
@@ -52,9 +62,6 @@ __Aim towards website release__.
 
 - Can toggle NPC speech bubbles
 - Can pause/resume NPC
-- Reorg `sh.lib`
-  - `spawn`, `click`, `nav` are from Terminal specified script.
-  - base functions are also from Terminal specified script
 - mobile-friendly command links (session must be open)
 
 - Clean
@@ -63,14 +70,15 @@ __Aim towards website release__.
   - ✅ Rooms can themselves have holes (from allWalls[i] where i ≥ 1)
     - ✅ Examples: 101, 102, 302
     - ✅ Important for _visibility ray casts_
-  - 🤔 Saw empty holeId in 301 i.e. `15`
-  - BUG render-npc cannot deal with nested transforms
+  - 🤔 Saw empty roomId in 301 i.e. `15`
+  - BUG `render-npc` cannot deal with nested transforms
     - g.transform inside a use
-    - maybe saw another example for g.transform of frame
-  - navPoly should be a single polygon?
+    - g.transform of frame
+  - navPoly must be a single polygon?
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tags `dark-front` and `dark-back` instead of `one-way`
   - Move light polygon computations into `lazy` i.e. reuse
+  - Easier to toggle doors on mobile
 
 - 🚧 `NavDemo1`
   - ✅ Circle with heart-beat and breath
