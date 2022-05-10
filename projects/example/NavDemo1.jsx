@@ -111,7 +111,7 @@ export default function NavDemo1(props) {
   return gms.length ? (
     <CssPanZoom
       className={rootCss}
-      initZoom={1.2}
+      initZoom={1.5}
       initCenter={{ x: 300, y: 300 }}
       dark
       wireKey={wireKey}

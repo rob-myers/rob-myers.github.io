@@ -35,6 +35,9 @@ __Aim towards website release__.
 - ✅ Interruptible zoom without lock
   - `matrix(a, b, c, d, e, f)` -> `scale(k) translate(x, y)`
   - `scale(k) translate(x, y)` = `matrix(k, 0, 0, k, x, y)`
+- ✅ fix issue with `transition` of matrix transform involving scale and translate (looks crap)
+  - ✅ split CSSPanZoom into two transforms i.e. scale and translate
+  - ✅ animate both
 - 🚧 Reorg `sh.lib`
   - base functions are also from Terminal specified script
   - `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
