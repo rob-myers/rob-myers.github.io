@@ -7,6 +7,7 @@ import { getCode, getComponent } from 'model/tabs/lookup';
 import useSiteStore from "store/site.store";
 import useSession from "store/session.store";
 import { CodeEditor, Terminal } from 'components/dynamic';
+import { isProfileKey, profileLookup } from 'model/sh/sh.lib';
 
 export default function Portals() {
   const lookup = useSiteStore(site => site.portal);
@@ -54,12 +55,18 @@ export default function Portals() {
           );
         }
         case 'terminal': {
-          const defaultEnv: React.ComponentProps<typeof Terminal>['env'] = {
-            // README: 'No environment was provided to this terminal.',
-          };
+
+          const env = meta.env || {};
+          if (typeof env.PROFILE === 'string') {
+            // Can specify profile via key
+            if (isProfileKey(env.PROFILE)) env.PROFILE = profileLookup[env.PROFILE];
+          } else {
+            env.PROFILE = profileLookup['profile-1'];
+          }
+
           return (
             <portals.InPortal key={key} node={portal}>
-              <Terminal sessionKey={meta.filepath} env={meta.env || defaultEnv} />
+              <Terminal sessionKey={meta.filepath} env={env} />
             </portals.InPortal>
           );
         }

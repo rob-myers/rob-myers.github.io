@@ -1,42 +1,54 @@
-export const preloadedFunctions = {
-
-  /** Evaluate and return a javascript expression */
-  expr: `run '({ api, args }) {
-  const input = args.join(" ")
-  yield api.parseJsArg(input)
-}' "$@"`,
-
-  /** Execute a javascript function */
-  call: `run '(ctxt) {
-  const func = Function(\`return \${ctxt.args[0]}\`)()
-  ctxt.args = ctxt.args.slice(1)
-  yield await func(ctxt)
-}' "$@"`,
-
-  /** Filter inputs */
-  filter: `run '(ctxt) {
-  let { api, args, datum } = ctxt
-  const func = Function(\`return \${args[0]}\`)()
-  while ((datum = await api.read()) !== null)
-    if (func(datum, ctxt)) yield datum
-}' "$@"`,
-
-  /** Apply function to each item from stdin */
-  map: `run '(ctxt) {
-  let { api, args, datum } = ctxt
-  const func = Function(\`return \${args[0]}\`)()
-  while ((datum = await api.read(true)) !== null) {
-    if (datum.__chunk__) yield { ...datum, items: datum.items.map(x => func(x, ctxt)) }
-    else yield func(datum, ctxt)
-  }
-}' "$@"`,
-
-  poll: `run '({ api, args }) {
-  yield* api.poll(args)
-}' "$@"`,
-
-  /** Reduce all items from stdin */
-  reduce: `run '({ api, args }) {
+// Index in array denotes version
+export const utilFunctions = [
+{
+/** Evaluate and return a javascript expression */
+expr: `{
+  run '({ api, args }) {
+    const input = args.join(" ")
+    yield api.parseJsArg(input)
+  }' "$@"
+}`,
+  
+/** Execute a javascript function */
+call: `{
+  run '(ctxt) {
+    const func = Function(\`return \${ctxt.args[0]}\`)()
+    ctxt.args = ctxt.args.slice(1)
+    yield await func(ctxt)
+  }' "$@"
+}`,
+  
+/** Filter inputs */
+filter: `{
+  run '(ctxt) {
+    let { api, args, datum } = ctxt
+    const func = Function(\`return \${args[0]}\`)()
+    while ((datum = await api.read()) !== null)
+      if (func(datum, ctxt)) yield datum
+  }' "$@"
+}`,
+  
+/** Apply function to each item from stdin */
+map: `{
+  run '(ctxt) {
+    let { api, args, datum } = ctxt
+    const func = Function(\`return \${args[0]}\`)()
+    while ((datum = await api.read(true)) !== null) {
+      if (datum.__chunk__) yield { ...datum, items: datum.items.map(x => func(x, ctxt)) }
+      else yield func(datum, ctxt)
+    }
+  }' "$@"
+}`,
+  
+poll: `{
+  run '({ api, args }) {
+    yield* api.poll(args)
+  }' "$@"
+}`,
+  
+/** Reduce all items from stdin */
+reduce: `{
+  run '({ api, args }) {
     const inputs = []
     const reducer = Function(\`return \${args[0]}\`)()
     while ((datum = await api.read()) !== null)
@@ -44,14 +56,16 @@ export const preloadedFunctions = {
     yield args[1]
       ? inputs.reduce(reducer, api.parseJsArg(args[1]))
       : inputs.reduce(reducer)
-  }' "$@"`,
+  }' "$@"
+}`,
 
-  /**
-   * Split arrays from stdin into items.
-   * Split strings by optional separator (default `''`).
-   * Otherwise ignore.
-   */
-  split: `run '({ api, args }) {
+/**
+ * Split arrays from stdin into items.
+ * Split strings by optional separator (default `''`).
+ * Otherwise ignore.
+ */
+split: `{
+  run '({ api, args }) {
     const arg = args[0] || ""
     while ((datum = await api.read()) !== null) {
       if (datum instanceof Array) {
@@ -62,45 +76,53 @@ export const preloadedFunctions = {
         yield { __chunk__: true, items: datum.split(arg) };
       }
     }
-  }' "$@"`,
-
-  /** Collect stdin into a single array */
-  sponge: `run '({ api }) {
+  }' "$@"
+}`,
+  
+/** Collect stdin into a single array */
+sponge: `{
+  run '({ api }) {
     const outputs = []
     while ((datum = await api.read()) !== null)
       outputs.push(datum)
     yield outputs
-  }'`,
-
-  range: `{
-call '({args}) =>
-  [...Array(Number(args[0]))].map((_, i) => i)
-' "$1"
+  }'
 }`,
-
-  seq: `{
+  
+range: `{
+  call '({args}) =>
+    [...Array(Number(args[0]))].map((_, i) => i)
+  ' "$1"
+}`,
+  
+seq: `{
   range "$1" | split
 }`,
-
-  pretty: `{
+  
+pretty: `{
   map '(x, { api }) => api.pretty(x)'
 }`,
-
-  keys: `{
+  
+keys: `{
   map Object.keys
 }`,
-  // cat: `get "$@" | split`,
-
-  // 'map console.log' would log the 2nd arg too
-  log: `{
+    // cat: `get "$@" | split`,
+  
+    // NOTE 'map console.log' would log the 2nd arg too
+log: `{
   map 'x => console.log(x)'
 }`,
+},
+];
 
-  /**
-   * Output world position clicks sent via WIRE_KEY.
-   * e.g. `click`, `click 1`
-   */
-  click: `{
+// TODO move to scripts?
+export const gameFunctions = [
+{
+/**
+ * Output world position clicks sent via WIRE_KEY.
+ * e.g. `click`, `click 1`
+ */
+click: `{
   run '({ api, args, home }) {
     const numClicks = args[0] === "" ? Number.MAX_SAFE_INTEGER : Number(args[0])
     if (!Number.isFinite(numClicks)) {
@@ -131,11 +153,11 @@ call '({args}) =>
   }' "$@"
 }`,
 
-  /**
-   * Spawn a character at a position.
-   * e.g. `spawn andros "$( click 1 )"`
-   */
-  spawn: `{
+/**
+ * Spawn a character at a position.
+ * e.g. `spawn andros "$( click 1 )"`
+ */
+spawn: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
     const position = api.safeJsonParse(args[1])
@@ -154,11 +176,11 @@ call '({args}) =>
   }' "$@"
 }`,
 
-  /**
-   * Request navpath to position for character via WIRE_KEY.
-   * e.g. `nav andros "$( click 1 )"'
-   */
-  nav: `{
+/**
+ * Request navpath to position for character via WIRE_KEY.
+ * e.g. `nav andros "$( click 1 )"'
+ */
+nav: `{
   run '({ api, args }) {
     const npcKey = args[0]
     const position = api.safeJsonParse(args[1])
@@ -189,11 +211,11 @@ call '({args}) =>
   }' "$@"
 }`,
 
-  /**
-   * Move an npc along a path via WIRE_KEY.
-   * e.g. `walk andros "[$( click 1 ), $( click 1 )]"'
-   */
-  walk: `{
+/**
+ * Move an npc along a path via WIRE_KEY.
+ * e.g. `walk andros "[$( click 1 ), $( click 1 )]"'
+ */
+walk: `{
   run '({ api, args }) {
     const npcKey = args[0]
     const path = api.safeJsonParse(args[1]) || !api.isTtyAt(0) && await api.read()
@@ -216,14 +238,14 @@ call '({args}) =>
   }' "$@"    
 }`,
 
-  // TODO currently a simplification
-  go: `{
+// TODO currently a simplification
+go: `{
   nav $1 $(click 1) |
     map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
     walk $1
 }`,
 
-  view: `{
+view: `{
   run '({ api, args }) {
     const zoom = args.find(x => Number(x) && Number.isFinite(Number(x)))
     const position = args.map(x => api.safeJsonParse(x))
@@ -245,21 +267,32 @@ call '({args}) =>
     wire.next({ key: "view", zoom, at: position })
   }' "$@"
 }`,
+},
+];
+
+/** Specified via terminal env.PROFILE */
+export const profileLookup = {
+  'profile-1': `
+
+# load util functions
+source /etc/util-1
+# load game functions
+source /etc/game-1
+
+`.trimLeft(),
 };
 
-export const preloadedVariables = {};
+export function isProfileKey(key: string): key is keyof typeof profileLookup {
+  return key in profileLookup;
+}
 
-export const shellScripts = {
+/** This is `/etc` */
+export const scriptLookup = {
+  'util-1': Object.entries(utilFunctions[0])
+    .map(([funcName, funcBody]) => `${funcName} () ${funcBody.trim()}`
+  ).join('\n\n'),
 
-  unusedBackgroundHandler: `
-foo | bar | baz &
-`,
-};
-
-export const profiles = {
-  unused: `
-
-${shellScripts.unusedBackgroundHandler.trim()}
-
-`.trim(),
+  'game-1': Object.entries(gameFunctions[0])
+    .map(([funcName, funcBody]) => `${funcName} () ${funcBody.trim()}`
+  ).join('\n\n'),
 };

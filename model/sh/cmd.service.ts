@@ -7,9 +7,11 @@ import { getProcessStatusIcon, ReadResult, preProcessRead } from './io/io.model'
 import useSession, { ProcessStatus } from 'store/session.store';
 import { computeNormalizedParts, createKillError as killError, normalizeAbsParts, ProcessError, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
+import { parseService } from './parse/parse.service';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
 import { TtyShell } from './tty.shell';
 
+import { scriptLookup } from './sh.lib';
 // Connections to "outside" i.e. react-query, rxjs
 import { queryCache } from 'projects/service/query-client';
 import { ensureWire } from 'projects/service/wire';
@@ -49,6 +51,8 @@ const commandKeys = {
   set: true,
   /** Wait for specified number of seconds */
   sleep: true,
+  /** Run shell code stored as a string somewhere */
+  source: true,
   /** Exit with code 0 */
   true: true,
   /** Unset top-level variables and shell functions */
@@ -317,6 +321,20 @@ class CmdService {
         } while (Date.now() < started + ms - 1)
         break;
       }
+      case 'source': {
+        const script = this.get(node, [args[0]])[0];
+        if (script === undefined) {
+          useSession.api.warn(meta.sessionKey, `source: "${args[0]}" not found`);
+        } else if (typeof script !== 'string') {
+          useSession.api.warn(meta.sessionKey, `source: "${args[0]}" is not a string`);
+        } else {
+          const parsed = parseService.parse(script);
+          parsed.meta = {...meta };
+          const { ttyShell, process } = useSession.api.getSession(meta.sessionKey);
+          await ttyShell.spawn(parsed, { posPositionals: args.slice(1) });
+        }
+        break;
+      }
       case 'true': {
         node.exitCode = 0;
         break;
@@ -435,7 +453,8 @@ class CmdService {
     const session = useSession.api.getSession(meta.sessionKey);
     return new Proxy({
       home: session.var,
-      cache: queryCache, 
+      cache: queryCache,
+      etc: scriptLookup,
     }, {
       get: (_, key) => {
         if (key === 'api') return new Proxy({}, {

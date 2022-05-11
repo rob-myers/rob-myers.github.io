@@ -10,7 +10,6 @@ import { wrapInFile } from './parse/parse.util';
 import { semanticsService } from './semantics.service';
 import { TtyXterm } from './tty.xterm';
 import { ProcessError } from './sh.util';
-import { preloadedFunctions, preloadedVariables } from './sh.lib';
 
 export class TtyShell implements Device {
 
@@ -54,10 +53,7 @@ export class TtyShell implements Device {
     if (!parseService.parse) {// Wait for parse.service
       await new Promise<void>(resolve => initializers.push(resolve));
     }
-    this.loadShellFuncs(preloadedFunctions);
-    for (const [varName, varValue] of Object.entries(preloadedVariables)) {
-      useSession.api.setVar(this.sessionKey, varName, varValue);
-    }
+
     await this.runProfile();
 
     this.prompt('$');
@@ -204,15 +200,15 @@ export class TtyShell implements Device {
   }
 
   /** Input is a lookup `{ foo: '{ echo foo; }' }` */
-  loadShellFuncs(funcDef: { [funcName: string]: string }) {
-    for (const [funcName, funcBody] of Object.entries(funcDef)) {
+  loadShellFuncs(funcDefs: { [funcName: string]: string }) {
+    for (const [funcName, funcBody] of Object.entries(funcDefs)) {
       try {
         const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
         const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
         const wrappedBody = wrapInFile(parsedBody);
         useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
       } catch (e) {
-        console.error(`Failed to load function: ${funcName}`);
+        console.error(`loadShellFuncs: failed to load function "${funcName}"`);
         console.error(e);
       }
     }

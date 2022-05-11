@@ -37,11 +37,13 @@ __Aim towards website release__.
   - `scale(k) translate(x, y)` = `matrix(k, 0, 0, k, x, y)`
 - ✅ fix issue with `transition` of matrix transform involving scale and translate (looks crap)
   - ✅ split CSSPanZoom into two transforms i.e. scale and translate
+    now essentially `translate(x, y) scale(k)` spread across 2 elems
   - ✅ animate both
+
 - 🚧 Reorg `sh.lib`
-  - base functions are also from Terminal specified script
-  - `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
-  - `view` -> `pan`, `zoom` 
+  - ✅ base functions are from Terminal specified script
+  - ✅ `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
+  - ❌ `view` -> `pan`, `zoom` 
   - shell function periodically panzooms to npc
   - script spawns andros and periodically panzooms back to him
   
@@ -100,6 +102,7 @@ __Aim towards website release__.
   - Andros is __situated__
   - `NavDemo1` has other NPCs
 
+- bring back `say`
 - start using `yarn inspect` as in BFF for server side debug
 
 - 🤔 NPCs have label
