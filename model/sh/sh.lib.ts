@@ -210,11 +210,7 @@ walk: `{
       || !Array.isArray(path)
       || !path.every(p => p && typeof p.x === "number" && typeof p.y === "number")
     ) {
-      api.throwError("format: \`walk {npc-key} [{vec},...,{vec}]\` e.g.${
-        `\\n\\r- walk andros \\"[$( click 1 ), $( click 1 )]\\"`
-      }${
-        `\\n\\r- myPath | walk andros`
-      }")
+      api.throwError("format: \`walk {npc-key} [{vec},...,{vec}]\`")
     }
 
     const anim = await api.reqRes({ key: "walk-req", npcKey, path })
@@ -243,13 +239,7 @@ view: `{
       !(args.length === 1 && (zoom || position)) &&
       !(args.length === 2 && zoom && position)
     ) {
-      api.throwError("format: \`view [{zoom}] [{vec}]\` e.g.${
-        `\\n\\r- view 2`
-      }${
-        `\\n\\r- view \\u0027{\\"x\\":300,\\"y\\":600}\\u0027`
-      }${
-        `\\n\\r- view 1.5 \\u0027{\\"x\\":0,\\"y\\":0}\\u0027`
-      }")
+      api.throwError("format: \`view [{zoom}] [{vec}]\`")
     }
 
     const wire = api.getWire()

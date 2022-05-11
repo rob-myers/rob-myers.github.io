@@ -119,4 +119,8 @@ walk andros ${myPath}
 myPath | map 'x => x.reverse()'
 walk andros ${myPath}
 # finished
+
+view '{"x":600,"y":600}' 0.5
+view '{"x":600,"y":600}'
+view 2
 ```
