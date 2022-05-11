@@ -221,8 +221,14 @@ walk: `{
       }")
     }
 
-    api.getWire().next({ key: "move-req", npcKey, path });
-  }' "$@"    
+    const anim = await api.reqRes({ key: "walk-req", npcKey, path })
+    
+    // Wait until walk finished or cancelled
+    await new Promise((resolve, reject) => {
+      anim.addEventListener("finish", resolve)
+      anim.addEventListener("cancel", reject)
+    })
+  }' "$@"
 }`,
 
 // TODO currently a simplification

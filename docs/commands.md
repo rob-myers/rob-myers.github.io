@@ -116,5 +116,7 @@ walk foo $( _ )
 spawn andros $( click 1 )
 nav andros $( click 1 ) | map 'x => x.paths[0]' >myPath
 walk andros ${myPath}
-
+myPath | map 'x => x.reverse()'
+walk andros ${myPath}
+# finished
 ```

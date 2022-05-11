@@ -111,6 +111,7 @@ export default function NPCs(props) {
         npc.updateAnimAux();
         npc.followNavPath();
         update();
+        return npc.anim.root;
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(rootEl) {
@@ -143,11 +144,12 @@ export default function NPCs(props) {
           throw Error(`npc "${e.npcKey}" does not exist`);
         const result = state.getGlobalNavPath(npc.getPosition(), e.dst);
         wire.next({ key: 'nav-res', req: e, res: result });
-      } else if (e.key === 'move-req') {
+      } else if (e.key === 'walk-req') {
         const npc = state.npc[e.npcKey];
         if (!npc)
           throw Error(`npc "${e.npcKey}" does not exist`);
-        state.moveNpcAlongPath(npc, e.path);
+        const anim = state.moveNpcAlongPath(npc, e.path);
+        wire.next({ key: 'walk-res', req: e, res: anim });
       } else if (e.key === 'debug-path') {
         const path = e.path.map(Vect.from);
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };

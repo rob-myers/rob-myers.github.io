@@ -22,7 +22,12 @@ declare namespace NPC {
 
   type NpcEvent = (
     | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
-    | { key: 'move-req'; npcKey: string; path: Geom.VectJson[]; }
+    | { key: 'walk-req'; npcKey: string; path: Geom.VectJson[]; }
+    | {
+        key: 'walk-res';
+        req: (NpcEvent & { key: 'walk-req' });
+        res: Animation;
+      }
     | { key: 'nav-req'; npcKey: string; dst: Geom.VectJson; }
     | {
         key: 'nav-res';
