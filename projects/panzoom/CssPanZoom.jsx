@@ -31,6 +31,7 @@ export default function CssPanZoom(props) {
       },
       scaleTimeoutId: 0,
       translateTimeoutId: 0,
+      noTransitionTimeout: 0,
 
       evt: {
         /** @param {WheelEvent} e */
@@ -163,24 +164,18 @@ export default function CssPanZoom(props) {
         const point = state.getWorld(e);
         wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
       },
-      /**
-       * @param {'translate' | 'scale'} [type] 
-       */
-      clearTransition(type) {
-        if (state.translateTimeoutId !== 0 && (!type || type === 'translate')) {
+      clearTransition() {
+        if (state.translateTimeoutId || state.scaleTimeoutId) {
+          // Keep small transition for smoothness.
+          // It will be totally removed via state.noTransitionTimeout
+          state.translateRoot.style.transition = state.scaleRoot.style.transition = 'transform 100ms linear';
           window.clearTimeout(state.translateTimeoutId);
-          state.translateTimeoutId = 0;
-          [, , , , state.x, state.y] = window.getComputedStyle(state.translateRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
-          state.translateRoot.style.transition = `transform 100ms linear`;
-          window.setTimeout(() => (state.translateTimeoutId === 0) && (state.translateRoot.style.transition = ''), 500);
-        }
-
-        if (state.scaleTimeoutId !== 0 && (!type || type === 'scale')) {
           window.clearTimeout(state.scaleTimeoutId);
-          state.scaleTimeoutId = 0;
+          state.translateTimeoutId = state.scaleTimeoutId = 0;
+          // Set target transform as current
+          [, , , , state.x, state.y] = window.getComputedStyle(state.translateRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
           [state.scale] = window.getComputedStyle(state.scaleRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
-          state.scaleRoot.style.transition = `transform 100ms linear`;
-          window.setTimeout(() => (state.scaleTimeoutId === 0) && (state.scaleRoot.style.transition = ''), 500);
+          state.updateView();
         }
       },
       updateView() {
@@ -212,13 +207,16 @@ export default function CssPanZoom(props) {
       zoomToWorld(toScale, worldPoint, transitionMs = 0) {
         toScale = toScale || state.scale;
         state.clearTransition();
+        // Can totally remove transition once no transition in progress
+        window.clearTimeout(state.noTransitionTimeout);
+        state.noTransitionTimeout = window.setTimeout(() => state.translateRoot.style.transition = state.scaleRoot.style.transition = '', transitionMs);
 
         if (worldPoint) {
           const { width: w, height: h } = state.parent.getBoundingClientRect();
           state.x = w/2 - (state.scale * worldPoint.x);
           state.y = h/2 - (state.scale * worldPoint.y);
           state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;
-          state.translateTimeoutId = window.setTimeout(() => state.clearTransition('translate'), transitionMs);
+          state.translateTimeoutId = window.setTimeout(() => state.clearTransition(), transitionMs);
           state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
         }
         
