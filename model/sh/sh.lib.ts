@@ -270,16 +270,26 @@ view: `{
 },
 ];
 
-/** Specified via terminal env.PROFILE */
+/** Can be specified via terminal env.PROFILE */
 export const profileLookup = {
-  'profile-1': `
+  'profile-1': () => `
 
 # load util functions
 source /etc/util-1
 # load game functions
 source /etc/game-1
 
-`.trimLeft(),
+`.trim(),
+
+  'profile-1-a': () => `
+${profileLookup["profile-1"]()}
+
+# TODO get spawns points instead
+spawn andros '{"x":185,"y":390}'
+
+# TODO ongoing process returns to andros
+# e.g. get position of andros
+`,
 };
 
 export function isProfileKey(key: string): key is keyof typeof profileLookup {
