@@ -45,8 +45,10 @@ __Aim towards website release__.
   - ✅ `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
   - ❌ `view` -> `pan`, `zoom` 
   - ✅ Automate foo-req and foo-res on wire via `await api.reqRes`
+  - ✅ Fix `kill --STOP {pid}` e.g. for `click`
+  - 🚧 shorten script validation via `api.something`
+  - 🚧 `npc [{key}]` gets api
   - 🚧 script spawns andros and periodically panzooms back to him
-  - shorten script validation via `api.something`
   
 
 - 🚧 Investigate migration to Gatsby
