@@ -1,6 +1,6 @@
 import cliColumns from 'cli-columns';
 
-import { testNever, truncateOneLine, Deferred, pause, keysDeep, safeStringify, pretty } from 'model/generic.model';
+import { testNever, truncateOneLine, Deferred, pause, keysDeep, safeStringify, pretty, deepGet } from 'model/generic.model';
 import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, preProcessRead } from './io/io.model';
@@ -211,7 +211,9 @@ class CmdService {
 
           if (opts.l) {
             if (typeof obj === 'function') keys = keys.filter(x => !['caller', 'callee', 'arguments'].includes(x));
-            const metas = keys.map(x => obj[x]?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'));
+            const metas = opts.r
+              ? keys.map(x => deepGet(obj, x.split('/'))?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'))
+              : keys.map(x => obj[x]?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'));
             const metasWidth = Math.max(...metas.map(x => x.length));
             items = keys.map((x, i) => `${ansiYellow}${metas[i].padEnd(metasWidth)}${ansiWhite} ${x}`);
           } else if (opts[1]) {
