@@ -126,24 +126,20 @@ click: `{
   run '({ api, args, home }) {
     const numClicks = args[0] === "" ? Number.MAX_SAFE_INTEGER : Number(args[0])
     if (!Number.isFinite(numClicks)) {
-      api.throwError("format: \`click [numberOfClicks]\`")
+      api.throwError("format: \`click [{numberOfClicks}]\`")
     }
-    const wire = api.getWire()
 
     const process = api.getProcess()
-    let [resolve, reject] = [(_) => {}, (_) => {}]
+    let [resolve, reject] = [() => {}, () => {}]
 
-    const sub = wire.subscribe({
+    const sub = api.getWire().subscribe({
       next: (e) => {// ProcessStatus.Running === 1
         if (e.key === "pointerup" && process.status === 1) {
           resolve({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) })
         }
       },
     });
-    process.cleanups.push(
-      () => sub.unsubscribe(),
-      () => reject(api.getKillError()),
-    )
+    process.cleanups.push(() => sub.unsubscribe(), () => reject(api.getKillError()))
 
     for (let i = 0; i < numClicks; i++) {
       yield await new Promise((res, rej) => [resolve, reject] = [res, rej])
@@ -169,10 +165,8 @@ spawn: `{
       api.throwError("format: \`spawn {key} [{vec}]\` e.g. spawn andros \'{"x":300,"y":120}\'")
     }
 
-    // TODO better default position?
     const at = position || { x: 0, y: 0 }
-    const wire = api.getWire()
-    wire.next({ key: "spawn", npcKey, at })
+    api.getWire().next({ key: "spawn", npcKey, at })
   }' "$@"
 }`,
 
@@ -181,7 +175,7 @@ spawn: `{
  * e.g. `nav andros "$( click 1 )"'
  */
 nav: `{
-  run '({ api, args }) {
+  run '({ api, args, home }) {
     const npcKey = args[0]
     const position = api.safeJsonParse(args[1])
     if (
@@ -193,11 +187,13 @@ nav: `{
     }
 
     const res = await api.reqRes({ key: "nav-req", npcKey, dst: position })
-    yield res
 
-    // TEST DEBUG
-    const path = (res?.paths??[]).reduce((agg, item) => agg.concat(item), []);
-    api.getWire().next({ key: "debug-path", pathName: "test-" + npcKey, path })
+    if (home.DEBUG === "true") {
+      const path = (res?.paths??[]).reduce((agg, item) => agg.concat(item), []);
+      api.getWire().next({ key: "debug-path", pathName: "debug-" + npcKey, path })
+    }
+
+    yield res
   }' "$@"
 }`,
 
@@ -260,6 +256,12 @@ view: `{
     wire.next({ key: "view", zoom, at: position })
   }' "$@"
 }`,
+
+npc: `{
+  run '({ api, args }) {
+    // TODO provide npc api given key
+  }' "$@"
+}`
 },
 ];
 

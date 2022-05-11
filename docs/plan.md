@@ -46,7 +46,8 @@ __Aim towards website release__.
   - ❌ `view` -> `pan`, `zoom` 
   - ✅ Automate foo-req and foo-res on wire via `await api.reqRes`
   - ✅ Fix `kill --STOP {pid}` e.g. for `click`
-  - 🚧 shorten script validation via `api.something`
+  - ❌ shorten script validation via `api.something`
+  - ✅ can toggle draw navpath via DEBUG=true
   - 🚧 `npc [{key}]` gets api
   - 🚧 script spawns andros and periodically panzooms back to him
   
