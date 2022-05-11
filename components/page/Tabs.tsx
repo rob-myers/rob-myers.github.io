@@ -108,7 +108,7 @@ export default function Tabs(props: Props) {
       {state.expanded && <>
         <div
           className="modal-backdrop"
-          onPointerUp={state.onModalBgPress}
+          onPointerDown={state.onModalBgPress}
           onTouchStart={state.preventTouch}
         />
         <div
