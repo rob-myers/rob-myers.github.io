@@ -44,8 +44,9 @@ __Aim towards website release__.
   - ✅ base functions are from Terminal specified script
   - ✅ `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
   - ❌ `view` -> `pan`, `zoom` 
-  - shell function periodically panzooms to npc
-  - script spawns andros and periodically panzooms back to him
+  - ✅ Automate foo-req and foo-res on wire via `await api.reqRes`
+  - 🚧 script spawns andros and periodically panzooms back to him
+  - shorten script validation via `api.something`
   
 
 - 🚧 Investigate migration to Gatsby

@@ -147,8 +147,7 @@ export default function NPCs(props) {
         const npc = state.npc[e.npcKey];
         if (!npc)
           throw Error(`npc "${e.npcKey}" does not exist`);
-        const result = state.moveNpcAlongPath(npc, e.path);
-        wire.next({ key: 'move-res', req: e, res: result });
+        state.moveNpcAlongPath(npc, e.path);
       } else if (e.key === 'debug-path') {
         const path = e.path.map(Vect.from);
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
@@ -215,7 +214,7 @@ const rootCss = css`
 import npcJson from '../../public/npc/first-npc.json'
 const { animLookup: anim, zoom } = npcJson;
 /** Scale the sprites */
-const npcScale = 0.18;
+const npcScale = 0.15;
 /** Ensure NPC faces along positive x-axis */
 // const npcOffsetAngleDeg = 90;
 const npcOffsetAngleDeg = 0;

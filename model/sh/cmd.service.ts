@@ -391,12 +391,7 @@ class CmdService {
     parent: this,
 
     getWire() {
-      const { var: home } = useSession.api.getSession(this.meta.sessionKey);
-      const wireKey = home.WIRE_KEY;
-      if (!(typeof wireKey === 'string' && wireKey)) {
-        throwError(`home/WIRE_KEY must be a non-empty string`);
-      }
-      return ensureWire(wireKey);
+      return getWire(this.meta);
     },
   
     getKillError() {
@@ -435,6 +430,23 @@ class CmdService {
     async read(chunks = false) {
       const result = await this.parent.readOnce(this.meta, chunks);
       return result?.eof ? null : result.data;
+    },
+
+    /**
+     * Syntactic sugar to handle ping-pong on wire:
+     * `req := { key: 'foo', ... }` --> `{ key: 'bar', req, res }`
+     */
+    async reqRes(reqMsg: NPC.NpcEvent) {
+      return new Promise(resolve => {
+        const wire = getWire(this.meta); // We cannot this.getWire()
+        const sub = wire.subscribe((e) => {
+          if ('req' in e && e.req === reqMsg) {
+            sub.unsubscribe();
+            resolve(e.res);
+          }
+        });
+        wire.next(reqMsg)
+      });
     },
   
     /** TODO support pause/resume like command `sleep` */
@@ -557,6 +569,15 @@ function safeJsonParse(input: string) {
 }
 function throwError(message: string, exitCode?: number) {
   throw new ShError(message, exitCode || 1);
+}
+
+function getWire(meta: Sh.BaseMeta) {
+  const { var: home } = useSession.api.getSession(meta.sessionKey);
+  const wireKey = home.WIRE_KEY;
+  if (!(typeof wireKey === 'string' && wireKey)) {
+    throwError(`home/WIRE_KEY must be a non-empty string`);
+  }
+  return ensureWire(wireKey);
 }
 
 export const cmdService = new CmdService;

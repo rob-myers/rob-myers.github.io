@@ -113,17 +113,8 @@ walk foo $( _ )
 ```
 
 ```sh
-spawn foo $( click 1 )
-nav foo $( click 1 )
-_/paths | map 'x => x.reduce((agg,x) => agg.concat(x), [])'
-walk foo $_
+spawn andros $( click 1 )
+nav andros $( click 1 ) | map 'x => x.paths[0]' >myPath
+walk andros ${myPath}
 
-spawn foo $( click 1 )
-nav foo $( click 1 )
-_/paths | map 'x => x.reduce((agg,item) => agg.concat(item), [])' >path
-walk foo "${path}"
-
-spawn foo $(click 1)
-go foo
-# then click destination
 ```

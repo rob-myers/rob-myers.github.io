@@ -192,22 +192,12 @@ nav: `{
       api.throwError("format: \`nav {npc-key} [{vec}]\` e.g. nav andros \'{"x":300,"y":120}\'")
     }
 
-    const wire = api.getWire()
-    const res = await new Promise(resolve => {
-      const navReq = { key: "nav-req", npcKey, dst: position }
-      const sub = wire.subscribe((e) => {
-        if (e.key === "nav-res" && e.req === navReq) {
-          sub.unsubscribe()
-          resolve(e.res)
-        }
-      });
-      wire.next(navReq)
-    })
+    const res = await api.reqRes({ key: "nav-req", npcKey, dst: position })
     yield res
 
     // TEST DEBUG
     const path = (res?.paths??[]).reduce((agg, item) => agg.concat(item), []);
-    wire.next({ key: "debug-path", pathName: "test-" + npcKey, path })
+    api.getWire().next({ key: "debug-path", pathName: "test-" + npcKey, path })
   }' "$@"
 }`,
 
@@ -231,10 +221,7 @@ walk: `{
       }")
     }
 
-    // TODO wait for response, and provide NPC api?
-    const wire = api.getWire()
-    wire.next({ key: "move-req", npcKey, path })
-    // console.log({ path })
+    api.getWire().next({ key: "move-req", npcKey, path });
   }' "$@"    
 }`,
 
