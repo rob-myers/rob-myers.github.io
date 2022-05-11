@@ -223,6 +223,7 @@ export default function CssPanZoom(props) {
         }
         
         if (toScale !== state.scale) {
+          state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;
           state.scaleRoot.style.transition = `transform ${transitionMs}ms ease`;
           // Compute screen position of world point
           worldPoint = worldPoint || state.getWorldAtCenter();
