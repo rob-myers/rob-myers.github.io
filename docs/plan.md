@@ -41,10 +41,10 @@ __Aim towards website release__.
   - ❌ shorten script validation via `api.something`
   - ✅ can toggle draw navpath via DEBUG=true
   - ✅ cache parsed scripts
-  - npc [{key}]` gets api
+  - game functions take single input like `"{ name: 'andros', at: $(click 1) }"`
+    > worse for mobile, but avoids arbitrary choices/validation
+  - `npc [{key}]` gets api
   - script spawns andros and periodically panzooms back to him
-
-- 🚧 Investigate migration to Gatsby
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
@@ -71,6 +71,7 @@ __Aim towards website release__.
   - ✅ Rooms can themselves have holes (from allWalls[i] where i ≥ 1)
     - ✅ Examples: 101, 102, 302
     - ✅ Important for _visibility ray casts_
+  - ✅ identify scale/translate timeouts in CssPanZoom
   - 🤔 Saw empty roomId in 301 i.e. `15`
   - BUG `render-npc` cannot deal with nested transforms
     - g.transform inside a use
@@ -98,8 +99,10 @@ __Aim towards website release__.
   - Andros is __situated__
   - `NavDemo1` has other NPCs
 
+- 🚧 Investigate migration to Gatsby
 - bring back `say`
 - start using `yarn inspect` as in BFF for server side debug
+
 
 - 🤔 NPCs have label
   - NPCs label tracks them as they move

@@ -29,8 +29,7 @@ export default function CssPanZoom(props) {
         scale: 1,
         distance: 0,
       },
-      scaleTimeoutId: 0,
-      translateTimeoutId: 0,
+      transitionTimeoutId: 0,
       noTransitionTimeout: 0,
 
       evt: {
@@ -165,13 +164,12 @@ export default function CssPanZoom(props) {
         wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
       },
       clearTransition() {
-        if (state.translateTimeoutId || state.scaleTimeoutId) {
+        if (state.transitionTimeoutId) {
           // Keep small transition for smoothness.
           // It will be totally removed via state.noTransitionTimeout
           state.translateRoot.style.transition = state.scaleRoot.style.transition = 'transform 100ms linear';
-          window.clearTimeout(state.translateTimeoutId);
-          window.clearTimeout(state.scaleTimeoutId);
-          state.translateTimeoutId = state.scaleTimeoutId = 0;
+          window.clearTimeout(state.transitionTimeoutId);
+          state.transitionTimeoutId = 0;
           // Set target transform as current
           [, , , , state.x, state.y] = window.getComputedStyle(state.translateRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
           [state.scale] = window.getComputedStyle(state.scaleRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
@@ -216,7 +214,7 @@ export default function CssPanZoom(props) {
           state.x = w/2 - (state.scale * worldPoint.x);
           state.y = h/2 - (state.scale * worldPoint.y);
           state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;
-          state.translateTimeoutId = window.setTimeout(() => state.clearTransition(), transitionMs);
+          state.transitionTimeoutId = window.setTimeout(() => state.clearTransition(), transitionMs);
           state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
         }
         
@@ -232,7 +230,7 @@ export default function CssPanZoom(props) {
           state.y = screenY - (worldPoint.y * toScale);
           state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
           state.scaleRoot.style.transform = `scale(${toScale})`;
-          state.scaleTimeoutId = window.setTimeout(() => state.clearTransition(), transitionMs);
+          state.transitionTimeoutId = window.setTimeout(() => state.clearTransition(), transitionMs);
         }
         
       },
