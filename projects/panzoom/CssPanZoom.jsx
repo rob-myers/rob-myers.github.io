@@ -30,7 +30,6 @@ export default function CssPanZoom(props) {
         distance: 0,
       },
       transitionTimeoutId: 0,
-      noTransitionTimeout: 0,
 
       evt: {
         /** @param {WheelEvent} e */
@@ -111,13 +110,15 @@ export default function CssPanZoom(props) {
 
       clearTransition() {
         if (state.transitionTimeoutId) {
+          window.clearTimeout(state.transitionTimeoutId);
+          state.transitionTimeoutId = 0;
           // Keep small transition for smoothness.
           // It will be totally removed via state.noTransitionTimeout
           state.translateRoot.style.transition = state.scaleRoot.style.transition = 'transform 100ms linear';
-          window.clearTimeout(state.transitionTimeoutId);
-          state.transitionTimeoutId = 0;
           // Set target transform as current
           Object.assign(state, state.getCurrentTransform());
+          // [, , , , state.x, state.y] = window.getComputedStyle(state.translateRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
+          // [state.scale] = window.getComputedStyle(state.scaleRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
           state.updateView();
         }
       },
@@ -197,31 +198,35 @@ export default function CssPanZoom(props) {
         toScale = toScale || state.scale;
         state.clearTransition();
         // Can totally remove transition once no transition in progress
-        window.clearTimeout(state.noTransitionTimeout);
-        state.noTransitionTimeout = window.setTimeout(() => state.translateRoot.style.transition = state.scaleRoot.style.transition = '', transitionMs);
+        state.transitionTimeoutId = window.setTimeout(() => {
+          state.clearTransition();
+          state.translateRoot.style.transition = state.scaleRoot.style.transition = '';
+        }, transitionMs);
 
-        if (worldPoint) {
-          const { width: w, height: h } = state.parent.getBoundingClientRect();
-          state.x = w/2 - (state.scale * worldPoint.x);
-          state.y = h/2 - (state.scale * worldPoint.y);
-          state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;
-          state.transitionTimeoutId = window.setTimeout(() => state.clearTransition(), transitionMs);
-          state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
-        }
+        const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
+        const current = this.getCurrentTransform();
         
         if (toScale !== state.scale) {
           state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;
           state.scaleRoot.style.transition = `transform ${transitionMs}ms ease`;
-          // Compute screen position of world point
           worldPoint = worldPoint || state.getWorldAtCenter();
-          const screenX = (worldPoint.x * state.scale) + state.x;
-          const screenY = (worldPoint.y * state.scale) + state.y;
-          // Compute new translations as done in `state.zoomToClient`
-          state.x = screenX - (worldPoint.x * toScale);
-          state.y = screenY - (worldPoint.y * toScale);
-          state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
-          state.scaleRoot.style.transform = `scale(${toScale})`;
-          state.transitionTimeoutId = window.setTimeout(() => state.clearTransition(), transitionMs);
+          /**
+           * Trying to compute (x, y) s.t. target transform
+           * `translate(x, y) scale(toScale)` has worldPoint at screen center
+           * i.e. x + (toScale * worldPoint.x) = screenWidth/2
+           * i.e. x := screenWidth/2 - (toScale * worldPoint.x)
+           */
+          state.x = screenWidth/2 - (toScale * worldPoint.x);
+          state.y = screenHeight/2 - (toScale * worldPoint.y);
+          state.scale = toScale;
+
+          state.updateView();
+        } else if (worldPoint) {
+          // See above
+          state.x = screenWidth/2 - (current.scale * worldPoint.x);
+          state.y = screenHeight/2 - (current.scale * worldPoint.y);
+          state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;
+          state.updateView();
         }
         
       },
@@ -238,6 +243,8 @@ export default function CssPanZoom(props) {
         const screenX = e.clientX - parentBounds.left;
         const screenY = e.clientY - parentBounds.top;
         // Compute world position given `translate(x, y) scale(scale)`
+        // - world to screen is: state.x + (state.scale * worldX)
+        // - screen to world is: (screenX - state.x) / state.scale
         const worldX = (screenX - state.x) / state.scale;
         const worldY = (screenY - state.y) / state.scale;
         // To maintain position, need state.x' s.t.
