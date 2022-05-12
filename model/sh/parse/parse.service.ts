@@ -1,4 +1,5 @@
 import Sh, { syntax } from 'mvdan-sh';
+import { deepClone } from 'model/generic.model';
 import type * as P from './parse.model';
 import { defaultSessionKey, defaultStdInOut } from './parse.model';
 import { withParents } from './parse.util';
@@ -10,6 +11,7 @@ class ParseShService {
 
   private mockMeta: P.BaseMeta;
   private mockPos: () => Sh.Pos;
+  private cache = {} as { [src: string]: P.FileWithMeta };
 
   constructor() {
     this.mockPos = () => ({ Line: () => 1, Col: () => 1, Offset: () => 0} as Sh.Pos);
@@ -52,23 +54,25 @@ class ParseShService {
   }
 
   /**
-   * Use mvdan-sh to parse shell code.
+   * Use npm module `mvdan-sh` to parse shell code.
    */
-  parse(src: string): P.FileWithMeta {
+  parse(src: string, cache = false): P.FileWithMeta {
+    if (src in this.cache) {
+      return deepClone(this.cache[src]);
+    }
     const parser = syntax.NewParser(
       syntax.KeepComments(true),
-      // syntax.Variant(syntax.LangPOSIX),
       syntax.Variant(syntax.LangBash),
+      // syntax.Variant(syntax.LangPOSIX),
       // syntax.Variant(syntax.LangMirBSDKorn),
     );
     const parsed = parser.Parse(src, 'src.sh');
     // console.log('mvdan-sh parsed', parsed);
-    /**
-     * Clean up the parse, making it serialisable.
-     * We also use a single fresh `meta` for all nodes, and attach parents.
-     */
-    const cleaned = this.File(parsed);
-    return withParents(cleaned);
+    // Clean the parse, making it serializable.
+    // Also use single fresh `meta` for all nodes & attach parents.
+    const output = withParents(this.File(parsed));
+
+    return cache ? this.cache[src] = output : output;
   }
 
   tryParseBuffer(buffer: string[]) {

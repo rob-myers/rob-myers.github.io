@@ -28,17 +28,9 @@ __Aim towards website release__.
 - 🚧 Andros is situated
   - 🚧 CSSPanZoom returns to andros
   - Can only move to point within lit area
-  - Cannot close door when Andros will go through it
-  - When avatar moves through doorway, lighting changes
-
-- ✅ Can zoom to point with animation
-- ✅ Interruptible zoom without lock
-  - `matrix(a, b, c, d, e, f)` -> `scale(k) translate(x, y)`
-  - `scale(k) translate(x, y)` = `matrix(k, 0, 0, k, x, y)`
-- ✅ fix issue with `transition` of matrix transform involving scale and translate (looks crap)
-  - ✅ split CSSPanZoom into two transforms i.e. scale and translate
-    now essentially `translate(x, y) scale(k)` spread across 2 elems
-  - ✅ animate both
+    - Then Andros must open doors to go through them
+    - Andros cannot close door when walking
+  - When Andros moves through doorway, lighting changes
 
 - 🚧 Reorg `sh.lib`
   - ✅ base functions are from Terminal specified script
@@ -48,9 +40,9 @@ __Aim towards website release__.
   - ✅ Fix `kill --STOP {pid}` e.g. for `click`
   - ❌ shorten script validation via `api.something`
   - ✅ can toggle draw navpath via DEBUG=true
-  - 🚧 `npc [{key}]` gets api
-  - 🚧 script spawns andros and periodically panzooms back to him
-  
+  - ✅ cache parsed scripts
+  - npc [{key}]` gets api
+  - script spawns andros and periodically panzooms back to him
 
 - 🚧 Investigate migration to Gatsby
 
@@ -166,6 +158,14 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Can zoom to point with animation
+- ✅ Interruptible zoom without lock
+  - `matrix(a, b, c, d, e, f)` -> `scale(k) translate(x, y)`
+  - `scale(k) translate(x, y)` = `matrix(k, 0, 0, k, x, y)`
+- ✅ fix issue with `transition` of matrix transform involving scale and translate (looks crap)
+  - ✅ split CSSPanZoom into two transforms i.e. scale and translate
+    now essentially `translate(x, y) scale(k)` spread across 2 elems
+  - ✅ animate both
 - Can move NPC along navpath
   - ✅ translate previous API
   - ✅ actuated via shell function `move`

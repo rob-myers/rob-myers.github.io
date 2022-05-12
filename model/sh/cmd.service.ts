@@ -330,9 +330,11 @@ class CmdService {
         } else if (typeof script !== 'string') {
           useSession.api.warn(meta.sessionKey, `source: "${args[0]}" is not a string`);
         } else {
-          const parsed = parseService.parse(script);
-          parsed.meta = {...meta };
-          const { ttyShell, process } = useSession.api.getSession(meta.sessionKey);
+          // We cache scripts
+          const parsed = parseService.parse(script, true);
+          // We clone meta; pid will be overwritten in `ttyShell.spawn`
+          parsed.meta = { ...meta, fd: { ...meta.fd }, stack: meta.stack.slice() };
+          const { ttyShell } = useSession.api.getSession(meta.sessionKey);
           await ttyShell.spawn(parsed, { posPositionals: args.slice(1) });
         }
         break;
