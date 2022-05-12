@@ -1,5 +1,33 @@
 import { ansiBlue, ansiWhite } from "./sh.util";
 
+/** Can be specified via terminal env.PROFILE */
+export const profileLookup = {
+  'profile-1': () => `
+
+# load util functions
+source /etc/util-1
+# load game functions
+source /etc/game-1
+
+`.trim(),
+
+  'profile-1-a': () => `
+${profileLookup["profile-1"]()}
+
+# await game world
+ready
+# TODO request spawns points
+spawn andros '{"x":185,"y":390}'
+
+# TODO ongoing process returns to andros
+# e.g. get position of andros
+`,
+};
+
+export function isProfileKey(key: string): key is keyof typeof profileLookup {
+  return key in profileLookup;
+}
+
 // Index in array denotes version
 export const utilFunctions = [
 {
@@ -239,10 +267,11 @@ view: `{
   }' "$@"
 }`,
 
-// TODO
+/** Get NPC */
 npc: `{
   run '({ api, args }) {
-    // TODO provide npc api given key
+    const npcKey = args[0]
+    yield api.reqRes({ key: "npc-req", npcKey })
   }' "$@"
 }`,
 
@@ -267,34 +296,6 @@ ready: `{
 },
 
 ];
-
-/** Can be specified via terminal env.PROFILE */
-export const profileLookup = {
-  'profile-1': () => `
-
-# load util functions
-source /etc/util-1
-# load game functions
-source /etc/game-1
-
-`.trim(),
-
-  'profile-1-a': () => `
-${profileLookup["profile-1"]()}
-
-# await game world
-ready
-# TODO request spawns points?
-spawn andros '{"x":185,"y":390}'
-
-# TODO ongoing process returns to andros
-# e.g. get position of andros
-`,
-};
-
-export function isProfileKey(key: string): key is keyof typeof profileLookup {
-  return key in profileLookup;
-}
 
 /** This is `/etc` */
 export const scriptLookup = {

@@ -151,6 +151,11 @@ export default function NPCs(props) {
           { panZoomApi: props.panZoomApi, update, disabled: props.disabled },
         );
         update();
+      } else if (e.key === 'npc-req') {
+        const npc = state.npc[e.npcKey];
+        if (!npc)
+          throw Error(`npc "${e.npcKey}" does not exist`);
+        wire.next({ key: 'npc-res', req: e, res: npc });
       } else if (e.key === 'nav-req') {
         if (!state.isPointLegal(e.dst))
           throw Error(`${JSON.stringify(e.dst)}: cannot navigate outside navPoly`);

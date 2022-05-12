@@ -29,6 +29,12 @@ declare namespace NPC {
     | { key: 'ping'; }
     | { key: 'pong'; wireKey: string }
     | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
+    | { key: 'npc-req'; npcKey: string; }
+    | {
+      key: 'npc-res';
+      req: (NpcEvent & { key: 'npc-req' });
+      res: NPC.NPC;
+    }
     | { key: 'walk-req'; npcKey: string; path: Geom.VectJson[]; }
     | {
         key: 'walk-res';
