@@ -124,6 +124,16 @@ export default function NPCs(props) {
           npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
         }
       },
+      /**
+       * Debug only?
+       * @param {string} npcKey
+       */
+      toggleNpcAnim(npcKey) {
+        const npc = state.npc[npcKey];
+        if (Date.now() < npc.spawnedAt + 100) return; // Prevent immediate toggle when spawn via click
+        npc.spriteSheet = spriteSheets[(spriteSheets.indexOf(npc.spriteSheet) + 1) % spriteSheets.length];
+        update();
+      },
     };
   }, { deps: [nav, props.doorsApi] });
   
@@ -134,7 +144,12 @@ export default function NPCs(props) {
       if (e.key === 'spawn') {
         if (!state.isPointLegal(e.at))
           throw Error(`${JSON.stringify(e.at)}: cannot spawn outside navPoly`);
-        state.npc[e.npcKey] = createNpc(e.npcKey, e.at, { panZoomApi: props.panZoomApi, update, disabled: props.disabled });
+
+        state.npc[e.npcKey] = createNpc(
+          e.npcKey,
+          e.at,
+          { panZoomApi: props.panZoomApi, update, disabled: props.disabled },
+        );
         update();
       } else if (e.key === 'nav-req') {
         if (!state.isPointLegal(e.dst))
@@ -173,12 +188,10 @@ export default function NPCs(props) {
   return (
     <div
       className={classNames('npcs', rootCss)}
-      onClick={(e) => {// Toggle animation Debug
+      onClick={(e) => {// For debugging animations
         if (e.target instanceof HTMLDivElement && e.target.classList.contains('body')) {
           const npcKey = /** @type {string} */ (e.target.getAttribute('data-npc-key'));
-          const npc = state.npc[npcKey];
-          npc.spriteSheet = spriteSheets[(spriteSheets.indexOf(npc.spriteSheet) + 1) % spriteSheets.length];
-          update();
+          state.toggleNpcAnim(npcKey);
         }
       }}
     >
@@ -188,7 +201,7 @@ export default function NPCs(props) {
 
       {Object.values(state.npc).map(npc => (
         <div
-          key={npc.uid} // So, respawn remounts
+          key={`${npc.key}@${npc.spawnedAt}`} // So, respawn remounts
           ref={state.npcRef}
           className={classNames('npc', npc.key, npc.spriteSheet, npcCss)}
           data-npc-key={npc.key}

@@ -3,9 +3,8 @@ import { Image, createCanvas, Canvas } from 'canvas';
 import path from 'path';
 
 import { Poly, Vect } from '../geom';
-import { extractDeepMetas, extractGeomsAt, extractMetas, hasTitle } from './cheerio';
+import { extractDeepMetas, extractGeomsAt, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
-import { getSpawnCount } from '../geomorph/geomorph.model';
 import { warn } from './log';
 
 /**
@@ -169,7 +168,7 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
   /** @type {NPC.NPC} */
   const npc = {
     key: npcKey,
-    uid: `${npcKey}-${getSpawnCount()}`,
+    spawnedAt: Date.now(),
     def: {
       key: npcKey,
       position: at,

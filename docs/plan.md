@@ -42,6 +42,7 @@ __Aim towards website release__.
   - ✅ can toggle draw navpath via DEBUG=true
   - ✅ cache parsed scripts
   - ✅ tty can await some `<NPCs/>` ready
+  - ✅ avoid mobile click-spawn toggling animation (debug)
   - game functions take single input like `"{ name: 'andros', at: $(click 1) }"`
     > worse for mobile, but avoids arbitrary choices/validation
   - `npc [{key}]` gets api
