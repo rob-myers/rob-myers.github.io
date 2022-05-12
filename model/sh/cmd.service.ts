@@ -401,7 +401,7 @@ class CmdService {
     },
   
     getProcess() {
-      return useSession.api.getProcess(this.meta);
+      return getProcess(this.meta);
     },
   
     isTtyAt(fd = 0) {
@@ -435,8 +435,10 @@ class CmdService {
     },
 
     /**
-     * Syntactic sugar to handle ping-pong on wire:
-     * `req := { key: 'foo', ... }` --> `{ key: 'bar', req, res }`
+     * Syntactic sugar for request/response on wire:
+     * Given message `req := { key: 'foo', ... }` and
+     * subsequent message `{ key: 'bar', req, res }`,
+     * returns `res`.
      */
     async reqRes(reqMsg: NPC.NpcEvent) {
       return new Promise(resolve => {
@@ -450,9 +452,10 @@ class CmdService {
         wire.next(reqMsg)
       });
     },
+    
   
     /** TODO support pause/resume like command `sleep` */
-    sleep(seconds: number) {
+    async sleep(seconds: number) {
       return new Promise<void>((resolve, reject) => {
         setTimeout(resolve, seconds * 1000);
         useSession.api.addCleanup(this.meta, () => reject(killError(this.meta)));
@@ -463,6 +466,40 @@ class CmdService {
     safeJsonParse,
   
     throwError,
+
+    async *mapWire<T>(
+      next: (e: NPC.WireMessage) => undefined | T,
+      stop: (e: NPC.WireMessage, count: number) => boolean = () => false,
+    ) {
+      const process = getProcess(this.meta);
+      let [resolve, reject] = [(v: T) => {}, (_err: any) => {}];
+      let [count, shouldStop] = [0, false];
+
+      const sub = getWire(this.meta).subscribe({
+        next: (e) => {
+          if (process.status === ProcessStatus.Running) {
+            try {
+              const mapped = next(e);
+              if (mapped !== undefined) {
+                resolve(mapped);
+                shouldStop = stop(e, ++count);
+              }
+            } catch (e) {
+              reject(e);
+            }
+          }
+        },
+      });
+      process.cleanups.push(
+        () => sub.unsubscribe(),
+        () => reject(killError(this.meta))
+      );
+  
+      while (!shouldStop) {
+        yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
+      }
+      sub.unsubscribe();
+    }
   };
 
   private provideProcessCtxt(meta: Sh.BaseMeta, posPositionals: string[] = []) {
@@ -543,34 +580,10 @@ class CmdService {
   
 }
 
-/** js parse with string fallback */
-function parseJsArg(input: string) {
-  try {
-    return Function(`return ${input}`)();
-  } catch (e) {
-    return input;
-  }
-}
-/** JSON.parse with string fallback */
-function parseJsonArg(input: string) {
-  try {
-    return input === undefined ? undefined : JSON.parse(input);
-  } catch {
-    return input;
-  }
-}
-function prettySafe(x: any) {
-  pretty(JSON.parse(safeStringify(x)));
-}
-function safeJsonParse(input: string) {
-  try {
-    return JSON.parse(input);
-  } catch  {
-    return;
-  }
-}
-function throwError(message: string, exitCode?: number) {
-  throw new ShError(message, exitCode || 1);
+//#region processApi related
+
+function getProcess(meta: Sh.BaseMeta) {
+  return useSession.api.getProcess(meta);
 }
 
 function getWire(meta: Sh.BaseMeta) {
@@ -581,5 +594,42 @@ function getWire(meta: Sh.BaseMeta) {
   }
   return ensureWire(wireKey);
 }
+
+
+/** js parse with string fallback */
+function parseJsArg(input: string) {
+  try {
+    return Function(`return ${input}`)();
+  } catch (e) {
+    return input;
+  }
+}
+
+/** JSON.parse with string fallback */
+function parseJsonArg(input: string) {
+  try {
+    return input === undefined ? undefined : JSON.parse(input);
+  } catch {
+    return input;
+  }
+}
+
+function prettySafe(x: any) {
+  pretty(JSON.parse(safeStringify(x)));
+}
+
+function safeJsonParse(input: string) {
+  try {
+    return JSON.parse(input);
+  } catch  {
+    return;
+  }
+}
+
+function throwError(message: string, exitCode?: number) {
+  throw new ShError(message, exitCode || 1);
+}
+
+//#endregion
 
 export const cmdService = new CmdService;

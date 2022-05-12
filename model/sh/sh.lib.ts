@@ -129,23 +129,12 @@ click: `{
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
 
-    const process = api.getProcess()
-    let [resolve, reject] = [() => {}, () => {}]
-
-    const sub = api.getWire().subscribe({
-      next: (e) => {// ProcessStatus.Running === 1
-        if (e.key === "pointerup" && process.status === 1) {
-          resolve({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) })
-        }
-      },
-    });
-    process.cleanups.push(() => sub.unsubscribe(), () => reject(api.getKillError()))
-
-    for (let i = 0; i < numClicks; i++) {
-      yield await new Promise((res, rej) => [resolve, reject] = [res, rej])
-    }
-    sub.unsubscribe()
-
+    yield* await api.mapWire(
+      (e) => e.key === "pointerup"
+        ? { x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) }
+        : undefined,
+      (_, count) => count >= numClicks,
+    )
   }' "$@"
 }`,
 
@@ -251,8 +240,18 @@ npc: `{
   run '({ api, args }) {
     // TODO provide npc api given key
   }' "$@"
-}`
+}`,
+
+// TODO ping until some <NPCs> pongs
+ready: `{
+  run '({ api }) {
+    const wire = api.getWire()
+
+
+  }' "$@"
+}`,
 },
+
 ];
 
 /** Can be specified via terminal env.PROFILE */
