@@ -156,6 +156,8 @@ export default function NPCs(props) {
         update();
       } else if (e.key === 'view') {
         props.panZoomApi.zoomToWorld(e.zoom, e.at, 2000);
+      } else if (e.key === 'ping') {
+        wire.next({ key: 'pong', wireKey: props.wireKey });
       }
     });
 

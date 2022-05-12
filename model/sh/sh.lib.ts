@@ -1,3 +1,5 @@
+import { ansiBlue, ansiWhite } from "./sh.util";
+
 // Index in array denotes version
 export const utilFunctions = [
 {
@@ -219,6 +221,7 @@ go: `{
     walk $1
 }`,
 
+// TODO can provide time for transition too?
 view: `{
   run '({ api, args }) {
     const zoom = args.find(x => Number(x) && Number.isFinite(Number(x)))
@@ -236,18 +239,29 @@ view: `{
   }' "$@"
 }`,
 
+// TODO
 npc: `{
   run '({ api, args }) {
     // TODO provide npc api given key
   }' "$@"
 }`,
 
-// TODO ping until some <NPCs> pongs
+/** Ping every second until pong */
 ready: `{
-  run '({ api }) {
-    const wire = api.getWire()
+  run '({ api, home }) {
+    yield \`Awaiting ${ansiBlue}"pong"${ansiWhite} on ${ansiBlue}"\${home.WIRE_KEY}"${ansiWhite}  \`
 
+    const ping = () => api.getWire().next({ key: "ping" })
+    const intervalId = window.setInterval(ping, 1000)
+    window.setTimeout(ping)
+    api.getProcess().cleanups.push(() => window.clearInterval(intervalId))
 
+    for await (_ of api.mapWire(
+      (e) => e.key === "pong" ? true : undefined,
+    )) {
+      yield \`Received ${ansiBlue}"pong"${ansiWhite} on ${ansiBlue}"\${home.WIRE_KEY}"${ansiWhite}  \`
+      break; // Stop on 1st message
+    }
   }' "$@"
 }`,
 },
@@ -268,7 +282,9 @@ source /etc/game-1
   'profile-1-a': () => `
 ${profileLookup["profile-1"]()}
 
-# TODO get spawns points instead
+# await game world
+ready
+# TODO request spawns points?
 spawn andros '{"x":185,"y":390}'
 
 # TODO ongoing process returns to andros

@@ -3,6 +3,12 @@ import { last } from 'model/generic.model';
 import { SigEnum } from './io/io.model';
 import type * as Sh from './parse/parse.model';
 
+export const ansiReset = '\x1b[0m';
+export const ansiYellow = '\x1b[93m';
+export const ansiBlue = '\x1b[1;34m';
+export const ansiWhite = '\x1b[0;37m';
+export const ansiWarn = '\x1b[41;37m';
+
 export function normalizeWhitespace(word: string, trim = true): string[] {
   if (!word.trim()) {// Prevent [''].
     return [];

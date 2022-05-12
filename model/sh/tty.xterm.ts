@@ -2,12 +2,7 @@ import { Terminal } from 'xterm';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import { safeStringify, testNever } from 'model/generic.model';
 import { scrollback, ShellIo, DataChunk, isDataChunk } from './io/io.model';
-
-export const ansiReset = '\x1b[0m';
-export const ansiYellow = '\x1b[93m';
-export const ansiBlue = '\x1b[1;34m';
-export const ansiWhite = '\x1b[0;37m';
-export const ansiWarn = '\x1b[41;37m';
+import { ansiWhite, ansiBlue, ansiReset, ansiYellow, ansiWarn } from './sh.util';
 
 /**
  * Wraps xtermjs `Terminal`.

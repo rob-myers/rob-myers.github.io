@@ -8,7 +8,7 @@ import useSession, { ProcessStatus } from 'store/session.store';
 import { computeNormalizedParts, createKillError as killError, normalizeAbsParts, ProcessError, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { parseService } from './parse/parse.service';
-import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './tty.xterm';
+import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './sh.util';
 import { TtyShell } from './tty.shell';
 
 import { scriptLookup } from './sh.lib';
@@ -407,6 +407,40 @@ class CmdService {
     isTtyAt(fd = 0) {
       return this.meta.fd[fd]?.startsWith('/dev/tty-');
     },
+
+    async *mapWire<T>(
+      next: (e: NPC.WireMessage) => undefined | T,
+      stop: (e: NPC.WireMessage, count: number) => boolean = () => false,
+    ) {
+      const process = getProcess(this.meta);
+      let [resolve, reject] = [(v: T) => {}, (_err: any) => {}];
+      let [count, shouldStop] = [0, false];
+
+      const sub = getWire(this.meta).subscribe({
+        next: (e) => {
+          if (process.status === ProcessStatus.Running) {
+            try {
+              const mapped = next(e);
+              if (mapped !== undefined) {
+                resolve(mapped);
+                shouldStop = stop(e, ++count);
+              }
+            } catch (e) {
+              reject(e);
+            }
+          }
+        },
+      });
+      process.cleanups.push(
+        () => sub.unsubscribe(),
+        () => reject(killError(this.meta))
+      );
+  
+      while (!shouldStop) {
+        yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
+      }
+      sub.unsubscribe();
+    },
   
     /** js parse with string fallback */
     parseJsArg,
@@ -466,40 +500,6 @@ class CmdService {
     safeJsonParse,
   
     throwError,
-
-    async *mapWire<T>(
-      next: (e: NPC.WireMessage) => undefined | T,
-      stop: (e: NPC.WireMessage, count: number) => boolean = () => false,
-    ) {
-      const process = getProcess(this.meta);
-      let [resolve, reject] = [(v: T) => {}, (_err: any) => {}];
-      let [count, shouldStop] = [0, false];
-
-      const sub = getWire(this.meta).subscribe({
-        next: (e) => {
-          if (process.status === ProcessStatus.Running) {
-            try {
-              const mapped = next(e);
-              if (mapped !== undefined) {
-                resolve(mapped);
-                shouldStop = stop(e, ++count);
-              }
-            } catch (e) {
-              reject(e);
-            }
-          }
-        },
-      });
-      process.cleanups.push(
-        () => sub.unsubscribe(),
-        () => reject(killError(this.meta))
-      );
-  
-      while (!shouldStop) {
-        yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
-      }
-      sub.unsubscribe();
-    }
   };
 
   private provideProcessCtxt(meta: Sh.BaseMeta, posPositionals: string[] = []) {

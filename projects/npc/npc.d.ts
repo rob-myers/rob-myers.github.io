@@ -11,6 +11,11 @@ declare namespace NPC {
     wireKey: string;
   }
 
+  type WireMessage = (
+    | NPC.NpcEvent
+    | NPC.PointerEvent
+  );
+
   type PointerEvent = {
     point: Geom.VectJson;
   } & (
@@ -21,6 +26,8 @@ declare namespace NPC {
   );
 
   type NpcEvent = (
+    | { key: 'ping'; }
+    | { key: 'pong'; wireKey: string }
     | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
     | { key: 'walk-req'; npcKey: string; path: Geom.VectJson[]; }
     | {

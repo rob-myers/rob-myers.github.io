@@ -1,6 +1,6 @@
 import { Subject } from "rxjs";
 
-/** @type {{ [wireKey: string]: Subject<NPC.NpcEvent | NPC.PointerEvent> }} */
+/** @type {{ [wireKey: string]: Subject<NPC.WireMessage> }} */
 const wire = {};
 
 export function ensureWire(wireKey = 'default-wire') {
