@@ -46,9 +46,12 @@ __Aim towards website release__.
   - 🤔 game functions take single input like `"{ name: 'andros', at: $(click 1) }"`
     > worse for mobile, but avoids arbitrary choices/validation
   - ✅ `npc {key}` gets api
-  - 🚧 script spawns andros and periodically panzooms back to him
+  - ✅ script spawns andros and periodically panzooms back to him
+    - ✅ jerkiness reintroduced when `view ...`
+  - 🚧 improve camera tracking
+    - `view` should only terminate when finished/interrupted
+    - returns after 1s of no camera interaction
     - abstract into `track {key} &`
-  - careful about game function exit codes i.e. when they are `1`
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
@@ -80,6 +83,7 @@ __Aim towards website release__.
   - BUG `render-npc` cannot deal with nested transforms
     - g.transform inside a use
     - g.transform of frame
+  - careful about game function exit codes
   - navPoly must be a single polygon?
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tags `dark-front` and `dark-back` instead of `one-way`

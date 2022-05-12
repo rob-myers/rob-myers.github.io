@@ -14,12 +14,13 @@ source /etc/game-1
   'profile-1-a': () => `
 ${profileLookup["profile-1"]()}
 
-# await game world
+# wait for world
 ready
-# TODO request spawns points
+# hard-coded spawn
+# TODO request spawn points
 spawn andros '{"x":185,"y":390}'
 
-# camera returns to andros (background process)
+# camera tracks andros (background process)
 run '/** track andros */ ({ api }) {
   const process = api.getProcess()
   
@@ -29,9 +30,8 @@ run '/** track andros */ ({ api }) {
       const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
       const position = npc.getPosition()
       
-      // TODO transition not cleared properly
-      console.log(position)
-      // api.getWire().next({ key: "view", zoom: 2, at: position })
+      // TODO can await; debounce
+      api.getWire().next({ key: "view", zoom: 1.5, at: position })
     }
   }, 2000)
   process.cleanups.push(() => window.clearInterval(intervalId))
