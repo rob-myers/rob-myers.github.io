@@ -123,4 +123,7 @@ walk andros ${myPath}
 view '{"x":600,"y":600}' 0.5
 view '{"x":600,"y":600}'
 view 2
+
+npc andros
+npc andros | map 'x => x.getPosition()'
 ```

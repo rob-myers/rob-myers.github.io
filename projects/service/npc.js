@@ -226,7 +226,7 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
     },
     getPosition() {
       const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
-      return Vect.from(panZoomApi.getWorld({ clientX, clientY }));
+      return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
     },
     pause() {
       if (this.anim.body.playState === 'running') {
