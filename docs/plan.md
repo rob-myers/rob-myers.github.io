@@ -46,7 +46,9 @@ __Aim towards website release__.
   - 🤔 game functions take single input like `"{ name: 'andros', at: $(click 1) }"`
     > worse for mobile, but avoids arbitrary choices/validation
   - ✅ `npc {key}` gets api
-  - script spawns andros and periodically panzooms back to him
+  - 🚧 script spawns andros and periodically panzooms back to him
+    - abstract into `track {key} &`
+  - careful about game function exit codes i.e. when they are `1`
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle

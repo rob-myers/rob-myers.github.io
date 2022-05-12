@@ -4,7 +4,7 @@ declare namespace PanZoom {
 
   export interface CssExtApi  {
     getWorld(e: { clientX: number; clientY: number; } ): Geom.VectJson;
-    zoomToWorld(zoom: number, point: Geom.VectJson, lockMs?: number): void;
+    transitionTo(zoom: number, point: Geom.VectJson, lockMs?: number): void;
   }
 }
  

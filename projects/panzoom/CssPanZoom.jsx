@@ -109,20 +109,47 @@ export default function CssPanZoom(props) {
         },
       },
 
+      clearTransition() {
+        if (state.transitionTimeoutId) {
+          // Keep small transition for smoothness.
+          // It will be totally removed via state.noTransitionTimeout
+          state.translateRoot.style.transition = state.scaleRoot.style.transition = 'transform 100ms linear';
+          window.clearTimeout(state.transitionTimeoutId);
+          state.transitionTimeoutId = 0;
+          // Set target transform as current
+          Object.assign(state, state.getCurrentTransform());
+          state.updateView();
+        }
+      },
+      /** Taking CSS animation into account */
+      getCurrentTransform() {
+        const bounds = state.parent.getBoundingClientRect();
+        const trBounds = state.translateRoot.getBoundingClientRect();
+        return {
+          x: trBounds.x - bounds.x,
+          y: trBounds.y - bounds.y,
+          // Works because state.scaleRoot.style.width = '1px'
+          scale: state.scaleRoot.getBoundingClientRect().width,
+        }
+      },
+
       /** @param {{ clientX: number; clientY: number; }} e */
       getWorld(e) {
         const parentBounds = state.parent.getBoundingClientRect();
         const screenX = e.clientX - parentBounds.left;
         const screenY = e.clientY - parentBounds.top;
-        // Compute world position given `translate(x, y) scale(scale)`
-        const worldX = (screenX - state.x) / state.scale;
-        const worldY = (screenY - state.y) / state.scale;
+        // state.{x,y,scale} needn't be current transform when transitioning
+        const current = state.getCurrentTransform();
+        const worldX = (screenX - current.x) / current.scale;
+        const worldY = (screenY - current.y) / current.scale;
         return { x: worldX, y: worldY };
       },
       getWorldAtCenter() {
         const parentBounds = state.parent.getBoundingClientRect();
-        const worldX = (parentBounds.width/2 - state.x) / state.scale;
-        const worldY = (parentBounds.height/2 - state.y) / state.scale;
+        // state.{x,y,scale} needn't be current transform when transitioning
+        const current = state.getCurrentTransform();
+        const worldX = (parentBounds.width/2 - current.x) / current.scale;
+        const worldY = (parentBounds.height/2 - current.y) / current.scale;
         return { x: worldX, y: worldY };
       },
       /**
@@ -137,7 +164,6 @@ export default function CssPanZoom(props) {
           state.y = toY;
           state.updateView();
         }
-        // Originally there was a return value
       },
       /** @type {React.RefCallback<HTMLDivElement>} */
       rootRef(el) {
@@ -163,46 +189,11 @@ export default function CssPanZoom(props) {
         const point = state.getWorld(e);
         wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
       },
-      clearTransition() {
-        if (state.transitionTimeoutId) {
-          // Keep small transition for smoothness.
-          // It will be totally removed via state.noTransitionTimeout
-          state.translateRoot.style.transition = state.scaleRoot.style.transition = 'transform 100ms linear';
-          window.clearTimeout(state.transitionTimeoutId);
-          state.transitionTimeoutId = 0;
-          // Set target transform as current
-          [, , , , state.x, state.y] = window.getComputedStyle(state.translateRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
-          [state.scale] = window.getComputedStyle(state.scaleRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
-          state.updateView();
-        }
-      },
-      updateView() {
-        state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
-        state.scaleRoot.style.transform = `scale(${state.scale})`;
-      },
-      /**
-       * @param {number} toScale 
-       * @param {{ clientX: number; clientY: number }} e 
-       */
-      zoomToClient(toScale, e) {
-        const parentBounds = state.parent.getBoundingClientRect();
-        const screenX = e.clientX - parentBounds.left;
-        const screenY = e.clientY - parentBounds.top;
-        // Compute world position given `translate(x, y) scale(scale)`
-        const worldX = (screenX - state.x) / state.scale;
-        const worldY = (screenY - state.y) / state.scale;
-        // To maintain position, need state.x' s.t.
-        // worldX' := (screenX - state.x') / toScale = worldPoint.x
-        state.x = screenX - (worldX * toScale);
-        state.y = screenY - (worldY * toScale);
-        state.scale = toScale;
-        state.updateView();
-      },
       /**
        * @param {number} [toScale] 
        * @param {Geom.VectJson} [worldPoint] 
        */
-      zoomToWorld(toScale, worldPoint, transitionMs = 0) {
+       transitionTo(toScale, worldPoint, transitionMs = 0) {
         toScale = toScale || state.scale;
         state.clearTransition();
         // Can totally remove transition once no transition in progress
@@ -234,6 +225,28 @@ export default function CssPanZoom(props) {
         }
         
       },
+      updateView() {
+        state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
+        state.scaleRoot.style.transform = `scale(${state.scale})`;
+      },
+      /**
+       * @param {number} toScale 
+       * @param {{ clientX: number; clientY: number }} e 
+       */
+      zoomToClient(toScale, e) {
+        const parentBounds = state.parent.getBoundingClientRect();
+        const screenX = e.clientX - parentBounds.left;
+        const screenY = e.clientY - parentBounds.top;
+        // Compute world position given `translate(x, y) scale(scale)`
+        const worldX = (screenX - state.x) / state.scale;
+        const worldY = (screenY - state.y) / state.scale;
+        // To maintain position, need state.x' s.t.
+        // worldX' := (screenX - state.x') / toScale = worldPoint.x
+        state.x = screenX - (worldX * toScale);
+        state.y = screenY - (worldY * toScale);
+        state.scale = toScale;
+        state.updateView();
+      },
       /**
        * @param {WheelEvent} event 
        */
@@ -254,7 +267,7 @@ export default function CssPanZoom(props) {
     props.onLoad?.(state);
     state.updateView();
     // Apply initial zoom and centering.
-    state.zoomToWorld(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
+    state.transitionTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
   }, []);
 
   return (
@@ -287,15 +300,16 @@ const rootCss = css`
   cursor: auto;
   
   .panzoom-translate {
-    width: 100%;
-    height: 100%;
+    width: 0;
+    height: 0;
     user-select: none;
     touch-action: none;
     transform-origin: 0 0;
     
     .panzoom-scale {
-      width: 100%;
-      height: 100%;
+      /** So can infer scale during CSS animation via getBoundingClientRect().width */
+      width: 1px;
+      height: 1px;
       transform-origin: 0 0;
     }
 
@@ -415,39 +429,3 @@ function removePointer(pointers, event) {
     pointers.splice(i, 1)
   }
 }
-
-/**
- * Dimensions used in containment and focal point zooming
- * We assume `parent` has no padding/margin/border
- * @param {HTMLElement} elem
- */
- function getDimensions(elem) {
-  const parent = /** @type {HTMLElement} */ (elem.parentNode);
-  const style = window.getComputedStyle(elem)
-  const parentStyle = window.getComputedStyle(parent)
-  const rectElem = elem.getBoundingClientRect()
-  const rectParent = parent.getBoundingClientRect()
-
-  return {
-    elem: {
-      style,
-      width: rectElem.width,
-      height: rectElem.height,
-      top: rectElem.top,
-      bottom: rectElem.bottom,
-      left: rectElem.left,
-      right: rectElem.right,
-    },
-    parent: {
-      style: parentStyle,
-      width: rectParent.width,
-      height: rectParent.height,
-      top: rectParent.top,
-      bottom: rectParent.bottom,
-      left: rectParent.left,
-      right: rectParent.right,
-    }
-  }
-}
-
-const tempPoint1 = new Vect;

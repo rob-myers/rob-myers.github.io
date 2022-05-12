@@ -19,8 +19,26 @@ ready
 # TODO request spawns points
 spawn andros '{"x":185,"y":390}'
 
-# TODO ongoing process returns to andros
-# e.g. get position of andros
+# camera returns to andros (background process)
+run '/** track andros */ ({ api }) {
+  const process = api.getProcess()
+  
+  const intervalId = window.setInterval(async () => {
+    if (process.status === 1) {// ProcessStatus.Running = 1
+      // Getting npc each time handles respawn and <NPCs> HMR
+      const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
+      const position = npc.getPosition()
+      
+      // TODO transition not cleared properly
+      console.log(position)
+      // api.getWire().next({ key: "view", zoom: 2, at: position })
+    }
+  }, 2000)
+  process.cleanups.push(() => window.clearInterval(intervalId))
+
+  // Must kill to stop
+  await new Promise((resolve) => process.cleanups.push(resolve))
+}' &
 `,
 };
 
@@ -249,7 +267,9 @@ go: `{
     walk $1
 }`,
 
-// TODO can provide time for transition too?
+// TODO 
+// - do not terminate until finished
+// - can provide time for transition too?
 view: `{
   run '({ api, args }) {
     const zoom = args.find(x => Number(x) && Number.isFinite(Number(x)))
@@ -262,8 +282,7 @@ view: `{
       api.throwError("format: \`view [{zoom}] [{vec}]\`")
     }
 
-    const wire = api.getWire()
-    wire.next({ key: "view", zoom, at: position })
+    api.getWire().next({ key: "view", zoom, at: position })
   }' "$@"
 }`,
 
@@ -271,7 +290,7 @@ view: `{
 npc: `{
   run '({ api, args }) {
     const npcKey = args[0]
-    yield api.reqRes({ key: "npc-req", npcKey })
+    yield await api.reqRes({ key: "npc-req", npcKey })
   }' "$@"
 }`,
 
