@@ -23,16 +23,15 @@ spawn andros '{"x":185,"y":390}'
 # camera tracks andros (background process)
 run '/** track andros */ ({ api }) {
   const process = api.getProcess()
-  
+
   const intervalId = window.setInterval(async () => {
     if (process.status === 1) {// ProcessStatus.Running = 1
       // Getting npc each time handles respawn and <NPCs> HMR
       const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
       const position = npc.getPosition()
       
-      // TODO 500ms after no action, return to closest point on circle around Andros
-      // await api.reqRes({ key: "view-req", zoom: 1.5, at: position })
-      await api.reqRes({ key: "view-req", at: position })
+      // await api.reqRes({ key: "view-req", zoom: 1.5, to: position })
+      await api.reqRes({ key: "view-req", to: position })
     }
   }, 2000)
   process.cleanups.push(() => window.clearInterval(intervalId))
@@ -268,22 +267,15 @@ go: `{
     walk $1
 }`,
 
-// TODO 
-// - can provide time for transition too?
+
 view: `{
   run '({ api, args }) {
-    const zoom = args.find(x => Number(x) && Number.isFinite(Number(x)))
-    const position = args.map(x => api.safeJsonParse(x))
-      .find(p => p && typeof p.x === "number" && typeof p.y === "number")
-    if (
-      !(args.length === 1 && (zoom || position)) &&
-      !(args.length === 2 && zoom && position)
-    ) {
-      api.throwError("format: \`view [{zoom}] [{vec}]\`")
+    const opts = Function(\`return \${args[0]} \`)()
+    if (!(opts && typeof opts === "object")) {
+      api.throwError("format: \`view \\"{ zoom?: {number}, to?: {vec}, ms?: {number} }\`\\"")
     }
-
-    const res = await api.reqRes({ key: "view-req", zoom, at: position })
-    // if (res === "cancelled") api.throwError("cancelled")
+    // Returns "cancelled" or "completed"
+    await api.reqRes({ key: "view-req", zoom: opts.zoom, to: opts.to, ms: opts.ms })
   }' "$@"
 }`,
 
@@ -313,6 +305,20 @@ ready: `{
     }
   }' "$@"
 }`,
+
+// TODO generic npc tracking
+track: `{
+  run '/** track andros */ ({ api }) {
+    const process = api.getProcess()
+
+    // Resolves after ≥ 200ms when panzoom user input "idle"
+    await api.reqRes({ key: "panzoom-idle-req" })
+
+    // TODO start transition to npc (or nearby),
+    // detecting when cancelled/completed, in which loop
+  }' "$@"
+}`,
+
 },
 
 ];

@@ -1,6 +1,8 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
+import { merge, of } from "rxjs";
+import { debounceTime, first } from "rxjs/operators";
 import { keys } from "../service/generic";
 import { ensureWire } from "../service/wire";
 import { error } from "../service/log";
@@ -175,9 +177,18 @@ export default function NPCs(props) {
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
         update();
       } else if (e.key === 'view-req') {
-        props.panZoomApi.transitionTo(e.zoom, e.at, 2000);
+        props.panZoomApi.transitionTo(e.zoom, e.to, e.ms??2000);
         props.panZoomApi.onCompleted.push(() => wire.next({ key: 'view-res', req: e, res: 'completed' }));
         props.panZoomApi.onCancelled.push(() => wire.next({ key: 'view-res', req: e, res: 'cancelled' }));
+      } else if (e.key === "panzoom-idle-req") {
+        // CssPanZoom idle if no transform updates for 200ms.
+        // Such updates arise from (a) user interaction, (b) `transitionTo`
+        merge(of('init'), props.panZoomApi.events).pipe(
+          debounceTime(200),
+          first(),
+        ).subscribe({
+          complete: () => wire.next({ key: 'panzoom-idle-res', req: e, res: true }),
+        });
       } else if (e.key === 'ping') {
         wire.next({ key: 'pong', wireKey: props.wireKey });
       }

@@ -48,11 +48,17 @@ declare namespace NPC {
         res: null | { paths: Geom.Vect[][]; edges: NPC.NavGmTransition[] };
       }
     | { key: 'debug-path'; path: Geom.VectJson[]; pathName: string }
-    | { key: 'view-req'; zoom: number; at: Geom.VectJson }
+    | { key: 'view-req'; zoom?: number; to?: Geom.VectJson; ms?: number }
     | {
       key: 'view-res';
       req: (NpcEvent & { key: 'view-req' });
       res: 'completed' | 'cancelled';
+    }
+    | { key: 'panzoom-idle-req' }
+    | {
+      key: 'panzoom-idle-res';
+      req: (NpcEvent & { key: 'panzoom-idle-req' });
+      res: true;
     }
   );
 

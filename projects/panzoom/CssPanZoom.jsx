@@ -4,6 +4,7 @@
 import React from 'react';
 import classNames from "classnames";
 import { css } from "goober";
+import { Subject } from 'rxjs';
 import { Vect } from "../geom";
 import { ensureWire } from '../service/wire';
 import useStateRef from "../hooks/use-state-ref";
@@ -17,11 +18,14 @@ export default function CssPanZoom(props) {
       translateRoot: /** @type {HTMLDivElement} */ ({}),
       scaleRoot: /** @type {HTMLDivElement} */ ({}),
 
-      isPanning: false,
       /** @type {(() => void)[]} */
       onCancelled: [],
       /** @type {(() => void)[]} */
       onCompleted: [],
+      /** @type {Subject<PanZoom.CssInternalEvent>} */
+      events: new Subject,
+
+      isPanning: false,
       opts: { minScale: 0.05, maxScale: 10, step: 0.05 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       origin: /** @type {Vect | undefined} */ (undefined),
@@ -248,6 +252,7 @@ export default function CssPanZoom(props) {
       updateView() {
         state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
         state.scaleRoot.style.transform = `scale(${state.scale})`;
+        state.events.next({ key: 'dst', x: state.x, y: state.y, scale: state.scale });
       },
       /**
        * @param {number} toScale 
