@@ -30,8 +30,9 @@ run '/** track andros */ ({ api }) {
       const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
       const position = npc.getPosition()
       
-      // TODO can await; debounce
-      api.getWire().next({ key: "view", zoom: 1.5, at: position })
+      // TODO 500ms after no action, return to closest point on circle around Andros
+      // await api.reqRes({ key: "view-req", zoom: 1.5, at: position })
+      await api.reqRes({ key: "view-req", at: position })
     }
   }, 2000)
   process.cleanups.push(() => window.clearInterval(intervalId))
@@ -268,7 +269,6 @@ go: `{
 }`,
 
 // TODO 
-// - do not terminate until finished
 // - can provide time for transition too?
 view: `{
   run '({ api, args }) {
@@ -282,7 +282,8 @@ view: `{
       api.throwError("format: \`view [{zoom}] [{vec}]\`")
     }
 
-    api.getWire().next({ key: "view", zoom, at: position })
+    const res = await api.reqRes({ key: "view-req", zoom, at: position })
+    // if (res === "cancelled") api.throwError("cancelled")
   }' "$@"
 }`,
 

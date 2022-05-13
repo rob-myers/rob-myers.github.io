@@ -16,13 +16,17 @@ export default function CssPanZoom(props) {
       parent: /** @type {HTMLDivElement} */ ({}),
       translateRoot: /** @type {HTMLDivElement} */ ({}),
       scaleRoot: /** @type {HTMLDivElement} */ ({}),
+
+      isPanning: false,
+      /** @type {(() => void)[]} */
+      onCancelled: [],
+      /** @type {(() => void)[]} */
+      onCompleted: [],
       opts: { minScale: 0.05, maxScale: 10, step: 0.05 },
       pointers: /** @type {PointerEvent[]} */ ([]),
-      isPanning: false,
-      x: 0,
-      y: 0,
-      scale: 1,
       origin: /** @type {Vect | undefined} */ (undefined),
+      /** Target scale in `scaleRoot` */
+      scale: 1,
       start: {
         clientX: /** @type {number | undefined} */ (undefined),
         clientY: /** @type {number | undefined} */ (undefined),
@@ -107,6 +111,10 @@ export default function CssPanZoom(props) {
           state.clearTransition();
         },
       },
+      /** Target translateX in `translateRoot` */
+      x: 0,
+      /** Target translateY in `translateRoot` */
+      y: 0,
 
       clearTransition() {
         if (state.transitionTimeoutId) {
@@ -117,10 +125,14 @@ export default function CssPanZoom(props) {
           state.translateRoot.style.transition = state.scaleRoot.style.transition = 'transform 100ms linear';
           // Set target transform as current
           Object.assign(state, state.getCurrentTransform());
-          // [, , , , state.x, state.y] = window.getComputedStyle(state.translateRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
-          // [state.scale] = window.getComputedStyle(state.scaleRoot).transform.slice('matrix('.length, -')'.length).split(',').map(Number);
           state.updateView();
+          state.finishedTransition('cancelled');
         }
+      },
+      /** @param {'completed' | 'cancelled'} type */
+      finishedTransition(type) {
+        (type === 'cancelled' ? state.onCancelled : state.onCompleted).forEach(cb => cb());
+        state.onCancelled.length = state.onCompleted.length = 0;
       },
       /** Taking CSS animation into account */
       getCurrentTransform() {
@@ -133,7 +145,6 @@ export default function CssPanZoom(props) {
           scale: state.scaleRoot.getBoundingClientRect().width,
         }
       },
-
       /** @param {{ clientX: number; clientY: number; }} e */
       getWorld(e) {
         const parentBounds = state.parent.getBoundingClientRect();
@@ -194,17 +205,21 @@ export default function CssPanZoom(props) {
        * @param {number} [toScale] 
        * @param {Geom.VectJson} [worldPoint] 
        */
-       transitionTo(toScale, worldPoint, transitionMs = 0) {
+      transitionTo(toScale, worldPoint, transitionMs = 0) {
         toScale = toScale || state.scale;
         state.clearTransition();
-        // Can totally remove transition once no transition in progress
         state.transitionTimeoutId = window.setTimeout(() => {
-          state.clearTransition();
+          state.transitionTimeoutId = 0;
+          // NOTE may not need because actually at this.{x,y,scale}
+          Object.assign(state, state.getCurrentTransform());
+          state.updateView();
+          // Can totally remove transition once no transition in progress
           state.translateRoot.style.transition = state.scaleRoot.style.transition = '';
+          state.finishedTransition('completed');
         }, transitionMs);
 
         const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
-        const current = this.getCurrentTransform();
+        const current = state.getCurrentTransform();
         
         if (toScale !== state.scale) {
           state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;

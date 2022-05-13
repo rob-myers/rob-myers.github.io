@@ -174,8 +174,10 @@ export default function NPCs(props) {
         const path = e.path.map(Vect.from);
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
         update();
-      } else if (e.key === 'view') {
+      } else if (e.key === 'view-req') {
         props.panZoomApi.transitionTo(e.zoom, e.at, 2000);
+        props.panZoomApi.onCompleted.push(() => wire.next({ key: 'view-res', req: e, res: 'completed' }));
+        props.panZoomApi.onCancelled.push(() => wire.next({ key: 'view-res', req: e, res: 'cancelled' }));
       } else if (e.key === 'ping') {
         wire.next({ key: 'pong', wireKey: props.wireKey });
       }

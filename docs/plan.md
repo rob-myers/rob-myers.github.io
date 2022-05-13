@@ -49,8 +49,9 @@ __Aim towards website release__.
   - ✅ script spawns andros and periodically panzooms back to him
     - ✅ jerkiness reintroduced when `view ...`
   - 🚧 improve camera tracking
-    - `view` should only terminate when finished/interrupted
-    - returns after 1s of no camera interaction
+    -  ✅ `view` should only terminate when finished/interrupted
+    - 🚧 can specify transition time in `view` too
+    - 🚧 returns to circle around npc after 300ms of no camera interaction
     - abstract into `track {key} &`
 
 - 🚧 Improve look of first-npc
