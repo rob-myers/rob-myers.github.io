@@ -449,8 +449,9 @@ export function geomorphDataToInstance(gm, transform) {
  * Lockers in bridge--042--8x9 need ~20.
  * @param {Geomorph.ParsedConnectorRect} connector 
  * @param {number} srcRoomId 
+ * @param {number} lightOffset In direction from srcRoomId through connector 
  */
-export function computeLightPosition(connector, srcRoomId, lightOffset = 20) {
+export function computeLightPosition(connector, srcRoomId, lightOffset) {
   const roomSign = connector.roomIds[0] === srcRoomId
     ? 1 : connector.roomIds[1] === srcRoomId ? -1 : null;
   if (roomSign === null) {

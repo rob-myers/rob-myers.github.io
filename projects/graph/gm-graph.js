@@ -262,7 +262,8 @@ export class gmGraph extends BaseGraph {
       return {
         gmIndex: area.gmIndex,
         poly: geom.lightPolygon({// TODO avoid nullable `adjRoomId` (?)
-          position: computeLightPosition(doors[area.doorIndex], area.adjRoomId??rootRoomId),
+          // Move light inside adjacent room i.e. `-10`
+          position: computeLightPosition(doors[area.doorIndex], area.adjRoomId??rootRoomId, -10),
           range: 2000,
           exterior: area.poly,
           extraSegs: closedDoorSegs,
@@ -283,7 +284,8 @@ export class gmGraph extends BaseGraph {
     const windowLights = adjWindowIds.map(windowIndex => ({
       gmIndex: gmId,
       poly: geom.lightPolygon({
-        position: computeLightPosition(gm.windows[windowIndex], rootRoomId),
+        // Move light inside current room i.e. `20`
+        position: computeLightPosition(gm.windows[windowIndex], rootRoomId, 20),
         range: 1000,
         exterior: this.getOpenWindowPolygon(gmId, windowIndex),
       }),
