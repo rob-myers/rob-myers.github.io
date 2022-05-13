@@ -86,7 +86,7 @@ export default function NavDemo1(props) {
         nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorId);
         gm.roomGraph.getAdjacentHullDoorIds(gm, roomNode).flatMap(({ hullDoorIndex }) =>
           gmGraph.getAdjacentRoomCtxt(state.gmId, hullDoorIndex) || []
-        ).forEach(({ adjGmId, adjDoorId }) => nextVis[adjGmId] = [adjDoorId]);
+        ).forEach(({ adjGmId, adjDoorId }) => (nextVis[adjGmId] = nextVis[adjGmId] || []).push(adjDoorId));
 
         gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextVis[gmId]));
       },
@@ -201,10 +201,10 @@ const rootCss = css`
     transform-origin: top left;
   }
   img.geomorph {
-    filter: brightness(80%);
+    filter: brightness(90%);
   }
   img.geomorph-dark {
-    filter: invert(100%) brightness(55%) contrast(200%) brightness(60%);
+    filter: invert(100%) brightness(55%) contrast(200%) brightness(100%);
     /* opacity: 0.6; */
   }
 

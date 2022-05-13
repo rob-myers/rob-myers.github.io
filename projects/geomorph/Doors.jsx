@@ -96,7 +96,6 @@ export default function Doors(props) {
     };
   });
 
-  // TODO replace by useImperativeHandle?
   React.useEffect(() => {
     props.onLoad(state);
   }, []);
