@@ -16,29 +16,10 @@ ${profileLookup["profile-1"]()}
 
 # wait for world
 ready
-# hard-coded spawn
-# TODO request spawn points
+# hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
-
-# camera tracks andros (background process)
-run '/** track andros */ ({ api }) {
-  const process = api.getProcess()
-
-  const intervalId = window.setInterval(async () => {
-    if (process.status === 1) {// ProcessStatus.Running = 1
-      // Getting npc each time handles respawn and <NPCs> HMR
-      const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
-      const position = npc.getPosition()
-      
-      // await api.reqRes({ key: "view-req", zoom: 1.5, to: position })
-      await api.reqRes({ key: "view-req", to: position })
-    }
-  }, 2000)
-  process.cleanups.push(() => window.clearInterval(intervalId))
-
-  // Must kill to stop
-  await new Promise((resolve) => process.cleanups.push(resolve))
-}' &
+# camera tracks andros
+track &
 `,
 };
 
@@ -306,16 +287,27 @@ ready: `{
   }' "$@"
 }`,
 
-// TODO generic npc tracking
 track: `{
   run '/** track andros */ ({ api }) {
     const process = api.getProcess()
+    // TODO can immediately kill
+    // TODO rethink: camera transitions useful, but tracking
+    // should probably be done via specific path-based animations,
+    // must like the way andros currently moves
 
-    // Resolves after ≥ 200ms when panzoom user input "idle"
-    await api.reqRes({ key: "panzoom-idle-req" })
+    while (process.status !== 2) {// ProcessStatus.Killed === 2
+      // Resolves after ≥ 200ms when panzoom "idle"
+      await api.reqRes({ key: "panzoom-idle-req" })
+      if (process.status === 1) {
+        // Getting npc each time handles respawn and <NPCs> HMR
+        const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
+        const position = npc.getPosition()
+        // Resolves when cancelled or completed
+        // TODO this prevents interruption
+        await api.reqRes({ key: "view-req", to: position, ms: 1000 })
+      }
+    }
 
-    // TODO start transition to npc (or nearby),
-    // detecting when cancelled/completed, in which loop
   }' "$@"
 }`,
 

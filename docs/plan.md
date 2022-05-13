@@ -48,12 +48,13 @@ __Aim towards website release__.
   - ✅ `npc {key}` gets api
   - ✅ script spawns andros and periodically panzooms back to him
     - ✅ jerkiness reintroduced when `view ...`
-  - 🚧 improve camera tracking
+  - ✅ improve camera tracking
     - ✅ `view` should only terminate when finished/interrupted
     - ✅ `view` expects param e.g. `{ zoom: 2, ms: 2000, to: { "x": 100, "y": 100 } }`
     - ✅ can specify transition time in `view` too
-    - 🚧 returns to circle around npc after 300ms of no camera interaction
-    - abstract into `track {key} &`
+    - ❌ returns to circle around npc after 300ms of no camera interaction
+    - ✅ abstract into `track &`
+  - 🚧 decided npc tracking camera should walk too
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
