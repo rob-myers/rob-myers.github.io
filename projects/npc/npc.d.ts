@@ -60,6 +60,12 @@ declare namespace NPC {
       req: (NpcEvent & { key: 'panzoom-idle-req' });
       res: true;
     }
+    | { key: 'panzoom-focus-req' }
+    | {
+      key: 'panzoom-focus-res';
+      req: (NpcEvent & { key: 'panzoom-focus-req' });
+      res: Geom.VectJson;
+    }
   );
 
   export interface NPC {

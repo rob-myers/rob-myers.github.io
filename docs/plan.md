@@ -31,6 +31,7 @@ __Aim towards website release__.
     - simplify/improve ui-idle event
       - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
       - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
+      - 🚧 if idle and "camera" not close enough to npc, transition to npc position
     - try `linear` transition
     - try providing future position of npc
     - what about pause/resume for npc?

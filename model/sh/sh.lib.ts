@@ -289,8 +289,11 @@ track: `{
   run '/** track andros */ ({ api }) {
     const process = api.getProcess()
     // TODO can immediately kill
+    // TODO if idle and "camera" not close enough to npc, transition to npc position
 
     await api.reqRes({ key: "panzoom-idle-req" })
+    const worldFocus = await api.reqRes({ key: "panzoom-focus-req" })
+    console.log({ worldFocus })
 
     // while (process.status !== 2) {// ProcessStatus.Killed === 2
     //   // Resolves when panzoom first "idle"
@@ -299,9 +302,10 @@ track: `{
     //     // Getting npc each time handles respawn and <NPCs> HMR
     //     const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
     //     const position = npc.getPosition()
+    //     console.log(position)
     //     // Resolves when cancelled or completed
     //     // TODO this prevents interruption
-    //     await api.reqRes({ key: "view-req", to: position, ms: 1000 })
+    //     // await api.reqRes({ key: "view-req", to: position, ms: 1000 })
     //   }
     // }
 

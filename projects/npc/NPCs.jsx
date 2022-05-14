@@ -185,7 +185,7 @@ export default function NPCs(props) {
           x.key === 'cancelled-transition' && wire.next({ key: 'view-res', req: e, res: 'cancelled' });
           x.key === 'completed-transition' && wire.next({ key: 'view-res', req: e, res: 'completed' });
         }});
-      } else if (e.key === "panzoom-idle-req") {
+      } else if (e.key === 'panzoom-idle-req') {
         if (props.panZoomApi.isIdle()) {
           wire.next({ key: 'panzoom-idle-res', req: e, res: true });
         } else {
@@ -196,6 +196,8 @@ export default function NPCs(props) {
             complete: () => wire.next({ key: 'panzoom-idle-res', req: e, res: true }),
           });
         }
+      } else if (e.key === 'panzoom-focus-req') {
+        wire.next({ key: 'panzoom-focus-res', req: e, res: props.panZoomApi.getWorldAtCenter() });
       } else if (e.key === 'ping') {
         wire.next({ key: 'pong', wireKey: props.wireKey });
       }
