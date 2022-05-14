@@ -26,12 +26,12 @@ __Aim towards website release__.
 
 
 - 🚧 Andros is situated
-  - ✅ CSSPanZoom returns to andros
-  - 🚧 CSSPanZoom tracks npc in better way
+  - ✅ CssPanZoom returns to andros
+  - 🚧 CssPanZoom tracks npc in better way
     - simplify/improve ui-idle event
-      - ✅ maybe CSSPanZoom.events has
+      - ✅ CssPanZoom.events has
         > {completed,cancelled}-transition, ui-idle
-      - maybe also have CSSPanZoom.uiIdle boolean
+      - 🚧 `track` uses CssPanZoom.{events,uiIdle}
     - try `linear` transition
     - try providing future position of npc
     - what about pause/resume for npc?
@@ -39,6 +39,8 @@ __Aim towards website release__.
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking
   - When Andros moves through doorway, lighting changes
+
+- 🚧 Start migration to Gatsby
 
 - ✅ Reorg `sh.lib`
   - ✅ base functions are from Terminal specified script
@@ -79,9 +81,9 @@ __Aim towards website release__.
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
 - ✅ Fix invisible hull doors
-- Prevent inaccessible hull doors from being opened
+- ✅ Prevent inaccessible hull doors from being opened
+- `<Doors>`: Visible hull doors are being drawn as invisible
 - Draw grid over dark png, so not over light geomorph png
-- 🚧 Investigate migration to Gatsby
 - Can toggle NPC speech bubbles
 - Can pause/resume NPC
 - mobile-friendly command links (session must be open)

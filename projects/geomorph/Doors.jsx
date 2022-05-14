@@ -29,9 +29,9 @@ export default function Doors(props) {
       getVisible(gmIndex) {
         return Object.keys(state.vis[gmIndex]).map(Number);
       },
-      setVisible(gmIndex, doorIds) {
-        state.vis[gmIndex] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
-        state.drawInvisibleInCanvas(gmIndex);
+      setVisible(gmId, doorIds) {
+        state.vis[gmId] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
+        state.drawInvisibleInCanvas(gmId);
         update();
       },
     };
@@ -49,45 +49,48 @@ export default function Doors(props) {
 
       /** @param {PointerEvent} e */
       onToggleDoor(e) {
-        const gmIndexAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-index');
-        if (gmIndexAttr === null) return;
-        const gmIndex = Number(gmIndexAttr);
-        const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-index'));
-        const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-index'));
+        const gmIndexAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
+        const gmId = Number(gmIndexAttr);
+        const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
+        const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-id'));
+        const gmDoorNode = hullDoorId === -1 ? null : props.gmGraph.getDoorNodeByIds(gmId, hullDoorId);
 
-        if (!state.vis[gmIndex][doorId]) {
+        if (gmIndexAttr === null || !state.vis[gmId][doorId] || gmDoorNode?.sealed) {
           return;
         }
 
         const adjHull = hullDoorId !== -1
-          ? props.gmGraph.getAdjacentRoomCtxt(gmIndex, hullDoorId) : null;
+          ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
 
-        if (state.open[gmIndex][doorId]) {
-          delete state.open[gmIndex][doorId]
+        if (state.open[gmId][doorId]) {
+          delete state.open[gmId][doorId]
           adjHull && (delete state.open[adjHull.adjGmId][adjHull.adjDoorId]);
         } else {
-          state.open[gmIndex][doorId] = true;
+          state.open[gmId][doorId] = true;
           adjHull && (state.open[adjHull.adjGmId][adjHull.adjDoorId] = true);
         }
-        const key = state.open[gmIndex][doorId] ? 'opened-door' : 'closed-door';
-        props.wire.next({ gmIndex, index: doorId, key });
+        const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
+        props.wire.next({ gmIndex: gmId, index: doorId, key });
         adjHull && props.wire.next({ gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId, key });
 
-        state.drawInvisibleInCanvas(gmIndex);
+        state.drawInvisibleInCanvas(gmId);
       },
-      /** @param {number} gmIndex */
-      drawInvisibleInCanvas(gmIndex) {
-        const canvas = state.canvas[gmIndex];
+      /** @param {number} gmId */
+      drawInvisibleInCanvas(gmId) {
+        const canvas = state.canvas[gmId];
         const ctxt = assertNonNull(canvas.getContext('2d'));
-        const gm = props.gms[gmIndex];
+        const gm = props.gms[gmId];
 
         ctxt.setTransform(1, 0, 0, 1, -gm.pngRect.x, -gm.pngRect.y);
         ctxt.clearRect(0, 0, canvas.width, canvas.height);
         ctxt.strokeStyle = '#ffd';
-        ctxt.lineWidth = 1;
+        ctxt.fillStyle = '#f00';
+        ctxt.lineWidth = 0.5;
+        gmId === 0 && console.log(state.vis[gmId])
         gm.doors.forEach(({ poly }, i) => {
-          if (!state.vis[gmIndex][i]) {
+          if (!state.vis[gmId][i]) {
             strokePolygon(ctxt, [poly]);
+            ctxt.fill()
           }
         });
       },
@@ -111,7 +114,7 @@ export default function Doors(props) {
       ref={el => el && (state.rootEl = el)}
       className={classNames("doors", rootCss)}
     >
-      {props.gms.map((gm, gmIndex) => (
+      {props.gms.map((gm, gmId) => (
         <div
           key={gm.itemKey}
           style={{
@@ -119,11 +122,11 @@ export default function Doors(props) {
           }}
         >
           {gm.doors.map((door, i) =>
-            state.vis[gmIndex][i] &&
+            state.vis[gmId][i] &&
               <div
                 key={i}
                 className={classNames("door", {
-                  open: state.open[gmIndex][i],
+                  open: state.open[gmId][i],
                   iris: door.tags.includes('iris'),
                 })}
                 style={{
@@ -137,15 +140,15 @@ export default function Doors(props) {
               >
                 <div
                   className="door-touch-ui"
-                  data-gm-index={gmIndex}
-                  data-door-index={i}
-                  data-hull-door-index={gm.hullDoors.indexOf(door)}
+                  data-gm-id={gmId}
+                  data-door-id={i}
+                  data-hull-door-id={gm.hullDoors.indexOf(door)}
                 />
               </div>
             )
           }
           <canvas
-            ref={(el) => el && (state.canvas[gmIndex] = el)}
+            ref={(el) => el && (state.canvas[gmId] = el)}
             width={gm.pngRect.width}
             height={gm.pngRect.height}
             style={{ left: gm.pngRect.x, top: gm.pngRect.y }}

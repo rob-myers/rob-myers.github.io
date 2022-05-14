@@ -190,6 +190,16 @@ export class gmGraph extends BaseGraph {
   getDoorNode(nodeId) {
     return /** @type {Graph.GmGraphNodeDoor} */ (this.getNodeById(nodeId));
   }
+  
+  /**
+   * @param {number} gmId 
+   * @param {number} hullDoorId 
+   */
+  getDoorNodeByIds(gmId, hullDoorId) {
+    const gm = this.gms[gmId];
+    const nodeId = getGmDoorNodeId(gm.key, gm.transform, hullDoorId);
+    return /** @type {Graph.GmGraphNodeDoor} */ (this.getNodeById(nodeId));
+  }
 
   /**
    * Get union of roomsWithDoors on either side of door.
