@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 import { merge, of } from "rxjs";
-import { debounceTime, first } from "rxjs/operators";
+import { debounceTime, filter, first } from "rxjs/operators";
 import { keys } from "../service/generic";
 import { ensureWire } from "../service/wire";
 import { error } from "../service/log";
@@ -178,8 +178,13 @@ export default function NPCs(props) {
         update();
       } else if (e.key === 'view-req') {
         props.panZoomApi.transitionTo(e.zoom, e.to, e.ms??2000);
-        props.panZoomApi.onCompleted.push(() => wire.next({ key: 'view-res', req: e, res: 'completed' }));
-        props.panZoomApi.onCancelled.push(() => wire.next({ key: 'view-res', req: e, res: 'cancelled' }));
+        props.panZoomApi.events.pipe(
+          filter(x => x.key === 'cancelled-transition' || x.key === 'completed-transition'),
+          first(),
+        ).subscribe({ next: (x) => {
+          x.key === 'cancelled-transition' && wire.next({ key: 'view-res', req: e, res: 'cancelled' });
+          x.key === 'completed-transition' && wire.next({ key: 'view-res', req: e, res: 'completed' });
+        }});
       } else if (e.key === "panzoom-idle-req") {
         // CssPanZoom idle if no transform updates for 200ms.
         // Such updates arise from (a) user interaction, (b) `transitionTo`

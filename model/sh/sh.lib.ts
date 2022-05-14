@@ -14,12 +14,12 @@ source /etc/game-1
   'profile-1-a': () => `
 ${profileLookup["profile-1"]()}
 
-# wait for world
+# await world
 ready
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
-# camera tracks andros
-track &
+# TODO camera follows andros e.g. walks
+# track &
 `,
 };
 
@@ -271,17 +271,15 @@ npc: `{
 /** Ping every second until pong */
 ready: `{
   run '({ api, home }) {
-    yield \`Awaiting ${ansiBlue}"pong"${ansiWhite} on ${ansiBlue}"\${home.WIRE_KEY}"${ansiWhite}  \`
+    yield \`ℹ️ awaiting ${ansiBlue}"pong"${ansiWhite} on ${ansiBlue}"\${home.WIRE_KEY}"${ansiWhite}  \`
 
     const ping = () => api.getWire().next({ key: "ping" })
     const intervalId = window.setInterval(ping, 1000)
     window.setTimeout(ping)
     api.getProcess().cleanups.push(() => window.clearInterval(intervalId))
 
-    for await (_ of api.mapWire(
-      (e) => e.key === "pong" ? true : undefined,
-    )) {
-      yield \`Received ${ansiBlue}"pong"${ansiWhite} on ${ansiBlue}"\${home.WIRE_KEY}"${ansiWhite}  \`
+    for await (_ of api.mapWire(e => e.key === "pong" ? 1 : undefined)) {
+      yield \`✅ received ${ansiBlue}"pong"${ansiWhite} on ${ansiBlue}"\${home.WIRE_KEY}"${ansiWhite}  \`
       break; // Stop on 1st message
     }
   }' "$@"
@@ -291,9 +289,6 @@ track: `{
   run '/** track andros */ ({ api }) {
     const process = api.getProcess()
     // TODO can immediately kill
-    // TODO rethink: camera transitions useful, but tracking
-    // should probably be done via specific path-based animations,
-    // must like the way andros currently moves
 
     while (process.status !== 2) {// ProcessStatus.Killed === 2
       // Resolves after ≥ 200ms when panzoom "idle"

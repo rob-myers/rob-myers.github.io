@@ -18,10 +18,6 @@ export default function CssPanZoom(props) {
       translateRoot: /** @type {HTMLDivElement} */ ({}),
       scaleRoot: /** @type {HTMLDivElement} */ ({}),
 
-      /** @type {(() => void)[]} */
-      onCancelled: [],
-      /** @type {(() => void)[]} */
-      onCompleted: [],
       /** @type {Subject<PanZoom.CssInternalEvent>} */
       events: new Subject,
 
@@ -135,8 +131,7 @@ export default function CssPanZoom(props) {
       },
       /** @param {'completed' | 'cancelled'} type */
       finishedTransition(type) {
-        (type === 'cancelled' ? state.onCancelled : state.onCompleted).forEach(cb => cb());
-        state.onCancelled.length = state.onCompleted.length = 0;
+        state.events.next({ key: type === 'cancelled' ? 'cancelled-transition' : 'completed-transition' });
       },
       /** Taking CSS animation into account */
       getCurrentTransform() {
@@ -252,7 +247,7 @@ export default function CssPanZoom(props) {
       updateView() {
         state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
         state.scaleRoot.style.transform = `scale(${state.scale})`;
-        state.events.next({ key: 'dst', x: state.x, y: state.y, scale: state.scale });
+        state.events.next({ key: 'ui-idle' });
       },
       /**
        * @param {number} toScale 
