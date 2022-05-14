@@ -2,7 +2,7 @@ import React from "react";
 import { css } from "goober";
 import classNames from "classnames";
 import { assertNonNull } from "../service/generic";
-import { fillPolygon } from "../service/dom";
+import { strokePolygon } from "../service/dom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 
@@ -79,15 +79,15 @@ export default function Doors(props) {
       drawInvisibleInCanvas(gmIndex) {
         const canvas = state.canvas[gmIndex];
         const ctxt = assertNonNull(canvas.getContext('2d'));
-        ctxt.clearRect(0, 0, canvas.width, canvas.height);
-        ctxt.fillStyle = '#000';
-        ctxt.strokeStyle = '#fff';
-        ctxt.lineWidth = 0.5;
         const gm = props.gms[gmIndex];
+
+        ctxt.setTransform(1, 0, 0, 1, -gm.pngRect.x, -gm.pngRect.y);
+        ctxt.clearRect(0, 0, canvas.width, canvas.height);
+        ctxt.strokeStyle = '#ffd';
+        ctxt.lineWidth = 1;
         gm.doors.forEach(({ poly }, i) => {
           if (!state.vis[gmIndex][i]) {
-            fillPolygon(ctxt, [poly]);
-            ctxt.stroke();
+            strokePolygon(ctxt, [poly]);
           }
         });
       },
@@ -148,6 +148,7 @@ export default function Doors(props) {
             ref={(el) => el && (state.canvas[gmIndex] = el)}
             width={gm.pngRect.width}
             height={gm.pngRect.height}
+            style={{ left: gm.pngRect.x, top: gm.pngRect.y }}
           />
         </div>
       ))}

@@ -26,13 +26,21 @@ __Aim towards website release__.
 
 
 - 🚧 Andros is situated
-  - 🚧 CSSPanZoom returns to andros
+  - ✅ CSSPanZoom returns to andros
+  - 🚧 CSSPanZoom tracks npc in better way
+    - simplify/improve ui-idle event
+      - ✅ maybe CSSPanZoom.events has
+        > {completed,cancelled}-transition, ui-idle
+      - maybe also have CSSPanZoom.uiIdle boolean
+    - try `linear` transition
+    - try providing future position of npc
+    - what about pause/resume for npc?
   - Can only move to point within lit area
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking
   - When Andros moves through doorway, lighting changes
 
-- 🚧 Reorg `sh.lib`
+- ✅ Reorg `sh.lib`
   - ✅ base functions are from Terminal specified script
   - ✅ `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
   - ❌ `view` -> `pan`, `zoom` 
@@ -54,7 +62,6 @@ __Aim towards website release__.
     - ✅ can specify transition time in `view` too
     - ❌ returns to circle around npc after 300ms of no camera interaction
     - ✅ abstract into `track &`
-  - 🚧 decided npc tracking camera should walk too
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
@@ -71,6 +78,10 @@ __Aim towards website release__.
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
+- ✅ Fix invisible hull doors
+- Prevent inaccessible hull doors from being opened
+- Draw grid over dark png, so not over light geomorph png
+- 🚧 Investigate migration to Gatsby
 - Can toggle NPC speech bubbles
 - Can pause/resume NPC
 - mobile-friendly command links (session must be open)
@@ -99,18 +110,17 @@ __Aim towards website release__.
   - ✅ Remove heart/breath
   - ✅ `NavDemo1` has Andros
     > First approximation i.e. first-npc
-  - 🚧 TTY script places navpath from Andros on click
+  - ✅ TTY script places navpath from Andros on click
     - ✅ expose use-query cache in terminal
     - ✅ move `stage` lookup into individual items in use-query cache
-    - 🚧 script needs position of Andros
+    - ✅ script needs position of Andros
       - `<NPCs>` has stageKey `nav-demo-1`, registering Andros
-    - script needs access to NavMesh
+    ✅ script needs access to NavMesh
       - access pathfinding from `use-query` cache
-  -  🤔 TTY script restrict navpath from Andros to lit area
+  - 🤔 TTY script restrict navpath from Andros to lit area
   - Andros is __situated__
   - `NavDemo1` has other NPCs
 
-- 🚧 Investigate migration to Gatsby
 - bring back `say`
 - start using `yarn inspect` as in BFF for server side debug
 
