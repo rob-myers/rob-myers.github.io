@@ -199,6 +199,7 @@ const rootCss = css`
   img {
     position: absolute;
     transform-origin: top left;
+    pointer-events: none;
   }
   img.geomorph {
     filter: brightness(90%);

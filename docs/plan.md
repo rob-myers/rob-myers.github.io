@@ -82,7 +82,7 @@ __Aim towards website release__.
 
 - ✅ Fix invisible hull doors
 - ✅ Prevent inaccessible hull doors from being opened
-- `<Doors>`: Visible hull doors are being drawn as invisible
+- ✅ `<Doors>`: Visible hull doors are being drawn as invisible
 - Draw grid over dark png, so not over light geomorph png
 - Can toggle NPC speech bubbles
 - Can pause/resume NPC
