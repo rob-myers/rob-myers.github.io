@@ -290,18 +290,20 @@ track: `{
     const process = api.getProcess()
     // TODO can immediately kill
 
-    while (process.status !== 2) {// ProcessStatus.Killed === 2
-      // Resolves after ≥ 200ms when panzoom "idle"
-      await api.reqRes({ key: "panzoom-idle-req" })
-      if (process.status === 1) {
-        // Getting npc each time handles respawn and <NPCs> HMR
-        const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
-        const position = npc.getPosition()
-        // Resolves when cancelled or completed
-        // TODO this prevents interruption
-        await api.reqRes({ key: "view-req", to: position, ms: 1000 })
-      }
-    }
+    await api.reqRes({ key: "panzoom-idle-req" })
+
+    // while (process.status !== 2) {// ProcessStatus.Killed === 2
+    //   // Resolves when panzoom first "idle"
+    //   await api.reqRes({ key: "panzoom-idle-req" })
+    //   if (process.status === 1) {
+    //     // Getting npc each time handles respawn and <NPCs> HMR
+    //     const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
+    //     const position = npc.getPosition()
+    //     // Resolves when cancelled or completed
+    //     // TODO this prevents interruption
+    //     await api.reqRes({ key: "view-req", to: position, ms: 1000 })
+    //   }
+    // }
 
   }' "$@"
 }`,

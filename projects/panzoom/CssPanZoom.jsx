@@ -20,9 +20,11 @@ export default function CssPanZoom(props) {
 
       /** @type {Subject<PanZoom.CssInternalEvent>} */
       events: new Subject,
+      /** UI is considered idle iff this is 0 */
+      idleTimeoutId: 0,
 
       isPanning: false,
-      opts: { minScale: 0.05, maxScale: 10, step: 0.05 },
+      opts: { minScale: 0.05, maxScale: 10, step: 0.05, idleMs: 200 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       origin: /** @type {Vect | undefined} */ (undefined),
       /** Target scale in `scaleRoot` */
@@ -38,11 +40,13 @@ export default function CssPanZoom(props) {
       evt: {
         /** @param {WheelEvent} e */
         wheel(e) {
+          state.delayIdle();
           state.clearTransition();
           state.zoomWithWheel(e);
         },
         /** @param {PointerEvent} e */
         pointerdown(e) {
+          state.delayIdle();
           state.clearTransition();
           // e.preventDefault();
           ensurePointer(state.pointers, e);
@@ -59,16 +63,18 @@ export default function CssPanZoom(props) {
         },
         /** @param {PointerEvent} e */
         pointermove(e) {
-          // e.preventDefault();
           if (
             state.origin === undefined
             || state.start.clientX === undefined
             || state.start.clientY === undefined
           ) {
-            return
+            return;
           }
+
+          state.delayIdle();
           ensurePointer(state.pointers, e);
           const current = getMiddle(state.pointers);
+
           if (state.pointers.length > 1) {
             // A startDistance of 0 means there weren't 2 pointers handled on start
             if (state.start.distance === 0) {
@@ -93,7 +99,6 @@ export default function CssPanZoom(props) {
         },
         /** @param {PointerEvent} e */
         pointerup(e) {
-          // e.preventDefault();
           /**
            * NOTE: don't remove all pointers.
            * Can restart without having to reinitiate all of them.
@@ -103,12 +108,13 @@ export default function CssPanZoom(props) {
           if (!state.isPanning) {
             return;
           }
+          // TODO `state.events` sends point and connect to wire elsewhere?
           if (props.wireKey) {
             state.sendPointOnWire(props.wireKey, e);
           }
           state.isPanning = false;
           state.origin = state.start.clientX = state.start.clientY = undefined;
-          state.clearTransition();
+          // state.clearTransition();
         },
       },
       /** Target translateX in `translateRoot` */
@@ -128,6 +134,11 @@ export default function CssPanZoom(props) {
           state.updateView();
           state.finishedTransition('cancelled');
         }
+      },
+      /** @private */
+      delayIdle() {
+        state.idleTimeoutId && window.clearTimeout(state.idleTimeoutId);
+        state.idleTimeoutId = window.setTimeout(state.idleTimeout, state.opts.idleMs);
       },
       /** @param {'completed' | 'cancelled'} type */
       finishedTransition(type) {
@@ -163,13 +174,23 @@ export default function CssPanZoom(props) {
         const worldY = (parentBounds.height/2 - current.y) / current.scale;
         return { x: worldX, y: worldY };
       },
+      /** @private */
+      idleTimeout() {
+        if (state.pointers.length === 0) {
+          state.events.next({ key: 'ui-idle' });
+          state.idleTimeoutId = 0;
+        } else {
+          state.delayIdle();
+        }
+      },
+      isIdle() {
+        return state.idleTimeoutId === 0;
+      },
       /**
        * @param {number} toX 
        * @param {number} toY 
        */
       pan(toX, toY) {
-        // const result = constrainXY(toX, toY, scale, panOptions)
-        // Only try to set if the result is somehow different
         if (state.x !== toX || state.y !== toY) {
           state.x = toX;
           state.y = toY;
@@ -247,7 +268,6 @@ export default function CssPanZoom(props) {
       updateView() {
         state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
         state.scaleRoot.style.transform = `scale(${state.scale})`;
-        state.events.next({ key: 'ui-idle' });
       },
       /**
        * @param {number} toScale 

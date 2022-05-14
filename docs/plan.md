@@ -29,9 +29,8 @@ __Aim towards website release__.
   - ✅ CssPanZoom returns to andros
   - 🚧 CssPanZoom tracks npc in better way
     - simplify/improve ui-idle event
-      - ✅ CssPanZoom.events has
-        > {completed,cancelled}-transition, ui-idle
-      - 🚧 `track` uses CssPanZoom.{events,uiIdle}
+      - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
+      - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
     - try `linear` transition
     - try providing future position of npc
     - what about pause/resume for npc?

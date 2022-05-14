@@ -186,14 +186,16 @@ export default function NPCs(props) {
           x.key === 'completed-transition' && wire.next({ key: 'view-res', req: e, res: 'completed' });
         }});
       } else if (e.key === "panzoom-idle-req") {
-        // CssPanZoom idle if no transform updates for 200ms.
-        // Such updates arise from (a) user interaction, (b) `transitionTo`
-        merge(of('init'), props.panZoomApi.events).pipe(
-          debounceTime(200),
-          first(),
-        ).subscribe({
-          complete: () => wire.next({ key: 'panzoom-idle-res', req: e, res: true }),
-        });
+        if (props.panZoomApi.isIdle()) {
+          wire.next({ key: 'panzoom-idle-res', req: e, res: true });
+        } else {
+          props.panZoomApi.events.pipe(
+            filter(x => x.key === 'ui-idle'),
+            first(),
+          ).subscribe({
+            complete: () => wire.next({ key: 'panzoom-idle-res', req: e, res: true }),
+          });
+        }
       } else if (e.key === 'ping') {
         wire.next({ key: 'pong', wireKey: props.wireKey });
       }
