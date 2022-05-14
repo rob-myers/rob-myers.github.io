@@ -88,7 +88,6 @@ export default function Doors(props) {
         ctxt.fillStyle = '#aaaaaa44';
         ctxt.lineWidth = 0.5;
 
-        gmId === 0 && console.log(state.vis[gmId])
         gm.doors.forEach(({ poly }, i) => {
           if (!state.vis[gmId][i]) {
             strokePolygon(ctxt, [poly]);
