@@ -21,7 +21,6 @@ spawn andros '{"x":185,"y":390}'
 # camera follows andros
 track andros &
 
-# TODO js version of "go andros"
 `,
 };
 
@@ -249,7 +248,6 @@ go: `{
     map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
     walk $1
 }`,
-
 
 view: `{
   run '({ api, args }) {

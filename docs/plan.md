@@ -36,9 +36,9 @@ __Aim towards website release__.
     - ✅ can choose transition timing function
     - ❌ try providing future position of npc
       > implemented `npc.getFuturePosition(inMs)` but looked worse
-    - 🚧 replace polling by npc move event
-    - pause/resume for npc?
-  - JS version of `go andros`
+    - ❌ replace polling by npc move event
+    - can stop walk
+  - 🚧 permit shell `while` with restricted head e.g. `click`
   - Can only move to point within lit area
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking
