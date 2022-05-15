@@ -87,8 +87,6 @@ declare namespace NPC {
     };
 
     //#region mutable
-    spriteSheet: 'idle' | 'walk';
-    origPath: Geom.Vect[];
     /** Initially `origPath` but may change on pause/unpause */
     animPath: Geom.Vect[];
     anim: {
@@ -107,10 +105,14 @@ declare namespace NPC {
       sofars: number[];
       total: number;
     };
+    enteredSheetAt: number;
+    origPath: Geom.Vect[];
+    spriteSheet: 'idle' | 'walk';
 
     //#endregion
     /** Radians */
     getAngle(): number;
+    getFuturePosition(inMs: number): Geom.Vect;
     getPosition(): Geom.Vect;
     followNavPath(): void;
     pause(): void;

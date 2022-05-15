@@ -159,7 +159,6 @@ function extractNpcFrames(api, topNodes, title, symbolLookup) {
 }
 
 /**
- * TODO 🚧 deps needs rethink?
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 
  * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; update: () => void }} deps
@@ -189,6 +188,7 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
     },
     origPath: [],
     spriteSheet: 'idle',
+    enteredSheetAt: Date.now(),
 
     followNavPath() {
       const { aux } = this;
@@ -213,7 +213,12 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       );
       
       this.spriteSheet = 'walk';
-      this.anim.root.addEventListener('finish', () => { this.spriteSheet = 'idle'; update(); });
+      this.enteredSheetAt = Date.now();
+      this.anim.root.addEventListener('finish', () => {
+        this.spriteSheet = 'idle';
+        this.enteredSheetAt = Date.now();
+        update();
+      });
 
       if (wasPaused || (aux.count === 0 && this.def.paused)) {
         this.pause();
@@ -223,6 +228,19 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
     getAngle() {
       const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);
       return Math.atan2(matrix.m12, matrix.m11);
+    },
+    // TODO needs testing
+    getFuturePosition(inMs) {
+      switch (this.spriteSheet) {
+        case 'idle': return this.getPosition();
+        case 'walk': {
+          const targetDuration = (Date.now() + inMs) - this.enteredSheetAt;
+          const targetDistance = targetDuration / animScaleFactor;
+          let nodeIndex = this.aux.sofars.findIndex(sofar => sofar > targetDistance);
+          if (nodeIndex === -1) nodeIndex = this.animPath.length - 1;
+          return this.animPath[nodeIndex].clone();
+        }
+      }
     },
     getPosition() {
       const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
