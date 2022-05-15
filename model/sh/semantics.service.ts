@@ -170,6 +170,10 @@ class SemanticsService {
                 await ttyShell.spawn(file);
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
+                /**
+                 * TODO `file` exitCode not set, even when handleShError.
+                 */
+                // console.log('inner pipeline finished', file, stmts[i], i)
                 if (node.exitCode = file.exitCode) {
                   throw new ShError(`pipe ${i}`, node.exitCode);
                 }
@@ -257,6 +261,7 @@ class SemanticsService {
           case 'IfClause': generator = this.IfClause(node); break;
           case 'TimeClause': generator = this.TimeClause(node); break;
           case 'Subshell': generator = this.Subshell(node); break;
+          case 'WhileClause': generator = this.WhileClause(node); break;
           default: throw new ShError('not implemented', 2);
         }
       }
@@ -537,6 +542,22 @@ class SemanticsService {
     useSession.api.resolve(1, node.meta).writeData(
       `real\t${Date.now() - before}ms`
     );
+  }
+
+  /**
+   * TODO
+   * - infinite loop safety
+   * - implement/handle `break`
+   */
+  private async *WhileClause(node: Sh.WhileClause) {
+      while (true) {
+        yield* sem.stmts(node, node.Cond)
+        if (node.Until ? !node.exitCode : node.exitCode) {
+          break;
+        }
+        yield* sem.stmts(node, node.Do);
+        console.log(node.Do)
+      }
   }
 }
 

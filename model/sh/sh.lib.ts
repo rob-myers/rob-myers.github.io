@@ -249,6 +249,17 @@ go: `{
     walk $1
 }`,
 
+goLoop: `{
+
+  # TODO Ctrl-C not working on inner failure e.g. \`goLoop\`
+
+  while true; do
+    nav $1 $(click 1) |
+      map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
+      walk $1
+  done
+}`,
+
 view: `{
   run '({ api, args }) {
     const opts = Function(\`return \${args[0]} \`)()

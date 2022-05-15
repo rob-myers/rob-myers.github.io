@@ -39,6 +39,7 @@ __Aim towards website release__.
     - ❌ replace polling by npc move event
     - can stop walk
   - 🚧 permit shell `while` with restricted head e.g. `click`
+    - 🚧 BUG Ctrl-C fails to propagate from inner loop -- pipe issue?
   - Can only move to point within lit area
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking
