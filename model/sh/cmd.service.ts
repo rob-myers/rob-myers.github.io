@@ -462,19 +462,30 @@ class CmdService {
 
     /**
      * Syntactic sugar for request/response on wire:
-     * Given message `req := { key: 'foo', ... }` and
-     * subsequent message `{ key: 'bar', req, res }`,
-     * resolves `res`.
+     * > Given msg `req := { key: 'foo', ... }` and
+     * > subsequent msg `{ key: 'bar', req, res }`,
+     * > we resolve with `res`.
+     * 
+     * If process suspended we provide `res` on resume.
      */
     async reqRes(reqMsg: NPC.NpcEvent) {
-      return new Promise(resolve => {
-        const wire = getWire(this.meta); // We cannot this.getWire()
+      return new Promise((resolve, reject) => {
+        const process = getProcess(this.meta);
+        const wire = getWire(this.meta);
         const sub = wire.subscribe((e) => {
           if ('req' in e && e.req === reqMsg) {
             sub.unsubscribe();
-            resolve(e.res);
+            if (process.status === ProcessStatus.Suspended) {
+              process.onResumes.push(() => resolve(e.res));
+            } else {
+              resolve(e.res);
+            }
           }
         });
+        process.cleanups.push(
+          () => reject(killError(this.meta)),
+          () => sub.unsubscribe(),
+        );
         wire.next(reqMsg)
       });
     },

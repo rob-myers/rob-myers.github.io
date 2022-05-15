@@ -31,10 +31,11 @@ __Aim towards website release__.
     - simplify/improve ui-idle event
       - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
       - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
-      - ✅ if idle and "camera" not close enough to npc, transition to npc position
-      - 🚧 support pausing: `api.sleep` + `api.reqRes`
-    - try `linear` transition
+    - ✅ if idle and cam not close enough, transition to npc, polling per second
+      - ✅ support pausing: `api.sleep` + `api.reqRes`
+    - 🚧 can choose transition timing function
     - try providing future position of npc
+    - replace polling by npc move event
     - what about pause/resume for npc?
   - Can only move to point within lit area
     - Then Andros must open doors to go through them
