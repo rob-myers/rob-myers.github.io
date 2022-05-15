@@ -168,13 +168,14 @@ class CmdService {
               p.onSuspend = null;
               p.status = ProcessStatus.Suspended;
             } else if (opts.CONT) {
-              p.onResume?.();
-              p.onResume = null;
+              p.onResumes.forEach(resume => resume());
+              p.onResumes.length = 0;
               p.status = ProcessStatus.Running;
             } else {
               p.status = ProcessStatus.Killed;
-              p.onResume?.();
-              p.onSuspend = p.onResume = null;
+              p.onSuspend = null;
+              p.onResumes.forEach(resume => resume());
+              p.onResumes.length = 0;
               // Immediate clean e.g. stops `sleep`
               setTimeout(() => { 
                 p.cleanups.forEach(cleanup => cleanup());
@@ -260,8 +261,9 @@ class CmdService {
       case 'return': {
         const process = useSession.api.getProcess(meta);
         process.status = ProcessStatus.Killed;
-        process.onResume?.();
-        process.onSuspend = process.onResume = null;
+        process.onSuspend = null;
+        process.onResumes.forEach(resume => resume());
+        process.onResumes.length = 0;
         break;
       }
       case 'rm': {
@@ -309,18 +311,8 @@ class CmdService {
         break;
       }
       case 'sleep': {
-        const process = useSession.api.getProcess(meta);
-        let ms = 1000 * (args.length ? parseFloat(parseJsonArg(args[0])) || 0 : 1);
-        let started = -1;
-        do {
-          await new Promise<void>((resolve, reject) => {
-            process.onSuspend = () => { ms = started + ms - Date.now(); resolve(); };
-            // NOTE potentially adding many cleanups
-            useSession.api.addCleanup(meta, () => reject(killError(meta)));
-            (started = Date.now()) && setTimeout(resolve, ms);
-          });
-          yield; // Pauses execution if process suspended
-        } while (Date.now() < started + ms - 1)
+        const seconds = args.length ? parseFloat(parseJsonArg(args[0])) || 0 : 1;
+        yield* sleep(meta, seconds);
         break;
       }
       case 'source': {
@@ -472,7 +464,7 @@ class CmdService {
      * Syntactic sugar for request/response on wire:
      * Given message `req := { key: 'foo', ... }` and
      * subsequent message `{ key: 'bar', req, res }`,
-     * returns `res`.
+     * resolves `res`.
      */
     async reqRes(reqMsg: NPC.NpcEvent) {
       return new Promise(resolve => {
@@ -486,14 +478,9 @@ class CmdService {
         wire.next(reqMsg)
       });
     },
-    
   
-    /** TODO support pause/resume like command `sleep` */
-    async sleep(seconds: number) {
-      return new Promise<void>((resolve, reject) => {
-        setTimeout(resolve, seconds * 1000);
-        useSession.api.addCleanup(this.meta, () => reject(killError(this.meta)));
-      })
+    async *sleep(seconds: number) {
+      yield* sleep(this.meta, seconds);
     },
   
     /** JSON.parse which returns `undefined` on parse error */
@@ -624,6 +611,23 @@ function safeJsonParse(input: string) {
   } catch  {
     return;
   }
+}
+
+async function *sleep(meta: Sh.BaseMeta, seconds = 1) {
+  const process = getProcess(meta);
+  let duration = 1000 * seconds, startedAt = -1;
+  let reject = (_: any) => {};
+  process.cleanups.push(() => reject(killError(meta)));
+  
+  do {
+    await new Promise<void>((resolve, currReject) => {
+      process.onSuspend = () => { duration -= (Date.now() - startedAt); resolve(); };
+      process.onResumes.push( () => { startedAt = Date.now() });
+      reject = currReject; // We update cleanup
+      (startedAt = Date.now()) && setTimeout(resolve, duration);
+    });
+    yield; // This yield pauses execution if process suspended
+  } while (Date.now() - startedAt < duration - 1)
 }
 
 function throwError(message: string, exitCode?: number) {

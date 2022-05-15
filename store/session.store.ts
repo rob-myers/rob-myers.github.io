@@ -93,7 +93,7 @@ export interface ProcessMeta {
   /** Executed on suspend */
   onSuspend: null | (() => void);
   /** Executed on resume */
-  onResume: null | (() => void);
+  onResumes: (() => void)[];
   positionals: string[];
 }
 
@@ -133,7 +133,7 @@ const useStore = create<State>(devtools((set, get) => ({
         positionals: ['jsh', ...posPositionals || []],
         cleanups: [],
         onSuspend: null,
-        onResume: null,
+        onResumes: [],
       };
       return processes[pid];
     },

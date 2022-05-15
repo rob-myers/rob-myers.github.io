@@ -111,7 +111,6 @@ export class TtyShell implements Device {
 
     if (opts.leading) {
       this.process.status = ProcessStatus.Running;
-      this.process.onResume = null;
     } else {
       const { ppid, pgid } = meta;
       const { positionals } = useSession.api.getProcess(meta);
