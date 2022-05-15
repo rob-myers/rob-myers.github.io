@@ -45,6 +45,7 @@ export default function CssPanZoom(props) {
           state.zoomWithWheel(e);
         },
         pointerdown(e) {
+          if (e.target !== state.parent) return;
           state.delayIdle();
           state.clearTransition();
           // e.preventDefault();
@@ -96,6 +97,7 @@ export default function CssPanZoom(props) {
           }
         },
         pointerup(e) {
+          if (e.target !== state.parent) return;
           /**
            * NOTE: don't remove all pointers.
            * Can restart without having to reinitiate all of them.
