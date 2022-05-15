@@ -242,17 +242,14 @@ walk: `{
   }' "$@"
 }`,
 
-// TODO currently a simplification
+// Simplification
 go: `{
   nav $1 $(click 1) |
     map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
     walk $1
 }`,
-
+// Simplification
 goLoop: `{
-
-  # TODO Ctrl-C not working on inner failure e.g. \`goLoop\`
-
   while true; do
     nav $1 $(click 1) |
       map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
@@ -311,8 +308,11 @@ track: `{
       const worldFocus = await api.reqRes({ key: "panzoom-focus-req" })
 
       if (npcPosition.distanceTo(worldFocus) > 10) {
-        const timingFn = npc.spriteSheet === "walk" ? "linear" : "ease"
-        await api.reqRes({ key: "view-req", to: npcPosition, ms: 1000, fn: timingFn, zoom: 1.6 })
+        if (npc.spriteSheet === "walk") {
+          await api.reqRes({ key: "view-req", to: npcPosition, ms: 500, fn: "linear", zoom: 1.6 })
+        } else {
+          await api.reqRes({ key: "view-req", to: npcPosition, ms: 2000, fn: "ease", zoom: 1.6 })
+        }
       } else {
         const ms = npc.spriteSheet === "walk" ? 0.01 : 1;
         yield* await api.sleep(ms)
