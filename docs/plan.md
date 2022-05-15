@@ -38,8 +38,11 @@ __Aim towards website release__.
       > implemented `npc.getFuturePosition(inMs)` but looked worse
     - ❌ replace polling by npc move event
     - can stop walk
-  - 🚧 permit shell `while` with restricted head e.g. `click`
-    - 🚧 BUG Ctrl-C fails to propagate from inner loop -- pipe issue?
+  - implement simple walk loop `goLoop andros`
+    - ✅ permit shell `while`
+    - ✅ Error should propagate from pipeline
+      - Could Ctrl-C `while true; do nav '' $( click 1 ); done`
+      - But not `while true; do nav '' $( click 1 ) | map 'x => x'; done`
   - Can only move to point within lit area
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking

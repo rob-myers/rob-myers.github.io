@@ -163,34 +163,33 @@ class SemanticsService {
           const stdOuts = clones.map(({ meta }) => useSession.api.resolve(1, meta));
 
           const process = useSession.api.getProcess(node.meta)
-          await Promise.allSettled(clones.map((file, i) =>
+          const results = await Promise.allSettled(clones.map((file, i) =>
             new Promise<void>(async (resolve, reject) => {
               try {
                 process.cleanups.push(() => reject()); // Handle Ctrl-C
                 await ttyShell.spawn(file);
                 stdOuts[i].finishedWriting();
                 stdOuts[i - 1]?.finishedReading();
-                /**
-                 * TODO `file` exitCode not set, even when handleShError.
-                 */
-                // console.log('inner pipeline finished', file, stmts[i], i)
                 if (node.exitCode = file.exitCode) {
                   throw new ShError(`pipe ${i}`, node.exitCode);
                 }
                 resolve();
               } catch (e) {
+                // console.log('inner pipeline error', i, e)
                 reject(e);
               }
             }),
           ));
 
-        } catch (error) {
-          // Terminate children and this process on pipeline error
-          clones.map(({ meta }) => useSession.api.getProcess(meta))
-            // Processes may have terminated, including their descendants.
-            // Perhaps we should try to cleanup their descendants too?
-            .forEach(x => x && (x.status = ProcessStatus.Killed) && x.cleanups.forEach(cleanup => cleanup()));
-          throw createKillError(node.meta);
+          if (results.some(x => x.status === 'rejected')) {
+            // Terminate children and this process on pipeline error
+            clones.map(({ meta }) => useSession.api.getProcess(meta))
+              // Processes may have terminated, including their descendants.
+              // Perhaps we should try to cleanup their descendants too?
+              .forEach(x => x && (x.status = ProcessStatus.Killed) && x.cleanups.forEach(cleanup => cleanup()));
+            throw createKillError(node.meta);
+          }
+
         } finally {
           fifos.forEach(fifo => {
             fifo.finishedWriting(); // TODO clarify
@@ -551,12 +550,17 @@ class SemanticsService {
    */
   private async *WhileClause(node: Sh.WhileClause) {
       while (true) {
-        yield* sem.stmts(node, node.Cond)
-        if (node.Until ? !node.exitCode : node.exitCode) {
-          break;
+        try {
+          yield* sem.stmts(node, node.Cond)
+          if (node.Until ? !node.exitCode : node.exitCode) {
+            break;
+          }
+          yield* sem.stmts(node, node.Do);
+          // console.log(node.Do)
+        } catch (e) {
+          console.log('saw', e)
+          throw e;
         }
-        yield* sem.stmts(node, node.Do);
-        console.log(node.Do)
       }
   }
 }
