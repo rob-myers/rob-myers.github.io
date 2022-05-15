@@ -199,7 +199,11 @@ export default function NPCs(props) {
       } else if (e.key === 'panzoom-focus-req') {
         wire.next({ key: 'panzoom-focus-res', req: e, res: props.panZoomApi.getWorldAtCenter() });
       } else if (e.key === 'ping') {
-        wire.next({ key: 'pong', wireKey: props.wireKey });
+        wire.next({ key: 'pong' });
+      } else if (e.key === 'classes-req') {
+        wire.next({ key: 'classes-res', req: e, res: {
+          Vect,
+        } });
       }
     });
 

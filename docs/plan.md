@@ -31,7 +31,8 @@ __Aim towards website release__.
     - simplify/improve ui-idle event
       - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
       - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
-      - 🚧 if idle and "camera" not close enough to npc, transition to npc position
+      - ✅ if idle and "camera" not close enough to npc, transition to npc position
+      - 🚧 support pausing: `api.sleep` + `api.reqRes`
     - try `linear` transition
     - try providing future position of npc
     - what about pause/resume for npc?
@@ -83,6 +84,7 @@ __Aim towards website release__.
 - ✅ Fix invisible hull doors
 - ✅ Prevent inaccessible hull doors from being opened
 - ✅ `<Doors>`: Visible hull doors are being drawn as invisible
+- BUG sometimes adjacent light is inside hull door, rather than outside
 - Draw grid over dark png, so not over light geomorph png
 - Can toggle NPC speech bubbles
 - Can pause/resume NPC

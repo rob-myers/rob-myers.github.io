@@ -27,7 +27,7 @@ declare namespace NPC {
 
   type NpcEvent = (
     | { key: 'ping'; }
-    | { key: 'pong'; wireKey: string }
+    | { key: 'pong'; }
     | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
     | { key: 'npc-req'; npcKey: string; }
     | {
@@ -65,6 +65,12 @@ declare namespace NPC {
       key: 'panzoom-focus-res';
       req: (NpcEvent & { key: 'panzoom-focus-req' });
       res: Geom.VectJson;
+    }
+    | { key: 'classes-req' }
+    | {
+      key: 'classes-res';
+      req: (NpcEvent & { key: 'classes-req' });
+      res: { Vect: Vect }
     }
   );
 

@@ -285,30 +285,29 @@ ready: `{
   }' "$@"
 }`,
 
+/** If CssPanZoom UI idle and camera far from npc, pan to npc */
 track: `{
   run '/** track andros */ ({ api }) {
     const process = api.getProcess()
-    // TODO can immediately kill
-    // TODO if idle and "camera" not close enough to npc, transition to npc position
+    const { Vect } = await api.reqRes({ key: "classes-req" })
 
-    await api.reqRes({ key: "panzoom-idle-req" })
-    const worldFocus = await api.reqRes({ key: "panzoom-focus-req" })
-    console.log({ worldFocus })
+    // TODO support pausing
+    // - ✅ during api.sleep
+    // - 🚧 during api.reqRes
 
-    // while (process.status !== 2) {// ProcessStatus.Killed === 2
-    //   // Resolves when panzoom first "idle"
-    //   await api.reqRes({ key: "panzoom-idle-req" })
-    //   if (process.status === 1) {
-    //     // Getting npc each time handles respawn and <NPCs> HMR
-    //     const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
-    //     const position = npc.getPosition()
-    //     console.log(position)
-    //     // Resolves when cancelled or completed
-    //     // TODO this prevents interruption
-    //     // await api.reqRes({ key: "view-req", to: position, ms: 1000 })
-    //   }
-    // }
+    while (process.status !== 2) {// ProcessStatus.Killed === 2
+      await api.reqRes({ key: "panzoom-idle-req" })
 
+      const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
+      const npcPosition = Vect.from(npc.getPosition())
+      const worldFocus = await api.reqRes({ key: "panzoom-focus-req" })
+
+      if (npcPosition.distanceTo(worldFocus) > 10) {
+        await api.reqRes({ key: "view-req", to: npcPosition, ms: 1000 })
+      } else {// TODO event on npc move?
+        yield* await api.sleep(1)
+      }
+    }
   }' "$@"
 }`,
 
