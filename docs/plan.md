@@ -33,7 +33,7 @@ __Aim towards website release__.
       - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
     - ✅ if idle and cam not close enough, transition to npc, polling per second
       - ✅ support pausing: `api.sleep` + `api.reqRes`
-    - 🚧 can choose transition timing function
+    - ✅ can choose transition timing function
     - try providing future position of npc
     - replace polling by npc move event
     - what about pause/resume for npc?

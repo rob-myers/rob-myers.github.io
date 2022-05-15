@@ -47,7 +47,7 @@ declare namespace PanZoom {
     rootRef(el: null | HTMLDivElement): void;
     /** Send world position of mouse/touch event */
     sendPointOnWire(wireKey: string, e: { clientX: number; clientY: number; }): void;
-    transitionTo(toScale?: number, worldPoint?: Geom.VectJson, transitionMs?: number): void;
+    transitionTo(toScale?: number, worldPoint?: Geom.VectJson, transitionMs?: number, timingFn?: string): void;
     updateView(): void;
     zoomToClient(toScale: number, e: { clientX: number; clientY: number; }): void;
     zoomWithWheel(event: WheelEvent): void;

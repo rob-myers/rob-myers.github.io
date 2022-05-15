@@ -48,7 +48,7 @@ declare namespace NPC {
         res: null | { paths: Geom.Vect[][]; edges: NPC.NavGmTransition[] };
       }
     | { key: 'debug-path'; path: Geom.VectJson[]; pathName: string }
-    | { key: 'view-req'; zoom?: number; to?: Geom.VectJson; ms?: number }
+    | { key: 'view-req'; zoom?: number; to?: Geom.VectJson; ms?: number; fn?: string }
     | {
       key: 'view-res';
       req: (NpcEvent & { key: 'view-req' });

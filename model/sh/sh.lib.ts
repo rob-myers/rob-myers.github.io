@@ -291,11 +291,7 @@ track: `{
     const process = api.getProcess()
     const { Vect } = await api.reqRes({ key: "classes-req" })
 
-    // TODO support pausing
-    // - ✅ during api.sleep
-    // - 🚧 during api.reqRes
-
-    while (process.status !== 2) {// ProcessStatus.Killed === 2
+    while (true) {
       await api.reqRes({ key: "panzoom-idle-req" })
 
       const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })

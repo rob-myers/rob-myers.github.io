@@ -12,21 +12,21 @@ import useStateRef from "../hooks/use-state-ref";
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
 
-  /** @type {PanZoom.CssApi} */
   const state = useStateRef(() => {
-    return {
+    /** @type {PanZoom.CssApi} */
+    const output = {
       parent: /** @type {HTMLDivElement} */ ({}),
       translateRoot: /** @type {HTMLDivElement} */ ({}),
       scaleRoot: /** @type {HTMLDivElement} */ ({}),
 
       isPanning: false,
       opts: { minScale: 0.05, maxScale: 10, step: 0.05, idleMs: 200 },
-      pointers: /** @type {PointerEvent[]} */ ([]),
-      origin: /** @type {Vect | undefined} */ (undefined),
+      pointers: [],
+      origin: undefined,
       scale: 1,
       start: {
-        clientX: /** @type {number | undefined} */ (undefined),
-        clientY: /** @type {number | undefined} */ (undefined),
+        clientX: undefined,
+        clientY: undefined,
         scale: 1,
         distance: 0,
       },
@@ -200,7 +200,7 @@ export default function CssPanZoom(props) {
         const point = state.getWorld(e);
         wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
       },
-      transitionTo(toScale, worldPoint, transitionMs = 0) {
+      transitionTo(toScale, worldPoint, transitionMs = 0, timingFn = 'ease') {
         toScale = toScale || state.scale;
         state.clearTransition();
         state.transitionTimeoutId = window.setTimeout(() => {
@@ -217,8 +217,8 @@ export default function CssPanZoom(props) {
         const current = state.getCurrentTransform();
         
         if (toScale !== state.scale) {
-          state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;
-          state.scaleRoot.style.transition = `transform ${transitionMs}ms ease`;
+          state.translateRoot.style.transition = `transform ${transitionMs}ms ${timingFn}`;
+          state.scaleRoot.style.transition = `transform ${transitionMs}ms ${timingFn}`;
           worldPoint = worldPoint || state.getWorldAtCenter();
           /**
            * Trying to compute (x, y) s.t. target transform
@@ -235,7 +235,7 @@ export default function CssPanZoom(props) {
           // See above
           state.x = screenWidth/2 - (current.scale * worldPoint.x);
           state.y = screenHeight/2 - (current.scale * worldPoint.y);
-          state.translateRoot.style.transition = `transform ${transitionMs}ms ease`;
+          state.translateRoot.style.transition = `transform ${transitionMs}ms ${timingFn}`;
           state.updateView();
         }
         
@@ -271,6 +271,7 @@ export default function CssPanZoom(props) {
         return state.zoomToClient(toScale, event);
       }
     };
+    return output;
   }, { deeper: ['evt'] });
 
   React.useEffect(() => {
