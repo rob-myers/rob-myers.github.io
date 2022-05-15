@@ -285,7 +285,7 @@ ready: `{
   }' "$@"
 }`,
 
-/** If CssPanZoom UI idle and camera far from npc, pan to npc */
+/** If UI idle and camera not close, pan to npc */
 track: `{
   run '/** track andros */ ({ api }) {
     const process = api.getProcess()
@@ -299,7 +299,8 @@ track: `{
       const worldFocus = await api.reqRes({ key: "panzoom-focus-req" })
 
       if (npcPosition.distanceTo(worldFocus) > 10) {
-        await api.reqRes({ key: "view-req", to: npcPosition, ms: 1000 })
+        const timingFn = npc.spriteSheet === "walk" ? "linear" : "ease"
+        await api.reqRes({ key: "view-req", to: npcPosition, ms: 1000, fn: timingFn, zoom: 1.6 })
       } else {// TODO event on npc move?
         yield* await api.sleep(1)
       }
