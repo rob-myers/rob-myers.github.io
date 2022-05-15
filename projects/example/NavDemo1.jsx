@@ -133,6 +133,24 @@ export default function NavDemo1(props) {
         />
       )}
 
+      {state.doorsApi.ready && (
+        <Debug
+          // outlines
+          // windows
+          // localNav
+          showIds
+          gms={gms}
+          gmGraph={gmGraph}
+          doorsApi={state.doorsApi}
+          gmId={state.gmId}
+          roomId={state.roomId}
+          setRoom={(gmId, roomId) => {
+            [state.gmId, state.roomId] = [gmId, roomId];
+            state.update();
+          }}
+        />
+      )}
+
       <NPCs
         disabled={props.disabled}
         doorsApi={state.doorsApi}
@@ -156,24 +174,6 @@ export default function NavDemo1(props) {
             top: gm.pngRect.y,
             transform: gm.transformStyle,
             transformOrigin: gm.transformOrigin,
-          }}
-        />
-      )}
-
-      {state.doorsApi.ready && (
-        <Debug
-          // outlines
-          // windows
-          // localNav
-          showIds
-          gms={gms}
-          gmGraph={gmGraph}
-          doorsApi={state.doorsApi}
-          gmId={state.gmId}
-          roomId={state.roomId}
-          setRoom={(gmId, roomId) => {
-            [state.gmId, state.roomId] = [gmId, roomId];
-            state.update();
           }}
         />
       )}

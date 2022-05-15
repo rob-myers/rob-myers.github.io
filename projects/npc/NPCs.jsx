@@ -256,13 +256,17 @@ const rootCss = css`
   .npc {
     position: absolute;
   }
+  svg.debug-path {
+    position: absolute;
+    pointer-events: none;
+  }
 `;
 
 // TODO modularise
 import npcJson from '../../public/npc/first-npc.json'
 const { animLookup: anim, zoom } = npcJson;
 /** Scale the sprites */
-const npcScale = 0.15;
+const npcScale = 0.17;
 /** Ensure NPC faces along positive x-axis */
 // const npcOffsetAngleDeg = 90;
 const npcOffsetAngleDeg = 0;
@@ -339,7 +343,7 @@ function Debug(props) {
         width={aabb.width}
         height={aabb.height}
         style={{
-          position: 'absolute',
+
           left: aabb.x,
           top: aabb.y,
         }}
