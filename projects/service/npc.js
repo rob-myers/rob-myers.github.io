@@ -162,7 +162,7 @@ function extractNpcFrames(api, topNodes, title, symbolLookup) {
  * TODO 🚧 deps needs rethink?
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 
- * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssExtApi; update: () => void }} deps
+ * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; update: () => void }} deps
  */
 export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
   /** @type {NPC.NPC} */

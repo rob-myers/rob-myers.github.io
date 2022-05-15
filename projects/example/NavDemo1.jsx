@@ -46,7 +46,7 @@ export default function NavDemo1(props) {
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       npcsApi: /** @type {NPC.NPCsApi} */ ({}),
-      panZoomApi: /** @type {PanZoom.CssExtApi} */ ({}),
+      panZoomApi: /** @type {PanZoom.CssApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
       update() {
@@ -202,11 +202,10 @@ const rootCss = css`
     pointer-events: none;
   }
   img.geomorph {
-    filter: brightness(90%);
+    filter: brightness(80%);
   }
   img.geomorph-dark {
-    filter: invert(100%) brightness(55%) contrast(200%) brightness(100%);
-    /* opacity: 0.6; */
+    filter: invert(100%) brightness(55%) contrast(200%) brightness(60%);
   }
 
   div.debug {

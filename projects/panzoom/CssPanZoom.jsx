@@ -12,22 +12,17 @@ import useStateRef from "../hooks/use-state-ref";
 /** @param {React.PropsWithChildren<Props>} props */
 export default function CssPanZoom(props) {
 
+  /** @type {PanZoom.CssApi} */
   const state = useStateRef(() => {
     return {
       parent: /** @type {HTMLDivElement} */ ({}),
       translateRoot: /** @type {HTMLDivElement} */ ({}),
       scaleRoot: /** @type {HTMLDivElement} */ ({}),
 
-      /** @type {Subject<PanZoom.CssInternalEvent>} */
-      events: new Subject,
-      /** UI is considered idle iff this is 0 */
-      idleTimeoutId: 0,
-
       isPanning: false,
       opts: { minScale: 0.05, maxScale: 10, step: 0.05, idleMs: 200 },
       pointers: /** @type {PointerEvent[]} */ ([]),
       origin: /** @type {Vect | undefined} */ (undefined),
-      /** Target scale in `scaleRoot` */
       scale: 1,
       start: {
         clientX: /** @type {number | undefined} */ (undefined),
@@ -35,16 +30,20 @@ export default function CssPanZoom(props) {
         scale: 1,
         distance: 0,
       },
+      x: 0,
+      y: 0,
+
+
+      events: new Subject,
+      idleTimeoutId: 0,
       transitionTimeoutId: 0,
 
       evt: {
-        /** @param {WheelEvent} e */
         wheel(e) {
           state.delayIdle();
           state.clearTransition();
           state.zoomWithWheel(e);
         },
-        /** @param {PointerEvent} e */
         pointerdown(e) {
           state.delayIdle();
           state.clearTransition();
@@ -61,7 +60,6 @@ export default function CssPanZoom(props) {
             distance: getDistance(state.pointers),
           };
         },
-        /** @param {PointerEvent} e */
         pointermove(e) {
           if (
             state.origin === undefined
@@ -97,7 +95,6 @@ export default function CssPanZoom(props) {
             );
           }
         },
-        /** @param {PointerEvent} e */
         pointerup(e) {
           /**
            * NOTE: don't remove all pointers.
@@ -117,10 +114,7 @@ export default function CssPanZoom(props) {
           // state.clearTransition();
         },
       },
-      /** Target translateX in `translateRoot` */
-      x: 0,
-      /** Target translateY in `translateRoot` */
-      y: 0,
+
 
       clearTransition() {
         if (state.transitionTimeoutId) {
@@ -135,16 +129,13 @@ export default function CssPanZoom(props) {
           state.finishedTransition('cancelled');
         }
       },
-      /** @private */
       delayIdle() {
         state.idleTimeoutId && window.clearTimeout(state.idleTimeoutId);
         state.idleTimeoutId = window.setTimeout(state.idleTimeout, state.opts.idleMs);
       },
-      /** @param {'completed' | 'cancelled'} type */
       finishedTransition(type) {
         state.events.next({ key: type === 'cancelled' ? 'cancelled-transition' : 'completed-transition' });
       },
-      /** Taking CSS animation into account */
       getCurrentTransform() {
         const bounds = state.parent.getBoundingClientRect();
         const trBounds = state.translateRoot.getBoundingClientRect();
@@ -155,7 +146,6 @@ export default function CssPanZoom(props) {
           scale: state.scaleRoot.getBoundingClientRect().width,
         }
       },
-      /** @param {{ clientX: number; clientY: number; }} e */
       getWorld(e) {
         const parentBounds = state.parent.getBoundingClientRect();
         const screenX = e.clientX - parentBounds.left;
@@ -174,7 +164,6 @@ export default function CssPanZoom(props) {
         const worldY = (parentBounds.height/2 - current.y) / current.scale;
         return { x: worldX, y: worldY };
       },
-      /** @private */
       idleTimeout() {
         if (state.pointers.length === 0) {
           state.events.next({ key: 'ui-idle' });
@@ -186,10 +175,6 @@ export default function CssPanZoom(props) {
       isIdle() {
         return state.idleTimeoutId === 0;
       },
-      /**
-       * @param {number} toX 
-       * @param {number} toY 
-       */
       pan(toX, toY) {
         if (state.x !== toX || state.y !== toY) {
           state.x = toX;
@@ -197,7 +182,6 @@ export default function CssPanZoom(props) {
           state.updateView();
         }
       },
-      /** @type {React.RefCallback<HTMLDivElement>} */
       rootRef(el) {
         if (el) {
           state.parent = /** @type {*} */ (el.parentElement);
@@ -211,20 +195,11 @@ export default function CssPanZoom(props) {
           state.parent.addEventListener('pointercancel', e => state.evt.pointerup(e));
         }
       },
-      /**
-       * Send world position of mouse/touch event
-       * @param {string} wireKey 
-       * @param {{ clientX: number; clientY: number; }} e 
-       */
       sendPointOnWire(wireKey, e) {
         const wire = ensureWire(wireKey);
         const point = state.getWorld(e);
         wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
       },
-      /**
-       * @param {number} [toScale] 
-       * @param {Geom.VectJson} [worldPoint] 
-       */
       transitionTo(toScale, worldPoint, transitionMs = 0) {
         toScale = toScale || state.scale;
         state.clearTransition();
@@ -269,10 +244,6 @@ export default function CssPanZoom(props) {
         state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
         state.scaleRoot.style.transform = `scale(${state.scale})`;
       },
-      /**
-       * @param {number} toScale 
-       * @param {{ clientX: number; clientY: number }} e 
-       */
       zoomToClient(toScale, e) {
         const parentBounds = state.parent.getBoundingClientRect();
         const screenX = e.clientX - parentBounds.left;
@@ -289,9 +260,6 @@ export default function CssPanZoom(props) {
         state.scale = toScale;
         state.updateView();
       },
-      /**
-       * @param {WheelEvent} event 
-       */
       zoomWithWheel(event) {
         // Avoid conflict with regular page scroll
         event.preventDefault();
@@ -393,7 +361,7 @@ const backgroundCss = (props) => css`
  * @property {string} [wireKey] Global identifier e.g. so shells can receive clicks.
  * @property {number} [initZoom] e.g. `1`
  * @property {Geom.VectJson} [initCenter]
- * @property {(api: PanZoom.CssExtApi) => void} [onLoad]
+ * @property {(api: PanZoom.CssApi) => void} [onLoad]
  */
 
 /**

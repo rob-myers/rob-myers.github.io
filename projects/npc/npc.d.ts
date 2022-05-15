@@ -6,7 +6,7 @@ declare namespace NPC {
   export interface NPCsProps {
     disabled?: boolean;
     gmGraph: Graph.GmGraph;
-    panZoomApi: PanZoom.CssExtApi;
+    panZoomApi: PanZoom.CssApi;
     doorsApi: NPC.DoorsApi;
     wireKey: string;
   }
