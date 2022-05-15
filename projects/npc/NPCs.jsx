@@ -219,12 +219,13 @@ export default function NPCs(props) {
   return (
     <div
       className={classNames('npcs', rootCss)}
-      onClick={(e) => {// For debugging animations
-        if (e.target instanceof HTMLDivElement && e.target.classList.contains('body')) {
-          const npcKey = /** @type {string} */ (e.target.getAttribute('data-npc-key'));
-          state.toggleNpcAnim(npcKey);
-        }
-      }}
+      // TODO make a separate component for testing animation
+      // onClick={(e) => {// For debugging animations
+      //   if (e.target instanceof HTMLDivElement && e.target.classList.contains('body')) {
+      //     const npcKey = /** @type {string} */ (e.target.getAttribute('data-npc-key'));
+      //     state.toggleNpcAnim(npcKey);
+      //   }
+      // }}
     >
       <Debug
         debugPath={state.debugPath}
@@ -255,6 +256,7 @@ const rootCss = css`
   }
   .npc {
     position: absolute;
+    pointer-events: none;
   }
   svg.debug-path {
     position: absolute;
@@ -274,9 +276,8 @@ const spriteSheets = keys(anim);
 
 const npcCss = css`
   .body {
-    cursor: pointer;
+    /* cursor: pointer; */
     position: absolute;
-    pointer-events: all;
     filter: grayscale(100%) brightness(140%);
     /* transform: scale(0.18) rotate(90deg); */
   }

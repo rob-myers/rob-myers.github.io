@@ -256,8 +256,9 @@ function Debug(props) {
 
   return (
     <div
-      onClick={({ target }) => {
-        const doorIdAttr = (/** @type {HTMLElement} */ (target)).getAttribute('data-debug-door-index');
+      className="debug-parent"
+      onClick={(e) => {
+        const doorIdAttr = (/** @type {HTMLElement} */ (e.target)).getAttribute('data-debug-door-index');
         if (doorIdAttr === null) return;
         const door = gm.doors[Number(doorIdAttr)];
 
