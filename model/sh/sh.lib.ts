@@ -18,8 +18,10 @@ ${profileLookup["profile-1"]()}
 ready
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
-# TODO camera follows andros e.g. walks
-# track &
+# camera follows andros
+track andros &
+
+# TODO js version of "go andros"
 `,
 };
 
@@ -287,22 +289,24 @@ ready: `{
 
 /** If UI idle and camera not close, pan to npc */
 track: `{
-  run '/** track andros */ ({ api }) {
+  run '/** track andros */ ({ api, args }) {
+    const npcKey = args[0]
     const process = api.getProcess()
     const { Vect } = await api.reqRes({ key: "classes-req" })
 
     while (true) {
       await api.reqRes({ key: "panzoom-idle-req" })
 
-      const npc = await api.reqRes({ key: "npc-req", npcKey: "andros" })
+      const npc = await api.reqRes({ key: "npc-req", npcKey })
       const npcPosition = Vect.from(npc.getPosition())
       const worldFocus = await api.reqRes({ key: "panzoom-focus-req" })
 
       if (npcPosition.distanceTo(worldFocus) > 10) {
         const timingFn = npc.spriteSheet === "walk" ? "linear" : "ease"
         await api.reqRes({ key: "view-req", to: npcPosition, ms: 1000, fn: timingFn, zoom: 1.6 })
-      } else {// TODO event on npc move?
-        yield* await api.sleep(1)
+      } else {
+        const ms = npc.spriteSheet === "walk" ? 0.01 : 1;
+        yield* await api.sleep(ms)
       }
     }
   }' "$@"

@@ -28,15 +28,17 @@ __Aim towards website release__.
 - 🚧 Andros is situated
   - ✅ CssPanZoom returns to andros
   - 🚧 CssPanZoom tracks npc in better way
-    - ✅ simplify/improve ui-idle event
+    - ✅simplify/improve ui-idle event
       - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
       - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
     - ✅ if idle and cam not close enough, transition to npc, polling per second
       - ✅ support pausing: `api.sleep` + `api.reqRes`
     - ✅ can choose transition timing function
-    - try providing future position of npc
-    - replace polling by npc move event
+    - ❌ try providing future position of npc
+      > implemented `npc.getFuturePosition(inMs)` but looked worse
+    - 🚧 replace polling by npc move event
     - pause/resume for npc?
+  - JS version of `go andros`
   - Can only move to point within lit area
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking
