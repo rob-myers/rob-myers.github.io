@@ -43,6 +43,12 @@ __Aim towards website release__.
     - ✅ Error should propagate from pipeline
       - Could Ctrl-C `while true; do nav '' $( click 1 ); done`
       - But not `while true; do nav '' $( click 1 ) | map 'x => x'; done`
+    - ✅ BUG pointerup on debug arrow
+    - BUG poor animation on mobile
+    - BUG `goLoop` "idle" while moving along path
+      - sometimes hard to repro
+    - BUG `declare` of `goLoop`
+
   - Can only move to point within lit area
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking
