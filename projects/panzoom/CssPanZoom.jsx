@@ -19,7 +19,7 @@ export default function CssPanZoom(props) {
       translateRoot: /** @type {HTMLDivElement} */ ({}),
       scaleRoot: /** @type {HTMLDivElement} */ ({}),
 
-      isPanning: false,
+      panning: false,
       opts: { minScale: 0.05, maxScale: 10, step: 0.05, idleMs: 200 },
       pointers: [],
       origin: undefined,
@@ -33,24 +33,24 @@ export default function CssPanZoom(props) {
       x: 0,
       y: 0,
 
-
       events: new Subject,
       idleTimeoutId: 0,
       transitionTimeoutId: 0,
+      anims: [null, null],
 
       evt: {
         wheel(e) {
           state.delayIdle();
-          state.clearTransition();
+          state.cancelAnimations();
           state.zoomWithWheel(e);
         },
         pointerdown(e) {
           if (e.target !== state.parent) return;
           state.delayIdle();
-          state.clearTransition();
+          state.cancelAnimations();
           // e.preventDefault();
           ensurePointer(state.pointers, e);
-          state.isPanning = true;
+          state.panning = true;
           state.origin = new Vect(state.x, state.y);
           // This works whether there are multiple pointers or not
           const point = getMiddle(state.pointers)
@@ -103,39 +103,31 @@ export default function CssPanZoom(props) {
            * Remove the pointer regardless of the isPanning state.
            */
           removePointer(state.pointers, e);
-          if (!state.isPanning) {
+          if (!state.panning) {
             return;
           }
           // TODO `state.events` sends point and connect to wire elsewhere?
           if (props.wireKey) {
             state.sendPointOnWire(props.wireKey, e);
           }
-          state.isPanning = false;
+          state.panning = false;
           state.origin = state.start.clientX = state.start.clientY = undefined;
           // state.clearTransition();
         },
       },
 
-
-      clearTransition() {
-        if (state.transitionTimeoutId) {
-          window.clearTimeout(state.transitionTimeoutId);
-          state.transitionTimeoutId = 0;
-          // Keep small transition for smoothness.
-          // It will be totally removed via state.noTransitionTimeout
-          state.translateRoot.style.transition = state.scaleRoot.style.transition = 'transform 100ms linear';
-          // Set target transform as current
+      cancelAnimations() {
+        if (state.anims[0] || state.anims[1]) {
+          // Retrieve style before cancel,
+          // or could (a) commitStyles, (b) infer state.{x/y/scale})
           Object.assign(state, state.getCurrentTransform());
           state.updateView();
-          state.finishedTransition('cancelled');
+          state.anims.forEach(anim => anim?.cancel());
         }
       },
       delayIdle() {
         state.idleTimeoutId && window.clearTimeout(state.idleTimeoutId);
         state.idleTimeoutId = window.setTimeout(state.idleTimeout, state.opts.idleMs);
-      },
-      finishedTransition(type) {
-        state.events.next({ key: type === 'cancelled' ? 'cancelled-transition' : 'completed-transition' });
       },
       getCurrentTransform() {
         const bounds = state.parent.getBoundingClientRect();
@@ -201,45 +193,64 @@ export default function CssPanZoom(props) {
         const point = state.getWorld(e);
         wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
       },
-      transitionTo(toScale, worldPoint, transitionMs = 0, timingFn = 'ease') {
-        toScale = toScale || state.scale;
-        state.clearTransition();
-        state.transitionTimeoutId = window.setTimeout(() => {
-          state.transitionTimeoutId = 0;
-          // NOTE may not need because actually at this.{x,y,scale}
-          Object.assign(state, state.getCurrentTransform());
-          state.updateView();
-          // Can totally remove transition once no transition in progress
-          state.translateRoot.style.transition = state.scaleRoot.style.transition = '';
-          state.finishedTransition('completed');
-        }, transitionMs);
+      /**
+       * IN PROGRESS
+       */
+      tweenTo(scale, worldPoint, durationMs) {
+        scale = scale || state.scale;
+        // TODO clear previous
 
-        const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
-        const current = state.getCurrentTransform();
-        
-        if (toScale !== state.scale) {
-          state.translateRoot.style.transition = `transform ${transitionMs}ms ${timingFn}`;
-          state.scaleRoot.style.transition = `transform ${transitionMs}ms ${timingFn}`;
+        if (scale !== state.scale) {
+          const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
+          const current = state.getCurrentTransform();
           worldPoint = worldPoint || state.getWorldAtCenter();
+
           /**
            * Trying to compute (x, y) s.t. target transform
            * `translate(x, y) scale(toScale)` has worldPoint at screen center
            * i.e. x + (toScale * worldPoint.x) = screenWidth/2
            * i.e. x := screenWidth/2 - (toScale * worldPoint.x)
            */
-          state.x = screenWidth/2 - (toScale * worldPoint.x);
-          state.y = screenHeight/2 - (toScale * worldPoint.y);
-          state.scale = toScale;
+          const dstX = screenWidth/2 - (scale * worldPoint.x);
+          const dstY = screenHeight/2 - (scale * worldPoint.y);
 
-          state.updateView();
+          state.anims = [
+            state.translateRoot.animate([
+              { offset: 0, transform: `translate(${current.x}px, ${current.y}px)` },
+              { offset: 1, transform: `translate(${dstX}px, ${dstY}px)` },
+            ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing: 'ease' }),
+            state.scaleRoot.animate([
+              { offset: 0, transform: `scale(${current.scale})` },
+              { offset: 1, transform: `scale(${scale})` },
+            ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing: 'ease' })
+          ];
+
         } else if (worldPoint) {
-          // See above
-          state.x = screenWidth/2 - (current.scale * worldPoint.x);
-          state.y = screenHeight/2 - (current.scale * worldPoint.y);
-          state.translateRoot.style.transition = `transform ${transitionMs}ms ${timingFn}`;
-          state.updateView();
+          const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
+          const current = state.getCurrentTransform();
+          // Same argument as above
+          const dstX = screenWidth/2 - (current.scale * worldPoint.x);
+          const dstY = screenHeight/2 - (current.scale * worldPoint.y);
+
+          state.anims[0] = state.translateRoot.animate([
+            { offset: 0, transform: `translate(${current.x}px, ${current.y}px)` },
+            { offset: 1, transform: `translate(${dstX}px, ${dstY}px)` },
+          ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing: 'ease' });
+
+        } else {
+          return;
         }
-        
+
+        state.anims.forEach(anim => anim && anim.addEventListener('finish', () => {
+          Object.assign(state, state.getCurrentTransform());
+          state.updateView();
+          anim.cancel(); // Yield control to styles (unless they're !important)
+          state.events.next({ key: 'completed-transition' });
+        }));
+        state.anims.forEach(anim => anim && anim.addEventListener('cancel', () => {
+          state.events.next({ key: 'cancelled-transition' });
+        }));
+
       },
       updateView() {
         state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
@@ -277,9 +288,9 @@ export default function CssPanZoom(props) {
 
   React.useEffect(() => {
     props.onLoad?.(state);
+    // Apply initial zoom and centering
     state.updateView();
-    // Apply initial zoom and centering.
-    state.transitionTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
+    state.tweenTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
   }, []);
 
   return (

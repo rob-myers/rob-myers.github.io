@@ -19,7 +19,7 @@ ready
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
 # camera follows andros
-track andros &
+# track andros &
 
 `,
 };

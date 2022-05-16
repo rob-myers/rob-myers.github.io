@@ -44,15 +44,25 @@ __Aim towards website release__.
       - Could Ctrl-C `while true; do nav '' $( click 1 ); done`
       - But not `while true; do nav '' $( click 1 ) | map 'x => x'; done`
     - ✅ BUG pointerup on debug arrow
-    - BUG poor animation on mobile
-    - BUG `goLoop` "idle" while moving along path
-      - sometimes hard to repro
     - ✅ BUG `declare` of `goLoop`
+    - 🚧 BUG poor animation on mobile
+      - ✅ CssPanZoom can play `Animation` on translateRoot
+      - ✅ CssPanZoom can play `Animation` on scaleRoot
+      - ✅ `Animation`s interrupted by ui
+      - ✅ Replace `style.transition` approach
+      - 🚧 `track` sends adaptation of npc animPath when walking
+    - BUG `goLoop` "idle" while moving along path
+      - hard to repro, but definitely there
+    - Click while moving cancels and replans
+      - use `click | ...` pattern instead of `while`
+      - remove `WhileClause`
+    - `state.events` sends point, not `evt.pointerup`
 
   - Can only move to point within lit area
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking
   - When Andros moves through doorway, lighting changes
+
 
 - 🚧 Start migration to Gatsby
 

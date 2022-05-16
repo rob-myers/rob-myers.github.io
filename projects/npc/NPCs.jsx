@@ -166,7 +166,8 @@ export default function NPCs(props) {
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
         update();
       } else if (e.key === 'view-req') {
-        props.panZoomApi.transitionTo(e.zoom, e.to, e.ms??2000, e.fn);
+        props.panZoomApi.tweenTo(e.zoom, e.to, e.ms??2000);
+        
         props.panZoomApi.events.pipe(
           filter(x => x.key === 'cancelled-transition' || x.key === 'completed-transition'),
           first(),

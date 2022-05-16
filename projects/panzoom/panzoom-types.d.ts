@@ -5,7 +5,7 @@ declare namespace PanZoom {
     translateRoot: HTMLDivElement;
     scaleRoot: HTMLDivElement;
 
-    isPanning: boolean;
+    panning: boolean;
     opts: { minScale: number; maxScale: number; step: number; idleMs: number },
     pointers: PointerEvent[];
     origin: Vect | undefined;
@@ -33,10 +33,11 @@ declare namespace PanZoom {
     /** UI is considered idle iff this is 0 */
     idleTimeoutId: number;
     transitionTimeoutId: number;
+    /** [translate, scale] */
+    anims: [null | Animation, null | Animation];
 
-    clearTransition(): void;
+    cancelAnimations(): void;
     private delayIdle(): void;
-    finishedTransition(type: 'completed' | 'cancelled');
     /** Taking CSS animation into account */
     getCurrentTransform(): { x: number; y: number; scale: number; };
     getWorld(e: { clientX: number; clientY: number; }): Geom.VectJson;
@@ -47,7 +48,7 @@ declare namespace PanZoom {
     rootRef(el: null | HTMLDivElement): void;
     /** Send world position of mouse/touch event */
     sendPointOnWire(wireKey: string, e: { clientX: number; clientY: number; }): void;
-    transitionTo(toScale?: number, worldPoint?: Geom.VectJson, transitionMs?: number, timingFn?: string): void;
+    tweenTo(scale?: number, worldPoint?: Geom.VectJson, durationMs?: number): void;
     updateView(): void;
     zoomToClient(toScale: number, e: { clientX: number; clientY: number; }): void;
     zoomWithWheel(event: WheelEvent): void;
