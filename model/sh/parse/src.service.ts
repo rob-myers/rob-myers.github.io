@@ -274,8 +274,10 @@ export class SrcService {
       }
 
       case 'WhileClause': {
-        return `${node.Until ? 'until' : 'while'} ${this.seqSrc(node.Cond, true)}do ${
-          this.seqSrc(node.Do, true)
+        return `${node.Until ? 'until' : 'while'} ${this.seqSrc(node.Cond, true)}; do${
+          this.onOneLine
+            ? ` ${this.seqSrc(node.Do, true)}; `
+            : `\n${this.seqSrc(node.Do, true).split('\n').map(x => `  ${x}`).join('\n')}\n`
         }done`;
       }
 
