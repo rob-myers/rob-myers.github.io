@@ -279,7 +279,7 @@ npc: `{
 /** Ping every second until pong */
 ready: `{
   run '({ api, home }) {
-    yield \`ℹ️ awaiting ${ansiBlue}"pong"${ansiWhite} on ${ansiBlue}"\${home.WIRE_KEY}"${ansiWhite}  \`
+    yield \`awaiting ${ansiBlue}pong${ansiWhite} on ${ansiBlue}\${home.WIRE_KEY}${ansiWhite}  \`
 
     const ping = () => api.getWire().next({ key: "ping" })
     const intervalId = window.setInterval(ping, 1000)
@@ -287,7 +287,7 @@ ready: `{
     api.getProcess().cleanups.push(() => window.clearInterval(intervalId))
 
     for await (_ of api.mapWire(e => e.key === "pong" ? 1 : undefined)) {
-      yield \`✅ received ${ansiBlue}"pong"${ansiWhite} on ${ansiBlue}"\${home.WIRE_KEY}"${ansiWhite}  \`
+      yield \`received ${ansiBlue}pong${ansiWhite} on ${ansiBlue}\${home.WIRE_KEY}${ansiWhite}  \`
       break; // Stop on 1st message
     }
   }' "$@"
