@@ -1,8 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
-import { merge, of } from "rxjs";
-import { debounceTime, filter, first } from "rxjs/operators";
+import { filter, first } from "rxjs/operators";
 import { keys } from "../service/generic";
 import { ensureWire } from "../service/wire";
 import { error } from "../service/log";
@@ -126,16 +125,6 @@ export default function NPCs(props) {
           npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
         }
       },
-      /**
-       * Debug only?
-       * @param {string} npcKey
-       */
-      toggleNpcAnim(npcKey) {
-        const npc = state.npc[npcKey];
-        if (Date.now() < npc.spawnedAt + 100) return; // Prevent immediate toggle when spawn via click
-        npc.spriteSheet = spriteSheets[(spriteSheets.indexOf(npc.spriteSheet) + 1) % spriteSheets.length];
-        update();
-      },
     };
   }, { deps: [nav, props.doorsApi] });
   
@@ -217,16 +206,7 @@ export default function NPCs(props) {
   }, [props.panZoomApi]);
 
   return (
-    <div
-      className={classNames('npcs', rootCss)}
-      // TODO make a separate component for testing animation
-      // onClick={(e) => {// For debugging animations
-      //   if (e.target instanceof HTMLDivElement && e.target.classList.contains('body')) {
-      //     const npcKey = /** @type {string} */ (e.target.getAttribute('data-npc-key'));
-      //     state.toggleNpcAnim(npcKey);
-      //   }
-      // }}
-    >
+    <div className={classNames('npcs', rootCss)}>
       <Debug
         debugPath={state.debugPath}
       />
