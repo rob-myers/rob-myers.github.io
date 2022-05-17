@@ -64,8 +64,10 @@ __Aim towards website release__.
     - Andros cannot close door when walking
   - When Andros moves through doorway, lighting changes
 
-- ✅ Start migration to Gatsby
-- 🚧 Continue migration to Gatsby
+- 🚧 Gatsby
+  - ✅ Start migration to Gatsby
+  - 🚧 Continue migration
+  - Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle

@@ -145,7 +145,9 @@ log: `{
 },
 ];
 
-// TODO move to scripts?
+// TODO move to scripts
+// - ready ✅
+// - ...
 export const gameFunctions = [
 {
 /**
@@ -276,20 +278,17 @@ npc: `{
   }' "$@"
 }`,
 
-/** Ping every second until pong */
+/** Ping every second until found */
 ready: `{
   run '({ api, home }) {
-    yield \`awaiting ${ansiBlue}pong${ansiWhite} on ${ansiBlue}\${home.WIRE_KEY}${ansiWhite}  \`
+    const cacheKey = \`npc-api-\${home.WIRE_KEY}\`
+    yield \`polling for cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
 
-    const ping = () => api.getWire().next({ key: "ping" })
-    const intervalId = window.setInterval(ping, 1000)
-    window.setTimeout(ping)
-    api.getProcess().cleanups.push(() => window.clearInterval(intervalId))
-
-    for await (_ of api.mapWire(e => e.key === "pong" ? 1 : undefined)) {
-      yield \`received ${ansiBlue}pong${ansiWhite} on ${ansiBlue}\${home.WIRE_KEY}${ansiWhite}  \`
-      break; // Stop on 1st message
+    while (!api.getCached(cacheKey)) {
+      yield* await api.sleep(1)
     }
+
+    yield \`found cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
   }' "$@"
 }`,
 

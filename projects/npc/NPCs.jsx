@@ -3,14 +3,14 @@ import classNames from "classnames";
 import { css } from "goober";
 import { filter, first } from "rxjs/operators";
 import { keys } from "../service/generic";
-import { ensureWire } from "../service/wire";
 import { error } from "../service/log";
+import { ensureWire } from "../service/wire";
+import { createNpc } from "../service/npc";
 import { Poly, Rect, Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
 
-import { createNpc } from "projects/service/npc";
 
 /** @param {NPC.NPCsProps} props */
 export default function NPCs(props) {
@@ -21,11 +21,12 @@ export default function NPCs(props) {
   // console.log(nav);
 
   const state = useStateRef(() => {
-    return {
-      /** @type {Record<string, NPC.NPC>} */
+
+    /** @type {NPC.FullApi} */
+    const output = {
       npc: {},
-      /** @type {Record<string, { path: Geom.Vect[]; aabb: Rect; }>} */
       debugPath: {},
+
       async awaitPanzoomIdle() {
         if (!props.panZoomApi.isIdle()) {
           await firstValueFrom(props.panZoomApi.events.pipe(
@@ -34,11 +35,6 @@ export default function NPCs(props) {
           ));
         }
       },
-      /**
-       * @param {Geom.VectJson} src
-       * @param {Geom.VectJson} dst
-       * @returns {null | { paths: Geom.Vect[][]; edges: NPC.NavGmTransition[] }}
-       */
       getGlobalNavPath(src, dst) {
         const {gms} = props.gmGraph
         const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
@@ -76,12 +72,6 @@ export default function NPCs(props) {
           };
         }
       },
-      /**
-       * Must transform to local coords and then back.
-       * @param {number} gmId 
-       * @param {Geom.VectJson} src World coords
-       * @param {Geom.VectJson} dst World coords
-       */
       getLocalNavPath(gmId, src, dst) {
         const gm = props.gmGraph.gms[gmId];
         const pf = nav.pfs[gmId];
@@ -99,10 +89,6 @@ export default function NPCs(props) {
           return [];
         }
       },
-      /**
-       * 
-       * @param {{ npcKey: string; dst: Geom.VectJson }} e 
-       */
       getNpcGlobalNav(e) {
         if (!state.isPointLegal(e.dst)) {
           throw Error(`${JSON.stringify(e.dst)}: cannot navigate outside navPoly`);
@@ -113,9 +99,6 @@ export default function NPCs(props) {
         }
         return state.getGlobalNavPath(npc.getPosition(), e.dst);
       },
-      /**
-       * @param {{ npcKey: string }} e 
-       */
       getNpc(e) {
         const npc = state.npc[e.npcKey];
         if (!npc) {
@@ -126,10 +109,6 @@ export default function NPCs(props) {
       getPanzoomFocus() {
         return props.panZoomApi.getWorldAtCenter();
       },
-      /**
-       * Does `p` lie inside some geomorph's navmesh?
-       * @param {Geom.VectJson} p
-       */
       isPointLegal(p) {
         const gmId = props.gmGraph.gms.findIndex(x => x.gridRect.contains(p));
         if (gmId === -1) return false;
@@ -149,7 +128,6 @@ export default function NPCs(props) {
         update();
         return npc.anim.root;
       },
-      /** @type {React.RefCallback<HTMLDivElement>} */
       npcRef(rootEl) {
         if (rootEl) {// NPC mounted
           const npcKey = /** @type {string} */ (rootEl.getAttribute('data-npc-key'));
@@ -160,9 +138,6 @@ export default function NPCs(props) {
           npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
         }
       },
-      /**
-       * @param {{ npcKey: string; at: Geom.VectJson }} e 
-       */
       spawn(e) {
         if (!state.isPointLegal(e.at)) {
           throw Error(`${JSON.stringify(e.at)}: cannot spawn outside navPoly`);
@@ -172,9 +147,6 @@ export default function NPCs(props) {
         });
         update();
       },
-      /**
-       * @param {{ pathKey: string; path?: Geom.VectJson[] }} e 
-       */
       toggleDebugPath(e) {
         if (e.path) {
           const path = e.path.map(Vect.from);
@@ -184,9 +156,6 @@ export default function NPCs(props) {
         }
         update();
       },
-      /**
-       * @param {{ zoom?: number; to?: Geom.VectJson; ms?: number }} e 
-       */
       async panzoomTo(e) {
         // TODO 🚧 remove 2000 hard-coding
         props.panZoomApi.tweenTo(e.zoom, e.to, e.ms??2000);
@@ -200,9 +169,6 @@ export default function NPCs(props) {
 
         return result.key === 'cancelled-transition' ? 'cancelled' : 'completed';
       },
-      /**
-       * @param {{ npcKey: string; path: Geom.VectJson[] }} e 
-       */
       async walkNpc(e) {
         const npc = state.npc[e.npcKey];
         if (!npc) {
@@ -216,6 +182,8 @@ export default function NPCs(props) {
         });
       },
     };
+
+    return output;
   }, { deps: [nav, props.doorsApi] });
   
   /**
@@ -225,6 +193,9 @@ export default function NPCs(props) {
    */
   React.useEffect(() => {
     const wire = ensureWire(props.wireKey);
+    
+    // IN PROGRESS
+    setCached(`npc-api-${props.wireKey}`, state);
 
     const sub = wire.subscribe((e) => {
       if (e.key === 'spawn') {
@@ -283,8 +254,6 @@ export default function NPCs(props) {
         }
       } else if (e.key === 'panzoom-focus-req') {
         wire.next({ key: 'panzoom-focus-res', req: e, res: props.panZoomApi.getWorldAtCenter() });
-      } else if (e.key === 'ping') {
-        wire.next({ key: 'pong' });
       } else if (e.key === 'classes-req') {
         wire.next({ key: 'classes-res', req: e, res: {
           Vect,
@@ -298,7 +267,10 @@ export default function NPCs(props) {
       wire.next({ key: 'spawn', npcKey: npc.key, at: npc.getPosition() });
     });
 
-    return () => sub.unsubscribe();
+    return () => {
+      sub.unsubscribe();
+      removeCached(`npc-api-${props.wireKey}`);
+    };
   }, [props.panZoomApi]);
 
   return (
@@ -343,6 +315,7 @@ const rootCss = css`
 // TODO modularise
 import npcJson from '../../public/npc/first-npc.json'
 import { firstValueFrom } from "rxjs";
+import { removeCached, setCached } from "projects/service/query-client";
 const { animLookup: anim, zoom } = npcJson;
 /** Scale the sprites */
 const npcScale = 0.17;

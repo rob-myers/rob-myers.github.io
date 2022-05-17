@@ -13,7 +13,7 @@ import { TtyShell } from './tty.shell';
 
 import { scriptLookup } from './sh.lib';
 // Connections to "outside" i.e. react-query, rxjs
-import { queryCache } from 'projects/service/query-client';
+import { getCached, queryCache } from 'projects/service/query-client';
 import { ensureWire } from 'projects/service/wire';
 
 const commandKeys = {
@@ -384,6 +384,8 @@ class CmdService {
      */
     parent: this,
 
+    getCached,
+
     getWire() {
       return getWire(this.meta);
     },
@@ -400,6 +402,7 @@ class CmdService {
       return this.meta.fd[fd]?.startsWith('/dev/tty-');
     },
 
+    // TODO 🚧 remove because related to NPCs
     async *mapWire<T>(
       next: (e: NPC.WireMessage) => undefined | T,
       stop: (e: NPC.WireMessage, count: number) => boolean = () => false,
@@ -461,6 +464,7 @@ class CmdService {
     },
 
     /**
+     * TODO 🚧 remove because related to NPCs
      * Syntactic sugar for request/response on wire:
      * > Given msg `req := { key: 'foo', ... }` and
      * > subsequent msg `{ key: 'bar', req, res }`,

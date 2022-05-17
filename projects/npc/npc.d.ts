@@ -26,8 +26,6 @@ declare namespace NPC {
   );
 
   type NpcEvent = (
-    | { key: 'ping'; }
-    | { key: 'pong'; }
     | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
     | { key: 'npc-req'; npcKey: string; }
     | {
@@ -119,6 +117,15 @@ declare namespace NPC {
     updateAnimAux(): void;
   }
 
+  export interface NPCDef {
+    key: string;
+    angle: number;
+    /** Initially paused? */
+    paused: boolean;
+    position: Geom.VectJson;
+  }
+
+  // TODO 🚧 replace with generic wire
   export type NavWire = import('rxjs').Subject<NPC.NavMessage>;
 
   export type NavMessage = (
@@ -179,8 +186,31 @@ declare namespace NPC {
     exit: Geom.Vect;
   }
 
-  // OLD BELOW
-  ////////////
+  interface GlobalNavPath {
+    paths: Geom.Vect[][];
+    edges: NPC.NavGmTransition[];
+  }
+
+  export interface FullApi {
+    npc: Record<string, NPC.NPC>;
+    debugPath: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
+
+    async awaitPanzoomIdle(): Promise<void>;
+    getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath | null;
+    getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): Geom.Vect[];
+    getNpcGlobalNav(e: { npcKey: string; dst: Geom.VectJson }): GlobalNavPath | null;
+    getNpc(e: { npcKey: string }): NPC.NPC;
+    getPanzoomFocus(): Geom.VectJson;
+    isPointLegal(p: Geom.VectJson): boolean;
+    moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Animation;
+    npcRef(el: HTMLDivElement | null): void;
+    spawn(e: { npcKey: string; at: Geom.VectJson }): void;
+    toggleDebugPath(e: { pathKey: string; path?: Geom.VectJson[] }): void;
+    async panzoomTo(e: { zoom?: number; to?: Geom.VectJson; ms?: number }): Promise<'cancelled' | 'completed'>;
+    async walkNpc(e: { npcKey: string; path: Geom.VectJson[] }): Promise<void>;
+  }
+
+  // TODO 🚧 remove all below
 
   export interface NPCsPropsOld {
     wireKey: string;
@@ -205,24 +235,5 @@ declare namespace NPC {
       root: HTMLDivElement;
     };
   }
-
-  export interface NPCDef {
-    key: string;
-    angle: number;
-    /** Initially paused? */
-    paused: boolean;
-    position: Geom.VectJson;
-    // zoneKey: string;
-    // /** Initial position */
-    // src: Geom.VectJson;
-    // /** Initial target */
-    // dst: Geom.VectJson;
-    // /** Initial angle */
-  }
-
-  export type AnimState = (
-    | 'idle'
-    | 'walk'
-  );
 
 }
