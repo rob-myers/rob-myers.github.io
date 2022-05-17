@@ -55,9 +55,13 @@ declare namespace PanZoom {
   }
 
   type CssInternalEvent = (
+    | CssInternalTransitionEvent
+    | { key: "ui-idle" }
+  )
+
+  type CssInternalTransitionEvent = (
     | { key: "cancelled-transition" }
     | { key: "completed-transition" }
-    | { key: "ui-idle" }
   )
 
 }

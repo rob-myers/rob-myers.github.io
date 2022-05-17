@@ -26,6 +26,14 @@ export default function NPCs(props) {
       npc: {},
       /** @type {Record<string, { path: Geom.Vect[]; aabb: Rect; }>} */
       debugPath: {},
+      async awaitPanzoomIdle() {
+        if (!props.panZoomApi.isIdle()) {
+          await firstValueFrom(props.panZoomApi.events.pipe(
+            filter(x => x.key === 'ui-idle'),
+            first(),
+          ));
+        }
+      },
       /**
        * @param {Geom.VectJson} src
        * @param {Geom.VectJson} dst
@@ -92,6 +100,33 @@ export default function NPCs(props) {
         }
       },
       /**
+       * 
+       * @param {{ npcKey: string; dst: Geom.VectJson }} e 
+       */
+      getNpcGlobalNav(e) {
+        if (!state.isPointLegal(e.dst)) {
+          throw Error(`${JSON.stringify(e.dst)}: cannot navigate outside navPoly`);
+        }
+        const npc = state.npc[e.npcKey];
+        if (!npc) {
+          throw Error(`npc "${e.npcKey}" does not exist`);
+        }
+        return state.getGlobalNavPath(npc.getPosition(), e.dst);
+      },
+      /**
+       * @param {{ npcKey: string }} e 
+       */
+      getNpc(e) {
+        const npc = state.npc[e.npcKey];
+        if (!npc) {
+          throw Error(`npc "${e.npcKey}" does not exist`);
+        }
+        return npc;
+      },
+      getPanzoomFocus() {
+        return props.panZoomApi.getWorldAtCenter();
+      },
+      /**
        * Does `p` lie inside some geomorph's navmesh?
        * @param {Geom.VectJson} p
        */
@@ -125,9 +160,69 @@ export default function NPCs(props) {
           npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
         }
       },
+      /**
+       * @param {{ npcKey: string; at: Geom.VectJson }} e 
+       */
+      spawn(e) {
+        if (!state.isPointLegal(e.at)) {
+          throw Error(`${JSON.stringify(e.at)}: cannot spawn outside navPoly`);
+        }
+        state.npc[e.npcKey] = createNpc(e.npcKey, e.at, {
+          panZoomApi: props.panZoomApi, update, disabled: props.disabled
+        });
+        update();
+      },
+      /**
+       * @param {{ pathKey: string; path?: Geom.VectJson[] }} e 
+       */
+      toggleDebugPath(e) {
+        if (e.path) {
+          const path = e.path.map(Vect.from);
+          state.debugPath[e.pathKey] = { path, aabb: Rect.from(...path).outset(10) };
+        } else {
+          delete state.debugPath[e.pathKey];
+        }
+        update();
+      },
+      /**
+       * @param {{ zoom?: number; to?: Geom.VectJson; ms?: number }} e 
+       */
+      async panzoomTo(e) {
+        // TODO 🚧 remove 2000 hard-coding
+        props.panZoomApi.tweenTo(e.zoom, e.to, e.ms??2000);
+        
+        const result = /** @type {PanZoom.CssInternalTransitionEvent} */ (
+          await firstValueFrom(props.panZoomApi.events.pipe(
+            // TODO 🚧 { key: 'cancelled-panzoom', type: 'translate' | 'scale' }
+            filter(x => x.key === 'cancelled-transition' || x.key === 'completed-transition'),
+          ))
+        );
+
+        return result.key === 'cancelled-transition' ? 'cancelled' : 'completed';
+      },
+      /**
+       * @param {{ npcKey: string; path: Geom.VectJson[] }} e 
+       */
+      async walkNpc(e) {
+        const npc = state.npc[e.npcKey];
+        if (!npc) {
+          throw Error(`npc "${e.npcKey}" does not exist`);
+        }
+        const anim = state.moveNpcAlongPath(npc, e.path);
+        // Wait until walk finished or cancelled
+        await new Promise((resolve, reject) => {
+          anim.addEventListener("finish", resolve);
+          anim.addEventListener("cancel", reject);
+        });
+      },
     };
   }, { deps: [nav, props.doorsApi] });
   
+  /**
+   * TODO
+   * - single npcs object
+   * - subsumes NavDemo1 state.wire
+   */
   React.useEffect(() => {
     const wire = ensureWire(props.wireKey);
 
@@ -247,6 +342,7 @@ const rootCss = css`
 
 // TODO modularise
 import npcJson from '../../public/npc/first-npc.json'
+import { firstValueFrom } from "rxjs";
 const { animLookup: anim, zoom } = npcJson;
 /** Scale the sprites */
 const npcScale = 0.17;
