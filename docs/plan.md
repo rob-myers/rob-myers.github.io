@@ -20,15 +20,16 @@ __Aim towards website release__.
   - Revisit second page
     - Discuss constraints as before
     - Decompose __SITUATED__
-- Story
-  - Anapanasati training
-  - 5 watchers as Jhanic hindrances
+  - Story
+    - Anapanasati training
+    - 5 watchers as Jhanic hindrances
 
+- 🚧 replace NPCs messaging by single object
 
 - 🚧 Andros is situated
   - ✅ CssPanZoom returns to andros
   - 🚧 CssPanZoom tracks npc in better way
-    - ✅simplify/improve ui-idle event
+    - ✅ simplify/improve ui-idle event
       - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
       - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
     - ✅ if idle and cam not close enough, transition to npc, polling per second
@@ -63,31 +64,8 @@ __Aim towards website release__.
     - Andros cannot close door when walking
   - When Andros moves through doorway, lighting changes
 
-
-- 🚧 Start migration to Gatsby
-
-- ✅ Reorg `sh.lib`
-  - ✅ base functions are from Terminal specified script
-  - ✅ `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
-  - ❌ `view` -> `pan`, `zoom` 
-  - ✅ Automate foo-req and foo-res on wire via `await api.reqRes`
-  - ✅ Fix `kill --STOP {pid}` e.g. for `click`
-  - ❌ shorten script validation via `api.something`
-  - ✅ can toggle draw navpath via DEBUG=true
-  - ✅ cache parsed scripts
-  - ✅ tty can await some `<NPCs/>` ready
-  - ✅ avoid mobile click-spawn toggling animation (debug)
-  - 🤔 game functions take single input like `"{ name: 'andros', at: $(click 1) }"`
-    > worse for mobile, but avoids arbitrary choices/validation
-  - ✅ `npc {key}` gets api
-  - ✅ script spawns andros and periodically panzooms back to him
-    - ✅ jerkiness reintroduced when `view ...`
-  - ✅ improve camera tracking
-    - ✅ `view` should only terminate when finished/interrupted
-    - ✅ `view` expects param e.g. `{ zoom: 2, ms: 2000, to: { "x": 100, "y": 100 } }`
-    - ✅ can specify transition time in `view` too
-    - ❌ returns to circle around npc after 300ms of no camera interaction
-    - ✅ abstract into `track &`
+- ✅ Start migration to Gatsby
+- 🚧 Continue migration to Gatsby
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
@@ -104,9 +82,6 @@ __Aim towards website release__.
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
-- ✅ Fix invisible hull doors
-- ✅ Prevent inaccessible hull doors from being opened
-- ✅ `<Doors>`: Visible hull doors are being drawn as invisible
 - BUG sometimes adjacent light is inside hull door, rather than outside
 - Draw grid over dark png, so not over light geomorph png
 - Can toggle NPC speech bubbles
@@ -149,9 +124,7 @@ __Aim towards website release__.
   - `NavDemo1` has other NPCs
 
 - bring back `say`
-- start using `yarn inspect` as in BFF for server side debug
-
-
+- ❌ start using `yarn inspect` as in BFF for server side debug
 - 🤔 NPCs have label
   - NPCs label tracks them as they move
 - ✅ user can only move npcs via terminal e.g. `click`...
@@ -161,54 +134,50 @@ __Aim towards website release__.
 - can see: npcs, meta points
 - Implement TTY interaction
 - Write into blog 'objective'
-
-- Start Gatsby Project which aims to replace this one
-
-- After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
-
+- ✅ Start Gatsby Project which aims to replace this one
+- ✅ After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
 - finish passenger-deck 303
-- PanZoom should have blue blob indicating touches
-- PanZoom should have inertia
-
 - mobile: issue with keyboard resizing screen and Xterm not resizing
-
 - geomorphs article can be "coming soon" with preview
-- EVENTUALLY redo site using Gatsby JamStack approach (not until after first release)
-
-- 🚧 start blog rewrite in terms of The Last Redoubt
-  - https://www.poetryfoundation.org/poems/43825/darkness-56d222aeeee1b
-- 🚧 clarify what needs to change
-
 - geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
 - NPCs can connect to meta points
-
-- bug: npc sometimes vanishes at src/dst when clicked
-- bug: sometimes turns slowly while moving
-- bug: mobile: while drag DraggableNode can pan-zoom
-  - e.g. PanZoom provides context, so we can temp disable it
-
-
 - offscreen tabs get disabled + rendered after 5 secs
   - Tabs don't load until scroll into view
   - Tabs disable on scroll out of view
-
 - GitHub Comments
-- get interested in simulating starship crews
-- declare this interest in objective
-
 - tech1: mention React "polyfill" of events, and why we avoid
 - finish geomorph 101
 - implement front page
-
-- 🚧 visibility polygon should have truncated precision
-- smooth back/forward scrolling
-- preserve scroll inside tab pane
-
-- `PanZoom` supports zoom to point via ref API
+- visibility polygon should have truncated precision
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ Fix invisible hull doors
+- ✅ Prevent inaccessible hull doors from being opened
+- ✅ `<Doors>`: Visible hull doors are being drawn as invisible
+- ✅ Reorg `sh.lib`
+  - ✅ base functions are from Terminal specified script
+  - ✅ `click`, `spawn`, `nav`, `walk` are from Terminal specified script.
+  - ❌ `view` -> `pan`, `zoom` 
+  - ✅ Automate foo-req and foo-res on wire via `await api.reqRes`
+  - ✅ Fix `kill --STOP {pid}` e.g. for `click`
+  - ❌ shorten script validation via `api.something`
+  - ✅ can toggle draw navpath via DEBUG=true
+  - ✅ cache parsed scripts
+  - ✅ tty can await some `<NPCs/>` ready
+  - ✅ avoid mobile click-spawn toggling animation (debug)
+  - 🤔 game functions take single input like `"{ name: 'andros', at: $(click 1) }"`
+    > worse for mobile, but avoids arbitrary choices/validation
+  - ✅ `npc {key}` gets api
+  - ✅ script spawns andros and periodically panzooms back to him
+    - ✅ jerkiness reintroduced when `view ...`
+  - ✅ improve camera tracking
+    - ✅ `view` should only terminate when finished/interrupted
+    - ✅ `view` expects param e.g. `{ zoom: 2, ms: 2000, to: { "x": 100, "y": 100 } }`
+    - ✅ can specify transition time in `view` too
+    - ❌ returns to circle around npc after 300ms of no camera interaction
+    - ✅ abstract into `track &`
 - ✅ Can zoom to point with animation
 - ✅ Interruptible zoom without lock
   - `matrix(a, b, c, d, e, f)` -> `scale(k) translate(x, y)`
