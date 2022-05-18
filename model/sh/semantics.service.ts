@@ -5,7 +5,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import { last } from 'model/generic.model';
 import useSession, { ProcessStatus } from 'store/session.store';
 import { NamedFunction } from './var.model';
-import { createKillError, expand, Expanded, literal, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
+import { createKillError, expand, Expanded, literal, matchFuncFormat, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { preProcessWrite, redirectNode, SigEnum } from './io/io.model';
@@ -222,15 +222,12 @@ class SemanticsService {
       } else {
         try {// Try to `get` things instead
           for (const arg of args) {
-            if (arg.includes('(')) {// Permit undefined
-              yield* cmdService.get(node, [arg]);
-            } else {// Throw if get undefined
-              const result = cmdService.get(node, [arg]);
-              if (result[0] !== undefined) {
-                yield* result;
-              } else {
-                throw Error();
-              }
+            const result = cmdService.get(node, [arg]);
+            if (result[0] !== undefined || matchFuncFormat(arg)) {
+              yield* result;
+            } else {
+              // Throw if get undefined, unless invoked func
+              throw Error();
             }
           }
         } catch {

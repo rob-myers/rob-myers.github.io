@@ -135,9 +135,25 @@ export function normalizeAbsParts(absParts: string[]) {
 }
 
 export function resolveNormalized(parts: string[], root: any) {
-  return parts.reduce((agg, item) => agg[item], root)
+  return parts.reduce((agg, item) => {
+    // Support invocation of functions, where
+    // args assumed valid JSON when []-wrapped,
+    // e.g. myFunc("foo", 42) -> myFunc(...["foo", 42])
+    if (item.endsWith(')')) {
+      const matched = matchFuncFormat(item);
+      if (matched) {
+        const args = JSON.parse(`[${matched[1]}]`);
+        return agg[item.slice(0, -(matched[1].length + 2))](...args);
+      }
+    }
+    return agg[item];
+  }, root)
 }
 
 export function resolveAbsParts(absParts: string[], root: any): any {
   return resolveNormalized(normalizeAbsParts(absParts), root);
+}
+
+export function matchFuncFormat(pathComponent: string) {
+  return pathComponent.match(/\(([^\)]*)\)$/);
 }
