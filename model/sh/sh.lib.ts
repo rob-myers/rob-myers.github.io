@@ -145,12 +145,10 @@ log: `{
 },
 ];
 
-// TODO change api
-// - ready, npc, spawn, nav, walk ✅
-// - ...
 export const gameFunctions = [
 {
 /**
+ * TODO provide rxjs operators and pipe npcs.getPanZoomEvents()
  * Output world position clicks sent via WIRE_KEY.
  * e.g. `click`, `click 1`
  */
@@ -160,9 +158,6 @@ click: `{
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
-
-    // TODO provide rxjs operators and pipe npcs.getPanZoomEvents()
-
     yield* await api.mapWire(
       (e) => e.key === "pointerup"
         ? { x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) }
@@ -173,6 +168,7 @@ click: `{
 }`,
 
 /**
+ * TODO can spawn many by reading
  * Spawn a character at a position.
  * e.g. `spawn andros "$( click 1 )"`
  */
@@ -181,7 +177,6 @@ spawn: `{
     const npcKey = args[0]
     const position = api.safeJsonParse(args[1])
     const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
-    // TODO can spawn many by reading
     npcs.spawn({ npcKey, at: position })
   }' "$@"
 }`,
@@ -205,14 +200,15 @@ nav: `{
 }`,
 
 /**
+ * TODO
+ * - can read arbitrarily many
+ * - can pause/resume (may need onSuspends)
  * Move an npc along a path via WIRE_KEY.
  * e.g. `walk andros "[$( click 1 ), $( click 1 )]"'
  */
 walk: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
-    // TODO can read arbitrarily many
-    // TODO can pause/resume (may need onSuspends)
     const path = api.safeJsonParse(args[1]) || !api.isTtyAt(0) && await api.read()
     const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
     await npcs.walkNpc({ npcKey, path })
@@ -226,6 +222,7 @@ go: `{
     walk $1
 }`,
 // Simplification
+// TODO remove while and WhileClause
 goLoop: `{
   while true; do
     nav $1 $(click 1) |
@@ -235,13 +232,11 @@ goLoop: `{
 }`,
 
 view: `{
-  run '({ api, args }) {
+  run '({ api, args, home }) {
     const opts = Function(\`return \${args[0]} \`)()
-    if (!(opts && typeof opts === "object")) {
-      api.throwError("format: \`view \\"{ zoom?: {number}, to?: {vec}, ms?: {number} }\`\\"")
-    }
+    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
     // Returns "cancelled" or "completed"
-    await api.reqRes({ key: "view-req", zoom: opts.zoom, to: opts.to, ms: opts.ms })
+    npcs.panZoomTo(opts)
   }' "$@"
 }`,
 
@@ -263,25 +258,28 @@ ready: `{
   }' "$@"
 }`,
 
-/** If UI idle and camera not close, pan to npc */
+/**
+ * TODO redo -- e.g. setting panZoom animation as npc walkAnim
+ * If UI idle and camera not close, pan to npc
+ */
 track: `{
-  run '/** track andros */ ({ api, args }) {
+  run '/** track npc */ ({ api, args, home }) {
     const npcKey = args[0]
-    const process = api.getProcess()
-    const { Vect } = await api.reqRes({ key: "classes-req" })
+    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const { Vect } = npcs.util;
 
     while (true) {
-      await api.reqRes({ key: "panzoom-idle-req" })
+      await npcs.awaitPanzoomIdle()
 
-      const npc = await api.reqRes({ key: "npc-req", npcKey })
+      const npc = npcs.npc[npcKey]
       const npcPosition = Vect.from(npc.getPosition())
-      const worldFocus = await api.reqRes({ key: "panzoom-focus-req" })
+      const worldFocus = npcs.getPanZoomFocus()
 
       if (npcPosition.distanceTo(worldFocus) > 10) {
         if (npc.spriteSheet === "walk") {
-          await api.reqRes({ key: "view-req", to: npcPosition, ms: 500, fn: "linear", zoom: 1.6 })
+          await npcs.panZoomTo({ zoom: 1.6, to: npcPosition, ms: 500 })
         } else {
-          await api.reqRes({ key: "view-req", to: npcPosition, ms: 2000, fn: "ease", zoom: 1.6 })
+          await npcs.panZoomTo({ zoom: 1.6, to: npcPosition, ms: 2000 })
         }
       } else {
         const ms = npc.spriteSheet === "walk" ? 0.01 : 1;

@@ -18,7 +18,6 @@ export default function NPCs(props) {
   const update = useUpdate();
 
   const nav = useGeomorphsNav(props.gmGraph, props.disabled);
-  // console.log(nav);
 
   const state = useStateRef(() => {
 
@@ -26,6 +25,10 @@ export default function NPCs(props) {
     const output = {
       npc: {},
       debugPath: {},
+      // TODO provide rxjs operators too
+      util: {
+        Vect: Vect,
+      },
 
       async awaitPanzoomIdle() {
         if (!props.panZoomApi.isIdle()) {
@@ -168,6 +171,10 @@ export default function NPCs(props) {
         update();
       },
       async panZoomTo(e) {
+        if (!(e && (Number.isFinite(e.zoom) || (e.to) || Number.isFinite(e.ms) ))) {
+          throw Error(`expected format: { zoom?: number; to?: { x: number; y: number }; ms?: number }`);
+        }
+
         // TODO 🚧 remove 2000 hard-coding
         props.panZoomApi.panZoomTo(e.zoom, e.to, e.ms??2000);
         
@@ -200,89 +207,19 @@ export default function NPCs(props) {
     return output;
   }, { deps: [nav, props.doorsApi] });
   
-  /**
-   * TODO
-   * - single npcs object
-   * - subsumes NavDemo1 state.wire
-   */
   React.useEffect(() => {
     const wire = ensureWire(props.wireKey);
     
     // IN PROGRESS
     setCached(`npcs@${props.wireKey}`, state);
 
-    const sub = wire.subscribe((e) => {
-      if (e.key === 'spawn') {
-        if (!state.isPointLegal(e.at))
-          throw Error(`${JSON.stringify(e.at)}: cannot spawn outside navPoly`);
-
-        state.npc[e.npcKey] = createNpc(
-          e.npcKey,
-          e.at,
-          { panZoomApi: props.panZoomApi, update, disabled: props.disabled },
-        );
-        update();
-      } else if (e.key === 'npc-req') {
-        const npc = state.npc[e.npcKey];
-        if (!npc)
-          throw Error(`npc "${e.npcKey}" does not exist`);
-        wire.next({ key: 'npc-res', req: e, res: npc });
-      } else if (e.key === 'nav-req') {
-        if (!state.isPointLegal(e.dst))
-          throw Error(`${JSON.stringify(e.dst)}: cannot navigate outside navPoly`);
-        const npc = state.npc[e.npcKey];
-        if (!npc)
-          throw Error(`npc "${e.npcKey}" does not exist`);
-        const result = state.getGlobalNavPath(npc.getPosition(), e.dst);
-        wire.next({ key: 'nav-res', req: e, res: result });
-      } else if (e.key === 'walk-req') {
-        const npc = state.npc[e.npcKey];
-        if (!npc)
-          throw Error(`npc "${e.npcKey}" does not exist`);
-        const anim = state.moveNpcAlongPath(npc, e.path);
-        wire.next({ key: 'walk-res', req: e, res: anim });
-      } else if (e.key === 'debug-path') {
-        const path = e.path.map(Vect.from);
-        state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
-        update();
-      } else if (e.key === 'view-req') {
-        props.panZoomApi.panZoomTo(e.zoom, e.to, e.ms??2000);
-        
-        props.panZoomApi.events.pipe(
-          filter(x => x.key === 'cancelled-transition' || x.key === 'completed-transition'),
-          first(),
-        ).subscribe({ next: (x) => {
-          x.key === 'cancelled-transition' && wire.next({ key: 'view-res', req: e, res: 'cancelled' });
-          x.key === 'completed-transition' && wire.next({ key: 'view-res', req: e, res: 'completed' });
-        }});
-      } else if (e.key === 'panzoom-idle-req') {
-        if (props.panZoomApi.isIdle()) {
-          wire.next({ key: 'panzoom-idle-res', req: e, res: true });
-        } else {
-          props.panZoomApi.events.pipe(
-            filter(x => x.key === 'ui-idle'),
-            first(),
-          ).subscribe({
-            complete: () => wire.next({ key: 'panzoom-idle-res', req: e, res: true }),
-          });
-        }
-      } else if (e.key === 'panzoom-focus-req') {
-        wire.next({ key: 'panzoom-focus-res', req: e, res: props.panZoomApi.getWorldAtCenter() });
-      } else if (e.key === 'classes-req') {
-        wire.next({ key: 'classes-res', req: e, res: {
-          Vect,
-        } });
-      }
-    });
-
     // On HMR, refresh each npc via remount
     Object.values(state.npc).forEach(npc => {
       delete state.npc[npc.key];
-      wire.next({ key: 'spawn', npcKey: npc.key, at: npc.getPosition() });
+      state.spawn({ npcKey: npc.key, at: npc.getPosition()  });
     });
 
     return () => {
-      sub.unsubscribe();
       removeCached(`npcs@${props.wireKey}`);
     };
   }, [props.panZoomApi]);

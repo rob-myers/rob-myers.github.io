@@ -457,36 +457,6 @@ class CmdService {
       return result?.eof ? null : result.data;
     },
 
-    /**
-     * TODO 🚧 remove because related to NPCs
-     * Syntactic sugar for request/response on wire:
-     * > Given msg `req := { key: 'foo', ... }` and
-     * > subsequent msg `{ key: 'bar', req, res }`,
-     * > we resolve with `res`.
-     * 
-     * If process suspended we provide `res` on resume.
-     */
-    async reqRes(reqMsg: NPC.NpcEvent) {
-      return new Promise((resolve, reject) => {
-        const process = getProcess(this.meta);
-        const wire = getWire(this.meta);
-        const sub = wire.subscribe((e) => {
-          if ('req' in e && e.req === reqMsg) {
-            sub.unsubscribe();
-            if (process.status === ProcessStatus.Suspended) {
-              process.onResumes.push(() => resolve(e.res));
-            } else {
-              resolve(e.res);
-            }
-          }
-        });
-        process.cleanups.push(
-          () => reject(killError(this.meta)),
-          () => sub.unsubscribe(),
-        );
-        wire.next(reqMsg)
-      });
-    },
   
     async *sleep(seconds: number) {
       yield* sleep(this.meta, seconds);

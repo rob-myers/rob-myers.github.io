@@ -25,52 +25,7 @@ declare namespace NPC {
     | { key: 'pointermove' }
   );
 
-  type NpcEvent = (
-    | { key: 'spawn'; npcKey: string; at: Geom.VectJson; }
-    | { key: 'npc-req'; npcKey: string; }
-    | {
-      key: 'npc-res';
-      req: (NpcEvent & { key: 'npc-req' });
-      res: NPC.NPC;
-    }
-    | { key: 'walk-req'; npcKey: string; path: Geom.VectJson[]; }
-    | {
-        key: 'walk-res';
-        req: (NpcEvent & { key: 'walk-req' });
-        res: Animation;
-      }
-    | { key: 'nav-req'; npcKey: string; dst: Geom.VectJson; }
-    | {
-        key: 'nav-res';
-        req: (NpcEvent & { key: 'nav-req' });
-        res: null | { paths: Geom.Vect[][]; edges: NPC.NavGmTransition[] };
-      }
-    | { key: 'debug-path'; path: Geom.VectJson[]; pathName: string }
-    | { key: 'view-req'; zoom?: number; to?: Geom.VectJson; ms?: number; fn?: string }
-    | {
-      key: 'view-res';
-      req: (NpcEvent & { key: 'view-req' });
-      res: 'completed' | 'cancelled';
-    }
-    | { key: 'panzoom-idle-req' }
-    | {
-      key: 'panzoom-idle-res';
-      req: (NpcEvent & { key: 'panzoom-idle-req' });
-      res: true;
-    }
-    | { key: 'panzoom-focus-req' }
-    | {
-      key: 'panzoom-focus-res';
-      req: (NpcEvent & { key: 'panzoom-focus-req' });
-      res: Geom.VectJson;
-    }
-    | { key: 'classes-req' }
-    | {
-      key: 'classes-res';
-      req: (NpcEvent & { key: 'classes-req' });
-      res: { Vect: Vect }
-    }
-  );
+  type NpcEvent = never
 
   export interface NPC {
     /** User specified e.g. `andros` */
@@ -194,6 +149,7 @@ declare namespace NPC {
   export interface FullApi {
     npc: Record<string, NPC.NPC>;
     debugPath: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
+    util: { Vect: typeof Geom.Vect };
 
     async awaitPanzoomIdle(): Promise<void>;
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath | null;
