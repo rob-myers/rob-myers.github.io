@@ -506,14 +506,19 @@ class CmdService {
       etc: scriptLookup,
     }, {
       get: (_, key) => {
-        if (key === 'api') return new Proxy({}, {
-          get: ({}, key: keyof typeof this.processApi) => {
-            if (key === 'meta' || key === 'parent') return null
-            return this.processApi[key]?.bind({ meta, parent: this }) || null;
-          },
-          // TODO ownKeys (requires getOwnPropertyDescriptor)
-        });
-        if (key === 'args') return posPositionals;
+        if (key === 'api') {
+          return new Proxy({}, {
+            get: ({}, key: keyof typeof this.processApi) => {
+              if (key === 'meta' || key === 'parent') return null
+              return this.processApi[key]?.bind({ meta, parent: this }) || null;
+            },
+            // TODO ownKeys (requires getOwnPropertyDescriptor)
+          });
+        } else if (key === 'args') {
+          return posPositionals;
+        } else if (key === '_') {// Can _ from anywhere e.g. inside root
+          return session.var._;
+        }
         return (_ as any)[key];
       },
       set: (_, key, value) => {

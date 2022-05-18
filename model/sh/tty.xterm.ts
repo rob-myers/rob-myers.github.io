@@ -52,7 +52,7 @@ export class TtyXterm {
     private session: {
       key: string;
       io: ShellIo<MessageFromXterm, MessageFromShell>;
-      /** Write last interactive value to `home/_` */
+      /** Write last interactive non-string returned value to `home/_` */
       rememberLastValue: (msg: any) => void;
     },
   ) {
@@ -440,7 +440,7 @@ export class TtyXterm {
     if (typeof msg === 'string') {
       const lines = msg.split('\n');
       const commands = lines.map(line => ({ key: 'line' as const, line: `${ansiWhite}${line}${ansiReset}` }));
-      this.session.rememberLastValue(lines[lines.length - 1]);
+      // this.session.rememberLastValue(lines[lines.length - 1]);
       return this.queueCommands(commands);
     } else if (msg === null) {
       this.session.rememberLastValue(null);
@@ -508,7 +508,7 @@ export class TtyXterm {
             key: 'line',
             line: `${ansiYellow}${safeStringify(msg)}${ansiReset}`,
           }]);
-          this.session.rememberLastValue(msg);
+          typeof msg !== 'string' && this.session.rememberLastValue(msg);
         }
       }
     }
