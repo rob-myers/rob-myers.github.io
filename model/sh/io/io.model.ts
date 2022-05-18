@@ -121,7 +121,11 @@ export async function preProcessWrite(
   if (process.status === ProcessStatus.Killed || device.finishedReading(true)) {
     throw new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey);
   } else if (process.status === ProcessStatus.Suspended) {
-    await new Promise<void>(resolve => process.onResumes.push(resolve));
+    await new Promise<void>((resolve, reject) => {
+      process.onResumes.push(resolve);
+      // TODO currently we keep adding these whenever we pause/resume
+      process.cleanups.push(() => reject(new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey)));
+    });
   }
 }
 
@@ -132,7 +136,11 @@ export async function preProcessRead(
   if (process.status === ProcessStatus.Killed) {
     throw new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey);
   } else if (process.status === ProcessStatus.Suspended) {
-    await new Promise<void>(resolve => process.onResumes.push(resolve));
+    await new Promise<void>((resolve, reject) => {
+      process.onResumes.push(resolve);
+      // TODO currently we keep adding these whenever we pause/resume
+      process.cleanups.push(() => reject(new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey)));
+    });
   }
 }
 

@@ -163,23 +163,20 @@ class CmdService {
         for (const pgid of pgids) {
           const processes = useSession.api.getProcesses(meta.sessionKey, pgid).reverse();
           processes.forEach(p => {
+            // NOTE on{Suspend,Resume}s are "first-in first-invoked"
             if (opts.STOP) {
-              p.onSuspend?.();
-              p.onSuspend = null;
+              p.onSuspends = p.onSuspends.filter(onSuspend => onSuspend());
               p.status = ProcessStatus.Suspended;
             } else if (opts.CONT) {
-              p.onResumes.forEach(resume => resume());
-              p.onResumes.length = 0;
+              p.onResumes = p.onResumes.filter(onResume => onResume());
               p.status = ProcessStatus.Running;
             } else {
               p.status = ProcessStatus.Killed;
-              p.onSuspend = null;
-              p.onResumes.forEach(resume => resume());
-              p.onResumes.length = 0;
+              // p.onResumes.forEach(onResume => onResume());
               // Immediate clean e.g. stops `sleep`
               setTimeout(() => { 
                 p.cleanups.forEach(cleanup => cleanup());
-                p.cleanups.length = 0;
+                // p.cleanups.length = 0;
               });
             }
           });
@@ -259,12 +256,9 @@ class CmdService {
         break;
       }
       case 'return': {
-        const process = useSession.api.getProcess(meta);
-        process.status = ProcessStatus.Killed;
-        process.onSuspend = null;
-        process.onResumes.forEach(resume => resume());
-        process.onResumes.length = 0;
-        break;
+        // Loop constructs like WhileClause are unsupported,
+        // so we just kill the current process
+        throw killError(meta);
       }
       case 'rm': {
         const root = this.provideProcessCtxt(meta);
@@ -636,9 +630,9 @@ async function *sleep(meta: Sh.BaseMeta, seconds = 1) {
   
   do {
     await new Promise<void>((resolve, currReject) => {
-      process.onSuspend = () => { duration -= (Date.now() - startedAt); resolve(); };
-      process.onResumes.push( () => { startedAt = Date.now() });
-      reject = currReject; // We update cleanup
+      process.onSuspends.push(() => { duration -= (Date.now() - startedAt); resolve(); });
+      process.onResumes.push(() => { startedAt = Date.now() });
+      reject = currReject; // We update cleanup here
       (startedAt = Date.now()) && setTimeout(resolve, duration);
     });
     yield; // This yield pauses execution if process suspended

@@ -90,10 +90,16 @@ export interface ProcessMeta {
   src: string;
   /** Each executed on kill */
   cleanups: (() => void)[];
-  /** Executed on suspend */
-  onSuspend: null | (() => void);
-  /** Executed on resume */
-  onResumes: (() => void)[];
+  /**
+   * Executed on suspend, without clearing `true` returners.
+   * The latter should be idempotent, e.g. unsubscribe, pause.
+   */
+  onSuspends: (() => void | boolean)[];
+  /**
+   * Executed on resume, without clearing `true` returners.
+   * The latter should be idempotent, e.g. reject, resolve.
+   */
+  onResumes: (() => void | boolean)[];
   positionals: string[];
 }
 
@@ -132,7 +138,7 @@ const useStore = create<State>(devtools((set, get) => ({
         src,
         positionals: ['jsh', ...posPositionals || []],
         cleanups: [],
-        onSuspend: null,
+        onSuspends: [],
         onResumes: [],
       };
       return processes[pid];
