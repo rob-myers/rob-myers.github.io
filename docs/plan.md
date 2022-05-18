@@ -25,6 +25,10 @@ __Aim towards website release__.
     - 5 watchers as Jhanic hindrances
 
 - 🚧 replace NPCs messaging by single object
+- replace WIRE_KEY by NPCS_KEY
+- `click` should use rxjs functions provided by NPCs api
+- `spawn` should be able to read arbitrarily many
+- remove support for `WhileClause`
 
 - 🚧 Andros is situated
   - ✅ CssPanZoom returns to andros

@@ -145,8 +145,8 @@ log: `{
 },
 ];
 
-// TODO move to scripts
-// - ready ✅
+// TODO change api
+// - ready, npc, spawn, nav, walk ✅
 // - ...
 export const gameFunctions = [
 {
@@ -160,6 +160,8 @@ click: `{
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
+
+    // TODO provide rxjs operators and pipe npcs.getPanZoomEvents()
 
     yield* await api.mapWire(
       (e) => e.key === "pointerup"
@@ -178,16 +180,9 @@ spawn: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
     const position = api.safeJsonParse(args[1])
-    if (
-      !npcKey
-      || position === undefined
-      || position && !(typeof position.x === "number" && typeof position.y === "number")
-    ) {
-      api.throwError("format: \`spawn {key} [{vec}]\` e.g. spawn andros \'{"x":300,"y":120}\'")
-    }
-
-    const at = position || { x: 0, y: 0 }
-    api.getWire().next({ key: "spawn", npcKey, at })
+    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    // TODO can spawn many by reading
+    npcs.spawn({ npcKey, at: position })
   }' "$@"
 }`,
 
@@ -199,22 +194,13 @@ nav: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
     const position = api.safeJsonParse(args[1])
-    if (
-      !npcKey
-      || position === undefined
-      || position && !(typeof position.x === "number" && typeof position.y === "number")
-    ) {
-      api.throwError("format: \`nav {npc-key} [{vec}]\` e.g. nav andros \'{"x":300,"y":120}\'")
-    }
-
-    const res = await api.reqRes({ key: "nav-req", npcKey, dst: position })
-
+    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const result = npcs.getNpcGlobalNav({ npcKey, dst: position })
     if (home.DEBUG === "true") {
-      const path = (res?.paths??[]).reduce((agg, item) => agg.concat(item), []);
-      api.getWire().next({ key: "debug-path", pathName: "debug-" + npcKey, path })
+      const path = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
+      npcs.toggleDebugPath({ pathKey: npcKey, path })
     }
-
-    yield res
+    yield result
   }' "$@"
 }`,
 
@@ -223,24 +209,13 @@ nav: `{
  * e.g. `walk andros "[$( click 1 ), $( click 1 )]"'
  */
 walk: `{
-  run '({ api, args }) {
+  run '({ api, args, home }) {
     const npcKey = args[0]
+    // TODO can read arbitrarily many
+    // TODO can pause/resume (may need onSuspends)
     const path = api.safeJsonParse(args[1]) || !api.isTtyAt(0) && await api.read()
-    if (
-      !npcKey
-      || !Array.isArray(path)
-      || !path.every(p => p && typeof p.x === "number" && typeof p.y === "number")
-    ) {
-      api.throwError("format: \`walk {npc-key} [{vec},...,{vec}]\`")
-    }
-
-    const anim = await api.reqRes({ key: "walk-req", npcKey, path })
-    
-    // Wait until walk finished or cancelled
-    await new Promise((resolve, reject) => {
-      anim.addEventListener("finish", resolve)
-      anim.addEventListener("cancel", reject)
-    })
+    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    await npcs.walkNpc({ npcKey, path })
   }' "$@"
 }`,
 
@@ -272,22 +247,18 @@ view: `{
 
 /** Get NPC */
 npc: `{
-  run '({ api, args }) {
-    const npcKey = args[0]
-    yield await api.reqRes({ key: "npc-req", npcKey })
+  run '({ api, args, home }) {
+    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    yield npcs.getNpc({ npcKey: args[0] })
   }' "$@"
 }`,
 
 /** Ping every second until found */
 ready: `{
   run '({ api, home }) {
-    const cacheKey = \`npc-api-\${home.WIRE_KEY}\`
+    const cacheKey = \`npcs@\${home.WIRE_KEY}\`
     yield \`polling for cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
-
-    while (!api.getCached(cacheKey)) {
-      yield* await api.sleep(1)
-    }
-
+    while (!api.getCached(cacheKey)) yield* await api.sleep(1)
     yield \`found cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
   }' "$@"
 }`,

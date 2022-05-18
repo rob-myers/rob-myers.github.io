@@ -90,8 +90,12 @@ export default function NPCs(props) {
         }
       },
       getNpcGlobalNav(e) {
-        if (!state.isPointLegal(e.dst)) {
-          throw Error(`${JSON.stringify(e.dst)}: cannot navigate outside navPoly`);
+        if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
+          throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
+        } else if (!(e.dst && typeof e.dst.x === 'number' && typeof e.dst.y === 'number')) {
+          throw Error(`invalid point: ${JSON.stringify(e.dst)}`);
+        } else if (!state.isPointLegal(e.dst)) {
+          throw Error(`cannot navigate outside navPoly: ${JSON.stringify(e.dst)}`);
         }
         const npc = state.npc[e.npcKey];
         if (!npc) {
@@ -106,7 +110,10 @@ export default function NPCs(props) {
         }
         return npc;
       },
-      getPanzoomFocus() {
+      getPanZoomEvents() {
+        return props.panZoomApi.events;
+      },
+      getPanZoomFocus() {
         return props.panZoomApi.getWorldAtCenter();
       },
       isPointLegal(p) {
@@ -139,8 +146,12 @@ export default function NPCs(props) {
         }
       },
       spawn(e) {
-        if (!state.isPointLegal(e.at)) {
-          throw Error(`${JSON.stringify(e.at)}: cannot spawn outside navPoly`);
+        if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
+          throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
+        } else if (!(e.at && typeof e.at.x === 'number' && typeof e.at.y === 'number')) {
+          throw Error(`invalid point: ${JSON.stringify(e.at)}`);
+        } else if (!state.isPointLegal(e.at)) {
+          throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.at)}`);
         }
         state.npc[e.npcKey] = createNpc(e.npcKey, e.at, {
           panZoomApi: props.panZoomApi, update, disabled: props.disabled
@@ -156,9 +167,9 @@ export default function NPCs(props) {
         }
         update();
       },
-      async panzoomTo(e) {
+      async panZoomTo(e) {
         // TODO 🚧 remove 2000 hard-coding
-        props.panZoomApi.tweenTo(e.zoom, e.to, e.ms??2000);
+        props.panZoomApi.panZoomTo(e.zoom, e.to, e.ms??2000);
         
         const result = /** @type {PanZoom.CssInternalTransitionEvent} */ (
           await firstValueFrom(props.panZoomApi.events.pipe(
@@ -173,9 +184,12 @@ export default function NPCs(props) {
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc "${e.npcKey}" does not exist`);
+        } else if (!(Array.isArray(e.path) && e.path.every(p => p && typeof p.x === "number" && typeof p.y === "number"))) {
+          throw Error(`invalid path: ${JSON.stringify(e.path)}`);
         }
         const anim = state.moveNpcAlongPath(npc, e.path);
         // Wait until walk finished or cancelled
+        // TODO need to handle walk pause/resume/cancel elsewhere
         await new Promise((resolve, reject) => {
           anim.addEventListener("finish", resolve);
           anim.addEventListener("cancel", reject);
@@ -195,7 +209,7 @@ export default function NPCs(props) {
     const wire = ensureWire(props.wireKey);
     
     // IN PROGRESS
-    setCached(`npc-api-${props.wireKey}`, state);
+    setCached(`npcs@${props.wireKey}`, state);
 
     const sub = wire.subscribe((e) => {
       if (e.key === 'spawn') {
@@ -232,7 +246,7 @@ export default function NPCs(props) {
         state.debugPath[e.pathName] = { path, aabb: Rect.from(...path).outset(10) };
         update();
       } else if (e.key === 'view-req') {
-        props.panZoomApi.tweenTo(e.zoom, e.to, e.ms??2000);
+        props.panZoomApi.panZoomTo(e.zoom, e.to, e.ms??2000);
         
         props.panZoomApi.events.pipe(
           filter(x => x.key === 'cancelled-transition' || x.key === 'completed-transition'),
@@ -269,7 +283,7 @@ export default function NPCs(props) {
 
     return () => {
       sub.unsubscribe();
-      removeCached(`npc-api-${props.wireKey}`);
+      removeCached(`npcs@${props.wireKey}`);
     };
   }, [props.panZoomApi]);
 

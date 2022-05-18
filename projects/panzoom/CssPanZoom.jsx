@@ -191,12 +191,13 @@ export default function CssPanZoom(props) {
       sendPointOnWire(wireKey, e) {
         const wire = ensureWire(wireKey);
         const point = state.getWorld(e);
+        // TODO keep for moment, but will move to `state.events`
         wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
       },
       /**
        * IN PROGRESS
        */
-      tweenTo(scale, worldPoint, durationMs) {
+      panZoomTo(scale, worldPoint, durationMs) {
         scale = scale || state.scale;
         // TODO clear previous
 
@@ -290,7 +291,7 @@ export default function CssPanZoom(props) {
     props.onLoad?.(state);
     // Apply initial zoom and centering
     state.updateView();
-    state.tweenTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
+    state.panZoomTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
   }, []);
 
   return (
