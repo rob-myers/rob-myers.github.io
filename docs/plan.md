@@ -29,8 +29,8 @@ __Aim towards website release__.
 - ✅ replace WIRE_KEY by NPCS_KEY
   - ✅ remove `api.mapWire`
 - ✅ `spawn` should be able to read arbitrarily many
-- remove support for `WhileClause`
-- CssPanZoom supports pointerup from descendants, distinguished via tags from data-tags
+- ✅ remove support for `WhileClause`
+- 🚧 CssPanZoom supports pointerup from descendants, distinguished via tags from data-tags
 
 - 🚧 Andros is situated
   - ✅ CssPanZoom returns to andros

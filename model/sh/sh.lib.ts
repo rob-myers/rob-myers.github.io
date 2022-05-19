@@ -241,28 +241,34 @@ walk: `{
   }' "$@"
 }`,
 
-// Simplification
+// NOTE ignores doors
 go: `{
   nav $1 $(click 1) |
-    map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
+    map 'x => ({
+      npcKey: "andros",
+      points: x.paths.reduce((agg, item) => agg.concat(item), []),
+    })' |
     walk $1
 }`,
-// Simplification
 // TODO remove while and WhileClause
+// TODO handle click before finish
 goLoop: `{
-  while true; do
-    nav $1 $(click 1) |
-      map 'x => x.paths.reduce((agg, item) => agg.concat(item), [])' |
-      walk $1
-  done
+  click |
+    map 'x => ({ npcKey: "andros", point: x })' |
+    nav |
+    map 'x => ({
+      npcKey: "andros",
+      points: x.paths.reduce((agg, item) => agg.concat(item), []),
+    })' |
+    walk
 }`,
 
+// TODO handle multiple reads?
 view: `{
   run '({ api, args, home }) {
     const opts = Function(\`return \${args[0]} \`)()
     const npcs = api.getCached(home.NPCS_KEY)
-    // Returns "cancelled" or "completed"
-    npcs.panZoomTo(opts)
+    npcs.panZoomTo(opts) // Returns "cancelled" or "completed"
   }' "$@"
 }`,
 

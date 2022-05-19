@@ -257,7 +257,6 @@ class SemanticsService {
           case 'IfClause': generator = this.IfClause(node); break;
           case 'TimeClause': generator = this.TimeClause(node); break;
           case 'Subshell': generator = this.Subshell(node); break;
-          case 'WhileClause': generator = this.WhileClause(node); break;
           default: throw new ShError('not implemented', 2);
         }
       }
@@ -543,26 +542,6 @@ class SemanticsService {
     );
   }
 
-  /**
-   * TODO
-   * - infinite loop safety
-   * - implement/handle `break`
-   */
-  private async *WhileClause(node: Sh.WhileClause) {
-      while (true) {
-        try {
-          yield* sem.stmts(node, node.Cond)
-          if (node.Until ? !node.exitCode : node.exitCode) {
-            break;
-          }
-          yield* sem.stmts(node, node.Do);
-          // console.log(node.Do)
-        } catch (e) {
-          console.log('saw', e)
-          throw e;
-        }
-      }
-  }
 }
 
 export const semanticsService = new SemanticsService;
