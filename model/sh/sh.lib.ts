@@ -292,7 +292,7 @@ ready: `{
 }`,
 
 /**
- * TODO redo -- e.g. setting panZoom animation as npc walkAnim
+ * TODO in progress
  * If UI idle and camera not close, pan to npc
  */
 track: `{
@@ -304,20 +304,33 @@ track: `{
     while (true) {
       await npcs.awaitPanzoomIdle()
 
-      const npc = npcs.npc[npcKey]
-      const npcPosition = Vect.from(npc.getPosition())
       const worldFocus = npcs.getPanZoomFocus()
+      const npc = npcs.npc[npcKey]
+      const npcPosition = npc.getPosition()
+      const distance = Vect.from(npcPosition).distanceTo(worldFocus)
 
-      if (npcPosition.distanceTo(worldFocus) > 10) {
-        if (npc.spriteSheet === "walk") {
-          await npcs.panZoomTo({ zoom: 1.6, to: npcPosition, ms: 500 })
+      // TODO fix stuttering
+
+      if (npc.spriteSheet === "walk") {
+        const targets = npc.getTargets()
+        if (targets.length > 1 || distance > 10) {
+          // TODO
+          console.log(targets)
+          const target = targets[1] || targets[0]
+          await npcs.panZoomTo({ zoom: 1.6, point: target.point, ms: 1.1 * target.ms, easing: "linear" })
         } else {
-          await npcs.panZoomTo({ zoom: 1.6, to: npcPosition, ms: 2000 })
+          yield* await api.sleep(1)
         }
-      } else {
-        const ms = npc.spriteSheet === "walk" ? 0.01 : 1;
-        yield* await api.sleep(ms)
+      } else if (npc.spriteSheet === "idle") {
+        if (distance > 10) {
+          // speed 60 world unit per second
+          const ms = (distance / 60) * 1000
+          await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms })
+        } else {
+          yield* await api.sleep(1)
+        }
       }
+
     }
   }' "$@"
 }`,

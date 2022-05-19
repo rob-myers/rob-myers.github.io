@@ -150,6 +150,9 @@ export default function NPCs(props) {
           npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
         }
       },
+      async panZoomPath(def) {
+        await props.panZoomApi.applyAnim(def, 'translate');
+      },
       spawn(e) {
         if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
           throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
@@ -172,21 +175,22 @@ export default function NPCs(props) {
         }
         update();
       },
+      /**
+       * TODO
+       * - remove 2000 hard-coding
+       * - { key: 'cancelled', type: 'translate' | 'scale' }
+       */
       async panZoomTo(e) {
-        if (!(e && (Number.isFinite(e.zoom) || (e.to) || Number.isFinite(e.ms) ))) {
-          throw Error(`expected format: { zoom?: number; to?: { x: number; y: number }; ms?: number }`);
+        if (!(e && (Number.isFinite(e.zoom) || (e.point) || Number.isFinite(e.ms) ))) {
+          throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms?: number; easing?: string }`);
         }
-
-        // TODO 🚧 remove 2000 hard-coding
-        props.panZoomApi.panZoomTo(e.zoom, e.to, e.ms??2000);
+        props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms??2000, e.easing);
         
         const result = /** @type {PanZoom.CssInternalTransitionEvent} */ (
           await firstValueFrom(props.panZoomApi.events.pipe(
-            // TODO 🚧 { key: 'cancelled-panzoom', type: 'translate' | 'scale' }
             filter(x => x.key === 'cancelled-transition' || x.key === 'completed-transition'),
           ))
         );
-
         return result.key === 'cancelled-transition' ? 'cancelled' : 'completed';
       },
       async walkNpc(e) {
@@ -341,16 +345,12 @@ function Debug(props) {
         className="debug-path"
         width={aabb.width}
         height={aabb.height}
-        style={{
-
-          left: aabb.x,
-          top: aabb.y,
-        }}
+        style={{ left: aabb.x, top: aabb.y }}
       >
         <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
-          <polyline fill="none" stroke="blue" strokeWidth={2} points={`${path}`} />
+          <polyline fill="none" stroke="#88c" strokeDasharray="2 2" strokeWidth={1} points={`${path}`} />
           {path.map(p => (
-            <circle fill="none" stroke="red" r={2.5} cx={p.x} cy={p.y} />
+            <circle fill="none" stroke="#fff" r={2} cx={p.x} cy={p.y} />
           ))}
         </g>
       </svg>

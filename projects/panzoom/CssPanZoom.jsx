@@ -192,9 +192,9 @@ export default function CssPanZoom(props) {
           state.parent.addEventListener('pointercancel', e => state.evt.pointerup(e));
         }
       },
-      panZoomTo(scale, worldPoint, durationMs) {
+      panZoomTo(scale, worldPoint, durationMs, easing) {
         scale = scale || state.scale;
-        // TODO clear previous
+        easing = easing || 'ease';
 
         if (scale !== state.scale) {
           const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
@@ -214,11 +214,11 @@ export default function CssPanZoom(props) {
             state.translateRoot.animate([
               { offset: 0, transform: `translate(${current.x}px, ${current.y}px)` },
               { offset: 1, transform: `translate(${dstX}px, ${dstY}px)` },
-            ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing: 'ease' }),
+            ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing }),
             state.scaleRoot.animate([
               { offset: 0, transform: `scale(${current.scale})` },
               { offset: 1, transform: `scale(${scale})` },
-            ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing: 'ease' })
+            ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing })
           ];
 
         } else if (worldPoint) {
@@ -231,7 +231,7 @@ export default function CssPanZoom(props) {
           state.anims[0] = state.translateRoot.animate([
             { offset: 0, transform: `translate(${current.x}px, ${current.y}px)` },
             { offset: 1, transform: `translate(${dstX}px, ${dstY}px)` },
-          ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing: 'ease' });
+          ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing });
 
         } else {
           return;

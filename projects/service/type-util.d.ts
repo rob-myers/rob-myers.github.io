@@ -8,4 +8,9 @@ declare namespace TypeUtil {
     [Key in keyof T]?: true;
   }
 
+  export interface AnimDef {
+    keyframes: Keyframe[];
+    opts: KeyframeAnimationOptions;
+  }
+
 }

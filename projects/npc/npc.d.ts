@@ -66,10 +66,11 @@ declare namespace NPC {
 
     //#endregion
     /** Radians */
-    getAngle(): number;
-    getFuturePosition(inMs: number): Geom.Vect;
-    getPosition(): Geom.Vect;
     followNavPath(): void;
+    getAngle(): number;
+    getAnimDef(): TypeUtil.AnimDef;
+    getPosition(): Geom.Vect;
+    getTargets(): { point: Geom.VectJson; ms: number }[];
     pause(): void;
     updateAnimAux(): void;
   }
@@ -174,9 +175,10 @@ declare namespace NPC {
     isPointLegal(p: Geom.VectJson): boolean;
     moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Animation;
     npcRef(el: HTMLDivElement | null): void;
+    async panZoomPath(def: TypeUtil.AnimDef): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
-    async panZoomTo(e: { zoom?: number; to?: Geom.VectJson; ms?: number }): Promise<'cancelled' | 'completed'>;
+    async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms?: number; easing?: string }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string; points: Geom.VectJson[] }): Promise<void>;
   }
 

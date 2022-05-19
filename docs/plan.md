@@ -31,7 +31,7 @@ __Aim towards website release__.
 - ✅ `spawn` should be able to read arbitrarily many
 - ✅ remove support for `WhileClause`
 - ✅ CssPanZoom supports pointerup from descendants, distinguished via tags from data-tags
-- `track` sends adaptation of npc animPath when walking
+- 🚧 `track` sends adaptation of npc animPath when walking
 - BUG `goLoop` "idle" while moving along path
   - hard to repro, but definitely there
 

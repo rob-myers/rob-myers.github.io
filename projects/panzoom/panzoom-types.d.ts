@@ -46,7 +46,7 @@ declare namespace PanZoom {
     isIdle(): boolean;
     pan(toX: number, toY: number): void;
     rootRef(el: null | HTMLDivElement): void;
-    panZoomTo(scale?: number, worldPoint?: Geom.VectJson, durationMs?: number): void;
+    panZoomTo(scale?: number, worldPoint?: Geom.VectJson, durationMs?: number, easing?: string): void;
     updateView(): void;
     zoomToClient(toScale: number, e: { clientX: number; clientY: number; }): void;
     zoomWithWheel(event: WheelEvent): void;

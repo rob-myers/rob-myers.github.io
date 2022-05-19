@@ -87,7 +87,7 @@ function drawFrameAt(anim, frameId, canvas, zoom = 1) {
  * @param {number} [zoom] 
  * @returns {ServerTypes.ParsedNpc}
  */
- export function parseNpc(npcName, svgContents, zoom = 1) {
+export function parseNpc(npcName, svgContents, zoom = 1) {
   const $ = cheerio.load(svgContents);
   const topNodes = Array.from($('svg > *'));
 
@@ -197,20 +197,8 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       }
       
       const wasPaused = this.anim.root.playState === 'paused';
-      this.anim.root = this.el.root.animate(
-        // NOTE need ≥ 2 frames for polyfill
-        this.animPath.flatMap((p, i) => [
-          {
-            offset: aux.sofars[i] / aux.total,
-            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || aux.angs[i] || 0}rad)`,
-          },
-          {
-            offset: aux.sofars[i] / aux.total,
-            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`,
-          },
-        ]),
-        { duration: aux.total * animScaleFactor, direction: 'normal', fill: 'forwards' },
-      );
+      const { keyframes, opts } = this.getAnimDef();
+      this.anim.root = this.el.root.animate(keyframes, opts);
       
       this.spriteSheet = 'walk';
       this.enteredSheetAt = Date.now();
@@ -229,22 +217,36 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);
       return Math.atan2(matrix.m12, matrix.m11);
     },
-    // TODO needs testing
-    getFuturePosition(inMs) {
-      switch (this.spriteSheet) {
-        case 'idle': return this.getPosition();
-        case 'walk': {
-          const targetDuration = (Date.now() + inMs) - this.enteredSheetAt;
-          const targetDistance = targetDuration / animScaleFactor;
-          let nodeIndex = this.aux.sofars.findIndex(sofar => sofar > targetDistance);
-          if (nodeIndex === -1) nodeIndex = this.animPath.length - 1;
-          return this.animPath[nodeIndex].clone();
-        }
-      }
+    getAnimDef() {
+      // NOTE Web Animations polyfill may require ≥ 2 frames
+      const { aux } = this;
+      return {
+        keyframes: this.animPath.flatMap((p, i) => [
+          {
+            offset: aux.sofars[i] / aux.total,
+            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || aux.angs[i] || 0}rad)`
+          },
+          {
+            offset: aux.sofars[i] / aux.total,
+            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`
+          },
+        ]),
+        opts: { duration: aux.total * animScaleFactor, direction: 'normal', fill: 'forwards' },
+      };
     },
     getPosition() {
       const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
       return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
+    },
+    getTargets() {
+      const durationSoFar = Date.now() - this.enteredSheetAt;
+      if (this.spriteSheet === "idle" || durationSoFar >= this.aux.total * animScaleFactor) {
+        return [{ point: this.getPosition(), ms: 0 }];
+      } else {
+        const firstIndex = this.aux.sofars.findIndex(sofar => sofar * animScaleFactor > durationSoFar);
+        return this.aux.sofars.slice(firstIndex)
+          .map((sofar, i) => ({ point: this.animPath[firstIndex + i], ms: (sofar * animScaleFactor) - durationSoFar }))
+      }
     },
     pause() {
       if (this.anim.body.playState === 'running') {
