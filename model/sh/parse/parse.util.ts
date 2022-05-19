@@ -168,3 +168,17 @@ export function wrapInFile(node: Sh.Stmt | Sh.CmdSubst | Sh.Subshell): Sh.FileWi
 export function collectIfClauses(cmd: Sh.IfClause): Sh.IfClause[] {
   return cmd.Else ? [cmd, ...collectIfClauses(cmd.Else)] : [cmd];
 }
+
+/**
+ * View "replace" as "_" i.e. last interactive non-string value
+ */
+export function reconstructReplParamExp(Repl: NonNullable<Sh.ParamExp['Repl']>) {
+  let origParam = '_';
+  Repl.Orig.Parts.length && (
+    origParam += '/' + Repl.Orig.Parts.map(x => (x as Sh.Lit).Value).join('')
+  );
+  Repl.With?.Parts.length && (
+    origParam += '/' + Repl.With.Parts.map(x => (x as Sh.Lit).Value).join('')
+  );
+  return origParam;
+}

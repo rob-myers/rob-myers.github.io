@@ -9,7 +9,7 @@ import { createKillError, expand, Expanded, literal, matchFuncFormat, normalizeW
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { preProcessWrite, redirectNode, SigEnum } from './io/io.model';
-import { cloneParsed, collectIfClauses, wrapInFile } from './parse/parse.util';
+import { cloneParsed, collectIfClauses, reconstructReplParamExp, wrapInFile } from './parse/parse.util';
 import { FifoDevice } from './io/fifo.device';
 
 class SemanticsService {
@@ -449,15 +449,18 @@ class SemanticsService {
   }
 
   /**
-   * - positionals $0, $1, ...
-   * - all positionals "${@}"
-   * - vanilla $x, ${foo}
-   * - default when empty ${foo:-bar}
+   * 1. Positionals $0, $1, ...
+   * 2. All positionals "${@}"
+   * 3. Vanilla $x, ${foo}
+   * 4. Default when empty ${foo:-bar}
+   * 5. ${_/foo/bar/baz} into last interactive non-string
    */
-  private async *ParamExp(
-    { meta, Param, Slice, Repl, Length, Excl, Exp }: Sh.ParamExp
-  ): AsyncGenerator<Expanded, void, unknown> {
-    if (Excl || Length || Repl || Slice) {
+  private async *ParamExp(node: Sh.ParamExp): AsyncGenerator<Expanded, void, unknown> {
+    const { meta, Param, Slice, Repl, Length, Excl, Exp } = node;
+    if (Repl) {
+      const origParam = reconstructReplParamExp(Repl)
+      yield expand(safeJsonStringify(cmdService.get(node, [origParam])));
+    } else if (Excl || Length || Slice) {
       throw new ShError(`ParamExp: ${Param.Value}: unsupported operation`, 2);
     } else if (Exp) {
       switch (Exp.Op) {

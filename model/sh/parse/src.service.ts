@@ -1,6 +1,6 @@
 import type * as Sh from "./parse.model";
 import { last, testNever } from "model/generic.model";
-import { collectIfClauses } from "./parse.util";
+import { collectIfClauses, reconstructReplParamExp } from "./parse.util";
 
 export class SrcService {
 
@@ -190,8 +190,11 @@ export class SrcService {
       case 'ParamExp': {
         if (node.Exp?.Op === ':-') {
           return `\${${node.Param.Value}:-${this.src(node.Exp.Word)}}`;
+        } else if (node.Repl) {
+          return `\${${reconstructReplParamExp(node.Repl)}}`;
+        } else {
+          return `\${${node.Param.Value}}`;
         }
-        return `\${${node.Param.Value}}`;
       }
 
       case 'ProcSubst': {
