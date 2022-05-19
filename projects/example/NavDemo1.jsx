@@ -321,6 +321,7 @@ function Debug(props) {
             <div
               key={doorId}
               data-debug-door-index={doorId}
+              data-tags="debug door-arrow"
               className="debug-door-arrow"
               style={{
                 left: arrowPos.x - debugRadius,

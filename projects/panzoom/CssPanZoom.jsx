@@ -44,11 +44,12 @@ export default function CssPanZoom(props) {
           state.zoomWithWheel(e);
         },
         pointerdown(e) {
-          if (e.target !== state.parent) return;
+          // if (e.target !== state.parent) return;
           state.delayIdle();
           state.cancelAnimations();
           // e.preventDefault();
           ensurePointer(state.pointers, e);
+
           state.panning = true;
           state.origin = new Vect(state.x, state.y);
           // This works whether there are multiple pointers or not
@@ -70,7 +71,7 @@ export default function CssPanZoom(props) {
           }
 
           state.delayIdle();
-          ensurePointer(state.pointers, e);
+          ensurePointer(state.pointers, e); // Needed?
           const current = getMiddle(state.pointers);
 
           if (state.pointers.length > 1) {
@@ -107,7 +108,11 @@ export default function CssPanZoom(props) {
           }
 
           const point = state.getWorld(e);
-          state.events.next({ key: 'pointerup', point: { x: point.x, y: point.y } });
+          state.events.next({
+            key: 'pointerup',
+            point: { x: point.x, y: point.y },
+            tags: (/** @type {HTMLElement} */ (e.target).getAttribute('data-tags') || '').split(' '),
+          });
 
           state.panning = false;
           state.origin = state.start.clientX = state.start.clientY = undefined;
@@ -285,7 +290,10 @@ export default function CssPanZoom(props) {
   }, []);
 
   return (
-    <div className={classNames("panzoom-parent", rootCss, backgroundCss(props))}>
+    <div
+      className={classNames("panzoom-parent", rootCss, backgroundCss(props))}
+      data-tags="floor"
+    >
       <div
         ref={state.rootRef}
         className={classNames("panzoom-translate", props.className)}
@@ -368,10 +376,8 @@ const backgroundCss = (props) => css`
  */
 
 /**
- * 
  * @param {PointerEvent[]} pointers 
  * @param {PointerEvent} event 
- * @returns 
  */
 function ensurePointer(pointers, event) {
   let i
@@ -386,6 +392,7 @@ function ensurePointer(pointers, event) {
   }
   i = pointers.findIndex(other => other.pointerId === event.pointerId);
   if (i > -1) pointers.splice(i, 1)
+
   pointers.push(event);
 }
 

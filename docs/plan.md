@@ -30,11 +30,15 @@ __Aim towards website release__.
   - ✅ remove `api.mapWire`
 - ✅ `spawn` should be able to read arbitrarily many
 - ✅ remove support for `WhileClause`
-- 🚧 CssPanZoom supports pointerup from descendants, distinguished via tags from data-tags
+- ✅ CssPanZoom supports pointerup from descendants, distinguished via tags from data-tags
+- `track` sends adaptation of npc animPath when walking
+- BUG `goLoop` "idle" while moving along path
+  - hard to repro, but definitely there
 
 - 🚧 Andros is situated
   - ✅ CssPanZoom returns to andros
-  - 🚧 CssPanZoom tracks npc in better way
+
+  - CssPanZoom tracks npc in better way
     - ✅ simplify/improve ui-idle event
       - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
       - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
@@ -57,13 +61,10 @@ __Aim towards website release__.
       - ✅ CssPanZoom can play `Animation` on scaleRoot
       - ✅ `Animation`s interrupted by ui
       - ✅ Replace `style.transition` approach
-      - 🚧 `track` sends adaptation of npc animPath when walking
-    - BUG `goLoop` "idle" while moving along path
-      - hard to repro, but definitely there
     - Click while moving cancels and replans
-      - use `click | ...` pattern instead of `while`
-      - remove `WhileClause`
-    - `state.events` sends point, not `evt.pointerup`
+      - ✅ use `click | ...` pattern instead of `while`
+      - ✅ remove `WhileClause`
+    - ✅ `state.events` sends point, not `evt.pointerup`
 
   - Can only move to point within lit area
     - Then Andros must open doors to go through them

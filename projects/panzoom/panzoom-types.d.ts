@@ -54,7 +54,7 @@ declare namespace PanZoom {
 
   type CssInternalEvent = (
     | CssInternalTransitionEvent
-    | { key: 'pointerup', point: Geom.VectJson }
+    | { key: 'pointerup', point: Geom.VectJson; tags: string[] }
     | { key: "ui-idle" }
   )
 

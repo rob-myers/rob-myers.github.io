@@ -165,7 +165,7 @@ click: `{
     yield* otag(
       npcs.getPanZoomEvents().pipe(
         filter(x => x.key === "pointerup" && process.status === 1),
-        map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) })),
+        map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)), tags: e.tags })),
         take(numClicks),
       ),
       (sub) => process.cleanups.push(() => sub.unsubscribe()),
@@ -254,6 +254,7 @@ go: `{
 // TODO handle click before finish
 goLoop: `{
   click |
+    filter 'x => x.tags.includes("floor")' |
     map 'x => ({ npcKey: "andros", point: x })' |
     nav |
     map 'x => ({
