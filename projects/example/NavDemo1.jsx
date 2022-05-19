@@ -114,7 +114,6 @@ export default function NavDemo1(props) {
       initZoom={1.5}
       initCenter={{ x: 300, y: 300 }}
       dark
-      wireKey={wireKey}
       onLoad={api => state.panZoomApi = api}
     >
       {gms.map(gm =>

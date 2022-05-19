@@ -148,7 +148,6 @@ log: `{
 export const gameFunctions = [
 {
 /**
- * TODO provide rxjs operators and pipe npcs.getPanZoomEvents()
  * Output world position clicks sent via WIRE_KEY.
  * e.g. `click`, `click 1`
  */
@@ -158,11 +157,18 @@ click: `{
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
-    yield* await api.mapWire(
-      (e) => e.key === "pointerup"
-        ? { x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) }
-        : undefined,
-      (_, count) => count >= numClicks,
+
+    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const { filter, map, take, otag } = npcs.rxjs
+    const process = api.getProcess()
+    
+    yield* otag(
+      npcs.getPanZoomEvents().pipe(
+        filter(x => x.key === "pointerup" && process.status === 1),
+        map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)) })),
+        take(numClicks),
+      ),
+      (sub) => process.cleanups.push(() => sub.unsubscribe()),
     )
   }' "$@"
 }`,
@@ -266,7 +272,7 @@ track: `{
   run '/** track npc */ ({ api, args, home }) {
     const npcKey = args[0]
     const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
-    const { Vect } = npcs.util;
+    const { Vect } = npcs.class;
 
     while (true) {
       await npcs.awaitPanzoomIdle()

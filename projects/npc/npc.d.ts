@@ -2,6 +2,8 @@
 declare namespace NPC {
   
   import { Subject } from 'rxjs';
+  import { filter, first, map, take } from 'rxjs/operators';
+  import { otag } from '../service/rxjs';
   
   export interface NPCsProps {
     disabled?: boolean;
@@ -149,7 +151,19 @@ declare namespace NPC {
   export interface FullApi {
     npc: Record<string, NPC.NPC>;
     debugPath: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
-    util: { Vect: typeof Geom.Vect };
+
+    class: {
+      Vect: typeof Geom.Vect;
+    };
+    rxjs: {
+      //#region rxjs/operators
+      filter: filter;
+      first: first;
+      map: map;
+      take: take;
+      //#endregion
+      otag: otag;
+    };
 
     async awaitPanzoomIdle(): Promise<void>;
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath | null;

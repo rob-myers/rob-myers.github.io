@@ -106,10 +106,10 @@ export default function CssPanZoom(props) {
           if (!state.panning) {
             return;
           }
-          // TODO `state.events` sends point and connect to wire elsewhere?
-          if (props.wireKey) {
-            state.sendPointOnWire(props.wireKey, e);
-          }
+
+          const point = state.getWorld(e);
+          state.events.next({ key: 'pointerup', point: { x: point.x, y: point.y } });
+
           state.panning = false;
           state.origin = state.start.clientX = state.start.clientY = undefined;
           // state.clearTransition();
@@ -188,15 +188,6 @@ export default function CssPanZoom(props) {
           state.parent.addEventListener('pointercancel', e => state.evt.pointerup(e));
         }
       },
-      sendPointOnWire(wireKey, e) {
-        const wire = ensureWire(wireKey);
-        const point = state.getWorld(e);
-        // TODO keep for moment, but will move to `state.events`
-        wire.next({ key: 'pointerup', point: { x: point.x, y: point.y }});
-      },
-      /**
-       * IN PROGRESS
-       */
       panZoomTo(scale, worldPoint, durationMs) {
         scale = scale || state.scale;
         // TODO clear previous
@@ -372,7 +363,6 @@ const backgroundCss = (props) => css`
  * @typedef Props @type {object}
  * @property {string} [className]
  * @property {boolean} [dark]
- * @property {string} [wireKey] Global identifier e.g. so shells can receive clicks.
  * @property {number} [initZoom] e.g. `1`
  * @property {Geom.VectJson} [initCenter]
  * @property {(api: PanZoom.CssApi) => void} [onLoad]

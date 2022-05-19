@@ -1,15 +1,19 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
-import { filter, first } from "rxjs/operators";
+import { firstValueFrom } from "rxjs";
+import { filter, first, map, take } from "rxjs/operators";
 import { keys } from "../service/generic";
 import { error } from "../service/log";
 import { ensureWire } from "../service/wire";
+import { removeCached, setCached } from "../service/query-client";
+import { otag } from "../service/rxjs";
 import { createNpc } from "../service/npc";
 import { Poly, Rect, Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
+
 
 
 /** @param {NPC.NPCsProps} props */
@@ -25,10 +29,8 @@ export default function NPCs(props) {
     const output = {
       npc: {},
       debugPath: {},
-      // TODO provide rxjs operators too
-      util: {
-        Vect: Vect,
-      },
+      class: { Vect },
+      rxjs: { filter, first, map, take, otag },
 
       async awaitPanzoomIdle() {
         if (!props.panZoomApi.isIdle()) {
@@ -126,10 +128,6 @@ export default function NPCs(props) {
         const localPoint = inverseMatrix.transformPoint(Vect.from(p));
         return navPoly.some(poly => poly.contains(localPoint));
       },
-      /**
-       * @param {NPC.NPC} npc 
-       * @param {Geom.VectJson[]} path 
-       */
       moveNpcAlongPath(npc, path) {
         npc.origPath = path.map(Vect.from);
         npc.animPath = npc.origPath.slice();
@@ -265,8 +263,6 @@ const rootCss = css`
 
 // TODO modularise
 import npcJson from '../../public/npc/first-npc.json'
-import { firstValueFrom } from "rxjs";
-import { removeCached, setCached } from "projects/service/query-client";
 const { animLookup: anim, zoom } = npcJson;
 /** Scale the sprites */
 const npcScale = 0.17;

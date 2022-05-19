@@ -46,8 +46,6 @@ declare namespace PanZoom {
     isIdle(): boolean;
     pan(toX: number, toY: number): void;
     rootRef(el: null | HTMLDivElement): void;
-    /** Send world position of mouse/touch event */
-    sendPointOnWire(wireKey: string, e: { clientX: number; clientY: number; }): void;
     panZoomTo(scale?: number, worldPoint?: Geom.VectJson, durationMs?: number): void;
     updateView(): void;
     zoomToClient(toScale: number, e: { clientX: number; clientY: number; }): void;
@@ -56,6 +54,7 @@ declare namespace PanZoom {
 
   type CssInternalEvent = (
     | CssInternalTransitionEvent
+    | { key: 'pointerup', point: Geom.VectJson }
     | { key: "ui-idle" }
   )
 
