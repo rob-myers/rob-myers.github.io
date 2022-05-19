@@ -45,7 +45,6 @@ export default function NavDemo1(props) {
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
-      npcsApi: /** @type {NPC.NPCsApi} */ ({}),
       panZoomApi: /** @type {PanZoom.CssApi} */ ({}),
       wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
@@ -154,8 +153,8 @@ export default function NavDemo1(props) {
         disabled={props.disabled}
         doorsApi={state.doorsApi}
         gmGraph={gmGraph}
+        npcsKey={npcsKey}
         panZoomApi={state.panZoomApi}
-        wireKey={wireKey}
       />
 
       {gms.map((gm, gmIndex) =>
@@ -189,7 +188,7 @@ export default function NavDemo1(props) {
   ) : null;
 }
 
-const wireKey = 'wire-demo-1';
+const npcsKey = 'npcs-demo-1';
 const debugRadius = 5;
 const debugDoorOffset = 18;
 

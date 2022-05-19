@@ -5,7 +5,6 @@ import { firstValueFrom } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { keys } from "../service/generic";
 import { error } from "../service/log";
-import { ensureWire } from "../service/wire";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { createNpc } from "../service/npc";
@@ -206,10 +205,7 @@ export default function NPCs(props) {
   }, { deps: [nav, props.doorsApi] });
   
   React.useEffect(() => {
-    const wire = ensureWire(props.wireKey);
-    
-    // IN PROGRESS
-    setCached(`npcs@${props.wireKey}`, state);
+    setCached(props.npcsKey, state);
 
     // On HMR, refresh each npc via remount
     Object.values(state.npc).forEach(npc => {
@@ -218,7 +214,7 @@ export default function NPCs(props) {
     });
 
     return () => {
-      removeCached(`npcs@${props.wireKey}`);
+      removeCached(props.npcsKey);
     };
   }, [props.panZoomApi]);
 

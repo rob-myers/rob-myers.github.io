@@ -6,7 +6,6 @@ import classNames from "classnames";
 import { css } from "goober";
 import { Subject } from 'rxjs';
 import { Vect } from "../geom";
-import { ensureWire } from '../service/wire';
 import useStateRef from "../hooks/use-state-ref";
 
 /** @param {React.PropsWithChildren<Props>} props */

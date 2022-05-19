@@ -14,7 +14,6 @@ import { TtyShell } from './tty.shell';
 import { scriptLookup } from './sh.lib';
 // Connections to "outside" i.e. react-query, rxjs
 import { getCached, queryCache } from 'projects/service/query-client';
-import { ensureWire } from 'projects/service/wire';
 
 const commandKeys = {
   /** Change current key prefix */
@@ -379,10 +378,6 @@ class CmdService {
     parent: this,
 
     getCached,
-
-    getWire() {
-      return getWire(this.meta);
-    },
   
     getKillError() {
       return killError(this.meta);
@@ -395,45 +390,11 @@ class CmdService {
     isTtyAt(fd = 0) {
       return this.meta.fd[fd]?.startsWith('/dev/tty-');
     },
-
-    // TODO 🚧 remove because related to NPCs
-    async *mapWire<T>(
-      next: (e: NPC.WireMessage) => undefined | T,
-      stop: (e: NPC.WireMessage, count: number) => boolean = () => false,
-    ) {
-      const process = getProcess(this.meta);
-      let [resolve, reject] = [(v: T) => {}, (_err: any) => {}];
-      let [count, shouldStop] = [0, false];
-
-      const sub = getWire(this.meta).subscribe({
-        next: (e) => {
-          if (process.status === ProcessStatus.Running) {
-            try {
-              const mapped = next(e);
-              if (mapped !== undefined) {
-                resolve(mapped);
-                shouldStop = stop(e, ++count);
-              }
-            } catch (e) {
-              reject(e);
-            }
-          }
-        },
-      });
-      process.cleanups.push(
-        () => sub.unsubscribe(),
-        () => reject(killError(this.meta))
-      );
-  
-      while (!shouldStop) {
-        yield await new Promise((res, rej) => [resolve, reject] = [res, rej]);
-      }
-      sub.unsubscribe();
-    },
   
     /** js parse with string fallback */
     parseJsArg,
   
+    // TODO use `otag` instead
     /** Output 1, 2, ... at fixed intervals */
     async *poll(args: string[]) {
       const seconds = args.length ? parseFloat(parseJsonArg(args[0])) || 1 : 1;
@@ -556,16 +517,6 @@ class CmdService {
 function getProcess(meta: Sh.BaseMeta) {
   return useSession.api.getProcess(meta);
 }
-
-function getWire(meta: Sh.BaseMeta) {
-  const { var: home } = useSession.api.getSession(meta.sessionKey);
-  const wireKey = home.WIRE_KEY;
-  if (!(typeof wireKey === 'string' && wireKey)) {
-    throwError(`home/WIRE_KEY must be a non-empty string`);
-  }
-  return ensureWire(wireKey);
-}
-
 
 /** js parse with string fallback */
 function parseJsArg(input: string) {

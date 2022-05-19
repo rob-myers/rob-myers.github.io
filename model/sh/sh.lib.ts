@@ -148,7 +148,7 @@ log: `{
 export const gameFunctions = [
 {
 /**
- * Output world position clicks sent via WIRE_KEY.
+ * Output world position clicks sent via panZoomApi.events.
  * e.g. `click`, `click 1`
  */
 click: `{
@@ -158,7 +158,7 @@ click: `{
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
 
-    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const npcs = api.getCached(home.NPCS_KEY)
     const { filter, map, take, otag } = npcs.rxjs
     const process = api.getProcess()
     
@@ -182,20 +182,20 @@ spawn: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
     const position = api.safeJsonParse(args[1])
-    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const npcs = api.getCached(home.NPCS_KEY)
     npcs.spawn({ npcKey, at: position })
   }' "$@"
 }`,
 
 /**
- * Request navpath to position for character via WIRE_KEY.
+ * Request navpath to position for character,
  * e.g. `nav andros "$( click 1 )"'
  */
 nav: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
     const position = api.safeJsonParse(args[1])
-    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const npcs = api.getCached(home.NPCS_KEY)
     const result = npcs.getNpcGlobalNav({ npcKey, dst: position })
     if (home.DEBUG === "true") {
       const path = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
@@ -209,14 +209,14 @@ nav: `{
  * TODO
  * - can read arbitrarily many
  * - can pause/resume (may need onSuspends)
- * Move an npc along a path via WIRE_KEY.
+ * Move an npc along a path,
  * e.g. `walk andros "[$( click 1 ), $( click 1 )]"'
  */
 walk: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
     const path = api.safeJsonParse(args[1]) || !api.isTtyAt(0) && await api.read()
-    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const npcs = api.getCached(home.NPCS_KEY)
     await npcs.walkNpc({ npcKey, path })
   }' "$@"
 }`,
@@ -240,7 +240,7 @@ goLoop: `{
 view: `{
   run '({ api, args, home }) {
     const opts = Function(\`return \${args[0]} \`)()
-    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const npcs = api.getCached(home.NPCS_KEY)
     // Returns "cancelled" or "completed"
     npcs.panZoomTo(opts)
   }' "$@"
@@ -249,7 +249,7 @@ view: `{
 /** Get NPC */
 npc: `{
   run '({ api, args, home }) {
-    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const npcs = api.getCached(home.NPCS_KEY)
     yield npcs.getNpc({ npcKey: args[0] })
   }' "$@"
 }`,
@@ -257,10 +257,10 @@ npc: `{
 /** Ping every second until found */
 ready: `{
   run '({ api, home }) {
-    const cacheKey = \`npcs@\${home.WIRE_KEY}\`
-    yield \`polling for cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
+    const cacheKey = home.NPCS_KEY
+    yield \`ℹ️  polling for cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
     while (!api.getCached(cacheKey)) yield* await api.sleep(1)
-    yield \`found cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
+    yield \`✅  found cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
   }' "$@"
 }`,
 
@@ -271,7 +271,7 @@ ready: `{
 track: `{
   run '/** track npc */ ({ api, args, home }) {
     const npcKey = args[0]
-    const npcs = api.getCached(\`npcs@\${home.WIRE_KEY}\`)
+    const npcs = api.getCached(home.NPCS_KEY)
     const { Vect } = npcs.class;
 
     while (true) {

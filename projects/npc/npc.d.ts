@@ -10,7 +10,7 @@ declare namespace NPC {
     gmGraph: Graph.GmGraph;
     panZoomApi: PanZoom.CssApi;
     doorsApi: NPC.DoorsApi;
-    wireKey: string;
+    npcsKey: string;
   }
 
   type WireMessage = (
@@ -82,7 +82,6 @@ declare namespace NPC {
     position: Geom.VectJson;
   }
 
-  // TODO 🚧 replace with generic wire
   export type NavWire = import('rxjs').Subject<NPC.NavMessage>;
 
   export type NavMessage = (
@@ -179,32 +178,6 @@ declare namespace NPC {
     toggleDebugPath(e: { pathKey: string; path?: Geom.VectJson[] }): void;
     async panZoomTo(e: { zoom?: number; to?: Geom.VectJson; ms?: number }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string; path: Geom.VectJson[] }): Promise<void>;
-  }
-
-  // TODO 🚧 remove all below
-
-  export interface NPCsPropsOld {
-    wireKey: string;
-    gmGraph: Graph.GmGraph;
-    disabled?: boolean;
-    onLoad: ((api: NPC.NPCsApi) => void);
-  }
-
-  export interface NPCsApi {
-    apis: NPCApi[];
-    root: HTMLDivElement;
-    npcRef: React.RefCallback<HTMLDivElement>;
-    rootRef: React.RefCallback<HTMLDivElement>;
-    // spawn(defs: NPCDef[]): void;
-  }
-
-  export interface NPCApi {
-    key: string;
-    def: NPCDef;
-    animState: 'idle' | 'walk';
-    el: {
-      root: HTMLDivElement;
-    };
   }
 
 }
