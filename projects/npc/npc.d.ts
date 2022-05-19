@@ -167,17 +167,17 @@ declare namespace NPC {
     async awaitPanzoomIdle(): Promise<void>;
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath | null;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): Geom.Vect[];
-    getNpcGlobalNav(e: { npcKey: string; dst: Geom.VectJson }): GlobalNavPath | null;
+    getNpcGlobalNav(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }): GlobalNavPath | null;
     getNpc(e: { npcKey: string }): NPC.NPC;
     getPanZoomEvents(): Subject<PanZoom.CssInternalEvent>;
     getPanZoomFocus(): Geom.VectJson;
     isPointLegal(p: Geom.VectJson): boolean;
     moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Animation;
     npcRef(el: HTMLDivElement | null): void;
-    spawn(e: { npcKey: string; at: Geom.VectJson }): void;
-    toggleDebugPath(e: { pathKey: string; path?: Geom.VectJson[] }): void;
+    spawn(e: { npcKey: string; point: Geom.VectJson }): void;
+    toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
     async panZoomTo(e: { zoom?: number; to?: Geom.VectJson; ms?: number }): Promise<'cancelled' | 'completed'>;
-    async walkNpc(e: { npcKey: string; path: Geom.VectJson[] }): Promise<void>;
+    async walkNpc(e: { npcKey: string; points: Geom.VectJson[] }): Promise<void>;
   }
 
 }

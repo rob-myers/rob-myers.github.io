@@ -96,16 +96,21 @@ export default function NPCs(props) {
       getNpcGlobalNav(e) {
         if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
           throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
-        } else if (!(e.dst && typeof e.dst.x === 'number' && typeof e.dst.y === 'number')) {
-          throw Error(`invalid point: ${JSON.stringify(e.dst)}`);
-        } else if (!state.isPointLegal(e.dst)) {
-          throw Error(`cannot navigate outside navPoly: ${JSON.stringify(e.dst)}`);
+        } else if (!(e.point && typeof e.point.x === 'number' && typeof e.point.y === 'number')) {
+          throw Error(`invalid point: ${JSON.stringify(e.point)}`);
+        } else if (!state.isPointLegal(e.point)) {
+          throw Error(`cannot navigate outside navPoly: ${JSON.stringify(e.point)}`);
         }
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc "${e.npcKey}" does not exist`);
         }
-        return state.getGlobalNavPath(npc.getPosition(), e.dst);
+        const result = state.getGlobalNavPath(npc.getPosition(), e.point);
+        if (e.debug) {
+          const points = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
+          state.toggleDebugPath({ pathKey: e.npcKey, points })
+        }
+        return result;
       },
       getNpc(e) {
         const npc = state.npc[e.npcKey];
@@ -148,19 +153,19 @@ export default function NPCs(props) {
       spawn(e) {
         if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
           throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
-        } else if (!(e.at && typeof e.at.x === 'number' && typeof e.at.y === 'number')) {
-          throw Error(`invalid point: ${JSON.stringify(e.at)}`);
-        } else if (!state.isPointLegal(e.at)) {
-          throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.at)}`);
+        } else if (!(e.point && typeof e.point.x === 'number' && typeof e.point.y === 'number')) {
+          throw Error(`invalid point: ${JSON.stringify(e.point)}`);
+        } else if (!state.isPointLegal(e.point)) {
+          throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.point)}`);
         }
-        state.npc[e.npcKey] = createNpc(e.npcKey, e.at, {
+        state.npc[e.npcKey] = createNpc(e.npcKey, e.point, {
           panZoomApi: props.panZoomApi, update, disabled: props.disabled
         });
         update();
       },
       toggleDebugPath(e) {
-        if (e.path) {
-          const path = e.path.map(Vect.from);
+        if (e.points) {
+          const path = e.points.map(Vect.from);
           state.debugPath[e.pathKey] = { path, aabb: Rect.from(...path).outset(10) };
         } else {
           delete state.debugPath[e.pathKey];
@@ -188,10 +193,10 @@ export default function NPCs(props) {
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc "${e.npcKey}" does not exist`);
-        } else if (!(Array.isArray(e.path) && e.path.every(p => p && typeof p.x === "number" && typeof p.y === "number"))) {
-          throw Error(`invalid path: ${JSON.stringify(e.path)}`);
+        } else if (!(Array.isArray(e.points) && e.points.every(p => p && typeof p.x === "number" && typeof p.y === "number"))) {
+          throw Error(`invalid path: ${JSON.stringify(e.points)}`);
         }
-        const anim = state.moveNpcAlongPath(npc, e.path);
+        const anim = state.moveNpcAlongPath(npc, e.points);
         // Wait until walk finished or cancelled
         // TODO need to handle walk pause/resume/cancel elsewhere
         await new Promise((resolve, reject) => {
@@ -210,7 +215,7 @@ export default function NPCs(props) {
     // On HMR, refresh each npc via remount
     Object.values(state.npc).forEach(npc => {
       delete state.npc[npc.key];
-      state.spawn({ npcKey: npc.key, at: npc.getPosition()  });
+      state.spawn({ npcKey: npc.key, point: npc.getPosition() });
     });
 
     return () => {

@@ -28,7 +28,7 @@ __Aim towards website release__.
 - ✅ `click` should use rxjs functions provided by NPCs api
 - ✅ replace WIRE_KEY by NPCS_KEY
   - ✅ remove `api.mapWire`
-- `spawn` should be able to read arbitrarily many
+- ✅ `spawn` should be able to read arbitrarily many
 - remove support for `WhileClause`
 - CssPanZoom supports pointerup from descendants, distinguished via tags from data-tags
 

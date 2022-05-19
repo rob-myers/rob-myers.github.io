@@ -174,50 +174,64 @@ click: `{
 }`,
 
 /**
- * TODO can spawn many by reading
- * Spawn a character at a position.
- * e.g. `spawn andros "$( click 1 )"`
+ * Spawn character(s) at a position(s),
+ * - e.g. `spawn andros "$( click 1 )"`
+ * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | spawn`
  */
 spawn: `{
-  run '({ api, args, home }) {
-    const npcKey = args[0]
-    const position = api.safeJsonParse(args[1])
+  run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
-    npcs.spawn({ npcKey, at: position })
+    if (api.isTtyAt(0)) {
+      const npcKey = args[0]
+      const point = api.safeJsonParse(args[1])
+      npcs.spawn({ npcKey, point })
+    } else {
+      while ((datum = await api.read()) !== null)
+        npcs.spawn(datum)
+    }
   }' "$@"
 }`,
 
 /**
- * Request navpath to position for character,
- * e.g. `nav andros "$( click 1 )"'
+ * Request navpath(s) to position(s) for character(s),
+ * - e.g. `nav andros "$( click 1 )"'
+ * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | nav`
  */
 nav: `{
-  run '({ api, args, home }) {
-    const npcKey = args[0]
-    const position = api.safeJsonParse(args[1])
+  run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
-    const result = npcs.getNpcGlobalNav({ npcKey, dst: position })
-    if (home.DEBUG === "true") {
-      const path = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
-      npcs.toggleDebugPath({ pathKey: npcKey, path })
+    if (api.isTtyAt(0)) {
+      const npcKey = args[0]
+      const point = api.safeJsonParse(args[1])
+      yield npcs.getNpcGlobalNav({ npcKey, point, debug: home.DEBUG === "true" })
+    } else {
+      while ((datum = await api.read()) !== null)
+        yield npcs.getNpcGlobalNav({ debug: home.DEBUG === "true", ...datum })
     }
-    yield result
   }' "$@"
 }`,
 
 /**
- * TODO
- * - can read arbitrarily many
- * - can pause/resume (may need onSuspends)
- * Move an npc along a path,
- * e.g. `walk andros "[$( click 1 ), $( click 1 )]"'
+ * Move an npc along path(s),
+ * e.g. - `walk andros "[$( click 1 ), $( click 1 )]"'
+ * e.g. - `expr "{ npcKey: 'andros', points: [$( click 1 ), $( click 1 )] }" | walk andros`
+ * 
+ * Technically distinct npcs can be referenced, but since each
+ * path is walked one after another, this is less useful.
+ * 
+ * TODO handle npc pause/resume
  */
 walk: `{
-  run '({ api, args, home }) {
-    const npcKey = args[0]
-    const path = api.safeJsonParse(args[1]) || !api.isTtyAt(0) && await api.read()
+  run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
-    await npcs.walkNpc({ npcKey, path })
+    if (api.isTtyAt(0)) {
+      const npcKey = args[0]
+      const points = api.safeJsonParse(args[1]) || !api.isTtyAt(0) && await api.read()
+      await npcs.walkNpc({ npcKey, points })
+    } else {
+      while ((datum = await api.read()) !== null)
+        await npcs.walkNpc(datum)
+    }
   }' "$@"
 }`,
 
