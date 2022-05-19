@@ -120,10 +120,11 @@ myPath | map 'x => x.reverse()'
 walk andros ${myPath}
 # finished
 
-view '{"x":600,"y":600}' 0.5
-view '{"x":600,"y":600}'
-view 2
+view '{ zoom: 1, point: {x: 600, y: 600} }'
+view '{ zoom: 2 }'
 
 npc andros
 npc andros | map 'x => x.getPosition()'
+
+click | map 'x => ({ npcKey: "andros", point: x })' | nav
 ```

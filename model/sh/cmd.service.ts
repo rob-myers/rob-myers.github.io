@@ -427,6 +427,10 @@ class CmdService {
     safeJsonParse,
   
     throwError,
+
+    warn(message: string) {
+      useSession.api.warn(this.meta.sessionKey, message);
+    },
   };
 
   private provideProcessCtxt(meta: Sh.BaseMeta, posPositionals: string[] = []) {

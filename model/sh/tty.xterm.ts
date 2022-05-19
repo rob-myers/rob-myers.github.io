@@ -2,7 +2,7 @@ import { Terminal } from 'xterm';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import { safeStringify, testNever } from 'model/generic.model';
 import { scrollback, ShellIo, DataChunk, isDataChunk } from './io/io.model';
-import { ansiWhite, ansiBlue, ansiReset, ansiYellow, ansiWarn } from './sh.util';
+import { ansiWhite, ansiBlue, ansiReset, ansiYellow, ansiWarn, ansiRed } from './sh.util';
 
 /**
  * Wraps xtermjs `Terminal`.
@@ -495,7 +495,7 @@ export class TtyXterm {
       case 'warn': {
         this.queueCommands([{
           key: 'line',
-          line: `${ansiYellow}${msg.msg}${ansiReset}`,
+          line: `${ansiRed}${msg.msg}${ansiReset}`,
         }]);
         break;
       }

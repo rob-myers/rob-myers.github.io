@@ -196,6 +196,7 @@ spawn: `{
  * Request navpath(s) to position(s) for character(s),
  * - e.g. `nav andros "$( click 1 )"'
  * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | nav`
+ * - e.g. `click | map 'x => ({ npcKey: "andros", point: x })' | nav`
  */
 nav: `{
   run '({ api, args, home, datum }) {
@@ -205,8 +206,13 @@ nav: `{
       const point = api.safeJsonParse(args[1])
       yield npcs.getNpcGlobalNav({ npcKey, point, debug: home.DEBUG === "true" })
     } else {
-      while ((datum = await api.read()) !== null)
-        yield npcs.getNpcGlobalNav({ debug: home.DEBUG === "true", ...datum })
+      while ((datum = await api.read()) !== null) {
+        try {
+          yield npcs.getNpcGlobalNav({ debug: home.DEBUG === "true", ...datum })
+        } catch (e) {
+          api.warn(\`\${e}\`)
+        }
+      }
     }
   }' "$@"
 }`,
