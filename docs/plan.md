@@ -26,11 +26,15 @@ __Aim towards website release__.
 
 - ✅ improve `track`
 - ✅ fix multiple animations with CssPanZoom and `track`
-- light changes when Andros moves thru doorway
+- 🚧 light changes when Andros moves thru doorway
+  - refine output of `nav` i.e. provide paths between rooms and door ids
+  - `walk` handles `nav` output e.g. console.log on exit doorway
+  - change lighting when exit doorway
 - `walk` fixes npc, receives paths, and cancels on receive early
 - `walk` pauses/resumes npc on suspend/resume process
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes
+- mobile: improve `track` jerkiness
 
 - BUG `goLoop` "idle" while moving along path
   - hard to repro, but definitely there

@@ -250,7 +250,6 @@ go: `{
     })' |
     walk $1
 }`,
-// TODO remove while and WhileClause
 // TODO handle click before finish
 goLoop: `{
   click |
@@ -292,8 +291,10 @@ ready: `{
 }`,
 
 /**
- * TODO in progress
  * If UI idle and camera not close, pan to npc
+ * TODO
+ * - less jerky on mobile
+ * - avoid polling
  */
 track: `{
   run '/** track npc */ ({ api, args, home }) {
@@ -330,7 +331,7 @@ track: `{
           await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms })
         } else if (distance > 20) {
           const ms = (distance / 30) * 1000
-          await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms, easing: "linear" })
+          await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms })
         } else {
           yield* await api.sleep(1)
         }
