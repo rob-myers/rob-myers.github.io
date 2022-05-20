@@ -93,7 +93,7 @@ export class floorGraph extends BaseGraph {
     if (nodePaths[nodePaths.length - 1]?.length === 0)
       nodePaths.pop(); // Fix trailing empty array when end at doorway
     
-    // DEBUG
+    // DEBUG 🚧
     console.log({ nodePaths, roomEdges });
 
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
@@ -120,17 +120,10 @@ export class floorGraph extends BaseGraph {
       return path.map(Vect.from);
     });
 
-    // Omit 1st point and discard adjacent repetitions
-    // TODO why repetitions?
-    const normalisedPaths = pulledPaths.map((pulledPath, i) => {
-      return (
-        i ? pulledPath : pulledPath.slice(1)
-      ).reduce((agg, p) =>
-        agg.length && p.equals(agg[agg.length - 1]) ? agg : agg.concat(p)
-      , /** @type {Geom.Vect[]} */ ([]));
-    });
-
-    return { normalisedPaths, nodePaths, nodePathMetas: roomEdges }
+    return {
+      paths: pulledPaths,
+      edges: roomEdges,
+    };
   }
 
   /**

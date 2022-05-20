@@ -32,7 +32,7 @@ export default function SvgStringPull(props) {
     updatePath: () => {
       if (pf) {
         state.path = [state.source.clone()].concat(
-          pf.graph.findPath(state.source, state.target)?.normalisedPaths.flatMap(x => x) || []
+          pf.graph.findPath(state.source, state.target)?.paths.flatMap(x => x) || []
         );
         state.pathEl = state.pathEl || state.rootEl.querySelector('polyline.navpath');
         state.pathEl?.setAttribute('points', `${state.path}`);

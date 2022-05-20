@@ -187,7 +187,7 @@ export function getInternalNpcApi(api) {
       const npcPos = api.getPosition();
       /** @type {NPC.PfData} */
       const pf = (getCached(zoneKeyToQueryKey(def.zoneKey)));
-      const computedPath = pf?.graph.findPath(npcPos, dst)?.normalisedPaths.flatMap(x => x) || [];
+      const computedPath = pf?.graph.findPath(npcPos, dst)?.paths.flatMap(x => x) || [];
       computedPath.forEach(p => p.precision(2));
       api.geom.navPath = ([Vect.from(npcPos)].concat(computedPath));
       api.geom.animPath = api.geom.navPath.slice(); // Same initially

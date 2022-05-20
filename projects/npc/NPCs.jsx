@@ -44,8 +44,7 @@ export default function NPCs(props) {
         const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
         const dstGmId = gms.findIndex(x => x.gridRect.contains(dst));
         if (srcGmId === -1 || dstGmId === -1) {
-          error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`);
-          return null;
+          throw Error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`)
         } else if (srcGmId === dstGmId) {
           return {
             paths: [state.getLocalNavPath(srcGmId, src, dst)],
@@ -55,8 +54,7 @@ export default function NPCs(props) {
           // Compute global strategy
           const gmEdges = props.gmGraph.findPath(src, dst);
           if (!gmEdges) {
-            error(`getGlobalNavPath: gmGraph.findPath not found: ${JSON.stringify(src)} -> ${JSON.stringify(dst)}`);
-            return null;
+            throw Error(`getGlobalNavPath: gmGraph.findPath not found: ${JSON.stringify(src)} -> ${JSON.stringify(dst)}`);
           }
           // console.log({gmEdges});
 
@@ -85,9 +83,12 @@ export default function NPCs(props) {
         const result = pf.graph.findPath(localSrc, localDst);
 
         if (result) {
+          /**
+           * TODO provide { paths, edges } 
+           */
           // Just join them together for the moment...
-          return [Vect.from(localSrc)]
-            .concat(result.normalisedPaths.flatMap(x => x))
+          return /** @type {Geom.Vect[]} */ ([])
+            .concat(result.paths.flatMap(x => x))
             .map(p => gm.matrix.transformPoint(p).precision(2));
         } else {
           return [];
@@ -99,7 +100,7 @@ export default function NPCs(props) {
         } else if (!(e.point && typeof e.point.x === 'number' && typeof e.point.y === 'number')) {
           throw Error(`invalid point: ${JSON.stringify(e.point)}`);
         } else if (!state.isPointLegal(e.point)) {
-          throw Error(`cannot navigate outside navPoly: ${JSON.stringify(e.point)}`);
+          throw Error(`outside navPoly: ${JSON.stringify(e.point)}`);
         }
         const npc = state.npc[e.npcKey];
         if (!npc) {
@@ -169,18 +170,14 @@ export default function NPCs(props) {
         }
         update();
       },
-      /**
-       * TODO
-       * - remove 2000 hard-coding
-       */
       async panZoomTo(e) {
-        if (!(e && (Number.isFinite(e.zoom) || (e.point) || Number.isFinite(e.ms) ))) {
-          throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms?: number; easing?: string }`);
+        if (!(e && ((Number.isFinite(e.zoom) || e.point) && Number.isFinite(e.ms) ))) {
+          throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
         }
 
         try {
           // console.log('start panzoom', e.zoom, e.point, e.ms??2000, e.easing);
-          await props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms??2000, e.easing);
+          await props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms, e.easing);
           return 'completed';
         } catch (e) {
           return 'cancelled';
@@ -341,9 +338,9 @@ function Debug(props) {
         style={{ left: aabb.x, top: aabb.y }}
       >
         <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
-          <polyline fill="none" stroke="#88c" strokeDasharray="2 2" strokeWidth={1} points={`${path}`} />
+          <polyline fill="none" stroke="#88f" strokeDasharray="2 2" strokeWidth={1} points={`${path}`} />
           {path.map(p => (
-            <circle fill="none" stroke="#fff" r={2} cx={p.x} cy={p.y} />
+            <circle fill="none" stroke="#ff444488" r={2} cx={p.x} cy={p.y} />
           ))}
         </g>
       </svg>
