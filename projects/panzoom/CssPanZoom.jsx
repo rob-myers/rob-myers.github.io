@@ -121,11 +121,9 @@ export default function CssPanZoom(props) {
       },
 
       cancelAnimations() {
-        if (state.anims[0] || state.anims[1]) {
-          // Retrieve style before cancel,
-          // or could (a) commitStyles, (b) infer state.{x/y/scale})
-          Object.assign(state, state.getCurrentTransform());
-          state.updateView();
+        // We are animating iff state.anims[0] non-null
+        if (state.anims[0]) {
+          state.syncStyles(); // Remember current translate/scale
           state.anims.forEach(anim => anim?.cancel());
         }
       },
@@ -176,23 +174,10 @@ export default function CssPanZoom(props) {
         if (state.x !== toX || state.y !== toY) {
           state.x = toX;
           state.y = toY;
-          state.updateView();
+          state.setStyles();
         }
       },
-      rootRef(el) {
-        if (el) {
-          state.parent = /** @type {*} */ (el.parentElement);
-          state.translateRoot = el;
-          state.scaleRoot = /** @type {*} */ (el.children[0]);
-          state.parent.addEventListener('wheel', e => state.evt.wheel(e));
-          state.parent.addEventListener('pointerdown', e => state.evt.pointerdown(e));
-          state.parent.addEventListener('pointermove', e => state.evt.pointermove(e));
-          state.parent.addEventListener('pointerup', e => state.evt.pointerup(e));
-          state.parent.addEventListener('pointerleave', e => state.evt.pointerup(e));
-          state.parent.addEventListener('pointercancel', e => state.evt.pointerup(e));
-        }
-      },
-      panZoomTo(scale, worldPoint, durationMs, easing) {
+      async panZoomTo(scale, worldPoint, durationMs, easing) {
         scale = scale || state.scale;
         easing = easing || 'ease';
 
@@ -237,18 +222,41 @@ export default function CssPanZoom(props) {
           return;
         }
 
-        state.anims.forEach(anim => anim && anim.addEventListener('finish', () => {
-          Object.assign(state, state.getCurrentTransform());
-          state.updateView();
-          anim.cancel(); // Yield control to styles (unless they're !important)
-          state.events.next({ key: 'completed-transition' });
-        }));
-        state.anims.forEach(anim => anim && anim.addEventListener('cancel', () => {
-          state.events.next({ key: 'cancelled-transition' });
-        }));
+        await new Promise((resolve, reject) => {
+          const translateAnim = /** @type {Animation} */ (state.anims[0]);
+          let finished = false;
+          translateAnim.addEventListener('finish', () => {
+            finished = true;
+            // Remember translate/scale before cancel
+            state.syncStyles();
+            // Cancelling yields control to styles
+            state.anims.forEach(anim => anim?.cancel());
+          });
+          translateAnim.addEventListener('cancel', () => {
+            state.anims = [null, null];
+            finished ? resolve('completed') : reject('cancelled');
+          });
+        });
 
       },
-      updateView() {
+      rootRef(el) {
+        if (el) {
+          state.parent = /** @type {*} */ (el.parentElement);
+          state.translateRoot = el;
+          state.scaleRoot = /** @type {*} */ (el.children[0]);
+          state.parent.addEventListener('wheel', e => state.evt.wheel(e));
+          state.parent.addEventListener('pointerdown', e => state.evt.pointerdown(e));
+          state.parent.addEventListener('pointermove', e => state.evt.pointermove(e));
+          state.parent.addEventListener('pointerup', e => state.evt.pointerup(e));
+          state.parent.addEventListener('pointerleave', e => state.evt.pointerup(e));
+          state.parent.addEventListener('pointercancel', e => state.evt.pointerup(e));
+        }
+      },
+      syncStyles() {
+        Object.assign(state, state.getCurrentTransform());
+        state.setStyles();
+      },
+      setStyles() {
         state.translateRoot.style.transform = `translate(${state.x}px, ${state.y}px)`;
         state.scaleRoot.style.transform = `scale(${state.scale})`;
       },
@@ -266,7 +274,7 @@ export default function CssPanZoom(props) {
         state.x = screenX - (worldX * toScale);
         state.y = screenY - (worldY * toScale);
         state.scale = toScale;
-        state.updateView();
+        state.setStyles();
       },
       zoomWithWheel(event) {
         // Avoid conflict with regular page scroll
@@ -275,8 +283,11 @@ export default function CssPanZoom(props) {
         const delta = event.deltaY === 0 && event.deltaX ? event.deltaX : event.deltaY;
         const wheel = delta < 0 ? 1 : -1;
         // Wheel has extra 0.5 scale factor (unlike pinch)
-        const toScale = Math.min(Math.max(state.scale * Math.exp((wheel * state.opts.step * 0.5) / 3), state.opts.minScale), state.opts.maxScale);
-        return state.zoomToClient(toScale, event);
+        const toScale = Math.min(
+          Math.max(state.scale * Math.exp((wheel * state.opts.step * 0.5) / 3), state.opts.minScale),
+          state.opts.maxScale,
+        );
+        state.zoomToClient(toScale, event);
       }
     };
     return output;
@@ -285,8 +296,8 @@ export default function CssPanZoom(props) {
   React.useEffect(() => {
     props.onLoad?.(state);
     // Apply initial zoom and centering
-    state.updateView();
-    state.panZoomTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
+    state.setStyles();
+    // state.panZoomTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
   }, []);
 
   return (

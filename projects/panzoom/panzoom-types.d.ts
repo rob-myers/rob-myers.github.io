@@ -45,9 +45,15 @@ declare namespace PanZoom {
     private idleTimeout(): void;
     isIdle(): boolean;
     pan(toX: number, toY: number): void;
+    async panZoomTo(scale?: number, worldPoint?: Geom.VectJson, durationMs?: number, easing?: string);
     rootRef(el: null | HTMLDivElement): void;
-    panZoomTo(scale?: number, worldPoint?: Geom.VectJson, durationMs?: number, easing?: string): void;
-    updateView(): void;
+    /** Use `(x, y, scale)` to set `style.transform`s */
+    setStyles(): void;
+    /**
+     * - Set `(x, y, scale)` using `getCurrentTransform()`
+     * - Then use `(x, y, scale)` to update `style.transform`s
+     */
+    syncStyles(): void;
     zoomToClient(toScale: number, e: { clientX: number; clientY: number; }): void;
     zoomWithWheel(event: WheelEvent): void;
   }

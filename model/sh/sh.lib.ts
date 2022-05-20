@@ -19,7 +19,7 @@ ready
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
 # camera follows andros
-# track andros &
+track andros &
 
 `,
 };
@@ -323,7 +323,7 @@ track: `{
           const ms = (distance / 60) * 1000
           await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms })
         } else if (distance > 20) {
-          const ms = (distance / 10) * 1000
+          const ms = (distance / 30) * 1000
           await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms, easing: "linear" })
         } else {
           yield* await api.sleep(1)

@@ -175,7 +175,6 @@ declare namespace NPC {
     isPointLegal(p: Geom.VectJson): boolean;
     moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Animation;
     npcRef(el: HTMLDivElement | null): void;
-    async panZoomPath(def: TypeUtil.AnimDef): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms?: number; easing?: string }): Promise<'cancelled' | 'completed'>;

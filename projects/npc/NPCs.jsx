@@ -150,9 +150,6 @@ export default function NPCs(props) {
           npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
         }
       },
-      async panZoomPath(def) {
-        await props.panZoomApi.applyAnim(def, 'translate');
-      },
       spawn(e) {
         if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
           throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
@@ -177,21 +174,21 @@ export default function NPCs(props) {
       },
       /**
        * TODO
+       * - add initial transition back
        * - remove 2000 hard-coding
-       * - { key: 'cancelled', type: 'translate' | 'scale' }
        */
       async panZoomTo(e) {
         if (!(e && (Number.isFinite(e.zoom) || (e.point) || Number.isFinite(e.ms) ))) {
           throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms?: number; easing?: string }`);
         }
-        props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms??2000, e.easing);
-        
-        const result = /** @type {PanZoom.CssInternalTransitionEvent} */ (
-          await firstValueFrom(props.panZoomApi.events.pipe(
-            filter(x => x.key === 'cancelled-transition' || x.key === 'completed-transition'),
-          ))
-        );
-        return result.key === 'cancelled-transition' ? 'cancelled' : 'completed';
+
+        try {
+          // console.log('start panzoom', e.zoom, e.point, e.ms??2000, e.easing);
+          await props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms??2000, e.easing);
+          return 'completed';
+        } catch (e) {
+          return 'cancelled';
+        }
       },
       async walkNpc(e) {
         const npc = state.npc[e.npcKey];
