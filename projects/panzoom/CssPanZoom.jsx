@@ -311,7 +311,7 @@ export default function CssPanZoom(props) {
       >
         <div className="panzoom-scale">
           <div className="origin" />
-          <div className="small-grid" />
+          {/* <div className="small-grid" /> */}
           {props.children}
           <div className="large-grid" />
         </div>
@@ -362,8 +362,8 @@ const rootCss = css`
       }
       .large-grid {
       background-image:
-        linear-gradient(to right, rgba(200, 200, 200, 0.35) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(200, 200, 200, 0.35) 1px, transparent 1px);
+        linear-gradient(to right, rgba(200, 200, 200, 0.15) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
       background-size: 60px 60px;
     }
     .origin {
