@@ -192,7 +192,7 @@ const rootCss = css`
 
       transition: width 300ms ease-in;
       &.open {
-        width: 10px !important;
+        width: 4px !important;
       }
     }
 
