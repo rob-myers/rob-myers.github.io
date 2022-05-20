@@ -297,7 +297,7 @@ export default function CssPanZoom(props) {
     props.onLoad?.(state);
     // Apply initial zoom and centering
     state.setStyles();
-    // state.panZoomTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
+    state.panZoomTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 2000);
   }, []);
 
   return (

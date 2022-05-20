@@ -163,7 +163,7 @@ click: `{
     const process = api.getProcess()
     
     yield* otag(
-      npcs.getPanZoomEvents().pipe(
+      npcs.getPanZoomApi().events.pipe(
         filter(x => x.key === "pointerup" && process.status === 1),
         map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)), tags: e.tags })),
         take(numClicks),
@@ -299,15 +299,21 @@ track: `{
   run '/** track npc */ ({ api, args, home }) {
     const npcKey = args[0]
     const npcs = api.getCached(home.NPCS_KEY)
-    const { Vect } = npcs.class;
+    const panZoomApi = npcs.getPanZoomApi()
 
     while (true) {
-      await npcs.awaitPanzoomIdle()
+      await npcs.awaitPanZoomIdle()
 
-      const worldFocus = npcs.getPanZoomFocus()
+      // TODO handle ongoing panZoom without polling
+      if (panZoomApi.anims[0]) {
+        yield* await api.sleep(1)
+        continue
+      }
+
+      const worldFocus = panZoomApi.getWorldAtCenter()
       const npc = npcs.npc[npcKey]
       const npcPosition = npc.getPosition()
-      const distance = Vect.from(npcPosition).distanceTo(worldFocus)
+      const distance = npcs.class.Vect.from(npcPosition).distanceTo(worldFocus)
 
       if (npc.spriteSheet === "walk") {
         const targets = npc.getTargets()

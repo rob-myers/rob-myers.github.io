@@ -31,7 +31,7 @@ export default function NPCs(props) {
       class: { Vect },
       rxjs: { filter, first, map, take, otag },
 
-      async awaitPanzoomIdle() {
+      async awaitPanZoomIdle() {
         if (!props.panZoomApi.isIdle()) {
           await firstValueFrom(props.panZoomApi.events.pipe(
             filter(x => x.key === 'ui-idle'),
@@ -119,11 +119,8 @@ export default function NPCs(props) {
         }
         return npc;
       },
-      getPanZoomEvents() {
-        return props.panZoomApi.events;
-      },
-      getPanZoomFocus() {
-        return props.panZoomApi.getWorldAtCenter();
+      getPanZoomApi() {
+        return props.panZoomApi;
       },
       isPointLegal(p) {
         const gmId = props.gmGraph.gms.findIndex(x => x.gridRect.contains(p));
@@ -174,7 +171,6 @@ export default function NPCs(props) {
       },
       /**
        * TODO
-       * - add initial transition back
        * - remove 2000 hard-coding
        */
       async panZoomTo(e) {

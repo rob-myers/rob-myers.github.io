@@ -25,7 +25,7 @@ __Aim towards website release__.
     - 5 watchers as Jhanic hindrances
 
 - ✅ improve `track`
-- fix multiple animation issue on CssPanZoom
+- ✅ fix multiple animations with CssPanZoom and `track`
 - light changes when Andros moves thru doorway
 - `walk` fixes npc, receives paths, and cancels on receive early
 - `walk` pauses/resumes npc on suspend/resume process
