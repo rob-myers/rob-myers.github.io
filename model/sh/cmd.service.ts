@@ -541,7 +541,7 @@ function parseJsonArg(input: string) {
 }
 
 function prettySafe(x: any) {
-  pretty(JSON.parse(safeStringify(x)));
+  return pretty(JSON.parse(safeStringify(x)));
 }
 
 function safeJsonParse(input: string) {
