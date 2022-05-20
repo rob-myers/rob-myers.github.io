@@ -146,7 +146,7 @@ export async function preProcessRead(
 
 export function getProcessStatusIcon(status: ProcessStatus) {
   switch(status) {
-    case ProcessStatus.Killed: return '☠';
+    case ProcessStatus.Killed: return '💀';
     case ProcessStatus.Running: return '▶️';
     case ProcessStatus.Suspended: return '⏸️';
   }
