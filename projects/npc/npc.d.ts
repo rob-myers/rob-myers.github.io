@@ -144,8 +144,12 @@ declare namespace NPC {
   }
 
   interface GlobalNavPath {
-    paths: Geom.Vect[][];
+    paths: LocalNavPath[];
     edges: NPC.NavGmTransition[];
+  }
+  interface LocalNavPath {
+    paths: Geom.Vect[][];
+    edges: NPC.NavRoomTransition[];
   }
 
   export interface FullApi {
@@ -167,7 +171,7 @@ declare namespace NPC {
 
     async awaitPanZoomIdle(): Promise<void>;
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
-    getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): Geom.Vect[];
+    getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
     getNpcGlobalNav(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }): GlobalNavPath;
     getNpc(e: { npcKey: string }): NPC.NPC;
     getPanZoomApi(): PanZoom.CssApi;

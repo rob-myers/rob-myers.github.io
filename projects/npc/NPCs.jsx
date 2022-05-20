@@ -58,7 +58,7 @@ export default function NPCs(props) {
           }
           // console.log({gmEdges});
 
-          const paths = /** @type {Geom.Vect[][]} */ ([]);
+          const paths = /** @type {NPC.LocalNavPath[]} */ ([]);
           for (let k = 0; k < gmEdges.length + 1; k++) {
             if (k === 0) {
               paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].src.exit);
@@ -83,15 +83,15 @@ export default function NPCs(props) {
         const result = pf.graph.findPath(localSrc, localDst);
 
         if (result) {
-          /**
-           * TODO provide { paths, edges } 
-           */
-          // Just join them together for the moment...
-          return /** @type {Geom.Vect[]} */ ([])
-            .concat(result.paths.flatMap(x => x))
-            .map(p => gm.matrix.transformPoint(p).precision(2));
+          return {
+            paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
+            edges: result.edges,
+          };
+          // return /** @type {Geom.Vect[]} */ ([])
+          //   .concat(result.paths.flatMap(x => x))
+          //   .map(p => gm.matrix.transformPoint(p).precision(2));
         } else {
-          return [];
+          return { paths: [], edges: [] };
         }
       },
       getNpcGlobalNav(e) {
@@ -108,7 +108,7 @@ export default function NPCs(props) {
         }
         const result = state.getGlobalNavPath(npc.getPosition(), e.point);
         if (e.debug) {
-          const points = (result?.paths??[]).reduce((agg, item) => agg.concat(item), []);
+          const points = (result?.paths??[]).reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
           state.toggleDebugPath({ pathKey: e.npcKey, points })
         }
         return result;

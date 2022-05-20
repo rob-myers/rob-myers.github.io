@@ -246,7 +246,7 @@ go: `{
   nav $1 $(click 1) |
     map 'x => ({
       npcKey: "andros",
-      points: x.paths.reduce((agg, item) => agg.concat(item), []),
+      points: x.paths.reduce((agg, item) => agg.concat(...item.paths), []),
     })' |
     walk $1
 }`,
@@ -258,7 +258,7 @@ goLoop: `{
     nav |
     map 'x => ({
       npcKey: "andros",
-      points: x.paths.reduce((agg, item) => agg.concat(item), []),
+      points: x.paths.reduce((agg, item) => agg.concat(...item.paths), []),
     })' |
     walk
 }`,
