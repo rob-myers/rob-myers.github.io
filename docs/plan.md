@@ -24,14 +24,13 @@ __Aim towards website release__.
     - Anapanasati training
     - 5 watchers as Jhanic hindrances
 
-- ✅ replace NPCs messaging by single object
-- ✅ `click` should use rxjs functions provided by NPCs api
-- ✅ replace WIRE_KEY by NPCS_KEY
-  - ✅ remove `api.mapWire`
-- ✅ `spawn` should be able to read arbitrarily many
-- ✅ remove support for `WhileClause`
-- ✅ CssPanZoom supports pointerup from descendants, distinguished via tags from data-tags
-- 🚧 `track` sends adaptation of npc animPath when walking
+- ✅ improve `track`
+- 🚧 light changes when Andros moves thru doorway
+- `walk` fixes npc, receives paths, and cancels on receive early
+- `walk` pauses/resumes npc on suspend/resume process
+- pause/resume Tabs pause/resumes any sessions
+     i.e. pause/resume foreground and all background processes
+
 - BUG `goLoop` "idle" while moving along path
   - hard to repro, but definitely there
 
@@ -162,6 +161,13 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ replace NPCs messaging by single object
+- ✅ `click` should use rxjs functions provided by NPCs api
+- ✅ replace WIRE_KEY by NPCS_KEY
+  - ✅ remove `api.mapWire`
+- ✅ `spawn` should be able to read arbitrarily many
+- ✅ remove support for `WhileClause`
+- ✅ CssPanZoom supports pointerup from descendants, distinguished via tags from data-tags
 - ✅ Fix invisible hull doors
 - ✅ Prevent inaccessible hull doors from being opened
 - ✅ `<Doors>`: Visible hull doors are being drawn as invisible

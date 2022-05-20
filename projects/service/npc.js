@@ -239,13 +239,21 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
     },
     getTargets() {
-      const durationSoFar = Date.now() - this.enteredSheetAt;
-      if (this.spriteSheet === "idle" || durationSoFar >= this.aux.total * animScaleFactor) {
-        return [{ point: this.getPosition(), ms: 0 }];
+      if (this.spriteSheet === "idle") {
+        return [];
+      }
+
+      const soFarMs = Date.now() - this.enteredSheetAt;
+      const unseenIndex = this.aux.sofars.findIndex(sofar => sofar * animScaleFactor >= soFarMs + 200);
+
+      if (
+        unseenIndex === -1
+        || unseenIndex === this.aux.sofars.length - 1
+      ) {
+        return [{ point: this.animPath[this.animPath.length - 1], ms: this.aux.total * animScaleFactor - soFarMs }];
       } else {
-        const firstIndex = this.aux.sofars.findIndex(sofar => sofar * animScaleFactor > durationSoFar);
-        return this.aux.sofars.slice(firstIndex)
-          .map((sofar, i) => ({ point: this.animPath[firstIndex + i], ms: (sofar * animScaleFactor) - durationSoFar }))
+        return this.aux.sofars.slice(unseenIndex)
+          .map((sofar, i) => ({ point: this.animPath[unseenIndex + i], ms: (sofar * animScaleFactor) - soFarMs }))
       }
     },
     pause() {

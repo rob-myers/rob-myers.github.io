@@ -309,23 +309,22 @@ track: `{
       const npcPosition = npc.getPosition()
       const distance = Vect.from(npcPosition).distanceTo(worldFocus)
 
-      // TODO fix stuttering
-
       if (npc.spriteSheet === "walk") {
         const targets = npc.getTargets()
-        if (targets.length > 1 || distance > 10) {
-          // TODO
-          console.log(targets)
-          const target = targets[1] || targets[0]
+        if (targets.length > 0) {
+          // console.log(targets)
+          const target = targets[0]
           await npcs.panZoomTo({ zoom: 1.6, point: target.point, ms: 1.1 * target.ms, easing: "linear" })
         } else {
           yield* await api.sleep(1)
         }
       } else if (npc.spriteSheet === "idle") {
-        if (distance > 10) {
-          // speed 60 world unit per second
+        if (distance > 60) {// speed 60 world unit per second
           const ms = (distance / 60) * 1000
           await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms })
+        } else if (distance > 20) {
+          const ms = (distance / 10) * 1000
+          await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms, easing: "linear" })
         } else {
           yield* await api.sleep(1)
         }
