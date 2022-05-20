@@ -1,4 +1,5 @@
 import safeStableStringify from 'safe-stable-stringify';
+import prettyCompact from 'json-stringify-pretty-compact';
 import { keys } from 'projects/service/generic';
 
 /** Useful for state management */
@@ -26,7 +27,8 @@ export function range(fromPos: number, toPos?: number): number[] {
 
 /** Pretty-print JSON. */
 export function pretty(input: any): string {
-  return JSON.stringify(input, null, '\t');
+  // return JSON.stringify(input, null, '\t');
+  return prettyCompact(input);
 }
 
 /** Usage `default: throw testNever(x)`. */
