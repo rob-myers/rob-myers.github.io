@@ -39,7 +39,7 @@ import fs from 'fs';
 import path from 'path';
 import chalk from 'chalk';
 import childProcess from 'child_process';
-import { nanoid } from 'nanoid';
+import { uid } from 'uid';
 
 import { 
   metaFromRootFilename,
@@ -155,7 +155,7 @@ console.log(childProcess.execSync(fileMetas.map(({ srcName, dstName }) => `
 `).join('')).toString());
 
 info(`applying ImageMagick command \`convert\` in parallel`);
-const tempDir = `temp_${nanoid()}`;
+const tempDir = `temp_${uid()}`;
 
 childProcess.execSync(`
   mkdir ${path.join(dstDir, tempDir)}

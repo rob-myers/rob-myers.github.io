@@ -16,7 +16,7 @@
 import fs from 'fs';
 import path from 'path';
 import childProcess from 'child_process';
-import { nanoid } from 'nanoid';
+import { uid } from 'uid';
 import { error, info } from '../../projects/service/log';
 
 const [,, srcDir] = process.argv;
@@ -30,7 +30,7 @@ if (!srcDir || !fs.existsSync(srcDir)) {
 }
 
 info(`applying parallel \`convert\` to directory ${srcDir}`);
-const tempDir = `temp_${nanoid()}`;
+const tempDir = `temp_${uid()}`;
 childProcess.execSync(`
   cd '${srcDir}' && mkdir ${tempDir}
   time find *.png -print0 |
