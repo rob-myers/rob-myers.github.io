@@ -110,6 +110,13 @@
       : new Vect(input.x, input.y);
   }
 
+  /**
+   * @param {any} input 
+   */
+  static isVectJson(input) {
+    return input && typeof input.x === 'number' && typeof input.y === 'number';
+  }
+
   normalize(newLength = 1) {
     if (this.length) {
       return this.scale(newLength / this.length);

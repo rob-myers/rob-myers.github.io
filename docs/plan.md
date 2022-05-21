@@ -14,6 +14,7 @@ __Aim towards website release__.
 
 - ✅ improve `track`
 - ✅ fix multiple animations with CssPanZoom and `track`
+- ✅ `view` should work while `track`
 - 🚧 light changes when Andros moves thru doorway
   - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
   - 🚧 `walk` handles `nav` output e.g. console.log on exit doorway
@@ -27,7 +28,7 @@ __Aim towards website release__.
 - fix NavDemo1 useGeomorphs adjustment
 - don't darken "holes" in geomorph png
 
-- model/sh -> projects/sh
+- 🚧 model/sh -> projects/sh
 - model/generic -> projects/service/generic
 - put terminal on CodeSandbox
 

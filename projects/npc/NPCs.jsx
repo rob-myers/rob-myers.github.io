@@ -147,6 +147,17 @@ export default function NPCs(props) {
           npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
         }
       },
+      async panZoomTo(e) {
+        if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {
+          throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
+        }
+        try {
+          await props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms, e.easing);
+          return 'completed';
+        } catch (e) {
+          return 'cancelled';
+        }
+      },
       spawn(e) {
         if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
           throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
@@ -168,19 +179,6 @@ export default function NPCs(props) {
           delete state.debugPath[e.pathKey];
         }
         update();
-      },
-      async panZoomTo(e) {
-        if (!(e && ((Number.isFinite(e.zoom) || e.point) && Number.isFinite(e.ms) ))) {
-          throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
-        }
-
-        try {
-          // console.log('start panzoom', e.zoom, e.point, e.ms??2000, e.easing);
-          await props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms, e.easing);
-          return 'completed';
-        } catch (e) {
-          return 'cancelled';
-        }
       },
       async walkNpc(e) {
         // TODO 🚧 can handle global nav path i.e. paths (vs points)
