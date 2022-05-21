@@ -3,7 +3,7 @@ import { testNever } from 'model/generic.model';
 import { Device, ReadResult, ShellIo, SigEnum } from './io/io.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 
-import useSession, { ProcessMeta, ProcessStatus } from 'store/session.store';
+import useSession, { ProcessMeta, ProcessStatus } from './session.store';
 import { ParseService } from './parse/parse.service';
 import { srcService } from './parse/src.service';
 import { wrapInFile } from './parse/parse.util';

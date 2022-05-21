@@ -28,8 +28,8 @@ __Aim towards website release__.
 - fix NavDemo1 useGeomorphs adjustment
 - don't darken "holes" in geomorph png
 
-- 🚧 model/sh -> projects/sh
-- model/generic -> projects/service/generic
+- ✅ model/sh -> projects/sh
+- 🚧 model/generic -> projects/service/generic
 - put terminal on CodeSandbox
 
 - Blog

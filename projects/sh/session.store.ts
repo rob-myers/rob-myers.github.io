@@ -1,18 +1,18 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import type { BaseMeta, FileWithMeta } from 'model/sh/parse/parse.model';
-import type { MessageFromShell, MessageFromXterm } from 'model/sh/tty.model';
-import type { NamedFunction } from 'model/sh/var.model';
 import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
-import { Device, makeShellIo, ShellIo } from 'model/sh/io/io.model';
-import { addToLookup, removeFromLookup } from './store.util';
-import { TtyShell } from 'model/sh/tty.shell';
-import { FifoDevice } from 'model/sh/io/fifo.device';
-import { VarDevice, VarDeviceMode } from 'model/sh/io/var.device';
-import { srcService } from 'model/sh/parse/src.service';
-import { NullDevice } from 'model/sh/io/null.device';
-import { computeNormalizedParts, resolveNormalized, ShError } from 'model/sh/sh.util';
+import type { BaseMeta, FileWithMeta } from './parse/parse.model';
+import type { MessageFromShell, MessageFromXterm } from './tty.model';
+import type { NamedFunction } from './var.model';
+import { Device, makeShellIo, ShellIo } from './io/io.model';
+import { addToLookup, removeFromLookup } from '../service/generic';
+import { TtyShell } from './tty.shell';
+import { FifoDevice } from './io/fifo.device';
+import { VarDevice, VarDeviceMode } from './io/var.device';
+import { srcService } from './parse/src.service';
+import { NullDevice } from './io/null.device';
+import { computeNormalizedParts, resolveNormalized, ShError } from './sh.util';
 
 export type State = {
   session: KeyedLookup<Session>;

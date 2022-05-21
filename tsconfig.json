@@ -32,8 +32,7 @@
     "projects/**/*.js",
     "projects/**/*.jsx",
     "projects/**/*.d.ts",
-    "media/scripts/*.js",
-    "model/sh/rxjs.js"
+    "media/scripts/*.js"
   ],
   "exclude": [
     "node_modules",

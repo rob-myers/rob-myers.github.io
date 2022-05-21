@@ -1,9 +1,9 @@
 import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
-import type { Session } from 'store/session.store';
+import type { Session } from 'projects/sh/session.store';
 import useStateRef from 'projects/hooks/use-state-ref';
-import useSessionStore from 'store/session.store';
+import useSessionStore from 'projects/sh/session.store';
 
 export function TouchHelperUI(props: {
   offset: number;

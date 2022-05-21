@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid';
 import safeJsonStringify from 'safe-json-stringify';
 
 import { last } from 'model/generic.model';
-import useSession, { ProcessStatus } from 'store/session.store';
+import useSession, { ProcessStatus } from './session.store';
 import { NamedFunction } from './var.model';
 import { killError, expand, Expanded, literal, matchFuncFormat, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';

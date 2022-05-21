@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 import { css } from 'goober';
-import { getSvgScale } from 'projects/service/dom';
+import { getSvgScale } from '../../service/dom';
 
 /**
  * Generic approach to foreignObject width/height:

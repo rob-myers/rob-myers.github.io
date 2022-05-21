@@ -5,9 +5,9 @@ import { useBeforeunload } from 'react-beforeunload';
 
 import { getCode, getComponent } from 'model/tabs/lookup';
 import useSiteStore from "store/site.store";
-import useSession from "store/session.store";
+import useSession from "projects/sh/session.store";
 import { CodeEditor, Terminal } from 'components/dynamic';
-import { isProfileKey, profileLookup } from 'model/sh/sh.lib';
+import { isProfileKey, profileLookup } from 'projects/sh/sh.lib';
 
 export default function Portals() {
   const lookup = useSiteStore(site => site.portal);

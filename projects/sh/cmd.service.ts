@@ -1,11 +1,11 @@
 import cliColumns from 'cli-columns';
 
 import { testNever, truncateOneLine, Deferred, pause, keysDeep, safeStringify, pretty, deepGet } from 'model/generic.model';
-import { removeFirst } from 'projects/service/generic';
+import { removeFirst } from '../service/generic';
 import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, preProcessRead } from './io/io.model';
-import useSession, { ProcessStatus } from 'store/session.store';
+import useSession, { ProcessStatus } from './session.store';
 import { computeNormalizedParts, killError as killError, normalizeAbsParts, ProcessError, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { parseService } from './parse/parse.service';
@@ -13,7 +13,7 @@ import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './sh.util';
 import { TtyShell } from './tty.shell';
 
 import { scriptLookup } from './sh.lib';
-import { getCached, queryCache } from 'projects/service/query-client';
+import { getCached, queryCache } from '../service/query-client';
 
 const commandKeys = {
   /** Change current key prefix */

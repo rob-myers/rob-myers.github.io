@@ -5,7 +5,7 @@ import { firstValueFrom } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { keys } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
-import { otag } from "../../model/sh/rxjs"; // TODO move to projects
+import { otag } from "../sh/rxjs";
 import { createNpc } from "../service/npc";
 import { Poly, Rect, Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";

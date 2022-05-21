@@ -1,5 +1,5 @@
 import { last } from "model/generic.model";
-import useSessionStore from "store/session.store";
+import useSessionStore from "../session.store";
 import { Device, ReadResult, isDataChunk } from "./io.model";
 
 export type VarDeviceMode = 'array' | 'last';

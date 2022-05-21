@@ -1,11 +1,11 @@
-import { killError } from 'model/sh/sh.util';
+import { killError } from './sh.util';
 
 /**
  * Convert an observable into an async generator which can be yielded.
  * Based on https://github.com/parzh/observable-to-async-generator/blob/main/src/index.ts
  * @template T
  * @param {import('rxjs').Observable<T>} observable
- * @param {import('store/session.store').ProcessMeta} process
+ * @param {import('./session.store').ProcessMeta} process
  * @returns {AsyncIterableIterator<T>}
  */
 export async function *otag(observable, process) {

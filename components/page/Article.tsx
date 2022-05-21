@@ -372,7 +372,7 @@ const articleComponents = (
                 break;
               }
               case 'sigkill': {
-                import('store/session.store').then(({ default: useSessionStore }) => {
+                import('projects/sh/session.store').then(({ default: useSessionStore }) => {
                   const { ttyShell } = useSessionStore.api.getSession(args[0])
                   ttyShell.xterm.sendSigKill();
                 });

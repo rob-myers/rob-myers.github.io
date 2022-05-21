@@ -3,9 +3,9 @@ import { styled } from 'goober';
 import type { ITerminalOptions } from 'xterm';
 import { debounce } from 'debounce';
 
-import { TtyXterm } from 'model/sh/tty.xterm';
+import { TtyXterm } from 'projects/sh/tty.xterm';
 import { canTouchDevice } from 'projects/service/dom';
-import useSession, { Session } from 'store/session.store';
+import useSession, { Session } from 'projects/sh/session.store';
 import useOnResize from 'projects/hooks/use-on-resize';
 import { XTerm } from 'components/dynamic';
 import { TouchHelperUI } from './TouchHelperUi';

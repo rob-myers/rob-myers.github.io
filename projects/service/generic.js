@@ -121,3 +121,24 @@ export function keys(record) {
 export function removeDups(items) {
   return Array.from(new Set(items));
 }
+
+/**
+ * @template {{ key: string }} LookupItem
+ * @param {LookupItem} newItem 
+ * @param {import("model/generic.model").KeyedLookup<LookupItem>} lookup 
+ * @returns {import("model/generic.model").KeyedLookup<LookupItem>}
+ */
+export function addToLookup(newItem, lookup) {
+  return { ...lookup, [newItem.key]: newItem };
+}
+
+/**
+ * @template {{ key: string }} LookupItem
+ * @param {string} itemKey 
+ * @param {import("model/generic.model").KeyedLookup<LookupItem>} lookup 
+ * @returns {import("model/generic.model").KeyedLookup<LookupItem>}
+ */
+export function removeFromLookup(itemKey, lookup) {
+  const { [itemKey]: _, ...rest } = lookup;
+  return rest;
+}
