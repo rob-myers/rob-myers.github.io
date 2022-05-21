@@ -7,7 +7,7 @@ import safeStableStringify from 'safe-stable-stringify';
  * @param {TypeUtil.KeyedLookup<LookupItem>} lookup 
  * @returns {TypeUtil.KeyedLookup<LookupItem>}
  */
- export function addToLookup(newItem, lookup) {
+export function addToLookup(newItem, lookup) {
   return { ...lookup, [newItem.key]: newItem };
 }
 
@@ -37,7 +37,7 @@ export function assertDefined(value, valueName) {
  * @param {T} value
  * @returns {T extends undefined | null ? never : T}
  */
- export function assertNonNull(value, ensureNull = true) {
+export function assertNonNull(value, ensureNull = true) {
   if (ensureNull && value == null) {
     throw new Error(`Encountered unexpected null or undefined value`);
   }
@@ -50,8 +50,51 @@ export function assertDefined(value, valueName) {
  * @param {T} input 
  * @returns {T}
  */
- export function deepClone(input) {
+export function deepClone(input) {
   return JSON.parse(JSON.stringify(input));
+}
+
+/**
+ * Iterate deep keys separated by `/`.
+ * https://stackoverflow.com/a/65571163/2917822
+ * @param {any} t
+ * @param {string[]} path
+ * @returns {IterableIterator<string>}
+ */
+function* deepKeys(t, path = []) {
+  switch(t?.constructor) {
+    case Object:
+      for (const [k,v] of Object.entries(t))
+        yield* deepKeys(v, [...path, k])
+      break;
+    default:
+      yield path.join("/");
+  }
+}
+
+/**
+ * 
+ * @param {any} obj 
+ * @param {string[]} path 
+ * @returns 
+ */
+export function deepGet(obj, path) {
+  return path.reduce((agg, part) => agg[part], obj);
+}
+
+/**
+ * @template T
+ */
+export class Deferred {
+  /** @type {(value: T | PromiseLike<T>) => void} */
+  resolve = () => {};
+  /** @type {(reason?: any) => void} */
+  reject = () => {};
+  /** @type {Promise<T>} */
+  promise = new Promise((resolve, reject) => {
+    this.resolve = resolve;
+    this.reject = reject;
+  });
 }
 
 /**
@@ -85,7 +128,7 @@ export function equals(x, y, depth = 0) {
  * @template T
  * @param {(T | T[])[]} items
  */
- export function flatten(items) {
+export function flatten(items) {
   return /** @type {T[]} */ ([]).concat(...items);
 }
 
@@ -94,7 +137,7 @@ export function equals(x, y, depth = 0) {
  * @param {*} value 
  * @returns 
  */
- export function isPlainObject(value) {
+export function isPlainObject(value) {
 	if (Object.prototype.toString.call(value) !== '[object Object]') {
 		return false;
 	}
@@ -108,8 +151,16 @@ export function equals(x, y, depth = 0) {
  * @param {Partial<Record<K, any>> | Record<K, any>} record
  * Typed `Object.keys`, usually as finitely many string literals.
  */
- export function keys(record) {
+export function keys(record) {
   return /** @type {K[]} */ (Object.keys(record));
+}
+
+/**
+ * @param {any} obj 
+ * @returns {string[]}
+ */
+export function keysDeep(obj) {
+  return Array.from(deepKeys(obj));
 }
 
 /**
@@ -122,6 +173,18 @@ export function last(items) {
 }
 
 /**
+ * @template {{ key: string }} T
+ * @param {T[]} values 
+ * @returns {TypeUtil.KeyedLookup<T>}
+ */
+export function lookupFromValues(values)  {
+  return values.reduce(
+    (agg, item) => ({ ...agg, [item.key]: item }),
+    /** @type {TypeUtil.KeyedLookup<T>} */ ({}),
+  );
+}
+
+/**
  * @template SrcValue
  * @template DstValue
  * @template {string} Key
@@ -130,7 +193,7 @@ export function last(items) {
  * Given `{ [key]: value }`, returns fresh
  * `{ [key]: _transform_(value) }`.
  */
- export function mapValues(input, transform) {
+export function mapValues(input, transform) {
   const output = /** @type {Record<Key, DstValue>} */ ({});
   keys(input).forEach((key) => output[key] = transform(input[key]));
   return output;
@@ -144,6 +207,11 @@ export function last(items) {
 export function pretty(input) {
   // return JSON.stringify(input, null, '\t');
   return prettyCompact(input);
+}
+
+/** @returns {Promise<void>} */
+export function pause(ms = 0) {
+  return new Promise(r => setTimeout(() => r(), ms));
 }
 
 /** @param {any} input */
@@ -165,7 +233,7 @@ export function safeStringify(input) {
  * @param {T[]} array
  * @param {T} elem
  */
- export function removeFirst(array, elem) {
+export function removeFirst(array, elem) {
   const firstIndex = array.indexOf(elem);
   if (firstIndex !== -1) {
     array.splice(firstIndex, 1);
@@ -200,6 +268,17 @@ export function removeFromLookup(itemKey, lookup) {
 export function testNever(x) {
   return `testNever: ${pretty(x)} not implemented.`;
 }
+
+/**
+ * @param {string} text 
+ * @returns 
+ */
+export function truncateOneLine(text, maxLength = 50) {
+  text = text.trimLeft();
+  const isLong = text.length > maxLength;
+  return isLong ? `${text.split('\n', 1)[0].slice(0, maxLength)} ...` : text;
+}
+
 
 /** @param {any} input */
 function tryJsonStringify(input) {

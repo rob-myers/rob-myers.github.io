@@ -1,5 +1,5 @@
 import Router from 'next/router';
-import { pause } from 'model/generic.model';
+import { pause } from 'projects/service/generic';
 import { maxScrollHeight, scrollFinished } from 'model/dom.model';
 
 export default function Link(props: Props) {

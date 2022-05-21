@@ -3,7 +3,7 @@ import React from "react";
 import useMeasure from "react-use-measure";
 import { css } from "goober";
 
-import { lookupFromValues } from "model/generic.model";
+import { lookupFromValues } from "projects/service/generic";
 import { ArticleKey, articlesMeta } from "articles/index";
 import useSiteStore from 'store/site.store';
 import { Rect } from "projects/geom/rect";

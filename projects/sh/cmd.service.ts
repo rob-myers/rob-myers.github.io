@@ -1,7 +1,6 @@
 import cliColumns from 'cli-columns';
 
-import { truncateOneLine, Deferred, pause, keysDeep, deepGet } from 'model/generic.model';
-import { pretty, removeFirst, safeStringify, testNever } from '../service/generic';
+import { Deferred, deepGet, keysDeep, pause, pretty, removeFirst, safeStringify, testNever, truncateOneLine } from '../service/generic';
 import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, preProcessRead } from './io/io.model';
