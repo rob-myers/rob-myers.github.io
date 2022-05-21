@@ -2,8 +2,9 @@ import { Subject, Subscription } from "rxjs";
 import type * as Sh from '../parse/parse.model';
 import { ProcessMeta, ProcessStatus } from "store/session.store";
 import { traverseParsed } from '../parse/parse.util';
-import { ProcessError } from "../sh.util";
+import { killError, ProcessError } from "../sh.util";
 import { deepClone } from "model/generic.model";
+import { removeFirst } from "projects/service/generic";
 
 export const scrollback = 200;
 
@@ -119,13 +120,14 @@ export async function preProcessWrite(
   device: Device,
 ) {
   if (process.status === ProcessStatus.Killed || device.finishedReading(true)) {
-    throw new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey);
+    throw killError(process);
   } else if (process.status === ProcessStatus.Suspended) {
+    let cleanup = () => {};
     await new Promise<void>((resolve, reject) => {
       process.onResumes.push(resolve);
-      // TODO currently we keep adding these whenever we pause/resume
-      process.cleanups.push(() => reject(new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey)));
+      process.cleanups.push(cleanup = () => reject(killError(process)));
     });
+    removeFirst(process.cleanups, cleanup);
   }
 }
 
@@ -134,13 +136,14 @@ export async function preProcessRead(
   _device: Device,
 ) {
   if (process.status === ProcessStatus.Killed) {
-    throw new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey);
+    throw killError(process);
   } else if (process.status === ProcessStatus.Suspended) {
+    let cleanup = () => {};
     await new Promise<void>((resolve, reject) => {
       process.onResumes.push(resolve);
-      // TODO currently we keep adding these whenever we pause/resume
-      process.cleanups.push(() => reject(new ProcessError(SigEnum.SIGKILL, process.key, process.sessionKey)));
+      process.cleanups.push(cleanup = () => reject(killError(process)));
     });
+    removeFirst(process.cleanups, cleanup);
   }
 }
 

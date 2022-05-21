@@ -19,7 +19,6 @@ export type State = {
   device: KeyedLookup<Device>;
   
   readonly api: {
-    addCleanup: (meta: BaseMeta, ...cleanups: (() => void)[]) => void;
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
     createSession: (sessionKey: string, env: Record<string, any>) => Session;
     createProcess: (def: {
@@ -88,8 +87,11 @@ export interface ProcessMeta {
   sessionKey: string;
   status: ProcessStatus;
   src: string;
-  /** Each executed on kill */
-  cleanups: (() => void)[];
+  /**
+   * Executed on Ctrl-C or `kill`.
+   * May contain `() => reject(killError(meta))` ...
+   */
+  cleanups: ((() => void) & {  })[];
   /**
    * Executed on suspend, without clearing `true` returners.
    * The latter should be idempotent, e.g. unsubscribe, pause.
@@ -109,10 +111,6 @@ const useStore = create<State>(devtools((set, get) => ({
   persist: {},
 
   api: {
-    addCleanup(meta, ...cleanups) {
-      api.getProcess(meta).cleanups.push(...cleanups);
-    },
-
     addFunc(sessionKey, funcName, file) {
       api.getSession(sessionKey).func[funcName] = {
         key: funcName,

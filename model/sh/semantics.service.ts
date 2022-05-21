@@ -5,7 +5,7 @@ import safeJsonStringify from 'safe-json-stringify';
 import { last } from 'model/generic.model';
 import useSession, { ProcessStatus } from 'store/session.store';
 import { NamedFunction } from './var.model';
-import { createKillError, expand, Expanded, literal, matchFuncFormat, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
+import { killError, expand, Expanded, literal, matchFuncFormat, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';
 import { cmdService } from './cmd.service';
 import { srcService } from './parse/src.service';
 import { preProcessWrite, redirectNode, SigEnum } from './io/io.model';
@@ -63,11 +63,10 @@ class SemanticsService {
 
   handleTopLevelProcessError(e: ProcessError) {
     if (e.code === SigEnum.SIGKILL) {
-      // Kill all processes in process group
       const process = useSession.api.getProcess(
         { pid: e.pid, sessionKey: e.sessionKey } as Sh.BaseMeta,
       );
-      if (process) {
+      if (process) {// Kill all processes in process group
         const processes = useSession.api.getProcesses(e.sessionKey, process.pgid);
         processes.forEach((process) => {
           process.status = ProcessStatus.Killed;
@@ -174,8 +173,8 @@ class SemanticsService {
                   throw new ShError(`pipe ${i}`, node.exitCode);
                 }
                 resolve();
-              } catch (e) {
-                // console.log('inner pipeline error', i, e)
+              } catch (e) {// Promise.allSettled won't throw on reject.
+                // Instead, we're informing it that this promise has settled
                 reject(e);
               }
             }),
@@ -183,11 +182,10 @@ class SemanticsService {
 
           if (results.some(x => x.status === 'rejected')) {
             // Terminate children and this process on pipeline error
+            // TODO descendants too (??)
             clones.map(({ meta }) => useSession.api.getProcess(meta))
-              // Processes may have terminated, including their descendants.
-              // Perhaps we should try to cleanup their descendants too?
               .forEach(x => x && (x.status = ProcessStatus.Killed) && x.cleanups.forEach(cleanup => cleanup()));
-            throw createKillError(node.meta);
+            throw killError(node.meta);
           }
 
         } finally {
@@ -212,7 +210,7 @@ class SemanticsService {
     const args = await sem.performShellExpansion(node.Args);
     const [command, ...cmdArgs] = args;
     node.meta.verbose && console.log('simple command', args);
-    
+
     if (args.length) {
       let func: NamedFunction | undefined;
       if (cmdService.isCmd(command)) {
@@ -263,7 +261,7 @@ class SemanticsService {
       const process = useSession.api.getProcess(node.meta);
       const device = useSession.api.resolve(1, node.meta);
       if (!device) {// Pipeline already failed
-        throw createKillError(node.meta);
+        throw killError(node.meta);
       }
       // Actually run the code
       for await (const item of generator) {

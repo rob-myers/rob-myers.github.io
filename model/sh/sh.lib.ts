@@ -19,7 +19,7 @@ ready
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
 # camera follows andros
-track andros &
+# track andros &
 
 `,
 };
@@ -168,7 +168,7 @@ click: `{
         map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)), tags: e.tags })),
         take(numClicks),
       ),
-      (sub) => process.cleanups.push(() => sub.unsubscribe()),
+      process,
     )
   }' "$@"
 }`,
@@ -218,21 +218,23 @@ nav: `{
 }`,
 
 /**
- * Move an npc along path(s),
- * e.g. - `walk andros "[$( click 1 ), $( click 1 )]"'
- * e.g. - `expr "{ npcKey: 'andros', points: [$( click 1 ), $( click 1 )] }" | walk andros`
+ * Move an npc along path(s) e.g.
+ * - `walk andros "[$( click 1 ), $( click 1 )]"'
+ * - `expr "{ npcKey: 'andros', points: [$( click 1 ), $( click 1 )] }" | walk andros`
+ * - `expr "{ npcKey: 'andros', paths: { paths: [[$( click 1 ), $( click 1 )]], edges: [] }, edges: [] }" | walk andros`
  * 
  * Technically distinct npcs can be referenced, but since each
  * path is walked one after another, this is less useful.
  * 
- * TODO handle npc pause/resume
+ * TODO
+ * - handle npc pause/resume
  */
 walk: `{
   run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
     if (api.isTtyAt(0)) {
       const npcKey = args[0]
-      const points = api.safeJsonParse(args[1]) || !api.isTtyAt(0) && await api.read()
+      const points = api.safeJsonParse(args[1])
       await npcs.walkNpc({ npcKey, points })
     } else {
       while ((datum = await api.read()) !== null)
@@ -241,6 +243,7 @@ walk: `{
   }' "$@"
 }`,
 
+// TODO remove path collapse
 // NOTE ignores doors
 go: `{
   nav $1 $(click 1) |
@@ -250,6 +253,7 @@ go: `{
     })' |
     walk $1
 }`,
+// TODO remove path collapse
 // TODO handle click before finish
 goLoop: `{
   click |

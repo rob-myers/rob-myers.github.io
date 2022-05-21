@@ -12,6 +12,25 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- ✅ improve `track`
+- ✅ fix multiple animations with CssPanZoom and `track`
+- 🚧 light changes when Andros moves thru doorway
+  - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
+  - 🚧 `walk` handles `nav` output e.g. console.log on exit doorway
+  - `walk` is for a fixed npc
+  - `walk` receives paths, and cancels on receive early
+  - `walk` pauses/resumes npc on suspend/resume process
+  - change lighting when exit doorway
+- pause/resume Tabs pause/resumes any sessions
+     i.e. pause/resume foreground and all background processes
+- mobile: improve `track` jerkiness
+- fix NavDemo1 useGeomorphs adjustment
+- don't darken "holes" in geomorph png
+
+- model/sh -> projects/sh
+- model/generic -> projects/service/generic
+- put terminal on CodeSandbox
+
 - Blog
   - ✅ Revisit first page
   - "1st meaningful example"
@@ -24,20 +43,7 @@ __Aim towards website release__.
     - Anapanasati training
     - 5 watchers as Jhanic hindrances
 
-- ✅ improve `track`
-- ✅ fix multiple animations with CssPanZoom and `track`
-- 🚧 light changes when Andros moves thru doorway
-  - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
-  - 🚧 `walk` handles `nav` output e.g. console.log on exit doorway
-  - change lighting when exit doorway
-- `walk` fixes npc, receives paths, and cancels on receive early
-- `walk` pauses/resumes npc on suspend/resume process
-- pause/resume Tabs pause/resumes any sessions
-     i.e. pause/resume foreground and all background processes
-- mobile: improve `track` jerkiness
-
 - BUG `goLoop` "idle" while moving along path
-  - hard to repro, but definitely there
 
 - 🚧 Andros is situated
   - ✅ CssPanZoom returns to andros
@@ -166,6 +172,9 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ BUG cannot Ctrl-C `click 1; click 1`
+  - `click 1; echo foo; click 1` works
+  - killing `{ click 1; click 1; } &` doesn't work
 - ✅ replace NPCs messaging by single object
 - ✅ `click` should use rxjs functions provided by NPCs api
 - ✅ replace WIRE_KEY by NPCS_KEY

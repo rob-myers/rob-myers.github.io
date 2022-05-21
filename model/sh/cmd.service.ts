@@ -1,18 +1,18 @@
 import cliColumns from 'cli-columns';
 
 import { testNever, truncateOneLine, Deferred, pause, keysDeep, safeStringify, pretty, deepGet } from 'model/generic.model';
+import { removeFirst } from 'projects/service/generic';
 import type * as Sh from './parse/parse.model';
 import type { NamedFunction } from './var.model';
 import { getProcessStatusIcon, ReadResult, preProcessRead } from './io/io.model';
 import useSession, { ProcessStatus } from 'store/session.store';
-import { computeNormalizedParts, createKillError as killError, normalizeAbsParts, ProcessError, resolveNormalized, resolvePath, ShError } from './sh.util';
+import { computeNormalizedParts, killError as killError, normalizeAbsParts, ProcessError, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { parseService } from './parse/parse.service';
 import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './sh.util';
 import { TtyShell } from './tty.shell';
 
 import { scriptLookup } from './sh.lib';
-// Connections to "outside" i.e. react-query, rxjs
 import { getCached, queryCache } from 'projects/service/query-client';
 
 const commandKeys = {
@@ -171,11 +171,10 @@ class CmdService {
               p.status = ProcessStatus.Running;
             } else {
               p.status = ProcessStatus.Killed;
-              // p.onResumes.forEach(onResume => onResume());
-              // Immediate clean e.g. stops `sleep`
-              setTimeout(() => { 
+              // Avoid immediate clean because it stops `sleep` (??)
+              window.setTimeout(() => { 
                 p.cleanups.forEach(cleanup => cleanup());
-                // p.cleanups.length = 0;
+                p.cleanups.length = 0;
               });
             }
           });
@@ -399,7 +398,7 @@ class CmdService {
     async *poll(args: string[]) {
       const seconds = args.length ? parseFloat(parseJsonArg(args[0])) || 1 : 1;
       const [delayMs, deferred] = [Math.max(seconds, 0.5) * 1000, new Deferred<void>()];
-      useSession.api.addCleanup(this.meta, () => deferred.resolve());
+      getProcess(this.meta).cleanups.push(() => deferred.reject(killError(this.meta)));
       let count = 1;
       while (true) {
         yield count++;
@@ -554,10 +553,9 @@ function safeJsonParse(input: string) {
 
 async function *sleep(meta: Sh.BaseMeta, seconds = 1) {
   const process = getProcess(meta);
-  let duration = 1000 * seconds, startedAt = -1;
-  let reject = (_: any) => {};
-  process.cleanups.push(() => reject(killError(meta)));
-  
+  let duration = 1000 * seconds, startedAt = -1, reject = (_: any) => {};
+  const cleanup = () => reject(killError(meta));
+  process.cleanups.push(cleanup);
   do {
     await new Promise<void>((resolve, currReject) => {
       process.onSuspends.push(() => { duration -= (Date.now() - startedAt); resolve(); });
@@ -567,6 +565,8 @@ async function *sleep(meta: Sh.BaseMeta, seconds = 1) {
     });
     yield; // This yield pauses execution if process suspended
   } while (Date.now() - startedAt < duration - 1)
+  // If process continually re-sleeps, avoid many cleanups
+  removeFirst(process.cleanups, cleanup);
 }
 
 function throwError(message: string, exitCode?: number) {

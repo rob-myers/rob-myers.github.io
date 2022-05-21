@@ -4,9 +4,8 @@ import { css } from "goober";
 import { firstValueFrom } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { keys } from "../service/generic";
-import { error } from "../service/log";
 import { removeCached, setCached } from "../service/query-client";
-import { otag } from "../service/rxjs";
+import { otag } from "../../model/sh/rxjs"; // TODO move to projects
 import { createNpc } from "../service/npc";
 import { Poly, Rect, Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
@@ -184,6 +183,8 @@ export default function NPCs(props) {
         }
       },
       async walkNpc(e) {
+        // TODO 🚧 can handle global nav path i.e. paths (vs points)
+
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc "${e.npcKey}" does not exist`);

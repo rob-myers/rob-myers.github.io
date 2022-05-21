@@ -1,5 +1,6 @@
 import braces from 'braces';
 import { last } from 'model/generic.model';
+import type { ProcessMeta } from 'store/session.store';
 import { SigEnum } from './io/io.model';
 import type * as Sh from './parse/parse.model';
 
@@ -109,8 +110,8 @@ export class ProcessError extends Error {
   }
 }
 
-export function createKillError(meta: Sh.BaseMeta) {
-  return new ProcessError(SigEnum.SIGKILL, meta.pid, meta.sessionKey);
+export function killError(meta: Sh.BaseMeta | ProcessMeta) {
+  return new ProcessError(SigEnum.SIGKILL, 'pid' in meta ? meta.pid : meta.key, meta.sessionKey);
 }
 
 export function resolvePath(path: string, root: any, pwd: string) {
