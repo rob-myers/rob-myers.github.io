@@ -1,4 +1,4 @@
-import { last } from 'model/generic.model';
+import { last } from 'projects/service/generic';
 import { ArticleKey, navGroups, articlesMeta } from 'articles/index';
 import Main from './Main';
 import Articles from './Articles';

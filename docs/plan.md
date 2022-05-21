@@ -29,7 +29,7 @@ __Aim towards website release__.
 - don't darken "holes" in geomorph png
 
 - ✅ model/sh -> projects/sh
-- 🚧 model/generic -> projects/service/generic
+- 🚧 model/generic.model -> projects/service/generic
 - put terminal on CodeSandbox
 
 - Blog

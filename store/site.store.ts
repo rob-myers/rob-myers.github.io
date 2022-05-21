@@ -3,7 +3,7 @@ import { devtools } from 'zustand/middleware';
 import type { HtmlPortalNode } from 'react-reverse-portal';
 import type { TabNode } from 'flexlayout-react';
 
-import { KeyedLookup, last } from 'model/generic.model';
+import { last } from 'projects/service/generic';
 import type { TabMeta } from 'model/tabs/tabs.model';
 import type { ArticleKey } from 'articles/index';
 
@@ -11,12 +11,12 @@ export type State = {
   /** Key of currently viewed article */
   articleKey: null | ArticleKey;
   /** <Article>s on current page */
-  articles: KeyedLookup<ArticleState>;
+  articles: TypeUtil.KeyedLookup<ArticleState>;
   navOpen: boolean;
   /** Site-wide portals, corresponding to individual tabs */
-  portal: KeyedLookup<PortalState>;
+  portal: TypeUtil.KeyedLookup<PortalState>;
   /** <Tabs> on current page */
-  tabs: KeyedLookup<TabsState>;
+  tabs: TypeUtil.KeyedLookup<TabsState>;
 
   readonly api: {
     updateArticleKey: () => void;

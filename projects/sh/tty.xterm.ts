@@ -1,6 +1,6 @@
 import { Terminal } from 'xterm';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
-import { safeStringify, testNever } from 'model/generic.model';
+import { safeStringify, testNever } from '../service/generic';
 import { scrollback, ShellIo, DataChunk, isDataChunk } from './io/io.model';
 import { ansiWhite, ansiBlue, ansiReset, ansiYellow, ansiWarn, ansiRed } from './sh.util';
 

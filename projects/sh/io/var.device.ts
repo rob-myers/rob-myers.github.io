@@ -1,4 +1,4 @@
-import { last } from "model/generic.model";
+import { last } from "../../service/generic";
 import useSessionStore from "../session.store";
 import { Device, ReadResult, isDataChunk } from "./io.model";
 

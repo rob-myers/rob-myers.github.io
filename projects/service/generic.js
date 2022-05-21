@@ -1,3 +1,16 @@
+import prettyCompact from 'json-stringify-pretty-compact';
+import safeStableStringify from 'safe-stable-stringify';
+
+/**
+ * @template {{ key: string }} LookupItem
+ * @param {LookupItem} newItem 
+ * @param {TypeUtil.KeyedLookup<LookupItem>} lookup 
+ * @returns {TypeUtil.KeyedLookup<LookupItem>}
+ */
+ export function addToLookup(newItem, lookup) {
+  return { ...lookup, [newItem.key]: newItem };
+}
+
 /** 
  * JSDoc types lack a non-null assertion.
  * https://github.com/Microsoft/TypeScript/issues/23405#issuecomment-873331031
@@ -32,6 +45,16 @@ export function assertDefined(value, valueName) {
 }
 
 /**
+ * Clone serializable data `input`, e.g. not regexes.
+ * @template T
+ * @param {T} input 
+ * @returns {T}
+ */
+ export function deepClone(input) {
+  return JSON.parse(JSON.stringify(input));
+}
+
+/**
  * Test equality, i.e. test fn `equality`,
  * falling back to primitive equality,
  * and recurse on arrays/objects.
@@ -59,6 +82,14 @@ export function equals(x, y, depth = 0) {
 }
 
 /**
+ * @template T
+ * @param {(T | T[])[]} items
+ */
+ export function flatten(items) {
+  return /** @type {T[]} */ ([]).concat(...items);
+}
+
+/**
  * https://github.com/sindresorhus/is-plain-obj/blob/main/index.js
  * @param {*} value 
  * @returns 
@@ -73,11 +104,58 @@ export function equals(x, y, depth = 0) {
 }
 
 /**
- * @template T
- * @param {(T | T[])[]} items
+ * @template {string} K
+ * @param {Partial<Record<K, any>> | Record<K, any>} record
+ * Typed `Object.keys`, usually as finitely many string literals.
  */
-export function flatten(items) {
-  return /** @type {T[]} */ ([]).concat(...items);
+ export function keys(record) {
+  return /** @type {K[]} */ (Object.keys(record));
+}
+
+/**
+ * @template T
+ * @param {T[]} items 
+ * @returns {T | undefined}
+ */
+export function last(items) {
+  return items[items.length - 1];
+}
+
+/**
+ * @template SrcValue
+ * @template DstValue
+ * @template {string} Key
+ * @param {Record<Key, SrcValue>} input
+ * @param {(value: SrcValue) => DstValue} transform
+ * Given `{ [key]: value }`, returns fresh
+ * `{ [key]: _transform_(value) }`.
+ */
+ export function mapValues(input, transform) {
+  const output = /** @type {Record<Key, DstValue>} */ ({});
+  keys(input).forEach((key) => output[key] = transform(input[key]));
+  return output;
+}
+
+/**
+ * Pretty-print JSON.
+ * @param {any} input 
+ * @returns {string}
+ */
+export function pretty(input) {
+  // return JSON.stringify(input, null, '\t');
+  return prettyCompact(input);
+}
+
+/** @param {any} input */
+export function safeStringify(input) {
+  if (typeof input === 'function') {
+    return zealousTrim(`${input}`);
+  }
+  return tryJsonStringify(input) || safeStableStringify(input, (_k, v) => {
+    if (v instanceof HTMLElement)
+      return `HTMLElement[${v.nodeName}]`;
+    return v;
+  });
 }
 
 /**
@@ -96,25 +174,6 @@ export function flatten(items) {
 }
 
 /**
- * Clone serializable data `input`, e.g. not regexes.
- * @template T
- * @param {T} input 
- * @returns {T}
- */
-export function deepClone(input) {
-  return JSON.parse(JSON.stringify(input));
-}
-
-/**
- * @template {string} K
- * @param {Partial<Record<K, any>> | Record<K, any>} record
- * Typed `Object.keys`, usually as finitely many string literals.
- */
-export function keys(record) {
-  return /** @type {K[]} */ (Object.keys(record));
-}
-
-/**
  * @template T
  * @param {T[]} items 
  */
@@ -124,21 +183,38 @@ export function removeDups(items) {
 
 /**
  * @template {{ key: string }} LookupItem
- * @param {LookupItem} newItem 
- * @param {import("model/generic.model").KeyedLookup<LookupItem>} lookup 
- * @returns {import("model/generic.model").KeyedLookup<LookupItem>}
- */
-export function addToLookup(newItem, lookup) {
-  return { ...lookup, [newItem.key]: newItem };
-}
-
-/**
- * @template {{ key: string }} LookupItem
  * @param {string} itemKey 
- * @param {import("model/generic.model").KeyedLookup<LookupItem>} lookup 
- * @returns {import("model/generic.model").KeyedLookup<LookupItem>}
+ * @param {TypeUtil.KeyedLookup<LookupItem>} lookup 
+ * @returns {TypeUtil.KeyedLookup<LookupItem>}
  */
 export function removeFromLookup(itemKey, lookup) {
   const { [itemKey]: _, ...rest } = lookup;
   return rest;
+}
+
+/**
+ * Usage `default: throw testNever(x)`.
+ * @param {never} x 
+ * @returns {string}
+ */
+export function testNever(x) {
+  return `testNever: ${pretty(x)} not implemented.`;
+}
+
+/** @param {any} input */
+function tryJsonStringify(input) {
+  try {
+    let ownKeys = /** @type {string[]} */ ([]);
+    return JSON.stringify(input, (_k, v) => {
+      if (typeof v === 'function') {
+        return `[Function]${(ownKeys = Object.keys(v)).length ? ` ...{${ownKeys}} ` : ''}`;
+      }
+      return v;
+    })
+  } catch {};
+}
+
+/** @param {string} input */
+function zealousTrim(input) {
+  return input.trim().replace(/\s\s+/g, ' ').trim();
 }

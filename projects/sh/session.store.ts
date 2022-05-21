@@ -1,12 +1,11 @@
 import create from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { deepClone, KeyedLookup, mapValues } from 'model/generic.model';
 import type { BaseMeta, FileWithMeta } from './parse/parse.model';
 import type { MessageFromShell, MessageFromXterm } from './tty.model';
 import type { NamedFunction } from './var.model';
 import { Device, makeShellIo, ShellIo } from './io/io.model';
-import { addToLookup, removeFromLookup } from '../service/generic';
+import { addToLookup, deepClone, mapValues, removeFromLookup } from '../service/generic';
 import { TtyShell } from './tty.shell';
 import { FifoDevice } from './io/fifo.device';
 import { VarDevice, VarDeviceMode } from './io/var.device';
@@ -15,8 +14,8 @@ import { NullDevice } from './io/null.device';
 import { computeNormalizedParts, resolveNormalized, ShError } from './sh.util';
 
 export type State = {
-  session: KeyedLookup<Session>;
-  device: KeyedLookup<Device>;
+  session: TypeUtil.KeyedLookup<Session>;
+  device: TypeUtil.KeyedLookup<Device>;
   
   readonly api: {
     addFunc: (sessionKey: string, funcName: string, wrappedFile: FileWithMeta) => void;
@@ -55,7 +54,7 @@ export type State = {
 
 export interface Session {
   key: string;
-  func: KeyedLookup<NamedFunction>;
+  func: TypeUtil.KeyedLookup<NamedFunction>;
   /**
    * Currently only support one tty per session,
    * i.e. cannot have two terminals in same session.
@@ -65,7 +64,7 @@ export interface Session {
   ttyShell: TtyShell,
   var: Record<string, any>;
   nextPid: number;
-  process: KeyedLookup<ProcessMeta>;
+  process: TypeUtil.KeyedLookup<ProcessMeta>;
 }
 
 interface Rehydrated {

@@ -2,7 +2,7 @@ import type * as Sh from './parse/parse.model';
 import { nanoid } from 'nanoid';
 import safeJsonStringify from 'safe-json-stringify';
 
-import { last } from 'model/generic.model';
+import { last } from '../service/generic';
 import useSession, { ProcessStatus } from './session.store';
 import { NamedFunction } from './var.model';
 import { killError, expand, Expanded, literal, matchFuncFormat, normalizeWhitespace, ProcessError, ShError, singleQuotes } from './sh.util';

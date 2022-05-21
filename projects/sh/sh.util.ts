@@ -1,5 +1,5 @@
 import braces from 'braces';
-import { last } from 'model/generic.model';
+import { last } from '../service/generic';
 import type { ProcessMeta } from './session.store';
 import { SigEnum } from './io/io.model';
 import type * as Sh from './parse/parse.model';

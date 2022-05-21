@@ -1,6 +1,6 @@
 import cloneWithRefs from 'lodash.clonedeep';
 import getopts from 'getopts';
-import { testNever, last } from "model/generic.model";
+import { testNever, last } from "../../service/generic";
 import type * as Sh from "./parse.model";
 
 /**

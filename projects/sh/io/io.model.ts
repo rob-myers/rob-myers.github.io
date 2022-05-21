@@ -1,10 +1,9 @@
 import { Subject, Subscription } from "rxjs";
-import { deepClone } from "model/generic.model";
 import type * as Sh from '../parse/parse.model';
 import { ProcessMeta, ProcessStatus } from "../session.store";
 import { traverseParsed } from '../parse/parse.util';
 import { killError } from "../sh.util";
-import { removeFirst } from "../../service/generic";
+import { deepClone, removeFirst } from "../../service/generic";
 
 export const scrollback = 200;
 

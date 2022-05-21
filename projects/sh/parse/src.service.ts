@@ -1,6 +1,6 @@
-import type * as Sh from "./parse.model";
-import { last, testNever } from "model/generic.model";
-import { collectIfClauses, reconstructReplParamExp } from "./parse.util";
+import type * as Sh from './parse.model';
+import { last, testNever } from '../../service/generic';
+import { collectIfClauses, reconstructReplParamExp } from './parse.util';
 
 export class SrcService {
 

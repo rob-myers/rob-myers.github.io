@@ -1,5 +1,5 @@
 import type * as Sh from './parse/parse.model';
-import { testNever } from 'model/generic.model';
+import { testNever } from '../service/generic';
 import { Device, ReadResult, ShellIo, SigEnum } from './io/io.model';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 
