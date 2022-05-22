@@ -17,11 +17,11 @@ __Aim towards website release__.
 - ✅ `view` should work while `track`
 - 🚧 light changes when Andros moves thru doorway
   - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
-  - 🚧 `walk` handles `nav` output e.g. console.log on exit doorway
+  - ✅ `walk` handles `nav` output, and `console.log` on enter/exit doorway
   - ✅ `walk` is for a fixed npc
-  - `walk` receives paths, and cancels on receive early
-  - `walk` pauses/resumes npc on suspend/resume process
-  - change lighting when exit doorway
+  - 🚧 `walk` cancels on receive early
+  - 🚧 `walk` pauses/resumes npc on suspend/resume process
+  - change lighting on exit doorway
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes
 - mobile: improve `track` jerkiness

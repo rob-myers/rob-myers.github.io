@@ -61,11 +61,11 @@ export default function NPCs(props) {
           const paths = /** @type {NPC.LocalNavPath[]} */ ([]);
           for (let k = 0; k < gmEdges.length + 1; k++) {
             if (k === 0) {
-              paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].src.exit);
+              paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].srcExit);
             } else if (k === gmEdges.length) {
-              paths[k] = state.getLocalNavPath(dstGmId, gmEdges[k - 1].dst.entry, dst);
+              paths[k] = state.getLocalNavPath(dstGmId, gmEdges[k - 1].dstEntry, dst);
             } else {
-              paths[k] = state.getLocalNavPath(gmEdges[k - 1].dst.gmId, gmEdges[k - 1].dst.entry, gmEdges[k].src.exit);
+              paths[k] = state.getLocalNavPath(gmEdges[k - 1].dstGmId, gmEdges[k - 1].dstEntry, gmEdges[k].srcExit);
             }
           }
           return {
@@ -86,11 +86,12 @@ export default function NPCs(props) {
         if (result) {
           return {
             key: 'local-nav',
+            gmId,
             paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
             edges: result.edges,
           };
         } else {
-          return { key: 'local-nav', paths: [], edges: [] };
+          return { key: 'local-nav', gmId, paths: [], edges: [] };
         }
       },
       getNpcGlobalNav(e) {
@@ -201,15 +202,32 @@ export default function NPCs(props) {
         }
 
         if ('points' in e) {
+          // Walk along path, ignoring any doors
           await state.moveNpcAlongPath(npc, e.points);
         } else if (e.key === 'global-nav') {
+          // Walk along a global navpath
           for (const [i, localNavPath] of e.paths.entries()) {
-            // IN PROGRESS
+            for (const [i, vectPath] of localNavPath.paths.entries()) {
+              await state.moveNpcAlongPath(npc, vectPath);
+              const roomEdge = localNavPath.edges[i];
+              // Either final path has no roomEdge, or we leave geomorph,
+              // in which case edge is a self-loop by construction
+              if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
+                console.log(`gm ${localNavPath.gmId}: entering door ${roomEdge.doorId} from room ${roomEdge.srcRoomId}`);
+                await state.moveNpcAlongPath(npc, [roomEdge.entry, roomEdge.exit]);
+                console.log(`gm ${localNavPath.gmId}: exiting door ${roomEdge.doorId} to room ${roomEdge.dstRoomId}`);
+              }
+            }
+            const gmEdge = e.edges[i];
+            if (gmEdge) {// Undefined for last
+              console.log(`gm ${gmEdge.srcGmId}: entering hull door ${gmEdge.srcHullDoorId} `);
+              await state.moveNpcAlongPath(npc, [npc.getPosition(), gmEdge.srcExit, gmEdge.dstEntry]);
+              console.log(`gm ${gmEdge.dstGmId}: exiting hull door ${gmEdge.dstHullDoorId}`);
+            }
           }
         } else if (e.key === 'local-nav') {
-          // TODO
           for (const [i, vectPath] of e.paths.entries()) {
-
+            // TODO
           }
         }
 

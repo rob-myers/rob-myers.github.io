@@ -244,18 +244,33 @@ walk: `{
   }' "$@"
 }`,
 
-// TODO remove path collapse
-// NOTE ignores doors
+// IN PROGRESS
 go: `{
+  nav $1 $(click 1) |
+    walk $1
+}`,
+/**
+ * Basic because we just join navpaths, ignoring doors.
+ */
+goBasic: `{
   nav $1 $(click 1) |
     map 'x => ({
       points: x.paths.reduce((agg, item) => agg.concat(...item.paths), []),
     })' |
     walk $1
 }`,
-// TODO remove path collapse
-// TODO handle click before finish
+// IN PROGRESS
 goLoop: `{
+  click |
+    filter 'x => x.tags.includes("floor")' |
+    map 'x => ({ npcKey: "'$1'", point: x })' |
+    nav |
+    walk $1
+}`,
+/**
+ * Basic because we just join navpaths, ignoring doors.
+ */
+goLoopBasic: `{
   click |
     filter 'x => x.tags.includes("floor")' |
     map 'x => ({ npcKey: "'$1'", point: x })' |

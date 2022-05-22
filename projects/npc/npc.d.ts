@@ -121,25 +121,25 @@ declare namespace NPC {
   }
 
   export interface NavGmTransition {
-    src: {
-      gmId: number;
-      hullDoorId: number;
-      /** World coords */
-      exit: Geom.Vect;
-    };
-    dst: {
-      gmId: number;
-      hullDoorId: number;
-      /** World coords */
-      entry: Geom.Vect;
-    };
+    srcGmId: number;
+    srcHullDoorId: number;
+    // srcDoorId: number;
+    /** World coords */
+    srcExit: Geom.Vect;
+    dstGmId: number;
+    dstHullDoorId: number;
+    // dstDoorId: number;
+    /** World coords */
+    dstEntry: Geom.Vect;
   }
 
   export interface NavRoomTransition {
     doorId: number;
     srcRoomId: number;
     dstRoomId: number;
+    /** TODO clarify meaning */
     entry: Geom.Vect;
+    /** TODO clarify meaning */
     exit: Geom.Vect;
   }
 
@@ -150,6 +150,7 @@ declare namespace NPC {
   }
   interface LocalNavPath {
     key: 'local-nav';
+    gmId: number;
     paths: Geom.Vect[][];
     edges: NPC.NavRoomTransition[];
   }

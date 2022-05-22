@@ -118,8 +118,13 @@ export class gmGraph extends BaseGraph {
           return null;
         } // Update state
         gmIdsPath.push({
-          src: { gmId, hullDoorId: closest.node.hullDoorId, exit: closest.v },
-          dst: { gmId: adjDoorNode.gmIndex, hullDoorId: adjDoorNode.hullDoorId, entry: this.getDoorEntry(adjDoorNode) },
+          srcGmId: gmId,
+          srcHullDoorId: closest.node.hullDoorId,
+          srcExit: closest.v,
+
+          dstGmId: adjDoorNode.gmIndex,
+          dstHullDoorId: adjDoorNode.hullDoorId,
+          dstEntry: this.getDoorEntry(adjDoorNode),
         });
         gmId = adjDoorNode.gmIndex;
         currSrc.copy(closest.v);
