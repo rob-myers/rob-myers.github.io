@@ -1,10 +1,10 @@
 import React from "react";
 import { css } from "goober";
-import { Vect } from "../../geom";
-import { getSvgPos } from "../../service/dom";
-import useUpdate from '../../hooks/use-update';
+import { Vect } from "../geom";
+import { getSvgPos } from "../service/dom";
+import useUpdate from '../hooks/use-update';
 
-/** @param {NPCTest.DraggableNodeProps} props */
+/** @param {DraggableNodeProps} props */
 export default function DraggableNode(props) {
 
   const update = useUpdate();
@@ -199,3 +199,22 @@ const rootCss = css`
     pointer-events: none;
   }
 `;
+
+/**
+ * @typedef DraggableNodeProps @type {object}
+ * @property {Geom.VectJson} initial
+ * @property {number} [radius]
+ * @property {'eye' | 'down' | 'right' | 'run' | 'finish'} [icon]
+ * @property {string} [stroke]
+ * @property {(api: DraggableNodeApi) => void} [onLoad]
+ * @property {() => void} [onStart]
+ * @property {(position: Geom.Vect) => void} [onStop]
+ * @property {(position: Geom.Vect) => void} [onClick]
+ * @property {(current: Geom.Vect, next: Geom.Vect) => void} [shouldCancel]
+ */
+
+/**
+ * @typedef DraggableNodeApi @type {object}
+ * @property {(p: Geom.VectJson) => void} moveTo
+ * @property {() => Geom.Vect} getPosition
+ */

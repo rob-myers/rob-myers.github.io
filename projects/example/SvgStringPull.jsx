@@ -7,7 +7,7 @@ import { Rect, Vect } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 import PanZoom from "../panzoom/PanZoom";
-import DraggableNode from "./svg-nav-demo/DraggableNode";
+import DraggableNode from "./DraggableNode";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
 import useStateRef from "../hooks/use-state-ref";

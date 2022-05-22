@@ -7,7 +7,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { geom } from "../service/geom";
 import * as defaults from "./defaults";
 import PanZoom from "../panzoom/PanZoom";
-import DraggableNode from "./svg-nav-demo/DraggableNode";
+import DraggableNode from "./DraggableNode";
 import useGeomorphData from "../hooks/use-geomorph-data";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean }} props */

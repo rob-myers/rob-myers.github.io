@@ -11,7 +11,6 @@
     { key: 'component', filepath: 'example/NavDemo1' },
     // { key: 'component', filepath: 'example/LightsTest' },
     // { key: 'component', filepath: 'example/Css3dForeignObject#301' },
-    // { key: 'component', filepath: 'example/SvgNavDemo1' },
     // { key: 'component', filepath: 'example/Pyramid3dDemo' },
     // { key: 'component', filepath: 'example/SvgStringPull' },
     // { key: 'component', filepath: 'example/TriangleDev#301' },

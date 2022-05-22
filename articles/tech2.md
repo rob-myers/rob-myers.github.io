@@ -158,9 +158,7 @@ We'll detect their imminent collision, and then stop them both.
   name="nav-collide-demo"
   height="400"
   enabled="false"
-  tabs="[
-     { key: 'component', filepath: 'example/SvgNavDemo1' },
-   ]"
+  tabs="[]"
 ></div>
 
 __TODO__
