@@ -131,16 +131,28 @@ export default function NPCs(props) {
         return navPoly.some(poly => poly.contains(localPoint));
       },
       async moveNpcAlongPath(npc, path) {
+        // TODO 🚧 can cancel via `npcAct` and `kill`
+        // TODO pause/resume
         npc.origPath = path.map(Vect.from);
         npc.animPath = npc.origPath.slice();
         npc.updateAnimAux();
-        npc.followNavPath();
-        const anim = npc.anim.root;
-        await new Promise((resolve, reject) => {
-          update();
-          anim.addEventListener("finish", resolve); // TODO cancel too
-          anim.addEventListener("cancel", reject);
-        });
+        await npc.followNavPath();
+      },
+      npcAct(e) {
+        const npc = state.npc[e.npcKey];
+        if (!npc) {
+          throw Error(`npc does not exist: "${e.npcKey}"`);
+        } else if (!(e.action === 'stop' || e.action === 'pause' || e.action === 'resume')) {
+          throw Error(`${e.npcKey} unrecognised action: "${e.action}"`);
+        }
+
+        if (e.action === 'stop') {
+          // TODO 🚧 cancel walking
+        } else if (e.action === 'pause') {
+          // TODO 🚧 pause walking
+        } else if (e.action === 'resume') {
+          // TODO 🚧 resume walking
+        }
       },
       npcRef(rootEl) {
         if (rootEl) {// NPC mounted
@@ -186,23 +198,27 @@ export default function NPCs(props) {
         update();
       },
       async walkNpc(e) {
-        // TODO 🚧 can also handle local/global nav path
+        // TODO 🚧
+        // - can cancel walk via `npc andros stop` or `kill`
+        // - can pause/resume walk via `npc andros pause/resume` or `kill --STOP/CONT`
 
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc "${e.npcKey}" does not exist`);
-        } else if ('key' in e && !(e.key === 'local-nav' || e.key === 'global-nav')) {
-          throw Error(`invalid key: ${JSON.stringify(e)}`);
-        } else if ('points' in e && !(Array.isArray(e.points) && e.points.every(p => Vect.isVectJson(p)))) {
+        } else if ('key' in e) {
+          if (!(e.key === 'local-nav' || e.key === 'global-nav')) {
+            throw Error(`invalid key: ${JSON.stringify(e)}`);
+          } else if (e.key === 'local-nav' && !isLocalNavPath(e)) {
+            throw Error(`invalid local navpath: ${JSON.stringify(e)}`);
+          } else if (e.key === 'global-nav' && !isGlobalNavPath(e)) {
+            throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
+          }
+        } else if ('points' in e && !(e.points?.every?.(Vect.isVectJson))) {
           throw Error(`invalid points: ${JSON.stringify(e.points)}`);
-        } else if ('key' in e && e.key === 'local-nav' && !isLocalNavPath(e)) {
-          throw Error(`invalid local navpath: ${JSON.stringify(e)}`);
-        } else if ('key' in e && e.key === 'global-nav' && !isGlobalNavPath(e)) {
-          throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
         }
 
         if ('points' in e) {
-          // Walk along path, ignoring any doors
+          // Walk along path `points`, ignoring doors
           await state.moveNpcAlongPath(npc, e.points);
         } else if (e.key === 'global-nav') {
           // Walk along a global navpath
@@ -219,7 +235,7 @@ export default function NPCs(props) {
               }
             }
             const gmEdge = e.edges[i];
-            if (gmEdge) {// Undefined for last
+            if (gmEdge) {// Undefined for final localNavPath
               console.log(`gm ${gmEdge.srcGmId}: entering hull door ${gmEdge.srcHullDoorId} `);
               await state.moveNpcAlongPath(npc, [npc.getPosition(), gmEdge.srcExit, gmEdge.dstEntry]);
               console.log(`gm ${gmEdge.dstGmId}: exiting hull door ${gmEdge.dstHullDoorId}`);

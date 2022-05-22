@@ -168,29 +168,21 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
   const npc = {
     key: npcKey,
     spawnedAt: Date.now(),
-    def: {
-      key: npcKey,
-      position: at,
-      angle: 0, // TODO 🚧 integrate
-      paused: !!disabled,
-    },
+    // TODO hook up angle
+    def: { key: npcKey, position: at, angle: 0, paused: !!disabled },
     el: {
       root: /** @type {HTMLDivElement} */ ({}),
       body: /** @type {HTMLDivElement} */ ({}),
     },
-    anim: {
-      root: new Animation,
-      body: new Animation,
-    },
+    anim: { root: new Animation, body: new Animation },
     animPath: [],
-    aux: {
-      angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0,
-    },
+    aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
     origPath: [],
     spriteSheet: 'idle',
     enteredSheetAt: Date.now(),
+    // TODO onCancels, onResumes, onPauses
 
-    followNavPath() {
+    async followNavPath() {
       const { aux } = this;
       if (this.animPath.length <= 1 || aux.total === 0) {
         return; // Already finished
@@ -212,6 +204,13 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
         this.pause();
       }
       aux.count++;
+
+      const anim = npc.anim.root;
+      update();
+      await new Promise((resolve, reject) => {
+        anim.addEventListener("finish", resolve); // TODO trigger cancel
+        anim.addEventListener("cancel", reject);
+      });
     },
     getAngle() {
       const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);

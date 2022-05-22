@@ -66,7 +66,7 @@ declare namespace NPC {
 
     //#endregion
     /** Radians */
-    followNavPath(): void;
+    async followNavPath(): Promise<void>;
     getAngle(): number;
     getAnimDef(): TypeUtil.AnimDef;
     getPosition(): Geom.Vect;
@@ -180,6 +180,7 @@ declare namespace NPC {
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;
     async moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Promise<void>;
+    npcAct(e: { npcKey: string; action: 'stop' | 'pause' | 'resume' }): void;
     npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;

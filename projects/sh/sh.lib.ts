@@ -290,11 +290,15 @@ view: `{
   }' "$@"
 }`,
 
-/** Get NPC */
+/** Get NPC or do [action] */
 npc: `{
   run '({ api, args, home }) {
     const npcs = api.getCached(home.NPCS_KEY)
-    yield npcs.getNpc({ npcKey: args[0] })
+    if (args[1]) {
+      npcs.npcAct({ npcKey: args[0], action: args[1] })
+    } else {
+      yield npcs.getNpc({ npcKey: args[0] })
+    }
   }' "$@"
 }`,
 
