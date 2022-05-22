@@ -1,8 +1,7 @@
 import Sh, { syntax } from 'mvdan-sh';
-import { deepClone } from '../../service/generic';
 import type * as P from './parse.model';
 import { defaultSessionKey, defaultStdInOut } from './parse.model';
-import { withParents } from './parse.util';
+import { cloneParsed, withParents } from './parse.util';
 
 /**
  * Parse shell code using npm module mvdan-sh.
@@ -58,7 +57,7 @@ class ParseShService {
    */
   parse(src: string, cache = false): P.FileWithMeta {
     if (src in this.cache) {
-      return deepClone(this.cache[src]);
+      return cloneParsed(this.cache[src]);
     }
     const parser = syntax.NewParser(
       syntax.KeepComments(true),
