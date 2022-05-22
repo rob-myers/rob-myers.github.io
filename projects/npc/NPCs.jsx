@@ -133,8 +133,8 @@ export default function NPCs(props) {
       async moveNpcAlongPath(npc, path) {
         // TODO 🚧 can cancel via `npcAct` and `kill`
         // TODO pause/resume
-        npc.origPath = path.map(Vect.from);
-        npc.animPath = npc.origPath.slice();
+        npc.anim.origPath = path.map(Vect.from);
+        npc.anim.animPath = npc.anim.origPath.slice();
         npc.updateAnimAux();
         await npc.followNavPath();
       },
@@ -277,7 +277,7 @@ export default function NPCs(props) {
         <div
           key={`${npc.key}@${npc.spawnedAt}`} // So, respawn remounts
           ref={state.npcRef}
-          className={classNames('npc', npc.key, npc.spriteSheet, npcCss)}
+          className={classNames('npc', npc.key, npc.anim.spriteSheet, npcCss)}
           data-npc-key={npc.key}
         >
           <div

@@ -42,27 +42,28 @@ declare namespace NPC {
     };
 
     //#region mutable
-    /** Initially `origPath` but may change on pause/unpause */
-    animPath: Geom.Vect[];
     anim: {
+      /** Initially `origPath` but may change on pause/unpause */
+      animPath: Geom.Vect[];
+      /** Data derived from `animPath` */
+      aux: {
+        angs: number[];
+        /** How many times has a new animation been created? */
+        count: number;
+        edges: ({ p: Geom.Vect; q: Geom.Vect })[];
+        elens: number[];
+        /** Outset version of `origPath` to detect progress on pause */
+        navPathPolys: Geom.Poly[];
+        sofars: number[];
+        total: number;
+      };
+      enteredSheetAt: number;
+      origPath: Geom.Vect[];
+      spriteSheet: 'idle' | 'walk';
+
       root: Animation;
       body: Animation;
     };
-    /** Data derived from `animPath` */
-    aux: {
-      angs: number[];
-      /** How many times has a new animation been created? */
-      count: number;
-      edges: ({ p: Geom.Vect; q: Geom.Vect })[];
-      elens: number[];
-      /** Outset version of `origPath` to detect progress on pause */
-      navPathPolys: Geom.Poly[];
-      sofars: number[];
-      total: number;
-    };
-    enteredSheetAt: number;
-    origPath: Geom.Vect[];
-    spriteSheet: 'idle' | 'walk';
 
     //#endregion
     /** Radians */

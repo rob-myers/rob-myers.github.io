@@ -338,7 +338,7 @@ track: `{
       const npcPosition = npc.getPosition()
       const distance = npcs.class.Vect.from(npcPosition).distanceTo(worldFocus)
 
-      if (npc.spriteSheet === "walk") {
+      if (npc.anim.spriteSheet === "walk") {
         const targets = npc.getTargets()
         if (targets.length > 0) {
           // console.log(targets)
@@ -347,7 +347,7 @@ track: `{
         } else {
           yield* await api.sleep(1)
         }
-      } else if (npc.spriteSheet === "idle") {
+      } else if (npc.anim.spriteSheet === "idle") {
         if (distance > 60) {// speed 60 world unit per second
           const ms = (distance / 60) * 1000
           await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms })

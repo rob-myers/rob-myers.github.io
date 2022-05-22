@@ -174,17 +174,21 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       root: /** @type {HTMLDivElement} */ ({}),
       body: /** @type {HTMLDivElement} */ ({}),
     },
-    anim: { root: new Animation, body: new Animation },
-    animPath: [],
-    aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
-    origPath: [],
-    spriteSheet: 'idle',
-    enteredSheetAt: Date.now(),
+    anim: {
+      animPath: [],
+      aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
+      enteredSheetAt: Date.now(),
+      origPath: [],
+      spriteSheet: 'idle',
+
+      root: new Animation,
+      body: new Animation
+    },
     // TODO onCancels, onResumes, onPauses
 
     async followNavPath() {
-      const { aux } = this;
-      if (this.animPath.length <= 1 || aux.total === 0) {
+      const { anim } = this;
+      if (anim.animPath.length <= 1 || anim.aux.total === 0) {
         return; // Already finished
       }
       
@@ -192,24 +196,25 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       const { keyframes, opts } = this.getAnimDef();
       this.anim.root = this.el.root.animate(keyframes, opts);
       
-      this.spriteSheet = 'walk';
-      this.enteredSheetAt = Date.now();
-      this.anim.root.addEventListener('finish', () => {
-        this.spriteSheet = 'idle';
-        this.enteredSheetAt = Date.now();
+      anim.spriteSheet = 'walk';
+      anim.enteredSheetAt = Date.now();
+      anim.root.addEventListener('finish', () => {
+        anim.spriteSheet = 'idle';
+        anim.enteredSheetAt = Date.now();
         update();
       });
 
-      if (wasPaused || (aux.count === 0 && this.def.paused)) {
+      if (wasPaused || (anim.aux.count === 0 && this.def.paused)) {
         this.pause();
       }
-      aux.count++;
+      anim.aux.count++;
 
-      const anim = npc.anim.root;
       update();
       await new Promise((resolve, reject) => {
-        anim.addEventListener("finish", resolve); // TODO trigger cancel
-        anim.addEventListener("cancel", reject);
+        // TODO store resolve/reject in npc's lists
+        // TODO finish should trigger cancel so can resume styles
+        npc.anim.root.addEventListener("finish", resolve);
+        npc.anim.root.addEventListener("cancel", reject);
       });
     },
     getAngle() {
@@ -218,9 +223,9 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
     },
     getAnimDef() {
       // NOTE Web Animations polyfill may require ≥ 2 frames
-      const { aux } = this;
+      const { anim } = this, { aux } = anim;
       return {
-        keyframes: this.animPath.flatMap((p, i) => [
+        keyframes: anim.animPath.flatMap((p, i) => [
           {
             offset: aux.sofars[i] / aux.total,
             transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || aux.angs[i] || 0}rad)`
@@ -238,21 +243,22 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
     },
     getTargets() {
-      if (this.spriteSheet === "idle") {
+      const { anim } = this;
+      if (anim.spriteSheet === "idle") {
         return [];
       }
 
-      const soFarMs = Date.now() - this.enteredSheetAt;
-      const unseenIndex = this.aux.sofars.findIndex(sofar => sofar * animScaleFactor >= soFarMs + 200);
+      const soFarMs = Date.now() - anim.enteredSheetAt;
+      const unseenIndex = anim.aux.sofars.findIndex(sofar => sofar * animScaleFactor >= soFarMs + 200);
 
       if (
         unseenIndex === -1
-        || unseenIndex === this.aux.sofars.length - 1
+        || unseenIndex === anim.aux.sofars.length - 1
       ) {
-        return [{ point: this.animPath[this.animPath.length - 1], ms: this.aux.total * animScaleFactor - soFarMs }];
+        return [{ point: anim.animPath[anim.animPath.length - 1], ms: anim.aux.total * animScaleFactor - soFarMs }];
       } else {
-        return this.aux.sofars.slice(unseenIndex)
-          .map((sofar, i) => ({ point: this.animPath[unseenIndex + i], ms: (sofar * animScaleFactor) - soFarMs }))
+        return anim.aux.sofars.slice(unseenIndex)
+          .map((sofar, i) => ({ point: anim.animPath[unseenIndex + i], ms: (sofar * animScaleFactor) - soFarMs }))
       }
     },
     pause() {
@@ -261,8 +267,8 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       }
     },
     updateAnimAux() {
-      const { animPath, aux } = this;
-      aux.edges = animPath.map((p, i) => ({ p, q: animPath[i + 1] })).slice(0, -1);
+      const { anim } = this, {  aux } = anim;
+      aux.edges = anim.animPath.map((p, i) => ({ p, q: anim.animPath[i + 1] })).slice(0, -1);
       aux.angs = aux.edges.map(e => Number(Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2)));
       aux.elens = aux.edges.map(({ p, q }) => Number(p.distanceTo(q).toFixed(2)));
       aux.navPathPolys = aux.edges.map(e => {
