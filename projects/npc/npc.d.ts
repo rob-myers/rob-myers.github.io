@@ -144,10 +144,12 @@ declare namespace NPC {
   }
 
   interface GlobalNavPath {
+    key: 'global-nav';
     paths: LocalNavPath[];
     edges: NPC.NavGmTransition[];
   }
   interface LocalNavPath {
+    key: 'local-nav';
     paths: Geom.Vect[][];
     edges: NPC.NavRoomTransition[];
   }
@@ -176,12 +178,16 @@ declare namespace NPC {
     getNpc(e: { npcKey: string }): NPC.NPC;
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;
-    moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Animation;
+    async moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Promise<void>;
     npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
-    async walkNpc(e: { npcKey: string; points: Geom.VectJson[] }): Promise<void>;
+    async walkNpc(e: { npcKey: string } & (
+      | { points: Geom.VectJson[] }
+      | GlobalNavPath
+      | LocalNavPath
+    )): Promise<void>;
   }
 
 }

@@ -19,7 +19,7 @@ ready
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
 # camera follows andros
-# track andros &
+track andros &
 
 `,
 };
@@ -220,8 +220,8 @@ nav: `{
 /**
  * Move an npc along path(s) e.g.
  * - `walk andros "[$( click 1 ), $( click 1 )]"'
- * - `expr "{ npcKey: 'andros', points: [$( click 1 ), $( click 1 )] }" | walk andros`
- * - `expr "{ npcKey: 'andros', paths: { paths: [[$( click 1 ), $( click 1 )]], edges: [] }, edges: [] }" | walk andros`
+ * - `expr "{ points: [$( click 1 ), $( click 1 )] }" | walk andros`
+ * - `expr "{ key: 'global-nav', paths: [{ key: 'local-nav', paths: [[$( click 1 ), $( click 1 )]], edges: [] }], edges: [] }" | walk andros`
  * 
  * Technically distinct npcs can be referenced, but since each
  * path is walked one after another, this is less useful.
@@ -232,13 +232,14 @@ nav: `{
 walk: `{
   run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
+    const npcKey = args[0]
     if (api.isTtyAt(0)) {
-      const npcKey = args[0]
       const points = api.safeJsonParse(args[1])
       await npcs.walkNpc({ npcKey, points })
     } else {
+      // npcKey must be fixed via 1st arg
       while ((datum = await api.read()) !== null)
-        await npcs.walkNpc(datum)
+        await npcs.walkNpc({ npcKey, ...datum })
     }
   }' "$@"
 }`,
@@ -248,7 +249,6 @@ walk: `{
 go: `{
   nav $1 $(click 1) |
     map 'x => ({
-      npcKey: "andros",
       points: x.paths.reduce((agg, item) => agg.concat(...item.paths), []),
     })' |
     walk $1
@@ -258,13 +258,12 @@ go: `{
 goLoop: `{
   click |
     filter 'x => x.tags.includes("floor")' |
-    map 'x => ({ npcKey: "andros", point: x })' |
+    map 'x => ({ npcKey: "'$1'", point: x })' |
     nav |
     map 'x => ({
-      npcKey: "andros",
       points: x.paths.reduce((agg, item) => agg.concat(...item.paths), []),
     })' |
-    walk
+    walk $1
 }`,
 
 // TODO handle multiple reads?

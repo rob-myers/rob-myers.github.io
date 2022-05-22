@@ -18,7 +18,7 @@ __Aim towards website release__.
 - 🚧 light changes when Andros moves thru doorway
   - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
   - 🚧 `walk` handles `nav` output e.g. console.log on exit doorway
-  - `walk` is for a fixed npc
+  - ✅ `walk` is for a fixed npc
   - `walk` receives paths, and cancels on receive early
   - `walk` pauses/resumes npc on suspend/resume process
   - change lighting when exit doorway

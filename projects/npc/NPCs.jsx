@@ -6,7 +6,7 @@ import { filter, first, map, take } from "rxjs/operators";
 import { keys } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../sh/rxjs";
-import { createNpc } from "../service/npc";
+import { createNpc, isGlobalNavPath, isLocalNavPath } from "../service/npc";
 import { Poly, Rect, Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -46,6 +46,7 @@ export default function NPCs(props) {
           throw Error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`)
         } else if (srcGmId === dstGmId) {
           return {
+            key: 'global-nav',
             paths: [state.getLocalNavPath(srcGmId, src, dst)],
             edges: [],
           };
@@ -68,6 +69,7 @@ export default function NPCs(props) {
             }
           }
           return {
+            key: 'global-nav',
             paths,
             edges: gmEdges,
           };
@@ -83,14 +85,12 @@ export default function NPCs(props) {
 
         if (result) {
           return {
+            key: 'local-nav',
             paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
             edges: result.edges,
           };
-          // return /** @type {Geom.Vect[]} */ ([])
-          //   .concat(result.paths.flatMap(x => x))
-          //   .map(p => gm.matrix.transformPoint(p).precision(2));
         } else {
-          return { paths: [], edges: [] };
+          return { key: 'local-nav', paths: [], edges: [] };
         }
       },
       getNpcGlobalNav(e) {
@@ -129,13 +129,17 @@ export default function NPCs(props) {
         const localPoint = inverseMatrix.transformPoint(Vect.from(p));
         return navPoly.some(poly => poly.contains(localPoint));
       },
-      moveNpcAlongPath(npc, path) {
+      async moveNpcAlongPath(npc, path) {
         npc.origPath = path.map(Vect.from);
         npc.animPath = npc.origPath.slice();
         npc.updateAnimAux();
         npc.followNavPath();
-        update();
-        return npc.anim.root;
+        const anim = npc.anim.root;
+        await new Promise((resolve, reject) => {
+          update();
+          anim.addEventListener("finish", resolve); // TODO cancel too
+          anim.addEventListener("cancel", reject);
+        });
       },
       npcRef(rootEl) {
         if (rootEl) {// NPC mounted
@@ -181,21 +185,34 @@ export default function NPCs(props) {
         update();
       },
       async walkNpc(e) {
-        // TODO 🚧 can handle global nav path i.e. paths (vs points)
+        // TODO 🚧 can also handle local/global nav path
 
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc "${e.npcKey}" does not exist`);
-        } else if (!(Array.isArray(e.points) && e.points.every(p => p && typeof p.x === "number" && typeof p.y === "number"))) {
-          throw Error(`invalid path: ${JSON.stringify(e.points)}`);
+        } else if ('key' in e && !(e.key === 'local-nav' || e.key === 'global-nav')) {
+          throw Error(`invalid key: ${JSON.stringify(e)}`);
+        } else if ('points' in e && !(Array.isArray(e.points) && e.points.every(p => Vect.isVectJson(p)))) {
+          throw Error(`invalid points: ${JSON.stringify(e.points)}`);
+        } else if ('key' in e && e.key === 'local-nav' && !isLocalNavPath(e)) {
+          throw Error(`invalid local navpath: ${JSON.stringify(e)}`);
+        } else if ('key' in e && e.key === 'global-nav' && !isGlobalNavPath(e)) {
+          throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
         }
-        const anim = state.moveNpcAlongPath(npc, e.points);
-        // Wait until walk finished or cancelled
-        // TODO need to handle walk pause/resume/cancel elsewhere
-        await new Promise((resolve, reject) => {
-          anim.addEventListener("finish", resolve);
-          anim.addEventListener("cancel", reject);
-        });
+
+        if ('points' in e) {
+          await state.moveNpcAlongPath(npc, e.points);
+        } else if (e.key === 'global-nav') {
+          for (const [i, localNavPath] of e.paths.entries()) {
+            // IN PROGRESS
+          }
+        } else if (e.key === 'local-nav') {
+          // TODO
+          for (const [i, vectPath] of e.paths.entries()) {
+
+          }
+        }
+
       },
     };
 

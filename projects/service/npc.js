@@ -283,3 +283,21 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
 
 /** Scale up how long it should take to move along navpath */
 const animScaleFactor = 15;
+
+/** @param {any} input */
+export function isLocalNavPath(input) {
+  let x = /** @type {Partial<NPC.LocalNavPath>} */ (input);
+  return x?.key === 'local-nav'
+    && x.paths?.every?.(path => path?.every?.(Vect.isVectJson))
+    && x.edges?.every?.(edge => edge) // Could check props here too
+    || false;
+}
+
+/** @param {any} input */
+export function isGlobalNavPath(input) {
+  let x = /** @type {Partial<NPC.GlobalNavPath>} */ (input);
+  return x?.key === 'global-nav'
+    && x.paths?.every?.(isLocalNavPath)
+    && x.edges?.every?.(edge => edge) // Could check props here too
+    || false;
+}
