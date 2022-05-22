@@ -218,27 +218,34 @@ const useStore = create<State>(devtools((set, get) => ({
 
     persist(sessionKey) {
       const { ttyShell, var: varLookup } = api.getSession(sessionKey);
-      
-      localStorage.setItem(
-        `history@session-${sessionKey}`,
-        JSON.stringify(ttyShell.getHistory()),
-      );
-
-      localStorage.setItem(`var@session-${sessionKey}`, JSON.stringify(
-        mapValues(varLookup, x => {
-          try {// Unserializable vars are ignored
-            return JSON.parse(JSON.stringify(x));
-          } catch {};
-        }),
-      ));
+      try {
+        localStorage.setItem(
+          `history@session-${sessionKey}`,
+          JSON.stringify(ttyShell.getHistory()),
+        );
+  
+        localStorage.setItem(`var@session-${sessionKey}`, JSON.stringify(
+          mapValues(varLookup, x => {
+            try {// Unserializable vars are ignored
+              return JSON.parse(JSON.stringify(x));
+            } catch {};
+          }),
+        ));
+      } catch (e) {
+        console.error(e);
+      }
     },
 
     rehydrate(sessionKey) {
-      const storedHistory = JSON.parse(localStorage.getItem(`history@session-${sessionKey}`) || 'null');
-      const storedVar = JSON.parse(localStorage.getItem(`var@session-${sessionKey}`) || 'null');
-      return { history: storedHistory, var: storedVar };
+      try {
+        const storedHistory = JSON.parse(localStorage.getItem(`history@session-${sessionKey}`) || 'null');
+        const storedVar = JSON.parse(localStorage.getItem(`var@session-${sessionKey}`) || 'null');
+        return { history: storedHistory, var: storedVar };
+      } catch (e) {// Can fail in CodeSandbox in Chrome Incognito
+        console.error(e);
+        return { history: null, var: null };
+      }
     },
-
     removeDevice(deviceKey) {
       delete get().device[deviceKey];
     },
