@@ -1,6 +1,3 @@
-/**
- * TODO try to simplify
- */
 import { Device, isDataChunk, ReadResult } from "./io.model";
 
 enum FifoStatus {
