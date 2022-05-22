@@ -21,6 +21,14 @@ Files like `next.config.js` are generated from `scripts/*` via `yarn next-cfg`.
 # General dev info
 
 ```sh
+# publish npm module e.g.
+# https://www.npmjs.com/package/@rob-myers/mvdan-sh
+npm login
+cd {package-root}
+npm publish --access public
+```
+
+```sh
 # Can patch npm modules with `patch-package`
 npx patch-package some-package
 git add patches/some-package+$version.patch
