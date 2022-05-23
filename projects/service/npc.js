@@ -158,6 +158,8 @@ function extractNpcFrames(api, topNodes, title, symbolLookup) {
   );
 }
 
+// TODO move to own file?
+
 /**
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 
@@ -182,9 +184,12 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
       spriteSheet: 'idle',
 
       root: new Animation,
-      body: new Animation
+      body: new Animation,
+
+      cancels: [],
+      pauses: [],
+      resumes: [],
     },
-    // TODO onCancels, onResumes, onPauses
 
     async followNavPath() {
       const { anim } = this;
@@ -192,30 +197,48 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
         return; // Already finished
       }
       
-      const wasPaused = this.anim.root.playState === 'paused';
       const { keyframes, opts } = this.getAnimDef();
       this.anim.root = this.el.root.animate(keyframes, opts);
       
-      anim.spriteSheet = 'walk';
-      anim.enteredSheetAt = Date.now();
-      anim.root.addEventListener('finish', () => {
-        anim.spriteSheet = 'idle';
-        anim.enteredSheetAt = Date.now();
-        update();
-      });
-
-      if (wasPaused || (anim.aux.count === 0 && this.def.paused)) {
-        this.pause();
-      }
+      // const wasPaused = this.anim.root.playState === 'paused';
+      // if (wasPaused || (anim.aux.count === 0 && this.def.paused)) {
+      //   this.pause();
+      // }
       anim.aux.count++;
 
-      update();
-      await new Promise((resolve, reject) => {
-        // TODO store resolve/reject in npc's lists
-        // TODO finish should trigger cancel so can resume styles
-        npc.anim.root.addEventListener("finish", resolve);
-        npc.anim.root.addEventListener("cancel", reject);
-      });
+      await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
+        // console.log('START')
+        anim.spriteSheet = 'walk';
+        anim.enteredSheetAt = Date.now();
+        let finished = false;
+        update();
+
+        anim.cancels.push(() => {
+          // console.log('CANCELLING')
+          anim.root.commitStyles();
+          anim.root.cancel();
+        });
+        anim.pauses.push(() => {
+          anim.root.pause();
+          anim.root.commitStyles();
+        });
+        anim.resumes.push(() => {
+          anim.root.play();
+        });
+        anim.root.addEventListener("finish", () => {
+          anim.root.commitStyles();
+          finished = true;
+          anim.root.cancel();
+        });
+        anim.root.addEventListener("cancel", () => {
+          finished ? resolve() : reject(new Error('cancelled'));
+          anim.spriteSheet = 'idle';
+          anim.enteredSheetAt = Date.now();
+          // console.log(finished ? 'FINISHED' : 'CANCELLED')
+          anim.cancels.length = anim.pauses.length = anim.resumes.length = 0;
+          update();
+        });
+      }));
     },
     getAngle() {
       const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);

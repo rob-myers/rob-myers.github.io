@@ -19,7 +19,9 @@ __Aim towards website release__.
   - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
   - ✅ `walk` handles `nav` output, and `console.log` on enter/exit doorway
   - ✅ `walk` is for a fixed npc
-  - 🚧 `walk` cancels on receive early
+  - ✅ can cancel `walk`
+  - ✅ `npc andros stop` cancels `walk`
+  - 🚧 `walk` cancels on receive early before starting
   - 🚧 `walk` pauses/resumes npc on suspend/resume process
   - change lighting on exit doorway
 - pause/resume Tabs pause/resumes any sessions

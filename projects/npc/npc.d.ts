@@ -60,9 +60,16 @@ declare namespace NPC {
       enteredSheetAt: number;
       origPath: Geom.Vect[];
       spriteSheet: 'idle' | 'walk';
-
+      
       root: Animation;
       body: Animation;
+      
+      /** Invoked to induce cancellation */
+      cancels: (() => void)[];
+      /** Invoked to pause */
+      pauses: (() => void)[];
+      /** Invoked to resume */
+      resumes: (() => void)[];
     };
 
     //#endregion

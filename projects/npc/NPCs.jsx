@@ -147,7 +147,8 @@ export default function NPCs(props) {
         }
 
         if (e.action === 'stop') {
-          // TODO 🚧 cancel walking
+          // Cancel walking
+          npc.anim.cancels.forEach(cancel => cancel());
         } else if (e.action === 'pause') {
           // TODO 🚧 pause walking
         } else if (e.action === 'resume') {
@@ -217,33 +218,48 @@ export default function NPCs(props) {
           throw Error(`invalid points: ${JSON.stringify(e.points)}`);
         }
 
-        if ('points' in e) {
-          // Walk along path `points`, ignoring doors
-          await state.moveNpcAlongPath(npc, e.points);
-        } else if (e.key === 'global-nav') {
-          // Walk along a global navpath
-          for (const [i, localNavPath] of e.paths.entries()) {
-            for (const [i, vectPath] of localNavPath.paths.entries()) {
-              await state.moveNpcAlongPath(npc, vectPath);
-              const roomEdge = localNavPath.edges[i];
-              // Either final path has no roomEdge, or we leave geomorph,
-              // in which case edge is a self-loop by construction
-              if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
-                console.log(`gm ${localNavPath.gmId}: entering door ${roomEdge.doorId} from room ${roomEdge.srcRoomId}`);
-                await state.moveNpcAlongPath(npc, [roomEdge.entry, roomEdge.exit]);
-                console.log(`gm ${localNavPath.gmId}: exiting door ${roomEdge.doorId} to room ${roomEdge.dstRoomId}`);
+        try {
+          if ('points' in e) {
+            // Walk along path `points`, ignoring doors
+            await state.moveNpcAlongPath(npc, e.points);
+          } else if (e.key === 'global-nav') {
+            // Walk along a global navpath
+            for (const [i, localNavPath] of e.paths.entries()) {
+              for (const [i, vectPath] of localNavPath.paths.entries()) {
+                await state.moveNpcAlongPath(npc, vectPath);
+                const roomEdge = localNavPath.edges[i];
+                // For final `vectPath` we do not need to traverse an edge
+                // - either roomEdge does not exist,
+                // - or we leave geomorph and edge is self-loop (by construction)
+                if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
+                  console.log(`gm ${localNavPath.gmId}: entering door ${roomEdge.doorId} from room ${roomEdge.srcRoomId}`);
+                  const gm = props.gmGraph.gms[localNavPath.gmId];
+                  await state.moveNpcAlongPath(npc, [
+                    // Transform RoomGraph edge entry/exit to world coords
+                    gm.matrix.transformPoint(roomEdge.entry.clone()).precision(2),
+                    gm.matrix.transformPoint(roomEdge.exit.clone()).precision(2),
+                  ]);
+                  console.log(`gm ${localNavPath.gmId}: exiting door ${roomEdge.doorId} to room ${roomEdge.dstRoomId}`);
+                }
+              }
+              const gmEdge = e.edges[i];
+              if (gmEdge) {// Undefined for final localNavPath
+                console.log(`gm ${gmEdge.srcGmId}: entering hull door ${gmEdge.srcHullDoorId} `);
+                await state.moveNpcAlongPath(npc, [npc.getPosition(), gmEdge.srcExit, gmEdge.dstEntry]);
+                // await state.moveNpcAlongPath(npc, [gmEdge.srcExit, gmEdge.dstEntry]);
+                console.log(`gm ${gmEdge.dstGmId}: exiting hull door ${gmEdge.dstHullDoorId}`);
               }
             }
-            const gmEdge = e.edges[i];
-            if (gmEdge) {// Undefined for final localNavPath
-              console.log(`gm ${gmEdge.srcGmId}: entering hull door ${gmEdge.srcHullDoorId} `);
-              await state.moveNpcAlongPath(npc, [npc.getPosition(), gmEdge.srcExit, gmEdge.dstEntry]);
-              console.log(`gm ${gmEdge.dstGmId}: exiting hull door ${gmEdge.dstHullDoorId}`);
+          } else if (e.key === 'local-nav') {
+            for (const [i, vectPath] of e.paths.entries()) {
+              // TODO
             }
           }
-        } else if (e.key === 'local-nav') {
-          for (const [i, vectPath] of e.paths.entries()) {
-            // TODO
+        } catch (err) {
+          if (err instanceof Error && err.message === 'cancelled') {
+            console.log(`${e.npcKey}: walkNpc cancelled`);
+          } else {
+            throw err;
           }
         }
 
