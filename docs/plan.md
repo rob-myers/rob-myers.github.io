@@ -21,6 +21,7 @@ __Aim towards website release__.
   - ✅ `walk` is for a fixed npc
   - ✅ can cancel `walk`
   - ✅ `npc andros stop` cancels `walk`
+  - ✅ `kill` cancels `walk`
   - 🚧 `walk` cancels on receive early before starting
   - 🚧 `walk` pauses/resumes npc on suspend/resume process
   - change lighting on exit doorway
@@ -30,9 +31,11 @@ __Aim towards website release__.
 - fix NavDemo1 useGeomorphs adjustment
 - don't darken "holes" in geomorph png
 
+- Saw non-termination on mobile when kept going through door
+
 - ✅ model/sh -> projects/sh
 - ✅ model/generic.model -> projects/service/generic
-- 🚧 put terminal on CodeSandbox
+- ✅ put Terminal on CodeSandbox
 
 - Blog
   - ✅ Revisit first page

@@ -158,8 +158,6 @@ function extractNpcFrames(api, topNodes, title, symbolLookup) {
   );
 }
 
-// TODO move to own file?
-
 /**
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 

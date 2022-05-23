@@ -219,21 +219,16 @@ nav: `{
 }`,
 
 /**
- * Move an npc along path(s) e.g.
+ * Move a specific npc along path(s) e.g.
  * - `walk andros "[$( click 1 ), $( click 1 )]"'
  * - `expr "{ points: [$( click 1 ), $( click 1 )] }" | walk andros`
  * - `expr "{ key: 'global-nav', paths: [{ key: 'local-nav', paths: [[$( click 1 ), $( click 1 )]], edges: [] }], edges: [] }" | walk andros`
- * 
- * Technically distinct npcs can be referenced, but since each
- * path is walked one after another, this is less useful.
- * 
- * TODO
- * - handle npc pause/resume
  */
 walk: `{
   run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
     const npcKey = args[0]
+    api.getProcess().cleanups.push(() => npcs.npcAct({ npcKey, action: "stop" }))
     if (api.isTtyAt(0)) {
       const points = api.safeJsonParse(args[1])
       await npcs.walkNpc({ npcKey, points })
