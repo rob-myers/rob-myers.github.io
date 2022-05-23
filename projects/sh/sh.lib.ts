@@ -223,19 +223,32 @@ nav: `{
  * - `walk andros "[$( click 1 ), $( click 1 )]"'
  * - `expr "{ points: [$( click 1 ), $( click 1 )] }" | walk andros`
  * - `expr "{ key: 'global-nav', paths: [{ key: 'local-nav', paths: [[$( click 1 ), $( click 1 )]], edges: [] }], edges: [] }" | walk andros`
+ *
+ * `npcKey` must be fixed via 1st arg
  */
 walk: `{
-  run '({ api, args, home, datum }) {
+  run '({ api, args, home, datum, promise }) {
     const npcs = api.getCached(home.NPCS_KEY)
     const npcKey = args[0]
-    api.getProcess().cleanups.push(() => npcs.npcAct({ npcKey, action: "stop" }))
+    api.getProcess().cleanups.push(() => npcs.npcAct({ npcKey, action: "cancel" }))
     if (api.isTtyAt(0)) {
       const points = api.safeJsonParse(args[1])
       await npcs.walkNpc({ npcKey, points })
     } else {
-      // npcKey must be fixed via 1st arg
-      while ((datum = await api.read()) !== null)
-        await npcs.walkNpc({ npcKey, ...datum })
+      datum = await api.read()
+      while (datum !== null) {
+        // Subsequent reads can interrupt walk
+        const resolved = await Promise.race([
+          npcs.walkNpc({ npcKey, ...datum }),
+          promise = api.read(),
+        ])
+        if (resolved === undefined) {// Finished walk
+          datum = await promise;
+        } else {// We read something before walk finished
+          await npcs.npcAct({ npcKey, action: "cancel" })
+          datum = resolved
+        }
+      }
     }
   }' "$@"
 }`,
@@ -291,7 +304,7 @@ npc: `{
   run '({ api, args, home }) {
     const npcs = api.getCached(home.NPCS_KEY)
     if (args[1]) {
-      npcs.npcAct({ npcKey: args[0], action: args[1] })
+      await npcs.npcAct({ npcKey: args[0], action: args[1] })
     } else {
       yield npcs.getNpc({ npcKey: args[0] })
     }
@@ -319,6 +332,7 @@ track: `{
     const npcKey = args[0]
     const npcs = api.getCached(home.NPCS_KEY)
     const panZoomApi = npcs.getPanZoomApi()
+    
 
     while (true) {
       await npcs.awaitPanZoomIdle()

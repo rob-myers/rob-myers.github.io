@@ -65,7 +65,7 @@ declare namespace NPC {
       body: Animation;
       
       /** Invoked to induce cancellation */
-      cancels: (() => void)[];
+      cancels: (() => void | Promise<void>)[];
       /** Invoked to pause */
       pauses: (() => void)[];
       /** Invoked to resume */
@@ -188,11 +188,12 @@ declare namespace NPC {
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;
     async moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Promise<void>;
-    npcAct(e: { npcKey: string; action: 'stop' | 'pause' | 'resume' }): void;
+    async npcAct(e: { npcKey: string; action: 'cancel' | 'pause' | 'resume' }): Promise<void>;
     npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
+    updateNpc(npcKey: string): void;
     async walkNpc(e: { npcKey: string } & (
       | { points: Geom.VectJson[] }
       | GlobalNavPath

@@ -161,9 +161,9 @@ function extractNpcFrames(api, topNodes, title, symbolLookup) {
 /**
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 
- * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; update: () => void }} deps
+ * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; updateNpc: () => void }} deps
  */
-export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
+export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
   /** @type {NPC.NPC} */
   const npc = {
     key: npcKey,
@@ -208,13 +208,16 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
         // console.log('START')
         anim.spriteSheet = 'walk';
         anim.enteredSheetAt = Date.now();
+        updateNpc();
         let finished = false;
-        update();
 
         anim.cancels.push(() => {
           // console.log('CANCELLING')
           anim.root.commitStyles();
-          anim.root.cancel();
+          return new Promise(resolve => {
+            anim.root.addEventListener('cancel', () => resolve());
+            anim.root.cancel();
+          });
         });
         anim.pauses.push(() => {
           anim.root.pause();
@@ -229,12 +232,12 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, update}) {
           anim.root.cancel();
         });
         anim.root.addEventListener("cancel", () => {
-          finished ? resolve() : reject(new Error('cancelled'));
           anim.spriteSheet = 'idle';
           anim.enteredSheetAt = Date.now();
+          updateNpc();
+          finished ? resolve() : reject(new Error('cancelled'));
           // console.log(finished ? 'FINISHED' : 'CANCELLED')
           anim.cancels.length = anim.pauses.length = anim.resumes.length = 0;
-          update();
         });
       }));
     },

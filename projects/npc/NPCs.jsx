@@ -138,17 +138,17 @@ export default function NPCs(props) {
         npc.updateAnimAux();
         await npc.followNavPath();
       },
-      npcAct(e) {
+      async npcAct(e) {
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc does not exist: "${e.npcKey}"`);
-        } else if (!(e.action === 'stop' || e.action === 'pause' || e.action === 'resume')) {
+        } else if (!(e.action === 'cancel' || e.action === 'pause' || e.action === 'resume')) {
           throw Error(`${e.npcKey} unrecognised action: "${e.action}"`);
         }
 
-        if (e.action === 'stop') {
+        if (e.action === 'cancel') {
           // Cancel walking
-          npc.anim.cancels.forEach(cancel => cancel());
+          await Promise.all(npc.anim.cancels.map(x => x()));
         } else if (e.action === 'pause') {
           // TODO 🚧 pause walking
         } else if (e.action === 'resume') {
@@ -185,7 +185,9 @@ export default function NPCs(props) {
           throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.point)}`);
         }
         state.npc[e.npcKey] = createNpc(e.npcKey, e.point, {
-          panZoomApi: props.panZoomApi, update, disabled: props.disabled
+          disabled: props.disabled,
+          panZoomApi: props.panZoomApi,
+          updateNpc: () => state.updateNpc(e.npcKey),
         });
         update();
       },
@@ -197,6 +199,12 @@ export default function NPCs(props) {
           delete state.debugPath[e.pathKey];
         }
         update();
+      },
+      /** @param {string} npcKey */
+      updateNpc(npcKey) {
+        const npc = state.npc[npcKey];
+        npc.el.root.classList.remove('idle', 'walk');
+        npc.el.root.classList.add(npc.anim.spriteSheet);
       },
       async walkNpc(e) {
         // TODO 🚧

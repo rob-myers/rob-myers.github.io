@@ -20,10 +20,13 @@ __Aim towards website release__.
   - ✅ `walk` handles `nav` output, and `console.log` on enter/exit doorway
   - ✅ `walk` is for a fixed npc
   - ✅ can cancel `walk`
-  - ✅ `npc andros stop` cancels `walk`
+  - ✅ `npc andros cancel` cancels `walk`
   - ✅ `kill` cancels `walk`
-  - 🚧 `walk` cancels on receive early before starting
-  - 🚧 `walk` pauses/resumes npc on suspend/resume process
+  - ✅ `walk` cancels on receive early before starting
+  - can pause/resume `walk`
+  - `npc andros pause` pauses `walk`
+  - `npc andros resume` resumes `walk`
+  - `walk` pauses/resumes npc on suspend/resume process
   - change lighting on exit doorway
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes
