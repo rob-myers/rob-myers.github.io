@@ -18,6 +18,7 @@ ${profileLookup["profile-1"]()}
 ready
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
+# spawn andros '{"x":300,"y":880}'
 # camera follows andros
 track andros &
 
@@ -348,8 +349,8 @@ track: `{
           yield* await api.sleep(1)
         }
       } else if (npc.anim.spriteSheet === "idle") {
-        if (distance > 60) {// speed 60 world unit per second
-          const ms = (distance / 60) * 1000
+        if (distance > 60) {
+          const ms = (distance / 100) * 1000
           await npcs.panZoomTo({ zoom: 1.6, point: npcPosition, ms })
         } else if (distance > 20) {
           const ms = (distance / 30) * 1000
