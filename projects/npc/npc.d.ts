@@ -64,22 +64,20 @@ declare namespace NPC {
       root: Animation;
       body: Animation;
       
-      /** Invoked to induce cancellation */
-      cancels: (() => void | Promise<void>)[];
-      /** Invoked to pause */
-      pauses: (() => void)[];
-      /** Invoked to resume */
-      resumes: (() => void)[];
+      finishedWalk: boolean;
     };
-
     //#endregion
+
+    async cancel(): Promise<void>;
+    async pause(): Promise<void>;
+    async resume(): Promise<void>;
+
     /** Radians */
     async followNavPath(): Promise<void>;
     getAngle(): number;
     getAnimDef(): TypeUtil.AnimDef;
     getPosition(): Geom.Vect;
     getTargets(): { point: Geom.VectJson; ms: number }[];
-    pause(): void;
     updateAnimAux(): void;
   }
 

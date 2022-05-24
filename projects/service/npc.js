@@ -184,9 +184,30 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       root: new Animation,
       body: new Animation,
 
-      cancels: [],
-      pauses: [],
-      resumes: [],
+      finishedWalk: true,
+    },
+
+    async cancel() {
+      const { anim } = this;
+      console.log('CANCELLING')
+      anim.root.commitStyles();
+      await /** @type {Promise<void>} */ (new Promise(resolve => {
+        anim.root.addEventListener('cancel', () => resolve());
+        anim.root.cancel();
+      }));
+    },
+    async pause() {
+      const { anim } = this;
+      if (anim.spriteSheet === 'walk') {
+        // TODO promise
+        anim.root.pause();
+        anim.root.commitStyles();
+      }
+    },
+    async resume() {
+      const { anim } = this;
+      // TODO promise
+      anim.root.play();
     },
 
     async followNavPath() {
@@ -205,39 +226,29 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       anim.aux.count++;
 
       await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
-        // console.log('START')
+        console.log('START')
         anim.spriteSheet = 'walk';
         anim.enteredSheetAt = Date.now();
         updateNpc();
-        let finished = false;
+        anim.finishedWalk = false;
 
-        anim.cancels.push(() => {
-          // console.log('CANCELLING')
-          anim.root.commitStyles();
-          return new Promise(resolve => {
-            anim.root.addEventListener('cancel', () => resolve());
-            anim.root.cancel();
-          });
-        });
-        anim.pauses.push(() => {
-          anim.root.pause();
-          anim.root.commitStyles();
-        });
-        anim.resumes.push(() => {
-          anim.root.play();
-        });
+        // TODO npc.onFinish, npc.onCancel
         anim.root.addEventListener("finish", () => {
+          anim.finishedWalk = true;
           anim.root.commitStyles();
-          finished = true;
           anim.root.cancel();
         });
         anim.root.addEventListener("cancel", () => {
           anim.spriteSheet = 'idle';
           anim.enteredSheetAt = Date.now();
           updateNpc();
-          finished ? resolve() : reject(new Error('cancelled'));
-          // console.log(finished ? 'FINISHED' : 'CANCELLED')
-          anim.cancels.length = anim.pauses.length = anim.resumes.length = 0;
+          if (anim.finishedWalk) {
+            resolve()
+            console.log('FINISHED');
+          } else {
+            reject(new Error('cancelled'));
+            console.log('CANCELLED');
+          }
         });
       }));
     },
@@ -283,11 +294,6 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       } else {
         return anim.aux.sofars.slice(unseenIndex)
           .map((sofar, i) => ({ point: anim.animPath[unseenIndex + i], ms: (sofar * animScaleFactor) - soFarMs }))
-      }
-    },
-    pause() {
-      if (this.anim.body.playState === 'running') {
-        this.anim.body.pause();
       }
     },
     updateAnimAux() {

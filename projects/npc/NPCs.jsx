@@ -148,7 +148,7 @@ export default function NPCs(props) {
 
         if (e.action === 'cancel') {
           // Cancel walking
-          await Promise.all(npc.anim.cancels.map(x => x()));
+          await npc.cancel();
         } else if (e.action === 'pause') {
           // TODO 🚧 pause walking
         } else if (e.action === 'resume') {

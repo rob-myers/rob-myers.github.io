@@ -12,6 +12,10 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- 🚧 BUG `walk` through doorway sometimes goes straight, ignoring navmesh, then resets itself
+
+- Can `walk` be written in a better way?
+
 - ✅ improve `track`
 - ✅ fix multiple animations with CssPanZoom and `track`
 - ✅ `view` should work while `track`
@@ -23,9 +27,9 @@ __Aim towards website release__.
   - ✅ `npc andros cancel` cancels `walk`
   - ✅ `kill` cancels `walk`
   - ✅ `walk` cancels on receive early before starting
-  - can pause/resume `walk`
+  - can pause/play `walk`
   - `npc andros pause` pauses `walk`
-  - `npc andros resume` resumes `walk`
+  - `npc andros play` resumes `walk`
   - `walk` pauses/resumes npc on suspend/resume process
   - change lighting on exit doorway
 - pause/resume Tabs pause/resumes any sessions
