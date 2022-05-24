@@ -131,7 +131,6 @@ export default function NPCs(props) {
         return navPoly.some(poly => poly.contains(localPoint));
       },
       async moveNpcAlongPath(npc, path) {
-        // TODO 🚧 can cancel via `npcAct` and `kill`
         // TODO pause/resume
         npc.anim.origPath = path.map(Vect.from);
         npc.anim.animPath = npc.anim.origPath.slice();
@@ -207,9 +206,7 @@ export default function NPCs(props) {
         npc.el.root.classList.add(npc.anim.spriteSheet);
       },
       async walkNpc(e) {
-        // TODO 🚧
-        // - can cancel walk via `npc andros stop` or `kill`
-        // - can pause/resume walk via `npc andros pause/resume` or `kill --STOP/CONT`
+        // TODO can pause/resume walk via `npc andros pause/resume` or `kill --STOP/CONT`
 
         const npc = state.npc[e.npcKey];
         if (!npc) {
