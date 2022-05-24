@@ -12,9 +12,8 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- 🚧 BUG `walk` through doorway sometimes goes straight, ignoring navmesh, then resets itself
-
-- Can `walk` be written in a better way?
+- ✅ BUG: `walk` through doorway sometimes START-FINISH too many times
+  - Was issue with floorGraph `nodePath` -> `nodePaths`
 
 - ✅ improve `track`
 - ✅ fix multiple animations with CssPanZoom and `track`

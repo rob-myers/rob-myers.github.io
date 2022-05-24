@@ -63,38 +63,41 @@ export class floorGraph extends BaseGraph {
 
     // One fewer than `nodePaths`
     const roomEdges = /** @type {NPC.NavRoomTransition[]} */ ([]);
-    // Split path by door nodes
-    const nodePaths = nodePath.reduce((agg, node) => {
+    /** `nodePath` split by the room they reside in */
+    const nodePaths = /** @type {Graph.FloorGraphNode[][]} */ ([]);
+    /**
+     * This is updated along `nodePath` whenever we see new valid roomId.
+     * @type {{ doorId: number; roomId: number }}
+     */
+    let prevMeta = this.nodeToMeta[nodePath[0].index];
+    nodePath.forEach((node) => {
       const meta = this.nodeToMeta[node.index];
-      if (meta.doorId === -1) {
-        agg.length ? agg[agg.length - 1].push(node) : agg.push([node]);
-      } else {
-        const lastSeen = roomEdges[roomEdges.length - 1];
-        if (!lastSeen || lastSeen.doorId !== meta.doorId) {// lastSeen undefined or new meta.doorId
-          agg.push([]);
-          const door = this.gm.doors[meta.doorId];
-          const entry = /** @type {Geom.Vect} */ (door.roomIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
-          roomEdges.push({
-            doorId: meta.doorId,
-            srcRoomId: meta.roomId,
-            dstRoomId: meta.roomId,
-            entry,
-            exit: entry,
-          });
-        } else if (meta.doorId === lastSeen.doorId && meta.roomId !== lastSeen.dstRoomId) {
-          lastSeen.dstRoomId = meta.roomId; // Should overwrite on exit door
-          const door = this.gm.doors[meta.doorId];
-          lastSeen.exit = /** @type {Geom.Vect} */ (door.roomIds[0] === meta.roomId ? door.entries[0] : door.entries[1]);
-        }
+      if (nodePaths.length === 0) {
+        nodePaths.push([node]);
+        // Currently, prevMeta === meta
+      } else if (meta.roomId === -1) {
+        nodePaths[nodePaths.length - 1].push(node);
+      } else if (meta.roomId === prevMeta?.roomId) {
+        nodePaths[nodePaths.length - 1].push(node);
+      } else {// meta.roomId !== -1 && meta.roomId !== prevMeta.roomId
+        nodePaths.push([node]);
+        const newDoor = this.gm.doors[meta.doorId];
+        // NOTE cannot be a hull door, by construction
+        const points = /** @type {[Geom.Vect, Geom.Vect]} */ (newDoor.entries);
+        roomEdges.push({
+          doorId: meta.doorId,
+          srcRoomId: prevMeta.roomId,
+          dstRoomId: meta.roomId,
+          entry: newDoor.roomIds[0] === prevMeta.roomId ? points[0] : points[1],
+          exit: newDoor.roomIds[0] === meta.roomId ? points[0] : points[1],
+        });
+        prevMeta = meta;
       }
-      return agg;
-    }, /** @type {Graph.FloorGraphNode[][]} */ ([]));
+    });
+    // console.log(nodePaths.length, { nodePath, metas: nodePath.map(x => this.nodeToMeta[x.index]), nodePaths})
 
     if (nodePaths[nodePaths.length - 1]?.length === 0)
       nodePaths.pop(); // Fix trailing empty array when end at doorway
-    
-    // DEBUG 🚧
-    console.log({ nodePaths, roomEdges });
 
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
       // const pathSrc = pathId === 0 ? src : nodePath[0].centroid;
@@ -119,6 +122,9 @@ export class floorGraph extends BaseGraph {
       const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
       return path.map(Vect.from);
     });
+
+    // DEBUG 🚧
+    console.log({ pulledPaths, roomEdges });
 
     return {
       paths: pulledPaths,
