@@ -96,12 +96,7 @@ export class floorGraph extends BaseGraph {
     });
     // console.log(nodePaths.length, { nodePath, metas: nodePath.map(x => this.nodeToMeta[x.index]), nodePaths})
 
-    if (nodePaths[nodePaths.length - 1]?.length === 0)
-      nodePaths.pop(); // Fix trailing empty array when end at doorway
-
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
-      // const pathSrc = pathId === 0 ? src : nodePath[0].centroid;
-      // const pathDst = pathId === nodePaths.length - 1 ? dst : nodePath[nodePath.length - 1].centroid;
       const pathSrc = pathId === 0 ? src : roomEdges[pathId - 1].exit;
       const pathDst = pathId === nodePaths.length - 1 ? dst : roomEdges[pathId].entry;
 
@@ -109,7 +104,7 @@ export class floorGraph extends BaseGraph {
       if (roomId === -1) {
         // NOTE hull doors handled in useGeomorphData, but src/dst could be in a doorway
         roomId = this.gm.roomsWithDoors.findIndex(x => x.outlineContains(pathSrc));
-        warn(`FloorGraph ${this.gm.key}: navNode ${closestNode.index} lacks associated roomId (using ${roomId})`);
+        warn(`floorGraph ${this.gm.key}: navNode ${closestNode.index} lacks associated roomId (using ${roomId})`);
       }
 
       const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
@@ -117,10 +112,10 @@ export class floorGraph extends BaseGraph {
       if (directPath) {
         return [Vect.from(pathSrc), Vect.from(pathDst)];
       }
-
-      // Apply "simple stupid funnel algorithm"
+      // Otherwise apply "simple stupid funnel algorithm"
       const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
-      return path.map(Vect.from);
+      // Finally avoid duplicate adjacent vertices (they can happen)
+      return geom.removePathReps(path).map(Vect.from);
     });
 
     // DEBUG 🚧

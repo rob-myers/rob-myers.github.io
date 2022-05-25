@@ -386,7 +386,7 @@ class geomService {
     return radian >= 0 ? radian : (2 * Math.PI + radian);
   }
 
-  /** @param {Vect[]} path */
+  /** @param {Geom.VectJson[]} path */
   removePathReps(path) {
     /** @type {Geom.VectJson} */
     let prev;
