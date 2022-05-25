@@ -141,19 +141,19 @@ export default function NPCs(props) {
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc does not exist: "${e.npcKey}"`);
-        } else if (!(e.action === 'cancel' || e.action === 'pause' || e.action === 'resume')) {
+        } else if (!(e.action === 'cancel' || e.action === 'pause' || e.action === 'play')) {
           throw Error(`${e.npcKey} unrecognised action: "${e.action}"`);
         }
 
         if (e.action === 'cancel') {
-          // Cancel walking
+          // Cancel current animation
           await npc.cancel();
         } else if (e.action === 'pause') {
-          // 🚧 Pause walking
+          // Pause current animation
           await npc.pause();
-        } else if (e.action === 'resume') {
-          // 🚧 Resume walking
-          await npc.resume();
+        } else if (e.action === 'play') {
+          // Resume current animation
+          await npc.play();
         }
       },
       npcRef(rootEl) {
@@ -164,6 +164,7 @@ export default function NPCs(props) {
           npc.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
           npc.el.root.style.transform = `translate(${npc.def.position.x}px, ${npc.def.position.y}px)`;
           npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
+          npc.startAnimation(); // Start idle animation
         }
       },
       async panZoomTo(e) {

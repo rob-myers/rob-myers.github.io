@@ -68,9 +68,10 @@ declare namespace NPC {
     };
     //#endregion
 
+    get paused(): boolean;
     async cancel(): Promise<void>;
     async pause(): Promise<void>;
-    async resume(): Promise<void>;
+    async play(): Promise<void>;
 
     /** Radians */
     async followNavPath(): Promise<void>;
@@ -80,6 +81,7 @@ declare namespace NPC {
     getTargets(): { point: Geom.VectJson; ms: number }[];
     onCancelWalk(resolve: () => void, reject: (err: Error) => void): void;
     onFinishWalk(): void;
+    startAnimation(): void;
     updateAnimAux(): void;
   }
 
@@ -188,7 +190,7 @@ declare namespace NPC {
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;
     async moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Promise<void>;
-    async npcAct(e: { npcKey: string; action: 'cancel' | 'pause' | 'resume' }): Promise<void>;
+    async npcAct(e: { npcKey: string; action: 'cancel' | 'pause' | 'play' }): Promise<void>;
     npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;

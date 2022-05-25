@@ -190,9 +190,12 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       finishedWalk: true,
     },
 
+    get paused() {
+      return this.anim.root.playState === 'paused';
+    },
     async cancel() {
+      console.log('CANCELLING');
       const { anim } = this;
-      console.log('CANCELLING')
       // Commit position and rotation
       anim.root.commitStyles();
       await /** @type {Promise<void>} */ (new Promise(resolve => {
@@ -202,14 +205,14 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       }));
     },
     async pause() {
+      console.log('PAUSING');
       const { anim } = this;
-      if (anim.spriteSheet === 'walk') {
-        anim.root.pause();
-        anim.body.pause();
-        anim.root.commitStyles();
-      }
+      anim.root.pause();
+      anim.body.pause();
+      anim.root.commitStyles();
     },
-    async resume() {
+    async play() {
+      console.log('RESUMING');
       const { anim } = this;
       anim.root.play();
       anim.body.play();
@@ -221,21 +224,12 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
         return; // Already finished
       }
       console.log('START');
-
-      // Animate position and rotation
-      const { keyframes, opts } = this.getAnimDef();
-      anim.root = this.el.root.animate(keyframes, opts);
-
-      // Animate spritesheet
+      
       anim.spriteSheet = 'walk';
       anim.enteredSheetAt = Date.now();
       updateNpc();
-      const { animLookup, zoom: animZoom } = npcJson;
-      anim.body = this.el.body.animate([
-        { offset: 0, backgroundPosition: '0px' },
-        { offset: 1, backgroundPosition: `${-animLookup.walk.frames.length * animLookup.walk.aabb.width * animZoom}px` },
-      ], { easing: `steps(${animLookup.walk.frames.length})`, duration: 0.625 * 1000, iterations: Infinity });
-      
+      this.startAnimation();
+
       anim.aux.count++;
 
       await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
@@ -293,6 +287,8 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       anim.spriteSheet = 'idle';
       anim.enteredSheetAt = Date.now();
       updateNpc();
+      this.startAnimation();
+
       if (anim.finishedWalk) {
         resolve();
         console.log('FINISHED');
@@ -307,6 +303,25 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       anim.root.commitStyles();
       anim.root.cancel();
       anim.body.cancel();
+    },
+    startAnimation() {
+      const { anim } = this;
+      if (anim.spriteSheet === 'walk') {
+        // Animate position and rotation
+        const { keyframes, opts } = this.getAnimDef();
+        anim.root = this.el.root.animate(keyframes, opts);
+        // Animate spritesheet
+        const { animLookup, zoom: animZoom } = npcJson;
+        anim.body = this.el.body.animate([
+          { offset: 0, backgroundPosition: '0px' },
+          { offset: 1, backgroundPosition: `${-animLookup.walk.frames.length * animLookup.walk.aabb.width * animZoom}px` },
+        ], { easing: `steps(${animLookup.walk.frames.length})`, duration: 0.625 * 1000, iterations: Infinity });
+      } else if (anim.spriteSheet === 'idle') {
+        anim.root = this.el.root.animate([], { duration: 2 * 1000, iterations: Infinity });
+        // TODO induced by animLookup
+        anim.body = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
+  
+      }
     },
     updateAnimAux() {
       const { anim } = this, {  aux } = anim;

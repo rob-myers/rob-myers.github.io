@@ -26,10 +26,11 @@ __Aim towards website release__.
   - ✅ `npc andros cancel` cancels `walk`
   - ✅ `kill` cancels `walk`
   - ✅ `walk` cancels on receive early before starting
-  - 🚧 can pause/play `walk`
-  - `npc andros pause` pauses `walk`
-  - `npc andros play` resumes `walk`
-  - `walk` pauses/resumes npc on suspend/resume process
+  - ✅ can pause/play `walk`
+  - ✅ `npc andros pause` pauses `walk`
+    - `track` hanging with START and no FINISHED/CANCELLED
+  - ✅ `npc andros play` resumes `walk`
+  - 🚧 `walk` pauses/resumes npc on suspend/resume process
   - change lighting on exit doorway
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes

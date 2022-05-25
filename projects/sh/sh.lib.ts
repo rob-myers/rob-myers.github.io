@@ -333,7 +333,6 @@ track: `{
     const npcs = api.getCached(home.NPCS_KEY)
     const panZoomApi = npcs.getPanZoomApi()
     
-
     while (true) {
       await npcs.awaitPanZoomIdle()
 
@@ -348,7 +347,9 @@ track: `{
       const npcPosition = npc.getPosition()
       const distance = npcs.class.Vect.from(npcPosition).distanceTo(worldFocus)
 
-      if (npc.anim.spriteSheet === "walk") {
+      if (npc.paused) {
+        yield* await api.sleep(1)
+      } else if (npc.anim.spriteSheet === "walk") {
         const targets = npc.getTargets()
         if (targets.length > 0) {
           // console.log(targets)
