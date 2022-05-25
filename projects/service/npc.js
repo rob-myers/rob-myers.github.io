@@ -180,7 +180,6 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
     anim: {
       animPath: [],
       aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
-      enteredSheetAt: Date.now(),
       origPath: [],
       spriteSheet: 'idle',
 
@@ -226,7 +225,6 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       console.log('START');
       
       anim.spriteSheet = 'walk';
-      anim.enteredSheetAt = Date.now();
       updateNpc();
       this.startAnimation();
 
@@ -265,18 +263,16 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
     },
     getTargets() {
       const { anim } = this;
-      if (anim.spriteSheet === "idle") {
+      if (anim.spriteSheet === "idle" || anim.root.currentTime === null) {
         return [];
       }
 
-      const soFarMs = Date.now() - anim.enteredSheetAt;
+      const soFarMs = anim.root.currentTime;
       const unseenIndex = anim.aux.sofars.findIndex(sofar => sofar * animScaleFactor >= soFarMs + 200);
+      const lastIndex = anim.animPath.length - 1;
 
-      if (
-        unseenIndex === -1
-        || unseenIndex === anim.aux.sofars.length - 1
-      ) {
-        return [{ point: anim.animPath[anim.animPath.length - 1], ms: anim.aux.total * animScaleFactor - soFarMs }];
+      if (unseenIndex === -1 || unseenIndex === lastIndex) {
+        return [{ point: anim.animPath[lastIndex], ms: anim.aux.total * animScaleFactor - soFarMs }];
       } else {
         return anim.aux.sofars.slice(unseenIndex)
           .map((sofar, i) => ({ point: anim.animPath[unseenIndex + i], ms: (sofar * animScaleFactor) - soFarMs }))
@@ -285,7 +281,6 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
     onCancelWalk(resolve, reject) {
       const { anim } = this;
       anim.spriteSheet = 'idle';
-      anim.enteredSheetAt = Date.now();
       updateNpc();
       this.startAnimation();
 

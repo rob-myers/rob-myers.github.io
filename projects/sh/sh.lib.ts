@@ -230,7 +230,12 @@ walk: `{
   run '({ api, args, home, datum, promise }) {
     const npcs = api.getCached(home.NPCS_KEY)
     const npcKey = args[0]
-    api.getProcess().cleanups.push(() => npcs.npcAct({ npcKey, action: "cancel" }))
+
+    const process = api.getProcess()
+    process.cleanups.push(() => npcs.npcAct({ npcKey, action: "cancel" }))
+    process.onSuspends.push(() => npcs.npcAct({ npcKey, action: "pause" }))
+    process.onResumes.push(() => npcs.npcAct({ npcKey, action: "play" }))
+
     if (api.isTtyAt(0)) {
       const points = api.safeJsonParse(args[1])
       await npcs.walkNpc({ npcKey, points })

@@ -57,7 +57,6 @@ declare namespace NPC {
         sofars: number[];
         total: number;
       };
-      enteredSheetAt: number;
       origPath: Geom.Vect[];
       spriteSheet: 'idle' | 'walk';
       

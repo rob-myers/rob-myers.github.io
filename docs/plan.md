@@ -30,8 +30,8 @@ __Aim towards website release__.
   - ✅ `npc andros pause` pauses `walk`
     - `track` hanging with START and no FINISHED/CANCELLED
   - ✅ `npc andros play` resumes `walk`
-  - 🚧 `walk` pauses/resumes npc on suspend/resume process
-  - change lighting on exit doorway
+  - ✅ `walk` pauses/resumes npc on suspend/resume process
+  - 🚧 change lighting on exit doorway
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes
 - mobile: improve `track` jerkiness
