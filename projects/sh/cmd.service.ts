@@ -156,12 +156,20 @@ class CmdService {
           'STOP', /** --STOP pauses a process */
           'CONT', /** --CONT continues a paused process */
         ] });
-        const pgids = operands.map(x => parseJsonArg(x))
+
+        const pids = operands.map(x => parseJsonArg(x))
           .filter((x): x is number => Number.isFinite(x));
-        for (const pgid of pgids) {
-          const processes = useSession.api.getProcesses(meta.sessionKey, pgid).reverse();
+
+        for (const pid of pids) {
+          const { process: { [pid]: process } } = useSession.api.getSession(meta.sessionKey);
+          const processes = process.pgid === pid
+            // Apply command to whole process group
+            ? useSession.api.getProcesses(meta.sessionKey, process.pgid).reverse()
+            // Apply command to exactly one process
+            : [process];
+
+          // NOTE on{Suspend,Resume}s are "first-in first-invoked"
           processes.forEach(p => {
-            // NOTE on{Suspend,Resume}s are "first-in first-invoked"
             if (opts.STOP) {
               p.onSuspends = p.onSuspends.filter(onSuspend => onSuspend());
               p.status = ProcessStatus.Suspended;
