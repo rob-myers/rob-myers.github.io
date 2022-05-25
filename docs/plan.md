@@ -12,8 +12,8 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ BUG: `walk` through doorway sometimes START-FINISH too many times
-  - Was issue with floorGraph `nodePath` -> `nodePaths`
+- BUG: `walk` hangs sometimes (last seen on mobile)
+- Camera jerky on mobile
 
 - ✅ improve `track`
 - ✅ fix multiple animations with CssPanZoom and `track`
@@ -26,7 +26,7 @@ __Aim towards website release__.
   - ✅ `npc andros cancel` cancels `walk`
   - ✅ `kill` cancels `walk`
   - ✅ `walk` cancels on receive early before starting
-  - can pause/play `walk`
+  - 🚧 can pause/play `walk`
   - `npc andros pause` pauses `walk`
   - `npc andros play` resumes `walk`
   - `walk` pauses/resumes npc on suspend/resume process
@@ -37,7 +37,6 @@ __Aim towards website release__.
 - fix NavDemo1 useGeomorphs adjustment
 - don't darken "holes" in geomorph png
 
-- Saw non-termination on mobile when kept going through door
 
 - ✅ model/sh -> projects/sh
 - ✅ model/generic.model -> projects/service/generic
@@ -184,6 +183,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ BUG: `walk` through doorway sometimes START-FINISH too many times
+  - Was issue with floorGraph `nodePath` -> `nodePaths`
 - ✅ BUG cannot Ctrl-C `click 1; click 1`
   - `click 1; echo foo; click 1` works
   - killing `{ click 1; click 1; } &` doesn't work

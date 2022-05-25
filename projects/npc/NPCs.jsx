@@ -149,9 +149,11 @@ export default function NPCs(props) {
           // Cancel walking
           await npc.cancel();
         } else if (e.action === 'pause') {
-          // TODO 🚧 pause walking
+          // 🚧 Pause walking
+          await npc.pause();
         } else if (e.action === 'resume') {
-          // TODO 🚧 resume walking
+          // 🚧 Resume walking
+          await npc.resume();
         }
       },
       npcRef(rootEl) {
@@ -329,13 +331,12 @@ const rootCss = css`
 
 // TODO modularise
 import npcJson from '../../public/npc/first-npc.json'
-const { animLookup: anim, zoom } = npcJson;
+const { animLookup, zoom } = npcJson;
+
 /** Scale the sprites */
 const npcScale = 0.17;
 /** Ensure NPC faces along positive x-axis */
-// const npcOffsetAngleDeg = 90;
 const npcOffsetAngleDeg = 0;
-const spriteSheets = keys(anim);
 
 const npcCss = css`
   .body {
@@ -346,52 +347,23 @@ const npcCss = css`
   }
   
   &.walk .body {
-    width: ${anim.walk.aabb.width * zoom}px;
-    height: ${anim.walk.aabb.height * zoom}px;
-    left: ${-anim.walk.aabb.width * zoom * 0.5}px;
-    top: ${-anim.walk.aabb.height * zoom * 0.5}px;
-    animation: walk 0.625s steps(${anim.walk.frames.length}) infinite;
+    width: ${animLookup.walk.aabb.width * zoom}px;
+    height: ${animLookup.walk.aabb.height * zoom}px;
+    left: ${-animLookup.walk.aabb.width * zoom * 0.5}px;
+    top: ${-animLookup.walk.aabb.height * zoom * 0.5}px;
     background: url('/npc/first-npc--walk.png');
   }
-  /* &.walk .body {
-    width: ${128 * 1}px;
-    height: ${128 * 1}px;
-    left: ${-128 * 1 * 0.5}px;
-    top: ${-128 * 1 * 0.5}px;
-    animation: walk 0.45s steps(${10}) infinite;
-    background: url('/npc/guard1_walk.png');
-  } */
+
   &.idle .body {
-    width: ${anim.idle.aabb.width * zoom}px;
-    height: ${anim.idle.aabb.height * zoom}px;
-    left: ${-anim.idle.aabb.width * zoom * 0.5}px;
-    top: ${-anim.idle.aabb.height * zoom * 0.5}px;
-    animation: idle 2s steps(${anim.idle.frames.length}) infinite;
+    width: ${animLookup.idle.aabb.width * zoom}px;
+    height: ${animLookup.idle.aabb.height * zoom}px;
+    left: ${-animLookup.idle.aabb.width * zoom * 0.5}px;
+    top: ${-animLookup.idle.aabb.height * zoom * 0.5}px;
     background: url('/npc/first-npc--idle.png');
   }
-  /* &.idle .body {
-    width: ${128 * 1}px;
-    height: ${128 * 1}px;
-    left: ${-128 * 1 * 0.5}px;
-    top: ${-128 * 1 * 0.5}px;
-    background: url('/npc/guard1_walk.png');
-  } */
 
   &.disabled .body {
     animation-play-state: paused;
-  }
-
-  @keyframes walk {
-    from { background-position: 0px; }
-    to { background-position: ${-anim.walk.frames.length * anim.walk.aabb.width * zoom}px; }
-  }
-  /* @keyframes walk {
-    from { background-position: 0px; }
-    to { background-position: ${-10 * 128 * 1}px; }
-  } */
-  @keyframes idle {
-    from { background-position: 0px; }
-    to { background-position: ${-anim.idle.frames.length * anim.walk.aabb.width * zoom}px; }
   }
 `;
 

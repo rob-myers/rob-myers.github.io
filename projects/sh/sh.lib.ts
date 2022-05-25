@@ -21,7 +21,7 @@ spawn andros '{"x":185,"y":390}'
 # spawn andros '{"x":300,"y":880}'
 # camera follows andros
 track andros &
-
+goLoop andros &
 `,
 };
 

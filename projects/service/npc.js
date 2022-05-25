@@ -7,6 +7,9 @@ import { extractDeepMetas, extractGeomsAt, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
 import { warn } from './log';
 
+// TODO modularise
+import npcJson from '../../public/npc/first-npc.json'
+
 /**
  * @param {ServerTypes.ParsedNpc} parsed 
  * @param {string} outputDir 
@@ -190,24 +193,26 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
     async cancel() {
       const { anim } = this;
       console.log('CANCELLING')
+      // Commit position and rotation
       anim.root.commitStyles();
       await /** @type {Promise<void>} */ (new Promise(resolve => {
         anim.root.addEventListener('cancel', () => resolve());
         anim.root.cancel();
+        anim.body.cancel();
       }));
     },
     async pause() {
       const { anim } = this;
       if (anim.spriteSheet === 'walk') {
-        // TODO promise
         anim.root.pause();
+        anim.body.pause();
         anim.root.commitStyles();
       }
     },
     async resume() {
       const { anim } = this;
-      // TODO promise
       anim.root.play();
+      anim.body.play();
     },
 
     async followNavPath() {
@@ -215,41 +220,28 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
       if (anim.animPath.length <= 1 || anim.aux.total === 0) {
         return; // Already finished
       }
-      
+      console.log('START');
+
+      // Animate position and rotation
       const { keyframes, opts } = this.getAnimDef();
-      this.anim.root = this.el.root.animate(keyframes, opts);
+      anim.root = this.el.root.animate(keyframes, opts);
+
+      // Animate spritesheet
+      anim.spriteSheet = 'walk';
+      anim.enteredSheetAt = Date.now();
+      updateNpc();
+      const { animLookup, zoom: animZoom } = npcJson;
+      anim.body = this.el.body.animate([
+        { offset: 0, backgroundPosition: '0px' },
+        { offset: 1, backgroundPosition: `${-animLookup.walk.frames.length * animLookup.walk.aabb.width * animZoom}px` },
+      ], { easing: `steps(${animLookup.walk.frames.length})`, duration: 0.625 * 1000, iterations: Infinity });
       
-      // const wasPaused = this.anim.root.playState === 'paused';
-      // if (wasPaused || (anim.aux.count === 0 && this.def.paused)) {
-      //   this.pause();
-      // }
       anim.aux.count++;
 
       await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
-        console.log('START')
-        anim.spriteSheet = 'walk';
-        anim.enteredSheetAt = Date.now();
-        updateNpc();
         anim.finishedWalk = false;
-
-        // TODO npc.onFinish, npc.onCancel
-        anim.root.addEventListener("finish", () => {
-          anim.finishedWalk = true;
-          anim.root.commitStyles();
-          anim.root.cancel();
-        });
-        anim.root.addEventListener("cancel", () => {
-          anim.spriteSheet = 'idle';
-          anim.enteredSheetAt = Date.now();
-          updateNpc();
-          if (anim.finishedWalk) {
-            resolve()
-            console.log('FINISHED');
-          } else {
-            reject(new Error('cancelled'));
-            console.log('CANCELLED');
-          }
-        });
+        anim.root.addEventListener("finish", () => this.onFinishWalk());
+        anim.root.addEventListener("cancel", () => this.onCancelWalk(resolve, reject));
       }));
     },
     getAngle() {
@@ -295,6 +287,26 @@ export function createNpc(npcKey, at, {disabled, panZoomApi, updateNpc}) {
         return anim.aux.sofars.slice(unseenIndex)
           .map((sofar, i) => ({ point: anim.animPath[unseenIndex + i], ms: (sofar * animScaleFactor) - soFarMs }))
       }
+    },
+    onCancelWalk(resolve, reject) {
+      const { anim } = this;
+      anim.spriteSheet = 'idle';
+      anim.enteredSheetAt = Date.now();
+      updateNpc();
+      if (anim.finishedWalk) {
+        resolve();
+        console.log('FINISHED');
+      } else {
+        reject(new Error('cancelled'));
+        console.log('CANCELLED');
+      };
+    },
+    onFinishWalk() {
+      const { anim } = this;
+      anim.finishedWalk = true;
+      anim.root.commitStyles();
+      anim.root.cancel();
+      anim.body.cancel();
     },
     updateAnimAux() {
       const { anim } = this, {  aux } = anim;

@@ -78,6 +78,8 @@ declare namespace NPC {
     getAnimDef(): TypeUtil.AnimDef;
     getPosition(): Geom.Vect;
     getTargets(): { point: Geom.VectJson; ms: number }[];
+    onCancelWalk(resolve: () => void, reject: (err: Error) => void): void;
+    onFinishWalk(): void;
     updateAnimAux(): void;
   }
 
