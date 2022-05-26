@@ -1,6 +1,7 @@
 import React from "react";
 import { css } from "goober";
 import classNames from "classnames";
+import { Subject } from "rxjs";
 import { assertNonNull } from "../service/generic";
 import { strokePolygon } from "../service/dom";
 import useStateRef from "../hooks/use-state-ref";
@@ -15,7 +16,8 @@ export default function Doors(props) {
 
   const state = useStateRef(() => {
     /** @type {NPC.DoorsApi} */
-    const api = {
+    const output = {
+      events: new Subject,
       get ready() {
         return true;
       },
@@ -34,34 +36,28 @@ export default function Doors(props) {
         state.drawInvisibleInCanvas(gmId);
         update();
       },
-    };
 
-    return {
-      /** @type {HTMLCanvasElement[]} */
       canvas: [],
-      /** @type {{ [doorIndex: number]: true }[]} */
       open: props.gms.map((_, gmId) => (props.initOpen[gmId] || [])
         .reduce((agg, doorId) => ({ ...agg, [doorId]: true }), {})),
-      /** @type {{ [doorIndex: number]: true }[]} */
       vis: props.gms.map(_ => ({})),
-
+  
       rootEl: /** @type {HTMLDivElement} */ ({}),
-
-      /** @param {PointerEvent} e */
+  
       onToggleDoor(e) {
         const gmIndexAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
         const gmId = Number(gmIndexAttr);
         const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
         const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-id'));
         const gmDoorNode = hullDoorId === -1 ? null : props.gmGraph.getDoorNodeByIds(gmId, hullDoorId);
-
+  
         if (gmIndexAttr === null || !state.vis[gmId][doorId] || gmDoorNode?.sealed) {
           return;
         }
-
+  
         const adjHull = hullDoorId !== -1
           ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
-
+  
         if (state.open[gmId][doorId]) {
           delete state.open[gmId][doorId]
           adjHull && (delete state.open[adjHull.adjGmId][adjHull.adjDoorId]);
@@ -70,9 +66,9 @@ export default function Doors(props) {
           adjHull && (state.open[adjHull.adjGmId][adjHull.adjDoorId] = true);
         }
         const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
-        props.wire.next({ gmIndex: gmId, index: doorId, key });
-        adjHull && props.wire.next({ gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId, key });
-
+        state.events.next({ key, gmIndex: gmId, index: doorId });
+        adjHull && state.events.next({ key, gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId });
+  
         state.drawInvisibleInCanvas(gmId);
       },
       /** @param {number} gmId */
@@ -80,14 +76,14 @@ export default function Doors(props) {
         const canvas = state.canvas[gmId];
         const ctxt = assertNonNull(canvas.getContext('2d'));
         const gm = props.gms[gmId];
-
+  
         ctxt.setTransform(1, 0, 0, 1, 0, 0);
         ctxt.clearRect(0, 0, canvas.width, canvas.height);
         ctxt.setTransform(1, 0, 0, 1, -gm.pngRect.x, -gm.pngRect.y);
         ctxt.strokeStyle = '#ffd';
         ctxt.fillStyle = '#aaaaaa44';
         ctxt.lineWidth = 0.5;
-
+  
         gm.doors.forEach(({ poly }, i) => {
           if (!state.vis[gmId][i]) {
             strokePolygon(ctxt, [poly]);
@@ -95,9 +91,9 @@ export default function Doors(props) {
           }
         });
       },
-
-      ...api, // Keep things shallow for HMR
     };
+
+    return output;
   });
 
   React.useEffect(() => {

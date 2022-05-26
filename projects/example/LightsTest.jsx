@@ -1,6 +1,5 @@
 import React from "react";
 import { css } from "goober";
-import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
@@ -30,7 +29,6 @@ export default function LightsTest(props) {
         0: true,
         2: true,
       }),
-      wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
       /** @param {React.MouseEvent<HTMLDivElement>} param0  */
       onToggleLight({ target }) {
@@ -81,7 +79,7 @@ export default function LightsTest(props) {
       }
       // Initial update
       state.updateMasks();
-      const sub = state.wire
+      const sub = state.doorsApi.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
         .subscribe((x) => state.updateMasks(x.key === 'closed-door' ? 300 : 0));
       return () => sub.unsubscribe();
@@ -140,7 +138,6 @@ export default function LightsTest(props) {
         <Doors
           gms={gms}
           gmGraph={gmGraph}
-          wire={state.wire}
           onLoad={api => state.doorsApi = api}
           initOpen={{}}
         />

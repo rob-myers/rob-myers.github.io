@@ -1,6 +1,5 @@
 import React from "react";
 import { css } from "goober";
-import { Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 
 import { geomorphPngPath } from "../geomorph/geomorph.model";
@@ -26,8 +25,6 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
-  // gmGraph && console.log(gmGraph)
-
   const state = useStateRef(() => {
     return {
       gmId: 0, roomId: 2,
@@ -46,7 +43,6 @@ export default function NavDemo1(props) {
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       panZoomApi: /** @type {PanZoom.CssApi} */ ({}),
-      wire: /** @type {Subject<NPC.NavMessage>} */ (new Subject),
 
       update() {
         state.updateClipPath();
@@ -96,11 +92,19 @@ export default function NavDemo1(props) {
   });
 
   React.useEffect(() => {
+    /**
+     * TODO
+     * - ✅ state.wire -> Doors.events
+     * - 🚧 NPCs.events replaces npc.cb
+     * - Handle NPCs.events here too:
+     *  - 'set-player-npc'
+     *  - 'npc-exited-room'
+     */
     if (gms.length && state.doorsApi.ready) {
       state.update();
-      const sub = state.wire
+      const sub = state.doorsApi.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
-        .subscribe((_) => {
+        .subscribe(() => {
           state.update(); // Technically needn't updateObservableDoors
         });
       return () => sub.unsubscribe();
@@ -179,7 +183,6 @@ export default function NavDemo1(props) {
       <Doors
         gms={gms}
         gmGraph={gmGraph}
-        wire={state.wire}
         initOpen={state.initOpen}
         onLoad={api => { state.doorsApi = api; render(); }}
       />

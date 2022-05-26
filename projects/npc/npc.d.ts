@@ -1,7 +1,6 @@
 
 declare namespace NPC {
   
-  import { Subject } from 'rxjs';
   import { filter, first, map, take } from 'rxjs/operators';
   import { otag } from '../service/rxjs';
   
@@ -15,10 +14,10 @@ declare namespace NPC {
 
   type WireMessage = (
     | NPC.NpcEvent
-    | NPC.PointerEvent
+    | NPC.PtrEvent
   );
 
-  type PointerEvent = {
+  type PtrEvent = {
     point: Geom.VectJson;
   } & (
     | { key: 'pointerdown' }
@@ -111,12 +110,6 @@ declare namespace NPC {
     position: Geom.VectJson;
   }
 
-  export type NavWire = import('rxjs').Subject<NPC.NavMessage>;
-
-  export type NavMessage = (
-    | DoorMessage
-  );
-
   export interface DoorMessage {
     key: 'opened-door' | 'closed-door';
     gmIndex: number;
@@ -126,12 +119,20 @@ declare namespace NPC {
   export interface DoorsProps {
     gms: Geomorph.GeomorphDataInstance[];
     gmGraph: Graph.GmGraph;
-    wire: NavWire;
+    // wire: NavWire;
     initOpen: { [gmId: number]: number[] }
     onLoad: (api: DoorsApi) => void;
   }
 
   export interface DoorsApi {
+    canvas: HTMLCanvasElement[];
+    open: { [doorId: number]: true }[];
+    vis: { [doorId: number]: true }[];
+    rootEl: HTMLDivElement;
+    onToggleDoor(e: PointerEvent): void;
+    drawInvisibleInCanvas(gmId: number): void;
+
+    events: import('rxjs').Subject<NPC.DoorMessage>;
     getVisible(gmIndex: number): number[];
     getClosed(gmIndex: number): number[];
     /** Get ids of open doors */
