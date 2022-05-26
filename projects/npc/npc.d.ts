@@ -29,6 +29,7 @@ declare namespace NPC {
 
   type NpcEvent = never
 
+  /** API for a single NPC */
   export interface NPC {
     /** User specified e.g. `andros` */
     key: string;
@@ -64,6 +65,13 @@ declare namespace NPC {
       body: Animation;
       
       finishedWalk: boolean;
+    };
+    /** Callbacks */
+    cb: {
+      /** Each invoked on exit door */
+      enterDoor: ((ctxt: { gmId: number; doorId: number; srcRoomId: number; dstRoomId: number }) => void)[]
+      /** Each invoked on exit door */
+      exitDoor: ((ctxt: { gmId: number; doorId: number; srcRoomId: number; dstRoomId: number }) => void)[]
     };
     //#endregion
 

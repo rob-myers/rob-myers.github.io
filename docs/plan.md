@@ -32,6 +32,8 @@ __Aim towards website release__.
   - ✅ `npc andros play` resumes `walk`
   - ✅ `walk` pauses/resumes npc on suspend/resume process
   - 🚧 change lighting on exit doorway
+- infinite loop protection for `track`
+- can turn andros when idle
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes
 - mobile: improve `track` jerkiness

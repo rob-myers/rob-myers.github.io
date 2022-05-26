@@ -3,11 +3,11 @@ import classNames from "classnames";
 import { css } from "goober";
 import { firstValueFrom } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
-import { keys } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../sh/rxjs";
-import { createNpc, isGlobalNavPath, isLocalNavPath } from "../service/npc";
 import { Poly, Rect, Vect } from "../geom";
+import { isGlobalNavPath, isLocalNavPath } from "../service/npc";
+import createNpc from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
@@ -26,9 +26,9 @@ export default function NPCs(props) {
     /** @type {NPC.FullApi} */
     const output = {
       npc: {},
-      debugPath: {},
+      debugPath: {}, 
       class: { Vect },
-      rxjs: { filter, first, map, take, otag },
+      rxjs: { filter, first, map, take, otag }, // TODO remove?
 
       async awaitPanZoomIdle() {
         if (!props.panZoomApi.isIdle()) {
@@ -209,8 +209,6 @@ export default function NPCs(props) {
         npc.el.root.classList.add(npc.anim.spriteSheet);
       },
       async walkNpc(e) {
-        // TODO can pause/resume walk via `npc andros pause/resume` or `kill --STOP/CONT`
-
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc "${e.npcKey}" does not exist`);
@@ -240,14 +238,19 @@ export default function NPCs(props) {
                 // - either roomEdge does not exist,
                 // - or we leave geomorph and edge is self-loop (by construction)
                 if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
-                  console.log(`gm ${localNavPath.gmId}: entering door ${roomEdge.doorId} from room ${roomEdge.srcRoomId}`);
+                  const ctxt = { gmId: localNavPath.gmId, doorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId, dstRoomId: roomEdge.dstRoomId };
+                  console.log(`enter door: ${JSON.stringify(ctxt)}`);
+                  npc.cb.enterDoor.forEach(cb => cb(ctxt));
+
                   const gm = props.gmGraph.gms[localNavPath.gmId];
                   await state.moveNpcAlongPath(npc, [
                     // Transform RoomGraph edge entry/exit to world coords
                     gm.matrix.transformPoint(roomEdge.entry.clone()).precision(2),
                     gm.matrix.transformPoint(roomEdge.exit.clone()).precision(2),
                   ]);
-                  console.log(`gm ${localNavPath.gmId}: exiting door ${roomEdge.doorId} to room ${roomEdge.dstRoomId}`);
+
+                  console.log(`exit door: ${JSON.stringify(ctxt)}`);
+                  npc.cb.exitDoor.forEach(cb => cb(ctxt));
                 }
               }
               const gmEdge = e.edges[i];
