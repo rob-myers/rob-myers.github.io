@@ -104,10 +104,19 @@ export default function NavDemo1(props) {
         .subscribe((e) => {
           if (e.key === 'set-player') {
             state.playerNpcKey = e.npcKey;
+            // Infer current room
+            const npc = state.npcsApi.npc[e.npcKey];
+            const position = npc.getPosition();
+            const found = gmGraph.findRoomContaining(position);
+            if (found) {
+              [state.gmId, state.roomId] = [found.gmId, found.roomId];
+              state.update();
+            } else {
+              console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
+            }
           } else if (e.key === 'exited-room') {
             if (e.npcKey === state.playerNpcKey) {
-              state.gmId = e.ctxt.dstGmId;
-              state.roomId = e.ctxt.dstRoomId;
+              [state.gmId, state.roomId] = [e.ctxt.dstGmId, e.ctxt.dstRoomId];
               state.update();
             }
           }

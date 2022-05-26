@@ -19,7 +19,7 @@ __Aim towards website release__.
 
 - BUG: `walk` hangs sometimes (last seen on mobile)
   - infinite loop protection for `track`
-- Camera jerky on mobile
+- 🚧 Camera jerky on mobile
   - mobile: improve `track` jerkiness
 
 - `npc {npcKey} {act}` -> `npc {act} [{npcKey}]` including `npc get andros`

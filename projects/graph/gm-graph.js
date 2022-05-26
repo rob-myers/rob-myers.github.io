@@ -143,6 +143,17 @@ export class gmGraph extends BaseGraph {
     return gmIdsPath;
   }
 
+  /** @param {Geom.VectJson} point */
+  findRoomContaining(point) {
+    const gmId = this.gms.findIndex(gm => gm.gridRect.contains(point));
+    if (gmId !== -1) {
+      const roomId = this.gms[gmId].rooms.findIndex(room => room.contains(point));
+      return roomId === -1 ? null : { gmId, roomId };
+    } else {
+      return null;
+    }
+  }
+
   /**
    * @param {Graph.GmGraphNode} node 
    */
