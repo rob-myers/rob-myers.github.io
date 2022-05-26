@@ -34,15 +34,14 @@ export default function NavDemo1(props) {
       // gmId: 1, roomId: 22,
       // gmId: 2, roomId: 2,
       // gmId: 3, roomId: 26,
-      /**
-       * TODO better way to know door id?
-       * TODO better way to know room id?
-       */
+
       initOpen: { 0: [24] },
       clipPath: gms.map(_ => 'none'),
+      playerNpcKey: /** @type {null | string} */ (null),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       panZoomApi: /** @type {PanZoom.CssApi} */ ({}),
+      npcsApi: /** @type {NPC.FullApi} */  ({ ready: false }),
 
       update() {
         state.updateClipPath();
@@ -92,24 +91,34 @@ export default function NavDemo1(props) {
   });
 
   React.useEffect(() => {
-    /**
-     * TODO
-     * - ✅ state.wire -> Doors.events
-     * - 🚧 NPCs.events replaces npc.cb
-     * - Handle NPCs.events here too:
-     *  - 'set-player-npc'
-     *  - 'npc-exited-room'
-     */
-    if (gms.length && state.doorsApi.ready) {
+    if (gms.length && state.doorsApi.ready && state.npcsApi.ready) {
       state.update();
-      const sub = state.doorsApi.events
+
+      const doorsSub = state.doorsApi.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
         .subscribe(() => {
-          state.update(); // Technically needn't updateObservableDoors
+          state.update();
         });
-      return () => sub.unsubscribe();
+
+      const npcsSub = state.npcsApi.events
+        .subscribe((e) => {
+          if (e.key === 'set-player') {
+            state.playerNpcKey = e.npcKey;
+          } else if (e.key === 'exited-room') {
+            if (e.npcKey === state.playerNpcKey) {
+              state.gmId = e.ctxt.dstGmId;
+              state.roomId = e.ctxt.dstRoomId;
+              state.update();
+            }
+          }
+        });
+
+      return () => {
+        doorsSub.unsubscribe();
+        npcsSub.unsubscribe();
+      };
     }
-  }, [gms, state.doorsApi.ready]);
+  }, [gms, state.doorsApi.ready, state.npcsApi.ready]);
 
   return gms.length ? (
     <CssPanZoom
@@ -159,6 +168,7 @@ export default function NavDemo1(props) {
         gmGraph={gmGraph}
         npcsKey={npcsKey}
         panZoomApi={state.panZoomApi}
+        onLoad={api => { state.npcsApi = api; render(); }}
       />
 
       {gms.map((gm, gmIndex) =>

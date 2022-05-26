@@ -120,13 +120,13 @@ export class gmGraph extends BaseGraph {
         }
         gmIdsPath.push({
           srcGmId: gmId,
-          srcRoomId: /** @type {number} */ (this.gms[gmId].doors[closest.node.doorId].roomIds.find(Boolean)),
+          srcRoomId: /** @type {number} */ (this.gms[gmId].doors[closest.node.doorId].roomIds.find(x => x !== null)),
           srcDoorId: closest.node.doorId,
           srcHullDoorId: closest.node.hullDoorId,
           srcExit: closest.v,
 
           dstGmId: adjDoorNode.gmId,
-          dstRoomId: /** @type {number} */ (this.gms[adjDoorNode.gmId].doors[adjDoorNode.doorId].roomIds.find(Boolean)),
+          dstRoomId: /** @type {number} */ (this.gms[adjDoorNode.gmId].doors[adjDoorNode.doorId].roomIds.find(x => x !== null)),
           dstDoorId: adjDoorNode.doorId,
           dstHullDoorId: adjDoorNode.hullDoorId,
           dstEntry: this.getDoorEntry(adjDoorNode),

@@ -35,10 +35,6 @@ import npcJson from '../../public/npc/first-npc.json'
 
       finishedWalk: true,
     },
-    cb: {
-      enterDoor: [],
-      exitDoor: [],
-    },
 
     get paused() {
       return this.anim.root.playState === 'paused';

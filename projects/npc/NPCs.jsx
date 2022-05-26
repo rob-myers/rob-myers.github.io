@@ -1,12 +1,12 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../sh/rxjs";
 import { Poly, Rect, Vect } from "../geom";
-import { isGlobalNavPath, isLocalNavPath } from "../service/npc";
+import { isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
 import createNpc from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -26,7 +26,10 @@ export default function NPCs(props) {
     /** @type {NPC.FullApi} */
     const output = {
       npc: {},
-      debugPath: {}, 
+      path: {}, 
+      events: new Subject,
+      
+      ready: true,
       class: { Vect },
       rxjs: { filter, first, map, take, otag }, // TODO remove?
 
@@ -141,7 +144,7 @@ export default function NPCs(props) {
         const npc = state.npc[e.npcKey];
         if (!npc) {
           throw Error(`npc does not exist: "${e.npcKey}"`);
-        } else if (!(e.action === 'cancel' || e.action === 'pause' || e.action === 'play')) {
+        } else if (!isNpcActionKey(e.action)) {
           throw Error(`${e.npcKey} unrecognised action: "${e.action}"`);
         }
 
@@ -154,6 +157,8 @@ export default function NPCs(props) {
         } else if (e.action === 'play') {
           // Resume current animation
           await npc.play();
+        } else if (e.action === 'set-player') {
+          state.events.next({ key: 'set-player', npcKey: e.npcKey });
         }
       },
       npcRef(rootEl) {
@@ -196,9 +201,9 @@ export default function NPCs(props) {
       toggleDebugPath(e) {
         if (e.points) {
           const path = e.points.map(Vect.from);
-          state.debugPath[e.pathKey] = { path, aabb: Rect.from(...path).outset(10) };
+          state.path[e.pathKey] = { path, aabb: Rect.from(...path).outset(10) };
         } else {
-          delete state.debugPath[e.pathKey];
+          delete state.path[e.pathKey];
         }
         update();
       },
@@ -244,16 +249,16 @@ export default function NPCs(props) {
                     dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
                   };
                   console.log(`enter door: ${JSON.stringify(ctxt)}`);
-                  npc.cb.enterDoor.forEach(cb => cb(ctxt));
-
+                  state.events.next({ key: 'exited-room', npcKey: e.npcKey, ctxt });
+                  
                   const gm = props.gmGraph.gms[localNavPath.gmId];
                   await state.moveNpcAlongPath(npc, [
                     gm.matrix.transformPoint(roomEdge.entry.clone()).precision(2),
                     gm.matrix.transformPoint(roomEdge.exit.clone()).precision(2),
                   ]);
-
+                  
                   console.log(`exit door: ${JSON.stringify(ctxt)}`);
-                  npc.cb.exitDoor.forEach(cb => cb(ctxt));
+                  state.events.next({ key: 'entered-room', npcKey: e.npcKey, ctxt });
                 }
               }
               const gmEdge = e.edges[i];
@@ -261,12 +266,12 @@ export default function NPCs(props) {
                 /** @type {NPC.TraverseDoorCtxt} */
                 const ctxt = gmEdge;
                 console.log(`enter hull door: ${JSON.stringify(ctxt)}`);
-                npc.cb.exitDoor.forEach(cb => cb(ctxt));
-
+                state.events.next({ key: 'exited-room', npcKey: e.npcKey, ctxt });
+                
                 await state.moveNpcAlongPath(npc, [gmEdge.srcExit, gmEdge.dstEntry]);
-
+                
                 console.log(`exit hull door: ${JSON.stringify(ctxt)}`);
-                npc.cb.exitDoor.forEach(cb => cb(ctxt));
+                state.events.next({ key: 'entered-room', npcKey: e.npcKey, ctxt });
               }
             }
           } else if (e.key === 'local-nav') {
@@ -290,6 +295,7 @@ export default function NPCs(props) {
   
   React.useEffect(() => {
     setCached(props.npcsKey, state);
+    props.onLoad(state);
 
     // On HMR, refresh each npc via remount
     Object.values(state.npc).forEach(npc => {
@@ -305,7 +311,7 @@ export default function NPCs(props) {
   return (
     <div className={classNames('npcs', rootCss)}>
       <Debug
-        debugPath={state.debugPath}
+        debugPath={state.path}
       />
 
       {Object.values(state.npc).map(npc => (

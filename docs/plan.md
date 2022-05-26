@@ -18,7 +18,7 @@ __Aim towards website release__.
 - ✅ improve `track`
 - ✅ fix multiple animations with CssPanZoom and `track`
 - ✅ `view` should work while `track`
-- 🚧 light changes when Andros moves thru doorway
+- ✅ light changes when Andros moves thru doorway
   - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
   - ✅ `walk` handles `nav` output, and `console.log` on enter/exit doorway
   - ✅ `walk` is for a fixed npc
@@ -31,7 +31,13 @@ __Aim towards website release__.
     - `track` hanging with START and no FINISHED/CANCELLED
   - ✅ `npc andros play` resumes `walk`
   - ✅ `walk` pauses/resumes npc on suspend/resume process
-  - 🚧 change lighting on exit doorway
+  - ✅ change lighting on exit doorway
+
+- 🚧 `npc {npcKey} {act}` -> `npc {act} [{npcKey}]` including `npc get andros`
+- can only open door when player close
+  - move playerNpcKey to NPCs
+  - only applies when there is a player
+    - `npc set-player andros`
 - infinite loop protection for `track`
 - can turn andros when idle
 - pause/resume Tabs pause/resumes any sessions

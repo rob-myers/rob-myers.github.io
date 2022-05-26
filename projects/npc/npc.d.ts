@@ -10,6 +10,7 @@ declare namespace NPC {
     panZoomApi: PanZoom.CssApi;
     doorsApi: NPC.DoorsApi;
     npcsKey: string;
+    onLoad(api: NPC.FullApi): void;
   }
 
   type WireMessage = (
@@ -64,13 +65,6 @@ declare namespace NPC {
       body: Animation;
       
       finishedWalk: boolean;
-    };
-    /** Callbacks */
-    cb: {
-      /** Each invoked on exit door */
-      enterDoor: ((ctxt: TraverseDoorCtxt) => void)[]
-      /** Each invoked on exit door */
-      exitDoor: ((ctxt: TraverseDoorCtxt) => void)[]
     };
     //#endregion
 
@@ -133,11 +127,11 @@ declare namespace NPC {
     drawInvisibleInCanvas(gmId: number): void;
 
     events: import('rxjs').Subject<NPC.DoorMessage>;
+    ready: boolean;
     getVisible(gmIndex: number): number[];
     getClosed(gmIndex: number): number[];
     /** Get ids of open doors */
     getOpen(gmIndex: number): number[];
-    get ready(): boolean;
     setVisible(gmIndex: number, doorIds: number[]): void ;
   }
 
@@ -188,7 +182,9 @@ declare namespace NPC {
 
   export interface FullApi {
     npc: Record<string, NPC.NPC>;
-    debugPath: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
+    path: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
+    events: import('rxjs').Subject<NPC.NPCsMessage>;
+    ready: boolean;
 
     class: {
       Vect: typeof Geom.Vect;
@@ -211,7 +207,10 @@ declare namespace NPC {
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;
     async moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Promise<void>;
-    async npcAct(e: { npcKey: string; action: 'cancel' | 'pause' | 'play' }): Promise<void>;
+    async npcAct(e: {
+      npcKey: string;
+      action: NpcActionKey;
+    }): Promise<void>;
     npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
@@ -223,5 +222,18 @@ declare namespace NPC {
       | LocalNavPath
     )): Promise<void>;
   }
+
+  type NpcActionKey = (
+    | 'cancel'
+    | 'pause'
+    | 'play'
+    | 'set-player'
+  );
+
+  type NPCsMessage = (
+    | { key: 'set-player'; npcKey: string; }
+    | { key: 'entered-room'; npcKey: string; ctxt: TraverseDoorCtxt; }
+    | { key: 'exited-room'; npcKey: string; ctxt: TraverseDoorCtxt; }
+  );
 
 }

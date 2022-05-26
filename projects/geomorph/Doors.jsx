@@ -18,9 +18,7 @@ export default function Doors(props) {
     /** @type {NPC.DoorsApi} */
     const output = {
       events: new Subject,
-      get ready() {
-        return true;
-      },
+      ready: true,
       getClosed(gmIndex) {
         const open = state.open[gmIndex];
         return props.gms[gmIndex].doors.map((_, i) => i).filter(i => !open[i]);
