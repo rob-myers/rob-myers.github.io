@@ -294,7 +294,7 @@ export class gmGraph extends BaseGraph {
         gmIndex: area.gmIndex,
         poly: geom.lightPolygon({// TODO avoid nullable `adjRoomId` (?)
           // Move light inside adjacent room i.e. `-10`
-          position: computeLightPosition(doors[area.doorIndex], area.adjRoomId??rootRoomId, -10),
+          position: computeLightPosition(doors[area.doorIndex], area.adjRoomId??rootRoomId, 40),
           range: 2000,
           exterior: area.poly,
           extraSegs: closedDoorSegs,
