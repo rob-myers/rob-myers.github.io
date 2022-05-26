@@ -12,44 +12,27 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- 🚧 Gatsby
+  - ✅ Start migration to Gatsby
+  - 🚧 Continue migration
+  - Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
+
 - BUG: `walk` hangs sometimes (last seen on mobile)
+  - infinite loop protection for `track`
 - Camera jerky on mobile
+  - mobile: improve `track` jerkiness
 
-- ✅ improve `track`
-- ✅ fix multiple animations with CssPanZoom and `track`
-- ✅ `view` should work while `track`
-- ✅ light changes when Andros moves thru doorway
-  - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
-  - ✅ `walk` handles `nav` output, and `console.log` on enter/exit doorway
-  - ✅ `walk` is for a fixed npc
-  - ✅ can cancel `walk`
-  - ✅ `npc andros cancel` cancels `walk`
-  - ✅ `kill` cancels `walk`
-  - ✅ `walk` cancels on receive early before starting
-  - ✅ can pause/play `walk`
-  - ✅ `npc andros pause` pauses `walk`
-    - `track` hanging with START and no FINISHED/CANCELLED
-  - ✅ `npc andros play` resumes `walk`
-  - ✅ `walk` pauses/resumes npc on suspend/resume process
-  - ✅ change lighting on exit doorway
-
-- 🚧 `npc {npcKey} {act}` -> `npc {act} [{npcKey}]` including `npc get andros`
+- `npc {npcKey} {act}` -> `npc {act} [{npcKey}]` including `npc get andros`
 - can only open door when player close
   - move playerNpcKey to NPCs
   - only applies when there is a player
     - `npc set-player andros`
-- infinite loop protection for `track`
 - can turn andros when idle
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes
-- mobile: improve `track` jerkiness
+
 - fix NavDemo1 useGeomorphs adjustment
 - don't darken "holes" in geomorph png
-
-
-- ✅ model/sh -> projects/sh
-- ✅ model/generic.model -> projects/service/generic
-- ✅ put Terminal on CodeSandbox
 
 - Blog
   - ✅ Revisit first page
@@ -62,8 +45,6 @@ __Aim towards website release__.
   - Story
     - Anapanasati training
     - 5 watchers as Jhanic hindrances
-
-- BUG `goLoop` "idle" while moving along path
 
 - 🚧 Andros is situated
   - ✅ CssPanZoom returns to andros
@@ -100,11 +81,6 @@ __Aim towards website release__.
     - Then Andros must open doors to go through them
     - Andros cannot close door when walking
   - When Andros moves through doorway, lighting changes
-
-- 🚧 Gatsby
-  - ✅ Start migration to Gatsby
-  - 🚧 Continue migration
-  - Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
@@ -192,6 +168,27 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+
+- ✅ improve `track`
+- ✅ fix multiple animations with CssPanZoom and `track`
+- ✅ `view` should work while `track`
+- ✅ light changes when Andros moves thru doorway
+  - ✅ refine output of `nav` i.e. provide paths between rooms and door ids
+  - ✅ `walk` handles `nav` output, and `console.log` on enter/exit doorway
+  - ✅ `walk` is for a fixed npc
+  - ✅ can cancel `walk`
+  - ✅ `npc andros cancel` cancels `walk`
+  - ✅ `kill` cancels `walk`
+  - ✅ `walk` cancels on receive early before starting
+  - ✅ can pause/play `walk`
+  - ✅ `npc andros pause` pauses `walk`
+    - `track` hanging with START and no FINISHED/CANCELLED
+  - ✅ `npc andros play` resumes `walk`
+  - ✅ `walk` pauses/resumes npc on suspend/resume process
+  - ✅ change lighting on exit doorway
+- ✅ model/sh -> projects/sh
+- ✅ model/generic.model -> projects/service/generic
+- ✅ put Terminal on CodeSandbox
 - ✅ BUG: `walk` through doorway sometimes START-FINISH too many times
   - Was issue with floorGraph `nodePath` -> `nodePaths`
 - ✅ BUG cannot Ctrl-C `click 1; click 1`
