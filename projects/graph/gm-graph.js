@@ -104,6 +104,7 @@ export class gmGraph extends BaseGraph {
       );
 
       // Choose doorway whose exit is closest to final destination
+      // NOTE simplistic strategy
       const closest = doorNodes.reduce((agg, doorNode) => {
         const v = this.getDoorEntry(doorNode);
         const d = v.distanceToSquared(dst);
@@ -113,20 +114,24 @@ export class gmGraph extends BaseGraph {
 
       if (closest.node) {
         const adjDoorNode = this.getAdjacentDoor(closest.node);
-        if (!adjDoorNode || adjDoorNode.gmIndex === gmId) {
+        if (!adjDoorNode || adjDoorNode.gmId === gmId) {
           error(`global nav: ${gmId} ${closest.node.id} has no adjacent door`);
           return null;
-        } // Update state
+        }
         gmIdsPath.push({
           srcGmId: gmId,
+          srcRoomId: /** @type {number} */ (this.gms[gmId].doors[closest.node.doorId].roomIds.find(Boolean)),
+          srcDoorId: closest.node.doorId,
           srcHullDoorId: closest.node.hullDoorId,
           srcExit: closest.v,
 
-          dstGmId: adjDoorNode.gmIndex,
+          dstGmId: adjDoorNode.gmId,
+          dstRoomId: /** @type {number} */ (this.gms[adjDoorNode.gmId].doors[adjDoorNode.doorId].roomIds.find(Boolean)),
+          dstDoorId: adjDoorNode.doorId,
           dstHullDoorId: adjDoorNode.hullDoorId,
           dstEntry: this.getDoorEntry(adjDoorNode),
         });
-        gmId = adjDoorNode.gmIndex;
+        gmId = adjDoorNode.gmId;
         currSrc.copy(closest.v);
         direction.copy(dst).sub(currSrc);
       } else {
@@ -178,7 +183,7 @@ export class gmGraph extends BaseGraph {
     }
     // `door` is a hull door and connected to another
     // console.log({otherDoorNode});
-    const { gmIndex: adjGmId, hullDoorId: dstHullDoorId, doorId: adjDoorId } = otherDoorNode;
+    const { gmId: adjGmId, hullDoorId: dstHullDoorId, doorId: adjDoorId } = otherDoorNode;
     const { roomIds } = this.gms[adjGmId].hullDoors[dstHullDoorId];
     const adjRoomId = /** @type {number} */ (roomIds.find(x => typeof x === 'number'));
     return { adjGmId, adjRoomId, adjHullId: dstHullDoorId, adjDoorId };
@@ -343,7 +348,7 @@ export class gmGraph extends BaseGraph {
           const doorNode = {
             type: 'door',
             gmKey,
-            gmIndex,
+            gmId: gmIndex,
             id: getGmDoorNodeId(gmKey, transform, hullDoorId),
             doorId: doors.indexOf(hullDoor),
             hullDoorId,
@@ -361,7 +366,7 @@ export class gmGraph extends BaseGraph {
     // Compute `graph.entry`
     nodes.forEach(node => {
       if (node.type === 'door') {
-        const { matrix, doors } = gms[node.gmIndex];
+        const { matrix, doors } = gms[node.gmId];
         const entry = /** @type {Geom.Vect} */ (doors[node.doorId].entries.find(Boolean));
         graph.entry.set(node, matrix.transformPoint(entry.clone()));
       }

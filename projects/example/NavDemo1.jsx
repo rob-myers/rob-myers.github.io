@@ -257,22 +257,26 @@ function Debug(props) {
     <div
       className="debug-parent"
       onClick={(e) => {
-        const doorIdAttr = (/** @type {HTMLElement} */ (e.target)).getAttribute('data-debug-door-index');
-        if (doorIdAttr === null) return;
-        const door = gm.doors[Number(doorIdAttr)];
+        const target = (/** @type {HTMLElement} */ (e.target));
+        if (!target.hasAttribute('data-debug-door-index')) {
+          return;
+        }
+
+        const door = gm.doors[Number(target.getAttribute('data-debug-door-index'))];
 
         const [otherRoomId] = door.roomIds.filter(id => id !== props.roomId);
         if (otherRoomId !== null) {// `door` is not a hull door
           return props.setRoom(props.gmId, otherRoomId);
+        } else {
+          const hullDoorId = gm.hullDoors.indexOf(door);
+          const ctxt = props.gmGraph.getAdjacentRoomCtxt(props.gmId, hullDoorId);
+          if (ctxt) {
+            props.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
+          } else {
+            console.info('hull door is isolated', props.gmId, hullDoorId);
+          }
         }
 
-        const hullDoorId = gm.hullDoors.indexOf(door);
-        const ctxt = props.gmGraph.getAdjacentRoomCtxt(props.gmId, hullDoorId);
-        if (ctxt) {
-          props.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
-        } else {
-          console.info('hull door is isolated', props.gmId, hullDoorId);
-        }
       }}
     >
       {props.outlines && props.gms.map((gm, gmIndex) =>

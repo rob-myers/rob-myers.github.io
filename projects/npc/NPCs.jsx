@@ -238,13 +238,16 @@ export default function NPCs(props) {
                 // - either roomEdge does not exist,
                 // - or we leave geomorph and edge is self-loop (by construction)
                 if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
-                  const ctxt = { gmId: localNavPath.gmId, doorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId, dstRoomId: roomEdge.dstRoomId };
+                  /** @type {NPC.TraverseDoorCtxt} */
+                  const ctxt = {
+                    srcGmId: localNavPath.gmId, srcDoorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId,
+                    dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
+                  };
                   console.log(`enter door: ${JSON.stringify(ctxt)}`);
                   npc.cb.enterDoor.forEach(cb => cb(ctxt));
 
                   const gm = props.gmGraph.gms[localNavPath.gmId];
                   await state.moveNpcAlongPath(npc, [
-                    // Transform RoomGraph edge entry/exit to world coords
                     gm.matrix.transformPoint(roomEdge.entry.clone()).precision(2),
                     gm.matrix.transformPoint(roomEdge.exit.clone()).precision(2),
                   ]);
@@ -255,10 +258,15 @@ export default function NPCs(props) {
               }
               const gmEdge = e.edges[i];
               if (gmEdge) {// Undefined for final localNavPath
-                console.log(`gm ${gmEdge.srcGmId}: entering hull door ${gmEdge.srcHullDoorId} `);
-                await state.moveNpcAlongPath(npc, [npc.getPosition(), gmEdge.srcExit, gmEdge.dstEntry]);
-                // await state.moveNpcAlongPath(npc, [gmEdge.srcExit, gmEdge.dstEntry]);
-                console.log(`gm ${gmEdge.dstGmId}: exiting hull door ${gmEdge.dstHullDoorId}`);
+                /** @type {NPC.TraverseDoorCtxt} */
+                const ctxt = gmEdge;
+                console.log(`enter hull door: ${JSON.stringify(ctxt)}`);
+                npc.cb.exitDoor.forEach(cb => cb(ctxt));
+
+                await state.moveNpcAlongPath(npc, [gmEdge.srcExit, gmEdge.dstEntry]);
+
+                console.log(`exit hull door: ${JSON.stringify(ctxt)}`);
+                npc.cb.exitDoor.forEach(cb => cb(ctxt));
               }
             }
           } else if (e.key === 'local-nav') {

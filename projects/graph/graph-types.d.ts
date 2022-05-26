@@ -106,7 +106,7 @@ declare namespace Graph {
     /** Key of parent geomorph */
     gmKey: Geomorph.LayoutKey;
     /** Index of parent geomorph instance in its respective array */
-    gmIndex: number;
+    gmId: number;
     /** Transform of parent geomorph */
     transform: [number, number, number, number, number, number];
     /** Index of `Geomorph.GeomorphData['doors']` */

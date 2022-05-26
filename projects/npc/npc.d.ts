@@ -69,9 +69,9 @@ declare namespace NPC {
     /** Callbacks */
     cb: {
       /** Each invoked on exit door */
-      enterDoor: ((ctxt: { gmId: number; doorId: number; srcRoomId: number; dstRoomId: number }) => void)[]
+      enterDoor: ((ctxt: TraverseDoorCtxt) => void)[]
       /** Each invoked on exit door */
-      exitDoor: ((ctxt: { gmId: number; doorId: number; srcRoomId: number; dstRoomId: number }) => void)[]
+      exitDoor: ((ctxt: TraverseDoorCtxt) => void)[]
     };
     //#endregion
 
@@ -90,6 +90,17 @@ declare namespace NPC {
     onFinishWalk(): void;
     startAnimation(): void;
     updateAnimAux(): void;
+  }
+
+  interface TraverseDoorCtxt {
+    srcGmId: number;
+    srcDoorId: number;
+    srcRoomId: number;
+    /** Distinct from srcGmId iff hull door */
+    dstGmId: number;
+    /** Possibly distinct from srcDoorId iff hull door */
+    dstDoorId: number;
+    dstRoomId: number;
   }
 
   export interface NPCDef {
@@ -139,15 +150,17 @@ declare namespace NPC {
 
   export interface NavGmTransition {
     srcGmId: number;
+    srcDoorId: number;
     srcHullDoorId: number;
-    // srcDoorId: number;
+    srcRoomId: number;
     /** World coords */
     srcExit: Geom.Vect;
     dstGmId: number;
+    dstDoorId: number;
     dstHullDoorId: number;
-    // dstDoorId: number;
     /** World coords */
     dstEntry: Geom.Vect;
+    dstRoomId: number;
   }
 
   export interface NavRoomTransition {
