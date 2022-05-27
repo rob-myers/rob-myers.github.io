@@ -111,18 +111,13 @@ import npcJson from '../../public/npc/first-npc.json'
     getTargets() {
       const { anim } = this;
       if (anim.spriteSheet === "idle" || anim.root.currentTime === null) {
-        return [];
-      }
-
-      const soFarMs = anim.root.currentTime;
-      const unseenIndex = anim.aux.sofars.findIndex(sofar => sofar * animScaleFactor >= soFarMs + 200);
-      const lastIndex = anim.animPath.length - 1;
-
-      if (unseenIndex === -1 || unseenIndex === lastIndex) {
-        return [{ point: anim.animPath[lastIndex], ms: anim.aux.total * animScaleFactor - soFarMs }];
+        return [{ point: this.getPosition(), arriveMs: 0 }];
       } else {
-        return anim.aux.sofars.slice(unseenIndex)
-          .map((sofar, i) => ({ point: anim.animPath[unseenIndex + i], ms: (sofar * animScaleFactor) - soFarMs }))
+        const soFarMs = anim.root.currentTime;
+
+        return anim.aux.sofars
+          .map((sofar, i) => ({ point: anim.animPath[i], arriveMs: (sofar * animScaleFactor) - soFarMs }))
+          .filter((x, i) => x.arriveMs >= 0 || i === anim.animPath.length - 1)
       }
     },
     onCancelWalk(resolve, reject) {

@@ -23,7 +23,8 @@ spawn andros '{"x":185,"y":390}'
 npc andros set-player
 
 # camera follows andros
-track andros &
+# track andros &
+trackNew andros &
 
 # click to move
 goLoop andros &
@@ -170,9 +171,9 @@ click: `{
     
     yield* otag(
       npcs.getPanZoomApi().events.pipe(
-        filter(x => x.key === "pointerup" && process.status === 1),
-        map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)), tags: e.tags })),
+        filter(x => x.key === "pointerup" && x.distance < 5 && process.status === 1),
         take(numClicks),
+        map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)), tags: e.tags })),
       ),
       process,
     )
@@ -338,7 +339,11 @@ trackNew: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
     const npcs = api.getCached(home.NPCS_KEY)
-    yield* await npcs.trackNpc({ npcKey })
+    const { subscription, setPaused } = npcs.trackNpc({ npcKey })
+    const process = api.getProcess()
+    process.cleanups.push(() => subscription.unsubscribe())
+    process.onSuspends.push(() => () => setPaused(true))
+    process.onResumes.push(() => () => setPaused(false))
   }' "$@"
 }`,
 
@@ -372,7 +377,7 @@ track: `{
         if (targets.length > 0) {
           // console.log(targets)
           const target = targets[0]
-          await npcs.panZoomTo({ zoom: 2, point: target.point, ms: 2 * target.ms, easing: "linear" })
+          await npcs.panZoomTo({ zoom: 2, point: target.point, ms: 2 * target.arriveMs, easing: "linear" })
         } else {
           yield* await api.sleep(1)
         }

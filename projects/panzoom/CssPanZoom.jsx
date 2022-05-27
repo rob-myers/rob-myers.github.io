@@ -36,6 +36,7 @@ export default function CssPanZoom(props) {
       idleTimeoutId: 0,
       transitionTimeoutId: 0,
       anims: [null, null],
+      worldPointerDown: new Vect,
 
       evt: {
         wheel(e) {
@@ -60,6 +61,8 @@ export default function CssPanZoom(props) {
             scale: state.scale,
             distance: getDistance(state.pointers),
           };
+
+          state.worldPointerDown.copy(state.getWorld(e));
         },
         pointermove(e) {
           if (
@@ -107,10 +110,11 @@ export default function CssPanZoom(props) {
             return;
           }
 
-          const point = state.getWorld(e);
+          const worldPointerUp = state.getWorld(e);
           state.events.next({
             key: 'pointerup',
-            point: { x: point.x, y: point.y },
+            point: worldPointerUp,
+            distance: state.worldPointerDown.distanceTo(worldPointerUp),
             tags: (/** @type {HTMLElement} */ (e.target).getAttribute('data-tags') || '').split(' '),
           });
 
@@ -161,8 +165,8 @@ export default function CssPanZoom(props) {
       },
       idleTimeout() {
         if (state.pointers.length === 0) {
-          state.events.next({ key: 'ui-idle' });
           state.idleTimeoutId = 0;
+          state.events.next({ key: 'ui-idle' });
         } else {
           state.delayIdle();
         }
@@ -228,8 +232,9 @@ export default function CssPanZoom(props) {
           translateAnim.addEventListener('finish', () => {
             finished = true;
             // Remember translate/scale before cancel
-            state.syncStyles();
             // Cancelling yields control to styles
+            state.syncStyles();
+            // TODO careful earlier animation doesn't cancel later one!
             state.anims.forEach(anim => anim?.cancel());
           });
           translateAnim.addEventListener('cancel', () => {

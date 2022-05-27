@@ -81,7 +81,7 @@ declare namespace NPC {
     getAngle(): number;
     getAnimDef(): TypeUtil.AnimDef;
     getPosition(): Geom.Vect;
-    getTargets(): { point: Geom.VectJson; ms: number }[];
+    getTargets(): { point: Geom.VectJson; arriveMs: number }[];
     onCancelWalk(resolve: () => void, reject: (err: Error) => void): void;
     onFinishWalk(): void;
     startAnimation(): void;
@@ -223,7 +223,7 @@ declare namespace NPC {
     npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
-    trackNpc(e: { npcKey: string }): AsyncGenerator<any, void, unknown>;
+    trackNpc(e: { npcKey: string }): { subscription: import('rxjs').Subscription; setPaused(next: boolean): void };
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string } & (
       | { points: Geom.VectJson[] }

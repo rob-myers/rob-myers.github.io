@@ -206,25 +206,63 @@ export default function NPCs(props) {
         }
         update();
       },
-      async *trackNpc(opts) {
-        merge(state.events, props.panZoomApi.events).pipe(
+      /**
+       * TODO
+       * - better/clearer approach to `status`
+       * - trigger tracking on tab resize
+       * - trigger tracking initially
+       */
+      trackNpc(opts) {
+        let paused = false;
+        /** Used to separate tracking types */
+        let status = /** @type {null | 'track-walk' | 'track-idle'} */ (null);
+
+        const subscription = merge(state.events, props.panZoomApi.events).pipe(
           filter(x => (
-            x.key === 'ui-idle'
+            !paused
+            && x.key === 'ui-idle'
             || (x.key === 'started-walking' && x.npcKey === opts.npcKey)
             || (x.key === 'stopped-walking' && x.npcKey === opts.npcKey)
           ))
         ).subscribe({
-          next(e) {
+          async next(e) {
             const npc = state.npc[opts.npcKey];
             if (!props.panZoomApi.isIdle()) {
+              status = null; // Releases status, yet maybe dodgy
               return;
             } else if (e.key === 'started-walking' || npc.anim.spriteSheet === 'walk') {
-              // TODO 🚧 make CssPanZoom follow path
-            } else if (e.key === 'stopped-walking' || npc.anim.spriteSheet === 'idle') {
-              // TODO 🚧 make CssPanZoom panzoom to npc
+              // props.panZoomApi.cancelAnimations();
+              while (npc.anim.spriteSheet === 'walk') {
+                console.log(status = 'track-walk')
+                for (const target of npc.getTargets()) {
+                  await props.panZoomApi.panZoomTo(2, target.point, 2 * target.arriveMs, 'linear');
+                }
+              }
+              status = null;
+
+            } else if (
+              (e.key === 'stopped-walking' || npc.anim.spriteSheet === 'idle')
+              && status === null
+            ) {
+              console.log(status = 'track-idle')
+              try {
+                const npcPosition = npc.getPosition();
+                await props.panZoomApi.panZoomTo(2, npcPosition, 2000);
+              } catch (e) {
+                console.error(e)
+              }
+              status = null;
             }
           }
-        })
+        });
+        return {
+          subscription,
+          /** @param {boolean} next */
+          setPaused(next) {
+            paused = next;
+            // TODO cancel ongoing animation on pause
+          }
+        };
       },
       async walkNpc(e) {
         const npc = state.npc[e.npcKey];

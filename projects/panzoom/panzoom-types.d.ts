@@ -35,6 +35,7 @@ declare namespace PanZoom {
     transitionTimeoutId: number;
     /** [translate, scale] */
     anims: [null | Animation, null | Animation];
+    worldPointerDown: Geom.Vect;
 
     cancelAnimations(): void;
     private delayIdle(): void;
@@ -60,7 +61,13 @@ declare namespace PanZoom {
 
   type CssInternalEvent = (
     | CssInternalTransitionEvent
-    | { key: 'pointerup', point: Geom.VectJson; tags: string[] }
+    | {
+      key: 'pointerup';
+      point: Geom.VectJson;
+      /** Distance from pointerdown in world coords */
+      distance: number;
+      tags: string[];
+    }
     | { key: "ui-idle" }
   )
 
