@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
-import { firstValueFrom, Subject } from "rxjs";
+import { firstValueFrom, merge, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../sh/rxjs";
@@ -194,7 +194,6 @@ export default function NPCs(props) {
         state.npc[e.npcKey] = createNpc(e.npcKey, e.point, {
           disabled: props.disabled,
           panZoomApi: props.panZoomApi,
-          updateNpc: () => state.updateNpc(e.npcKey),
         });
         update();
       },
@@ -207,11 +206,25 @@ export default function NPCs(props) {
         }
         update();
       },
-      /** @param {string} npcKey */
-      updateNpc(npcKey) {
-        const npc = state.npc[npcKey];
-        npc.el.root.classList.remove('idle', 'walk');
-        npc.el.root.classList.add(npc.anim.spriteSheet);
+      async *trackNpc(opts) {
+        merge(state.events, props.panZoomApi.events).pipe(
+          filter(x => (
+            x.key === 'ui-idle'
+            || (x.key === 'started-walking' && x.npcKey === opts.npcKey)
+            || (x.key === 'stopped-walking' && x.npcKey === opts.npcKey)
+          ))
+        ).subscribe({
+          next(e) {
+            const npc = state.npc[opts.npcKey];
+            if (!props.panZoomApi.isIdle()) {
+              return;
+            } else if (e.key === 'started-walking' || npc.anim.spriteSheet === 'walk') {
+              // TODO 🚧 make CssPanZoom follow path
+            } else if (e.key === 'stopped-walking' || npc.anim.spriteSheet === 'idle') {
+              // TODO 🚧 make CssPanZoom panzoom to npc
+            }
+          }
+        })
       },
       async walkNpc(e) {
         const npc = state.npc[e.npcKey];
@@ -232,16 +245,22 @@ export default function NPCs(props) {
         try {
           if ('points' in e) {
             // Walk along path `points`, ignoring doors
+            state.events.next({ key: 'started-walking', npcKey: e.npcKey });
             await state.moveNpcAlongPath(npc, e.points);
+            state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
           } else if (e.key === 'global-nav') {
             // Walk along a global navpath
+            state.events.next({ key: 'started-walking', npcKey: e.npcKey });
+            npc.anim.keepWalking = true;
+
             for (const [i, localNavPath] of e.paths.entries()) {
               for (const [i, vectPath] of localNavPath.paths.entries()) {
                 await state.moveNpcAlongPath(npc, vectPath);
                 const roomEdge = localNavPath.edges[i];
-                // For final `vectPath` we do not need to traverse an edge
-                // - either roomEdge does not exist,
-                // - or we leave geomorph and edge is self-loop (by construction)
+
+                // In case of final `vectPath` don't traverse edge
+                // - either roomEdge does not exist
+                // - or leaving geomorph and edge is self-loop (by construction)
                 if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
                   /** @type {NPC.TraverseDoorCtxt} */
                   const ctxt = {
@@ -261,8 +280,9 @@ export default function NPCs(props) {
                   state.events.next({ key: 'entered-room', npcKey: e.npcKey, ctxt });
                 }
               }
+              // Undefined iff final localNavPath
               const gmEdge = e.edges[i];
-              if (gmEdge) {// Undefined for final localNavPath
+              if (gmEdge) {
                 /** @type {NPC.TraverseDoorCtxt} */
                 const ctxt = gmEdge;
                 console.log(`enter hull door: ${JSON.stringify(ctxt)}`);
@@ -274,12 +294,21 @@ export default function NPCs(props) {
                 state.events.next({ key: 'entered-room', npcKey: e.npcKey, ctxt });
               }
             }
+
+            // Become idle
+            npc.anim.keepWalking = false;
+            npc.anim.body.cancel();
+            npc.updateSpritesheet('idle');
+            npc.startAnimation();
+            state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
+
           } else if (e.key === 'local-nav') {
             for (const [i, vectPath] of e.paths.entries()) {
               // TODO
             }
           }
         } catch (err) {
+          state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
           if (err instanceof Error && err.message === 'cancelled') {
             console.log(`${e.npcKey}: walkNpc cancelled`);
           } else {
@@ -292,6 +321,7 @@ export default function NPCs(props) {
 
     return output;
   }, { deps: [nav, props.doorsApi] });
+  
   
   React.useEffect(() => {
     setCached(props.npcsKey, state);

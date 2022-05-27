@@ -59,19 +59,22 @@ declare namespace NPC {
         total: number;
       };
       origPath: Geom.Vect[];
-      spriteSheet: 'idle' | 'walk';
+      spriteSheet: SpriteSheetKey;
       
       root: Animation;
       body: Animation;
       
-      finishedWalk: boolean;
+      /** Has anim.root triggered finished event? */
+      walkAnimFinished: null | boolean;
+      /** Expect to keep walking after anim finishes? */
+      keepWalking: boolean;
     };
     //#endregion
 
     get paused(): boolean;
     async cancel(): Promise<void>;
-    async pause(): Promise<void>;
-    async play(): Promise<void>;
+    pause(): void;
+    play(): void;
 
     /** Radians */
     async followNavPath(): Promise<void>;
@@ -83,7 +86,13 @@ declare namespace NPC {
     onFinishWalk(): void;
     startAnimation(): void;
     updateAnimAux(): void;
+    updateSpritesheet(spriteSheet: SpriteSheetKey): void;
   }
+
+  type SpriteSheetKey = (
+    | 'idle'
+    | 'walk'
+  );
 
   interface TraverseDoorCtxt {
     srcGmId: number;
@@ -214,8 +223,8 @@ declare namespace NPC {
     npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
+    trackNpc(e: { npcKey: string }): AsyncGenerator<any, void, unknown>;
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
-    updateNpc(npcKey: string): void;
     async walkNpc(e: { npcKey: string } & (
       | { points: Geom.VectJson[] }
       | GlobalNavPath
@@ -232,6 +241,8 @@ declare namespace NPC {
 
   type NPCsMessage = (
     | { key: 'set-player'; npcKey: string; }
+    | { key: 'started-walking'; npcKey: string; }
+    | { key: 'stopped-walking'; npcKey: string; }
     | { key: 'entered-room'; npcKey: string; ctxt: TraverseDoorCtxt; }
     | { key: 'exited-room'; npcKey: string; ctxt: TraverseDoorCtxt; }
   );

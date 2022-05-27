@@ -17,10 +17,12 @@ __Aim towards website release__.
   - 🚧 Continue migration
   - Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
 
-- BUG: `walk` hangs sometimes (last seen on mobile)
-  - infinite loop protection for `track`
-- 🚧 Camera jerky on mobile
-  - mobile: improve `track` jerkiness
+- 🚧 Improve track:
+  - 🚧 improve jerkiness on mobile (maybe `walk` too)
+  - 🚧 infinite loop protection
+  - ✅ `trackNew` based on `npcs.trackNpc(...)`
+  - 🚧 npc sends event on start walk, triggering camera animation
+  - npc sends event on pause etc.
 
 - `npc {npcKey} {act}` -> `npc {act} [{npcKey}]` including `npc get andros`
 - can only open door when player close

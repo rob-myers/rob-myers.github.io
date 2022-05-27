@@ -7,12 +7,12 @@ import npcJson from '../../public/npc/first-npc.json'
 /**
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 
- * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; updateNpc: () => void }} deps
+ * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi }} deps
  */
  export default function createNpc(
   npcKey,
   at,
-  {disabled, panZoomApi, updateNpc},
+  { disabled, panZoomApi },
 ) {
   /** @type {NPC.NPC} */
   const npc = {
@@ -33,7 +33,8 @@ import npcJson from '../../public/npc/first-npc.json'
       root: new Animation,
       body: new Animation,
 
-      finishedWalk: true,
+      walkAnimFinished: null,
+      keepWalking: false,
     },
 
     get paused() {
@@ -50,14 +51,14 @@ import npcJson from '../../public/npc/first-npc.json'
         anim.body.cancel();
       }));
     },
-    async pause() {
+    pause() {
       console.log('PAUSING');
       const { anim } = this;
       anim.root.pause();
       anim.body.pause();
       anim.root.commitStyles();
     },
-    async play() {
+    play() {
       console.log('RESUMING');
       const { anim } = this;
       anim.root.play();
@@ -71,14 +72,13 @@ import npcJson from '../../public/npc/first-npc.json'
       }
       console.log('START');
       
-      anim.spriteSheet = 'walk';
-      updateNpc();
+      this.updateSpritesheet('walk');
       this.startAnimation();
 
       anim.aux.count++;
 
       await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
-        anim.finishedWalk = false;
+        anim.walkAnimFinished = false;
         anim.root.addEventListener("finish", () => this.onFinishWalk());
         anim.root.addEventListener("cancel", () => this.onCancelWalk(resolve, reject));
       }));
@@ -127,12 +127,14 @@ import npcJson from '../../public/npc/first-npc.json'
     },
     onCancelWalk(resolve, reject) {
       const { anim } = this;
-      anim.spriteSheet = 'idle';
-      updateNpc();
-      this.startAnimation();
-
-      if (anim.finishedWalk) {
+      if (!anim.keepWalking) {
+        this.updateSpritesheet('idle');
+        this.startAnimation();
+      }
+      
+      if (anim.walkAnimFinished) {
         resolve();
+        anim.walkAnimFinished = null;
         console.log('FINISHED');
       } else {
         reject(new Error('cancelled'));
@@ -141,10 +143,10 @@ import npcJson from '../../public/npc/first-npc.json'
     },
     onFinishWalk() {
       const { anim } = this;
-      anim.finishedWalk = true;
+      anim.walkAnimFinished = true;
       anim.root.commitStyles();
       anim.root.cancel();
-      anim.body.cancel();
+      // anim.body.cancel();
     },
     startAnimation() {
       const { anim } = this;
@@ -162,7 +164,6 @@ import npcJson from '../../public/npc/first-npc.json'
         anim.root = this.el.root.animate([], { duration: 2 * 1000, iterations: Infinity });
         // TODO induced by animLookup
         anim.body = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
-  
       }
     },
     updateAnimAux() {
@@ -181,6 +182,13 @@ import npcJson from '../../public/npc/first-npc.json'
       }, { sofars: [0], total: 0 });
       [aux.sofars, aux.total] = [reduced.sofars, reduced.total];
     },
+    updateSpritesheet(spriteSheet) {
+      if (spriteSheet !== this.anim.spriteSheet) {
+        this.el.root.classList.remove(this.anim.spriteSheet);
+        this.el.root.classList.add(spriteSheet);
+        this.anim.spriteSheet = spriteSheet;
+      }
+    }
   };
   return npc;
 }
