@@ -7,12 +7,12 @@ import npcJson from '../../public/npc/first-npc.json'
 /**
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 
- * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi }} deps
+ * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; npcs: NPC.FullApi; }} deps
  */
  export default function createNpc(
   npcKey,
   at,
-  { disabled, panZoomApi },
+  { disabled, panZoomApi, npcs },
 ) {
   /** @type {NPC.NPC} */
   const npc = {
@@ -31,6 +31,7 @@ import npcJson from '../../public/npc/first-npc.json'
       spriteSheet: 'idle',
       root: new Animation,
       body: new Animation,
+      wayMetas: [],
     },
 
     get paused() {
@@ -61,13 +62,33 @@ import npcJson from '../../public/npc/first-npc.json'
       anim.body.play();
     },
 
-    async followNavPath(path) {
+    async followNavPath(path, opts) {
       const { anim } = this;
       anim.origPath = path.map(Vect.from);
       anim.animPath = npc.anim.origPath.slice();
       this.updateAnimAux();
       if (anim.animPath.length <= 1 || anim.aux.total === 0) {
         return;
+      }
+      
+      if (opts?.enterIndexes) {
+        anim.wayMetas = opts.enterIndexes.flatMap(i => [
+          { key: 'enter-door', length: anim.aux.sofars[i]},
+          { key: 'exit-door', length: anim.aux.sofars[i + 1]},
+        ]);
+
+        const items = anim.wayMetas.slice();
+        const animEventCb = () => {
+          if (items.length === 0) {
+            npcs.loop.remove(animEventCb);
+          } else if (npc.anim.spriteSheet === 'walk' && anim.root.playState === 'running') {
+            if (/** @type {number} */ (anim.root.currentTime) > items[0].length * animScaleFactor) {
+              // TODO send event 🚧
+              console.log(items.shift());
+            }
+          }
+        };
+        npcs.loop.updates.push(animEventCb);
       }
 
       console.log(`followNavPath: ${this.def.key} started walk`);
@@ -174,7 +195,9 @@ import npcJson from '../../public/npc/first-npc.json'
         agg.sofars.push(agg.sofars[agg.sofars.length - 1] + length);
         return agg;
       }, { sofars: [0], total: 0 });
-      [aux.sofars, aux.total] = [reduced.sofars, reduced.total];
+      aux.sofars = reduced.sofars
+      aux.total = reduced.total;
+      anim.wayMetas = [];
     },
 
   };

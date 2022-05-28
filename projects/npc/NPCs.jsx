@@ -28,10 +28,22 @@ export default function NPCs(props) {
       npc: {},
       path: {}, 
       events: new Subject,
-      
+
       ready: true,
       class: { Vect },
       rxjs: { filter, first, map, take, otag }, // TODO remove?
+      loop: {
+        updates: [],
+        reqId: 0,
+        trigger() {
+          state.loop.updates.forEach(cb => cb());
+          state.loop.reqId = requestAnimationFrame(state.loop.trigger);
+        },
+        remove(cb) {
+          const found = state.loop.updates.findIndex(x => x == cb);
+          found !== -1 && state.loop.updates.splice(found, 1);
+        },
+      },
 
       async awaitPanZoomIdle() {
         if (!props.panZoomApi.isIdle()) {
@@ -187,6 +199,7 @@ export default function NPCs(props) {
         state.npc[e.npcKey] = createNpc(e.npcKey, e.point, {
           disabled: props.disabled,
           panZoomApi: props.panZoomApi,
+          npcs: state,
         });
         update();
       },
@@ -286,15 +299,31 @@ export default function NPCs(props) {
              * TODO
              * - one big animation ✅
              * - detect when moves through door 🚧
-             * - wrap animation creation with "events" 🚧
+             *   - NPCs triggers requestAnimFrame ✅
+             *   - given global navpath, compute times at which enter/exit doors 🚧
+             *   - register callback logging enter/exit
              */
+            const globalNavPath = e.paths;
 
             // Walk along a global navpath
             state.events.next({ key: 'started-walking', npcKey: e.npcKey });
             // npc.anim.keepWalking = true;
 
-            const allPoints = e.paths.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
-            await npc.followNavPath(allPoints);
+            const allPoints = globalNavPath.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
+
+            // NOTE exit indexes always straight after enter indexes
+            const enterIndexes = globalNavPath.reduce((agg, { paths }, i) => {
+              let indexOffset = i === 0 ? 0 : agg[agg.length - 1] + 1;
+              paths.forEach(path => {
+                agg.push(indexOffset + (path.length - 1));
+                indexOffset += path.length;
+              });
+              return agg;
+            }, /** @type {number[]} */ ([]));
+            // NOTE _currently_ assume localNavPaths terminate in a room, so pop final push
+            enterIndexes.pop();
+
+            await npc.followNavPath(allPoints, { enterIndexes });
 
             // for (const [i, localNavPath] of e.paths.entries()) {
             //   for (const [i, vectPath] of localNavPath.paths.entries()) {
@@ -368,6 +397,7 @@ export default function NPCs(props) {
   React.useEffect(() => {
     setCached(props.npcsKey, state);
     props.onLoad(state);
+    state.loop.reqId = requestAnimationFrame(state.loop.trigger);
 
     // On HMR, refresh each npc via remount
     Object.values(state.npc).forEach(npc => {
@@ -377,6 +407,7 @@ export default function NPCs(props) {
 
     return () => {
       removeCached(props.npcsKey);
+      cancelAnimationFrame(state.loop.reqId);
     };
   }, [props.panZoomApi]);
 

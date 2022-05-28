@@ -25,6 +25,7 @@ __Aim towards website release__.
     - use cancellable timeouts for events
   - New `track`follows whole walk
 
+- GlobalNavPath can initially follow edge if start in doorway (i.e. |path| === |edge|)
 
 - `npc {npcKey} {act}` -> `npc {act} [{npcKey}]` including `npc get andros`
 - can only open door when player close

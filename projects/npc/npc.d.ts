@@ -63,6 +63,8 @@ declare namespace NPC {
       
       root: Animation;
       body: Animation;
+      // TODO add door context
+      wayMetas: ({ key: 'enter-door' | 'exit-door'; length: number })[];
     };
     //#endregion
 
@@ -71,7 +73,7 @@ declare namespace NPC {
     pause(): void;
     play(): void;
 
-    async followNavPath(path: Geom.VectJson[]): Promise<void>;
+    async followNavPath(path: Geom.VectJson[], opts?: { enterIndexes?: number[] }): Promise<void>;
     /** Radians */
     getAngle(): number;
     getAnimDef(): TypeUtil.AnimDef;
@@ -199,6 +201,12 @@ declare namespace NPC {
       take: take;
       //#endregion
       otag: otag;
+    };
+    loop: {
+      updates: (() => void)[];
+      reqId: number;
+      trigger(): void;
+      remove(cb: () => void): void;
     };
 
     async awaitPanZoomIdle(): Promise<void>;

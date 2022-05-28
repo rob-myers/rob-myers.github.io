@@ -218,6 +218,7 @@ nav: `{
           yield npcs.getNpcGlobalNav({ debug: home.DEBUG === "true", ...datum })
         } catch (e) {
           api.warn(\`\${e}\`)
+          console.error(e)
         }
       }
     }
