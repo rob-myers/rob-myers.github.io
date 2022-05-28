@@ -29,59 +29,67 @@ import npcJson from '../../public/npc/first-npc.json'
       aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
       origPath: [],
       spriteSheet: 'idle',
-
       root: new Animation,
       body: new Animation,
-
-      walkAnimFinished: null,
-      keepWalking: false,
     },
 
     get paused() {
       return this.anim.root.playState === 'paused';
     },
     async cancel() {
-      console.log('CANCELLING');
+      console.log(`cancel: cancelling ${this.def.key}`);
       const { anim } = this;
       // Commit position and rotation
       anim.root.commitStyles();
-      await /** @type {Promise<void>} */ (new Promise(resolve => {
+      await/** @type {Promise<void>} */ (new Promise(resolve => {
         anim.root.addEventListener('cancel', () => resolve());
         anim.root.cancel();
         anim.body.cancel();
       }));
     },
     pause() {
-      console.log('PAUSING');
+      console.log(`pause: pausing ${this.def.key}`);
       const { anim } = this;
       anim.root.pause();
       anim.body.pause();
       anim.root.commitStyles();
     },
     play() {
-      console.log('RESUMING');
+      console.log(`play: resuming ${this.def.key}`);
       const { anim } = this;
       anim.root.play();
       anim.body.play();
     },
 
-    async followNavPath() {
+    async followNavPath(path) {
       const { anim } = this;
+      anim.origPath = path.map(Vect.from);
+      anim.animPath = npc.anim.origPath.slice();
+      this.updateAnimAux();
       if (anim.animPath.length <= 1 || anim.aux.total === 0) {
-        return; // Already finished
+        return;
       }
-      console.log('START');
-      
-      this.updateSpritesheet('walk');
+
+      console.log(`followNavPath: ${this.def.key} started walk`);
+      this.setSpritesheet('walk');
       this.startAnimation();
 
-      anim.aux.count++;
-
       await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
-        anim.walkAnimFinished = false;
-        anim.root.addEventListener("finish", () => this.onFinishWalk());
-        anim.root.addEventListener("cancel", () => this.onCancelWalk(resolve, reject));
+        anim.root.addEventListener("finish", () => {
+          // We don't cancel, so we don't pass control back to styles
+          console.log(`followNavPath: ${this.def.key} finished walk`);
+          resolve();
+        });
+        anim.root.addEventListener("cancel", () => {
+          // Cancel only when _actually_ cancelled, not when finished
+          console.log(`followNavPath: ${this.def.key} cancelled walk`);
+          reject(new Error('cancelled'));
+        });
       }));
+
+      // TODO what about when cancel walk?
+      this.setSpritesheet('idle');
+      this.startAnimation();
     },
     getAngle() {
       const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);
@@ -120,41 +128,32 @@ import npcJson from '../../public/npc/first-npc.json'
           .filter((x, i) => x.arriveMs >= 0 || i === anim.animPath.length - 1)
       }
     },
-    onCancelWalk(resolve, reject) {
-      const { anim } = this;
-      if (!anim.keepWalking) {
-        this.updateSpritesheet('idle');
-        this.startAnimation();
+    setSpritesheet(spriteSheet) {
+      if (spriteSheet !== this.anim.spriteSheet) {
+        this.el.root.classList.remove(this.anim.spriteSheet);
+        this.el.root.classList.add(spriteSheet);
+        this.anim.spriteSheet = spriteSheet;
       }
-      
-      if (anim.walkAnimFinished) {
-        resolve();
-        anim.walkAnimFinished = null;
-        console.log('FINISHED');
-      } else {
-        reject(new Error('cancelled'));
-        console.log('CANCELLED');
-      };
-    },
-    onFinishWalk() {
-      const { anim } = this;
-      anim.walkAnimFinished = true;
-      anim.root.commitStyles();
-      anim.root.cancel();
-      // anim.body.cancel();
     },
     startAnimation() {
       const { anim } = this;
+      anim.aux.count++;
+
       if (anim.spriteSheet === 'walk') {
         // Animate position and rotation
         const { keyframes, opts } = this.getAnimDef();
-        anim.root = this.el.root.animate(keyframes, opts);
+        // TODO 🚧 wrap animation with events, and own interface e.g. pause/play
+        const kfe = new KeyframeEffect(this.el.root, keyframes, opts);
+        anim.root = new Animation(kfe, document.timeline);
+        anim.root.play();
+
         // Animate spritesheet
         const { animLookup, zoom: animZoom } = npcJson;
         anim.body = this.el.body.animate([
           { offset: 0, backgroundPosition: '0px' },
           { offset: 1, backgroundPosition: `${-animLookup.walk.frames.length * animLookup.walk.aabb.width * animZoom}px` },
         ], { easing: `steps(${animLookup.walk.frames.length})`, duration: 0.625 * 1000, iterations: Infinity });
+
       } else if (anim.spriteSheet === 'idle') {
         anim.root = this.el.root.animate([], { duration: 2 * 1000, iterations: Infinity });
         // TODO induced by animLookup
@@ -177,13 +176,7 @@ import npcJson from '../../public/npc/first-npc.json'
       }, { sofars: [0], total: 0 });
       [aux.sofars, aux.total] = [reduced.sofars, reduced.total];
     },
-    updateSpritesheet(spriteSheet) {
-      if (spriteSheet !== this.anim.spriteSheet) {
-        this.el.root.classList.remove(this.anim.spriteSheet);
-        this.el.root.classList.add(spriteSheet);
-        this.anim.spriteSheet = spriteSheet;
-      }
-    }
+
   };
   return npc;
 }

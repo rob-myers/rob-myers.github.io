@@ -63,11 +63,6 @@ declare namespace NPC {
       
       root: Animation;
       body: Animation;
-      
-      /** Has anim.root triggered finished event? */
-      walkAnimFinished: null | boolean;
-      /** Expect to keep walking after anim finishes? */
-      keepWalking: boolean;
     };
     //#endregion
 
@@ -76,17 +71,15 @@ declare namespace NPC {
     pause(): void;
     play(): void;
 
+    async followNavPath(path: Geom.VectJson[]): Promise<void>;
     /** Radians */
-    async followNavPath(): Promise<void>;
     getAngle(): number;
     getAnimDef(): TypeUtil.AnimDef;
     getPosition(): Geom.Vect;
     getTargets(): { point: Geom.VectJson; arriveMs: number }[];
-    onCancelWalk(resolve: () => void, reject: (err: Error) => void): void;
-    onFinishWalk(): void;
     startAnimation(): void;
     updateAnimAux(): void;
-    updateSpritesheet(spriteSheet: SpriteSheetKey): void;
+    setSpritesheet(spriteSheet: SpriteSheetKey): void;
   }
 
   type SpriteSheetKey = (
@@ -215,7 +208,6 @@ declare namespace NPC {
     getNpc(e: { npcKey: string }): NPC.NPC;
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;
-    async moveNpcAlongPath(npc: NPC.NPC, path: Geom.VectJson[]): Promise<void>;
     async npcAct(e: {
       npcKey: string;
       action: NpcActionKey;
@@ -223,7 +215,7 @@ declare namespace NPC {
     npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
-    trackNpc(e: { npcKey: string }): { subscription: import('rxjs').Subscription; setPaused(next: boolean): void };
+    // trackNpc(e: { npcKey: string }): { subscription: import('rxjs').Subscription; setPaused(next: boolean): void };
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string } & (
       | { points: Geom.VectJson[] }
