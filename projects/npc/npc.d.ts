@@ -63,8 +63,7 @@ declare namespace NPC {
       
       root: Animation;
       body: Animation;
-      // TODO add door context
-      wayMetas: ({ key: 'enter-door' | 'exit-door'; length: number })[];
+      wayMetas: WayPathMeta[];
     };
     //#endregion
 
@@ -72,16 +71,32 @@ declare namespace NPC {
     async cancel(): Promise<void>;
     pause(): void;
     play(): void;
+    update(): void;
 
-    async followNavPath(path: Geom.VectJson[], opts?: { enterIndexes?: number[] }): Promise<void>;
+    async followNavPath(
+      path: Geom.VectJson[],
+      opts?: { doorMetas?: NavPathDoorMeta[]; },
+    ): Promise<void>;
     /** Radians */
     getAngle(): number;
     getAnimDef(): TypeUtil.AnimDef;
     getPosition(): Geom.Vect;
     getTargets(): { point: Geom.VectJson; arriveMs: number }[];
+    npcRef(el: HTMLDivElement | null): void;
     startAnimation(): void;
     updateAnimAux(): void;
     setSpritesheet(spriteSheet: SpriteSheetKey): void;
+  }
+
+  interface WayPathMeta {
+    key: 'enter-door' | 'exit-door';
+    length: number;
+    ctxt: TraverseDoorCtxt;
+  }
+
+  interface NavPathDoorMeta {
+    enterIndex: number;
+    ctxt: NPC.TraverseDoorCtxt;
   }
 
   type SpriteSheetKey = (
@@ -220,7 +235,6 @@ declare namespace NPC {
       npcKey: string;
       action: NpcActionKey;
     }): Promise<void>;
-    npcRef(el: HTMLDivElement | null): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
     // trackNpc(e: { npcKey: string }): { subscription: import('rxjs').Subscription; setPaused(next: boolean): void };

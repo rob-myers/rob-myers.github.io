@@ -61,6 +61,16 @@ import npcJson from '../../public/npc/first-npc.json'
       anim.root.play();
       anim.body.play();
     },
+    update() {
+      const { anim } = npc; // Used as callback
+      if (anim.wayMetas.length && anim.spriteSheet === 'walk' && anim.root.playState === 'running') {
+        if (/** @type {number} */ (anim.root.currentTime) > anim.wayMetas[0].length * animScaleFactor) {
+          const item = /** @type {NPC.WayPathMeta} */ (anim.wayMetas.shift());
+          console.log(item);
+          npcs.events.next({ key: 'exited-room', npcKey: npc.def.key, ctxt: item.ctxt });
+        }
+      }
+    },
 
     async followNavPath(path, opts) {
       const { anim } = this;
@@ -71,24 +81,11 @@ import npcJson from '../../public/npc/first-npc.json'
         return;
       }
       
-      if (opts?.enterIndexes) {
-        anim.wayMetas = opts.enterIndexes.flatMap(i => [
-          { key: 'enter-door', length: anim.aux.sofars[i]},
-          { key: 'exit-door', length: anim.aux.sofars[i + 1]},
+      if (opts?.doorMetas) {
+        anim.wayMetas = opts.doorMetas.flatMap(({ enterIndex, ctxt }) => [
+          { key: 'enter-door', length: anim.aux.sofars[enterIndex], ctxt },
+          { key: 'exit-door', length: anim.aux.sofars[enterIndex + 1], ctxt },
         ]);
-
-        const items = anim.wayMetas.slice();
-        const animEventCb = () => {
-          if (items.length === 0) {
-            npcs.loop.remove(animEventCb);
-          } else if (npc.anim.spriteSheet === 'walk' && anim.root.playState === 'running') {
-            if (/** @type {number} */ (anim.root.currentTime) > items[0].length * animScaleFactor) {
-              // TODO send event 🚧
-              console.log(items.shift());
-            }
-          }
-        };
-        npcs.loop.updates.push(animEventCb);
       }
 
       console.log(`followNavPath: ${this.def.key} started walk`);
@@ -149,6 +146,18 @@ import npcJson from '../../public/npc/first-npc.json'
           .filter((x, i) => x.arriveMs >= 0 || i === anim.animPath.length - 1)
       }
     },
+    npcRef(rootEl) {
+      if (rootEl) {// NPC mounted
+        npc.el.root = rootEl;
+        npc.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
+        npc.el.root.style.transform = `translate(${npc.def.position.x}px, ${npc.def.position.y}px)`;
+        npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
+        npcs.loop.updates.push(npc.update);
+        npc.startAnimation(); // Start idle animation
+      } else {// TODO cleanup
+        npcs.loop.remove(npc.update);
+      }
+    },
     setSpritesheet(spriteSheet) {
       if (spriteSheet !== this.anim.spriteSheet) {
         this.el.root.classList.remove(this.anim.spriteSheet);
@@ -197,9 +206,14 @@ import npcJson from '../../public/npc/first-npc.json'
       }, { sofars: [0], total: 0 });
       aux.sofars = reduced.sofars
       aux.total = reduced.total;
-      anim.wayMetas = [];
+      anim.wayMetas.length = 0; // Clear them
     },
 
   };
   return npc;
 }
+
+/** Scale the sprites */
+const npcScale = 0.17;
+/** Ensure NPC faces along positive x-axis */
+const npcOffsetAngleDeg = 0;

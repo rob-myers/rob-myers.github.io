@@ -166,17 +166,6 @@ export default function NPCs(props) {
           state.events.next({ key: 'set-player', npcKey: e.npcKey });
         }
       },
-      npcRef(rootEl) {
-        if (rootEl) {// NPC mounted
-          const npcKey = /** @type {string} */ (rootEl.getAttribute('data-npc-key'));
-          const npc = state.npc[npcKey];
-          npc.el.root = rootEl;
-          npc.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
-          npc.el.root.style.transform = `translate(${npc.def.position.x}px, ${npc.def.position.y}px)`;
-          npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
-          npc.startAnimation(); // Start idle animation
-        }
-      },
       async panZoomTo(e) {
         if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {
           throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
@@ -196,7 +185,7 @@ export default function NPCs(props) {
         } else if (!state.isPointLegal(e.point)) {
           throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.point)}`);
         }
-        state.npc[e.npcKey] = createNpc(e.npcKey, e.point, {
+        state.npc[e.npcKey]= createNpc(e.npcKey, e.point, {
           disabled: props.disabled,
           panZoomApi: props.panZoomApi,
           npcs: state,
@@ -295,77 +284,42 @@ export default function NPCs(props) {
             state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
 
           } else if (e.key === 'global-nav') {
-            /**
-             * TODO
-             * - one big animation ✅
-             * - detect when moves through door 🚧
-             *   - NPCs triggers requestAnimFrame ✅
-             *   - given global navpath, compute times at which enter/exit doors 🚧
-             *   - register callback logging enter/exit
-             */
-            const globalNavPath = e.paths;
-
             // Walk along a global navpath
+            const globalNavPath = e;
             state.events.next({ key: 'started-walking', npcKey: e.npcKey });
-            // npc.anim.keepWalking = true;
 
-            const allPoints = globalNavPath.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
+            const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
 
-            // NOTE exit indexes always straight after enter indexes
-            const enterIndexes = globalNavPath.reduce((agg, { paths }, i) => {
-              let indexOffset = i === 0 ? 0 : agg[agg.length - 1] + 1;
+            /**
+             * NOTE exit indexes always straight after enter indexes
+             * TODO cleanup below
+             */
+            const doorMetas = globalNavPath.paths.reduce((agg, localNavPath, i) => {
+              const { paths, edges } = localNavPath;
+              let indexOffset = i === 0 ? 0 : agg[agg.length - 1].enterIndex + 1;
+
               paths.forEach(path => {
-                agg.push(indexOffset + (path.length - 1));
+                const roomEdge = edges[i];
+                if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
+                  agg.push({
+                    enterIndex: indexOffset + (path.length - 1),
+                    ctxt: {
+                      srcGmId: localNavPath.gmId, srcDoorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId,
+                      dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
+                    },
+                  });
+                }
                 indexOffset += path.length;
               });
+
+              const gmEdge = globalNavPath.edges[i];
+              if (gmEdge) {
+                agg.push({ enterIndex: indexOffset, ctxt: gmEdge });
+              }
               return agg;
-            }, /** @type {number[]} */ ([]));
-            // NOTE _currently_ assume localNavPaths terminate in a room, so pop final push
-            enterIndexes.pop();
+            }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
 
-            await npc.followNavPath(allPoints, { enterIndexes });
-
-            // for (const [i, localNavPath] of e.paths.entries()) {
-            //   for (const [i, vectPath] of localNavPath.paths.entries()) {
-            //     await state.moveNpcAlongPath(npc, vectPath);
-            //     const roomEdge = localNavPath.edges[i];
-
-            //     // In case of final `vectPath` don't traverse edge
-            //     // - either roomEdge does not exist
-            //     // - or leaving geomorph and edge is self-loop (by construction)
-            //     if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
-            //       /** @type {NPC.TraverseDoorCtxt} */
-            //       const ctxt = {
-            //         srcGmId: localNavPath.gmId, srcDoorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId,
-            //         dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
-            //       };
-            //       console.log(`enter door: ${JSON.stringify(ctxt)}`);
-            //       state.events.next({ key: 'exited-room', npcKey: e.npcKey, ctxt });
-                  
-            //       const gm = props.gmGraph.gms[localNavPath.gmId];
-            //       await state.moveNpcAlongPath(npc, [
-            //         gm.matrix.transformPoint(roomEdge.entry.clone()).precision(2),
-            //         gm.matrix.transformPoint(roomEdge.exit.clone()).precision(2),
-            //       ]);
-                  
-            //       console.log(`exit door: ${JSON.stringify(ctxt)}`);
-            //       state.events.next({ key: 'entered-room', npcKey: e.npcKey, ctxt });
-            //     }
-            //   }
-            //   // Undefined iff final localNavPath
-            //   const gmEdge = e.edges[i];
-            //   if (gmEdge) {
-            //     /** @type {NPC.TraverseDoorCtxt} */
-            //     const ctxt = gmEdge;
-            //     console.log(`enter hull door: ${JSON.stringify(ctxt)}`);
-            //     state.events.next({ key: 'exited-room', npcKey: e.npcKey, ctxt });
-                
-            //     await state.moveNpcAlongPath(npc, [gmEdge.srcExit, gmEdge.dstEntry]);
-                
-            //     console.log(`exit hull door: ${JSON.stringify(ctxt)}`);
-            //     state.events.next({ key: 'entered-room', npcKey: e.npcKey, ctxt });
-            //   }
-            // }
+            await npc.followNavPath(allPoints, { doorMetas });
 
             // // Become idle
             // npc.anim.body.cancel();
@@ -420,7 +374,7 @@ export default function NPCs(props) {
       {Object.values(state.npc).map(npc => (
         <div
           key={`${npc.key}@${npc.spawnedAt}`} // So, respawn remounts
-          ref={state.npcRef}
+          ref={npc.npcRef}
           className={classNames('npc', npc.key, npc.anim.spriteSheet, npcCss)}
           data-npc-key={npc.key}
         >
@@ -453,11 +407,6 @@ const rootCss = css`
 // TODO modularise
 import npcJson from '../../public/npc/first-npc.json'
 const { animLookup, zoom } = npcJson;
-
-/** Scale the sprites */
-const npcScale = 0.17;
-/** Ensure NPC faces along positive x-axis */
-const npcOffsetAngleDeg = 0;
 
 const npcCss = css`
   .body {
