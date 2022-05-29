@@ -8,14 +8,14 @@ import npcJson from '../../public/npc/first-npc.json'
  * @param {string} npcKey 
  * @param {Geom.VectJson} at 
  * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; npcs: NPC.FullApi; }} deps
+ * @returns {NPC.NPC}
  */
  export default function createNpc(
   npcKey,
   at,
   { disabled, panZoomApi, npcs },
 ) {
-  /** @type {NPC.NPC} */
-  const npc = {
+  return {
     key: npcKey,
     spawnedAt: Date.now(),
     // TODO hook up angle
@@ -32,6 +32,7 @@ import npcJson from '../../public/npc/first-npc.json'
       root: new Animation,
       body: new Animation,
       wayMetas: [],
+      wayTimeoutId: 0,
     },
 
     get paused() {
@@ -61,21 +62,52 @@ import npcJson from '../../public/npc/first-npc.json'
       anim.root.play();
       anim.body.play();
     },
-    update() {
-      const { anim } = npc; // Used as callback
-      if (anim.wayMetas.length && anim.spriteSheet === 'walk' && anim.root.playState === 'running') {
-        if (/** @type {number} */ (anim.root.currentTime) > anim.wayMetas[0].length * animScaleFactor) {
-          const item = /** @type {NPC.WayPathMeta} */ (anim.wayMetas.shift());
-          console.log(item);
-          npcs.events.next({ key: 'exited-room', npcKey: npc.def.key, ctxt: item.ctxt });
+    triggerWayTimeout() {
+      const { anim } = this;
+      if (anim.root.currentTime === null) {
+        return console.warn('triggerWayTimeout: anim.root.currentTime is null')
+      }
+      if (anim.wayMetas[0]) {
+        anim.wayTimeoutId = window.setTimeout(
+          this.wayTimeout.bind(this),
+          (anim.wayMetas[0].length * animScaleFactor) - anim.root.currentTime,
+        );
+      }
+    },
+    wayTimeout() {
+      const { anim } = this;
+      if (
+        anim.wayMetas.length === 0
+        || anim.spriteSheet === 'idle'
+        || anim.root.currentTime === null
+        || anim.root.playState === 'paused'
+      ) {
+        if (anim.wayMetas.length === 0) console.warn('wayTimeout: empty anim.wayMetas');
+        if (anim.root.currentTime === null) console.warn('wayTimeout: anim.root.currentTime is null');
+        if (anim.spriteSheet === 'idle') console.warn('wayTimeout: anim.spriteSheet is "idle"');
+        return;
+      } else if (anim.root.currentTime >= (anim.wayMetas[0].length * animScaleFactor) - 1) {
+        const wayMeta = /** @type { NPC.WayPathMeta} */ (anim.wayMetas.shift());
+        /**
+         * TODO hull door
+         * - missing exit-door
+         * - late enter-door
+         */
+        console.log(wayMeta);
+        if (wayMeta.key === 'exit-door') {
+          npcs.events.next({ key: 'entered-room', npcKey: this.def.key, ctxt: wayMeta.ctxt });
+        } else if (wayMeta.key === 'enter-door') {
+          npcs.events.next({ key: 'exited-room', npcKey: this.def.key, ctxt: wayMeta.ctxt });
         }
       }
+      this.triggerWayTimeout();
     },
 
     async followNavPath(path, opts) {
       const { anim } = this;
       anim.origPath = path.map(Vect.from);
-      anim.animPath = npc.anim.origPath.slice();
+      anim.animPath = anim.origPath.slice();
+      anim.wayMetas.length = 0;
       this.updateAnimAux();
       if (anim.animPath.length <= 1 || anim.aux.total === 0) {
         return;
@@ -91,6 +123,7 @@ import npcJson from '../../public/npc/first-npc.json'
       console.log(`followNavPath: ${this.def.key} started walk`);
       this.setSpritesheet('walk');
       this.startAnimation();
+      this.triggerWayTimeout();
 
       await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
         anim.root.addEventListener("finish", () => {
@@ -147,15 +180,11 @@ import npcJson from '../../public/npc/first-npc.json'
       }
     },
     npcRef(rootEl) {
-      if (rootEl) {// NPC mounted
-        npc.el.root = rootEl;
-        npc.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
-        npc.el.root.style.transform = `translate(${npc.def.position.x}px, ${npc.def.position.y}px)`;
-        npc.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
-        npcs.loop.updates.push(npc.update);
-        npc.startAnimation(); // Start idle animation
-      } else {// TODO cleanup
-        npcs.loop.remove(npc.update);
+      if (rootEl) {
+        this.el.root = rootEl;
+        this.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
+        this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
+        this.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
       }
     },
     setSpritesheet(spriteSheet) {
@@ -172,10 +201,8 @@ import npcJson from '../../public/npc/first-npc.json'
       if (anim.spriteSheet === 'walk') {
         // Animate position and rotation
         const { keyframes, opts } = this.getAnimDef();
-        // TODO 🚧 wrap animation with events, and own interface e.g. pause/play
-        const kfe = new KeyframeEffect(this.el.root, keyframes, opts);
-        anim.root = new Animation(kfe, document.timeline);
-        anim.root.play();
+        anim.root = this.el.root.animate(keyframes, opts);
+        // anim.root.play();
 
         // Animate spritesheet
         const { animLookup, zoom: animZoom } = npcJson;
@@ -185,6 +212,9 @@ import npcJson from '../../public/npc/first-npc.json'
         ], { easing: `steps(${animLookup.walk.frames.length})`, duration: 0.625 * 1000, iterations: Infinity });
 
       } else if (anim.spriteSheet === 'idle') {
+        // TODO put somewhere better?
+        anim.wayMetas.length = 0;
+
         anim.root = this.el.root.animate([], { duration: 2 * 1000, iterations: Infinity });
         // TODO induced by animLookup
         anim.body = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
@@ -206,11 +236,8 @@ import npcJson from '../../public/npc/first-npc.json'
       }, { sofars: [0], total: 0 });
       aux.sofars = reduced.sofars
       aux.total = reduced.total;
-      anim.wayMetas.length = 0; // Clear them
     },
-
   };
-  return npc;
 }
 
 /** Scale the sprites */

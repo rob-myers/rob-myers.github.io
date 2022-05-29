@@ -1,3 +1,4 @@
+import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 
@@ -8,9 +9,19 @@ const { animLookup, zoom } = npcJson;
 /** @param {{ npc: NPC.NPC }} props  */
 export default function NPC(props) {
   const { npc } = props;
+
+  React.useEffect(() => {
+    if (npc.anim.spriteSheet === 'idle' && npc.anim.aux.count === 0) {
+      npc.startAnimation(); // Start idle animation 
+    }
+    return () => {
+      window.clearTimeout(npc.anim.wayTimeoutId);
+    };
+  }, []);
+
   return (
     <div
-      ref={npc.npcRef}
+      ref={npc.npcRef.bind(npc)}
       className={classNames('npc', npc.key, npc.anim.spriteSheet, npcCss)}
       data-npc-key={npc.key}
     >

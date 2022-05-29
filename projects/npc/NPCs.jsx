@@ -28,18 +28,6 @@ export default function NPCs(props) {
     ready: true,
     class: { Vect },
     rxjs: { filter, first, map, take, otag }, // TODO remove?
-    loop: {
-      updates: [],
-      reqId: 0,
-      trigger() {
-        state.loop.updates.forEach(cb => cb());
-        state.loop.reqId = requestAnimationFrame(state.loop.trigger);
-      },
-      remove(cb) {
-        const found = state.loop.updates.findIndex(x => x == cb);
-        found !== -1 && state.loop.updates.splice(found, 1);
-      },
-    },
 
     async awaitPanZoomIdle() {
       if (!props.panZoomApi.isIdle()) {
@@ -343,7 +331,6 @@ export default function NPCs(props) {
   React.useEffect(() => {
     setCached(props.npcsKey, state);
     props.onLoad(state);
-    state.loop.reqId = requestAnimationFrame(state.loop.trigger);
 
     // On HMR, refresh each npc via remount
     Object.values(state.npc).forEach(npc => {
@@ -353,7 +340,6 @@ export default function NPCs(props) {
 
     return () => {
       removeCached(props.npcsKey);
-      cancelAnimationFrame(state.loop.reqId);
     };
   }, [props.panZoomApi]);
 
@@ -365,7 +351,8 @@ export default function NPCs(props) {
 
       {Object.values(state.npc).map(npc => (
         <NPC
-          key={`${npc.key}@${npc.spawnedAt}`} // Respawn remounts
+          // Respawn remounts
+          key={`${npc.key}@${npc.spawnedAt}`}
           npc={npc}
         />
       ))}

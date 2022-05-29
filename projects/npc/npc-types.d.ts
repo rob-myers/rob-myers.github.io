@@ -64,6 +64,7 @@ declare namespace NPC {
       root: Animation;
       body: Animation;
       wayMetas: WayPathMeta[];
+      wayTimeoutId: number;
     };
     //#endregion
 
@@ -71,7 +72,8 @@ declare namespace NPC {
     async cancel(): Promise<void>;
     pause(): void;
     play(): void;
-    update(): void;
+    triggerWayTimeout(): void;
+    wayTimeout(): void;
 
     async followNavPath(
       path: Geom.VectJson[],
@@ -216,12 +218,6 @@ declare namespace NPC {
       take: take;
       //#endregion
       otag: otag;
-    };
-    loop: {
-      updates: (() => void)[];
-      reqId: number;
-      trigger(): void;
-      remove(cb: () => void): void;
     };
 
     async awaitPanZoomIdle(): Promise<void>;
