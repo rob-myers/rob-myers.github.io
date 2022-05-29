@@ -11,8 +11,7 @@ import createNpc from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
-
-
+import NPC from "./NPC";
 
 /** @param {NPC.NPCsProps} props */
 export default function NPCs(props) {
@@ -21,331 +20,324 @@ export default function NPCs(props) {
 
   const nav = useGeomorphsNav(props.gmGraph, props.disabled);
 
-  const state = useStateRef(() => {
+  const state = useStateRef(/** @type {() => NPC.FullApi} */ () => ({
+    npc: {},
+    path: {}, 
+    events: new Subject,
 
-    /** @type {NPC.FullApi} */
-    const output = {
-      npc: {},
-      path: {}, 
-      events: new Subject,
-
-      ready: true,
-      class: { Vect },
-      rxjs: { filter, first, map, take, otag }, // TODO remove?
-      loop: {
-        updates: [],
-        reqId: 0,
-        trigger() {
-          state.loop.updates.forEach(cb => cb());
-          state.loop.reqId = requestAnimationFrame(state.loop.trigger);
-        },
-        remove(cb) {
-          const found = state.loop.updates.findIndex(x => x == cb);
-          found !== -1 && state.loop.updates.splice(found, 1);
-        },
+    ready: true,
+    class: { Vect },
+    rxjs: { filter, first, map, take, otag }, // TODO remove?
+    loop: {
+      updates: [],
+      reqId: 0,
+      trigger() {
+        state.loop.updates.forEach(cb => cb());
+        state.loop.reqId = requestAnimationFrame(state.loop.trigger);
       },
-
-      async awaitPanZoomIdle() {
-        if (!props.panZoomApi.isIdle()) {
-          await firstValueFrom(props.panZoomApi.events.pipe(
-            filter(x => x.key === 'ui-idle'),
-            first(),
-          ));
-        }
+      remove(cb) {
+        const found = state.loop.updates.findIndex(x => x == cb);
+        found !== -1 && state.loop.updates.splice(found, 1);
       },
-      getGlobalNavPath(src, dst) {
-        const {gms} = props.gmGraph
-        const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
-        const dstGmId = gms.findIndex(x => x.gridRect.contains(dst));
-        if (srcGmId === -1 || dstGmId === -1) {
-          throw Error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`)
-        } else if (srcGmId === dstGmId) {
-          return {
-            key: 'global-nav',
-            paths: [state.getLocalNavPath(srcGmId, src, dst)],
-            edges: [],
-          };
-        } else {
-          // Compute global strategy
-          const gmEdges = props.gmGraph.findPath(src, dst);
-          if (!gmEdges) {
-            throw Error(`getGlobalNavPath: gmGraph.findPath not found: ${JSON.stringify(src)} -> ${JSON.stringify(dst)}`);
-          }
-          // console.log({gmEdges});
+    },
 
-          const paths = /** @type {NPC.LocalNavPath[]} */ ([]);
-          for (let k = 0; k < gmEdges.length + 1; k++) {
-            if (k === 0) {
-              paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].srcExit);
-            } else if (k === gmEdges.length) {
-              paths[k] = state.getLocalNavPath(dstGmId, gmEdges[k - 1].dstEntry, dst);
-            } else {
-              paths[k] = state.getLocalNavPath(gmEdges[k - 1].dstGmId, gmEdges[k - 1].dstEntry, gmEdges[k].srcExit);
-            }
-          }
-          return {
-            key: 'global-nav',
-            paths,
-            edges: gmEdges,
-          };
+    async awaitPanZoomIdle() {
+      if (!props.panZoomApi.isIdle()) {
+        await firstValueFrom(props.panZoomApi.events.pipe(
+          filter(x => x.key === 'ui-idle'),
+          first(),
+        ));
+      }
+    },
+    getGlobalNavPath(src, dst) {
+      const {gms} = props.gmGraph
+      const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
+      const dstGmId = gms.findIndex(x => x.gridRect.contains(dst));
+      if (srcGmId === -1 || dstGmId === -1) {
+        throw Error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`)
+      } else if (srcGmId === dstGmId) {
+        return {
+          key: 'global-nav',
+          paths: [state.getLocalNavPath(srcGmId, src, dst)],
+          edges: [],
+        };
+      } else {
+        // Compute global strategy
+        const gmEdges = props.gmGraph.findPath(src, dst);
+        if (!gmEdges) {
+          throw Error(`getGlobalNavPath: gmGraph.findPath not found: ${JSON.stringify(src)} -> ${JSON.stringify(dst)}`);
         }
-      },
-      getLocalNavPath(gmId, src, dst) {
-        const gm = props.gmGraph.gms[gmId];
-        const pf = nav.pfs[gmId];
-        const localSrc = gm.inverseMatrix.transformPoint(Vect.from(src));
-        const localDst = gm.inverseMatrix.transformPoint(Vect.from(dst));
+        // console.log({gmEdges});
 
-        const result = pf.graph.findPath(localSrc, localDst);
-
-        if (result) {
-          return {
-            key: 'local-nav',
-            gmId,
-            paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
-            edges: result.edges,
-          };
-        } else {
-          return { key: 'local-nav', gmId, paths: [], edges: [] };
-        }
-      },
-      getNpcGlobalNav(e) {
-        if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
-          throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
-        } else if (!(e.point && typeof e.point.x === 'number' && typeof e.point.y === 'number')) {
-          throw Error(`invalid point: ${JSON.stringify(e.point)}`);
-        } else if (!state.isPointLegal(e.point)) {
-          throw Error(`outside navPoly: ${JSON.stringify(e.point)}`);
-        }
-        const npc = state.npc[e.npcKey];
-        if (!npc) {
-          throw Error(`npc "${e.npcKey}" does not exist`);
-        }
-        const result = state.getGlobalNavPath(npc.getPosition(), e.point);
-        if (e.debug) {
-          const points = (result?.paths??[]).reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
-          state.toggleDebugPath({ pathKey: e.npcKey, points })
-        }
-        return result;
-      },
-      getNpc(e) {
-        const npc = state.npc[e.npcKey];
-        if (!npc) {
-          throw Error(`npc "${e.npcKey}" does not exist`);
-        }
-        return npc;
-      },
-      getPanZoomApi() {
-        return props.panZoomApi;
-      },
-      isPointLegal(p) {
-        const gmId = props.gmGraph.gms.findIndex(x => x.gridRect.contains(p));
-        if (gmId === -1) return false;
-        const { navPoly, inverseMatrix } = props.gmGraph.gms[gmId];
-        const localPoint = inverseMatrix.transformPoint(Vect.from(p));
-        return navPoly.some(poly => poly.contains(localPoint));
-      },
-      async npcAct(e) {
-        const npc = state.npc[e.npcKey];
-        if (!npc) {
-          throw Error(`npc does not exist: "${e.npcKey}"`);
-        } else if (!isNpcActionKey(e.action)) {
-          throw Error(`${e.npcKey} unrecognised action: "${e.action}"`);
-        }
-
-        if (e.action === 'cancel') {
-          // Cancel current animation
-          await npc.cancel();
-        } else if (e.action === 'pause') {
-          // Pause current animation
-          await npc.pause();
-        } else if (e.action === 'play') {
-          // Resume current animation
-          await npc.play();
-        } else if (e.action === 'set-player') {
-          state.events.next({ key: 'set-player', npcKey: e.npcKey });
-        }
-      },
-      async panZoomTo(e) {
-        if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {
-          throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
-        }
-        try {
-          await props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms, e.easing);
-          return 'completed';
-        } catch (e) {
-          return 'cancelled';
-        }
-      },
-      spawn(e) {
-        if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
-          throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
-        } else if (!(e.point && typeof e.point.x === 'number' && typeof e.point.y === 'number')) {
-          throw Error(`invalid point: ${JSON.stringify(e.point)}`);
-        } else if (!state.isPointLegal(e.point)) {
-          throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.point)}`);
-        }
-        state.npc[e.npcKey]= createNpc(e.npcKey, e.point, {
-          disabled: props.disabled,
-          panZoomApi: props.panZoomApi,
-          npcs: state,
-        });
-        update();
-      },
-      toggleDebugPath(e) {
-        if (e.points) {
-          const path = e.points.map(Vect.from);
-          state.path[e.pathKey] = { path, aabb: Rect.from(...path).outset(10) };
-        } else {
-          delete state.path[e.pathKey];
-        }
-        update();
-      },
-      // /**
-      //  * TODO 🚧 probably total rewrite
-      //  * - better/clearer approach to `status`
-      //  * - trigger tracking on tab resize
-      //  * - trigger tracking initially
-      //  */
-      // trackNpc(opts) {
-      //   let paused = false;
-      //   /** Used to separate tracking types */
-      //   let status = /** @type {null | 'track-walk' | 'track-idle'} */ (null);
-
-      //   const subscription = merge(state.events, props.panZoomApi.events).pipe(
-      //     filter(x => (
-      //       !paused
-      //       && x.key === 'ui-idle'
-      //       || (x.key === 'started-walking' && x.npcKey === opts.npcKey)
-      //       || (x.key === 'stopped-walking' && x.npcKey === opts.npcKey)
-      //     ))
-      //   ).subscribe({
-      //     async next(e) {
-      //       const npc = state.npc[opts.npcKey];
-      //       if (!props.panZoomApi.isIdle()) {
-      //         status = null; // Releases status, yet maybe dodgy
-      //         return;
-      //       } else if (e.key === 'started-walking' || npc.anim.spriteSheet === 'walk') {
-      //         // props.panZoomApi.cancelAnimations();
-      //         while (npc.anim.spriteSheet === 'walk') {
-      //           console.log(status = 'track-walk')
-      //           for (const target of npc.getTargets()) {
-      //             await props.panZoomApi.panZoomTo(2, target.point, 2 * target.arriveMs, 'linear');
-      //           }
-      //         }
-      //         status = null;
-
-      //       } else if (
-      //         (e.key === 'stopped-walking' || npc.anim.spriteSheet === 'idle')
-      //         && status === null
-      //       ) {
-      //         console.log(status = 'track-idle')
-      //         try {
-      //           const npcPosition = npc.getPosition();
-      //           await props.panZoomApi.panZoomTo(2, npcPosition, 2000);
-      //         } catch (e) {
-      //           console.error(e)
-      //         }
-      //         status = null;
-      //       }
-      //     }
-      //   });
-      //   return {
-      //     subscription,
-      //     /** @param {boolean} next */
-      //     setPaused(next) {
-      //       paused = next;
-      //       // TODO cancel ongoing animation on pause
-      //     }
-      //   };
-      // },
-      async walkNpc(e) {
-        const npc = state.npc[e.npcKey];
-        if (!npc) {
-          throw Error(`npc "${e.npcKey}" does not exist`);
-        } else if ('key' in e) {
-          if (!(e.key === 'local-nav' || e.key === 'global-nav')) {
-            throw Error(`invalid key: ${JSON.stringify(e)}`);
-          } else if (e.key === 'local-nav' && !isLocalNavPath(e)) {
-            throw Error(`invalid local navpath: ${JSON.stringify(e)}`);
-          } else if (e.key === 'global-nav' && !isGlobalNavPath(e)) {
-            throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
-          }
-        } else if ('points' in e && !(e.points?.every?.(Vect.isVectJson))) {
-          throw Error(`invalid points: ${JSON.stringify(e.points)}`);
-        }
-
-        try {
-          if ('points' in e) {
-
-            // Walk along path `points`, ignoring doors
-            state.events.next({ key: 'started-walking', npcKey: e.npcKey });
-            await npc.followNavPath(e.points);
-            state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
-
-          } else if (e.key === 'global-nav') {
-            // Walk along a global navpath
-            const globalNavPath = e;
-            state.events.next({ key: 'started-walking', npcKey: e.npcKey });
-
-            const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
-
-            /**
-             * NOTE exit indexes always straight after enter indexes
-             * TODO cleanup below
-             */
-            const doorMetas = globalNavPath.paths.reduce((agg, localNavPath, i) => {
-              const { paths, edges } = localNavPath;
-              let indexOffset = i === 0 ? 0 : agg[agg.length - 1].enterIndex + 1;
-
-              paths.forEach(path => {
-                const roomEdge = edges[i];
-                if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
-                  agg.push({
-                    enterIndex: indexOffset + (path.length - 1),
-                    ctxt: {
-                      srcGmId: localNavPath.gmId, srcDoorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId,
-                      dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
-                    },
-                  });
-                }
-                indexOffset += path.length;
-              });
-
-              const gmEdge = globalNavPath.edges[i];
-              if (gmEdge) {
-                agg.push({ enterIndex: indexOffset, ctxt: gmEdge });
-              }
-              return agg;
-            }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
-
-            await npc.followNavPath(allPoints, { doorMetas });
-
-            // // Become idle
-            // npc.anim.body.cancel();
-            // npc.setSpritesheet('idle');
-            // npc.startAnimation();
-            state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
-
-          } else if (e.key === 'local-nav') {
-            for (const [i, vectPath] of e.paths.entries()) {
-              // TODO
-            }
-          }
-        } catch (err) {
-          state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
-          if (err instanceof Error && err.message === 'cancelled') {
-            console.log(`${e.npcKey}: walkNpc cancelled`);
+        const paths = /** @type {NPC.LocalNavPath[]} */ ([]);
+        for (let k = 0; k < gmEdges.length + 1; k++) {
+          if (k === 0) {
+            paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].srcExit);
+          } else if (k === gmEdges.length) {
+            paths[k] = state.getLocalNavPath(dstGmId, gmEdges[k - 1].dstEntry, dst);
           } else {
-            throw err;
+            paths[k] = state.getLocalNavPath(gmEdges[k - 1].dstGmId, gmEdges[k - 1].dstEntry, gmEdges[k].srcExit);
           }
         }
+        return {
+          key: 'global-nav',
+          paths,
+          edges: gmEdges,
+        };
+      }
+    },
+    getLocalNavPath(gmId, src, dst) {
+      const gm = props.gmGraph.gms[gmId];
+      const pf = nav.pfs[gmId];
+      const localSrc = gm.inverseMatrix.transformPoint(Vect.from(src));
+      const localDst = gm.inverseMatrix.transformPoint(Vect.from(dst));
 
-      },
-    };
+      const result = pf.graph.findPath(localSrc, localDst);
 
-    return output;
-  }, { deps: [nav, props.doorsApi] });
+      if (result) {
+        return {
+          key: 'local-nav',
+          gmId,
+          paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
+          edges: result.edges,
+        };
+      } else {
+        return { key: 'local-nav', gmId, paths: [], edges: [] };
+      }
+    },
+    getNpcGlobalNav(e) {
+      if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
+        throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
+      } else if (!(e.point && typeof e.point.x === 'number' && typeof e.point.y === 'number')) {
+        throw Error(`invalid point: ${JSON.stringify(e.point)}`);
+      } else if (!state.isPointLegal(e.point)) {
+        throw Error(`outside navPoly: ${JSON.stringify(e.point)}`);
+      }
+      const npc = state.npc[e.npcKey];
+      if (!npc) {
+        throw Error(`npc "${e.npcKey}" does not exist`);
+      }
+      const result = state.getGlobalNavPath(npc.getPosition(), e.point);
+      if (e.debug) {
+        const points = (result?.paths??[]).reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
+        state.toggleDebugPath({ pathKey: e.npcKey, points })
+      }
+      return result;
+    },
+    getNpc(e) {
+      const npc = state.npc[e.npcKey];
+      if (!npc) {
+        throw Error(`npc "${e.npcKey}" does not exist`);
+      }
+      return npc;
+    },
+    getPanZoomApi() {
+      return props.panZoomApi;
+    },
+    isPointLegal(p) {
+      const gmId = props.gmGraph.gms.findIndex(x => x.gridRect.contains(p));
+      if (gmId === -1) return false;
+      const { navPoly, inverseMatrix } = props.gmGraph.gms[gmId];
+      const localPoint = inverseMatrix.transformPoint(Vect.from(p));
+      return navPoly.some(poly => poly.contains(localPoint));
+    },
+    async npcAct(e) {
+      const npc = state.npc[e.npcKey];
+      if (!npc) {
+        throw Error(`npc does not exist: "${e.npcKey}"`);
+      } else if (!isNpcActionKey(e.action)) {
+        throw Error(`${e.npcKey} unrecognised action: "${e.action}"`);
+      }
+
+      if (e.action === 'cancel') {
+        // Cancel current animation
+        await npc.cancel();
+      } else if (e.action === 'pause') {
+        // Pause current animation
+        await npc.pause();
+      } else if (e.action === 'play') {
+        // Resume current animation
+        await npc.play();
+      } else if (e.action === 'set-player') {
+        state.events.next({ key: 'set-player', npcKey: e.npcKey });
+      }
+    },
+    async panZoomTo(e) {
+      if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {
+        throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
+      }
+      try {
+        await props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms, e.easing);
+        return 'completed';
+      } catch (e) {
+        return 'cancelled';
+      }
+    },
+    spawn(e) {
+      if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
+        throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
+      } else if (!(e.point && typeof e.point.x === 'number' && typeof e.point.y === 'number')) {
+        throw Error(`invalid point: ${JSON.stringify(e.point)}`);
+      } else if (!state.isPointLegal(e.point)) {
+        throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.point)}`);
+      }
+      state.npc[e.npcKey]= createNpc(e.npcKey, e.point, {
+        disabled: props.disabled,
+        panZoomApi: props.panZoomApi,
+        npcs: state,
+      });
+      update();
+    },
+    toggleDebugPath(e) {
+      if (e.points) {
+        const path = e.points.map(Vect.from);
+        state.path[e.pathKey] = { path, aabb: Rect.from(...path).outset(10) };
+      } else {
+        delete state.path[e.pathKey];
+      }
+      update();
+    },
+    // /**
+    //  * TODO 🚧 probably total rewrite
+    //  * - better/clearer approach to `status`
+    //  * - trigger tracking on tab resize
+    //  * - trigger tracking initially
+    //  */
+    // trackNpc(opts) {
+    //   let paused = false;
+    //   /** Used to separate tracking types */
+    //   let status = /** @type {null | 'track-walk' | 'track-idle'} */ (null);
+
+    //   const subscription = merge(state.events, props.panZoomApi.events).pipe(
+    //     filter(x => (
+    //       !paused
+    //       && x.key === 'ui-idle'
+    //       || (x.key === 'started-walking' && x.npcKey === opts.npcKey)
+    //       || (x.key === 'stopped-walking' && x.npcKey === opts.npcKey)
+    //     ))
+    //   ).subscribe({
+    //     async next(e) {
+    //       const npc = state.npc[opts.npcKey];
+    //       if (!props.panZoomApi.isIdle()) {
+    //         status = null; // Releases status, yet maybe dodgy
+    //         return;
+    //       } else if (e.key === 'started-walking' || npc.anim.spriteSheet === 'walk') {
+    //         // props.panZoomApi.cancelAnimations();
+    //         while (npc.anim.spriteSheet === 'walk') {
+    //           console.log(status = 'track-walk')
+    //           for (const target of npc.getTargets()) {
+    //             await props.panZoomApi.panZoomTo(2, target.point, 2 * target.arriveMs, 'linear');
+    //           }
+    //         }
+    //         status = null;
+
+    //       } else if (
+    //         (e.key === 'stopped-walking' || npc.anim.spriteSheet === 'idle')
+    //         && status === null
+    //       ) {
+    //         console.log(status = 'track-idle')
+    //         try {
+    //           const npcPosition = npc.getPosition();
+    //           await props.panZoomApi.panZoomTo(2, npcPosition, 2000);
+    //         } catch (e) {
+    //           console.error(e)
+    //         }
+    //         status = null;
+    //       }
+    //     }
+    //   });
+    //   return {
+    //     subscription,
+    //     /** @param {boolean} next */
+    //     setPaused(next) {
+    //       paused = next;
+    //       // TODO cancel ongoing animation on pause
+    //     }
+    //   };
+    // },
+    async walkNpc(e) {
+      const npc = state.npc[e.npcKey];
+      if (!npc) {
+        throw Error(`npc "${e.npcKey}" does not exist`);
+      } else if ('key' in e) {
+        if (!(e.key === 'local-nav' || e.key === 'global-nav')) {
+          throw Error(`invalid key: ${JSON.stringify(e)}`);
+        } else if (e.key === 'local-nav' && !isLocalNavPath(e)) {
+          throw Error(`invalid local navpath: ${JSON.stringify(e)}`);
+        } else if (e.key === 'global-nav' && !isGlobalNavPath(e)) {
+          throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
+        }
+      } else if ('points' in e && !(e.points?.every?.(Vect.isVectJson))) {
+        throw Error(`invalid points: ${JSON.stringify(e.points)}`);
+      }
+
+      try {
+        if ('points' in e) {
+
+          // Walk along path `points`, ignoring doors
+          state.events.next({ key: 'started-walking', npcKey: e.npcKey });
+          await npc.followNavPath(e.points);
+          state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
+
+        } else if (e.key === 'global-nav') {
+          // Walk along a global navpath
+          const globalNavPath = e;
+          state.events.next({ key: 'started-walking', npcKey: e.npcKey });
+
+          const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
+
+          /**
+           * NOTE exit indexes always straight after enter indexes
+           * TODO cleanup below
+           */
+          const doorMetas = globalNavPath.paths.reduce((agg, localNavPath, i) => {
+            const { paths, edges } = localNavPath;
+            let indexOffset = i === 0 ? 0 : agg[agg.length - 1].enterIndex + 1;
+
+            paths.forEach(path => {
+              const roomEdge = edges[i];
+              if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
+                agg.push({
+                  enterIndex: indexOffset + (path.length - 1),
+                  ctxt: {
+                    srcGmId: localNavPath.gmId, srcDoorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId,
+                    dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
+                  },
+                });
+              }
+              indexOffset += path.length;
+            });
+
+            const gmEdge = globalNavPath.edges[i];
+            if (gmEdge) {
+              agg.push({ enterIndex: indexOffset, ctxt: gmEdge });
+            }
+            return agg;
+          }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
+
+          await npc.followNavPath(allPoints, { doorMetas });
+
+          // // Become idle
+          // npc.anim.body.cancel();
+          // npc.setSpritesheet('idle');
+          // npc.startAnimation();
+          state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
+
+        } else if (e.key === 'local-nav') {
+          for (const [i, vectPath] of e.paths.entries()) {
+            // TODO
+          }
+        }
+      } catch (err) {
+        state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
+        if (err instanceof Error && err.message === 'cancelled') {
+          console.log(`${e.npcKey}: walkNpc cancelled`);
+        } else {
+          throw err;
+        }
+      }
+    },
+  }), { deps: [nav, props.doorsApi] });
   
   
   React.useEffect(() => {
@@ -372,17 +364,10 @@ export default function NPCs(props) {
       />
 
       {Object.values(state.npc).map(npc => (
-        <div
-          key={`${npc.key}@${npc.spawnedAt}`} // So, respawn remounts
-          ref={npc.npcRef}
-          className={classNames('npc', npc.key, npc.anim.spriteSheet, npcCss)}
-          data-npc-key={npc.key}
-        >
-          <div
-            className={classNames('body', npc.key, 'no-select')}
-            data-npc-key={npc.key}
-          />
-        </div>
+        <NPC
+          key={`${npc.key}@${npc.spawnedAt}`} // Respawn remounts
+          npc={npc}
+        />
       ))}
     </div>
   );
@@ -401,39 +386,6 @@ const rootCss = css`
   svg.debug-path {
     position: absolute;
     pointer-events: none;
-  }
-`;
-
-// TODO modularise
-import npcJson from '../../public/npc/first-npc.json'
-const { animLookup, zoom } = npcJson;
-
-const npcCss = css`
-  .body {
-    /* cursor: pointer; */
-    position: absolute;
-    filter: grayscale(100%) brightness(140%);
-    /* transform: scale(0.18) rotate(90deg); */
-  }
-  
-  &.walk .body {
-    width: ${animLookup.walk.aabb.width * zoom}px;
-    height: ${animLookup.walk.aabb.height * zoom}px;
-    left: ${-animLookup.walk.aabb.width * zoom * 0.5}px;
-    top: ${-animLookup.walk.aabb.height * zoom * 0.5}px;
-    background: url('/npc/first-npc--walk.png');
-  }
-
-  &.idle .body {
-    width: ${animLookup.idle.aabb.width * zoom}px;
-    height: ${animLookup.idle.aabb.height * zoom}px;
-    left: ${-animLookup.idle.aabb.width * zoom * 0.5}px;
-    top: ${-animLookup.idle.aabb.height * zoom * 0.5}px;
-    background: url('/npc/first-npc--idle.png');
-  }
-
-  &.disabled .body {
-    animation-play-state: paused;
   }
 `;
 

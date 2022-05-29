@@ -19,10 +19,10 @@ __Aim towards website release__.
 
 - 🚧 Improve track:
   - **SMOOTHNESS FIRST** approach (mobile, in particular)
-  - Comment out `track` and `trackNew` ✅
-  - `walk` animation (for global nav) is one large animation 🚧
-    - currently slight delay on anim switch on mobile (particularly hull doors)
-    - use cancellable timeouts for events
+  - ✅ Comment out `track` and `trackNew`
+  - ✅ `walk` animation (for global nav) is one large animation
+  - ✅ separate NPC out of NPCs
+  - 🚧 use cancellable timeouts for events
   - New `track`follows whole walk
 
 - GlobalNavPath can initially follow edge if start in doorway (i.e. |path| === |edge|)
