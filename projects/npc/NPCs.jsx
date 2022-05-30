@@ -229,15 +229,23 @@ export default function NPCs(props) {
 
         if (!props.panZoomApi.isIdle()) {
           status = 'no-track';
+          console.warn('@', status)
           continue;
         }
         if (npc.anim.spriteSheet === 'idle' && status !== 'panzoom-to') {
-          // TODO start panzooming towards
+          // Pan zoom towards player
           status = 'panzoom-to';
+          console.warn('@', status)
+          try {
+            const npcPosition = npc.getPosition();
+            await props.panZoomApi.panZoomTo(2, npcPosition, 2000);
+          } catch { /** Ignore Error('cancelled') */ }
+          status = 'no-track';
         }
         if (msg.key === 'started-walking') {
-          // TODO start following
+          // TODO 🚧 start following
           status = 'follow-walk';
+          console.warn('@', status)
         }
       }
 

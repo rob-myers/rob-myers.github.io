@@ -229,14 +229,16 @@ export default function CssPanZoom(props) {
 
         await new Promise((resolve, reject) => {
           const translateAnim = /** @type {Animation} */ (state.anims[0]);
+          const scaleAnim = state.anims[1];
           let finished = false;
           translateAnim.addEventListener('finish', () => {
             finished = true;
             // Remember translate/scale before cancel
             // Cancelling yields control to styles
             state.syncStyles();
-            // TODO careful earlier animation doesn't cancel later one!
-            state.anims.forEach(anim => anim?.cancel());
+            // NOTE careful earlier animation doesn't cancel later one!
+            translateAnim.cancel();
+            scaleAnim?.cancel();
           });
           translateAnim.addEventListener('cancel', () => {
             state.anims = [null, null];
