@@ -72,7 +72,7 @@ declare namespace NPC {
     async cancel(): Promise<void>;
     pause(): void;
     play(): void;
-    triggerWayTimeout(): void;
+    nextWayTimeout(): void;
     wayTimeout(): void;
 
     async followNavPath(

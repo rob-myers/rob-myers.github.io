@@ -55,17 +55,19 @@ import npcJson from '../../public/npc/first-npc.json'
       anim.root.pause();
       anim.body.pause();
       anim.root.commitStyles();
+      window.clearTimeout(anim.wayTimeoutId);
     },
     play() {
       console.log(`play: resuming ${this.def.key}`);
       const { anim } = this;
       anim.root.play();
       anim.body.play();
+      this.nextWayTimeout();
     },
-    triggerWayTimeout() {
+    nextWayTimeout() {
       const { anim } = this;
       if (anim.root.currentTime === null) {
-        return console.warn('triggerWayTimeout: anim.root.currentTime is null')
+        return console.warn('nextWayTimeout: anim.root.currentTime is null')
       }
       if (anim.wayMetas[0]) {
         anim.wayTimeoutId = window.setTimeout(
@@ -74,6 +76,9 @@ import npcJson from '../../public/npc/first-npc.json'
         );
       }
     },
+    /**
+     * TODO cleanup
+     */
     wayTimeout() {
       const { anim } = this;
       if (
@@ -88,19 +93,14 @@ import npcJson from '../../public/npc/first-npc.json'
         return;
       } else if (anim.root.currentTime >= (anim.wayMetas[0].length * animScaleFactor) - 1) {
         const wayMeta = /** @type { NPC.WayPathMeta} */ (anim.wayMetas.shift());
-        /**
-         * TODO hull door
-         * - missing exit-door
-         * - late enter-door
-         */
-        console.log(wayMeta);
+        console.log(wayMeta); // DEBUG
         if (wayMeta.key === 'exit-door') {
           npcs.events.next({ key: 'entered-room', npcKey: this.def.key, ctxt: wayMeta.ctxt });
         } else if (wayMeta.key === 'enter-door') {
           npcs.events.next({ key: 'exited-room', npcKey: this.def.key, ctxt: wayMeta.ctxt });
         }
       }
-      this.triggerWayTimeout();
+      this.nextWayTimeout();
     },
 
     async followNavPath(path, opts) {
@@ -123,7 +123,7 @@ import npcJson from '../../public/npc/first-npc.json'
       console.log(`followNavPath: ${this.def.key} started walk`);
       this.setSpritesheet('walk');
       this.startAnimation();
-      this.triggerWayTimeout();
+      this.nextWayTimeout();
 
       await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
         anim.root.addEventListener("finish", () => {

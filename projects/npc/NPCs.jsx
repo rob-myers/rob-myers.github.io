@@ -274,16 +274,12 @@ export default function NPCs(props) {
 
           const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
 
-          /**
-           * NOTE exit indexes always straight after enter indexes
-           * TODO cleanup below
-           */
+          // TODO cleanup
           const doorMetas = globalNavPath.paths.reduce((agg, localNavPath, i) => {
-            const { paths, edges } = localNavPath;
             let indexOffset = i === 0 ? 0 : agg[agg.length - 1].enterIndex + 1;
 
-            paths.forEach(path => {
-              const roomEdge = edges[i];
+            localNavPath.paths.forEach((path, j) => {
+              const roomEdge = localNavPath.edges[j];
               if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
                 agg.push({
                   enterIndex: indexOffset + (path.length - 1),
@@ -292,13 +288,13 @@ export default function NPCs(props) {
                     dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
                   },
                 });
-              }
-              indexOffset += path.length;
+              }// +1 beyond path is room entry point
+              indexOffset += (path.length - 1) + 1;
             });
 
             const gmEdge = globalNavPath.edges[i];
-            if (gmEdge) {
-              agg.push({ enterIndex: indexOffset, ctxt: gmEdge });
+            if (gmEdge) {// Move back to end of last localNavPath.paths
+              agg.push({ enterIndex: indexOffset - 1, ctxt: gmEdge });
             }
             return agg;
           }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
