@@ -69,6 +69,7 @@ declare namespace PanZoom {
       tags: string[];
     }
     | { key: "ui-idle" }
+    | { key: "resized-bounds"; bounds: Geom.RectJson }
   )
 
   type CssInternalTransitionEvent = (

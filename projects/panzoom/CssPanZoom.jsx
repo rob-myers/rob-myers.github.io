@@ -5,6 +5,7 @@ import React from 'react';
 import classNames from "classnames";
 import { css } from "goober";
 import { Subject } from 'rxjs';
+import useMeasure from 'react-use-measure';
 import { Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
 
@@ -305,10 +306,18 @@ export default function CssPanZoom(props) {
     state.panZoomTo(props.initZoom || 1, props.initCenter || { x: 0, y: 0 }, 1000);
   }, []);
 
+  const [measureRef, bounds] = useMeasure({ debounce: 30, scroll: false });
+  React.useEffect(() => {
+    if (bounds.width && bounds.height) {
+      state.events.next({ key: 'resized-bounds', bounds: { x: bounds.x, y: bounds.y, width: bounds.width, height: bounds.height } });
+    }
+  }, [bounds.width, bounds.height]);
+
   return (
     <div
       className={classNames("panzoom-parent", rootCss, backgroundCss(props))}
       data-tags="floor"
+      ref={measureRef}
     >
       <div
         ref={state.rootRef}
