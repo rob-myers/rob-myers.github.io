@@ -112,7 +112,7 @@ import npcJson from '../../public/npc/first-npc.json'
       if (anim.animPath.length <= 1 || anim.aux.total === 0) {
         return;
       }
-      
+            
       if (opts?.doorMetas) {
         anim.wayMetas = opts.doorMetas.flatMap(({ enterIndex, ctxt }) => [
           { key: 'enter-door', length: anim.aux.sofars[enterIndex], ctxt },
@@ -120,9 +120,10 @@ import npcJson from '../../public/npc/first-npc.json'
         ]);
       }
 
-      console.log(`followNavPath: ${this.def.key} started walk`);
       this.setSpritesheet('walk');
       this.startAnimation();
+      npcs.events.next({ key: 'started-walking', npcKey: this.def.key });
+      console.log(`followNavPath: ${this.def.key} started walk`);
       this.nextWayTimeout();
 
       await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
@@ -141,6 +142,7 @@ import npcJson from '../../public/npc/first-npc.json'
       // TODO what about when cancel walk?
       this.setSpritesheet('idle');
       this.startAnimation();
+      npcs.events.next({ key: 'stopped-walking', npcKey: this.def.key });
     },
     getAngle() {
       const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);

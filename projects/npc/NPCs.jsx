@@ -220,9 +220,25 @@ export default function NPCs(props) {
         ),
       );
       
+      let status = /** @type {'no-track' | 'follow-walk' | 'panzoom-to'} */ ('no-track');
+
       for await (const msg of ag) {
-        // TODO isolate follow vs panzoom-to
         console.log('msg', msg);
+        // TODO isolate {follow, panzoom-to}
+        // TODO follow sends (pos,zoom)[] to CssPanZoom which constructs keyframes 
+
+        if (!props.panZoomApi.isIdle()) {
+          status = 'no-track';
+          continue;
+        }
+        if (npc.anim.spriteSheet === 'idle' && status !== 'panzoom-to') {
+          // TODO start panzooming towards
+          status = 'panzoom-to';
+        }
+        if (msg.key === 'started-walking') {
+          // TODO start following
+          status = 'follow-walk';
+        }
       }
 
     // const subscription = merge(state.events, props.panZoomApi.events).pipe(
@@ -284,15 +300,12 @@ export default function NPCs(props) {
         if ('points' in e) {
 
           // Walk along path `points`, ignoring doors
-          state.events.next({ key: 'started-walking', npcKey: e.npcKey });
           await npc.followNavPath(e.points);
-          state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
 
         } else if (e.key === 'global-nav') {
+
           // Walk along a global navpath
           const globalNavPath = e;
-          state.events.next({ key: 'started-walking', npcKey: e.npcKey });
-
           const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
 
           // TODO cleanup
@@ -320,13 +333,8 @@ export default function NPCs(props) {
             return agg;
           }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
 
+          // NOTE finishes by setting spriteSheet idle
           await npc.followNavPath(allPoints, { doorMetas });
-
-          // // Become idle
-          // npc.anim.body.cancel();
-          // npc.setSpritesheet('idle');
-          // npc.startAnimation();
-          state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
 
         } else if (e.key === 'local-nav') {
           for (const [i, vectPath] of e.paths.entries()) {

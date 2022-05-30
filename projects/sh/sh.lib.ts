@@ -24,7 +24,7 @@ npc andros set-player
 
 # camera follows andros
 # track andros &
-# trackNew andros &
+trackNew andros &
 
 # click to move
 goLoop andros &
