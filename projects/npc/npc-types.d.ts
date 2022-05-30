@@ -1,8 +1,9 @@
 
 declare namespace NPC {
   
-  import { filter, first, map, take } from 'rxjs/operators';
-  import { otag } from '../service/rxjs';
+  // TODO types issue
+  import type { filter, first, map, take } from 'rxjs/operators';
+  import type { otag } from '../service/rxjs';
   
   export interface NPCsProps {
     disabled?: boolean;
@@ -233,7 +234,7 @@ declare namespace NPC {
     }): Promise<void>;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
-    trackNpc(e: { npcKey: string }): { subscription: import('rxjs').Subscription; setPaused(next: boolean): void };
+    async trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): AsyncIterableIterator;
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string } & (
       | { points: Geom.VectJson[] }
