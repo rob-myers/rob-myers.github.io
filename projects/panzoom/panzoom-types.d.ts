@@ -39,6 +39,7 @@ declare namespace PanZoom {
 
     cancelAnimations(): void;
     private delayIdle(): void;
+    distanceTo(worldPosition: Geom.Vect): number;
     /** Taking CSS animation into account */
     getCurrentTransform(): { x: number; y: number; scale: number; };
     getWorld(e: { clientX: number; clientY: number; }): Geom.VectJson;
@@ -73,8 +74,8 @@ declare namespace PanZoom {
   )
 
   type CssInternalTransitionEvent = (
-    | { key: "cancelled-transition" }
-    | { key: "completed-transition" }
+    | { key: "cancelled-panzoom-to" }
+    | { key: "completed-panzoom-to" }
   )
 
 }

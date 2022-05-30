@@ -126,15 +126,19 @@ export default function CssPanZoom(props) {
       },
 
       cancelAnimations() {
-        // We are animating iff state.anims[0] non-null
+        // We are (or were) animating iff state.anims[0] non-null
         if (state.anims[0]) {
           state.syncStyles(); // Remember current translate/scale
           state.anims.forEach(anim => anim?.cancel());
+          state.anims = [null, null];
         }
       },
       delayIdle() {
         state.idleTimeoutId && window.clearTimeout(state.idleTimeoutId);
         state.idleTimeoutId = window.setTimeout(state.idleTimeout, state.opts.idleMs);
+      },
+      distanceTo(worldPosition) {
+        return worldPosition.distanceTo(state.getWorldAtCenter());
       },
       getCurrentTransform() {
         const bounds = state.parent.getBoundingClientRect();
@@ -185,6 +189,7 @@ export default function CssPanZoom(props) {
       async panZoomTo(scale, worldPoint, durationMs, easing) {
         scale = scale || state.scale;
         easing = easing || 'ease';
+        state.cancelAnimations();
 
         if (scale !== state.scale) {
           const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
@@ -231,10 +236,11 @@ export default function CssPanZoom(props) {
           const translateAnim = /** @type {Animation} */ (state.anims[0]);
           translateAnim.addEventListener('finish', () => {
             resolve('completed');
+            state.events.next({ key: 'completed-panzoom-to' })
           });
           translateAnim.addEventListener('cancel', () => {
-            state.anims = [null, null];
             reject('cancelled');
+            state.events.next({ key: 'cancelled-panzoom-to' })
           });
         });
 

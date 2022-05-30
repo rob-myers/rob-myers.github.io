@@ -346,7 +346,8 @@ trackNew: `{
     const npcKey = args[0]
     const npcs = api.getCached(home.NPCS_KEY)
     const process = api.getProcess()
-    yield* await npcs.trackNpc({ npcKey, process })
+    const subscription = npcs.trackNpc({ npcKey, process })
+    process.cleanups.push(() => subscription.unsubscribe())
   }' "$@"
 }`,
 

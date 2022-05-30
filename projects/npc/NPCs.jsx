@@ -194,60 +194,62 @@ export default function NPCs(props) {
       const npc = state.npc[npcKey];
       if (!npc) {
         throw Error(`npc "${npcKey}" does not exist`);
-      } 
+      }
 
-      const ag = otag(
-        merge(
-          of({ key: /** @type {const} */ ('init-track') }),
-          state.events,
-          props.panZoomApi.events,
-        ).pipe(
-          filter(x => (
-            process.status === 1 && (
-              x.key === 'init-track'
-              || x.key === 'ui-idle'
-              || x.key === 'resized-bounds'
-              || (x.key === 'started-walking' && x.npcKey === npcKey)
-              || (x.key === 'stopped-walking' && x.npcKey === npcKey)
-            )
-          )),
-        ),
-        (deferred, subscription) => (
-          process.cleanups.push(
-            () => deferred.reject(killError(process)),
-            () => subscription.unsubscribe(),
-          )
-        ),
-      );
-      
       let status = /** @type {'no-track' | 'follow-walk' | 'panzoom-to'} */ ('no-track');
 
-      for await (const msg of ag) {
-        console.log('msg', msg);
-        // TODO isolate {follow, panzoom-to}
-        // TODO follow sends (pos,zoom)[] to CssPanZoom which constructs keyframes 
+      const subscription = merge(
+        of({ key: /** @type {const} */ ('init-track') }),
+        state.events,
+        props.panZoomApi.events,
+      ).pipe(
+        filter(x => (
+          process.status === 1 && (
+            x.key === 'init-track'
+            || x.key === 'ui-idle'
+            || x.key === 'resized-bounds'
+            || x.key === 'cancelled-panzoom-to'
+            || x.key === 'completed-panzoom-to'
+            || (x.key === 'started-walking' && x.npcKey === npcKey)
+            || (x.key === 'stopped-walking' && x.npcKey === npcKey)
+          )
+        )),
+      ).subscribe({
+        async next(msg) {
+          console.log('msg', msg);
+          // TODO isolate {follow, panzoom-to}
+          // TODO follow sends (pos,zoom)[] to CssPanZoom which constructs keyframes 
+    
+          if (!props.panZoomApi.isIdle()) {
+            status = 'no-track';
+            console.warn('@', status)
+            return;
+          }
 
-        if (!props.panZoomApi.isIdle()) {
-          status = 'no-track';
-          console.warn('@', status)
-          continue;
-        }
-        if (npc.anim.spriteSheet === 'idle' && status !== 'panzoom-to') {
-          // Pan zoom towards player
-          status = 'panzoom-to';
-          console.warn('@', status)
-          try {
-            const npcPosition = npc.getPosition();
-            await props.panZoomApi.panZoomTo(2, npcPosition, 2000);
-          } catch { /** Ignore Error('cancelled') */ }
-          status = 'no-track';
-        }
-        if (msg.key === 'started-walking') {
-          // TODO 🚧 start following
-          status = 'follow-walk';
-          console.warn('@', status)
-        }
-      }
+          const npcPosition = npc.getPosition();
+          // Only panzoom to npc when:
+          // (a) npc idle, (b) camera not animating, (c) camera not close
+          if (
+            npc.anim.spriteSheet === 'idle'
+            && (props.panZoomApi.anims[0] === null || props.panZoomApi.anims[0].playState === 'finished')
+            && props.panZoomApi.distanceTo(npcPosition) > 10
+          ) {
+            status = 'panzoom-to';
+            console.warn('@', status)
+            try {
+              await props.panZoomApi.panZoomTo(2, npcPosition, 2000);
+            } catch { /** Ignore Error('cancelled') */ }
+            status = 'no-track';
+          }
+          if (msg.key === 'started-walking') {
+            // TODO 🚧 start following
+            status = 'follow-walk';
+            console.warn('@', status)
+          }
+        },
+      });
+      
+      return subscription;
 
     // const subscription = merge(state.events, props.panZoomApi.events).pipe(
     //     filter(x => (
