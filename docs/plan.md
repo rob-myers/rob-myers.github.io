@@ -22,12 +22,18 @@ __Aim towards website release__.
   - ✅ Comment out `track` and `trackNew`
   - ✅ `walk` animation (for global nav) is one large animation
   - ✅ separate NPC out of NPCs
-  - 🚧 use cancellable timeouts for events
-  - New `track`follows whole walk
+  - ✅ use cancellable timeouts for events
+  - 🚧 New `track`follows whole walk
 
-- GlobalNavPath can initially follow edge if start in doorway (i.e. |path| === |edge|)
+- LocalNavPath can start/end inside a doorway
+  - e.g. `[navEdge, path, navEdge]`
+  - edges need custom start/endpoints
+- GlobalNavPath can start/end inside a hull doorway
+  - e.g. `[navEdge, localNavPath, navEdge]`
+  - edges need custom start/endpoints
 
-- `npc {npcKey} {act}` -> `npc {act} [{npcKey}]` including `npc get andros`
+- `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`
+  - e.g. including `npc get andros`
 - can only open door when player close
   - move playerNpcKey to NPCs
   - only applies when there is a player
