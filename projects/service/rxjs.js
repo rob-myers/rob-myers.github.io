@@ -1,14 +1,12 @@
-import { killError } from './sh.util';
-
 /**
  * Convert an observable into an async generator which can be yielded.
  * Based on https://github.com/parzh/observable-to-async-generator/blob/main/src/index.ts
  * @template T
  * @param {import('rxjs').Observable<T>} observable
- * @param {import('./session.store').ProcessMeta} process
+ * @param {(deferred: Deferred<T>, subscription: import('rxjs').Subscription) => void } [initiate]
  * @returns {AsyncIterableIterator<T>}
  */
-export async function *otag(observable, process) {
+export async function *otag(observable, initiate) {
   /** @type {Deferred<T>} */
 	let deferred = defer();
 	let finished = false;
@@ -40,10 +38,7 @@ export async function *otag(observable, process) {
     },
   });
 
-  process.cleanups.push(
-    () => deferred.reject(killError(process)),
-    () => subscription.unsubscribe(),
-  );
+  initiate?.(deferred, subscription);
 
   try {
     while (true) {

@@ -175,7 +175,12 @@ click: `{
         take(numClicks),
         map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)), tags: e.tags })),
       ),
-      process,
+      (deferred, subscription) => (
+        process.cleanups.push(
+          () => deferred.reject(api.getKillError()),
+          () => subscription.unsubscribe(),
+        )
+      ),
     )
   }' "$@"
 }`,
@@ -333,20 +338,20 @@ ready: `{
   }' "$@"
 }`,
 
-// /**
-//  * IN PROGRESS
-//  */
-// trackNew: `{
-//   run '({ api, args, home }) {
-//     const npcKey = args[0]
-//     const npcs = api.getCached(home.NPCS_KEY)
-//     const { subscription, setPaused } = npcs.trackNpc({ npcKey })
-//     const process = api.getProcess()
-//     process.cleanups.push(() => subscription.unsubscribe())
-//     process.onSuspends.push(() => () => setPaused(true))
-//     process.onResumes.push(() => () => setPaused(false))
-//   }' "$@"
-// }`,
+/**
+ * IN PROGRESS
+ */
+trackNew: `{
+  run '({ api, args, home }) {
+    const npcKey = args[0]
+    const npcs = api.getCached(home.NPCS_KEY)
+    const { subscription, setPaused } = npcs.trackNpc({ npcKey })
+    const process = api.getProcess()
+    process.cleanups.push(() => subscription.unsubscribe())
+    process.onSuspends.push(() => () => setPaused(true))
+    process.onResumes.push(() => () => setPaused(false))
+  }' "$@"
+}`,
 
 // /**
 //  * If UI idle and camera not close, pan to npc

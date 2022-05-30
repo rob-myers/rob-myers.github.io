@@ -4,7 +4,7 @@ import { css } from "goober";
 import { firstValueFrom, merge, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { removeCached, setCached } from "../service/query-client";
-import { otag } from "../sh/rxjs";
+import { otag } from "../service/rxjs";
 import { Poly, Rect, Vect } from "../geom";
 import { isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
 import createNpc from "./create-npc";
@@ -191,19 +191,21 @@ export default function NPCs(props) {
     //  * - trigger tracking on tab resize
     //  * - trigger tracking initially
     //  */
-    // trackNpc(opts) {
-    //   let paused = false;
+    trackNpc(opts) {
+      let paused = false;
     //   /** Used to separate tracking types */
     //   let status = /** @type {null | 'track-walk' | 'track-idle'} */ (null);
 
-    //   const subscription = merge(state.events, props.panZoomApi.events).pipe(
+      // otag()
+
+      const subscription = merge(state.events, props.panZoomApi.events).pipe(
     //     filter(x => (
     //       !paused
     //       && x.key === 'ui-idle'
     //       || (x.key === 'started-walking' && x.npcKey === opts.npcKey)
     //       || (x.key === 'stopped-walking' && x.npcKey === opts.npcKey)
     //     ))
-    //   ).subscribe({
+      ).subscribe({
     //     async next(e) {
     //       const npc = state.npc[opts.npcKey];
     //       if (!props.panZoomApi.isIdle()) {
@@ -233,16 +235,16 @@ export default function NPCs(props) {
     //         status = null;
     //       }
     //     }
-    //   });
-    //   return {
-    //     subscription,
-    //     /** @param {boolean} next */
-    //     setPaused(next) {
-    //       paused = next;
-    //       // TODO cancel ongoing animation on pause
-    //     }
-    //   };
-    // },
+      });
+      return {
+        subscription,
+        /** @param {boolean} next */
+        setPaused(next) {
+          paused = next;
+          // TODO cancel ongoing animation on pause
+        }
+      };
+    },
     async walkNpc(e) {
       const npc = state.npc[e.npcKey];
       if (!npc) {
