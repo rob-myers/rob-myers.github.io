@@ -23,8 +23,7 @@ spawn andros '{"x":185,"y":390}'
 npc andros set-player
 
 # camera follows andros
-# track andros &
-trackNew andros &
+track andros &
 
 # click to move
 goLoop andros &
@@ -341,64 +340,20 @@ ready: `{
 /**
  * IN PROGRESS
  */
-trackNew: `{
+track: `{
   run '({ api, args, home }) {
     const npcKey = args[0]
     const npcs = api.getCached(home.NPCS_KEY)
     const process = api.getProcess()
     const subscription = npcs.trackNpc({ npcKey, process })
-    process.cleanups.push(() => subscription.unsubscribe())
+    await new Promise(resolve =>
+      process.cleanups.push(
+        () => subscription.unsubscribe(),
+        resolve,
+      )
+    )
   }' "$@"
 }`,
-
-// /**
-//  * If UI idle and camera not close, pan to npc
-//  */
-// track: `{
-//   run '/** track npc */ ({ api, args, home }) {
-//     const npcKey = args[0]
-//     const npcs = api.getCached(home.NPCS_KEY)
-//     const panZoomApi = npcs.getPanZoomApi()
-    
-//     while (true) {
-//       await npcs.awaitPanZoomIdle()
-
-//       // TODO handle ongoing panZoom without polling
-//       if (panZoomApi.anims[0]) {
-//         yield* await api.sleep(1)
-//         continue
-//       }
-
-//       const worldFocus = panZoomApi.getWorldAtCenter()
-//       const npc = npcs.npc[npcKey]
-//       const npcPosition = npc.getPosition()
-//       const distance = npcs.class.Vect.from(npcPosition).distanceTo(worldFocus)
-
-//       if (npc.paused) {
-//         yield* await api.sleep(1)
-//       } else if (npc.anim.spriteSheet === "walk") {
-//         const targets = npc.getTargets()
-//         if (targets.length > 0) {
-//           // console.log(targets)
-//           const target = targets[0]
-//           await npcs.panZoomTo({ zoom: 2, point: target.point, ms: 2 * target.arriveMs, easing: "linear" })
-//         } else {
-//           yield* await api.sleep(1)
-//         }
-//       } else if (npc.anim.spriteSheet === "idle") {
-//         // TODO jerky on arrive
-//         ///////////////////////
-//         if (distance > 60) {
-//           const ms = 2 * (distance / 100) * 1000
-//           await npcs.panZoomTo({ zoom: 2, point: npcPosition, ms })
-//         } else {
-//           yield* await api.sleep(1)
-//         }
-//       }
-
-//     }
-//   }' "$@"
-// }`,
 
 },
 

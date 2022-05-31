@@ -189,7 +189,7 @@ export default function NPCs(props) {
     /**
      * TODO 🚧 total rewrite
      */
-    async trackNpc(opts) {
+    trackNpc(opts) {
       const { npcKey, process } = opts;
       const npc = state.npc[npcKey];
       if (!npc) {

@@ -3,11 +3,6 @@
 __Aim towards website release__.
 
 ### 🚧 _Technology (Part 2)_ i.e. nav and raycast
-
-- Raycasting
-  > https://github.com/rob-myers/rob-myers.github.io/blob/dev/model/geom/geom.service.ts
-
-
 ### 🚧 _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
 
 ## TODO (unsorted)
@@ -23,7 +18,12 @@ __Aim towards website release__.
   - ✅ `walk` animation (for global nav) is one large animation
   - ✅ separate NPC out of NPCs
   - ✅ use cancellable timeouts for events
+  - ✅ `track` panzoom-to
+  - ✅ `track`awaits termination
   - 🚧 New `track`follows whole walk
+    - CssPanZoom: simplify panZoomTo
+    - CssPanZoom: converts future npc path into animation
+    - ...
 
 - LocalNavPath can start/end inside a doorway
   - e.g. `[navEdge, path, navEdge]`
@@ -44,6 +44,12 @@ __Aim towards website release__.
 
 - fix NavDemo1 useGeomorphs adjustment
 - don't darken "holes" in geomorph png
+- `position: fixed` Safari issue
+  - flickers dark (incorrect clip) on repeated wheel
+  - only happens when Tabs maximised
+  - https://bugs.webkit.org/show_bug.cgi?id=160953
+  - consider position fixed alternative
+    
 
 - Blog
   - ✅ Revisit first page
