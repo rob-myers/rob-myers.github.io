@@ -1,6 +1,7 @@
 import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
+import { tryLocalStorageGet, tryLocalStorageSet } from 'projects/service/generic';
 import type { Session } from 'projects/sh/session.store';
 import useStateRef from 'projects/hooks/use-state-ref';
 import useSessionStore from 'projects/sh/session.store';
@@ -21,7 +22,7 @@ export function TouchHelperUI(props: {
           const message = `⚠️  input ${forced ? 'forced as' : 'not forced as'} lowercase`;
           useSessionStore.api.warnCleanly(props.session.key, message);
           target.classList.toggle('enabled');
-          localStorage.setItem(localStorageKey, `${forced}`);
+          tryLocalStorageSet(localStorageKey, `${forced}`);
         } else if (target.classList.contains('ctrl-c')) {
           xterm.sendSigKill();
         } else if (target.classList.contains('clear')) {
@@ -38,11 +39,11 @@ export function TouchHelperUI(props: {
   
   React.useEffect(() => {
     const { xterm } = props.session.ttyShell;
-    if (!localStorage.getItem(localStorageKey)) {
+    if (!tryLocalStorageGet(localStorageKey)) {
       // force lowercase by default on touch device
-      localStorage.setItem(localStorageKey, 'true');
+      tryLocalStorageSet(localStorageKey, 'true');
     }
-    xterm.forceLowerCase = localStorage.getItem(localStorageKey) === 'true';
+    xterm.forceLowerCase = tryLocalStorageGet(localStorageKey) === 'true';
     return () => void (xterm.forceLowerCase = false);
   }, []);
 

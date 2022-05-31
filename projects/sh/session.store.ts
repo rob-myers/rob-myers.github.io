@@ -5,7 +5,7 @@ import type { BaseMeta, FileWithMeta } from './parse/parse.model';
 import type { MessageFromShell, MessageFromXterm } from './tty.model';
 import type { NamedFunction } from './var.model';
 import { Device, makeShellIo, ShellIo } from './io/io.model';
-import { addToLookup, deepClone, mapValues, removeFromLookup } from '../service/generic';
+import { addToLookup, deepClone, mapValues, removeFromLookup, tryLocalStorageGet, tryLocalStorageSet } from '../service/generic';
 import { TtyShell } from './tty.shell';
 import { FifoDevice } from './io/fifo.device';
 import { VarDevice, VarDeviceMode } from './io/var.device';
@@ -218,28 +218,25 @@ const useStore = create<State>(devtools((set, get) => ({
 
     persist(sessionKey) {
       const { ttyShell, var: varLookup } = api.getSession(sessionKey);
-      try {
-        localStorage.setItem(
-          `history@session-${sessionKey}`,
-          JSON.stringify(ttyShell.getHistory()),
-        );
-  
-        localStorage.setItem(`var@session-${sessionKey}`, JSON.stringify(
-          mapValues(varLookup, x => {
-            try {// Unserializable vars are ignored
-              return JSON.parse(JSON.stringify(x));
-            } catch {};
-          }),
-        ));
-      } catch (e) {
-        console.error(e);
-      }
+
+      tryLocalStorageSet(
+        `history@session-${sessionKey}`,
+        JSON.stringify(ttyShell.getHistory()),
+      );
+
+      tryLocalStorageSet(`var@session-${sessionKey}`, JSON.stringify(
+        mapValues(varLookup, x => {
+          try {// Unserializable vars are ignored
+            return JSON.parse(JSON.stringify(x));
+          } catch {};
+        }),
+      ));
     },
 
     rehydrate(sessionKey) {
       try {
-        const storedHistory = JSON.parse(localStorage.getItem(`history@session-${sessionKey}`) || 'null');
-        const storedVar = JSON.parse(localStorage.getItem(`var@session-${sessionKey}`) || 'null');
+        const storedHistory = JSON.parse(tryLocalStorageGet(`history@session-${sessionKey}`) || 'null');
+        const storedVar = JSON.parse(tryLocalStorageGet(`var@session-${sessionKey}`) || 'null');
         return { history: storedHistory, var: storedVar };
       } catch (e) {// Can fail in CodeSandbox in Chrome Incognito
         console.error(e);

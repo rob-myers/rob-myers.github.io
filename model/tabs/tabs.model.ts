@@ -10,7 +10,7 @@ export function getTabInternalId(meta: TabMeta) {
   return `${getTabName(meta)}${meta.idSuffix || ''}`;
 }
 
-function getTabName(meta: TabMeta) {
+export function getTabName(meta: TabMeta) {
   switch (meta.key) {
     case 'code':
     case 'component':

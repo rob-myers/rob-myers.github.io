@@ -5,6 +5,7 @@ import { enableBodyScroll, disableBodyScroll } from 'body-scroll-lock';
 
 import type { TabMeta } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
+import { tryLocalStorageGet, tryLocalStorageSet } from 'projects/service/generic';
 import useUpdate from 'projects/hooks/use-update';
 import useStateRef from 'projects/hooks/use-state-ref';
 import { Layout } from 'components/dynamic';
@@ -54,7 +55,7 @@ export default function Tabs(props: Props) {
     toggleExpand() {
       state.expanded = !state.expanded;
       if (state.expanded) {
-        localStorage.setItem(expandedStorageKey, 'true');
+        tryLocalStorageSet(expandedStorageKey, 'true');
         if (!state.enabled) {// Auto-enable on expand
           state.toggleEnabled();
         }
@@ -82,7 +83,7 @@ export default function Tabs(props: Props) {
   React.useEffect(() => {// Initially trigger CSS animation
     state.colour = state.enabled ? 'clear' : 'faded';
 
-    if (localStorage.getItem(expandedStorageKey) === 'true') {
+    if (tryLocalStorageGet(expandedStorageKey) === 'true') {
       if (!useSiteStore.getState().navOpen) {
         state.expanded = true;
         location.href = `#${props.id}`;

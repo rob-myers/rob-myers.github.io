@@ -1,42 +1,46 @@
 import Router from 'next/router';
 import React from 'react';
-import { Actions, Layout as FlexLayout, Model, TabNode } from 'flexlayout-react';
+import { Actions, IJsonModel, Layout as FlexLayout, Model, TabNode } from 'flexlayout-react';
+import { useBeforeunload } from 'react-beforeunload';
 
-import { TabMeta, computeJsonModel } from 'model/tabs/tabs.model';
+import { tryLocalStorageGet, tryLocalStorageSet } from 'projects/service/generic';
+import { TabMeta, computeJsonModel, getTabName } from 'model/tabs/tabs.model';
 import { scrollFinished } from 'model/dom.model';
 import useSiteStore from 'store/site.store';
 import type { Props as TabsProps } from './Tabs';
 import Portal from './Portal';
 
 export default function Layout(props: Props) {
-  const model = React.useMemo(
-    () => {
-      const output = Model.fromJson(computeJsonModel(props.tabs));
-      output.visitNodes((node) => {
-        if (node.getType() === 'tab') {
-          node.setEventListener('visibility', () => {
-            /**
-             * - Disable if tab becomes invisible.
-             * - Enable if tab becomes visible and parent Tabs enabled.
-             */
-            setTimeout(() => {
-              const [key, visible] = [node.getId(), node.isVisible()];
-              const portal = useSiteStore.getState().portal[key];
-              const tabs = Object.values(useSiteStore.getState().tabs)
-                .find(x => x.def.some(y => y.filepath === portal?.key));
-              if (portal && tabs) {
-                // console.log(key, visible, tabs);
-                portal.portal.setPortalProps({ disabled: !visible || tabs.disabled });
-              }
-            });
-          });
-        }
-      });
-      return output;
-    },
-    [JSON.stringify(props.tabs)],
-  );
 
+  const model = React.useMemo(() => {
+
+    const output = restoreJsonModel(props);
+
+    output.visitNodes((node) => {
+      if (node.getType() === 'tab') {
+        node.setEventListener('visibility', () => {
+          /**
+           * - Disable if tab becomes invisible.
+           * - Enable if tab becomes visible and parent Tabs enabled.
+           */
+          setTimeout(() => {
+            const [key, visible] = [node.getId(), node.isVisible()];
+            const portal = useSiteStore.getState().portal[key];
+            const tabs = Object.values(useSiteStore.getState().tabs)
+              .find(x => x.def.some(y => y.filepath === portal?.key));
+            if (portal && tabs) {
+              // console.log(key, visible, tabs);
+              portal.portal.setPortalProps({ disabled: !visible || tabs.disabled });
+            }
+          });
+        });
+      }
+    });
+
+    return output;
+  }, [JSON.stringify(props.tabs)],
+  );
+  
   useRegisterTabs(props, model);
 
   return (
@@ -63,8 +67,9 @@ function useRegisterTabs(props: Props, model: Model) {
     if (!props.id) {
       return console.warn('Tabs has no id', props.tabs);
     }
-    // Register tabs with state
+
     if (!tabs[props.id]) {
+      // Register tabs with state
       tabs[props.id] = {
         key: props.id,
         def: props.tabs[0].concat(props.tabs[1]),
@@ -90,9 +95,37 @@ function useRegisterTabs(props: Props, model: Model) {
 
     return () => void delete useSiteStore.getState().tabs[props.id];
   }, [model]);
+
+  useBeforeunload(() => {
+    tryLocalStorageSet(`model@${props.id}`, JSON.stringify(model.toJson()));
+  });
 }
 
 function factory(node: TabNode) {
   const meta = node.getConfig() as TabMeta;
   return <Portal {...meta} />;
+}
+
+function restoreJsonModel(props: Props) {
+  const jsonModelString = tryLocalStorageGet(`model@${props.id}`);
+
+  if (jsonModelString) {
+    try {
+      const jsonModel = JSON.parse(jsonModelString) as IJsonModel;
+      const model = Model.fromJson(jsonModel);
+      
+      // Validate i.e. props.tabs must mention same ids
+      const prevTabNodeIds = [] as string[];
+      model.visitNodes(node => node.getType() === 'tab' && prevTabNodeIds.push(node.getId()));
+      const nextTabNodeIds = props.tabs[0].concat(props.tabs[1]).map(getTabName)
+      if (prevTabNodeIds.length === nextTabNodeIds.length && prevTabNodeIds.every(id => nextTabNodeIds.includes(id))) {
+        return model;
+      }
+
+      console.error(`restoreJsonModel: prev/next ids differ ${JSON.stringify(prevTabNodeIds)} versus ${JSON.stringify(nextTabNodeIds)}`);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return Model.fromJson(computeJsonModel(props.tabs));
 }

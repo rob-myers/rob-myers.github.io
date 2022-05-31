@@ -26,6 +26,9 @@ __Aim towards website release__.
     - CssPanZoom: converts future npc path into animation
     - ...
 
+- ✅ Tabs remembers layout
+- 🚧 Migrate to Gatsby
+
 - LocalNavPath can start/end inside a doorway
   - e.g. `[navEdge, path, navEdge]`
   - edges need custom start/endpoints
