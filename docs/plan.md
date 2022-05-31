@@ -20,8 +20,9 @@ __Aim towards website release__.
   - ✅ use cancellable timeouts for events
   - ✅ `track` panzoom-to
   - ✅ `track`awaits termination
+  - ✅ view "{ zoom: 2, point: $(click 1),  ms: 1000 }" working
   - 🚧 New `track`follows whole walk
-    - CssPanZoom: simplify panZoomTo
+    - ✅ CssPanZoom: simplify panZoomTo
     - CssPanZoom: converts future npc path into animation
     - ...
 

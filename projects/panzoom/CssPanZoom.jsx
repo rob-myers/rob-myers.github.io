@@ -188,48 +188,32 @@ export default function CssPanZoom(props) {
       },
       async panZoomTo(scale, worldPoint, durationMs, easing) {
         scale = scale || state.scale;
+        worldPoint = worldPoint || state.getWorldAtCenter();
         easing = easing || 'ease';
         state.cancelAnimations();
 
-        if (scale !== state.scale) {
-          const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
-          const current = state.getCurrentTransform();
-          worldPoint = worldPoint || state.getWorldAtCenter();
+        /**
+         * Trying to compute (x, y) s.t. target transform
+         * `translate(x, y) scale(toScale)` has worldPoint at screen center
+         * i.e. x + (toScale * worldPoint.x) = screenWidth/2
+         * i.e. x := screenWidth/2 - (toScale * worldPoint.x)
+         */
+        const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
+        const dstX = screenWidth/2 - (scale * worldPoint.x);
+        const dstY = screenHeight/2 - (scale * worldPoint.y);
 
-          /**
-           * Trying to compute (x, y) s.t. target transform
-           * `translate(x, y) scale(toScale)` has worldPoint at screen center
-           * i.e. x + (toScale * worldPoint.x) = screenWidth/2
-           * i.e. x := screenWidth/2 - (toScale * worldPoint.x)
-           */
-          const dstX = screenWidth/2 - (scale * worldPoint.x);
-          const dstY = screenHeight/2 - (scale * worldPoint.y);
+        const current = state.getCurrentTransform();
 
-          state.anims = [
-            state.translateRoot.animate([
-              { offset: 0, transform: `translate(${current.x}px, ${current.y}px)` },
-              { offset: 1, transform: `translate(${dstX}px, ${dstY}px)` },
-            ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing }),
-            state.scaleRoot.animate([
-              { offset: 0, transform: `scale(${current.scale})` },
-              { offset: 1, transform: `scale(${scale})` },
-            ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing })
-          ];
+        state.anims[0] = state.translateRoot.animate([
+          { offset: 0, transform: `translate(${current.x}px, ${current.y}px)` },
+          { offset: 1, transform: `translate(${dstX}px, ${dstY}px)` },
+        ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing });
 
-        } else if (worldPoint) {
-          const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
-          const current = state.getCurrentTransform();
-          // Same argument as above
-          const dstX = screenWidth/2 - (current.scale * worldPoint.x);
-          const dstY = screenHeight/2 - (current.scale * worldPoint.y);
-
-          state.anims[0] = state.translateRoot.animate([
-            { offset: 0, transform: `translate(${current.x}px, ${current.y}px)` },
-            { offset: 1, transform: `translate(${dstX}px, ${dstY}px)` },
-          ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing });
-
-        } else {
-          return;
+        if (scale !== current.scale) {
+          state.anims[1] = state.scaleRoot.animate([
+            { offset: 0, transform: `scale(${current.scale})` },
+            { offset: 1, transform: `scale(${scale})` },
+          ], { duration: durationMs, direction: 'normal', fill: 'forwards', easing })
         }
 
         await new Promise((resolve, reject) => {
@@ -243,7 +227,6 @@ export default function CssPanZoom(props) {
             state.events.next({ key: 'cancelled-panzoom-to' })
           });
         });
-
       },
       rootRef(el) {
         if (el) {
