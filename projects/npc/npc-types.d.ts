@@ -221,7 +221,6 @@ declare namespace NPC {
       otag: otag;
     };
 
-    async awaitPanZoomIdle(): Promise<void>;
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
     getNpcGlobalNav(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }): GlobalNavPath;

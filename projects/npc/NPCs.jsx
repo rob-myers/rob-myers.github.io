@@ -30,14 +30,6 @@ export default function NPCs(props) {
     class: { Vect },
     rxjs: { filter, first, map, take, otag }, // TODO remove?
 
-    async awaitPanZoomIdle() {
-      if (!props.panZoomApi.isIdle()) {
-        await firstValueFrom(props.panZoomApi.events.pipe(
-          filter(x => x.key === 'ui-idle'),
-          first(),
-        ));
-      }
-    },
     getGlobalNavPath(src, dst) {
       const {gms} = props.gmGraph
       const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
@@ -220,31 +212,34 @@ export default function NPCs(props) {
           // TODO isolate {follow, panzoom-to}
           // TODO follow sends (pos,zoom)[] to CssPanZoom which constructs keyframes 
     
-          if (!props.panZoomApi.isIdle()) {
+          if (!props.panZoomApi.isIdle() && msg.key !== 'started-walking') {
             status = 'no-track';
             console.warn('@', status)
             return;
           }
 
           const npcPosition = npc.getPosition();
-          // Only panzoom to npc when:
-          // (a) npc idle, (b) camera not animating, (c) camera not close
-          if (
+          
+          if (// Only when: npc idle, camera not animating, camera not close
             npc.anim.spriteSheet === 'idle'
             && (props.panZoomApi.anims[0] === null || props.panZoomApi.anims[0].playState === 'finished')
             && props.panZoomApi.distanceTo(npcPosition) > 10
           ) {
             status = 'panzoom-to';
             console.warn('@', status)
-            try {
-              await props.panZoomApi.panZoomTo(2, npcPosition, 2000);
-            } catch { /** Ignore Error('cancelled') */ }
+            // Ignore Error('cancelled')
+            try { await props.panZoomApi.panZoomTo(2, npcPosition, 2000) } catch {}
             status = 'no-track';
           }
+
           if (msg.key === 'started-walking') {
-            // TODO 🚧 start following
             status = 'follow-walk';
             console.warn('@', status)
+            const path = npc.getTargets().map(x => Vect.from(x.point)); // TODO arriveMs?
+            const keyframes = props.panZoomApi.computePathKeyframes(path);
+            console.log({keyframes})
+            // Ignore Error('cancelled')
+            try { await props.panZoomApi.playKeyframes(keyframes) } catch {}
           }
         },
       });

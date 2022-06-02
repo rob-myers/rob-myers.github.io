@@ -94,10 +94,14 @@ export default function CssPanZoom(props) {
             // because the zoom has not always rendered in time
             // for accurate calculations
             // See https://github.com/timmywil/panzoom/issues/512
-            state.pan(
-              state.origin.x + (current.clientX - state.start.clientX) / state.scale,
-              state.origin.y + (current.clientY - state.start.clientY) / state.scale,
-            );
+            const nextX = state.origin.x + (current.clientX - state.start.clientX) / state.scale;
+            const nextY = state.origin.y + (current.clientY - state.start.clientY) / state.scale;
+
+            if (state.x !== nextX || state.y !== nextY) {
+              state.x = nextX;
+              state.y = nextY;
+              state.setStyles();
+            }
           }
         },
         pointerup(e) {
@@ -132,6 +136,25 @@ export default function CssPanZoom(props) {
           state.anims.forEach(anim => anim?.cancel());
           state.anims = [null, null];
         }
+      },
+      // TODO support changing scale
+      computePathKeyframes(path) {
+        const worldPoint = state.getWorldAtCenter();
+        const elens = path.map((p, i) => Number(p.distanceTo(i === 0 ? worldPoint : path[i - 1]).toFixed(2)));
+        const total = elens.reduce((sum, len) => sum + len, 0);
+        
+        const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
+        const current = state.getCurrentTransform();
+        
+        let sofar = 0;
+        /** @type {Keyframe[]} */
+        const keyframes = [{ offset: 0, transform: `translate(${current.x}px, ${current.y}px)` }];
+        elens.forEach((elen, i) => keyframes.push({
+          offset: (sofar += elen) / total,
+          transform: `translate(${screenWidth/2 - (current.scale * path[i].x)}px, ${screenHeight/2 - (current.scale * path[i].y)}px)`,
+        }));
+
+        return keyframes;
       },
       delayIdle() {
         state.idleTimeoutId && window.clearTimeout(state.idleTimeoutId);
@@ -179,13 +202,6 @@ export default function CssPanZoom(props) {
       isIdle() {
         return state.idleTimeoutId === 0;
       },
-      pan(toX, toY) {
-        if (state.x !== toX || state.y !== toY) {
-          state.x = toX;
-          state.y = toY;
-          state.setStyles();
-        }
-      },
       async panZoomTo(scale, worldPoint, durationMs, easing) {
         scale = scale || state.scale;
         worldPoint = worldPoint || state.getWorldAtCenter();
@@ -194,9 +210,9 @@ export default function CssPanZoom(props) {
 
         /**
          * Trying to compute (x, y) s.t. target transform
-         * `translate(x, y) scale(toScale)` has worldPoint at screen center
-         * i.e. x + (toScale * worldPoint.x) = screenWidth/2
-         * i.e. x := screenWidth/2 - (toScale * worldPoint.x)
+         * `translate(x, y) scale(scale)` has worldPoint at screen center
+         * i.e. x + (scale * worldPoint.x) = screenWidth/2
+         * i.e. x := screenWidth/2 - (scale * worldPoint.x)
          */
         const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
         const dstX = screenWidth/2 - (scale * worldPoint.x);
@@ -225,6 +241,24 @@ export default function CssPanZoom(props) {
           translateAnim.addEventListener('cancel', () => {
             reject('cancelled');
             state.events.next({ key: 'cancelled-panzoom-to' })
+          });
+        });
+      },
+      async playKeyframes(keyframes) {
+        state.cancelAnimations();
+        state.anims[0] = state.translateRoot.animate(keyframes, {
+          duration: 2000, // TODO
+          direction: 'normal', fill: 'forwards', easing: 'linear',
+        });
+        await new Promise((resolve, reject) => {
+          const translateAnim = /** @type {Animation} */ (state.anims[0]);
+          translateAnim.addEventListener('finish', () => {
+            resolve('completed');
+            // state.events.next({ key: 'completed-panzoom-to' })
+          });
+          translateAnim.addEventListener('cancel', () => {
+            reject('cancelled');
+            // state.events.next({ key: 'cancelled-panzoom-to' })
           });
         });
       },

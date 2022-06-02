@@ -172,13 +172,12 @@ import npcJson from '../../public/npc/first-npc.json'
     getTargets() {
       const { anim } = this;
       if (anim.spriteSheet === "idle" || anim.root.currentTime === null) {
-        return [{ point: this.getPosition(), arriveMs: 0 }];
+        return [];
       } else {
         const soFarMs = anim.root.currentTime;
-
         return anim.aux.sofars
           .map((sofar, i) => ({ point: anim.animPath[i], arriveMs: (sofar * animScaleFactor) - soFarMs }))
-          .filter((x, i) => x.arriveMs >= 0 || i === anim.animPath.length - 1)
+          .filter(x => x.arriveMs >= 0)
       }
     },
     npcRef(rootEl) {

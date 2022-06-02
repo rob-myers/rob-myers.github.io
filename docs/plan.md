@@ -9,8 +9,8 @@ __Aim towards website release__.
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
+  - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
   - 🚧 Continue migration
-  - Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
 
 - 🚧 Improve track:
   - **SMOOTHNESS FIRST** approach (mobile, in particular)
@@ -23,11 +23,13 @@ __Aim towards website release__.
   - ✅ view "{ zoom: 2, point: $(click 1),  ms: 1000 }" working
   - 🚧 New `track`follows whole walk
     - ✅ CssPanZoom: simplify panZoomTo
-    - CssPanZoom: converts future npc path into animation
-    - ...
+    - ✅ CssPanZoom: converts future npc path into keyframes
+    - ✅ CssPanZoom can play specified path translation anim
+    - 🚧 Fix speed of path traversal
+    - 🚧 Debug + Clean
 
 - ✅ Tabs remembers layout
-- 🚧 Migrate to Gatsby
+- ✅ Migrate to Gatsby
 
 - LocalNavPath can start/end inside a doorway
   - e.g. `[navEdge, path, navEdge]`
