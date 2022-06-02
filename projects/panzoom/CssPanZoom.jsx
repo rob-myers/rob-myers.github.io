@@ -141,20 +141,21 @@ export default function CssPanZoom(props) {
       computePathKeyframes(path) {
         const worldPoint = state.getWorldAtCenter();
         const elens = path.map((p, i) => Number(p.distanceTo(i === 0 ? worldPoint : path[i - 1]).toFixed(2)));
-        const total = elens.reduce((sum, len) => sum + len, 0);
         
         const { width: screenWidth, height: screenHeight } = state.parent.getBoundingClientRect();
         const current = state.getCurrentTransform();
-        
+        const total = elens.reduce((sum, len) => sum + len, 0);
         let sofar = 0;
-        /** @type {Keyframe[]} */
-        const keyframes = [{ offset: 0, transform: `translate(${current.x}px, ${current.y}px)` }];
-        elens.forEach((elen, i) => keyframes.push({
-          offset: (sofar += elen) / total,
-          transform: `translate(${screenWidth/2 - (current.scale * path[i].x)}px, ${screenHeight/2 - (current.scale * path[i].y)}px)`,
-        }));
 
-        return keyframes;
+        /** @type {Keyframe[]} */
+        const keyframes = [
+          { offset: 0, transform: `translate(${current.x}px, ${current.y}px)` },
+          ...elens.map((elen, i) => ({
+            offset: (sofar += elen) / total,
+            transform: `translate(${screenWidth/2 - (current.scale * path[i].x)}px, ${screenHeight/2 - (current.scale * path[i].y)}px)`,
+          })),
+        ];
+        return { keyframes, distance: total };
       },
       delayIdle() {
         state.idleTimeoutId && window.clearTimeout(state.idleTimeoutId);
@@ -162,6 +163,27 @@ export default function CssPanZoom(props) {
       },
       distanceTo(worldPosition) {
         return worldPosition.distanceTo(state.getWorldAtCenter());
+      },
+      async followPath(path, { animScaleFactor }) {
+        state.cancelAnimations();
+
+        const { keyframes, distance } = state.computePathKeyframes(path);
+        const duration = distance * animScaleFactor;
+
+        state.anims[0] = state.translateRoot.animate(keyframes, {
+          duration, direction: 'normal', fill: 'forwards', easing: 'linear',
+        });
+        await new Promise((resolve, reject) => {
+          const translateAnim = /** @type {Animation} */ (state.anims[0]);
+          translateAnim.addEventListener('finish', () => {
+            resolve('completed');
+            // state.events.next({ key: 'completed-panzoom-to' })
+          });
+          translateAnim.addEventListener('cancel', () => {
+            reject('cancelled');
+            // state.events.next({ key: 'cancelled-panzoom-to' })
+          });
+        });
       },
       getCurrentTransform() {
         const bounds = state.parent.getBoundingClientRect();
@@ -241,24 +263,6 @@ export default function CssPanZoom(props) {
           translateAnim.addEventListener('cancel', () => {
             reject('cancelled');
             state.events.next({ key: 'cancelled-panzoom-to' })
-          });
-        });
-      },
-      async playKeyframes(keyframes) {
-        state.cancelAnimations();
-        state.anims[0] = state.translateRoot.animate(keyframes, {
-          duration: 2000, // TODO
-          direction: 'normal', fill: 'forwards', easing: 'linear',
-        });
-        await new Promise((resolve, reject) => {
-          const translateAnim = /** @type {Animation} */ (state.anims[0]);
-          translateAnim.addEventListener('finish', () => {
-            resolve('completed');
-            // state.events.next({ key: 'completed-panzoom-to' })
-          });
-          translateAnim.addEventListener('cancel', () => {
-            reject('cancelled');
-            // state.events.next({ key: 'cancelled-panzoom-to' })
           });
         });
       },

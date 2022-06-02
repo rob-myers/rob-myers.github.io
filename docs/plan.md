@@ -25,7 +25,7 @@ __Aim towards website release__.
     - ✅ CssPanZoom: simplify panZoomTo
     - ✅ CssPanZoom: converts future npc path into keyframes
     - ✅ CssPanZoom can play specified path translation anim
-    - 🚧 Fix speed of path traversal
+    - ✅ Fix speed of path traversal
     - 🚧 Debug + Clean
 
 - ✅ Tabs remembers layout

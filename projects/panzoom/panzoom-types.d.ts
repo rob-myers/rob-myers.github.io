@@ -38,7 +38,7 @@ declare namespace PanZoom {
     worldPointerDown: Geom.Vect;
 
     cancelAnimations(): void;
-    computePathKeyframes(path: Geom.Vect[]): Keyframe[];
+    private computePathKeyframes(path: Geom.Vect[]): { keyframes: Keyframe[]; distance: number; };
     private delayIdle(): void;
     distanceTo(worldPosition: Geom.Vect): number;
     /** Taking CSS animation into account */
@@ -48,7 +48,7 @@ declare namespace PanZoom {
     private idleTimeout(): void;
     isIdle(): boolean;
     async panZoomTo(scale?: number, worldPoint?: Geom.VectJson, durationMs: number, easing?: string);
-    async playKeyframes(keyframes: Keyframe[]);
+    async followPath(path: Geom.Vect[], { animScaleFactor: number });
     rootRef(el: null | HTMLDivElement): void;
     /** Use `(x, y, scale)` to set `style.transform`s */
     setStyles(): void;

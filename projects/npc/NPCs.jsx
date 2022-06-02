@@ -5,9 +5,8 @@ import { firstValueFrom, merge, of, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
-import { killError } from "../sh/sh.util";
 import { Poly, Rect, Vect } from "../geom";
-import { isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
+import { animScaleFactor, isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
 import createNpc from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -235,11 +234,10 @@ export default function NPCs(props) {
           if (msg.key === 'started-walking') {
             status = 'follow-walk';
             console.warn('@', status)
-            const path = npc.getTargets().map(x => Vect.from(x.point)); // TODO arriveMs?
-            const keyframes = props.panZoomApi.computePathKeyframes(path);
-            console.log({keyframes})
-            // Ignore Error('cancelled')
-            try { await props.panZoomApi.playKeyframes(keyframes) } catch {}
+            try {
+              const path = npc.getTargets().map(x => Vect.from(x.point)); // TODO arriveMs?
+              await props.panZoomApi.followPath(path, { animScaleFactor });
+            } catch {} // Ignore Error('cancelled')
           }
         },
       });
