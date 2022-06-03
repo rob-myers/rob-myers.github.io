@@ -1,7 +1,5 @@
 // Utils from service/geomorph which don't depend on imports
 
-export const doorEntryDelta = 10;
-
 /** @param {Geomorph.LayoutKey} layoutKey */
 export function geomorphJsonPath(layoutKey) {
   return `/geomorph/${layoutKey}.json`

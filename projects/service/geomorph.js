@@ -3,7 +3,7 @@ import { createCanvas } from 'canvas';
 import { Poly, Rect, Mat, Vect } from '../geom';
 import { extractGeomsAt, hasTitle } from './cheerio';
 import { geom } from './geom';
-import { doorEntryDelta, filterSingles, labelMeta, singlesToPolys } from '../geomorph/geomorph.model';
+import { filterSingles, labelMeta, singlesToPolys } from '../geomorph/geomorph.model';
 import { RoomGraph } from '../graph/room-graph';
 import { Builder } from '../pathfinding/Builder';
 import { warn } from './log';
@@ -213,8 +213,9 @@ function singleToConnectorRect(single, rooms) {
   const [u, v] = geom.getAngledRectSeg({ angle, rect });
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
 
-  const infront = poly.center.addScaledVector(normal, doorEntryDelta).precision(2);
-  const behind = poly.center.addScaledVector(normal, -doorEntryDelta).precision(2);
+  const doorEntryDelta = (Math.min(rect.width, rect.height)/2) + 0.001
+  const infront = poly.center.addScaledVector(normal, doorEntryDelta).precision(3);
+  const behind = poly.center.addScaledVector(normal, -doorEntryDelta).precision(3);
 
   /** @type {[null | number, null | number]} */
   const roomIds = rooms.reduce((agg, room, roomId) => {
