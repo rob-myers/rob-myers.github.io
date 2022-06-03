@@ -36,6 +36,7 @@ export default function NavDemo1(props) {
       // gmId: 3, roomId: 26,
 
       initOpen: { 0: [24] },
+      lit: false,
       clipPath: gms.map(_ => 'none'),
       playerNpcKey: /** @type {null | string} */ (null),
 
@@ -100,27 +101,27 @@ export default function NavDemo1(props) {
           state.update();
         });
 
-      const npcsSub = state.npcsApi.events
-        .subscribe((e) => {
-          if (e.key === 'set-player') {
-            state.playerNpcKey = e.npcKey;
-            // Infer current room
-            const npc = state.npcsApi.npc[e.npcKey];
-            const position = npc.getPosition();
-            const found = gmGraph.findRoomContaining(position);
-            if (found) {
-              [state.gmId, state.roomId] = [found.gmId, found.roomId];
-              state.update();
-            } else {
-              console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
-            }
-          } else if (e.key === 'exited-room') {
-            if (e.npcKey === state.playerNpcKey) {
-              [state.gmId, state.roomId] = [e.ctxt.dstGmId, e.ctxt.dstRoomId];
-              state.update();
-            }
+      const npcsSub = state.npcsApi.events.subscribe((e) => {
+        if (e.key === 'set-player') {
+          state.playerNpcKey = e.npcKey;
+          // Infer current room
+          const npc = state.npcsApi.npc[e.npcKey];
+          const position = npc.getPosition();
+          const found = gmGraph.findRoomContaining(position);
+          if (found) {
+            [state.gmId, state.roomId] = [found.gmId, found.roomId];
+            state.lit = true; // TODO set false on clear player
+            state.update();
+          } else {
+            console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
           }
-        });
+        } else if (e.key === 'exited-room') {
+          if (e.npcKey === state.playerNpcKey) {
+            [state.gmId, state.roomId] = [e.ctxt.dstGmId, e.ctxt.dstRoomId];
+            state.update();
+          }
+        }
+      });
 
       return () => {
         doorsSub.unsubscribe();
@@ -137,7 +138,7 @@ export default function NavDemo1(props) {
       dark
       onLoad={api => state.panZoomApi = api}
     >
-      {gms.map(gm =>
+      {state.lit && gms.map(gm =>
         <img
           className="geomorph"
           src={geomorphPngPath(gm.key)}
