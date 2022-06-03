@@ -43,6 +43,10 @@ declare namespace Geom {
   }
 
   export interface AngledRect<T> {
+    /**
+     * This need not be the actual bounding rectangle,
+     * it needs to be rotated first.
+     */
     rect: T;
     /** Radians */
     angle: number;

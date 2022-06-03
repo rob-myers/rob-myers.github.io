@@ -25,24 +25,45 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
         return Poly.union([layout.rooms[roomNodeId], ...doors])[0];
       });
 
-    const switchPoints = layout.groups.singles
-      .filter(x => x.tags.includes('switch')).map(x => x.poly.center);
-
     const spawnPoints = layout.groups.singles
       .filter(x => x.tags.includes('spawn')).map(x => x.poly.center);
+    const switchPoints = layout.groups.singles
+      .filter(x => x.tags.includes('switch')).map(x => x.poly.center);
+    // Rect should cover door and have center inside room
+    const lightMetas = layout.groups.singles
+      .filter(x => x.tags.includes('light'))
+      .map(({ poly: { rect } }) => /** @type {const} */ ([rect.center, rect]));
 
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...layout,
-      roomsWithDoors,
-      roomsSwitch: layout.rooms.map((poly) => {
-        const found = switchPoints.find(p => poly.contains(p));
-        return found || poly.rect.center;
-      }),
+
       hullDoors: layout.doors.filter(({ tags }) => tags.includes('hull')),
       hullOutline: layout.hullPoly[0].removeHoles(),
       pngRect: Rect.fromJson(layout.items[0].pngRect),
-      spawnPoints,
+      roomsWithDoors,
+
+      point: {
+        all: /** @type {Geom.Vect[]} */ ([]).concat(
+          lightMetas.map(x => x[0]),
+          spawnPoints,
+          switchPoints,
+        ),
+        light: lightMetas.reduce((agg, [p, rect], i) => {
+          const roomId = layout.rooms.findIndex(poly => poly.contains(p));
+          const doorId = layout.doors.findIndex((door) => door.poly.rect.intersects(rect));
+          if (roomId >= 0 && doorId >= 0) (agg[roomId] = agg[roomId] || {})[doorId] = p;
+          else console.warn(`useGeomorphData: light ${i} roomId/doorId ${roomId}/${doorId}`);
+          return agg;
+        }, /** @type {Record<number, Record<number, Geom.Vect>>} */ ({})),
+        spawn: layout.rooms.map((poly) =>
+          spawnPoints.filter(p => poly.contains(p))
+        ),
+        switch: layout.rooms.map((poly) => {
+          const found = switchPoints.find(p => poly.contains(p));
+          return found || poly.rect.center;
+        }),
+      },
       lazy: /** @type {*} */ (null),
     };
 

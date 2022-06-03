@@ -285,16 +285,27 @@ export class gmGraph extends BaseGraph {
       .map(x => x.doorId).filter(id => openDoorIds.includes(id));
     const areas = adjOpenDoorIds
       .flatMap(doorId => this.getOpenDoorArea(gmId, doorId) || []);
+
     const doorLights = areas.map((area) => {
       const doors = this.gms[area.gmIndex].doors;
-      // TODO restrict to fewer doors
-      // Needed when 2 doors adjoin a single room e.g. double-doors
+      /**
+       * These additional line segments are needed when 2 doors
+       * adjoin a single room e.g. double doors.
+       * TODO restrict to fewer doors
+       */
       const closedDoorSegs = doors.filter((_, id) => id !== area.doorIndex).map(x => x.seg);
+      const roomId = area.adjRoomId??rootRoomId; // TODO avoid nullable `adjRoomId` (?)
+      /**
+       * By default we move light inside current room by constant amount.
+       * Sometimes this breaks (lies outside current room), so can override via 'light' tagged rects.
+       */
+      const lightPosition = gm.point.light[rootRoomId]?.[area.doorIndex] ||
+        computeLightPosition(doors[area.doorIndex], roomId, 40);
+
       return {
         gmIndex: area.gmIndex,
-        poly: geom.lightPolygon({// TODO avoid nullable `adjRoomId` (?)
-          // Move light inside adjacent room i.e. `-10`
-          position: computeLightPosition(doors[area.doorIndex], area.adjRoomId??rootRoomId, 40),
+        poly: geom.lightPolygon({
+          position: lightPosition,
           range: 2000,
           exterior: area.poly,
           extraSegs: closedDoorSegs,

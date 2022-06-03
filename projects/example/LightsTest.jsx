@@ -120,7 +120,7 @@ export default function LightsTest(props) {
           className="light-toggles"
           onClick={state.onToggleLight}
         >
-          {gm.roomsSwitch.map((center, roomId) => {
+          {gm.point.switch.map((center, roomId) => {
             return <div
               key={roomId}
               data-index={roomId}
@@ -192,7 +192,7 @@ function DebugGraph({ gm }) {
           fill="none"
           r={5}
           {...node.type === 'room'
-            && { cx: gm.roomsSwitch[i].x, cy: gm.roomsSwitch[i].y,  }}
+            && { cx: gm.point.switch[i].x, cy: gm.point.switch[i].y,  }}
           {...node.type === 'door'
             && { cx: gm.doors[node.doorId].poly.center.x, cy: gm.doors[node.doorId].poly.center.y }}
           {...node.type === 'window'
@@ -211,9 +211,9 @@ function DebugGraph({ gm }) {
           .map((edge) =>
             <line
               stroke="red"
-              x1={gm.roomsSwitch[
+              x1={gm.point.switch[
                 /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].x}
-              y1={gm.roomsSwitch[
+              y1={gm.point.switch[
                 /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].y}
               x2={gm.doors[
                 /** @type {Graph.RoomGraphNodeDoor} */ (edge.dst).doorId].poly.center.x}

@@ -111,15 +111,19 @@ declare namespace Geomorph {
    */
    export interface GeomorphData extends Geomorph.ParsedLayout {
     roomsWithDoors: Poly[];
-    /**
-    * Aligned to `rooms`, where switch from meta point in interior,
-    * else default to room's center.
-    */
-    roomsSwitch: Vect[];
     hullDoors: ConnectorRect<Poly, Geom.Vect, Geom.Rect>[];
     hullOutline: Poly;
     pngRect: Geom.Rect;
-    spawnPoints: Vect[];
+    
+    point: {
+      all: Vect[];
+      /** Can specify light position from room through door */
+      light: { [roomId?: number]: { [doorId?: number]: Vect } };
+      /** Aligned to `rooms`; possibly many. */
+      spawn: Vect[][];
+      /** Aligned to `rooms`, default to room's center. */
+      switch: Vect[];
+    };
 
     /** Proxy for lazy cached data */
     lazy: {

@@ -10,7 +10,16 @@ __Aim towards website release__.
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
+  - Fix dark-mode + Safari issue
+    - apply filter provides new context for position fixed
+    - Safari Bug position fixed
+      - flickers dark (incorrect clip) on repeated wheel
+      - only happens when Tabs maximised
+      - https://bugs.webkit.org/show_bug.cgi?id=160953
+      - consider position fixed alternative
   - 🚧 Continue migration
+
+- ✅ Customizable light position via meta points
 
 - 🚧 Improve track:
   - **SMOOTHNESS FIRST** approach (mobile, in particular)
@@ -28,13 +37,10 @@ __Aim towards website release__.
     - ✅ Fix speed of path traversal
     - 🚧 Debug + Clean
 
-- ✅ Tabs remembers layout
-- ✅ Migrate to Gatsby
-
-- LocalNavPath can start/end inside a doorway
+- 🚧 LocalNavPath can start/end inside a doorway
   - e.g. `[navEdge, path, navEdge]`
   - edges need custom start/endpoints
-- GlobalNavPath can start/end inside a hull doorway
+- 🚧 GlobalNavPath can start/end inside a hull doorway
   - e.g. `[navEdge, localNavPath, navEdge]`
   - edges need custom start/endpoints
 
@@ -50,12 +56,7 @@ __Aim towards website release__.
 
 - fix NavDemo1 useGeomorphs adjustment
 - don't darken "holes" in geomorph png
-- `position: fixed` Safari issue
-  - flickers dark (incorrect clip) on repeated wheel
-  - only happens when Tabs maximised
-  - https://bugs.webkit.org/show_bug.cgi?id=160953
-  - consider position fixed alternative
-    
+
 
 - Blog
   - ✅ Revisit first page
@@ -191,7 +192,8 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
-
+- ✅ Tabs remembers layout
+- ✅ Migrate to Gatsby
 - ✅ improve `track`
 - ✅ fix multiple animations with CssPanZoom and `track`
 - ✅ `view` should work while `track`
