@@ -59,7 +59,9 @@ export default function Portals() {
           const env = meta.env || {};
           if (typeof env.PROFILE === 'string') {
             // Can specify profile via key
-            if (isProfileKey(env.PROFILE)) env.PROFILE = profileLookup[env.PROFILE]();
+            if (isProfileKey(env.PROFILE)) {
+              env.PROFILE = profileLookup[env.PROFILE]();
+            }
           } else {
             env.PROFILE = profileLookup['profile-1']();
           }

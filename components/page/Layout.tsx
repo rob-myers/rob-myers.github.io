@@ -1,6 +1,6 @@
 import Router from 'next/router';
 import React from 'react';
-import { Actions, IJsonModel, Layout as FlexLayout, Model, TabNode } from 'flexlayout-react';
+import { Actions, IJsonModel, Layout as FlexLayout, Model, Node, TabNode } from 'flexlayout-react';
 import { useBeforeunload } from 'react-beforeunload';
 
 import { tryLocalStorageGet, tryLocalStorageSet } from 'projects/service/generic';
@@ -115,14 +115,29 @@ function restoreJsonModel(props: Props) {
       const model = Model.fromJson(jsonModel);
       
       // Validate i.e. props.tabs must mention same ids
-      const prevTabNodeIds = [] as string[];
-      model.visitNodes(node => node.getType() === 'tab' && prevTabNodeIds.push(node.getId()));
+      const prevTabNodes = [] as Node[];
+      model.visitNodes(node => node.getType() === 'tab' && prevTabNodes.push(node));
       const nextTabNodeIds = props.tabs[0].concat(props.tabs[1]).map(getTabName)
-      if (prevTabNodeIds.length === nextTabNodeIds.length && prevTabNodeIds.every(id => nextTabNodeIds.includes(id))) {
-        return model;
-      }
 
-      console.error(`restoreJsonModel: prev/next ids differ ${JSON.stringify(prevTabNodeIds)} versus ${JSON.stringify(nextTabNodeIds)}`);
+      if (!(
+        prevTabNodes.length === nextTabNodeIds.length
+        && prevTabNodes.every(node => nextTabNodeIds.includes(node.getId()))
+      )) {
+        console.error(`restoreJsonModel: prev/next ids differ ${
+          JSON.stringify(prevTabNodes.map(x => x.getId()))
+        } versus ${JSON.stringify(nextTabNodeIds)}`);
+      }
+      
+      // Overwrite metas to avoid stale data
+      const allMetas = props.tabs[0].concat(props.tabs[1]);
+      model.visitNodes(node => {
+        if (node.getType() === 'tab') {
+          (node as any)._attributes.config = allMetas.find(meta => getTabName(meta) === node.getId());
+        }
+      });
+      
+      return model;
+
     } catch (e) {
       console.error(e);
     }

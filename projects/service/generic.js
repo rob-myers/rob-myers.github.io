@@ -189,13 +189,13 @@ export function lookupFromValues(values)  {
  * @template DstValue
  * @template {string} Key
  * @param {Record<Key, SrcValue>} input
- * @param {(value: SrcValue) => DstValue} transform
+ * @param {(value: SrcValue, key: string) => DstValue} transform
  * Given `{ [key]: value }`, returns fresh
  * `{ [key]: _transform_(value) }`.
  */
 export function mapValues(input, transform) {
   const output = /** @type {Record<Key, DstValue>} */ ({});
-  keys(input).forEach((key) => output[key] = transform(input[key]));
+  keys(input).forEach((key) => output[key] = transform(input[key], key));
   return output;
 }
 
