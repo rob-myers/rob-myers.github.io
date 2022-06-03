@@ -206,14 +206,14 @@ export async function createLayout(def, lookup, triangleService) {
  */
 function singleToConnectorRect(single, rooms) {
   const { poly, tags } = single;
-  const { angle, rect } = poly.outline.length === 4
+  const { angle, baseRect } = poly.outline.length === 4
     ? geom.polyToAngledRect(poly)
     // For curved windows we simply use aabb
-    : { rect: poly.rect, angle: 0 };
-  const [u, v] = geom.getAngledRectSeg({ angle, rect });
+    : { baseRect: poly.rect, angle: 0 };
+  const [u, v] = geom.getAngledRectSeg({ angle, baseRect });
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
 
-  const doorEntryDelta = (Math.min(rect.width, rect.height)/2) + 0.001
+  const doorEntryDelta = (Math.min(baseRect.width, baseRect.height)/2) + 0.001
   const infront = poly.center.addScaledVector(normal, doorEntryDelta).precision(3);
   const behind = poly.center.addScaledVector(normal, -doorEntryDelta).precision(3);
 
@@ -226,8 +226,9 @@ function singleToConnectorRect(single, rooms) {
 
   return {
     angle,
-    rect: rect.precision(3),
+    baseRect: baseRect.precision(3),
     poly,
+    rect: poly.rect,
     tags,
     seg: [u.precision(3), v.precision(3)],
     normal: normal.precision(3),
@@ -245,11 +246,13 @@ function singleToConnectorRect(single, rooms) {
  * @returns {Geomorph.ParsedConnectorRect}
  */
 function parseConnectRect(x) {
+  const poly = Poly.from(x.poly);
   return {
     ...x,
+    baseRect: Rect.fromJson(x.baseRect),
+    poly: poly,
+    rect: poly.rect,
     normal: Vect.from(x.normal),
-    poly: Poly.from(x.poly),
-    rect: Rect.fromJson(x.rect),
     seg: [Vect.from(x.seg[0]), Vect.from(x.seg[1])],
     entries: [
       x.entries[0] ? Vect.from(x.entries[0]) : null,

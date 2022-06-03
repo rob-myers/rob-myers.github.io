@@ -51,7 +51,7 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
         ),
         light: lightMetas.reduce((agg, [p, rect], i) => {
           const roomId = layout.rooms.findIndex(poly => poly.contains(p));
-          const doorId = layout.doors.findIndex((door) => door.poly.rect.intersects(rect));
+          const doorId = layout.doors.findIndex((door) => door.rect.intersects(rect));
           if (roomId >= 0 && doorId >= 0) (agg[roomId] = agg[roomId] || {})[doorId] = p;
           else console.warn(`useGeomorphData: light ${i} roomId/doorId ${roomId}/${doorId}`);
           return agg;

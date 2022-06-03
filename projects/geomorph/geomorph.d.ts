@@ -281,6 +281,8 @@ declare namespace Geomorph {
 
   export interface ConnectorRect<P, V, R> extends Geom.AngledRect<R> {
     poly: P;
+    /** `poly.rect` i.e. rotated rectangle */
+    rect: R;
     seg: [V, V];
     normal: V;
     tags: string[];

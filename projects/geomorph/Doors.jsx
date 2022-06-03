@@ -125,10 +125,10 @@ export default function Doors(props) {
                   iris: door.tags.includes('iris'),
                 })}
                 style={{
-                  left: door.rect.x,
-                  top: door.rect.y,
-                  width: door.rect.width,
-                  height: door.rect.height,
+                  left: door.baseRect.x,
+                  top: door.baseRect.y,
+                  width: door.baseRect.width,
+                  height: door.baseRect.height,
                   transform: `rotate(${door.angle}rad)`,
                   transformOrigin: 'top left',
                 }}

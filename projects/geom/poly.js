@@ -340,9 +340,9 @@ export class Poly {
 
   /** @param {Geom.AngledRect<Geom.RectJson>} angled */
   static fromAngledRect(angled) {
-    const poly = Poly.fromRect(new Rect(0, 0, angled.rect.width, angled.rect.height));
+    const poly = Poly.fromRect(new Rect(0, 0, angled.baseRect.width, angled.baseRect.height));
     poly.applyMatrix(new Mat().setRotation(angled.angle));
-    poly.translate(angled.rect.x, angled.rect.y);
+    poly.translate(angled.baseRect.x, angled.baseRect.y);
     return poly;
   }
 

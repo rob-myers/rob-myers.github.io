@@ -97,11 +97,11 @@ class geomService {
    * Get segment through center along 'x+'.
    * @param {Geom.AngledRect<Geom.Rect>} _ 
    */
-  getAngledRectSeg({ angle, rect }) {
+  getAngledRectSeg({ angle, baseRect }) {
     const widthNormal = tempVect.set(Math.cos(angle), Math.sin(angle));
     const heightNormal = tempVect2.set(-Math.sin(angle), Math.cos(angle));
-    const src = rect.topLeft.addScaledVector(heightNormal, 0.5 * rect.height);
-    return [src, src.clone().addScaledVector(widthNormal, rect.width)];
+    const src = baseRect.topLeft.addScaledVector(heightNormal, 0.5 * baseRect.height);
+    return [src, src.clone().addScaledVector(widthNormal, baseRect.width)];
   }
 
   /**
@@ -365,12 +365,12 @@ class geomService {
 
     if (w >= h) {
       return {
-        rect: new Rect(ps[0].x, ps[0].y, w, h),
+        baseRect: new Rect(ps[0].x, ps[0].y, w, h),
         angle: Math.atan2(tempVect.y, tempVect.x),
       };
     } else {
       return {
-        rect: new Rect(ps[1].x, ps[1].y, h, w),
+        baseRect: new Rect(ps[1].x, ps[1].y, h, w),
         angle: Math.atan2(tempVect2.y, tempVect2.x),
       };
     }

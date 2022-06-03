@@ -380,16 +380,16 @@ function Debug(props) {
           </div>
         )}
 
-        {props.windows && gm.windows.map(({ rect, angle }, i) => {
+        {props.windows && gm.windows.map(({ baseRect, angle }, i) => {
           return (
             <div
               key={`window-${i}`}
               className="debug-window"
               style={{
-                left: rect.x,
-                top: rect.y,
-                width: rect.width,
-                height: rect.height,
+                left: baseRect.x,
+                top: baseRect.y,
+                width: baseRect.width,
+                height: baseRect.height,
                 transform: `rotate(${angle}rad)`,
               }}
             />

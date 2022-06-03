@@ -37,22 +37,22 @@ function ForeignObject({ gm }) {
   const onClick = (e) => {
     const div = /** @type {HTMLDivElement} */ (e.target);
     const [width, index] = [div.clientWidth, Number(div.getAttribute('data-index'))];
-    const nextWidth = width <= 10 ? gm.doors[index].rect.width : 10; // Leq for borders
+    const nextWidth = width <= 10 ? gm.doors[index].baseRect.width : 10; // Leq for borders
     div.style.width = `${nextWidth}px`;
   };
 
   return (
     <foreignObject {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
       <div onPointerUp={onClick}>
-        {gm.doors.map(({ rect, angle }, i) =>
+        {gm.doors.map(({ baseRect, angle }, i) =>
           <div
             className="door"
             data-index={i}
             style={{
-              left: rect.x - gm.pngRect.x,
-              top: rect.y - gm.pngRect.y,
-              width: rect.width,
-              height: rect.height,
+              left: baseRect.x - gm.pngRect.x,
+              top: baseRect.y - gm.pngRect.y,
+              width: baseRect.width,
+              height: baseRect.height,
               transformOrigin: 'top left',
               transform: `rotate(${angle}rad)`,
             }}
