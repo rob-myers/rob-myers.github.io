@@ -117,7 +117,8 @@ export default function NavDemo1(props) {
           }
         } else if (e.key === 'exited-room') {
           if (e.npcKey === state.playerNpcKey) {
-            [state.gmId, state.roomId] = [e.ctxt.dstGmId, e.ctxt.dstRoomId];
+            state.gmId = e.ctxt.dstGmId;
+            state.roomId = e.ctxt.dstRoomId;
             state.update();
           }
         }

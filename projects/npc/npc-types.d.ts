@@ -111,9 +111,13 @@ declare namespace NPC {
     srcGmId: number;
     srcDoorId: number;
     srcRoomId: number;
-    /** Distinct from srcGmId iff hull door */
+    /** Distinct from `srcGmId` iff hull door. */
     dstGmId: number;
-    /** Possibly distinct from srcDoorId iff hull door */
+    /**
+     * If distinct from srcDoorId then hull door.
+     * The converse may fail because the two distinct
+     * geomorphs may have same doorId for connected doors.
+     */
     dstDoorId: number;
     dstRoomId: number;
   }
@@ -197,9 +201,15 @@ declare namespace NPC {
   }
   interface LocalNavPath {
     key: 'local-nav';
-    gmId: number;
     paths: Geom.Vect[][];
     edges: NPC.NavRoomTransition[];
+    
+    gmId: number;
+    dstDoorway: null | {
+      /** doorId of final nav node */
+      doorId: number;
+      roomId: number;
+    };
   }
 
   export interface FullApi {

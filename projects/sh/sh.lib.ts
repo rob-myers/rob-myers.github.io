@@ -18,9 +18,9 @@ ${profileLookup["profile-1"]()}
 ready
 
 # hard-coded spawn (TODO spawn points)
-# spawn andros '{"x":185,"y":390}'
+spawn andros '{"x":185,"y":390}'
 # spawn andros '{"x":300,"y":880}'
-spawn andros '{"x":677.19,"y":320.18}'
+# spawn andros '{"x":677.19,"y":320.18}'
 npc andros set-player
 
 # camera follows andros

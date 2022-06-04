@@ -1,6 +1,6 @@
 import React from "react";
 import { assertDefined } from "../service/generic";
-import { gmGraph } from "../graph/gm-graph";
+import { gmGraphClass } from "../graph/gm-graph";
 import { geomorphDataToInstance } from "../service/geomorph";
 import useGeomorphData from "./use-geomorph-data";
 
@@ -33,9 +33,9 @@ export default function useGeomorphs(defs) {
         const transform = def.transform || [1, 0, 0, 1, 0, 0];
         return geomorphDataToInstance(data, transform);
       });
-      return { gms: items, gmGraph: gmGraph.fromGms(items) };
+      return { gms: items, gmGraph: gmGraphClass.fromGms(items) };
     } else {
-      return { gms: [], gmGraph: new gmGraph([]) }
+      return { gms: [], gmGraph: new gmGraphClass([]) }
     }
   }, [ready]);
 }

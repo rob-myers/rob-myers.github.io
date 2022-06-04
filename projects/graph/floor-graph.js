@@ -86,12 +86,6 @@ export class floorGraph extends BaseGraph {
       nodePath.push(closestNode);
     }
 
-    /**
-     * TODO 🚧
-     * - what if start in doorway?
-     * - what if end in doorway?
-     */
-
     // One fewer than `nodePaths` ??
     const roomEdges = /** @type {NPC.NavRoomTransition[]} */ ([]);
     /** `nodePath` split by the room they reside in */
@@ -160,9 +154,14 @@ export class floorGraph extends BaseGraph {
     this.cleanStringPull(pulledPaths, roomEdges);
     console.log({ pulledPaths, roomEdges }); // DEBUG 🚧
 
+    const finalNavMeta = nodePath.length ? this.nodeToMeta[nodePath[nodePath.length - 1].index] : null;
+
     return {
       paths: pulledPaths,
       edges: roomEdges,
+      dstDoorway: finalNavMeta && finalNavMeta.doorId >= 0
+        ? { doorId: finalNavMeta.doorId, roomId: finalNavMeta.roomId }
+        : null,
     };
   }
 

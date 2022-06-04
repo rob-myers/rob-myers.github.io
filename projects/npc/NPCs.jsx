@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
-import { firstValueFrom, merge, of, Subject } from "rxjs";
+import { merge, of, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
@@ -80,9 +80,10 @@ export default function NPCs(props) {
           gmId,
           paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
           edges: result.edges,
+          dstDoorway: result.dstDoorway,
         };
       } else {
-        return { key: 'local-nav', gmId, paths: [], edges: [] };
+        return { key: 'local-nav', paths: [], edges: [], gmId, dstDoorway: null };
       }
     },
     getNpcGlobalNav(e) {
@@ -206,7 +207,7 @@ export default function NPCs(props) {
         )),
       ).subscribe({
         async next(msg) {
-          // console.log('msg', msg);
+          // console.log(msg); // DEBUG
           if (!props.panZoomApi.isIdle() && msg.key !== 'started-walking') {
             status = 'no-track';
             console.warn('@', status);
@@ -240,45 +241,6 @@ export default function NPCs(props) {
       });
       
       return subscription;
-
-    // const subscription = merge(state.events, props.panZoomApi.events).pipe(
-    //     filter(x => (
-    //       !paused
-    //       && x.key === 'ui-idle'
-    //       || (x.key === 'started-walking' && x.npcKey === opts.npcKey)
-    //       || (x.key === 'stopped-walking' && x.npcKey === opts.npcKey)
-    //     ))
-    // ).subscribe({
-    //     async next(e) {
-    //       const npc = state.npc[opts.npcKey];
-    //       if (!props.panZoomApi.isIdle()) {
-    //         status = null; // Releases status, yet maybe dodgy
-    //         return;
-    //       } else if (e.key === 'started-walking' || npc.anim.spriteSheet === 'walk') {
-    //         // props.panZoomApi.cancelAnimations();
-    //         while (npc.anim.spriteSheet === 'walk') {
-    //           console.log(status = 'track-walk')
-    //           for (const target of npc.getTargets()) {
-    //             await props.panZoomApi.panZoomTo(2, target.point, 2 * target.arriveMs, 'linear');
-    //           }
-    //         }
-    //         status = null;
-
-    //       } else if (
-    //         (e.key === 'stopped-walking' || npc.anim.spriteSheet === 'idle')
-    //         && status === null
-    //       ) {
-    //         console.log(status = 'track-idle')
-    //         try {
-    //           const npcPosition = npc.getPosition();
-    //           await props.panZoomApi.panZoomTo(2, npcPosition, 2000);
-    //         } catch (e) {
-    //           console.error(e)
-    //         }
-    //         status = null;
-    //       }
-    //     }
-    // });
     },
     async walkNpc(e) {
       const npc = state.npc[e.npcKey];
@@ -307,33 +269,8 @@ export default function NPCs(props) {
           // Walk along a global navpath
           const globalNavPath = e;
           const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
-
-          // TODO cleanup
-          const doorMetas = globalNavPath.paths.reduce((agg, localNavPath, i) => {
-            let indexOffset = i === 0 ? 0 : agg[agg.length - 1].enterIndex + 1;
-
-            localNavPath.paths.forEach((path, j) => {
-              const roomEdge = localNavPath.edges[j];
-              if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
-                agg.push({
-                  enterIndex: indexOffset + (path.length - 1),
-                  ctxt: {
-                    srcGmId: localNavPath.gmId, srcDoorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId,
-                    dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
-                  },
-                });
-              }// +1 beyond path is room entry point
-              indexOffset += (path.length - 1) + 1;
-            });
-
-            const gmEdge = globalNavPath.edges[i];
-            if (gmEdge) {// Move back to end of last localNavPath.paths
-              agg.push({ enterIndex: indexOffset - 1, ctxt: gmEdge });
-            }
-            return agg;
-          }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
-
-          // NOTE finishes by setting spriteSheet idle
+          const doorMetas = props.gmGraph.computeDoorMetas(globalNavPath);
+          // Below finishes by setting spriteSheet idle
           await npc.followNavPath(allPoints, { doorMetas });
 
         } else if (e.key === 'local-nav') {

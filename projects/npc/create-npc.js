@@ -81,6 +81,8 @@ import npcJson from '../../public/npc/first-npc.json'
      */
     wayTimeout() {
       const { anim } = this;
+      // TODO avoid many short timeouts
+      // console.log('anim.wayMetas[0]', anim.wayMetas[0]);
       if (
         anim.wayMetas.length === 0
         || anim.spriteSheet === 'idle'
@@ -115,7 +117,9 @@ import npcJson from '../../public/npc/first-npc.json'
             
       if (opts?.doorMetas) {
         anim.wayMetas = opts.doorMetas.flatMap(({ enterIndex, ctxt }) => [
-          { key: 'enter-door', length: anim.aux.sofars[enterIndex], ctxt },
+          // Slightly early to ensure it is triggered
+          { key: 'enter-door', length: anim.aux.sofars[enterIndex] - 10, ctxt },
+          // If end in doorway we'll never trigger this
           { key: 'exit-door', length: anim.aux.sofars[enterIndex + 1], ctxt },
         ]);
       }

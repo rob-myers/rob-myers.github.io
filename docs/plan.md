@@ -38,6 +38,12 @@ __Aim towards website release__.
     - 🚧 Debug + Clean
 
 - 🚧 LocalNavPath can start/end inside a doorway
+  - ✅ door entry/exit just outside doorway
+  - ✅ ensure pulled path 2nd/penultimate not inside doorway by removing points
+  - ✅ if player ends in a doorway, lights should switch
+      - `enter-door` must be triggered
+  - 🚧 if player started in a doorway, lights should switch
+
   - e.g. `[navEdge, path, navEdge]`
   - edges need custom start/endpoints
 - 🚧 GlobalNavPath can start/end inside a hull doorway
