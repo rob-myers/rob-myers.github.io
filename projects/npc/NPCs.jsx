@@ -178,12 +178,11 @@ export default function NPCs(props) {
       update();
     },
     /**
-     * TODO 🚧 total rewrite
+     * TODO move to shell function?
      */
     trackNpc(opts) {
       const { npcKey, process } = opts;
-      const npc = state.npc[npcKey];
-      if (!npc) {
+      if (!state.npc[npcKey]) {
         throw Error(`npc "${npcKey}" does not exist`);
       }
 
@@ -207,16 +206,14 @@ export default function NPCs(props) {
         )),
       ).subscribe({
         async next(msg) {
-          console.log('msg', msg);
-          // TODO isolate {follow, panzoom-to}
-          // TODO follow sends (pos,zoom)[] to CssPanZoom which constructs keyframes 
-    
+          // console.log('msg', msg);
           if (!props.panZoomApi.isIdle() && msg.key !== 'started-walking') {
             status = 'no-track';
-            console.warn('@', status)
+            console.warn('@', status);
             return;
           }
 
+          const npc = state.npc[npcKey];
           const npcPosition = npc.getPosition();
           
           if (// Only when: npc idle, camera not animating, camera not close
@@ -225,7 +222,7 @@ export default function NPCs(props) {
             && props.panZoomApi.distanceTo(npcPosition) > 10
           ) {
             status = 'panzoom-to';
-            console.warn('@', status)
+            console.warn('@', status);
             // Ignore Error('cancelled')
             try { await props.panZoomApi.panZoomTo(2, npcPosition, 2000) } catch {}
             status = 'no-track';
@@ -233,7 +230,7 @@ export default function NPCs(props) {
 
           if (msg.key === 'started-walking') {
             status = 'follow-walk';
-            console.warn('@', status)
+            console.warn('@', status);
             try {
               const path = npc.getTargets().map(x => Vect.from(x.point)); // TODO arriveMs?
               await props.panZoomApi.followPath(path, { animScaleFactor });
