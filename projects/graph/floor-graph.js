@@ -44,6 +44,31 @@ export class floorGraph extends BaseGraph {
   }
 
   /**
+   * Mutates `pulledPaths`
+   * @param {Geom.Vect[][]} pulledPaths 
+   * @param {NPC.NavRoomTransition[]} roomEdges
+   */
+  cleanStringPull(pulledPaths, roomEdges) {
+    for (const [pathId, path] of pulledPaths.entries()) {
+      // Ensure 2nd point not inside doorway
+      let roomEdge = roomEdges[pathId - 1];
+      if (roomEdge) {
+        const door = this.gm.doors[roomEdge.doorId];
+        if (door.rect.contains(path[1])) path.splice(1, 1);
+      }
+      // Ensure penultimate point not inside doorway
+      roomEdge = roomEdges[pathId];
+      if (roomEdge && path.length >= 2) {
+        const door = this.gm.doors[roomEdge.doorId];
+        if (door.rect.contains(path[path.length - 2])) path.splice(path.length - 2, 1);
+      }
+
+      // Avoid duplicate adjacent vertices (they can happen)
+      pulledPaths[pathId] = geom.removePathReps(path);
+    }
+  }
+
+  /**
    * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
    * @param {Geom.VectJson} src in geomorph local coords
    * @param {Geom.VectJson} dst in geomorph local coords
@@ -52,7 +77,7 @@ export class floorGraph extends BaseGraph {
     const closestNode = this.getClosestNode(src);
     const farthestNode = this.getClosestNode(dst);
     if (!closestNode || !farthestNode) {
-      return null; // We can't find any node
+      return null;
     }
 
     const nodePath = AStar.search(this, closestNode, farthestNode);
@@ -61,7 +86,13 @@ export class floorGraph extends BaseGraph {
       nodePath.push(closestNode);
     }
 
-    // One fewer than `nodePaths`
+    /**
+     * TODO 🚧
+     * - what if start in doorway?
+     * - what if end in doorway?
+     */
+
+    // One fewer than `nodePaths` ??
     const roomEdges = /** @type {NPC.NavRoomTransition[]} */ ([]);
     /** `nodePath` split by the room they reside in */
     const nodePaths = /** @type {Graph.FloorGraphNode[][]} */ ([]);
@@ -76,25 +107,30 @@ export class floorGraph extends BaseGraph {
         nodePaths.push([node]);
         // Currently, prevMeta === meta
       } else if (meta.roomId === -1) {
+        // Node outside any room i.e. properly in a doorway
+        // console.warn('nav node in no room', node, meta);
         nodePaths[nodePaths.length - 1].push(node);
       } else if (meta.roomId === prevMeta?.roomId) {
+        // Node inside same room as previous node
         nodePaths[nodePaths.length - 1].push(node);
-      } else {// meta.roomId !== -1 && meta.roomId !== prevMeta.roomId
+      } else {
+        // Node inside new room (2nd or later), so start new path
         nodePaths.push([node]);
+        // Just entered room, so node adjacent to a door
+        // NOTE cannot be a hull door because entered from other side
         const newDoor = this.gm.doors[meta.doorId];
-        // NOTE cannot be a hull door, by construction
         const points = /** @type {[Geom.Vect, Geom.Vect]} */ (newDoor.entries);
         roomEdges.push({
           doorId: meta.doorId,
           srcRoomId: prevMeta.roomId,
           dstRoomId: meta.roomId,
+          // TODO what if `src` was in doorway?
           entry: newDoor.roomIds[0] === prevMeta.roomId ? points[0] : points[1],
           exit: newDoor.roomIds[0] === meta.roomId ? points[0] : points[1],
         });
         prevMeta = meta;
       }
     });
-    // console.log(nodePaths.length, { nodePath, metas: nodePath.map(x => this.nodeToMeta[x.index]), nodePaths})
 
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
       const pathSrc = pathId === 0 ? src : roomEdges[pathId - 1].exit;
@@ -107,19 +143,22 @@ export class floorGraph extends BaseGraph {
         warn(`floorGraph ${this.gm.key}: navNode ${closestNode.index} lacks associated roomId (using ${roomId})`);
       }
 
+      // Can we simply walk straight through room `roomId`?
       const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
       const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
       if (directPath) {
         return [Vect.from(pathSrc), Vect.from(pathDst)];
       }
-      // Otherwise apply "simple stupid funnel algorithm"
-      const path = /** @type {Geom.VectJson[]} */ (this.computeStringPull(pathSrc, pathDst, nodePath).path);
-      // Finally avoid duplicate adjacent vertices (they can happen)
-      return geom.removePathReps(path).map(Vect.from);
+
+      // Otherwise, use "simple stupid funnel algorithm"
+      return /** @type {Geom.VectJson[]} */ (
+        this.computeStringPull(pathSrc, pathDst, nodePath).path
+      ).map(Vect.from);
+
     });
 
-    // DEBUG 🚧
-    console.log({ pulledPaths, roomEdges });
+    this.cleanStringPull(pulledPaths, roomEdges);
+    console.log({ pulledPaths, roomEdges }); // DEBUG 🚧
 
     return {
       paths: pulledPaths,
