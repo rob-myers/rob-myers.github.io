@@ -123,7 +123,7 @@ function restoreJsonModel(props: Props) {
         prevTabNodes.length === nextTabNodeIds.length
         && prevTabNodes.every(node => nextTabNodeIds.includes(node.getId()))
       )) {
-        console.error(`restoreJsonModel: prev/next ids differ ${
+        throw Error(`restoreJsonModel: prev/next ids differ ${
           JSON.stringify(prevTabNodes.map(x => x.getId()))
         } versus ${JSON.stringify(nextTabNodeIds)}`);
       }
