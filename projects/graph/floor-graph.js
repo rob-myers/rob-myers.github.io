@@ -3,6 +3,7 @@ import { BaseGraph } from "./graph";
 import { Utils } from "../pathfinding/Utils";
 import { AStar } from "../pathfinding/AStar";
 import { Channel } from "../pathfinding/Channel";
+import { extantLast } from "../service/generic";
 import { warn } from "../service/log";
 import { geom } from "../service/geom";
 
@@ -32,9 +33,7 @@ export class floorGraph extends BaseGraph {
     this.gm = gm;
     this.vectors = gm.navZone.vertices.map(Vect.from);
 
-    /**
-     * Compute `this.nodeToMeta` via `gm.navZone.{doorNodeIds,roomNodeIds}`.
-     */
+    // Compute `this.nodeToMeta` via `gm.navZone.{doorNodeIds,roomNodeIds}`.
     const preNavNodes = gm.navZone.groups[0];
     this.nodeToMeta = preNavNodes.map((_) => ({ doorId: -1, roomId: -1 }));
     gm.navZone.doorNodeIds.forEach((nodeIds, doorId) => {
@@ -131,6 +130,26 @@ export class floorGraph extends BaseGraph {
         prevMeta = meta;
       }
     });
+
+    /**
+     * - TODO if start in door
+     *   - 1st pulled path src should be door exit
+     *   - should start alternating sequence with roomEdge
+     *   - may need to discard initial door path (unless start/end same door)
+     * - TODO if end in door
+     *   - last pulled path dst should be door entry
+     *   - should end alternating sequence with roomEdge
+     */
+    const initDoorId = this.nodeToMeta[nodePaths[0][0].index].doorId
+    const finalDoorId = this.nodeToMeta[extantLast(extantLast(nodePaths)).index].doorId
+    if (initDoorId >= 0 && this.gm.doors[initDoorId].poly.contains(src)) {
+      // NOTE currently not detected because path dst is being moved outside door
+      console.log('WILL START IN DOORWAY', initDoorId);
+    }
+    if (finalDoorId >= 0 && this.gm.doors[finalDoorId].poly.contains(dst)) {
+      console.log('WILL END IN DOORWAY', finalDoorId);
+    }
+
 
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
       const pathSrc = pathId === 0 ? src : roomEdges[pathId - 1].exit;

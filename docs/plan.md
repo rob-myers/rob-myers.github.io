@@ -42,7 +42,6 @@ __Aim towards website release__.
   - ✅ ensure pulled path 2nd/penultimate not inside doorway by removing points
   - ✅ `nodeToMeta` doorId and roomId are clearly understood
     - _nav node has doorId_ iff tri intersects door rect
-      i.e. should never be totally inside a room (could border)
     - _nav node has roomId_ iff tri has ≥ 2 points in room
       i.e. could be totally in room, or in doorway with 1 edge in room.
     - cannot expect nav node with doorId to _always_ have a roomId,

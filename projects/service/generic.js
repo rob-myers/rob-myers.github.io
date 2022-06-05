@@ -173,6 +173,15 @@ export function last(items) {
 }
 
 /**
+ * @template T
+ * @param {T[]} items 
+ * @returns {T}
+ */
+export function extantLast(items) {
+  return items[items.length - 1];
+}
+
+/**
  * @template {{ key: string }} T
  * @param {T[]} values 
  * @returns {TypeUtil.KeyedLookup<T>}
