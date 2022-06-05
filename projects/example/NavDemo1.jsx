@@ -159,7 +159,8 @@ export default function NavDemo1(props) {
         <Debug
           // outlines
           // windows
-          // localNav
+          localNav
+          // roomOutlines
           showIds
           gms={gms}
           gmGraph={gmGraph}
@@ -257,13 +258,18 @@ const rootCss = css`
       pointer-events: none;
       transform-origin: top left;
     }
-    svg.debug-room-nav {
+    svg.debug-room-nav, svg.debug-room-outline {
       position: absolute;
       pointer-events: none;
       path.nav-poly {
         pointer-events: none;
         fill: rgba(255, 0, 0, 0.1);
         stroke: blue;
+      }
+      path.room-outline {
+        pointer-events: none;
+        fill: rgba(0, 0, 255, 0.1);
+        stroke: red;
       }
     }
   }
@@ -276,6 +282,8 @@ function Debug(props) {
   const visDoorIds = props.doorsApi.getVisible(props.gmId);
   const roomNavPoly = gm.lazy.roomNavPoly[props.roomId];
   const roomNavAabb = roomNavPoly.rect;
+  const roomAabb = gm.rooms[props.roomId].rect;
+  const roomPoly = gm.rooms[props.roomId];
 
   return (
     <div
@@ -316,13 +324,14 @@ function Debug(props) {
           }}
         />  
       )}
+
       <div
         key={gm.itemKey}
         className="debug"
-        style={{
-          transform: gm.transformStyle,
-        }}
+        /** Must transform local ordinates */
+        style={{ transform: gm.transformStyle }}
       >
+
         {props.localNav && (
           <svg
             className="debug-room-nav"
@@ -335,6 +344,26 @@ function Debug(props) {
           >
             <g style={{ transform: `translate(${-roomNavAabb.x}px, ${-roomNavAabb.y}px)` }}>
               <path className="nav-poly" d={roomNavPoly.svgPath} />
+              {visDoorIds.map(doorId => {
+                const { seg: [src, dst] } = gm.doors[doorId];
+                return <line key={doorId} stroke="red" x1={src.x} y1={src.y} x2={dst.x} y2={dst.y} />
+              })}
+            </g>
+          </svg>
+        )}
+
+        {props.roomOutlines && (
+          <svg
+            className="debug-room-outline"
+            width={roomAabb.width}
+            height={roomAabb.height}
+            style={{
+              left: roomAabb.x,
+              top: roomAabb.y,
+            }}
+          >
+            <g style={{ transform: `translate(${-roomAabb.x}px, ${-roomAabb.y}px)` }}>
+              <path className="room-outline" d={roomPoly.svgPath} />
             </g>
           </svg>
         )}
@@ -414,4 +443,5 @@ function Debug(props) {
  * @property {boolean} [windows]
  * @property {boolean} [localNav]
  * @property {boolean} [showIds]
+ * @property {boolean} [roomOutlines]
  */
