@@ -41,15 +41,14 @@ declare namespace Nav {
 
   export interface ZoneWithMeta extends Zone {
     /**
-     * Aligned to `Geomorph.Layout['doors']`.
-     * In particular, `doorNodeIds[doorId]` includes
-     * all nodeIds whose triangle intersects the
-     * line segment `doors[doorId].seg`.
+     * Aligned to `Geomorph.Layout['doors']`,
+     * `doorNodeIds[doorId]` includes all nodeIds whose
+     * triangle intersects `doors[doorId].poly`.
      */
     doorNodeIds: number[][];
     /**
-     * Aligned to `Geomorph.Layout['rooms']`.
-     * In particular, `roomNodeIds[roomId]` includes all
+     * Aligned to `Geomorph.Layout['rooms']`,
+     * `roomNodeIds[roomId]` includes all
      * nodeIds inside outline of room `rooms[roomId]`.
      * - _inside_ means ≥ 2 vertices of triangle lie in room.
      * - we check _rooms_ as opposed to _roomsWithDoors_.

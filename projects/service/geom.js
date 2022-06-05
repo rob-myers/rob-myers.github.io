@@ -1,6 +1,6 @@
 import { Poly, Rect, Vect } from '../geom';
 
-class geomService {
+class geomServiceClass {
 
   /**
    * @param {Vect} p 
@@ -20,6 +20,49 @@ class geomService {
         return -p.x > -p.y ? [3, 0] : [0, 3]; // { 'w', 'n' }
       }
     }
+  }
+
+  /**
+   * See Separating Axis Theorem for convex polygons.
+   * https://github.com/davidfig/intersects/blob/9fba4c88dcf28998ced7df7c6e744646eac1917d/polygon-polygon.js#L10
+   * @param {Geom.VectJson[]} ps1 
+   * @param {Geom.VectJson[]} ps2 
+   */
+  convexPolysIntersect(ps1, ps2) {
+    const polygons = [ps1, ps2];
+    let minA, maxA, projected, minB, maxB, j;
+    for (let i = 0; i < polygons.length; i++) {
+      let polygon = polygons[i];
+      for (let i1 = 0; i1 < polygon.length; i1++) {
+        let i2 = (i1 + 1) % polygon.length;
+        let normal = { x: polygon[i2].y - polygon[i1].y, y: polygon[i1].x - polygon[i2].x };
+        minA = maxA = null
+        for (j = 0; j < ps1.length; j++) {
+          projected = normal.x * ps1[j].x + normal.y * ps1[j].y;
+          if (minA === null || projected < minA) {
+            minA = projected;
+          }
+          if (maxA === null || projected > maxA) {
+            maxA = projected;
+          }
+        }
+        minB = maxB = null;
+        for (j = 0; j < ps2.length; j++) {
+          projected = normal.x * ps2[j].x + normal.y * ps2[j].y;
+          if (minB === null || projected < minB) {
+            minB = projected;
+          }
+          if (maxB === null || projected > maxB) {
+            maxB = projected
+          }
+        }
+        // @ts-ignore
+        if (maxA < minB || maxB < minA) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 
   /**
@@ -387,6 +430,17 @@ class geomService {
   }
 
   /**
+   * @param {Geom.Rect} rect 
+   * @param {Geom.VectJson[]} points 
+   */
+  rectIntersectsConvexPoly(rect, points) {
+    return this.convexPolysIntersect(
+      rect.points,
+      points,
+    );
+  }
+
+  /**
    * @template {Geom.VectJson} T
    * @param {T[]} path
    * @returns {T[]}
@@ -416,7 +470,7 @@ class geomService {
 const tempVect = new Vect;
 const tempVect2 = new Vect;
 
-export const geom = new geomService;
+export const geom = new geomServiceClass;
 
 /**
  * Aligned to `Geom.Direction`.

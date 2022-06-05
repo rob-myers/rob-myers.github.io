@@ -477,16 +477,16 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
 
   /**
    * Attach `doorNodeIds` to navZone.
-   * A nav node is associated with at most one doorId i.e.
-   * when it intersects the respective door's line segment.
+   * A nav node is associated with at most one doorId,
+   * when it intersects the respective door.
    */
   const doorNodeIds = /** @type {number[][]} */ ([]);
   const tempTri = new Poly;
-  doors.forEach(({ seg: [u, v] }, doorId) => {
+  doors.forEach((door, doorId) => {
     doorNodeIds[doorId] = [];
     navNodes.forEach((node, nodeId) => {
       tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid]);
-      if (geom.lineSegIntersectsPolygon(u, v, tempTri)) {
+      if (geom.convexPolysIntersect(door.poly.outline, tempTri.outline)) {
         doorNodeIds[doorId].push(nodeId);
       }
     });
