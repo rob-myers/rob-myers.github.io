@@ -199,17 +199,12 @@ declare namespace NPC {
     paths: LocalNavPath[];
     edges: NPC.NavGmTransition[];
   }
+
   interface LocalNavPath {
     key: 'local-nav';
+    gmId: number;
     paths: Geom.Vect[][];
     edges: NPC.NavRoomTransition[];
-    
-    gmId: number;
-    dstDoorway: null | {
-      /** doorId of final nav node */
-      doorId: number;
-      roomId: number;
-    };
   }
 
   export interface FullApi {

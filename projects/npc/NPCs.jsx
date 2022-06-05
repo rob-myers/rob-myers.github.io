@@ -80,10 +80,9 @@ export default function NPCs(props) {
           gmId,
           paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
           edges: result.edges,
-          dstDoorway: result.dstDoorway,
         };
       } else {
-        return { key: 'local-nav', paths: [], edges: [], gmId, dstDoorway: null };
+        return { key: 'local-nav', paths: [], edges: [], gmId };
       }
     },
     getNpcGlobalNav(e) {

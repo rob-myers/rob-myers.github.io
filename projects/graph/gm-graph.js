@@ -59,23 +59,20 @@ export class gmGraphClass extends BaseGraph {
       });
 
       const gmEdge = globalNavPath.edges[i];
-      if (gmEdge) {
-        // Go back to door entry point (i.e. room exit)
+      if (gmEdge) {// Go back to door entry point (i.e. room exit)
         agg.push({ enterIndex: indexOffset - 1, ctxt: gmEdge });
       } else {// We're finished
-        if (localNavPath.dstDoorway) {// We'll end in a doorway
-          // console.log('WILL END IN DOORWAY')
-          const { roomId, doorId } = localNavPath.dstDoorway;
-          const doorRoomIds = /** @type {[number, number]} */ (this.gms[localNavPath.gmId].doors[doorId].roomIds);
-          agg.push({
-            enterIndex: indexOffset - 1,
-            ctxt: {// Technically we aren't going to dstRoomId, but still need to know it
-              srcGmId: localNavPath.gmId, srcDoorId: doorId, srcRoomId: roomId,
-              dstGmId: localNavPath.gmId, dstDoorId: doorId, dstRoomId: doorRoomIds[0] === roomId ? doorRoomIds[1] : doorRoomIds[0],
-            },
-          });
-        }
-
+        // if (localNavPath.dstDoorway) {// We'll end in a doorway
+        //   const { roomId, doorId } = localNavPath.dstDoorway;
+        //   const doorRoomIds = /** @type {[number, number]} */ (this.gms[localNavPath.gmId].doors[doorId].roomIds);
+        //   agg.push({
+        //     enterIndex: indexOffset - 1,
+        //     ctxt: {// Technically we aren't going to dstRoomId, but still need to know it
+        //       srcGmId: localNavPath.gmId, srcDoorId: doorId, srcRoomId: roomId,
+        //       dstGmId: localNavPath.gmId, dstDoorId: doorId, dstRoomId: doorRoomIds[0] === roomId ? doorRoomIds[1] : doorRoomIds[0],
+        //     },
+        //   });
+        // }
       }
       return agg;
     }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));

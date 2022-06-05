@@ -86,10 +86,14 @@ export class floorGraph extends BaseGraph {
       nodePath.push(closestNode);
     }
 
-    // One fewer than `nodePaths` ??
-    const roomEdges = /** @type {NPC.NavRoomTransition[]} */ ([]);
-    /** `nodePath` split by the room they reside in */
+    /**
+     * `nodePath` split by the room they reside in
+     * - First path may not reside in any room (initial doorway)
+     * - Final path may include part outside room (final doorway)
+     */
     const nodePaths = /** @type {Graph.FloorGraphNode[][]} */ ([]);
+    /** Currently always one fewer than nodePaths */
+    const roomEdges = /** @type {NPC.NavRoomTransition[]} */ ([]);
     /**
      * This is updated along `nodePath` whenever we see new valid roomId.
      * @type {{ doorId: number; roomId: number }}
@@ -104,7 +108,7 @@ export class floorGraph extends BaseGraph {
         // Node outside any room i.e. properly in a doorway
         // console.warn('nav node in no room', node, meta);
         nodePaths[nodePaths.length - 1].push(node);
-      } else if (meta.roomId === prevMeta?.roomId) {
+      } else if (meta.roomId === prevMeta.roomId) {
         // Node inside same room as previous node
         nodePaths[nodePaths.length - 1].push(node);
       } else {
@@ -152,16 +156,21 @@ export class floorGraph extends BaseGraph {
     });
 
     this.cleanStringPull(pulledPaths, roomEdges);
-    console.log({ pulledPaths, roomEdges }); // DEBUG 🚧
+    console.log({ pulledPaths, roomEdges }); // DEBUG
 
-    const finalNavMeta = nodePath.length ? this.nodeToMeta[nodePath[nodePath.length - 1].index] : null;
+    // const firstNavMeta = nodePath.length ? this.nodeToMeta[nodePath[0].index] : null;
+    // const finalNavMeta = nodePath.length ? this.nodeToMeta[nodePath[nodePath.length - 1].index] : null;
 
     return {
+      /**
+       * TODO cleaner approach i.e. alternating sequence 🚧
+       * - [pulledPath, roomEdge, pulledPath, ...] or
+       * - [roomEdge, pulledPath, roomEdge, ...]
+       * - 1st pulledPath or roomEdge can start from src
+       * - last pulledPath or roomEdge can end at dst
+       */
       paths: pulledPaths,
       edges: roomEdges,
-      dstDoorway: finalNavMeta && finalNavMeta.doorId >= 0
-        ? { doorId: finalNavMeta.doorId, roomId: finalNavMeta.roomId }
-        : null,
     };
   }
 
