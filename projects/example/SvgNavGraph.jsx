@@ -39,10 +39,16 @@ export default function SvgSvgNavGraph(props) {
           </g>
         )}
 
-        {pf.graph.nodesArray.map(({ vertexIds }) =>
+        {pf.graph.nodesArray.map(({ vertexIds }, nodeId) =>
           <polygon
-            className="navtri"
+            // className="navtri"
             points={`${vertexIds.map(id => pf.graph.vectors[id])}`}
+            stroke="#00000044"
+            strokeWidth={0.1}
+            fill={
+              pf.graph.nodeToMeta[nodeId].doorId >= 0
+                ? pf.graph.nodeToMeta[nodeId].roomId >= 0 ? '#ffff0066' : '#ff000066'
+                : pf.graph.nodeToMeta[nodeId].roomId >= 0 ? '#00ff0066' : 'none'}
           />
         )}
 
