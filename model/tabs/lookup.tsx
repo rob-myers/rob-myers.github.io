@@ -38,6 +38,8 @@ const component = {
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/SvgNavGraph#302': () => import('projects/example/SvgNavGraph')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-302--xboat-repair-bay' />),
+  'example/SvgNavGraph#101': () => import('projects/example/SvgNavGraph')
+    .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-101--multipurpose' />),
   'example/LightsTest': () => import('projects/example/LightsTest')
     .then(x => x.default),
   'example/NavDemo1': () => import('projects/example/NavDemo1')
