@@ -32,7 +32,9 @@ export class floorGraph extends BaseGraph {
     this.gm = gm;
     this.vectors = gm.navZone.vertices.map(Vect.from);
 
-    // Compute `this.nodeToMeta`
+    /**
+     * Compute `this.nodeToMeta` via `gm.navZone.{doorNodeIds,roomNodeIds}`.
+     */
     const preNavNodes = gm.navZone.groups[0];
     this.nodeToMeta = preNavNodes.map((_) => ({ doorId: -1, roomId: -1 }));
     gm.navZone.doorNodeIds.forEach((nodeIds, doorId) => {
@@ -74,16 +76,16 @@ export class floorGraph extends BaseGraph {
    * @param {Geom.VectJson} dst in geomorph local coords
    */
   findPath(src, dst) {
-    const closestNode = this.getClosestNode(src);
-    const farthestNode = this.getClosestNode(dst);
-    if (!closestNode || !farthestNode) {
+    const srcNode = this.getClosestNode(src);
+    const dstNode = this.getClosestNode(dst);
+    if (!srcNode || !dstNode) {
       return null;
     }
 
-    const nodePath = AStar.search(this, closestNode, farthestNode);
-    if (nodePath.length === 0 && closestNode === farthestNode) {
-      // Ensure a non-empty nodePath when src and dst in same triangle
-      nodePath.push(closestNode);
+    const nodePath = AStar.search(this, srcNode, dstNode);
+    if (nodePath.length === 0 && srcNode === dstNode) {
+      // Ensure non-empty nodePath if src, dst in same triangle
+      nodePath.push(srcNode);
     }
 
     /**
@@ -134,11 +136,11 @@ export class floorGraph extends BaseGraph {
       const pathSrc = pathId === 0 ? src : roomEdges[pathId - 1].exit;
       const pathDst = pathId === nodePaths.length - 1 ? dst : roomEdges[pathId].entry;
 
-      let roomId = pathId === 0 ? this.nodeToMeta[closestNode.index].roomId : roomEdges[pathId - 1].dstRoomId;
+      let roomId = pathId === 0 ? this.nodeToMeta[srcNode.index].roomId : roomEdges[pathId - 1].dstRoomId;
       if (roomId === -1) {
         // NOTE hull doors handled in useGeomorphData, but src/dst could be in a doorway
         roomId = this.gm.roomsWithDoors.findIndex(x => x.outlineContains(pathSrc));
-        warn(`floorGraph ${this.gm.key}: navNode ${closestNode.index} lacks associated roomId (using ${roomId})`);
+        warn(`floorGraph ${this.gm.key}: navNode ${srcNode.index} lacks associated roomId (using ${roomId})`);
       }
 
       // Can we simply walk straight through room `roomId`?

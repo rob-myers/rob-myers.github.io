@@ -475,7 +475,11 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
   // If invoked browser-side, no triangulation hence no navNodes
   const navNodes = navZone.groups[0] || [];
 
-  // Attach `doorNodeIds` to navZone
+  /**
+   * Attach `doorNodeIds` to navZone.
+   * A nav node is associated with at most one doorId i.e.
+   * when it intersects the respective door's line segment.
+   */
   const doorNodeIds = /** @type {number[][]} */ ([]);
   const tempTri = new Poly;
   doors.forEach(({ seg: [u, v] }, doorId) => {
@@ -488,7 +492,14 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
     });
   });
 
-  // Attach `roomNodeIds` to navZone
+  /**
+   * Attach `roomNodeIds` to navZone.
+   * A nav node is associated with at most one roomId i.e.
+   * - when ≥ 2 of its vertices lie inside the room.
+   * - this includes doorway tris with an edge bordering the room.
+   *
+   * We rely on the latter when finding paths in the floorGraph.
+   */
   const roomNodeIds = /** @type {number[][]} */ ([]);
   rooms.forEach((poly, roomId) => {
     roomNodeIds[roomId] = [];

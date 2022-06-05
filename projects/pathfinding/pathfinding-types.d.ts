@@ -51,7 +51,8 @@ declare namespace Nav {
      * Aligned to `Geomorph.Layout['rooms']`.
      * In particular, `roomNodeIds[roomId]` includes all
      * nodeIds inside outline of room `rooms[roomId]`.
-     * We check _rooms_ as opposed to _roomsWithDoors_.
+     * - _inside_ means ≥ 2 vertices of triangle lie in room.
+     * - we check _rooms_ as opposed to _roomsWithDoors_.
      */
     roomNodeIds: number[][];
   }

@@ -40,9 +40,14 @@ __Aim towards website release__.
 - 🚧 LocalNavPath can start/end inside a doorway
   - ✅ door entry/exit just outside doorway
   - ✅ ensure pulled path 2nd/penultimate not inside doorway by removing points
-  - ✅ if player ends in a doorway, lights should switch
+  - ✅ `nodeToMeta` doorId and roomId are clearly understood
+    - _nav node has doorId_ iff tri intersects door line seg
+      i.e. should never be totally inside a room (could border)
+    - _nav node has roomId_ iff tri has ≥ 2 points in room
+      i.e. could be totally in room, or in doorway with 1 edge in room.
+  - 🚧 if player ends in a doorway, lights should switch
       - `enter-door` must be triggered
-  - 🚧 if player started in a doorway, lights should switch
+  - 🚧 if player starts in a doorway and enter either room, lights should switch
 
   - e.g. `[navEdge, path, navEdge]`
   - edges need custom start/endpoints
