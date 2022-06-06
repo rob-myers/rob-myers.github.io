@@ -6,11 +6,12 @@ import * as defaults from "./defaults";
 import { Rect, Vect } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
-import PanZoom from "../panzoom/PanZoom";
-import DraggableNode from "./DraggableNode";
+import { flattenLocalNavPath } from "../service/npc";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
 import useStateRef from "../hooks/use-state-ref";
+import PanZoom from "../panzoom/PanZoom";
+import DraggableNode from "./DraggableNode";
 
 /** @param {{ disabled?: boolean }} props */
 export default function SvgStringPull(props) {
@@ -31,9 +32,8 @@ export default function SvgStringPull(props) {
 
     updatePath: () => {
       if (pf) {
-        state.path = [state.source.clone()].concat(
-          pf.graph.findPath(state.source, state.target)?.paths.flatMap(x => x) || []
-        );
+        const result = pf.graph.findPath(state.source, state.target);
+        state.path = result ? flattenLocalNavPath(result) : [state.source];
         state.pathEl = state.pathEl || state.rootEl.querySelector('polyline.navpath');
         state.pathEl?.setAttribute('points', `${state.path}`);
       }

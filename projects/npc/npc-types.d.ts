@@ -195,9 +195,9 @@ declare namespace NPC {
     /** `null` iff ended path in doorway */
     dstRoomId: number | null;
     /** Could be doorway entry point or src */
-    start: Geom.VectJson;
+    start: Geom.Vect;
     /** Could be doorway entry point or dst */
-    stop: Geom.VectJson;
+    stop: Geom.Vect;
   }
 
   interface GlobalNavPath {

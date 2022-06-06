@@ -78,8 +78,8 @@ export class floorGraphClass extends BaseGraph {
 
   /**
    * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
-   * @param {Geom.VectJson} src in geomorph local coords
-   * @param {Geom.VectJson} dst in geomorph local coords
+   * @param {Geom.Vect} src in geomorph local coords
+   * @param {Geom.Vect} dst in geomorph local coords
    * @returns {null | Pick<NPC.LocalNavPath, 'paths' | 'edges' | 'seq'>}
    */
   findPath(src, dst) {

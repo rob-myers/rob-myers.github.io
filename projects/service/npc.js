@@ -170,6 +170,14 @@ export function isLocalNavPath(input) {
     || false;
 }
 
+/** @param {Pick<NPC.LocalNavPath, 'seq'>} localNavPath */
+export function flattenLocalNavPath(localNavPath) {
+  const lastIndex = localNavPath.seq.length - 1;
+  return localNavPath.seq.flatMap((x, i) =>
+    Array.isArray(x) ? x : i === 0 ? x.start : i === lastIndex ? x.stop : []
+  );
+}
+
 /** @param {any} input */
 export function isGlobalNavPath(input) {
   let x = /** @type {Partial<NPC.GlobalNavPath>} */ (input);
