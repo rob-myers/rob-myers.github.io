@@ -167,9 +167,8 @@ export class floorGraphClass extends BaseGraph {
       const metas = extantLast(nodePaths).map(x => this.nodeToMeta[x.index]);
       const { roomId: srcRoomId } = assertDefined(metas.find(meta => meta.doorId === finalDoorId && meta.roomId >= 0));
       const start = assertNonNull(door.entries[door.roomIds.findIndex(x => x === srcRoomId)]);
-      prePostEdges[1] = { key: 'room-edge', doorId: initDoorId, srcRoomId, dstRoomId: null, start, stop: dst };
+      prePostEdges[1] = { key: 'room-edge', doorId: finalDoorId, srcRoomId, dstRoomId: null, start, stop: dst };
     }
-
 
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
 
@@ -216,7 +215,7 @@ export class floorGraphClass extends BaseGraph {
     });
     prePostEdges[1] && seq.push(prePostEdges[1]);
 
-    console.log({ pulledPaths, roomEdges }); // DEBUG
+    console.log({ seq, pulledPaths, roomEdges }); // DEBUG
     this.cleanStringPull(seq);
 
     return {
