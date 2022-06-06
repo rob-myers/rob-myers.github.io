@@ -16,5 +16,5 @@ export function info(...args) {
  * @param  {...string} args 
  */
 export function warn(...args) {
-  console.log(`WARN`, chalk.blueBright(...args));
+  console.warn(chalk.blueBright(...args));
 }

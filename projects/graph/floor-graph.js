@@ -3,14 +3,14 @@ import { BaseGraph } from "./graph";
 import { Utils } from "../pathfinding/Utils";
 import { AStar } from "../pathfinding/AStar";
 import { Channel } from "../pathfinding/Channel";
-import { extantLast } from "../service/generic";
+import { assertDefined, assertNonNull, extantLast } from "../service/generic";
 import { warn } from "../service/log";
 import { geom } from "../service/geom";
 
 /**
  * @extends {BaseGraph<Graph.FloorGraphNode, Graph.FloorGraphEdgeOpts>}
  */
-export class floorGraph extends BaseGraph {
+export class floorGraphClass extends BaseGraph {
 
   /** @type {Geomorph.GeomorphData} */
   gm;
@@ -45,27 +45,34 @@ export class floorGraph extends BaseGraph {
   }
 
   /**
-   * Mutates `pulledPaths`
-   * @param {Geom.Vect[][]} pulledPaths 
-   * @param {NPC.NavRoomTransition[]} roomEdges
+   * Mutates the alternating sequence `seq`.
+   * @param {NPC.LocalNavPath['seq']} seq 
    */
-  cleanStringPull(pulledPaths, roomEdges) {
-    for (const [pathId, path] of pulledPaths.entries()) {
-      // Ensure 2nd point not inside doorway
-      let roomEdge = roomEdges[pathId - 1];
+  cleanStringPull(seq) {
+    for (const entry of seq.entries()) {
+      if (!Array.isArray(entry[1])) {
+        continue;
+      } else if (entry[1].length <= 1) {
+        warn(`cleanStringPull: short pulledPath ${JSON.stringify(entry[1])}`);
+        continue;
+      }
+      const [itemId, path] = entry;
+
+      // If just traversed an edge, ensure 2nd point not inside doorway
+      let roomEdge = /** @type {NPC.NavRoomTransition | undefined} */ (seq[itemId - 1]);
       if (roomEdge) {
         const door = this.gm.doors[roomEdge.doorId];
         if (door.rect.contains(path[1])) path.splice(1, 1);
       }
-      // Ensure penultimate point not inside doorway
-      roomEdge = roomEdges[pathId];
-      if (roomEdge && path.length >= 2) {
+      // If will traverse an edge, ensure penultimate point not inside doorway
+      roomEdge = /** @type {NPC.NavRoomTransition | undefined} */ (seq[itemId + 1]);
+      if (roomEdge) {
         const door = this.gm.doors[roomEdge.doorId];
         if (door.rect.contains(path[path.length - 2])) path.splice(path.length - 2, 1);
       }
 
       // Avoid duplicate adjacent vertices (they can happen)
-      pulledPaths[pathId] = geom.removePathReps(path);
+      seq[itemId] = geom.removePathReps(path);
     }
   }
 
@@ -73,6 +80,7 @@ export class floorGraph extends BaseGraph {
    * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
    * @param {Geom.VectJson} src in geomorph local coords
    * @param {Geom.VectJson} dst in geomorph local coords
+   * @returns {null | Pick<NPC.LocalNavPath, 'paths' | 'edges' | 'seq'>}
    */
   findPath(src, dst) {
     const srcNode = this.getClosestNode(src);
@@ -120,46 +128,69 @@ export class floorGraph extends BaseGraph {
         const newDoor = this.gm.doors[meta.doorId];
         const points = /** @type {[Geom.Vect, Geom.Vect]} */ (newDoor.entries);
         roomEdges.push({
+          key: 'room-edge',
           doorId: meta.doorId,
           srcRoomId: prevMeta.roomId,
-          dstRoomId: meta.roomId,
-          // TODO what if `src` was in doorway?
-          entry: newDoor.roomIds[0] === prevMeta.roomId ? points[0] : points[1],
-          exit: newDoor.roomIds[0] === meta.roomId ? points[0] : points[1],
+          dstRoomId: meta.roomId, // We know meta.roomId ≥ 0
+          start: newDoor.roomIds[0] === prevMeta.roomId ? points[0] : points[1],
+          stop: newDoor.roomIds[0] === meta.roomId ? points[0] : points[1],
         });
         prevMeta = meta;
       }
     });
 
-    /**
-     * - TODO if start in door
-     *   - 1st pulled path src should be door exit
-     *   - should start alternating sequence with roomEdge
-     *   - may need to discard initial door path (unless start/end same door)
-     * - TODO if end in door
-     *   - last pulled path dst should be door entry
-     *   - should end alternating sequence with roomEdge
-     */
-    const initDoorId = this.nodeToMeta[nodePaths[0][0].index].doorId
-    const finalDoorId = this.nodeToMeta[extantLast(extantLast(nodePaths)).index].doorId
-    if (initDoorId >= 0 && this.gm.doors[initDoorId].poly.contains(src)) {
-      // NOTE currently not detected because path dst is being moved outside door
-      console.log('WILL START IN DOORWAY', initDoorId);
+    /** @type {[null | NPC.NavRoomTransition, null | NPC.NavRoomTransition]} */
+    let prePostEdges = [null, null];
+
+    const initDoorId = this.nodeToMeta[nodePaths[0][0].index].doorId;
+    const finalDoorId = this.nodeToMeta[extantLast(extantLast(nodePaths)).index].doorId;
+    const startInDoorway = initDoorId >= 0 && this.gm.doors[initDoorId].poly.contains(src);
+    const stopInDoorway = finalDoorId >= 0 && this.gm.doors[finalDoorId].poly.contains(dst);
+
+    if (startInDoorway && stopInDoorway && initDoorId === finalDoorId) {
+      console.log('WILL START/END IN SAME DOORWAY', initDoorId);
+      return { paths: [], edges: [], seq: [{ key: 'room-edge', doorId: initDoorId, srcRoomId: null, dstRoomId: null, start: src, stop: dst }] };
     }
-    if (finalDoorId >= 0 && this.gm.doors[finalDoorId].poly.contains(dst)) {
-      console.log('WILL END IN DOORWAY', finalDoorId);
+    if (startInDoorway) {
+      console.log('WILL START IN DOORWAY', initDoorId);
+      const door = this.gm.doors[initDoorId];
+      // Either 1st or 2nd sub-nodePath should match initDoorId and have valid roomId
+      const metas = nodePaths.slice(0, 2).flatMap(x => x).map(x => this.nodeToMeta[x.index]);
+      const { roomId: dstRoomId } = assertDefined(metas.find(meta => meta.doorId === initDoorId && meta.roomId >= 0));
+      const stop = assertNonNull(door.entries[door.roomIds.findIndex(x => x === dstRoomId)]);
+      prePostEdges[0] = { key: 'room-edge', doorId: initDoorId, srcRoomId: null, dstRoomId, start: src, stop };
+    }
+    if (stopInDoorway) {
+      console.log('WILL STOP IN DOORWAY', finalDoorId);
+      const door = this.gm.doors[finalDoorId];
+      // Final sub-nodePath should match finalDoorId and have valid roomId
+      const metas = extantLast(nodePaths).map(x => this.nodeToMeta[x.index]);
+      const { roomId: srcRoomId } = assertDefined(metas.find(meta => meta.doorId === finalDoorId && meta.roomId >= 0));
+      const start = assertNonNull(door.entries[door.roomIds.findIndex(x => x === srcRoomId)]);
+      prePostEdges[1] = { key: 'room-edge', doorId: initDoorId, srcRoomId, dstRoomId: null, start, stop: dst };
     }
 
 
     const pulledPaths = nodePaths.map((nodePath, pathId) => {
-      const pathSrc = pathId === 0 ? src : roomEdges[pathId - 1].exit;
-      const pathDst = pathId === nodePaths.length - 1 ? dst : roomEdges[pathId].entry;
 
-      let roomId = pathId === 0 ? this.nodeToMeta[srcNode.index].roomId : roomEdges[pathId - 1].dstRoomId;
+      const pathSrc = pathId === 0
+        // 1st path might be preceded by a roomEdge
+        ? prePostEdges[0] ? prePostEdges[0].stop : src
+        : roomEdges[pathId - 1].stop;
+        
+      const pathDst = pathId === nodePaths.length - 1
+        // Final path might be proceeded by a roomEdge
+        ? prePostEdges[1] ? prePostEdges[1].start : dst
+        : roomEdges[pathId].start;
+
+      let roomId = pathId === 0 // See above for casts
+        ? prePostEdges[0] ? /** @type {number} */ (prePostEdges[0].dstRoomId) : this.nodeToMeta[srcNode.index].roomId 
+        : /** @type {number} */ (roomEdges[pathId - 1].dstRoomId);
+
       if (roomId === -1) {
         // NOTE hull doors handled in useGeomorphData, but src/dst could be in a doorway
         roomId = this.gm.roomsWithDoors.findIndex(x => x.outlineContains(pathSrc));
-        warn(`floorGraph ${this.gm.key}: navNode ${srcNode.index} lacks associated roomId (using ${roomId})`);
+        warn(`floorGraphClass ${this.gm.key}: navNode ${srcNode.index} lacks associated roomId (using ${roomId})`);
       }
 
       // Can we simply walk straight through room `roomId`?
@@ -176,22 +207,22 @@ export class floorGraph extends BaseGraph {
 
     });
 
-    this.cleanStringPull(pulledPaths, roomEdges);
-    console.log({ pulledPaths, roomEdges }); // DEBUG
+    // Construct the alternating sequence
+    const seq = /** @type {NPC.LocalNavPath['seq']} */ ([]);
+    prePostEdges[0] && seq.push(prePostEdges[0]);
+    pulledPaths.forEach((path, i) => {
+      seq.push(path);
+      roomEdges[i] && seq.push(roomEdges[i]);
+    });
+    prePostEdges[1] && seq.push(prePostEdges[1]);
 
-    // const firstNavMeta = nodePath.length ? this.nodeToMeta[nodePath[0].index] : null;
-    // const finalNavMeta = nodePath.length ? this.nodeToMeta[nodePath[nodePath.length - 1].index] : null;
+    console.log({ pulledPaths, roomEdges }); // DEBUG
+    this.cleanStringPull(seq);
 
     return {
-      /**
-       * TODO cleaner approach i.e. alternating sequence 🚧
-       * - [pulledPath, roomEdge, pulledPath, ...] or
-       * - [roomEdge, pulledPath, roomEdge, ...]
-       * - 1st pulledPath or roomEdge can start from src
-       * - last pulledPath or roomEdge can end at dst
-       */
-      paths: pulledPaths,
-      edges: roomEdges,
+      paths: pulledPaths, // TODO remove
+      edges: roomEdges, // TODO remove
+      seq,
     };
   }
 
@@ -276,7 +307,7 @@ export class floorGraph extends BaseGraph {
     const zone = gm.navZone;
 
     const { groups: [navNodes], vertices } = zone;
-    const graph = new floorGraph(gm);
+    const graph = new floorGraphClass(gm);
 
     for (const [nodeId, node] of Object.entries(navNodes)) {
       graph.registerNode({

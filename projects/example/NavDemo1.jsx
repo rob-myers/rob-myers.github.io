@@ -116,10 +116,13 @@ export default function NavDemo1(props) {
             console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
           }
         } else if (e.key === 'exited-room') {
-          if (e.npcKey === state.playerNpcKey) {
+          if (e.npcKey === state.playerNpcKey && e.ctxt.dstRoomId !== null) {
             state.gmId = e.ctxt.dstGmId;
             state.roomId = e.ctxt.dstRoomId;
             state.update();
+          }
+          if (e.ctxt.dstRoomId === null) {
+            console.warn(`exited-room with null dstRoomId`)
           }
         }
       });
@@ -159,7 +162,7 @@ export default function NavDemo1(props) {
         <Debug
           // outlines
           // windows
-          localNav
+          // localNav
           // roomOutlines
           showIds
           gms={gms}

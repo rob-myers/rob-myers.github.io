@@ -77,12 +77,23 @@ export default function NPCs(props) {
       if (result) {
         return {
           key: 'local-nav',
-          gmId,
+          // OLD
           paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
           edges: result.edges,
+          // NEW
+          gmId,
+          seq: result.seq.map(x => 
+            Array.isArray(x)
+              ? x.map(p => gm.matrix.transformPoint(p).precision(2))
+              : {
+                  ...x,
+                  start: gm.matrix.transformPoint(Vect.from(x.start)).precision(2),
+                  stop: gm.matrix.transformPoint(Vect.from(x.stop)).precision(2),
+                }
+          )
         };
       } else {
-        return { key: 'local-nav', paths: [], edges: [], gmId };
+        return { key: 'local-nav', paths: [], edges: [], gmId, seq: [] };
       }
     },
     getNpcGlobalNav(e) {

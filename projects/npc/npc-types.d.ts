@@ -110,7 +110,8 @@ declare namespace NPC {
   interface TraverseDoorCtxt {
     srcGmId: number;
     srcDoorId: number;
-    srcRoomId: number;
+    /** `null` iff start in doorway */
+    srcRoomId: number | null;
     /** Distinct from `srcGmId` iff hull door. */
     dstGmId: number;
     /**
@@ -119,7 +120,8 @@ declare namespace NPC {
      * geomorphs may have same doorId for connected doors.
      */
     dstDoorId: number;
-    dstRoomId: number;
+    /** `null` iff end in doorway */
+    dstRoomId: number | null;
   }
 
   export interface NPCDef {
@@ -185,13 +187,17 @@ declare namespace NPC {
   }
 
   export interface NavRoomTransition {
+    key: 'room-edge';
     doorId: number;
-    srcRoomId: number;
-    dstRoomId: number;
-    /** TODO clarify meaning */
-    entry: Geom.Vect;
-    /** TODO clarify meaning */
-    exit: Geom.Vect;
+
+    /** `null` iff started path in doorway */
+    srcRoomId: number | null;
+    /** `null` iff ended path in doorway */
+    dstRoomId: number | null;
+    /** Could be doorway entry point or src */
+    start: Geom.VectJson;
+    /** Could be doorway entry point or dst */
+    stop: Geom.VectJson;
   }
 
   interface GlobalNavPath {
@@ -205,6 +211,8 @@ declare namespace NPC {
     gmId: number;
     paths: Geom.Vect[][];
     edges: NPC.NavRoomTransition[];
+    /** Alternating sequence of edges and vector paths */
+    seq: (Geom.Vect[] | NPC.NavRoomTransition)[]
   }
 
   export interface FullApi {
