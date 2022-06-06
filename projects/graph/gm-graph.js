@@ -38,41 +38,34 @@ export class gmGraphClass extends BaseGraph {
 
   /** @param {NPC.GlobalNavPath} globalNavPath */
   computeDoorMetas(globalNavPath) {
+    /**
+     * TODO globalNavPath as alternating path
+     */
     return globalNavPath.paths.reduce((agg, localNavPath, i) => {
       // Start from 0 or just after hull door entry i.e. hull door exit
       let indexOffset = i === 0 ? 0 : agg[agg.length - 1].enterIndex + 1;
 
-      localNavPath.paths.forEach((path, j) => {
-        const roomEdge = localNavPath.edges[j];
-        // When go through hull door, srcRoomId === dstRoomId by construction
-        if (roomEdge && (roomEdge.srcRoomId !== roomEdge.dstRoomId)) {
-          agg.push({
-            enterIndex: indexOffset + (path.length - 1),
-            ctxt: {
-              srcGmId: localNavPath.gmId, srcDoorId: roomEdge.doorId, srcRoomId: roomEdge.srcRoomId,
-              dstGmId: localNavPath.gmId, dstDoorId: roomEdge.doorId, dstRoomId: roomEdge.dstRoomId,
-            },
-          });
+      localNavPath.seq.forEach((item, j) => {
+        if (Array.isArray(item)) {
+          indexOffset += (item.length - 1); // Go to end of path
+        } else {
+          // Going through hull door iff srcRoomId === dstRoomId non-null
+          if (item.dstRoomId !== null && (item.srcRoomId !== item.dstRoomId)) {
+            agg.push({
+              enterIndex: indexOffset,
+              ctxt: {
+                srcGmId: localNavPath.gmId, srcDoorId: item.doorId, srcRoomId: item.srcRoomId,
+                dstGmId: localNavPath.gmId, dstDoorId: item.doorId, dstRoomId: item.dstRoomId,
+              },
+            });
+          }
+          indexOffset++; // Go to door exit
         }
-        // +1 beyond path is room entry point (i.e. door exit)
-        indexOffset += (path.length - 1) + 1;
       });
 
       const gmEdge = globalNavPath.edges[i];
       if (gmEdge) {// Go back to door entry point (i.e. room exit)
         agg.push({ enterIndex: indexOffset - 1, ctxt: gmEdge });
-      } else {// We're finished
-        // if (localNavPath.dstDoorway) {// We'll end in a doorway
-        //   const { roomId, doorId } = localNavPath.dstDoorway;
-        //   const doorRoomIds = /** @type {[number, number]} */ (this.gms[localNavPath.gmId].doors[doorId].roomIds);
-        //   agg.push({
-        //     enterIndex: indexOffset - 1,
-        //     ctxt: {// Technically we aren't going to dstRoomId, but still need to know it
-        //       srcGmId: localNavPath.gmId, srcDoorId: doorId, srcRoomId: roomId,
-        //       dstGmId: localNavPath.gmId, dstDoorId: doorId, dstRoomId: doorRoomIds[0] === roomId ? doorRoomIds[1] : doorRoomIds[0],
-        //     },
-        //   });
-        // }
       }
       return agg;
     }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
