@@ -6,7 +6,7 @@ import { filter, first, map, take } from "rxjs/operators";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { Poly, Rect, Vect } from "../geom";
-import { animScaleFactor, isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
+import { animScaleFactor, flattenLocalNavPath, isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
 import createNpc from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -77,10 +77,6 @@ export default function NPCs(props) {
       if (result) {
         return {
           key: 'local-nav',
-          // OLD
-          paths: result.paths.map(path => path.map(p => gm.matrix.transformPoint(p).precision(2))),
-          edges: result.edges,
-          // NEW
           gmId,
           seq: result.seq.map(x => 
             Array.isArray(x)
@@ -110,7 +106,7 @@ export default function NPCs(props) {
       }
       const result = state.getGlobalNavPath(npc.getPosition(), e.point);
       if (e.debug) {
-        const points = (result?.paths??[]).reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
+        const points = (result?.paths??[]).reduce((agg, item) => agg.concat(...flattenLocalNavPath(item)), /** @type {Geom.Vect[]} */ ([]));
         state.toggleDebugPath({ pathKey: e.npcKey, points })
       }
       return result;
@@ -278,13 +274,13 @@ export default function NPCs(props) {
 
           // Walk along a global navpath
           const globalNavPath = e;
-          const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...item.paths), /** @type {Geom.Vect[]} */ ([]));
+          const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...flattenLocalNavPath(item)), /** @type {Geom.Vect[]} */ ([]));
           const doorMetas = props.gmGraph.computeDoorMetas(globalNavPath);
           // Below finishes by setting spriteSheet idle
           await npc.followNavPath(allPoints, { doorMetas });
 
         } else if (e.key === 'local-nav') {
-          for (const [i, vectPath] of e.paths.entries()) {
+          for (const [i, vectPath] of e.seq.entries()) {
             // TODO
           }
         }

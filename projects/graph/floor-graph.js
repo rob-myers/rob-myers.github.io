@@ -80,7 +80,7 @@ export class floorGraphClass extends BaseGraph {
    * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
    * @param {Geom.Vect} src in geomorph local coords
    * @param {Geom.Vect} dst in geomorph local coords
-   * @returns {null | Pick<NPC.LocalNavPath, 'paths' | 'edges' | 'seq'>}
+   * @returns {null | Pick<NPC.LocalNavPath, 'seq'>}
    */
   findPath(src, dst) {
     const srcNode = this.getClosestNode(src);
@@ -149,7 +149,7 @@ export class floorGraphClass extends BaseGraph {
 
     if (startInDoorway && stopInDoorway && initDoorId === finalDoorId) {
       console.log('WILL START/END IN SAME DOORWAY', initDoorId);
-      return { paths: [], edges: [], seq: [{ key: 'room-edge', doorId: initDoorId, srcRoomId: null, dstRoomId: null, start: src, stop: dst }] };
+      return { seq: [{ key: 'room-edge', doorId: initDoorId, srcRoomId: null, dstRoomId: null, start: src, stop: dst }] };
     }
     if (startInDoorway) {
       console.log('WILL START IN DOORWAY', initDoorId);
@@ -219,8 +219,6 @@ export class floorGraphClass extends BaseGraph {
     this.cleanStringPull(seq);
 
     return {
-      paths: pulledPaths, // TODO remove
-      edges: roomEdges, // TODO remove
       seq,
     };
   }

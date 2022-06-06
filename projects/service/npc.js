@@ -165,8 +165,7 @@ export const animScaleFactor = 15;
 export function isLocalNavPath(input) {
   let x = /** @type {Partial<NPC.LocalNavPath>} */ (input);
   return x?.key === 'local-nav'
-    && x.paths?.every?.(path => path?.every?.(Vect.isVectJson))
-    && x.edges?.every?.(edge => edge) // Could check props here too
+    && x.seq?.every?.(x => (Array.isArray(x) && x?.every?.(Vect.isVectJson)) || 'key' in x && x.key === 'room-edge' )
     || false;
 }
 

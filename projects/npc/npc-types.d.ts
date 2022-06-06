@@ -209,8 +209,6 @@ declare namespace NPC {
   interface LocalNavPath {
     key: 'local-nav';
     gmId: number;
-    paths: Geom.Vect[][];
-    edges: NPC.NavRoomTransition[];
     /** Alternating sequence of edges and vector paths */
     seq: (Geom.Vect[] | NPC.NavRoomTransition)[]
   }
