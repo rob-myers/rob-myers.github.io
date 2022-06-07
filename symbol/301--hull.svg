@@ -82,32 +82,11 @@
     <rect x="60" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
       <title>spawn</title>
     </rect>
-    <rect x="180" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="300" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="300" y="410" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="300" y="530" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="1020" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
     <rect x="1140" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
       <title>spawn</title>
     </rect>
-    <rect x="900" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="900" y="410" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
-    </rect>
-    <rect x="900" y="530" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
-      <title>spawn</title>
+    <rect x="710.689" y="321.134" width="70" height="10" style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.5;">
+      <title>light</title>
     </rect>
   </g>
 </svg>

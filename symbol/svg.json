@@ -699,68 +699,26 @@
         "tags": ["spawn"],
         "poly": {
           "type": "Polygon",
-          "coordinates": [[[180, 290], [180, 300], [190, 300], [190, 290]]]
-        }
-      },
-      {
-        "tags": ["spawn"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [[[300, 290], [300, 300], [310, 300], [310, 290]]]
-        }
-      },
-      {
-        "tags": ["spawn"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [[[300, 410], [300, 420], [310, 420], [310, 410]]]
-        }
-      },
-      {
-        "tags": ["spawn"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [[[300, 530], [300, 540], [310, 540], [310, 530]]]
-        }
-      },
-      {
-        "tags": ["spawn"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [[[1020, 290], [1020, 300], [1030, 300], [1030, 290]]]
-        }
-      },
-      {
-        "tags": ["spawn"],
-        "poly": {
-          "type": "Polygon",
           "coordinates": [[[1140, 290], [1140, 300], [1150, 300], [1150, 290]]]
         }
       },
       {
-        "tags": ["spawn"],
+        "tags": ["light"],
         "poly": {
           "type": "Polygon",
-          "coordinates": [[[900, 290], [900, 300], [910, 300], [910, 290]]]
-        }
-      },
-      {
-        "tags": ["spawn"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [[[900, 410], [900, 420], [910, 420], [910, 410]]]
-        }
-      },
-      {
-        "tags": ["spawn"],
-        "poly": {
-          "type": "Polygon",
-          "coordinates": [[[900, 530], [900, 540], [910, 540], [910, 530]]]
+          "coordinates": [
+            [
+              [710.689, 321.134],
+              [710.689, 331.134],
+              [780.689, 331.134],
+              [780.689, 321.134]
+            ]
+          ]
         }
       }
     ],
     "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628},
-    "lastModified": 1650902703924.6309
+    "lastModified": 1654258691295.7012
   },
   "302--hull": {
     "key": "302--hull",
