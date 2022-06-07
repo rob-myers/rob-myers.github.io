@@ -155,8 +155,9 @@ export class floorGraphClass extends BaseGraph {
       // Discard 1-paths obtained by crossing into room in doorway
       nodePaths.pop();
       roomEdges.pop();
-    } else if (nodePaths.length >= 2 && nodePaths[0].length === 1) {
-      // Discard 1-paths obtained by starting in a doorway (e.g. via global nav)
+    } else if (nodePaths.length >= 2 && nodePaths[0].length === 1 && roomEdges[0].start === null) {
+      // TODO clarify
+      // Discard 1-paths obtained by starting in a doorway via global nav
       nodePaths.shift();
       roomEdges.shift();
     }
