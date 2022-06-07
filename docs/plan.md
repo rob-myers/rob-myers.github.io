@@ -37,7 +37,7 @@ __Aim towards website release__.
     - ✅ Fix speed of path traversal
     - 🚧 Debug + Clean
 
-- 🚧 LocalNavPath can start/end inside a doorway
+- ✅ LocalNavPath can start/end inside a doorway
   - ✅ door entry/exit just outside doorway
   - ✅ ensure pulled path 2nd/penultimate not inside doorway by removing points
   - ✅ `nodeToMeta` doorId and roomId are clearly understood
@@ -46,12 +46,13 @@ __Aim towards website release__.
       i.e. could be totally in room, or in doorway with 1 edge in room.
     - cannot expect nav node with doorId to _always_ have a roomId,
       due to particular triangulation
-  - 🚧 LocalNavPath has alternating node/edge paths
-  - 🚧 if player ends in a doorway, lights should switch
-  - 🚧 if player starts in a doorway and enter either room, lights should switch
+  - ✅ LocalNavPath has alternating node/edge paths
+  - ✅ discard 1-path when end in doorway and room changes across door nodes
+  - ✅ if start navnode with doorId not inside door, light should trigger
+  - ✅ if player ends in a doorway, lights shouldn't switch,
+       because have not entered another room
+  - ✅ if player starts in a doorway and enter new room, light should switch
 
-  - e.g. `[navEdge, path, navEdge]`
-  - edges need custom start/endpoints
 - 🚧 GlobalNavPath can start/end inside a hull doorway
   - e.g. `[navEdge, localNavPath, navEdge]`
   - edges need custom start/endpoints
