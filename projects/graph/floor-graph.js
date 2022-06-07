@@ -109,8 +109,11 @@ export class floorGraphClass extends BaseGraph {
     }
 
     const nodePath = AStar.search(this, srcNode, dstNode);
-    if (nodePath.length <= 1) {// Degenerate
-      return { seq: [[src, dst]] };
+    if (nodePath[0] !== srcNode) {
+      // Fixes various issues, including:
+      // - nodePath empty and src/dst same triangle
+      // - nodePaths construction
+      nodePath.unshift(srcNode);
     }
 
     /**
