@@ -152,9 +152,8 @@ export class floorGraphClass extends BaseGraph {
     });
 
     if (nodePaths.length >= 2 && extantLast(nodePaths).length === 1) {
-      // Discard 1-paths obtained by crossing into room in doorway
-      nodePaths.pop();
-      roomEdges.pop();
+      // Merge 1-paths obtained by finishing in doorway in next room
+      nodePaths[nodePaths.length - 2].concat(nodePaths.pop() || []);
     } else if (nodePaths.length >= 2 && nodePaths[0].length === 1 && roomEdges[0].start === null) {
       // TODO clarify
       // Discard 1-paths obtained by starting in a doorway via global nav
