@@ -20,7 +20,7 @@ export class floorGraphClass extends BaseGraph {
    * Inverse of `doorNodeIds` and `roomToNodeIds`.
    * - We assume no nav node touches > 1 door.
    * - We assume no triangle resides in > 1 room.
-   * @type {Record<number, { doorId: number; roomId: number }>}
+   * @type {Record<number, NPC.NavNodeMeta>}
    */
   nodeToMeta;
 
@@ -77,6 +77,25 @@ export class floorGraphClass extends BaseGraph {
   }
 
   /**
+   * @param {NPC.NavNodeMeta} meta
+   * Assume doorId ≥ 0, roomId ≥ 0 and door is not a hull door.
+   * @param {number | null} prevRoomId
+   * @returns {NPC.NavRoomTransition}
+   */
+  createRoomEdge(meta, prevRoomId) {
+    const door = this.gm.doors[meta.doorId];
+    const points = /** @type {[Geom.Vect, Geom.Vect]} */ (door.entries);
+    return {
+      key: 'room-edge',
+      doorId: meta.doorId,
+      srcRoomId: prevRoomId,
+      dstRoomId: meta.roomId,
+      start: door.roomIds[0] === meta.roomId ? points[1] : points[0],
+      stop: door.roomIds[0] === meta.roomId ? points[0] : points[1],
+    };
+  }
+
+  /**
    * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
    * @param {Geom.Vect} src in geomorph local coords
    * @param {Geom.Vect} dst in geomorph local coords
@@ -90,9 +109,8 @@ export class floorGraphClass extends BaseGraph {
     }
 
     const nodePath = AStar.search(this, srcNode, dstNode);
-    if (nodePath.length === 0 && srcNode === dstNode) {
-      // Ensure non-empty nodePath if src, dst in same triangle
-      nodePath.push(srcNode);
+    if (nodePath.length <= 1) {// Degenerate
+      return { seq: [[src, dst]] };
     }
 
     /**
@@ -101,14 +119,14 @@ export class floorGraphClass extends BaseGraph {
      * - Final path may include part outside room (final doorway)
      */
     const nodePaths = /** @type {Graph.FloorGraphNode[][]} */ ([]);
-    /** Currently always one fewer than nodePaths */
+    /** Always one fewer than nodePaths, but may add pre/post edge later */
     const roomEdges = /** @type {NPC.NavRoomTransition[]} */ ([]);
     /**
      * This is updated along `nodePath` whenever we see new valid roomId.
-     * @type {{ doorId: number; roomId: number }}
+     * @type {NPC.NavNodeMeta}
      */
     let prevMeta = this.nodeToMeta[nodePath[0].index];
-    nodePath.forEach((node) => {
+    nodePath.forEach(node => {
       const meta = this.nodeToMeta[node.index];
       if (nodePaths.length === 0) {
         nodePaths.push([node]);
@@ -125,19 +143,16 @@ export class floorGraphClass extends BaseGraph {
         nodePaths.push([node]);
         // Just entered room, so node adjacent to a door
         // NOTE cannot be a hull door because entered from other side
-        const newDoor = this.gm.doors[meta.doorId];
-        const points = /** @type {[Geom.Vect, Geom.Vect]} */ (newDoor.entries);
-        roomEdges.push({
-          key: 'room-edge',
-          doorId: meta.doorId,
-          srcRoomId: prevMeta.roomId,
-          dstRoomId: meta.roomId, // We know meta.roomId ≥ 0
-          start: newDoor.roomIds[0] === prevMeta.roomId ? points[0] : points[1],
-          stop: newDoor.roomIds[0] === meta.roomId ? points[0] : points[1],
-        });
+        roomEdges.push(this.createRoomEdge(meta, prevMeta.roomId));
         prevMeta = meta;
       }
     });
+
+    // Discard 1-paths obtained by crossing into room in doorway
+    if (nodePaths.length >= 2 && extantLast(nodePaths).length === 1) {
+      nodePaths.pop();
+      roomEdges.pop();
+    }
 
     /** @type {[null | NPC.NavRoomTransition, null | NPC.NavRoomTransition]} */
     let prePostEdges = [null, null];
@@ -215,7 +230,7 @@ export class floorGraphClass extends BaseGraph {
     });
     prePostEdges[1] && seq.push(prePostEdges[1]);
 
-    console.log({ seq, pulledPaths, roomEdges }); // DEBUG
+    console.log({ seq, nodePaths, pulledPaths, roomEdges, nodePath, nodeMetas: nodePath.map(x => this.nodeToMeta[x.index]) }); // DEBUG
     this.cleanStringPull(seq);
 
     return {

@@ -123,6 +123,11 @@ declare namespace NPC {
     /** `null` iff end in doorway */
     dstRoomId: number | null;
   }
+  
+  export interface NavNodeMeta {
+    doorId: number;
+    roomId: number;
+  }
 
   export interface NPCDef {
     key: string;
