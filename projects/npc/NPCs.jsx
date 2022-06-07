@@ -47,15 +47,15 @@ export default function NPCs(props) {
         if (!gmEdges) {
           throw Error(`getGlobalNavPath: gmGraph.findPath not found: ${JSON.stringify(src)} -> ${JSON.stringify(dst)}`);
         }
-        // console.log({gmEdges});
+        console.log('gmEdges', gmEdges); // DEBUG
 
         const paths = /** @type {NPC.LocalNavPath[]} */ ([]);
         for (let k = 0; k < gmEdges.length + 1; k++) {
-          if (k === 0) {
+          if (k === 0) {// Initial
             paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].srcExit);
-          } else if (k === gmEdges.length) {
+          } else if (k === gmEdges.length) {// Final
             paths[k] = state.getLocalNavPath(dstGmId, gmEdges[k - 1].dstEntry, dst);
-          } else {
+          } else {// Intermediate
             paths[k] = state.getLocalNavPath(gmEdges[k - 1].dstGmId, gmEdges[k - 1].dstEntry, gmEdges[k].srcExit);
           }
         }
@@ -78,6 +78,7 @@ export default function NPCs(props) {
         return {
           key: 'local-nav',
           gmId,
+          // Transform into world coordinates
           seq: result.seq.map(x => 
             Array.isArray(x)
               ? x.map(p => gm.matrix.transformPoint(p).precision(2))

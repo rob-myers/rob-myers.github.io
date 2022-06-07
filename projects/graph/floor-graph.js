@@ -151,10 +151,14 @@ export class floorGraphClass extends BaseGraph {
       }
     });
 
-    // Discard 1-paths obtained by crossing into room in doorway
     if (nodePaths.length >= 2 && extantLast(nodePaths).length === 1) {
+      // Discard 1-paths obtained by crossing into room in doorway
       nodePaths.pop();
       roomEdges.pop();
+    } else if (nodePaths.length >= 2 && nodePaths[0].length === 1) {
+      // Discard 1-paths obtained by starting in a doorway (e.g. via global nav)
+      nodePaths.shift();
+      roomEdges.shift();
     }
 
     /** @type {[null | NPC.NavRoomTransition, null | NPC.NavRoomTransition]} */
@@ -188,7 +192,7 @@ export class floorGraphClass extends BaseGraph {
       prePostEdges[1] = { key: 'room-edge', doorId: finalDoorId, srcRoomId, dstRoomId: null, start, stop: dst };
     }
 
-    const pulledPaths = nodePaths.map((nodePath, pathId) => {
+    const pulledPaths = nodePaths.map((subNodePath, pathId) => {
 
       const pathSrc = pathId === 0
         // 1st path might be preceded by a roomEdge
@@ -198,6 +202,7 @@ export class floorGraphClass extends BaseGraph {
       const pathDst = pathId === nodePaths.length - 1
         // Final path might be proceeded by a roomEdge
         ? prePostEdges[1] ? prePostEdges[1].start : dst
+        // NOTE seen issue with global nav where this null
         : roomEdges[pathId].start;
 
       let roomId = pathId === 0 // See above for casts
@@ -219,7 +224,7 @@ export class floorGraphClass extends BaseGraph {
 
       // Otherwise, use "simple stupid funnel algorithm"
       return /** @type {Geom.VectJson[]} */ (
-        this.computeStringPull(pathSrc, pathDst, nodePath).path
+        this.computeStringPull(pathSrc, pathDst, subNodePath).path
       ).map(Vect.from);
 
     });
