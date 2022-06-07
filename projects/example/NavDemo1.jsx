@@ -407,7 +407,7 @@ function Debug(props) {
         {props.showIds && (
           <div
             className="debug-room-id-icon"
-            style={{ left: roomNavAabb.x + 20, top: roomNavAabb.y + 20 }}
+            style={{ left: roomNavAabb.x + roomNavAabb.width - 20, top: roomNavAabb.y + 20 }}
           >
             {props.roomId}
           </div>
