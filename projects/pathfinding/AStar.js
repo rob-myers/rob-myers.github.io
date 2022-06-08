@@ -63,13 +63,15 @@ export class AStar {
       // End case -- result has been found, return the traced path.
       if (currentNode === end) {
         let curr = currentNode;
-        const ret = [];
+        const result = [];
         while (curr.parent) {
-          ret.push(curr);
+          result.push(curr);
           curr = curr.parent;
         }
-        this.cleanUp(ret);
-        return ret.reverse();
+        result.push(start); // We include start
+        this.cleanUp(result);
+        result.reverse();
+        return result;
       }
 
       // Normal case -- move currentNode from open to closed, process each of its neighbours.
