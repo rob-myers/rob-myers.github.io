@@ -174,25 +174,39 @@ export class floorGraphClass extends BaseGraph {
 
     if (startInDoorway && stopInDoorway && initDoorId === finalDoorId) {
       console.log('WILL START/END IN SAME DOORWAY', initDoorId);
-      return { seq: [{ key: 'room-edge', doorId: initDoorId, srcRoomId: null, dstRoomId: null, start: src, stop: dst }] };
+      return {
+        seq: [{ key: 'room-edge', doorId: initDoorId, srcRoomId: null, dstRoomId: null, start: src, stop: dst }],
+      };
     }
     if (startInDoorway) {
       console.log('WILL START IN DOORWAY', initDoorId);
+      /**
+       * - `dstRoomId` available early in 1st/2nd sub node path (past doors)
+       * - `srcRoomId` should be other door.roomIds unless hull door
+       *   > We provide it even though started in doorway
+       */
       const door = this.gm.doors[initDoorId];
-      // Either 1st or 2nd sub-nodePath should match initDoorId and have valid roomId
       const metas = nodePaths.slice(0, 2).flatMap(x => x).map(x => this.nodeToMeta[x.index]);
-      const { roomId: dstRoomId } = assertDefined(metas.find(meta => meta.doorId === initDoorId && meta.roomId >= 0));
-      const stop = assertNonNull(door.entries[door.roomIds.findIndex(x => x === dstRoomId)]);
-      prePostEdges[0] = { key: 'room-edge', doorId: initDoorId, srcRoomId: null, dstRoomId, start: src, stop };
+      const { roomId: dstRoomId } = assertDefined(metas.find(meta => meta.doorId === -1 && meta.roomId >= 0));
+      const srcIdIndex = door.roomIds.findIndex(x => x === dstRoomId);
+      const stop = assertNonNull(door.entries[srcIdIndex]);
+      const srcRoomId = door.roomIds[1 - srcIdIndex];
+      prePostEdges[0] = { key: 'room-edge', doorId: initDoorId, srcRoomId, dstRoomId, start: src, stop };
     }
     if (stopInDoorway) {
       console.log('WILL STOP IN DOORWAY', finalDoorId);
+      /**
+       * - `srcRoomId` should be available early in final sub node path
+       * - `dstRoomId` should be other door.roomIds unless hull door
+       *   > We provide it even though not going through door e.g. to change light
+       */
       const door = this.gm.doors[finalDoorId];
-      // Final sub-nodePath should match finalDoorId and have valid roomId
       const metas = extantLast(nodePaths).map(x => this.nodeToMeta[x.index]);
       const { roomId: srcRoomId } = assertDefined(metas.find(meta => meta.doorId === finalDoorId && meta.roomId >= 0));
-      const start = assertNonNull(door.entries[door.roomIds.findIndex(x => x === srcRoomId)]);
-      prePostEdges[1] = { key: 'room-edge', doorId: finalDoorId, srcRoomId, dstRoomId: null, start, stop: dst };
+      const srcIdIndex = door.roomIds.findIndex(x => x === srcRoomId);
+      const start = assertNonNull(door.entries[srcIdIndex]);
+      const dstRoomId = door.roomIds[1 - srcIdIndex];
+      prePostEdges[1] = { key: 'room-edge', doorId: finalDoorId, srcRoomId, dstRoomId, start, stop: dst };
     }
 
     const pulledPaths = nodePaths.map((subNodePath, pathId) => {
