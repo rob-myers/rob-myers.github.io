@@ -101,6 +101,18 @@ export class floorGraphClass extends BaseGraph {
    * @param {Geom.Vect} dst in geomorph local coords
    * @returns {null | Pick<NPC.LocalNavPath, 'seq'>}
    */
+  findPathNew(src, dst) {
+    return {
+      seq: [],
+    };
+  }
+
+  /**
+   * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
+   * @param {Geom.Vect} src in geomorph local coords
+   * @param {Geom.Vect} dst in geomorph local coords
+   * @returns {null | Pick<NPC.LocalNavPath, 'seq'>}
+   */
   findPath(src, dst) {
     const srcNode = this.getClosestNode(src);
     const dstNode = this.getClosestNode(dst);
@@ -108,16 +120,21 @@ export class floorGraphClass extends BaseGraph {
       return null;
     }
 
+    // TODO why are srcNode/dstNode not necessarily first/last?
     const nodePath = AStar.search(this, srcNode, dstNode);
-    if (nodePath[0] !== srcNode) {
-      // Fixes issues, including:
-      // - nodePath empty and src/dst same triangle
-      // - nodePaths construction
-      nodePath.unshift(srcNode);
-    }
-    if (extantLast(nodePath) !== dstNode) {
-      nodePath.push(dstNode); // Needed?
-    }
+    if (nodePath[0] !== srcNode) nodePath.unshift(srcNode);
+    if (extantLast(nodePath) !== dstNode) nodePath.push(dstNode);
+
+    /**
+     * OLD APPROACH
+     * 1. Compute `nodePath` srcNode -> dstNode via A-Star
+     * 2. Partition `nodePath` into `nodePaths` by detecting changed `roomId`,
+     *    simultaneously computing intermittent `roomEdges`
+     * 3. Compute initial/final roomEdge's based on start/end in doorway.
+     * 4. Patch `nodePaths` and `roomEdges`.
+     * 5. Construct `pulledPaths` for each item in `nodePaths`
+     * 6. Join `pulledPaths` and `roomEdges` and initial/final roomEdges to construct `seq`
+     */
 
     /**
      * `nodePath` split by the room they reside in
@@ -199,6 +216,7 @@ export class floorGraphClass extends BaseGraph {
       prePostEdges[1] = { key: 'room-edge', doorId: finalDoorId, srcRoomId, dstRoomId, start, stop: dst };
     }
 
+    // More horrible shit...
     if (nodePaths.length >= 2 && extantLast(nodePaths).length === 1) {
       // Merge 1-paths obtained by finishing in doorway in next room
       // without discarding roomEdge

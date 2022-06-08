@@ -7,6 +7,11 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
+- 🚧 Redo local nav path computation
+  - Recall navnodes intersecting door rect have doorId
+  - split `nodePath` into alternating path between doorNodes and roomNodes
+  - transform latter into `seq`
+
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
@@ -37,23 +42,6 @@ __Aim towards website release__.
     - ✅ Fix speed of path traversal
     - 🚧 Debug + Clean
 
-- 🚧 LocalNavPath can start/end inside a doorway
-  - ✅ door entry/exit just outside doorway
-  - ✅ ensure pulled path 2nd/penultimate not inside doorway by removing points
-  - ✅ `nodeToMeta` doorId and roomId are clearly understood
-    - _nav node has doorId_ iff tri intersects door rect
-    - _nav node has roomId_ iff tri has ≥ 2 points in room
-      i.e. could be totally in room, or in doorway with 1 edge in room.
-    - cannot expect nav node with doorId to _always_ have a roomId,
-      due to particular triangulation
-  - ✅ LocalNavPath has alternating node/edge paths
-  - ✅ discard 1-path when end in doorway and room changes across door nodes
-  - ✅ if start navnode with doorId not inside door, light should trigger
-  - ✅ if player ends in a doorway, lights shouldn't switch,
-       because have not entered another room
-  - ✅ if player starts in a doorway and enter new room, light should switch
-  - ✅ exit-room/enter-door should trigger when end in door
-  - 🚧 when start in doorway and navigate back, should not zig-zag
 
 - 🚧 GlobalNavPath
   - alternating edge/localNavPath (should fix immediate light change)
@@ -208,6 +196,23 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ LocalNavPath can start/end inside a doorway
+  - ✅ door entry/exit just outside doorway
+  - ✅ ensure pulled path 2nd/penultimate not inside doorway by removing points
+  - ✅ `nodeToMeta` doorId and roomId are clearly understood
+    - _nav node has doorId_ iff tri intersects door rect
+    - _nav node has roomId_ iff tri has ≥ 2 points in room
+      i.e. could be totally in room, or in doorway with 1 edge in room.
+    - cannot expect nav node with doorId to _always_ have a roomId,
+      due to particular triangulation
+  - ✅ LocalNavPath has alternating node/edge paths
+  - ✅ discard 1-path when end in doorway and room changes across door nodes
+  - ✅ if start navnode with doorId not inside door, light should trigger
+  - ✅ if player ends in a doorway, lights shouldn't switch,
+       because have not entered another room
+  - ✅ if player starts in a doorway and enter new room, light should switch
+  - ✅ exit-room/enter-door should trigger when end in door
+  - ✅ when start in doorway and navigate back, should not zig-zag
 - ✅ Tabs remembers layout
 - ✅ Migrate to Gatsby
 - ✅ improve `track`
