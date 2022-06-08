@@ -293,11 +293,10 @@ declare namespace Geomorph {
      */
     roomIds: [null | number, null | number];
     /**
-     * Aligned to `roomIds` i.e. `[null | id of room infront, null | id of room behind]`
+     * Aligned to `roomIds` i.e. `[infront, behind]`
      * where a room is *infront* if `normal` is pointing towards it.
-     * Hull doors have exactly one non-null entry.
      */
-    entries: [null | V, null | V];
+    entries: [V, V];
   }
 
   type ParsedConnectorRect = ConnectorRect<Geom.Poly, Geom.Vect, Geom.Rect>;

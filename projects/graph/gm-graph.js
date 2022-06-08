@@ -426,7 +426,8 @@ export class gmGraphClass extends BaseGraph {
     nodes.forEach(node => {
       if (node.type === 'door') {
         const { matrix, doors } = gms[node.gmId];
-        const entry = /** @type {Geom.Vect} */ (doors[node.doorId].entries.find(Boolean));
+        const nonNullIndex = doors[node.doorId].roomIds.findIndex(x => x !== null);
+        const entry = /** @type {Geom.Vect} */ (doors[node.doorId].entries[nonNullIndex]);
         graph.entry.set(node, matrix.transformPoint(entry.clone()));
       }
     });

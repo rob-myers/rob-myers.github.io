@@ -233,10 +233,7 @@ function singleToConnectorRect(single, rooms) {
     seg: [u.precision(3), v.precision(3)],
     normal: normal.precision(3),
     roomIds: roomIds,
-    entries: [
-      roomIds[0] === null ? null : infront,
-      roomIds[1] === null ? null : behind,
-    ],
+    entries: [infront, behind],
   };
 }
 
@@ -255,8 +252,8 @@ function parseConnectRect(x) {
     normal: Vect.from(x.normal),
     seg: [Vect.from(x.seg[0]), Vect.from(x.seg[1])],
     entries: [
-      x.entries[0] ? Vect.from(x.entries[0]) : null,
-      x.entries[1] ? Vect.from(x.entries[1]) : null,
+      Vect.from(x.entries[0]),
+      Vect.from(x.entries[1]),
     ],
   }
 }
