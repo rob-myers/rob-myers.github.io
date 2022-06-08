@@ -118,7 +118,7 @@ import npcJson from '../../public/npc/first-npc.json'
       if (opts?.doorMetas) {
         anim.wayMetas = opts.doorMetas.flatMap(({ enterIndex, ctxt }) => [
           // Slightly early to ensure it is triggered
-          { key: 'enter-door', length: anim.aux.sofars[enterIndex] - 10, ctxt },
+          { key: 'enter-door', length: Math.max(anim.aux.sofars[enterIndex] - 10, 0), ctxt },
           // If end in doorway we'll never trigger this
           { key: 'exit-door', length: anim.aux.sofars[enterIndex + 1], ctxt },
         ]);

@@ -115,6 +115,9 @@ export class floorGraphClass extends BaseGraph {
       // - nodePaths construction
       nodePath.unshift(srcNode);
     }
+    if (extantLast(nodePath) !== dstNode) {
+      nodePath.push(dstNode); // Needed?
+    }
 
     /**
      * `nodePath` split by the room they reside in
