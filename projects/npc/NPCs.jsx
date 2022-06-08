@@ -277,12 +277,15 @@ export default function NPCs(props) {
           const globalNavPath = e;
           const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...flattenLocalNavPath(item)), /** @type {Geom.Vect[]} */ ([]));
           const doorMetas = props.gmGraph.computeDoorMetas(globalNavPath);
+          console.log('doorMetas', doorMetas);
           // Below finishes by setting spriteSheet idle
           await npc.followNavPath(allPoints, { doorMetas });
 
         } else if (e.key === 'local-nav') {
           for (const [i, vectPath] of e.seq.entries()) {
-            // TODO
+            /**
+             * TODO
+             */
           }
         }
       } catch (err) {

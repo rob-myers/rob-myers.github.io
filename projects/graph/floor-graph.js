@@ -110,7 +110,7 @@ export class floorGraphClass extends BaseGraph {
 
     const nodePath = AStar.search(this, srcNode, dstNode);
     if (nodePath[0] !== srcNode) {
-      // Fixes various issues, including:
+      // Fixes issues, including:
       // - nodePath empty and src/dst same triangle
       // - nodePaths construction
       nodePath.unshift(srcNode);
@@ -154,16 +154,6 @@ export class floorGraphClass extends BaseGraph {
       }
     });
 
-    if (nodePaths.length >= 2 && extantLast(nodePaths).length === 1) {
-      // Merge 1-paths obtained by finishing in doorway in next room
-      nodePaths[nodePaths.length - 2].concat(nodePaths.pop() || []);
-    } else if (nodePaths.length >= 2 && nodePaths[0].length === 1 && roomEdges[0].start === null) {
-      // TODO clarify
-      // Discard 1-paths obtained by starting in a doorway via global nav
-      nodePaths.shift();
-      roomEdges.shift();
-    }
-
     /** @type {[null | NPC.NavRoomTransition, null | NPC.NavRoomTransition]} */
     let prePostEdges = [null, null];
 
@@ -181,13 +171,13 @@ export class floorGraphClass extends BaseGraph {
     if (startInDoorway) {
       console.log('WILL START IN DOORWAY', initDoorId);
       /**
-       * - `dstRoomId` available early in 1st/2nd sub node path (past doors)
+       * - `dstRoomId` available early in sub node paths (past doors)
        * - `srcRoomId` should be other door.roomIds unless hull door
        *   > We provide it even though started in doorway
        */
       const door = this.gm.doors[initDoorId];
-      const metas = nodePaths.slice(0, 2).flatMap(x => x).map(x => this.nodeToMeta[x.index]);
-      const { roomId: dstRoomId } = assertDefined(metas.find(meta => meta.doorId === -1 && meta.roomId >= 0));
+      const metas = nodePaths.flatMap(x => x).map(x => this.nodeToMeta[x.index]);
+      const { roomId: dstRoomId } = assertDefined(metas.find(meta => meta.doorId === -1 && meta.roomId >= 0)) || metas[0];
       const srcIdIndex = door.roomIds.findIndex(x => x === dstRoomId);
       const stop = assertNonNull(door.entries[srcIdIndex]);
       const srcRoomId = door.roomIds[1 - srcIdIndex];
@@ -207,6 +197,24 @@ export class floorGraphClass extends BaseGraph {
       const start = assertNonNull(door.entries[srcIdIndex]);
       const dstRoomId = door.roomIds[1 - srcIdIndex];
       prePostEdges[1] = { key: 'room-edge', doorId: finalDoorId, srcRoomId, dstRoomId, start, stop: dst };
+    }
+
+    if (nodePaths.length >= 2 && extantLast(nodePaths).length === 1) {
+      // Merge 1-paths obtained by finishing in doorway in next room
+      // without discarding roomEdge
+      nodePaths[nodePaths.length - 2].concat(nodePaths.pop() || []);
+    } else if (nodePaths.length >= 2 && nodePaths[0].length === 1) {
+      if (roomEdges[0].start === null) {
+        // TODO clarify
+        // Discard 1-paths obtained by starting in a doorway via global nav
+        nodePaths.shift();
+        roomEdges.shift();
+      } else if (startInDoorway) {
+        // console.log('!') // ISSUE what if started in door tri but not doorway 
+        // Merge 1-paths obtained by starting in doorway in other room
+        nodePaths[1].concat(nodePaths.shift() || []);
+        roomEdges.shift();
+      }
     }
 
     const pulledPaths = nodePaths.map((subNodePath, pathId) => {

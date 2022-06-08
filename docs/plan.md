@@ -37,7 +37,7 @@ __Aim towards website release__.
     - ✅ Fix speed of path traversal
     - 🚧 Debug + Clean
 
-- ✅ LocalNavPath can start/end inside a doorway
+- 🚧 LocalNavPath can start/end inside a doorway
   - ✅ door entry/exit just outside doorway
   - ✅ ensure pulled path 2nd/penultimate not inside doorway by removing points
   - ✅ `nodeToMeta` doorId and roomId are clearly understood
@@ -52,9 +52,12 @@ __Aim towards website release__.
   - ✅ if player ends in a doorway, lights shouldn't switch,
        because have not entered another room
   - ✅ if player starts in a doorway and enter new room, light should switch
+  - ✅ exit-room/enter-door should trigger when end in door
+  - 🚧 when start in doorway and navigate back, should not zig-zag
 
-- 🚧 GlobalNavPath can start/end inside a hull doorway
-  - e.g. `[navEdge, localNavPath, navEdge]`
+- 🚧 GlobalNavPath
+  - alternating edge/localNavPath (should fix immediate light change)
+  - can start/end inside a hull doorway
   - edges need custom start/endpoints
 
 - `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`

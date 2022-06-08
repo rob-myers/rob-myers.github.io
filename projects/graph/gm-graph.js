@@ -39,7 +39,9 @@ export class gmGraphClass extends BaseGraph {
   /** @param {NPC.GlobalNavPath} globalNavPath */
   computeDoorMetas(globalNavPath) {
     /**
-     * TODO globalNavPath as alternating path
+     * TODO
+     * - globalNavPath as alternating path
+     * - enterIndex should not be 0 for hull doors
      */
     return globalNavPath.paths.reduce((agg, localNavPath, i) => {
       // Start from 0 or just after hull door entry i.e. hull door exit
