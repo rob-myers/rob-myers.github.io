@@ -5,14 +5,15 @@ import { warn } from "../service/log";
 import { parseLayout } from "../service/geomorph";
 
 /**
+ * NOTE saw issue when `geomorphJsonPath(layoutKey)`
+ * re-requested, causing doors vs hullDoors mismatch.
+ * 
  * @param {Geomorph.LayoutKey} layoutKey
- * @param {import('react-query').UseQueryOptions} [useQueryOpts]
  */
-export default function useGeomorphData(layoutKey, useQueryOpts) {
+export default function useGeomorphData(layoutKey) {
   return useQuery(geomorphJsonPath(layoutKey), async () => {
     
-    const layout = await fetch(geomorphJsonPath(layoutKey))
-      .then(x => x.json()).then(parseLayout);
+    const layout = parseLayout(await fetch(geomorphJsonPath(layoutKey)).then(x => x.json()));
 
     const roomGraph = layout.roomGraph;
     const roomsWithDoors = roomGraph.nodesArray
@@ -72,9 +73,9 @@ export default function useGeomorphData(layoutKey, useQueryOpts) {
 
     return output;
   }, {
-    // keepPreviousData: true,
     cacheTime: Infinity,
-    .../** @type {*} */ (useQueryOpts),
+    keepPreviousData: true,
+    staleTime: Infinity,
   });
 }
 

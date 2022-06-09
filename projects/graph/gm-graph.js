@@ -399,8 +399,8 @@ export class gmGraphClass extends BaseGraph {
         return gmNode;        
       }),
 
-      ...gms.flatMap(({ key: gmKey, hullDoors, transform, pngRect, doors }, gmIndex) =>
-        hullDoors.map((hullDoor, hullDoorId) => {
+      ...gms.flatMap(({ key: gmKey, hullDoors, transform, pngRect, doors }, gmIndex) => {
+        return hullDoors.map((hullDoor, hullDoorId) => {
           const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
           const gmInFront = pngRect.contains(alongNormal);
           const direction = this.computeHullDoorDirection(hullDoor, hullDoorId, transform);
@@ -423,7 +423,7 @@ export class gmGraphClass extends BaseGraph {
           };
           return doorNode;
         })
-      ),
+      }),
     ];
 
     graph.registerNodes(nodes);

@@ -10,10 +10,17 @@ __Aim towards website release__.
 - 🚧 Redo local nav path computation
   - ✅ Recall navnodes intersecting door rect have doorId
   - ✅ split `nodePath` into alternating path between doorNodes and roomNodes
-  - 🚧 transform latter into fullPath
+  - ✅ transform latter into fullPath
   - 🚧 transform latter into navMetas
+  - 🚧 replace old approach and start testing
 
-- BUG when NavDemo1 starts hidden, gmGraph hull doors have doorId -1
+- ✅ BUG when NavDemo1 starts hidden, gmGraph hull doors have doorId -1
+  - `useGeomorphData`
+  - if g-301--bridge.json fetched twice before NavDemo1 init
+  - if switch from NavDemo1 to SvgStringPull
+  - fixed via `staleTime: Infinity` useGeomorphData
+    - so must refresh onchange geomorph jsons
+    - permit edit useGeomorphData though
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby

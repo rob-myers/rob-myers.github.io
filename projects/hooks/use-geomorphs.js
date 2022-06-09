@@ -19,7 +19,7 @@ export default function useGeomorphs(defs) {
     }
   }, [defs]);
 
-  const queries = gmKeys.map(layoutKey => useGeomorphData(layoutKey, { staleTime: Infinity }));
+  const queries = gmKeys.map(layoutKey => useGeomorphData(layoutKey));
   const ready = (
     defs.every(x => gmKeys.includes(x.layoutKey)) 
     && queries.every(x => x.data)
@@ -37,5 +37,5 @@ export default function useGeomorphs(defs) {
     } else {
       return { gms: [], gmGraph: new gmGraphClass([]) }
     }
-  }, [ready]);
+  }, [ready, ...queries.map(x => x.data)]);
 }
