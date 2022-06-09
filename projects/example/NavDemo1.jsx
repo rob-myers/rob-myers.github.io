@@ -116,14 +116,14 @@ export default function NavDemo1(props) {
             console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
           }
         } else if (e.key === 'exited-room') {
-          if (e.npcKey === state.playerNpcKey && e.ctxt.dstRoomId !== null) {
-            state.gmId = e.ctxt.dstGmId;
-            state.roomId = e.ctxt.dstRoomId;
+          if (e.npcKey === state.playerNpcKey && e.navMeta.key === 'exit-room' && e.navMeta.otherRoomId !== null) {
+            state.gmId = e.navMeta.gmId; // TODO dstGmId?
+            state.roomId = e.navMeta.otherRoomId;
             state.update();
           }
-          if (e.ctxt.dstRoomId === null) {
-            console.warn(`exited-room with null dstRoomId`)
-          }
+          // if (e.ctxt.dstRoomId === null) {
+          //   console.warn(`exited-room with null dstRoomId`)
+          // }
         }
       });
 

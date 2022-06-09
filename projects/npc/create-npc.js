@@ -94,12 +94,15 @@ import npcJson from '../../public/npc/first-npc.json'
         if (anim.spriteSheet === 'idle') console.warn('wayTimeout: anim.spriteSheet is "idle"');
         return;
       } else if (anim.root.currentTime >= (anim.wayMetas[0].length * animScaleFactor) - 1) {
+        /**
+         * TODO simplify event transmission
+         */
         const wayMeta = /** @type { NPC.WayPathMeta} */ (anim.wayMetas.shift());
         console.log(wayMeta); // DEBUG
         if (wayMeta.key === 'exit-door') {
-          npcs.events.next({ key: 'entered-room', npcKey: this.def.key, ctxt: wayMeta.ctxt });
+          npcs.events.next({ key: 'entered-room', npcKey: this.def.key, navMeta: wayMeta.navMeta });
         } else if (wayMeta.key === 'enter-door') {
-          npcs.events.next({ key: 'exited-room', npcKey: this.def.key, ctxt: wayMeta.ctxt });
+          npcs.events.next({ key: 'exited-room', npcKey: this.def.key, navMeta: wayMeta.navMeta });
         }
       }
       this.nextWayTimeout();
@@ -115,13 +118,13 @@ import npcJson from '../../public/npc/first-npc.json'
         return;
       }
             
-      if (opts?.doorMetas) {
-        anim.wayMetas = opts.doorMetas.flatMap(({ enterIndex, ctxt }) => [
-          // Slightly early to ensure it is triggered
-          { key: 'enter-door', length: Math.max(anim.aux.sofars[enterIndex] - 10, 0), ctxt },
-          // If end in doorway we'll never trigger this
-          { key: 'exit-door', length: anim.aux.sofars[enterIndex + 1], ctxt },
-        ]);
+      if (opts?.globalNavMetas) {
+        anim.wayMetas = opts.globalNavMetas.map((navMeta) =>
+          navMeta.key === 'enter-room'
+            ? { key: 'exit-door', length: anim.aux.sofars[navMeta.index], navMeta }
+            // Slightly early to ensure it is triggered
+            : { key: 'enter-door', length: Math.max(anim.aux.sofars[navMeta.index] - 10, 0), navMeta }
+        );
       }
 
       this.setSpritesheet('walk');

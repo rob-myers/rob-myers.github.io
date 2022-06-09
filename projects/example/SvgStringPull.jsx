@@ -6,7 +6,6 @@ import * as defaults from "./defaults";
 import { Rect, Vect } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
-import { flattenLocalNavPath } from "../service/npc";
 import useGeomorphData from "../hooks/use-geomorph-data";
 import usePathfinding from "../hooks/use-pathfinding";
 import useStateRef from "../hooks/use-state-ref";

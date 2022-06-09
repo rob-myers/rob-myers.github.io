@@ -36,42 +36,44 @@ export class gmGraphClass extends BaseGraph {
     this.entry = new Map;
   }
 
-  /** @param {NPC.GlobalNavPath} globalNavPath */
-  computeDoorMetas(globalNavPath) {
-    /**
-     * TODO
-     * - globalNavPath as alternating path
-     * - enterIndex should not be 0 for hull doors
-     */
-    return globalNavPath.paths.reduce((agg, localNavPath, i) => {
-      // Start from 0 or just after hull door entry i.e. hull door exit
-      let indexOffset = i === 0 ? 0 : agg[agg.length - 1].enterIndex + 1;
+  // /**
+  //  * @param {NPC.GlobalNavPath} globalNavPath
+  //  */
+  // computeDoorMetas(globalNavPath) {
+  //   /**
+  //    * TODO
+  //    * - globalNavPath as alternating path
+  //    * - enterIndex should not be 0 for hull doors
+  //    */
+  //   return globalNavPath.paths.reduce((agg, localNavPath, i) => {
+  //     // Start from 0 or just after hull door entry i.e. hull door exit
+  //     let indexOffset = i === 0 ? 0 : agg[agg.length - 1].enterIndex + 1;
 
-      localNavPath.seq.forEach((item, j) => {
-        if (Array.isArray(item)) {
-          indexOffset += (item.length - 1); // Go to end of path
-        } else {
-          // Going through hull door iff srcRoomId === dstRoomId non-null
-          if (item.dstRoomId !== null && (item.srcRoomId !== item.dstRoomId)) {
-            agg.push({
-              enterIndex: indexOffset,
-              ctxt: {
-                srcGmId: localNavPath.gmId, srcDoorId: item.doorId, srcRoomId: item.srcRoomId,
-                dstGmId: localNavPath.gmId, dstDoorId: item.doorId, dstRoomId: item.dstRoomId,
-              },
-            });
-          }
-          indexOffset++; // Go to door exit
-        }
-      });
+  //     localNavPath.seq.forEach((item, j) => {
+  //       if (Array.isArray(item)) {
+  //         indexOffset += (item.length - 1); // Go to end of path
+  //       } else {
+  //         // Going through hull door iff srcRoomId === dstRoomId non-null
+  //         if (item.dstRoomId !== null && (item.srcRoomId !== item.dstRoomId)) {
+  //           agg.push({
+  //             enterIndex: indexOffset,
+  //             ctxt: {
+  //               srcGmId: localNavPath.gmId, srcDoorId: item.doorId, srcRoomId: item.srcRoomId,
+  //               dstGmId: localNavPath.gmId, dstDoorId: item.doorId, dstRoomId: item.dstRoomId,
+  //             },
+  //           });
+  //         }
+  //         indexOffset++; // Go to door exit
+  //       }
+  //     });
 
-      const gmEdge = globalNavPath.edges[i];
-      if (gmEdge) {// Go back to door entry point (i.e. room exit)
-        agg.push({ enterIndex: indexOffset - 1, ctxt: gmEdge });
-      }
-      return agg;
-    }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
-  }
+  //     const gmEdge = globalNavPath.edges[i];
+  //     if (gmEdge) {// Go back to door entry point (i.e. room exit)
+  //       agg.push({ enterIndex: indexOffset - 1, ctxt: gmEdge });
+  //     }
+  //     return agg;
+  //   }, /** @type {NPC.NavPathDoorMeta[]} */ ([]));
+  // }
 
   /**
    * TODO 🚧 verify

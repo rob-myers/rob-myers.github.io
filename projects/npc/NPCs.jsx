@@ -6,7 +6,7 @@ import { filter, first, map, take } from "rxjs/operators";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { Poly, Rect, Vect } from "../geom";
-import { animScaleFactor, flattenLocalNavPath, isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
+import { animScaleFactor, isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
 import createNpc from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -29,6 +29,9 @@ export default function NPCs(props) {
     class: { Vect },
     rxjs: { filter, first, map, take, otag }, // TODO remove?
 
+    /**
+     * TODO flat global navpath like local navpath
+     */
     getGlobalNavPath(src, dst) {
       const {gms} = props.gmGraph
       const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
@@ -72,30 +75,19 @@ export default function NPCs(props) {
       const localSrc = gm.inverseMatrix.transformPoint(Vect.from(src));
       const localDst = gm.inverseMatrix.transformPoint(Vect.from(dst));
 
-      const result = pf.graph.findPath(localSrc, localDst);
+      // const result = pf.graph.findPath(localSrc, localDst);
       const resultNew = pf.graph.findPathNew(localSrc, localDst);
 
 
-      if (result) {
+      if (resultNew) {
         return {
           key: 'local-nav',
           gmId,
-          // NEW
-          fullPath: (resultNew?.fullPath || [])
-            .map(p =>  gm.matrix.transformPoint(Vect.from(p)).precision(2)),
-          // OLD
-          seq: result.seq.map(x => 
-            Array.isArray(x)
-              ? x.map(p => gm.matrix.transformPoint(p).precision(2))
-              : {
-                  ...x,
-                  start: gm.matrix.transformPoint(Vect.from(x.start)).precision(2),
-                  stop: gm.matrix.transformPoint(Vect.from(x.stop)).precision(2),
-                }
-          )
+          fullPath: resultNew.fullPath.map(p =>  gm.matrix.transformPoint(Vect.from(p)).precision(2)),
+          navMetas: resultNew.navMetas,
         };
       } else {
-        return { key: 'local-nav', gmId, fullPath: [], seq: [] };
+        return { key: 'local-nav', gmId, fullPath: [], navMetas: [], seq: [] };
       }
     },
     getNpcGlobalNav(e) {
@@ -112,7 +104,7 @@ export default function NPCs(props) {
       }
       const result = state.getGlobalNavPath(npc.getPosition(), e.point);
       if (e.debug) {
-        const points = (result?.paths??[]).reduce((agg, item) => agg.concat(...flattenLocalNavPath(item)), /** @type {Geom.Vect[]} */ ([]));
+        const points = (result?.paths??[]).reduce((agg, item) => agg.concat(...item.fullPath), /** @type {Geom.Vect[]} */ ([]));
         state.toggleDebugPath({ pathKey: e.npcKey, points })
       }
       return result;
@@ -271,23 +263,41 @@ export default function NPCs(props) {
       }
 
       try {
-        if ('points' in e) {
-
-          // Walk along path `points`, ignoring doors
+        if ('points' in e) {// Walk along path `points`, ignoring doors
+          
           await npc.followNavPath(e.points);
 
-        } else if (e.key === 'global-nav') {
-
-          // Walk along a global navpath
+        } else if (e.key === 'global-nav') {// Walk along a global navpath
+          
           const globalNavPath = e;
-          const allPoints = globalNavPath.paths.reduce((agg, item) => agg.concat(...flattenLocalNavPath(item)), /** @type {Geom.Vect[]} */ ([]));
-          const doorMetas = props.gmGraph.computeDoorMetas(globalNavPath);
-          console.log('doorMetas', doorMetas);
+          /** Join all local navpath `fullPath`s */
+          const allPoints = globalNavPath.paths.reduce((agg, item) =>
+            // NOTE no intermediate dups due to global navpath construction
+            agg.concat(...item.fullPath),
+          /** @type {Geom.Vect[]} */ ([]));
+
+          /**
+           * Join all local navpath navMetas.
+           * TODO clean version with flattened global navpath
+           */
+          let sofar = 0;
+          const globalNavMetas = globalNavPath.paths.reduce((agg, { gmId, navMetas }, i) => {
+            const indexOffset = agg.length;
+            agg.push(...navMetas.map(x => ({ ...x, gmId, index: indexOffset + x.index, sofar: (sofar += x.sofar)  })));
+            if (globalNavPath.edges[i + 1]) {// Include global nav edge
+              sofar += globalNavPath.edges[i + 1].srcExit.distanceTo(globalNavPath.edges[i + 1].dstEntry);
+            }
+            return agg;
+          }, /** @type {NPC.GlobalNavMeta[]} */ ([]));
+
+          // const doorMetas = props.gmGraph.computeDoorMetas(globalNavPath);
+          // console.log('doorMetas', doorMetas);
           // Below finishes by setting spriteSheet idle
-          await npc.followNavPath(allPoints, { doorMetas });
+          // await npc.followNavPath(allPoints, { doorMetas });
+          await npc.followNavPath(allPoints, { globalNavMetas });
 
         } else if (e.key === 'local-nav') {
-          for (const [i, vectPath] of e.seq.entries()) {
+          for (const [i, vectPath] of e.fullPath.entries()) {
             /**
              * TODO
              */

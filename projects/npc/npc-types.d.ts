@@ -78,7 +78,7 @@ declare namespace NPC {
 
     async followNavPath(
       path: Geom.VectJson[],
-      opts?: { doorMetas?: NavPathDoorMeta[]; },
+      opts?: { globalNavMetas?: NPC.GlobalNavMeta[]; },
     ): Promise<void>;
     /** Radians */
     getAngle(): number;
@@ -94,7 +94,7 @@ declare namespace NPC {
   interface WayPathMeta {
     key: 'enter-door' | 'exit-door';
     length: number;
-    ctxt: TraverseDoorCtxt;
+    navMeta: GlobalNavMeta;
   }
 
   interface NavPathDoorMeta {
@@ -211,17 +211,18 @@ declare namespace NPC {
     edges: NPC.NavGmTransition[];
   }
 
-  interface LocalNavPath {
+  interface LocalNavPath extends BaseLocalNavPath {
     key: 'local-nav';
     gmId: number;
-    fullPath: Geom.Vect[];
-    /** Alternating sequence of edges and vector paths */
-    seq: (Geom.Vect[] | NPC.NavRoomTransition)[]
   }
 
   interface BaseLocalNavPath {
     fullPath: Geom.Vect[];
-    navMetas: ({
+    navMetas: LocalNavMeta[];
+  }
+
+  type LocalNavMeta =
+    ({
       /** Pointer into `fullPath` */
       index: number;
       /** Distance so far along path to `index` */
@@ -229,7 +230,10 @@ declare namespace NPC {
     } & (
       | { key: 'exit-room'; exitedRoomId: number; doorId: number; otherRoomId: null | number; }
       | { key: 'enter-room'; enteredRoomId: number; doorId: number; otherRoomId: null | number; }
-    ))[];
+    ));
+
+  type GlobalNavMeta = LocalNavMeta & {
+    gmId: number;
   }
 
   export interface FullApi {
@@ -283,8 +287,8 @@ declare namespace NPC {
     | { key: 'set-player'; npcKey: string; }
     | { key: 'started-walking'; npcKey: string; }
     | { key: 'stopped-walking'; npcKey: string; }
-    | { key: 'entered-room'; npcKey: string; ctxt: TraverseDoorCtxt; }
-    | { key: 'exited-room'; npcKey: string; ctxt: TraverseDoorCtxt; }
+    | { key: 'entered-room'; npcKey: string; navMeta: GlobalNavMeta; }
+    | { key: 'exited-room'; npcKey: string; navMeta: GlobalNavMeta; }
   );
 
 }

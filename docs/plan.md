@@ -7,20 +7,18 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- 🚧 Redo local nav path computation
+- ✅ Redo local nav path computation
   - ✅ Recall navnodes intersecting door rect have doorId
   - ✅ split `nodePath` into alternating path between doorNodes and roomNodes
   - ✅ transform latter into fullPath
-  - 🚧 transform latter into navMetas
-  - 🚧 replace old approach and start testing
+  - ✅ transform latter into navMetas
+  - ✅ replace old approach and start testing
 
-- ✅ BUG when NavDemo1 starts hidden, gmGraph hull doors have doorId -1
-  - `useGeomorphData`
-  - if g-301--bridge.json fetched twice before NavDemo1 init
-  - if switch from NavDemo1 to SvgStringPull
-  - fixed via `staleTime: Infinity` useGeomorphData
-    - so must refresh onchange geomorph jsons
-    - permit edit useGeomorphData though
+- 🚧 nav continued
+  - clean away old local nav + renaming
+  - no need to compute sofars
+  - flatten global nav
+  - list nav bugs
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
@@ -206,6 +204,13 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ BUG when NavDemo1 starts hidden, gmGraph hull doors have doorId -1
+  - `useGeomorphData`
+  - if g-301--bridge.json fetched twice before NavDemo1 init
+  - if switch from NavDemo1 to SvgStringPull
+  - fixed via `staleTime: Infinity` useGeomorphData
+    - so must refresh onchange geomorph jsons
+    - permit edit useGeomorphData though
 - ✅ LocalNavPath can start/end inside a doorway
   - ✅ door entry/exit just outside doorway
   - ✅ ensure pulled path 2nd/penultimate not inside doorway by removing points
