@@ -8,9 +8,12 @@ __Aim towards website release__.
 ## TODO (unsorted)
 
 - 🚧 Redo local nav path computation
-  - Recall navnodes intersecting door rect have doorId
-  - split `nodePath` into alternating path between doorNodes and roomNodes
-  - transform latter into `seq`
+  - ✅ Recall navnodes intersecting door rect have doorId
+  - ✅ split `nodePath` into alternating path between doorNodes and roomNodes
+  - 🚧 transform latter into fullPath
+  - 🚧 transform latter into navMetas
+
+- BUG when NavDemo1 starts hidden, gmGraph hull doors have doorId -1
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby

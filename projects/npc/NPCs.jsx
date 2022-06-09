@@ -73,12 +73,17 @@ export default function NPCs(props) {
       const localDst = gm.inverseMatrix.transformPoint(Vect.from(dst));
 
       const result = pf.graph.findPath(localSrc, localDst);
+      const resultNew = pf.graph.findPathNew(localSrc, localDst);
+
 
       if (result) {
         return {
           key: 'local-nav',
           gmId,
-          // Transform into world coordinates
+          // NEW
+          fullPath: (resultNew?.fullPath || [])
+            .map(p =>  gm.matrix.transformPoint(Vect.from(p)).precision(2)),
+          // OLD
           seq: result.seq.map(x => 
             Array.isArray(x)
               ? x.map(p => gm.matrix.transformPoint(p).precision(2))
@@ -90,7 +95,7 @@ export default function NPCs(props) {
           )
         };
       } else {
-        return { key: 'local-nav', paths: [], edges: [], gmId, seq: [] };
+        return { key: 'local-nav', gmId, fullPath: [], seq: [] };
       }
     },
     getNpcGlobalNav(e) {

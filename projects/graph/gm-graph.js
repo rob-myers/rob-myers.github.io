@@ -385,6 +385,7 @@ export class gmGraphClass extends BaseGraph {
 
     /** @type {Graph.GmGraphNode[]} */
     const nodes = [
+
       // NOTE geomorph nodes are aligned to `gms` for easy access
       ...gms.map((x, gmIndex) => {
         /** @type {Graph.GmGraphNodeGm} */
@@ -397,6 +398,7 @@ export class gmGraphClass extends BaseGraph {
         };
         return gmNode;        
       }),
+
       ...gms.flatMap(({ key: gmKey, hullDoors, transform, pngRect, doors }, gmIndex) =>
         hullDoors.map((hullDoor, hullDoorId) => {
           const alongNormal = hullDoor.poly.center.addScaledVector(hullDoor.normal, 20);
@@ -409,6 +411,9 @@ export class gmGraphClass extends BaseGraph {
             gmKey,
             gmId: gmIndex,
             id: getGmDoorNodeId(gmKey, transform, hullDoorId),
+            /**
+             * TODO seen -1 here when NavDemo1 tab starts hidden
+             */
             doorId: doors.indexOf(hullDoor),
             hullDoorId,
             transform,
@@ -426,6 +431,7 @@ export class gmGraphClass extends BaseGraph {
     nodes.forEach(node => {
       if (node.type === 'door') {
         const { matrix, doors } = gms[node.gmId];
+        // console.log('->', node);
         const nonNullIndex = doors[node.doorId].roomIds.findIndex(x => x !== null);
         const entry = /** @type {Geom.Vect} */ (doors[node.doorId].entries[nonNullIndex]);
         graph.entry.set(node, matrix.transformPoint(entry.clone()));

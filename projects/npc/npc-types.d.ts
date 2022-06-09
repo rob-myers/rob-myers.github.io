@@ -214,8 +214,22 @@ declare namespace NPC {
   interface LocalNavPath {
     key: 'local-nav';
     gmId: number;
+    fullPath: Geom.Vect[];
     /** Alternating sequence of edges and vector paths */
     seq: (Geom.Vect[] | NPC.NavRoomTransition)[]
+  }
+
+  interface BaseLocalNavPath {
+    fullPath: Geom.Vect[];
+    navMetas: ({
+      /** Pointer into `fullPath` */
+      index: number;
+      /** Distance so far along path to `index` */
+      sofar: number;
+    } & (
+      | { key: 'exit-room'; exitedRoomId: number; doorId: number; otherRoomId: null | number; }
+      | { key: 'enter-room'; enteredRoomId: number; doorId: number; otherRoomId: null | number; }
+    ))[];
   }
 
   export interface FullApi {

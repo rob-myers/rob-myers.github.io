@@ -96,15 +96,97 @@ export class floorGraphClass extends BaseGraph {
   }
 
   /**
-   * Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
    * @param {Geom.Vect} src in geomorph local coords
    * @param {Geom.Vect} dst in geomorph local coords
-   * @returns {null | Pick<NPC.LocalNavPath, 'seq'>}
+   * @returns {null | NPC.BaseLocalNavPath}
    */
   findPathNew(src, dst) {
-    return {
-      seq: [],
-    };
+    const srcNode = this.getClosestNode(src);
+    const dstNode = this.getClosestNode(dst);
+    if (!srcNode || !dstNode) {
+      return null;
+    }
+
+    // Based on https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
+    const nodePath = AStar.search(this, srcNode, dstNode);
+
+    /**
+     * Partition nodePath into alternating lists of
+     * doorNodes and roomNodes.
+     */
+    const partition = nodePath.reduce((agg, node) => {
+      const prev = agg.length ? agg[agg.length - 1] : undefined;
+      const meta = this.nodeToMeta[node.index];
+      const key = meta.doorId >= 0 ? 'door' : 'room';
+      if (prev?.key === key) {
+        prev.nodes.push(node);
+      } else {
+        agg.push(key === 'door'
+          ? { key, nodes: [node], doorId: meta.doorId }
+          : { key, nodes: [node], roomId: meta.roomId }
+        );
+        if (key === 'room' && meta.roomId === -1) {
+          console.warn(`findPathNew: expected roomId for node`, node, meta);
+        }
+      }
+      return agg;
+    }, /** @type {({ nodes: Graph.FloorGraphNode[] } & ({ key: 'door'; doorId: number } | { key: 'room'; roomId: number }))[]} */ ([]));
+
+    console.log('partition', partition);
+
+    const fullPath = [src.clone()];
+    const navMetas = /** @type {NPC.BaseLocalNavPath['navMetas']} */ ([]);
+    
+    for (const [i, item] of partition.entries()) {
+      if (item.key === 'door') {
+        if (i === 0 && partition.length === 1) {
+          fullPath.push(dst.clone());
+          break;
+        }
+
+        /** If have next node, we know nextRoomId */
+        const nextRoomId = i < partition.length - 1 ? /** @type {{ roomId: number }} */ (partition[i + 1]).roomId : null;
+        /**
+         * But if nextRoomId null, we know prevRoomId non-null, because i > 0
+         * for otherwise partition.length === 1 and we'd break earlier.
+         */
+        const prevRoomId = i > 0 ? /** @type {{ roomId: number }} */ (partition[i - 1]).roomId : null;
+
+        const door = this.gm.doors[item.doorId];
+        const doorExit = nextRoomId !== null
+          ? door.entries[door.roomIds.findIndex(x => x === nextRoomId)]
+          : door.entries[1 - door.roomIds.findIndex(x => x === prevRoomId)]
+
+        fullPath.push(doorExit);
+      } else {
+        const roomId = item.roomId;
+
+        // Compute endpoints of path through room
+        const pathSrc = i === 0 ? src : fullPath[fullPath.length - 1];
+        let pathDst = dst;
+        if (i < partition.length - 1) {
+          const door = this.gm.doors[/** @type {{ doorId: number }} */ (partition[i + 1]).doorId];
+          pathDst = door.entries[1 - door.roomIds.findIndex(x => x === roomId)];
+        }
+
+        // Can we simply walk straight through the room?
+        const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
+        const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
+        if (directPath) {
+          fullPath.push(pathDst.clone());
+          break;
+        }
+
+        // Otherwise, use "simple stupid funnel algorithm"
+        const stringPull = /** @type {Geom.VectJson[]} */ (
+          this.computeStringPull(pathSrc, pathDst, item.nodes).path
+        ).map(Vect.from);
+
+        fullPath.push(...stringPull.slice(1));
+      }
+    }
+
+    return { fullPath, navMetas };
   }
 
   /**
@@ -120,7 +202,6 @@ export class floorGraphClass extends BaseGraph {
       return null;
     }
 
-    // TODO why are srcNode/dstNode not necessarily first/last?
     const nodePath = AStar.search(this, srcNode, dstNode);
     if (nodePath[0] !== srcNode) nodePath.unshift(srcNode);
     if (extantLast(nodePath) !== dstNode) nodePath.push(dstNode);
