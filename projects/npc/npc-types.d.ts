@@ -225,8 +225,6 @@ declare namespace NPC {
     ({
       /** Pointer into `fullPath` */
       index: number;
-      /** Distance so far along path to `index` */
-      sofar: number;
     } & (
       | { key: 'exit-room'; exitedRoomId: number; doorId: number; otherRoomId: null | number; }
       | { key: 'enter-room'; enteredRoomId: number; doorId: number; otherRoomId: null | number; }

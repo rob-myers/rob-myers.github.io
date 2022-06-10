@@ -74,17 +74,14 @@ export default function NPCs(props) {
       const pf = nav.pfs[gmId];
       const localSrc = gm.inverseMatrix.transformPoint(Vect.from(src));
       const localDst = gm.inverseMatrix.transformPoint(Vect.from(dst));
+      const result = pf.graph.findPath(localSrc, localDst);
 
-      // const result = pf.graph.findPath(localSrc, localDst);
-      const resultNew = pf.graph.findPathNew(localSrc, localDst);
-
-
-      if (resultNew) {
+      if (result) {
         return {
           key: 'local-nav',
           gmId,
-          fullPath: resultNew.fullPath.map(p =>  gm.matrix.transformPoint(Vect.from(p)).precision(2)),
-          navMetas: resultNew.navMetas,
+          fullPath: result.fullPath.map(p =>  gm.matrix.transformPoint(Vect.from(p)).precision(2)),
+          navMetas: result.navMetas,
         };
       } else {
         return { key: 'local-nav', gmId, fullPath: [], navMetas: [], seq: [] };
@@ -278,22 +275,20 @@ export default function NPCs(props) {
 
           /**
            * Join all local navpath navMetas.
-           * TODO clean version with flattened global navpath
+           * TODO clean version using flattened global navpath
            */
           let sofar = 0;
           const globalNavMetas = globalNavPath.paths.reduce((agg, { gmId, navMetas }, i) => {
             const indexOffset = agg.length;
-            agg.push(...navMetas.map(x => ({ ...x, gmId, index: indexOffset + x.index, sofar: (sofar += x.sofar)  })));
+            agg.push(...navMetas.map(x => ({ ...x, gmId, index: indexOffset + x.index  })));
             if (globalNavPath.edges[i + 1]) {// Include global nav edge
               sofar += globalNavPath.edges[i + 1].srcExit.distanceTo(globalNavPath.edges[i + 1].dstEntry);
             }
             return agg;
           }, /** @type {NPC.GlobalNavMeta[]} */ ([]));
 
-          // const doorMetas = props.gmGraph.computeDoorMetas(globalNavPath);
-          // console.log('doorMetas', doorMetas);
+          console.log('globalNavMetas', globalNavMetas); // DEBUG
           // Below finishes by setting spriteSheet idle
-          // await npc.followNavPath(allPoints, { doorMetas });
           await npc.followNavPath(allPoints, { globalNavMetas });
 
         } else if (e.key === 'local-nav') {

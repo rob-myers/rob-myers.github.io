@@ -7,17 +7,10 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ Redo local nav path computation
-  - ✅ Recall navnodes intersecting door rect have doorId
-  - ✅ split `nodePath` into alternating path between doorNodes and roomNodes
-  - ✅ transform latter into fullPath
-  - ✅ transform latter into navMetas
-  - ✅ replace old approach and start testing
-
 - 🚧 nav continued
-  - clean away old local nav + renaming
-  - no need to compute sofars
-  - flatten global nav
+  - ✅ clean away old local nav + renaming
+  - ✅ no need to compute sofars
+  - 🚧 flatten global nav
   - list nav bugs
 
 - 🚧 Gatsby
@@ -49,12 +42,6 @@ __Aim towards website release__.
     - ✅ CssPanZoom can play specified path translation anim
     - ✅ Fix speed of path traversal
     - 🚧 Debug + Clean
-
-
-- 🚧 GlobalNavPath
-  - alternating edge/localNavPath (should fix immediate light change)
-  - can start/end inside a hull doorway
-  - edges need custom start/endpoints
 
 - `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`
   - e.g. including `npc get andros`
@@ -204,6 +191,13 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+
+- ✅ Redo local nav path computation
+  - ✅ Recall navnodes intersecting door rect have doorId
+  - ✅ split `nodePath` into alternating path between doorNodes and roomNodes
+  - ✅ transform latter into fullPath
+  - ✅ transform latter into navMetas
+  - ✅ replace old approach and start testing
 - ✅ BUG when NavDemo1 starts hidden, gmGraph hull doors have doorId -1
   - `useGeomorphData`
   - if g-301--bridge.json fetched twice before NavDemo1 init
