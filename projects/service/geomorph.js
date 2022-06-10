@@ -213,7 +213,7 @@ function singleToConnectorRect(single, rooms) {
   const [u, v] = geom.getAngledRectSeg({ angle, baseRect });
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
 
-  const doorEntryDelta = (Math.min(baseRect.width, baseRect.height)/2) + 0.001
+  const doorEntryDelta = (Math.min(baseRect.width, baseRect.height)/2) + 0.05
   const infront = poly.center.addScaledVector(normal, doorEntryDelta).precision(3);
   const behind = poly.center.addScaledVector(normal, -doorEntryDelta).precision(3);
 
