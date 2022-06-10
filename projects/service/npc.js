@@ -166,6 +166,7 @@ export function isLocalNavPath(input) {
   let x = /** @type {Partial<NPC.LocalNavPath>} */ (input);
   return x?.key === 'local-nav'
     && x.fullPath?.every?.(Vect.isVectJson)
+    // TODO check navMetas
     || false;
 }
 
@@ -173,8 +174,8 @@ export function isLocalNavPath(input) {
 export function isGlobalNavPath(input) {
   let x = /** @type {Partial<NPC.GlobalNavPath>} */ (input);
   return x?.key === 'global-nav'
-    && x.paths?.every?.(isLocalNavPath)
-    && x.edges?.every?.(edge => edge) // Could check props here too
+    && x.fullPath?.every?.(Vect.isVectJson)
+    // TODO check navMetas
     || false;
 }
 

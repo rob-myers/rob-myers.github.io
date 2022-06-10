@@ -1,8 +1,9 @@
 import { Poly, Rect, Vect } from '../geom';
 
 class geomServiceClass {
-
   /**
+   * Return the two compass points with angle
+   * nearest to direction.
    * @param {Vect} p 
    * @returns {[Geom.Direction, Geom.Direction]}
    */
@@ -446,14 +447,15 @@ class geomServiceClass {
    * @returns {T[]}
    */
   removePathReps(path) {
-    /** @type {Geom.VectJson} */
-    let prev;
-    return path.reduce((agg, p) => {
-      if (!(prev && (p.x === prev.x) && (p.y === prev.y))) {
-        agg.push(prev = p);
-      }
-      return agg;
-    }, /** @type {typeof path} */ ([]));
+    let prev = path[0];
+    return prev
+      ? path.reduce((agg, p) => {
+          if (!((p.x === prev.x) && (p.y === prev.y))) {
+            agg.push(prev = p);
+          }
+          return agg;
+        }, /** @type {typeof path} */ ([prev]))
+      : path;
   }
 
   /**

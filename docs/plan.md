@@ -10,7 +10,8 @@ __Aim towards website release__.
 - 🚧 nav continued
   - ✅ clean away old local nav + renaming
   - ✅ no need to compute sofars
-  - 🚧 flatten global nav
+  - ✅ flatten global nav
+  - 🚧 global nav door edges seem wrong
   - list nav bugs
 
 - 🚧 Gatsby

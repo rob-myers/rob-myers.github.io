@@ -91,38 +91,19 @@ declare namespace NPC {
     setSpritesheet(spriteSheet: SpriteSheetKey): void;
   }
 
+  /**
+   * TODO align to LocalNavMeta
+   */
   interface WayPathMeta {
     key: 'enter-door' | 'exit-door';
     length: number;
     navMeta: GlobalNavMeta;
   }
 
-  interface NavPathDoorMeta {
-    enterIndex: number;
-    ctxt: NPC.TraverseDoorCtxt;
-  }
-
   type SpriteSheetKey = (
     | 'idle'
     | 'walk'
   );
-
-  interface TraverseDoorCtxt {
-    srcGmId: number;
-    srcDoorId: number;
-    /** `null` iff start in doorway */
-    srcRoomId: number | null;
-    /** Distinct from `srcGmId` iff hull door. */
-    dstGmId: number;
-    /**
-     * If distinct from srcDoorId then hull door.
-     * The converse may fail because the two distinct
-     * geomorphs may have same doorId for connected doors.
-     */
-    dstDoorId: number;
-    /** `null` iff end in doorway */
-    dstRoomId: number | null;
-  }
   
   export interface NavNodeMeta {
     doorId: number;
@@ -181,34 +162,27 @@ declare namespace NPC {
     srcDoorId: number;
     srcHullDoorId: number;
     srcRoomId: number;
-    /** World coords */
-    srcExit: Geom.Vect;
+    /**
+     * Entrypoint of the hull door from geomorph `srcGmId`,
+     * in world coordinates.
+     */
+    srcDoorEntry: Geom.Vect;
+    
     dstGmId: number;
+    dstRoomId: number;
     dstDoorId: number;
     dstHullDoorId: number;
-    /** World coords */
-    dstEntry: Geom.Vect;
-    dstRoomId: number;
-  }
-
-  export interface NavRoomTransition {
-    key: 'room-edge';
-    doorId: number;
-
-    /** `null` iff started path in doorway */
-    srcRoomId: number | null;
-    /** `null` iff ended path in doorway */
-    dstRoomId: number | null;
-    /** Could be doorway entry point or src */
-    start: Geom.Vect;
-    /** Could be doorway entry point or dst */
-    stop: Geom.Vect;
+    /**
+     * Entrypoint of the hull door from geomorph `dstGmId`,
+     * in world coordinates.
+     */
+    dstDoorEntry: Geom.Vect;
   }
 
   interface GlobalNavPath {
     key: 'global-nav';
-    paths: LocalNavPath[];
-    edges: NPC.NavGmTransition[];
+    fullPath: Geom.Vect[];
+    navMetas: GlobalNavMeta[];
   }
 
   interface LocalNavPath extends BaseLocalNavPath {

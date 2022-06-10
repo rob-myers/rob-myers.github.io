@@ -120,7 +120,7 @@ export class gmGraphClass extends BaseGraph {
   }
 
   /**
-   * TODO 🚧 test
+   * Find path using simplistic global nav strategy.
    * @param {Geom.VectJson} src
    * @param {Geom.VectJson} dst 
    */
@@ -131,19 +131,27 @@ export class gmGraphClass extends BaseGraph {
       return null;
     }
     
-    const gmIdsPath = /** @type {NPC.NavGmTransition[]} */ ([]);
+    const gmEdges = /** @type {NPC.NavGmTransition[]} */ ([]);
     const currSrc = Vect.from(src);
     const direction = Vect.from(dst).sub(src);
     let gmId = srcGmId;
 
     while (gmId !== dstGmId) {
       const sides = geom.compassPoints(direction);
+      /**
+       * Restrict to hull door nodes in geomorph `gmId`,
+       * connected to other geomorphs by some side in `sides`. 
+       * Intuitively, restrict to hull doors in `direction`.
+       */
       const doorNodes = sides.flatMap(sideDir =>
         this.getConnectedDoorsBySide(gmId, sideDir)
       );
-
-      // Choose doorway whose exit is closest to final destination
-      // NOTE simplistic strategy
+      /**
+       * Choose node in `doorNodes` with exit closest to final destination.
+       * This is a rather simplistic strategy, and depends on the
+       * respective topology being "nice". However, we would expect
+       * the Last Redoubt to use up as much space as possible.
+       */
       const closest = doorNodes.reduce((agg, doorNode) => {
         const v = this.getDoorEntry(doorNode);
         const d = v.distanceToSquared(dst);
@@ -157,19 +165,22 @@ export class gmGraphClass extends BaseGraph {
           error(`global nav: ${gmId} ${closest.node.id} has no adjacent door`);
           return null;
         }
-        gmIdsPath.push({
+
+        gmEdges.push({
           srcGmId: gmId,
           srcRoomId: /** @type {number} */ (this.gms[gmId].doors[closest.node.doorId].roomIds.find(x => x !== null)),
           srcDoorId: closest.node.doorId,
           srcHullDoorId: closest.node.hullDoorId,
-          srcExit: closest.v,
+          srcDoorEntry: closest.v,
 
           dstGmId: adjDoorNode.gmId,
           dstRoomId: /** @type {number} */ (this.gms[adjDoorNode.gmId].doors[adjDoorNode.doorId].roomIds.find(x => x !== null)),
           dstDoorId: adjDoorNode.doorId,
           dstHullDoorId: adjDoorNode.hullDoorId,
-          dstEntry: this.getDoorEntry(adjDoorNode),
+          dstDoorEntry: this.getDoorEntry(adjDoorNode),
         });
+
+        // Goto next geomorph
         gmId = adjDoorNode.gmId;
         currSrc.copy(closest.v);
         direction.copy(dst).sub(currSrc);
@@ -179,7 +190,7 @@ export class gmGraphClass extends BaseGraph {
       }
     }
 
-    return gmIdsPath;
+    return gmEdges;
   }
 
   /** @param {Geom.VectJson} point */

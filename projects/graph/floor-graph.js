@@ -77,25 +77,6 @@ export class floorGraphClass extends BaseGraph {
   // }
 
   /**
-   * @param {NPC.NavNodeMeta} meta
-   * Assume doorId ≥ 0, roomId ≥ 0 and door is not a hull door.
-   * @param {number | null} prevRoomId
-   * @returns {NPC.NavRoomTransition}
-   */
-  createRoomEdge(meta, prevRoomId) {
-    const door = this.gm.doors[meta.doorId];
-    const points = /** @type {[Geom.Vect, Geom.Vect]} */ (door.entries);
-    return {
-      key: 'room-edge',
-      doorId: meta.doorId,
-      srcRoomId: prevRoomId,
-      dstRoomId: meta.roomId,
-      start: door.roomIds[0] === meta.roomId ? points[1] : points[0],
-      stop: door.roomIds[0] === meta.roomId ? points[0] : points[1],
-    };
-  }
-
-  /**
    * @param {Geom.Vect} src in geomorph local coords
    * @param {Geom.Vect} dst in geomorph local coords
    * @returns {null | NPC.BaseLocalNavPath}
@@ -183,14 +164,6 @@ export class floorGraphClass extends BaseGraph {
           pathDst = door.entries[1 - door.roomIds.findIndex(x => x === roomId)];
         }
 
-        // Can we simply walk straight through the room?
-        const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
-        const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
-        if (directPath) {
-          fullPath.push(pathDst.clone());
-          break;
-        }
-
         if (i > 0) {// We entered this room
           const doorId = /** @type {{ doorId: number }} */ (partition[i - 1]).doorId;
           const door = this.gm.doors[doorId];
@@ -204,6 +177,14 @@ export class floorGraphClass extends BaseGraph {
           });
         }
 
+        // Can we simply walk straight through the room?
+        const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
+        const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
+        if (directPath) {
+          fullPath.push(pathDst.clone());
+          break;
+        }
+
         // Otherwise, use "simple stupid funnel algorithm"
         const stringPull = /** @type {Geom.VectJson[]} */ (
           this.computeStringPull(pathSrc, pathDst, item.nodes).path
@@ -214,7 +195,7 @@ export class floorGraphClass extends BaseGraph {
     }
 
     return {
-      fullPath: geom.removePathReps(fullPath),
+      fullPath, // May contain adjacent dups
       navMetas,
     };
   }

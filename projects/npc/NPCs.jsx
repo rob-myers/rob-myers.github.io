@@ -5,6 +5,7 @@ import { merge, of, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
+import { geom } from "../service/geom";
 import { Poly, Rect, Vect } from "../geom";
 import { animScaleFactor, isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
 import createNpc from "./create-npc";
@@ -29,43 +30,60 @@ export default function NPCs(props) {
     class: { Vect },
     rxjs: { filter, first, map, take, otag }, // TODO remove?
 
-    /**
-     * TODO flat global navpath like local navpath
-     */
     getGlobalNavPath(src, dst) {
       const {gms} = props.gmGraph
       const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
       const dstGmId = gms.findIndex(x => x.gridRect.contains(dst));
+
       if (srcGmId === -1 || dstGmId === -1) {
         throw Error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`)
       } else if (srcGmId === dstGmId) {
+        const localNavPath = state.getLocalNavPath(srcGmId, src, dst);
         return {
           key: 'global-nav',
-          paths: [state.getLocalNavPath(srcGmId, src, dst)],
-          edges: [],
+          fullPath: localNavPath.fullPath.slice(),
+          navMetas: localNavPath.navMetas.map(x => ({ ...x, gmId: localNavPath.gmId })),
         };
       } else {
-        // Compute global strategy
+
+        // Compute global strategy i.e. edges in gmGraph
         const gmEdges = props.gmGraph.findPath(src, dst);
         if (!gmEdges) {
           throw Error(`getGlobalNavPath: gmGraph.findPath not found: ${JSON.stringify(src)} -> ${JSON.stringify(dst)}`);
         }
         console.log('gmEdges', gmEdges); // DEBUG
 
-        const paths = /** @type {NPC.LocalNavPath[]} */ ([]);
+        const fullPath = /** @type {Geom.Vect[]} */ ([]);
+        const navMetas = /** @type {NPC.GlobalNavMeta[]} */ ([]);
+
         for (let k = 0; k < gmEdges.length + 1; k++) {
-          if (k === 0) {// Initial
-            paths[k] = state.getLocalNavPath(srcGmId, src, gmEdges[0].srcExit);
-          } else if (k === gmEdges.length) {// Final
-            paths[k] = state.getLocalNavPath(dstGmId, gmEdges[k - 1].dstEntry, dst);
-          } else {// Intermediate
-            paths[k] = state.getLocalNavPath(gmEdges[k - 1].dstGmId, gmEdges[k - 1].dstEntry, gmEdges[k].srcExit);
-          }
+          const localNavPath = k === 0
+            // Initial
+            ? state.getLocalNavPath(srcGmId, src, gmEdges[0].srcDoorEntry)
+            : k < gmEdges.length
+              // Intermediate
+              ? state.getLocalNavPath(gmEdges[k - 1].dstGmId, gmEdges[k - 1].dstDoorEntry, gmEdges[k].srcDoorEntry)
+              // Final
+              : state.getLocalNavPath(dstGmId, gmEdges[k - 1].dstDoorEntry, dst);
+            
+          const indexOffset = fullPath.length;
+          fullPath.push(...localNavPath.fullPath);
+
+          // TODO 🚧 transform navMeta with otherRoomId null?
+          console.log('localNavPath', localNavPath);
+          navMetas.push(...localNavPath.navMetas.map(x => ({
+            ...x,
+            index: indexOffset + x.index,
+            gmId: localNavPath.gmId,
+          })));
         }
+        
+        console.log({fullPath})
+
         return {
           key: 'global-nav',
-          paths,
-          edges: gmEdges,
+          fullPath,
+          navMetas,
         };
       }
     },
@@ -80,17 +98,23 @@ export default function NPCs(props) {
         return {
           key: 'local-nav',
           gmId,
-          fullPath: result.fullPath.map(p =>  gm.matrix.transformPoint(Vect.from(p)).precision(2)),
+          // Transform to world coords, reduce precision, prevent adjacent dups
+          fullPath: geom.removePathReps(
+            result.fullPath.map(p => gm.matrix.transformPoint(Vect.from(p)).precision(3))
+          ),
           navMetas: result.navMetas,
         };
       } else {
-        return { key: 'local-nav', gmId, fullPath: [], navMetas: [], seq: [] };
+        return { key: 'local-nav', gmId, fullPath: [], navMetas: [] };
       }
     },
+    /**
+     * Used by shell function `nav`.
+     */
     getNpcGlobalNav(e) {
       if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
         throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
-      } else if (!(e.point && typeof e.point.x === 'number' && typeof e.point.y === 'number')) {
+      } else if (!(Vect.isVectJson(e.point))) {
         throw Error(`invalid point: ${JSON.stringify(e.point)}`);
       } else if (!state.isPointLegal(e.point)) {
         throw Error(`outside navPoly: ${JSON.stringify(e.point)}`);
@@ -101,7 +125,7 @@ export default function NPCs(props) {
       }
       const result = state.getGlobalNavPath(npc.getPosition(), e.point);
       if (e.debug) {
-        const points = (result?.paths??[]).reduce((agg, item) => agg.concat(...item.fullPath), /** @type {Geom.Vect[]} */ ([]));
+        const points = (result?.fullPath)??[];
         state.toggleDebugPath({ pathKey: e.npcKey, points })
       }
       return result;
@@ -267,29 +291,11 @@ export default function NPCs(props) {
         } else if (e.key === 'global-nav') {// Walk along a global navpath
           
           const globalNavPath = e;
-          /** Join all local navpath `fullPath`s */
-          const allPoints = globalNavPath.paths.reduce((agg, item) =>
-            // NOTE no intermediate dups due to global navpath construction
-            agg.concat(...item.fullPath),
-          /** @type {Geom.Vect[]} */ ([]));
+          const allPoints = globalNavPath.fullPath;
 
-          /**
-           * Join all local navpath navMetas.
-           * TODO clean version using flattened global navpath
-           */
-          let sofar = 0;
-          const globalNavMetas = globalNavPath.paths.reduce((agg, { gmId, navMetas }, i) => {
-            const indexOffset = agg.length;
-            agg.push(...navMetas.map(x => ({ ...x, gmId, index: indexOffset + x.index  })));
-            if (globalNavPath.edges[i + 1]) {// Include global nav edge
-              sofar += globalNavPath.edges[i + 1].srcExit.distanceTo(globalNavPath.edges[i + 1].dstEntry);
-            }
-            return agg;
-          }, /** @type {NPC.GlobalNavMeta[]} */ ([]));
-
-          console.log('globalNavMetas', globalNavMetas); // DEBUG
+          console.log('global navMetas', globalNavPath.navMetas); // DEBUG
           // Below finishes by setting spriteSheet idle
-          await npc.followNavPath(allPoints, { globalNavMetas });
+          await npc.followNavPath(allPoints, { globalNavMetas: globalNavPath.navMetas });
 
         } else if (e.key === 'local-nav') {
           for (const [i, vectPath] of e.fullPath.entries()) {
