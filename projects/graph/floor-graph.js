@@ -121,6 +121,7 @@ export class floorGraphClass extends BaseGraph {
     
     for (const [i, item] of partition.entries()) {
       if (item.key === 'door') {
+
         if (i === 0 && partition.length === 1) {
           fullPath.push(dst.clone());
           break;
@@ -161,7 +162,8 @@ export class floorGraphClass extends BaseGraph {
         let pathDst = dst;
         if (i < partition.length - 1) {
           const door = this.gm.doors[/** @type {{ doorId: number }} */ (partition[i + 1]).doorId];
-          pathDst = door.entries[1 - door.roomIds.findIndex(x => x === roomId)];
+          // Given next door node, pathDst should be door entry for roomId
+          pathDst = door.entries[door.roomIds.findIndex(x => x === roomId)];
         }
 
         if (i > 0) {// We entered this room
@@ -182,7 +184,7 @@ export class floorGraphClass extends BaseGraph {
         const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
         if (directPath) {
           fullPath.push(pathDst.clone());
-          break;
+          continue;
         }
 
         // Otherwise, use "simple stupid funnel algorithm"
