@@ -39,6 +39,7 @@ export default function NPCs(props) {
         throw Error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`)
       } else if (srcGmId === dstGmId) {
         const localNavPath = state.getLocalNavPath(srcGmId, src, dst);
+        // console.log('localNavPath (single)', localNavPath);
         return {
           key: 'global-nav',
           fullPath: localNavPath.fullPath.slice(),
@@ -89,16 +90,16 @@ export default function NPCs(props) {
     },
     getLocalNavPath(gmId, src, dst) {
       const gm = props.gmGraph.gms[gmId];
-      const pf = nav.pfs[gmId];
       const localSrc = gm.inverseMatrix.transformPoint(Vect.from(src));
       const localDst = gm.inverseMatrix.transformPoint(Vect.from(dst));
+      const pf = nav.pfs[gmId];
       const result = pf.graph.findPath(localSrc, localDst);
 
       if (result) {
         return {
           key: 'local-nav',
           gmId,
-          // Transform to world coords, reduce precision, prevent adjacent dups
+          // Back to world coords with rounding and no adjacent dups
           fullPath: geom.removePathReps(
             result.fullPath.map(p => gm.matrix.transformPoint(Vect.from(p)).precision(3))
           ),
