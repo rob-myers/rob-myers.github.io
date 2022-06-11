@@ -64,7 +64,7 @@ declare namespace NPC {
       
       root: Animation;
       body: Animation;
-      wayMetas: WayPathMeta[];
+      wayMetas: WayPointMeta[];
       wayTimeoutId: number;
     };
     //#endregion
@@ -89,15 +89,6 @@ declare namespace NPC {
     startAnimation(): void;
     updateAnimAux(): void;
     setSpritesheet(spriteSheet: SpriteSheetKey): void;
-  }
-
-  /**
-   * TODO align to LocalNavMeta
-   */
-  interface WayPathMeta {
-    key: 'enter-door' | 'exit-door';
-    length: number;
-    navMeta: GlobalNavMeta;
   }
 
   type SpriteSheetKey = (
@@ -208,6 +199,11 @@ declare namespace NPC {
     gmId: number;
   }
 
+  type WayPointMeta = GlobalNavMeta & {
+    /** Computed via `anim.sofars` */
+    length: number;
+  }
+
   export interface FullApi {
     npc: Record<string, NPC.NPC>;
     path: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
@@ -259,8 +255,9 @@ declare namespace NPC {
     | { key: 'set-player'; npcKey: string; }
     | { key: 'started-walking'; npcKey: string; }
     | { key: 'stopped-walking'; npcKey: string; }
-    | { key: 'entered-room'; npcKey: string; navMeta: GlobalNavMeta; }
-    | { key: 'exited-room'; npcKey: string; navMeta: GlobalNavMeta; }
+    // | { key: 'entered-room'; npcKey: string; navMeta: GlobalNavMeta; }
+    // | { key: 'exited-room'; npcKey: string; navMeta: GlobalNavMeta; }
+    | { key: 'way-point'; npcKey: string; meta: WayPointMeta }
   );
 
 }

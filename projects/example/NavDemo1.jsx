@@ -115,15 +115,18 @@ export default function NavDemo1(props) {
           } else {
             console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
           }
-        } else if (e.key === 'exited-room') {
-          if (e.npcKey === state.playerNpcKey && e.navMeta.key === 'exit-room' && e.navMeta.otherRoomId !== null) {
-            state.gmId = e.navMeta.gmId; // TODO dstGmId?
-            state.roomId = e.navMeta.otherRoomId;
+        } else if (e.key === 'way-point') {
+          if (e.npcKey === state.playerNpcKey && e.meta.key === 'exit-room' && e.meta.otherRoomId !== null) {
+            state.gmId = e.meta.gmId;
+            state.roomId = e.meta.otherRoomId;
             state.update();
           }
-          // if (e.ctxt.dstRoomId === null) {
-          //   console.warn(`exited-room with null dstRoomId`)
-          // }
+          // TODO remove this i.e. handle hull doors via exit-room
+          if (e.npcKey === state.playerNpcKey && e.meta.key === 'enter-room' && e.meta.otherRoomId === null) {
+            state.gmId = e.meta.gmId;
+            state.roomId = e.meta.enteredRoomId;
+            state.update();
+          }
         }
       });
 

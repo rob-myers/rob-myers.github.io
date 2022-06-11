@@ -11,8 +11,10 @@ __Aim towards website release__.
   - ✅ clean away old local nav + renaming
   - ✅ no need to compute sofars
   - ✅ flatten global nav
-  - 🚧 global nav door edges seem wrong
-  - list nav bugs
+  - ✅ global nav door edges seem wrong
+  - ✅ light changes when move thru hull door
+  - 🚧 hull door light switch should be on room-exit
+  - 🚧 fix stop/start in door issues
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby

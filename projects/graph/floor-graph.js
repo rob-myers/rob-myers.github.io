@@ -152,7 +152,10 @@ export class floorGraphClass extends BaseGraph {
           ? door.entries[door.roomIds.findIndex(x => x === nextRoomId)]
           : door.entries[1 - door.roomIds.findIndex(x => x === prevRoomId)]
 
-        fullPath.push(doorExit.clone());
+        // Avoid case where just entered geomorph and doorExit ~ src
+        if (!(i == 0 && src.distanceTo(doorExit) < 0.1)) {
+          fullPath.push(doorExit.clone());
+        }
 
       } else {
         const roomId = item.roomId;
@@ -183,6 +186,7 @@ export class floorGraphClass extends BaseGraph {
         const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
         const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
         if (directPath) {
+          console.log('directPath', pathDst.clone())
           fullPath.push(pathDst.clone());
           continue;
         }

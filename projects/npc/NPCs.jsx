@@ -99,10 +99,8 @@ export default function NPCs(props) {
         return {
           key: 'local-nav',
           gmId,
-          // Back to world coords with rounding and no adjacent dups
-          fullPath: geom.removePathReps(
-            result.fullPath.map(p => gm.matrix.transformPoint(Vect.from(p)).precision(3))
-          ),
+          // Avoid geom.removePathReps because navMetas would have to be adjusted
+          fullPath: result.fullPath.map(p => gm.matrix.transformPoint(Vect.from(p)).precision(3)),
           navMetas: result.navMetas,
         };
       } else {
