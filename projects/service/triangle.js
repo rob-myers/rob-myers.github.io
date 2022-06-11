@@ -24,7 +24,7 @@ export class TriangleService {
     // console.log('triangulating');
     Triangle.triangulate({
       pslg: true,
-      quality: opts?.minAngle || true,
+      // quality: opts?.minAngle || true,
       holes: true,
       // holes: false,
       area: opts?.maxArea || false,
@@ -32,6 +32,7 @@ export class TriangleService {
       // convexHull: true,
       jettison: true,
       ccdt: true,
+      refine: false
     }, input, output);
     
     // triangle-wasm uses 0-based indices (unlike .poly file format)

@@ -1,6 +1,18 @@
-import { Poly, Rect, Vect } from '../geom';
+import { Mat, Poly, Rect, Vect } from '../geom';
 
 class geomServiceClass {
+  /**
+   * @param {Geom.AngledRect<Geom.Rect>} input 
+   * @returns {Geom.Poly}
+   */
+   angledRectToPoly(input) {
+    const poly = Poly.fromRect(input.baseRect);
+    poly.translate(-input.baseRect.x, -input.baseRect.y);
+    poly.applyMatrix((new Mat).setRotation(input.angle));
+    poly.translate(input.baseRect.x, input.baseRect.y);
+    return poly;
+  }
+
   /**
    * Return the two compass points with angle
    * nearest to direction.

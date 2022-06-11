@@ -284,6 +284,9 @@ declare namespace Geomorph {
     /** `poly.rect` i.e. rotated rectangle */
     rect: R;
     seg: [V, V];
+    /**
+     * Points towards `entries[0]`.
+     */
     normal: V;
     tags: string[];
     /**

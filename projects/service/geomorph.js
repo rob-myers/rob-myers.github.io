@@ -86,26 +86,6 @@ export async function createLayout(def, lookup, triangleService) {
   const hullOutline = hullSym.hull.map(x => x.clone().removeHoles()); // Not transformed
   const windowPolys = singlesToPolys(groups.singles, 'window');
 
-  // Navigation polygon
-  const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
-    // Use non-unioned walls to avoid outset issue
-    unjoinedWalls.flatMap(x => x.createOutset(12)),
-    groups.obstacles.flatMap(x => x.createOutset(8)),
-  ), hullOutline).map(x => x.cleanFinalReps().fixOrientation().precision(4));
-
-  /**
-   * - Currently triangle-wasm runs server-side only
-   * - Errors thrown by other code seems to trigger error at:
-   *   > `/Users/robmyers/coding/rob-myers.github.io/node_modules/triangle-wasm/triangle.out.js:9`
-   */
-  const navDecomp = triangleService
-    ? await triangleService.triangulate(navPoly, {
-        minAngle: 10,
-        // maxSteiner: 300,
-        // maxArea: 750,
-      })
-    : { vs: [], tris: [] };
-
   // Labels
   const measurer = createCanvas(0, 0).getContext('2d');
   measurer.font = labelMeta.font;
@@ -148,6 +128,43 @@ export async function createLayout(def, lookup, triangleService) {
     extendHullDoorTags(door, hullRect);
   });
 
+  // Navigation polygon
+  const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
+    // Use non-unioned walls to avoid outset issue
+    unjoinedWalls.flatMap(x => x.createOutset(12)),
+    groups.obstacles.flatMap(x => x.createOutset(8)),
+  ), hullOutline).map(
+    x => x.cleanFinalReps().fixOrientation().precision(4)
+  );
+  /**
+   * In order to ensure "steiner points" for door rect,
+   * without [Triangle](https://www.cs.cmu.edu/~quake/triangle.html)
+   * throwing a fit, we add an outsetted version of them.
+   */
+  const restrictedDoorPolys = Poly.intersect(navPoly, doorPolys).map(x => x.createOutset(0.1)[0]);
+  /** Must concat doors else absorbed into `navPoly` */
+  const navPolyWithDoors = navPoly.concat(restrictedDoorPolys);
+
+  /**
+   * - Currently triangle-wasm runs server-side only
+   * - Adding door polys produced failures with opts { minAngle: 10 }
+   * - Adding door polys produced failures without out-setting them a bit first
+   * - Errors thrown by other code seems to trigger error at:
+   *   > `/Users/robmyers/coding/rob-myers.github.io/node_modules/triangle-wasm/triangle.out.js:9`
+   */
+  const navDecomp = triangleService
+    ? await triangleService.triangulate(
+        navPolyWithDoors,
+        {
+          // minAngle: 10,
+          maxSteiner: 200,
+          // maxArea: 750,
+        },
+      )
+    : { vs: [], tris: [] };
+
+  console.log('nav tris count:', navDecomp.vs.length)
+
   /**
    * Compute navZone using method from three-pathfinding,
    * also attaching `doorNodeIds` and `roomNodeIds`.
@@ -169,7 +186,7 @@ export async function createLayout(def, lookup, triangleService) {
     doors,
     windows,
     labels,
-    navPoly,
+    navPoly: navPolyWithDoors,
     navZone,
     roomGraph,
     
@@ -513,4 +530,3 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
     roomNodeIds,
   };
 }
-
