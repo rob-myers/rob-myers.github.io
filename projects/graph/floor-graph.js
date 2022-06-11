@@ -114,18 +114,11 @@ export class floorGraphClass extends BaseGraph {
       return agg;
     }, /** @type {({ nodes: Graph.FloorGraphNode[] } & ({ key: 'door'; doorId: number } | { key: 'room'; roomId: number }))[]} */ ([]));
 
-    console.log('findPath: partition', partition); // DEBUG 🚧
-
     const fullPath = [src.clone()];
     const navMetas = /** @type {NPC.BaseLocalNavPath['navMetas']} */ ([]);
     
     for (const [i, item] of partition.entries()) {
       if (item.key === 'door') {
-
-        if (i === 0 && partition.length === 1) {
-          fullPath.push(dst.clone());
-          break;
-        }
 
         const door = this.gm.doors[item.doorId];
 
@@ -135,23 +128,21 @@ export class floorGraphClass extends BaseGraph {
             key: 'exit-room',
             index: fullPath.length - 1,
             doorId: item.doorId,
+            hullDoorId: this.gm.hullDoors.indexOf(door),
             exitedRoomId: roomId,
             otherRoomId: door.roomIds[1 - door.roomIds.findIndex(x => x === roomId)],
           });
         }
+
+        if (!partition[i + 1]) {// Finish in doorway
+          fullPath.push(dst.clone());
+          break;
+        } 
         
-        /** If have next node, we know nextRoomId */
-        const nextRoomId = i < partition.length - 1 ? /** @type {{ roomId: number }} */ (partition[i + 1]).roomId : null;
-        /**
-         * But if nextRoomId null, we know prevRoomId non-null, because i > 0
-         * for otherwise partition.length === 1 and we'd break earlier.
-         */
-        const prevRoomId = i > 0 ? /** @type {{ roomId: number }} */ (partition[i - 1]).roomId : null;
-
-        const doorExit = nextRoomId !== null
-          ? door.entries[door.roomIds.findIndex(x => x === nextRoomId)]
-          : door.entries[1 - door.roomIds.findIndex(x => x === prevRoomId)]
-
+        /** Have next node with nextRoomId */
+        const nextRoomId = /** @type {{ roomId: number }} */ (partition[i + 1]).roomId;
+        const doorExit =door.entries[door.roomIds.findIndex(x => x === nextRoomId)];
+        
         // Avoid case where just entered geomorph and doorExit ~ src
         if (!(i == 0 && src.distanceTo(doorExit) < 0.1)) {
           fullPath.push(doorExit.clone());
@@ -177,6 +168,7 @@ export class floorGraphClass extends BaseGraph {
             key: 'enter-room',
             index: fullPath.length - 1,
             doorId,
+            hullDoorId: this.gm.hullDoors.indexOf(door),
             enteredRoomId: roomId,
             otherRoomId: door.roomIds[1 - door.roomIds.findIndex(x => x === roomId)],
           });
@@ -186,7 +178,6 @@ export class floorGraphClass extends BaseGraph {
         const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
         const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
         if (directPath) {
-          console.log('directPath', pathDst.clone())
           fullPath.push(pathDst.clone());
           continue;
         }
@@ -199,6 +190,8 @@ export class floorGraphClass extends BaseGraph {
         fullPath.push(...stringPull.slice(1));
       }
     }
+
+    console.log('findPath', partition, fullPath, navMetas); // DEBUG 🚧
 
     return {
       fullPath, // May contain adjacent dups

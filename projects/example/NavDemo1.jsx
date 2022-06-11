@@ -36,7 +36,6 @@ export default function NavDemo1(props) {
       // gmId: 3, roomId: 26,
 
       initOpen: { 0: [24] },
-      lit: false,
       clipPath: gms.map(_ => 'none'),
       playerNpcKey: /** @type {null | string} */ (null),
 
@@ -103,28 +102,29 @@ export default function NavDemo1(props) {
 
       const npcsSub = state.npcsApi.events.subscribe((e) => {
         if (e.key === 'set-player') {
-          state.playerNpcKey = e.npcKey;
           // Infer current room
           const npc = state.npcsApi.npc[e.npcKey];
           const position = npc.getPosition();
           const found = gmGraph.findRoomContaining(position);
           if (found) {
+            state.playerNpcKey = e.npcKey;
             [state.gmId, state.roomId] = [found.gmId, found.roomId];
-            state.lit = true; // TODO set false on clear player
             state.update();
           } else {
             console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
           }
         } else if (e.key === 'way-point') {
-          if (e.npcKey === state.playerNpcKey && e.meta.key === 'exit-room' && e.meta.otherRoomId !== null) {
-            state.gmId = e.meta.gmId;
-            state.roomId = e.meta.otherRoomId;
-            state.update();
-          }
-          // TODO remove this i.e. handle hull doors via exit-room
-          if (e.npcKey === state.playerNpcKey && e.meta.key === 'enter-room' && e.meta.otherRoomId === null) {
-            state.gmId = e.meta.gmId;
-            state.roomId = e.meta.enteredRoomId;
+          if (e.npcKey === state.playerNpcKey && e.meta.key === 'exit-room') {
+            if (e.meta.otherRoomId !== null) {
+              state.gmId = e.meta.gmId;
+              state.roomId = e.meta.otherRoomId;
+            } else {// Handle hull doors
+              const adjCtxt = gmGraph.getAdjacentRoomCtxt(e.meta.gmId, e.meta.hullDoorId);
+              if (adjCtxt) {
+                state.gmId = adjCtxt.adjGmId;
+                state.roomId = adjCtxt.adjRoomId;
+              }
+            }
             state.update();
           }
         }
@@ -145,7 +145,7 @@ export default function NavDemo1(props) {
       dark
       onLoad={api => state.panZoomApi = api}
     >
-      {state.lit && gms.map(gm =>
+      {gms.map(gm =>
         <img
           className="geomorph"
           src={geomorphPngPath(gm.key)}
