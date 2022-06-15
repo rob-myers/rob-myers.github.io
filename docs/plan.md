@@ -7,14 +7,19 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- 🚧 nav continued
-  - ✅ clean away old local nav + renaming
-  - ✅ no need to compute sofars
-  - ✅ flatten global nav
-  - ✅ global nav door edges seem wrong
-  - ✅ light changes when move thru hull door
-  - 🚧 hull door light switch should be on room-exit
-  - 🚧 fix stop/start in door issues
+- nav door issues (post nav door stitching)
+  - ✅ only 2 door tris should have doorId
+  - 🚧 light does not change when nav to door
+  - 🚧 light does not change when nav from door
+
+- support multiple groups in navZone e.g. 102
+  - ✅ exists in navZone
+  - ✅ drawn their triangulation
+  - 🚧 support navigation with multiple groups
+
+- craft navmesh with door rects (2 tris) manually
+  - triangulate each room and then join
+  - careful e.g. 302
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
@@ -194,7 +199,14 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
-
+- nav continued
+  - ✅ clean away old local nav + renaming
+  - ✅ no need to compute sofars
+  - ✅ flatten global nav
+  - ✅ global nav door edges seem wrong
+  - ✅ light changes when move thru hull door
+  - ✅ hull door light switch should be on room-exit
+  - ✅ nav to door node should not go thru door
 - ✅ Redo local nav path computation
   - ✅ Recall navnodes intersecting door rect have doorId
   - ✅ split `nodePath` into alternating path between doorNodes and roomNodes
