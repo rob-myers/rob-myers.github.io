@@ -76,14 +76,14 @@ function ForeignObject({ gm }) {
   return (
     <foreignObject {...gm.pngRect} xmlns="http://www.w3.org/1999/xhtml">
       <div onClick={onClick}>
-        {gm.doors.map(({ rect, angle }) =>
+        {gm.doors.map(({ baseRect, angle }) =>
           <div
             className="door"
             style={{
-              left: rect.x - gm.pngRect.x,
-              top: rect.y - gm.pngRect.y,
-              width: rect.width,
-              height: rect.height,
+              left: baseRect.x - gm.pngRect.x,
+              top: baseRect.y - gm.pngRect.y,
+              width: baseRect.width,
+              height: baseRect.height,
               transformOrigin: 'top left',
               transform: `rotate(${angle}rad)`,
             }} />
