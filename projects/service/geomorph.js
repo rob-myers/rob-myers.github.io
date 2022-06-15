@@ -6,7 +6,7 @@ import { geom } from './geom';
 import { filterSingles, labelMeta, singlesToPolys } from '../geomorph/geomorph.model';
 import { RoomGraph } from '../graph/room-graph';
 import { Builder } from '../pathfinding/Builder';
-import { warn } from './log';
+import { error, warn } from './log';
 
 /**
  * Create a layout, given a definition and all symbols.
@@ -128,40 +128,84 @@ export async function createLayout(def, lookup, triangleService) {
     extendHullDoorTags(door, hullRect);
   });
 
-  // Navigation polygon
-  const navPoly = Poly.cutOut(/** @type {Poly[]} */([]).concat(
+  /** Sometimes large disjoint nav areas must be discarded  */
+  const ignoreNavPoints = groups.singles
+    .filter(x => x.tags.includes('ignore-nav')).map(x => x.poly.center);
+
+  /**
+   * Navigation polygon obtained by cutting walls and obstacles
+   * from `hullOutline`, thereby creating doorways (including doors).
+   * We also discard polygons which intersect ignoreNavPoints.
+   */
+  const navPolyWithDoors = Poly.cutOut(/** @type {Poly[]} */([]).concat(
     // Use non-unioned walls to avoid outset issue
     unjoinedWalls.flatMap(x => x.createOutset(12)),
     groups.obstacles.flatMap(x => x.createOutset(8)),
   ), hullOutline).map(
     x => x.cleanFinalReps().fixOrientation().precision(4)
+  ).filter(poly => 
+    !ignoreNavPoints.some(p => poly.contains(p))
+    && poly.rect.area > 20 * 20 // also ignore small areas
   );
-  /**
-   * In order to ensure "steiner points" for door rect,
-   * without [Triangle](https://www.cs.cmu.edu/~quake/triangle.html)
-   * throwing a fit, we add an outsetted version of them.
-   */
-  const restrictedDoorPolys = Poly.intersect(navPoly, doorPolys).map(x => x.createOutset(0.1)[0]);
-  /** Must concat doors else absorbed into `navPoly` */
-  const navPolyWithDoors = navPoly.concat(restrictedDoorPolys);
+
+  /** Intersection of each door (angled rect) with navPoly */
+  const navDoorPolys = doorPolys
+    .flatMap(doorPoly => Poly.intersect([doorPoly], navPolyWithDoors))
+    .map(x => x.cleanFinalReps());
+  /** Navigation polygon without doors */
+  const navPolySansDoors = Poly.cutOut(doorPolys, navPolyWithDoors);
 
   /**
+   * Apply Triangle triangulation library to `navPolySansDoors`.
+   * - We add the doors back manually further below
    * - Currently triangle-wasm runs server-side only
-   * - Adding door polys produced failures with opts { minAngle: 10 }
-   * - Adding door polys produced failures without out-setting them a bit first
    * - Errors thrown by other code seems to trigger error at:
-   *   > `/Users/robmyers/coding/rob-myers.github.io/node_modules/triangle-wasm/triangle.out.js:9`
+   *   > `{REPO_ROOT}/node_modules/triangle-wasm/triangle.out.js:9`
    */
   const navDecomp = triangleService
     ? await triangleService.triangulate(
-        navPolyWithDoors,
+        navPolySansDoors,
         {
           // minAngle: 10,
-          maxSteiner: 200,
+          // maxSteiner: 100,
           // maxArea: 750,
         },
       )
     : { vs: [], tris: [] };
+
+  /**
+   * Extend navDecomp with 2 triangles for each door
+   * - We assume well-formedness i.e. exactly 2 edges already present
+   *   in the triangulation. If not we warn and skip the door.
+   */
+  const tempVect = new Vect;
+  // const tempPoly = new Poly([new Vect, new Vect, new Vect]);
+  for (const [i, { outline }] of navDoorPolys.entries()) {
+    if (outline.length !== 4) {
+      error(`door ${i} nav skipped: expected 4 vertices but saw ${outline.length}`);
+      continue;
+    }
+    // 1st triangle arises from any three ids
+    const ids = outline.map(p => {
+      const vId = navDecomp.vs.findIndex(q => p.equalsAlmost(q, 0.0001));
+      return vId === -1 ? navDecomp.vs.push(p) - 1 : vId;
+    });
+    const triA = /** @type {[number, number, number]} */ (ids.slice(0, 3));
+
+    // 2nd triangle follows via distance
+    tempVect.copy(navDecomp.vs[ids[3]]);
+    const idDists = triA.map(id => [id, tempVect.distanceTo(navDecomp.vs[id])])
+      .sort((a, b) => a[1] < b[1] ? -1 : 1);
+    const triB = /** @type {[number, number, number]} */ (
+      [ids[3]].concat(idDists.slice(0, 2).map(x => x[0]))
+    );
+    // triA.forEach((id, j) => tempPoly.outline[j].copy(navDecomp.vs[id]));
+    // if (tempPoly.anticlockwise()) triA.reverse();
+    // triB.forEach((id, j) => tempPoly.outline[j].copy(navDecomp.vs[id]));
+    // if (tempPoly.anticlockwise()) triB.reverse();
+    // console.log(ids.length, { ids, triA, triB });
+    navDecomp.tris.push(triA, triB);
+  }
 
   console.log('nav tris count:', navDecomp.vs.length)
 
@@ -172,6 +216,9 @@ export async function createLayout(def, lookup, triangleService) {
    * We expect it to have exactly one group.
    */
   const navZone = buildZoneWithMeta(navDecomp, doors, rooms);
+  navZone.groups.forEach((tris, i) =>
+    i > 0 && tris.length <= 12 && warn(`createLayout: unexpected small navZone group ${i} with ${tris.length} tris`)
+  );
 
   const roomGraphJson = RoomGraph.json(rooms, doors, windows);
   const roomGraph = RoomGraph.from(roomGraphJson);
@@ -186,6 +233,7 @@ export async function createLayout(def, lookup, triangleService) {
     doors,
     windows,
     labels,
+    // navPoly: navPolySansDoors,
     navPoly: navPolyWithDoors,
     navZone,
     roomGraph,

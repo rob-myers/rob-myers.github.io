@@ -27,13 +27,13 @@
     <rect width="580" height="61.5" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; pointer-events: auto;" x="10">
       <title>window</title>
     </rect>
-    <rect x="575" y="330" width="48" height="230" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
+    <rect x="575" y="350" width="48" height="200" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
       <title>door e</title>
     </rect>
     <rect x="185" y="575" width="230" height="48" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;">
       <title>door s</title>
     </rect>
-    <rect y="330" width="48" height="230" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" x="-24">
+    <rect y="350" width="48" height="200" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9; stroke-width: 4px;" x="-24">
       <title>door w</title>
     </rect>
     <rect y="590" width="610" height="20" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);">

@@ -103,6 +103,11 @@
     return this.x === x && this.y === y;
   }
 
+  /** @param {Geom.VectJson} _ */
+  equalsAlmost({ x, y }, error = Number.EPSILON) {
+    return Math.abs(this.x - x) <= error && Math.abs(this.y - y) <= error;
+  }
+
   /** @param {[number, number] | Geom.VectJson} input */
   static from(input) {
     return Array.isArray(input)

@@ -4,17 +4,17 @@ import chalk from "chalk";
  * @param  {...string} args 
  */
  export function error(...args) {
-  console.error(chalk.red(...args));
+  console.error('ERROR', chalk.red(...args));
 }
 /**
  * @param  {...string} args 
  */
 export function info(...args) {
-  console.log(`INFO`, chalk.yellow(...args));
+  console.info('INFO', chalk.blueBright(...args));
 }
 /**
  * @param  {...string} args 
  */
 export function warn(...args) {
-  console.warn(chalk.blueBright(...args));
+  console.warn('WARN', chalk.yellowBright(...args));
 }

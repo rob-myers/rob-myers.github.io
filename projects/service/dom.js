@@ -1,6 +1,7 @@
 import { parseSVG, makeAbsolute, MoveToCommand } from 'svg-path-parser';
 import { Vect } from '../geom/vect';
 import { Poly } from '../geom/poly';
+import { warn } from './log';
 
 /** @param {WheelEvent | PointerEvent | React.WheelEvent} e */
 export function isSvgEvent(e) {
@@ -187,11 +188,17 @@ export function setStyle(ctxt, fillStyle, strokeStyle, lineWidth) {
  * @param {Nav.Zone} navZone 
  */
 export function drawTriangulation(ctxt, navZone) {
-	const { groups: { 0: tris }, vertices } = navZone;
-	for (const { vertexIds } of tris) {
-		ctxt.beginPath();
-		fillRing(ctxt, vertexIds.map(i => vertices[i]), false);
-		ctxt.stroke();
+	const { groups, vertices } = navZone;
+	for (const [index, tris] of groups.entries()) {
+		if (index > 0) {
+			warn(`drawTriangulation: drawing extra navZone group ${index} with ${tris.length} tris`);
+			// continue;
+		}
+		for (const { vertexIds } of tris) {
+			ctxt.beginPath();
+			fillRing(ctxt, vertexIds.map(i => vertices[i]), false);
+			ctxt.stroke();
+		}
 	}
 }
 
