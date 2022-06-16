@@ -16,30 +16,30 @@
       <title>hull--20x20</title>
     </path>
   </g>
-  <g style="pointer-events: none; visibility: hidden;">
+  <g style="">
     <title>singles</title>
-    <rect x="-6" y="250.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
+    <rect x="-6" y="250" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
       <title>door hull</title>
     </rect>
-    <rect x="-6" y="850.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
+    <rect x="-6" y="850" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
       <title>door hull</title>
     </rect>
-    <rect x="1194" y="250.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
+    <rect x="1194" y="250" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
       <title>door hull</title>
     </rect>
-    <rect x="1194" y="850.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
+    <rect x="1194" y="850" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;">
       <title>door hull</title>
     </rect>
-    <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 934.299988, -992)">
+    <rect x="986" y="-15" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 933, -992)">
       <title>door hull</title>
     </rect>
-    <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 334.299988, -992)">
+    <rect x="986" y="-15" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 333, -992)">
       <title>door hull</title>
     </rect>
-    <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 934.299988, 208)">
+    <rect x="986" y="-15" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 935, 208)">
       <title>door hull</title>
     </rect>
-    <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 334.299988, 208)">
+    <rect x="986" y="-15" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 333, 208)">
       <title>door hull</title>
     </rect>
     <rect x="260" y="254" width="9" height="46" style="stroke: rgb(0, 0, 0); visibility: visible;" transform="matrix(0, 1, -1, 0, 426.792786, 95.699898)">
@@ -55,7 +55,7 @@
       <title>wall</title>
     </rect>
   </g>
-  <g style="visibility: hidden; pointer-events: none;">
+  <g style="pointer-events: none; visibility: hidden;">
     <title>unused</title>
     <rect x="538.4" y="538.4" width="123.4" height="3.5" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
       <title>wall</title>

@@ -18,30 +18,30 @@
       <title>hull--20x20</title>
     </path>
   </g>
-  <g style="">
+  <g style="pointer-events: none;">
     <title>singles</title>
-    <rect x="-6" y="250.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="-6" y="250" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door hull</title>
     </rect>
-    <rect x="-6" y="850.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="-6" y="850" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door hull</title>
     </rect>
-    <rect x="1194" y="250.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="1194" y="250" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door hull</title>
     </rect>
-    <rect x="1194" y="850.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="1194" y="850" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door hull</title>
     </rect>
-    <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 934.299988, -992)">
+    <rect x="986" y="-15" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 935, -992)">
       <title>door hull</title>
     </rect>
-    <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 334.299988, -992)">
+    <rect x="986" y="-15" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 335, -992)">
       <title>door hull</title>
     </rect>
-    <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 935.299988, 208)">
+    <rect x="986" y="-15" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 933, 208)">
       <title>door hull</title>
     </rect>
-    <rect x="986" y="-14.7" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 334.299988, 208)">
+    <rect x="986" y="-15" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 333, 208)">
       <title>door hull</title>
     </rect>
     <rect x="260" y="254" width="9" height="46" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9;" transform="matrix(0, 1, -1, 0, 486.792786, 95.699898)">
