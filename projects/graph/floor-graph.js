@@ -33,8 +33,11 @@ export class floorGraphClass extends BaseGraph {
     this.gm = gm;
     this.vectors = gm.navZone.vertices.map(Vect.from);
 
-    // Compute `this.nodeToMeta` via `gm.navZone.{doorNodeIds,roomNodeIds}`.
-    const preNavNodes = gm.navZone.groups[0];
+    /**
+     * Compute `this.nodeToMeta` via `gm.navZone.{doorNodeIds,roomNodeIds}`.
+     * Observe that a nodeId can e.g. point to a node in 2nd group.
+     */
+    const preNavNodes = gm.navZone.groups.flatMap(x => x);
     this.nodeToMeta = preNavNodes.map((_) => ({ doorId: -1, roomId: -1 }));
     gm.navZone.doorNodeIds.forEach((nodeIds, doorId) => {
       nodeIds.forEach(nodeId => this.nodeToMeta[nodeId].doorId = doorId);
@@ -124,6 +127,21 @@ export class floorGraphClass extends BaseGraph {
 
         if (i > 0) {// We exited previous room
           const roomId = /** @type {{ roomId: number }} */ (partition[i - 1]).roomId;
+          /**
+           * TODO
+           * - need to skip doorEntry when start inside doorway
+           * - need door exit when start inside doorway
+           */
+          // const roomIdIndex = door.roomIds.findIndex(x => x === roomId);
+          // const dp = dst.clone().sub(door.entries[roomIdIndex]).dot(door.normal);
+          // const sign = roomIdIndex === 0 ? 1 : -1;
+          // if (!partition[i + 1] && dp * sign > 0) {
+          //   // Dst has not reached door rect, so discard prev door entry
+          //   console.log('IN DOORWAY BUT NOT DOOR RECT');
+          //   fullPath.pop();
+          //   fullPath.push(dst.clone());
+          //   break;
+          // }
           navMetas.push({
             key: 'exit-room',
             index: fullPath.length - 1,
@@ -279,8 +297,9 @@ export class floorGraphClass extends BaseGraph {
   static fromZone(gm) {
     const zone = gm.navZone;
 
-    const { groups: [navNodes], vertices } = zone;
+    const { groups: navNodeGroups, vertices } = zone;
     const graph = new floorGraphClass(gm);
+    const navNodes = navNodeGroups.flatMap(x => x);
 
     for (const [nodeId, node] of Object.entries(navNodes)) {
       graph.registerNode({

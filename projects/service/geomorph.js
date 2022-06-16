@@ -534,8 +534,24 @@ export function computeLightPosition(connector, srcRoomId, lightOffset) {
  */
 export function buildZoneWithMeta(navDecomp, doors, rooms) {
   const navZone = Builder.buildZone(navDecomp);
-  // If invoked browser-side, no triangulation hence no navNodes
-  const navNodes = navZone.groups[0] || [];
+  /**
+   * - Multiple navZone groups are possible e.g. 102. 
+   * - If invoked browser-side, no triangulation hence no navNodes
+   */
+  const navNodes = navZone.groups.flatMap(x => x) || [];
+
+  /**
+   * We'll verify that:
+   * (a) every nav node has either a doorId or a roomId.
+   * (b) every nav node has at most one doorId.
+   * (c) every doorId is related to exactly two nav nodes.
+   * (d) every nav node without a doorId has at most one roomId.
+   *
+   * There may be overlap i.e. the two triangles corresponding
+   * to a particular doorId may overlap the rooms they connect.
+   */
+  const nodeDoorIds = /** @type {number[][]} */ ([]);
+  const nodeRoomIds = /** @type {number[][]} */ ([]);
 
   /**
    * Attach `doorNodeIds` to navZone.
@@ -550,9 +566,17 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
       tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid]);
       if (geom.lineSegIntersectsPolygon(u, v, tempTri)) {
         doorNodeIds[doorId].push(nodeId);
+        if ((nodeDoorIds[nodeId] = nodeDoorIds[nodeId] || []).push(doorId) > 1) {
+          warn('nav node', node, 'has multiple doorIds', nodeDoorIds[nodeId]);
+        }
       }
     });
   });
+
+  const malformedDoorIds = doorNodeIds.flatMap((x, i) => x.length === 2 ? [] : i);
+  if (malformedDoorIds.length) {
+    warn('doorIds lacking exactly 2 nav nodes:', malformedDoorIds, `(resp. counts ${malformedDoorIds.map(i => doorNodeIds[i].length)})`);
+  }
 
   /**
    * Attach `roomNodeIds` to navZone.
@@ -566,9 +590,20 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
       // if (node.vertexIds.filter(id => poly.outlineContains(navZone.vertices[id])).length >= 2) {
       if (node.vertexIds.some(id => poly.outlineContains(navZone.vertices[id]))) {
         roomNodeIds[roomId].push(nodeId);
+        if (
+          (nodeRoomIds[nodeId] = nodeRoomIds[nodeId] || []).push(roomId) > 1
+          && nodeDoorIds[nodeId].length === 0 // nodes with a doorId may have 2 roomIds
+        ) {
+          warn('nav node', node.id, 'has no doorId and multiple roomIds', nodeRoomIds[nodeId]);
+        }
       }
     });
   });
+  
+  const nodesSansBothIds = nodeRoomIds.flatMap((roomIds, nodeId) => roomIds.length ? [] : nodeDoorIds[nodeId].length ? [] : nodeId);
+  if (nodesSansBothIds.length) {
+    warn('nav nodes have neither roomId nor doorId', nodesSansBothIds);
+  }
 
   return {
     ...navZone,

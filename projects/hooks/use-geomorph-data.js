@@ -123,7 +123,7 @@ function extendRoomNodeIds(gm) {
   gm.navZone.doorNodeIds.forEach((navNodeIds, doorId) => {
     const door = gm.doors[doorId];
     if (gm.hullDoors.includes(door)) {
-      const roomId = /** @type {number} */ (door.roomIds.find(Boolean));
+      const roomId = /** @type {number} */ (door.roomIds.find(x => x !== null));
       if (Number.isFinite(roomId)) {
         gm.navZone.roomNodeIds[roomId].push(...navNodeIds);
       } else {

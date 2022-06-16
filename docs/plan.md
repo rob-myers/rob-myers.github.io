@@ -10,13 +10,16 @@ __Aim towards website release__.
 - nav door issues (post nav door stitching)
   - ✅ only 2 door tris should have doorId
   - ✅ navnode has roomId if has a vertex in room
-  - 🚧 light does not change when nav to door
-  - 🚧 light does not change when nav from door
-  - 🚧 do not backtrack when start inside door
+  - ✅ warn if nav node doorId/roomId's fail constraints
+  - 🚧 light should change when nav to door then back
+  - 🚧 do not backtrack when start inside hull door
+  - 🚧 cleaner path when start inside door
 
 - support multiple groups in navZone e.g. 102
   - ✅ exists in navZone
   - ✅ drawn their triangulation
+  - ✅ ensure doorIds are being assigned correctly
+  - ✅ ensure nodeIds are decoded correctly when have multiple groups
   - 🚧 support navigation with multiple groups
 
 - craft navmesh with door rects (2 tris) manually
