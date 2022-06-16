@@ -11,7 +11,9 @@ __Aim towards website release__.
   - ✅ only 2 door tris should have doorId
   - ✅ navnode has roomId if has a vertex in room
   - ✅ warn if nav node doorId/roomId's fail constraints
-  - ✅ light should change when nav to door then back
+  - ✅ light changes when nav to door then back
+  - ✅ light changes when moving either way thru hull door
+  - ✅ light changes when move through hull door
   - 🚧 do not backtrack when start inside hull door
   - 🚧 cleaner path when start inside door
 

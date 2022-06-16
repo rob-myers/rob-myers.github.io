@@ -70,17 +70,29 @@ export default function NPCs(props) {
           const indexOffset = fullPath.length;
           fullPath.push(...localNavPath.fullPath);
 
-          // TODO 🚧 transform navMeta with otherRoomId null?
           console.log('localNavPath', localNavPath);
-          navMetas.push(...localNavPath.navMetas.map(x => ({
-            ...x,
-            index: indexOffset + x.index,
-            gmId: localNavPath.gmId,
-          })));
+          navMetas.push(
+            ...localNavPath.navMetas.map(x => ({
+              ...x,
+              index: indexOffset + x.index,
+              gmId: localNavPath.gmId,
+            })),
+          );
+
+          const gmEdge = gmEdges[k];
+          if (gmEdge) {
+            navMetas.push({
+              key: 'exit-room',
+              gmId: gmEdge.srcGmId,
+              doorId: gmEdge.srcDoorId,
+              exitedRoomId: gmEdge.srcRoomId,
+              hullDoorId: gmEdge.srcHullDoorId,
+              index: fullPath.length - 1,
+              otherRoomId: null,
+            });
+          }
         }
         
-        console.log({fullPath})
-
         return {
           key: 'global-nav',
           fullPath,
@@ -291,8 +303,8 @@ export default function NPCs(props) {
           
           const globalNavPath = e;
           const allPoints = globalNavPath.fullPath;
-
           console.log('global navMetas', globalNavPath.navMetas); // DEBUG
+
           // Below finishes by setting spriteSheet idle
           await npc.followNavPath(allPoints, { globalNavMetas: globalNavPath.navMetas });
 
