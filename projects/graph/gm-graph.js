@@ -196,12 +196,15 @@ export class gmGraphClass extends BaseGraph {
   /** @param {Geom.VectJson} point */
   findRoomContaining(point) {
     const gmId = this.gms.findIndex(gm => gm.gridRect.contains(point));
-    if (gmId !== -1) {
-      const roomId = this.gms[gmId].rooms.findIndex(room => room.contains(point));
-      return roomId === -1 ? null : { gmId, roomId };
-    } else {
+    if (gmId === -1) {
       return null;
     }
+    const gm = this.gms[gmId];
+    const localPoint = new Vect;
+    const roomId = gm.rooms.findIndex(room => room.contains(
+      gm.inverseMatrix.transformPoint(localPoint.copy(point))
+    ));
+    return roomId === -1 ? null : { gmId, roomId };
   }
 
   /**
