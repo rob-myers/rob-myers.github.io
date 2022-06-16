@@ -39,7 +39,7 @@ export default function NPCs(props) {
         throw Error(`getGlobalNavPath: src/dst must be inside some geomorph's aabb`)
       } else if (srcGmId === dstGmId) {
         const localNavPath = state.getLocalNavPath(srcGmId, src, dst);
-        // console.log('localNavPath (single)', localNavPath);
+        console.log('localNavPath (single)', localNavPath);
         return {
           key: 'global-nav',
           fullPath: localNavPath.fullPath.slice(),
@@ -66,20 +66,29 @@ export default function NPCs(props) {
               ? state.getLocalNavPath(gmEdges[k - 1].dstGmId, gmEdges[k - 1].dstDoorEntry, gmEdges[k].srcDoorEntry)
               // Final
               : state.getLocalNavPath(dstGmId, gmEdges[k - 1].dstDoorEntry, dst);
-            
-          const indexOffset = fullPath.length;
-          fullPath.push(...localNavPath.fullPath);
 
-          console.log('localNavPath', localNavPath);
-          navMetas.push(
-            ...localNavPath.navMetas.map(x => ({
-              ...x,
-              index: indexOffset + x.index,
-              gmId: localNavPath.gmId,
-            })),
-          );
+          console.log('localNavPath', k, localNavPath);
 
           const gmEdge = gmEdges[k];
+          
+          if (k === 0 && localNavPath.startEndDoorIds[0] >= 0) {
+            // console.log('STARTED IN HULL DOOR');
+            fullPath.push(Vect.from(src));
+          } else if (k === gmEdges.length && localNavPath.startEndDoorIds[1] >= 0) {
+            // console.log('ENDED IN HULL DOOR');
+            fullPath.push(Vect.from(dst));
+          } else {
+            const indexOffset = fullPath.length;
+            fullPath.push(...localNavPath.fullPath);
+            navMetas.push(
+              ...localNavPath.navMetas.map(x => ({
+                ...x,
+                index: indexOffset + x.index,
+                gmId: localNavPath.gmId,
+              })),
+            );
+          }
+
           if (gmEdge) {
             navMetas.push({
               key: 'exit-room',
@@ -114,9 +123,10 @@ export default function NPCs(props) {
           // Avoid geom.removePathReps because navMetas would have to be adjusted
           fullPath: result.fullPath.map(p => gm.matrix.transformPoint(Vect.from(p)).precision(3)),
           navMetas: result.navMetas,
+          startEndDoorIds: result.startEndDoorIds,
         };
       } else {
-        return { key: 'local-nav', gmId, fullPath: [], navMetas: [] };
+        return { key: 'local-nav', gmId, fullPath: [], navMetas: [], startEndDoorIds: [-1, -1] };
       }
     },
     /**

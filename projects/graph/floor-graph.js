@@ -119,7 +119,8 @@ export class floorGraphClass extends BaseGraph {
 
     const fullPath = [src.clone()];
     const navMetas = /** @type {NPC.BaseLocalNavPath['navMetas']} */ ([]);
-    
+    let startDoorId = -1, endDoorId = -1;
+
     for (const [i, item] of partition.entries()) {
       if (item.key === 'door') {
 
@@ -150,10 +151,13 @@ export class floorGraphClass extends BaseGraph {
             exitedRoomId: roomId,
             otherRoomId: door.roomIds[1 - door.roomIds.findIndex(x => x === roomId)],
           });
+        } else {
+          startDoorId = item.doorId;
         }
 
-        if (!partition[i + 1]) {// Finish in doorway
+        if (!partition[i + 1]) {// Finish in door
           fullPath.push(dst.clone());
+          endDoorId = item.doorId;
           break;
         } 
         
@@ -209,11 +213,12 @@ export class floorGraphClass extends BaseGraph {
       }
     }
 
-    console.log('findPath', partition, fullPath, navMetas); // DEBUG 🚧
+    console.log('findPath', {nodePath, nodeMetas: nodePath.map(x => this.nodeToMeta[x.index]) , partition, fullPath, navMetas}); // DEBUG 🚧
 
     return {
       fullPath, // May contain adjacent dups
       navMetas,
+      startEndDoorIds: [startDoorId, endDoorId],
     };
   }
 

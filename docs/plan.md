@@ -14,8 +14,9 @@ __Aim towards website release__.
   - ✅ light changes when nav to door then back
   - ✅ light changes when moving either way thru hull door
   - ✅ light changes when move through hull door
-  - 🚧 do not backtrack when start inside hull door
-  - 🚧 cleaner path when start inside door
+  - ✅ light changes when nav from hull door back
+  - ✅ do not backtrack when finish inside hull door
+  - ✅ do not backtrack when continue from inside hull door
 
 - support multiple groups in navZone e.g. 102
   - ✅ exists in navZone

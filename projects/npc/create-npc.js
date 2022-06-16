@@ -112,7 +112,6 @@ import npcJson from '../../public/npc/first-npc.json'
       }
             
       if (opts?.globalNavMetas) {
-        console.log('sofars', anim.aux.sofars)
         anim.wayMetas = opts.globalNavMetas.map((navMeta) => ({
           ...navMeta,
           // Slightly early to ensure it is triggered
