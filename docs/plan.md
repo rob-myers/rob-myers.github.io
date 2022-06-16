@@ -9,8 +9,10 @@ __Aim towards website release__.
 
 - nav door issues (post nav door stitching)
   - ✅ only 2 door tris should have doorId
+  - ✅ navnode has roomId if has a vertex in room
   - 🚧 light does not change when nav to door
   - 🚧 light does not change when nav from door
+  - 🚧 do not backtrack when start inside door
 
 - support multiple groups in navZone e.g. 102
   - ✅ exists in navZone

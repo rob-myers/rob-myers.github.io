@@ -557,16 +557,14 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
   /**
    * Attach `roomNodeIds` to navZone.
    * A nav node is associated with at most one roomId i.e.
-   * - when ≥ 2 of its vertices lie inside the room.
-   * - this includes doorway tris with an edge bordering the room.
-   *
-   * We rely on the latter when finding paths in the floorGraph.
+   * when some vertex lie inside the room.
    */
   const roomNodeIds = /** @type {number[][]} */ ([]);
   rooms.forEach((poly, roomId) => {
     roomNodeIds[roomId] = [];
     navNodes.forEach((node, nodeId) => {
-      if (node.vertexIds.filter(id => poly.outlineContains(navZone.vertices[id])).length >= 2) {
+      // if (node.vertexIds.filter(id => poly.outlineContains(navZone.vertices[id])).length >= 2) {
+      if (node.vertexIds.some(id => poly.outlineContains(navZone.vertices[id]))) {
         roomNodeIds[roomId].push(nodeId);
       }
     });
