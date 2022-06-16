@@ -7,16 +7,7 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- nav door issues (post nav door stitching)
-  - ✅ only 2 door tris should have doorId
-  - ✅ navnode has roomId if has a vertex in room
-  - ✅ warn if nav node doorId/roomId's fail constraints
-  - ✅ light changes when nav to door then back
-  - ✅ light changes when moving either way thru hull door
-  - ✅ light changes when move through hull door
-  - ✅ light changes when nav from hull door back
-  - ✅ do not backtrack when finish inside hull door
-  - ✅ do not backtrack when continue from inside hull door
+- ✅ fix `click` ctrl-c
 
 - support multiple groups in navZone e.g. 102
   - ✅ exists in navZone
@@ -24,6 +15,7 @@ __Aim towards website release__.
   - ✅ ensure doorIds are being assigned correctly
   - ✅ ensure nodeIds are decoded correctly when have multiple groups
   - 🚧 support navigation with multiple groups
+    - test joined 102
 
 - craft navmesh with door rects (2 tris) manually
   - triangulate each room and then join
@@ -207,6 +199,16 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- nav door issues (post nav door stitching)
+  - ✅ only 2 door tris should have doorId
+  - ✅ navnode has roomId if has a vertex in room
+  - ✅ warn if nav node doorId/roomId's fail constraints
+  - ✅ light changes when nav to door then back
+  - ✅ light changes when moving either way thru hull door
+  - ✅ light changes when move through hull door
+  - ✅ light changes when nav from hull door back
+  - ✅ do not backtrack when finish inside hull door
+  - ✅ do not backtrack when continue from inside hull door
 - nav continued
   - ✅ clean away old local nav + renaming
   - ✅ no need to compute sofars

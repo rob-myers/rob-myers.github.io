@@ -19,8 +19,7 @@ ready
 
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
-# spawn andros '{"x":300,"y":880}'
-# spawn andros '{"x":677.19,"y":320.18}'
+# spawn andros '{"x":272.75,"y":570.08}'
 npc andros set-player
 
 # camera follows andros
@@ -177,7 +176,7 @@ click: `{
       ),
       (deferred, subscription) => (
         process.cleanups.push(
-          () => deferred.reject(api.getKillError()),
+          () => deferred.promise.reject(api.getKillError()),
           () => subscription.unsubscribe(),
         )
       ),

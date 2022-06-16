@@ -3,12 +3,12 @@
  * Based on https://github.com/parzh/observable-to-async-generator/blob/main/src/index.ts
  * @template T
  * @param {import('rxjs').Observable<T>} observable
- * @param {(deferred: Deferred<T>, subscription: import('rxjs').Subscription) => void } [initiate]
+ * @param {(deferred: { promise: Deferred<T> }, subscription: import('rxjs').Subscription) => void } [initiate]
  * @returns {AsyncIterableIterator<T>}
  */
 export async function *otag(observable, initiate) {
-  /** @type {Deferred<T>} */
-	let deferred = defer();
+  /** @type {{ promise: Deferred<T> }} */
+	const deferred = { promise: defer() };
 	let finished = false;
 
   const subscription = observable.subscribe({
@@ -16,8 +16,8 @@ export async function *otag(observable, initiate) {
       // Resolve value using deferred promise,
       // creating another deferred promise for future values
       window.setTimeout(() => {
-        const result = deferred;
-        deferred = defer();
+        const result = deferred.promise;
+        deferred.promise = defer();
         result.resolve(value);
       });
     },
@@ -25,15 +25,15 @@ export async function *otag(observable, initiate) {
       // Reject error using deferred promise,
       // creating another deferred promise for future values
       window.setTimeout(() => {
-        const result = deferred;
-        deferred = defer();
+        const result = deferred.promise;
+        deferred.promise = defer();
         result.reject(err);
       });
     },
     complete() {
       window.setTimeout(() => {
         finished = true;
-        deferred.resolve();
+        deferred.promise.resolve();
       });
     },
   });
@@ -42,7 +42,7 @@ export async function *otag(observable, initiate) {
 
   try {
     while (true) {
-      const value = await deferred;
+      const value = await deferred.promise;
       if (finished) break; // ?
       yield value;
     }
