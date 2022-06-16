@@ -120,10 +120,9 @@ export default function NPCs(props) {
         return {
           key: 'local-nav',
           gmId,
+          ...result,
           // Avoid geom.removePathReps because navMetas would have to be adjusted
           fullPath: result.fullPath.map(p => gm.matrix.transformPoint(Vect.from(p)).precision(3)),
-          navMetas: result.navMetas,
-          startEndDoorIds: result.startEndDoorIds,
         };
       } else {
         return { key: 'local-nav', gmId, fullPath: [], navMetas: [], startEndDoorIds: [-1, -1] };
@@ -133,21 +132,17 @@ export default function NPCs(props) {
      * Used by shell function `nav`.
      */
     getNpcGlobalNav(e) {
-      if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
-        throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
+      const npc = state.npc[e.npcKey];
+      if (!npc) {
+        throw Error(`npcKey "${e.npcKey}" does not exist`);
       } else if (!(Vect.isVectJson(e.point))) {
         throw Error(`invalid point: ${JSON.stringify(e.point)}`);
       } else if (!state.isPointLegal(e.point)) {
         throw Error(`outside navPoly: ${JSON.stringify(e.point)}`);
       }
-      const npc = state.npc[e.npcKey];
-      if (!npc) {
-        throw Error(`npc "${e.npcKey}" does not exist`);
-      }
       const result = state.getGlobalNavPath(npc.getPosition(), e.point);
       if (e.debug) {
-        const points = (result?.fullPath)??[];
-        state.toggleDebugPath({ pathKey: e.npcKey, points })
+        state.toggleDebugPath({ pathKey: e.npcKey, points: result.fullPath })
       }
       return result;
     },

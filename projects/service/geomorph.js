@@ -135,7 +135,8 @@ export async function createLayout(def, lookup, triangleService) {
   /**
    * Navigation polygon obtained by cutting walls and obstacles
    * from `hullOutline`, thereby creating doorways (including doors).
-   * We also discard polygons which intersect ignoreNavPoints.
+   * We also discard polygons intersecting ignoreNavPoints,
+   * or if they are deemed too small.
    */
   const navPolyWithDoors = Poly.cutOut(/** @type {Poly[]} */([]).concat(
     // Use non-unioned walls to avoid outset issue
