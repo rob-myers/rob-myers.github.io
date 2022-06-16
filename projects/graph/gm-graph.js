@@ -424,9 +424,6 @@ export class gmGraphClass extends BaseGraph {
             gmKey,
             gmId: gmIndex,
             id: getGmDoorNodeId(gmKey, transform, hullDoorId),
-            /**
-             * TODO seen -1 here when NavDemo1 tab starts hidden
-             */
             doorId: doors.indexOf(hullDoor),
             hullDoorId,
             transform,
@@ -471,9 +468,8 @@ export class gmGraphClass extends BaseGraph {
       // console.info('geomorph to geomorph:', srcItem, '-->', adjItems);
       /**
        * For each hull door, detect any intersection with aligned geomorph hull doors.
-       * - We may assume every hull door is an axis-aligned rect.
-       * - However, `door.rect` is an "angled rect" i.e. may need to have angle applied,
-       *   or alteratively one can work with `door.poly` as we do below.
+       * - We use `door.poly.rect` instead of `door.rect` because we apply a transform to it.
+       * - Anecdotally, every hull door will be an axis-aligned rect (unlike non-hull doors).
        */
       const [srcRect, dstRect] = [new Rect, new Rect];
       const [srcMatrix, dstMatrix] = [new Mat, new Mat];
@@ -483,7 +479,9 @@ export class gmGraphClass extends BaseGraph {
         srcRect.copy(srcDoor.poly.rect.applyMatrix(srcMatrix));
 
         const pairs = adjItems.flatMap(item => item.hullDoors.map(door => /** @type {const} */ ([item, door])));
-        const matching = pairs.find(([{ transform }, { poly }]) => srcRect.intersects(dstRect.copy(poly.rect.applyMatrix(dstMatrix.setMatrixValue(transform)))));
+        const matching = pairs.find(([{ transform }, { poly }]) =>
+          srcRect.intersects(dstRect.copy(poly.rect.applyMatrix(dstMatrix.setMatrixValue(transform))))
+        );
         if (matching !== undefined) {
           const [dstItem, dstDoor] = matching;
           const dstHullDoorId = dstItem.hullDoors.indexOf(dstDoor);
