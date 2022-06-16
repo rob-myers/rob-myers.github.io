@@ -113,8 +113,8 @@ export default function NavDemo1(props) {
           } else {
             console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
           }
-        } else if (e.key === 'way-point') {
-          if (e.npcKey === state.playerNpcKey && e.meta.key === 'exit-room') {
+        } else if (e.key === 'way-point' && e.npcKey === state.playerNpcKey) {
+          if (e.meta.key === 'exit-room') {
             if (e.meta.otherRoomId !== null) {
               state.gmId = e.meta.gmId;
               state.roomId = e.meta.otherRoomId;
@@ -126,6 +126,13 @@ export default function NavDemo1(props) {
               }
             }
             state.update();
+          } else if (e.meta.key === 'enter-room') {
+            // Can re-enter room from doorway without entering/exiting other
+            if (!(state.gmId === e.meta.gmId && state.roomId === e.meta.enteredRoomId)) {
+              state.gmId = e.meta.gmId;
+              state.roomId = e.meta.enteredRoomId;
+              state.update();
+            }
           }
         }
       });

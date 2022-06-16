@@ -112,10 +112,12 @@ import npcJson from '../../public/npc/first-npc.json'
       }
             
       if (opts?.globalNavMetas) {
-        anim.wayMetas = opts.globalNavMetas.map((navMeta) =>
+        console.log('sofars', anim.aux.sofars)
+        anim.wayMetas = opts.globalNavMetas.map((navMeta) => ({
+          ...navMeta,
           // Slightly early to ensure it is triggered
-          ({ ...navMeta, length: Math.max(anim.aux.sofars[navMeta.index] - 10, 0) })
-        );
+          length: Math.max(anim.aux.sofars[navMeta.index] - 0.1, 0)
+        }));
       }
 
       this.setSpritesheet('walk');
