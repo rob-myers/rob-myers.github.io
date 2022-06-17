@@ -10,13 +10,8 @@ __Aim towards website release__.
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
-  - Fix dark-mode + Safari issue
-    - apply filter provides new context for position fixed
-    - Safari Bug position fixed
-      - flickers dark (incorrect clip) on repeated wheel
-      - only happens when Tabs maximised
-      - https://bugs.webkit.org/show_bug.cgi?id=160953
-      - consider position fixed alternative
+  - ✅ Fix dark mode by not inverting Tabs
+      - apply filter provides new context for position fixed
   - 🚧 Continue migration
 
 - ✅ Customizable light position via meta points
@@ -49,7 +44,11 @@ __Aim towards website release__.
 
 - fix NavDemo1 useGeomorphs adjustment
 - don't darken "holes" in geomorph png
-
+- Fix dark-mode + Safari issue
+  - Safari Bug position fixed
+    - flickers dark (incorrect clip) on repeated wheel
+    - only happens when Tabs maximised
+    - https://bugs.webkit.org/show_bug.cgi?id=160953
 
 - Blog
   - ✅ Revisit first page

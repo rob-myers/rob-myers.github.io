@@ -528,8 +528,8 @@ export function computeLightPosition(connector, srcRoomId, lightOffset) {
 }
 
 /**
- * - Convert triangulation into a nav zone
- *   (see npm module `three-pathfinding`)
+ * - Convert triangulation into a nav zone,
+ *   as in npm module `three-pathfinding`.
  * - Compute doorId -> navNodeId mapping
  * - Compute roomId -> navNodeId mapping
  * - Verify various constraints
