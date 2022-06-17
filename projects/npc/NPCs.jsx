@@ -3,9 +3,9 @@ import classNames from "classnames";
 import { css } from "goober";
 import { merge, of, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
+import { testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
-import { geom } from "../service/geom";
 import { Poly, Rect, Vect } from "../geom";
 import { animScaleFactor, isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
 import createNpc from "./create-npc";
@@ -164,24 +164,23 @@ export default function NPCs(props) {
       return navPoly.some(poly => poly.contains(localPoint));
     },
     async npcAct(e) {
-      const npc = state.npc[e.npcKey];
-      if (!npc) {
-        throw Error(`npc does not exist: "${e.npcKey}"`);
-      } else if (!isNpcActionKey(e.action)) {
-        throw Error(`${e.npcKey} unrecognised action: "${e.action}"`);
-      }
-
-      if (e.action === 'cancel') {
-        // Cancel current animation
-        await npc.cancel();
-      } else if (e.action === 'pause') {
-        // Pause current animation
-        await npc.pause();
-      } else if (e.action === 'play') {
-        // Resume current animation
-        await npc.play();
-      } else if (e.action === 'set-player') {
-        state.events.next({ key: 'set-player', npcKey: e.npcKey });
+      switch (e.action) {
+        case 'cancel':// Cancel current animation
+          await state.getNpc(e).cancel();
+          break;
+        case 'get':
+          return state.getNpc(e);
+        case 'pause':// Pause current animation
+          await state.getNpc(e).pause();
+          break;
+        case 'play':// Resume current animation
+          await state.getNpc(e).play();
+          break;
+        case 'set-player':
+          state.events.next({ key: 'set-player', npcKey: e.npcKey??null });
+          break;
+        default:
+          throw Error(testNever(e, `unrecognised action: "${JSON.stringify(e)}"`));
       }
     },
     async panZoomTo(e) {

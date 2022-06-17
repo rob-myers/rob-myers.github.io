@@ -20,7 +20,8 @@ ready
 # hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
 # spawn andros '{"x":272.75,"y":570.08}'
-npc andros set-player
+# spawn andros '{"x":-34.69,"y":332.88}'
+npc set-player andros
 
 # camera follows andros
 track andros &
@@ -315,15 +316,11 @@ view: `{
   }' "$@"
 }`,
 
-/** Get NPC or do [action] */
+/** npc {action} [{npcKey}] */
 npc: `{
   run '({ api, args, home }) {
     const npcs = api.getCached(home.NPCS_KEY)
-    if (args[1]) {
-      await npcs.npcAct({ npcKey: args[0], action: args[1] })
-    } else {
-      yield npcs.getNpc({ npcKey: args[0] })
-    }
+    yield await npcs.npcAct({ action: args[0], npcKey: args[1] })
   }' "$@"
 }`,
 

@@ -274,8 +274,8 @@ export function removeFromLookup(itemKey, lookup) {
  * @param {never} x 
  * @returns {string}
  */
-export function testNever(x) {
-  return `testNever: ${pretty(x)} not implemented.`;
+export function testNever(x, message = `testNever: ${pretty(x)} not implemented.`) {
+  return message;
 }
 
 /**

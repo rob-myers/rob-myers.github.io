@@ -12,17 +12,20 @@ __Aim towards website release__.
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
   - ✅ Fix dark mode by not inverting Tabs
       - apply filter provides new context for position fixed
-  - Terminal migration
+  - 🚧 Terminal migration
     - Simplify in original repo
     - Copy across and get working
-  - 🚧 Continue migration
+  - Continue migration
 
 
-- `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`
+- ✅ `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`
   - e.g. `npc get andros`
   - e.g. `npc set-player` (set no player)
 
+- larger character?
 - don't darken "holes" in geomorph png
+
+- clean and simplify render-npc
 
 - can only open door when player close
   - move playerNpcKey to NPCs

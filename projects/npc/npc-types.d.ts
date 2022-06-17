@@ -231,10 +231,7 @@ declare namespace NPC {
     getNpc(e: { npcKey: string }): NPC.NPC;
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;
-    async npcAct(e: {
-      npcKey: string;
-      action: NpcActionKey;
-    }): Promise<void>;
+    async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
     trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): import('rxjs').Subscription;
@@ -246,19 +243,20 @@ declare namespace NPC {
     )): Promise<void>;
   }
 
-  type NpcActionKey = (
-    | 'cancel'
-    | 'pause'
-    | 'play'
-    | 'set-player'
+  type NpcAction = (
+    | { action: 'cancel'; npcKey: string }
+    | { action: 'get'; npcKey: string }
+    | { action: 'pause'; npcKey: string }
+    | { action: 'play'; npcKey: string }
+    | { action: 'set-player'; npcKey?: string }
   );
 
+  type NpcActionKey = NpcAction['action'];
+
   type NPCsMessage = (
-    | { key: 'set-player'; npcKey: string; }
+    | { key: 'set-player'; npcKey: string | null; }
     | { key: 'started-walking'; npcKey: string; }
     | { key: 'stopped-walking'; npcKey: string; }
-    // | { key: 'entered-room'; npcKey: string; navMeta: GlobalNavMeta; }
-    // | { key: 'exited-room'; npcKey: string; navMeta: GlobalNavMeta; }
     | { key: 'way-point'; npcKey: string; meta: WayPointMeta }
   );
 

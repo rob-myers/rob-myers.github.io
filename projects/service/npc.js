@@ -187,6 +187,7 @@ export function isNpcActionKey(input) {
 /** @type {Record<NPC.NpcActionKey, true>} */
 const fromNavActionKey = {
   cancel: true,
+  get: true,
   pause: true,
   play: true,
   'set-player': true,
