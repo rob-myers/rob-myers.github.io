@@ -136,7 +136,7 @@ class CmdService {
         const commands = cliColumns(Object.keys(commandKeys), { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
         for (const line of commands) yield `${ansiBlue}${line}`;
         // yield `Traverse context via \`ls\` or \`ls -l var.foo.bar\` (Object.keys).` 
-        yield `View shell functions via ${ansiBlue}declare${ansiWhite}.`
+        yield `\n\rView shell functions via ${ansiBlue}declare${ansiWhite}.`
         // yield `Use Ctrl-c to interrupt and Ctrl-l to clear screen.`
         // yield `View history via up/down or \`history\`.`
         // yield `Traverse input using Option-left/right and Ctrl-{a,e}.`
