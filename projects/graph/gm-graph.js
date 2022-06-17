@@ -336,6 +336,7 @@ export class gmGraphClass extends BaseGraph {
 
     const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode)
       .map(x => x.doorId).filter(id => openDoorIds.includes(id));
+
     const areas = adjOpenDoorIds
       .flatMap(doorId => this.getOpenDoorArea(gmId, doorId) || []);
 
@@ -367,15 +368,16 @@ export class gmGraphClass extends BaseGraph {
     });
     
     const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode)
-    .filter(x => {
-      const connector = gm.windows[x.windowIndex];
-        // Frosted windows opaque
-        if (connector.tags.includes('frosted')) return false;
-        // One-way mirror
-        if (connector.tags.includes('one-way') && connector.roomIds[0] !== rootRoomId) return false;
-        return true;
+      .filter(x => {
+        const connector = gm.windows[x.windowIndex];
+          // Frosted windows opaque
+          if (connector.tags.includes('frosted')) return false;
+          // One-way mirror
+          if (connector.tags.includes('one-way') && connector.roomIds[0] !== rootRoomId) return false;
+          return true;
       })
       .map(x => x.windowIndex);
+
     const windowLights = adjWindowIds.map(windowIndex => ({
       gmIndex: gmId,
       poly: geom.lightPolygon({

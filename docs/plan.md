@@ -17,20 +17,14 @@ __Aim towards website release__.
     - Copy across and get working
   - Continue migration
 
+- 🚧 clean and simplify render-npc
+- 🚧 larger character?
 
-- ✅ `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`
-  - e.g. `npc get andros`
-  - e.g. `npc set-player` (set no player)
-
-- larger character?
-- don't darken "holes" in geomorph png
-
-- clean and simplify render-npc
-
-- can only open door when player close
+- can only open door when player is close
   - move playerNpcKey to NPCs
   - only applies when there is a player
     - `npc set-player andros`
+
 - can turn andros when idle
 - can toggle NPC speech bubbles
 - can pause/resume NPC
@@ -177,6 +171,11 @@ __Aim towards website release__.
     - only happens when Tabs maximised
     - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ don't darken "holes" in geomorph png
+  - ignore roomWithDoors holes for current room light
+- ✅ `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`
+  - e.g. `npc get andros`
+  - e.g. `npc set-player` (set no player)
 - ✅ Customizable light position via meta points
 - ✅ Improve track:
   - **SMOOTHNESS FIRST** approach (mobile, in particular)

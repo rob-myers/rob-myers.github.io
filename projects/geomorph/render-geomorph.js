@@ -55,16 +55,7 @@ export async function renderGeomorph(
     drawTriangulation(ctxt, layout.navZone)
   }
 
-  /**
-   * Fill walls
-   * - without this some walls look worse, particularly when inverted
-   * - do not fill windows, or walls tagged with no-fill
-   * - currently dark grey for debug?
-   */
   const { singles, obstacles, walls } = layout.groups;
-  const wallsToFill = Poly.cutOut(singlesToPolys(singles, 'window', ['wall', 'no-fill']), walls);
-  ctxt.fillStyle = 'rgba(50, 50, 50, 1)';
-  fillPolygon(ctxt, wallsToFill);
 
   ctxt.lineJoin = 'round';
   hullSym.singles.forEach(({ poly, tags }) => {
@@ -110,14 +101,19 @@ export async function renderGeomorph(
   //#region overlay
   ctxt.fillStyle = obsColor;
   obsBounds && fillPolygon(ctxt, obstacles);
+
+  /**
+   * Fill walls
+   * - necessary to show our custom walls e.g. near cut doors
+   * - do not fill windows
+   * - do not fill walls tagged with no-fill
+   */
+  const wallsToFill = Poly.cutOut(singlesToPolys(singles, 'window', ['wall', 'no-fill']), walls);
   ctxt.fillStyle = wallColor;
-  wallBounds && fillPolygon(ctxt, walls);
+  wallBounds && fillPolygon(ctxt, wallsToFill);
+
   ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
   fillPolygon(ctxt, layout.hullTop);
-  // // Draw walls without drawing them over windows
-  // const wallsSansWindows = Poly.cutOut(singlesToPolys(singles, 'window'), walls);
-  // ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
-  // fillPolygon(ctxt, wallsSansWindows);
 
   if (doors) {
     const doors = singlesToPolys(singles, 'door');

@@ -33,7 +33,6 @@
     <rect x="891" y="743" width="20" height="159" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1491" y="743" width="20" height="159" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1791" y="743" width="20" height="159" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
-    <path d="M 2383 1203 L 2420 1203 L 2419 2719 L 1201 2721 L 1200 2721 L -17 2719 L -18 1213 L -18 1213 L -18 1192 L 609 1192 L 609 1213 L 20 1213 L 43 1432 L 95 1610 L 179 1795 L 337 2014 L 590 2217 L 907 2351 L 1201 2387 L 1495 2351 L 1812 2217 L 2065 2014 L 2223 1795 L 2307 1610 L 2359 1432 Z" style="fill-opacity: 0.5; fill: rgb(255, 0, 0);"/>
     <rect x="2001" y="1343" width="20" height="159" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="2182" y="1343" width="20" height="159" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
     <rect x="1790" y="1192" width="620" height="21" style="fill: rgb(255, 0, 0); fill-opacity: 0.5; stroke: rgb(0, 0, 0);"/>
@@ -50,6 +49,9 @@
     <rect x="900" y="1502" width="892" height="62" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0);">
       <title>window frosted</title>
     </rect>
+    <path d="M 2383 1203 L 2420 1203 L 2419 2719 L 1201 2721 L 1200 2721 L -17 2719 L -18 1213 L -18 1192 L 609 1192 L 609 1213 L 20 1213 L 43 1432 L 95 1610 L 179 1795 L 337 2014 L 590 2217 L 907 2351 L 1201 2387 L 1495 2351 L 1812 2217 L 2065 2014 L 2223 1795 L 2307 1610 L 2359 1432 L 2383 1203 Z" style="fill-opacity: 0.5; fill: rgb(255, 0, 0);">
+      <title>wall no-fill</title>
+    </path>
     <rect x="59" y="1492" width="848.8" height="21" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
       <title>wall</title>
     </rect>

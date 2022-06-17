@@ -303,7 +303,6 @@ function singleToConnectorRect(single, rooms) {
   };
 }
 
-
 /**
  * @param {Geomorph.ConnectorRectJson} x
  * @returns {Geomorph.ParsedConnectorRect}

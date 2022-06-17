@@ -33,6 +33,8 @@ export function singlesToPolys(singles, ...tagOrTags) {
  */
 export function filterSingles(singles, ...tagOrTags) {
   return singles.filter(x => tagOrTags.some(spec =>
-    Array.isArray(spec) ? spec.every(tag => x.tags.includes(tag)) : x.tags.includes(spec))
+    Array.isArray(spec)
+      ? spec.every(tag => x.tags.includes(tag))
+      : x.tags.includes(spec))
   );
 }
