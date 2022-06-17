@@ -528,13 +528,21 @@ export function computeLightPosition(connector, srcRoomId, lightOffset) {
 }
 
 /**
+ * - Convert triangulation into a nav zone
+ *   (see npm module `three-pathfinding`)
+ * - Compute doorId -> navNodeId mapping
+ * - Compute roomId -> navNodeId mapping
+ * - Verify various constraints
  * @param {Geom.TriangulationJson} navDecomp
  * @param {Geomorph.ParsedConnectorRect[]} doors
  * @param {Geom.Poly[]} rooms
  * @returns {Nav.ZoneWithMeta}
  */
 export function buildZoneWithMeta(navDecomp, doors, rooms) {
+
+  // The main calculation
   const navZone = Builder.buildZone(navDecomp);
+
   /**
    * - Multiple navZone groups are possible e.g. 102. 
    * - If invoked browser-side, no triangulation hence no navNodes
@@ -542,7 +550,37 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
   const navNodes = navZone.groups.flatMap(x => x) || [];
 
   /**
-   * We'll verify that:
+   * A navNodeId is an index into `navNodes` i.e. we flatten groups.
+   * Consequently we need to offset neighbours of 2nd and later groups.
+   * The portals and vertexIds are derived from the triangulation,
+   * so they are already correct.
+   */
+  let groupOffset = navZone.groups[0].length;
+  for (const group of navZone.groups.slice(1)) {
+    group.forEach(node => node.neighbours = node.neighbours.map(id => id + groupOffset));
+    groupOffset += group.length;
+  }
+
+  /**
+   * We'll construct `doorNodeIds` and `roomNodeIds` i.e.
+   * - navNode has doorId if navNode.index in doorNodeIds[doorId]
+   * - navNode has roomId if navNode.index in roomNodeIds[doorId]
+   */
+
+  /**
+   * A nav node is associated with at most one doorId,
+   * when it intersects the respective door's line segment.
+   * Actually, there should be exactly two nav nodes for any doorId.
+   */
+  const doorNodeIds = /** @type {number[][]} */ ([]);
+  /**
+   * A nav node is associated with at most one roomId i.e.
+   * when some vertex lie inside the room.
+   */
+  const roomNodeIds = /** @type {number[][]} */ ([]);
+
+  /**
+   * We'll also verify that:
    * (a) every nav node has either a doorId or a roomId.
    * (b) every nav node has at most one doorId.
    * (c) every doorId is related to exactly two nav nodes.
@@ -554,12 +592,7 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
   const nodeDoorIds = /** @type {number[][]} */ ([]);
   const nodeRoomIds = /** @type {number[][]} */ ([]);
 
-  /**
-   * Attach `doorNodeIds` to navZone.
-   * A nav node is associated with at most one doorId,
-   * when it intersects the respective door's line segment.
-   */
-  const doorNodeIds = /** @type {number[][]} */ ([]);
+  // Construct doorNodeIds
   const tempTri = new Poly;
   doors.forEach(({ seg: [u, v] }, doorId) => {
     doorNodeIds[doorId] = [];
@@ -579,12 +612,7 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
     warn('doorIds lacking exactly 2 nav nodes:', malformedDoorIds, `(resp. counts ${malformedDoorIds.map(i => doorNodeIds[i].length)})`);
   }
 
-  /**
-   * Attach `roomNodeIds` to navZone.
-   * A nav node is associated with at most one roomId i.e.
-   * when some vertex lie inside the room.
-   */
-  const roomNodeIds = /** @type {number[][]} */ ([]);
+  // Construct roomNodeIds
   rooms.forEach((poly, roomId) => {
     roomNodeIds[roomId] = [];
     navNodes.forEach((node, nodeId) => {

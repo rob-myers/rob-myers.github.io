@@ -7,20 +7,6 @@ __Aim towards website release__.
 
 ## TODO (unsorted)
 
-- ✅ fix `click` ctrl-c
-
-- support multiple groups in navZone e.g. 102
-  - ✅ exists in navZone
-  - ✅ drawn their triangulation
-  - ✅ ensure doorIds are being assigned correctly
-  - ✅ ensure nodeIds are decoded correctly when have multiple groups
-  - 🚧 support navigation with multiple groups
-    - test joined 102
-
-- craft navmesh with door rects (2 tris) manually
-  - triangulate each room and then join
-  - careful e.g. 302
-
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
@@ -199,6 +185,18 @@ __Aim towards website release__.
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
 
+- ✅ craft navmesh with door rects (2 tris) manually
+  - triangulate each room and then join
+  - careful e.g. 302
+- ✅ support multiple groups in navZone e.g. 102
+  - ✅ exists in navZone
+  - ✅ drawn their triangulation
+  - ✅ ensure doorIds are being assigned correctly
+  - ✅ ensure nodeIds are decoded correctly when have multiple groups
+  - ✅ support navigation with multiple groups
+    - ✅ try joining 102 in two ways
+    - ✅ fix neighbours: add offset to 2nd and later groups
+- ✅ fix `click` ctrl-c
 - nav door issues (post nav door stitching)
   - ✅ only 2 door tris should have doorId
   - ✅ navnode has roomId if has a vertex in room

@@ -11727,49 +11727,49 @@
         {
           "id": 0,
           "centroid": {"x": 64.16, "y": 507.72},
-          "neighbours": [2, 5],
+          "neighbours": [847, 850],
           "portals": [[94, 97], [97, 693]],
           "vertexIds": [97, 693, 94]
         },
         {
           "id": 1,
           "centroid": {"x": 44.57, "y": 510.32},
-          "neighbours": [4],
+          "neighbours": [849],
           "portals": [[93, 695]],
           "vertexIds": [695, 98, 93]
         },
         {
           "id": 2,
           "centroid": {"x": 67.83, "y": 510.49},
-          "neighbours": [0, 3, 6],
+          "neighbours": [845, 848, 851],
           "portals": [[97, 94], [694, 97], [94, 694]],
           "vertexIds": [97, 94, 694]
         },
         {
           "id": 3,
           "centroid": {"x": 64.28, "y": 513.31},
-          "neighbours": [2],
+          "neighbours": [847],
           "portals": [[97, 694]],
           "vertexIds": [694, 96, 97]
         },
         {
           "id": 4,
           "centroid": {"x": 53.22, "y": 507.8},
-          "neighbours": [5, 1],
+          "neighbours": [850, 846],
           "portals": [[693, 695], [695, 93]],
           "vertexIds": [693, 695, 93]
         },
         {
           "id": 5,
           "centroid": {"x": 57.12, "y": 510.28},
-          "neighbours": [4, 0],
+          "neighbours": [849, 845],
           "portals": [[695, 693], [693, 97]],
           "vertexIds": [695, 693, 97]
         },
         {
           "id": 6,
           "centroid": {"x": 76.67, "y": 510.74},
-          "neighbours": [2],
+          "neighbours": [847],
           "portals": [[694, 94]],
           "vertexIds": [94, 95, 694]
         }
