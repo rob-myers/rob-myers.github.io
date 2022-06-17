@@ -12,43 +12,31 @@ __Aim towards website release__.
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
   - ✅ Fix dark mode by not inverting Tabs
       - apply filter provides new context for position fixed
+  - Terminal migration
+    - Simplify in original repo
+    - Copy across and get working
   - 🚧 Continue migration
 
-- ✅ Customizable light position via meta points
-
-- 🚧 Improve track:
-  - **SMOOTHNESS FIRST** approach (mobile, in particular)
-  - ✅ Comment out `track` and `trackNew`
-  - ✅ `walk` animation (for global nav) is one large animation
-  - ✅ separate NPC out of NPCs
-  - ✅ use cancellable timeouts for events
-  - ✅ `track` panzoom-to
-  - ✅ `track`awaits termination
-  - ✅ view "{ zoom: 2, point: $(click 1),  ms: 1000 }" working
-  - 🚧 New `track`follows whole walk
-    - ✅ CssPanZoom: simplify panZoomTo
-    - ✅ CssPanZoom: converts future npc path into keyframes
-    - ✅ CssPanZoom can play specified path translation anim
-    - ✅ Fix speed of path traversal
-    - 🚧 Debug + Clean
 
 - `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`
-  - e.g. including `npc get andros`
+  - e.g. `npc get andros`
+  - e.g. `npc set-player` (set no player)
+
+- don't darken "holes" in geomorph png
+
 - can only open door when player close
   - move playerNpcKey to NPCs
   - only applies when there is a player
     - `npc set-player andros`
 - can turn andros when idle
+- can toggle NPC speech bubbles
+- can pause/resume NPC
+
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes
 
-- fix NavDemo1 useGeomorphs adjustment
-- don't darken "holes" in geomorph png
-- Fix dark-mode + Safari issue
-  - Safari Bug position fixed
-    - flickers dark (incorrect clip) on repeated wheel
-    - only happens when Tabs maximised
-    - https://bugs.webkit.org/show_bug.cgi?id=160953
+- fix NavDemo1 useGeomorphs HMR
+  - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
 
 - Blog
   - ✅ Revisit first page
@@ -115,8 +103,6 @@ __Aim towards website release__.
 
 - BUG sometimes adjacent light is inside hull door, rather than outside
 - Draw grid over dark png, so not over light geomorph png
-- Can toggle NPC speech bubbles
-- Can pause/resume NPC
 - mobile-friendly command links (session must be open)
 
 - Clean
@@ -132,7 +118,6 @@ __Aim towards website release__.
     - g.transform of frame
   - careful about game function exit codes
   - navPoly must be a single polygon?
-  - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Support window tags `dark-front` and `dark-back` instead of `one-way`
   - Move light polygon computations into `lazy` i.e. reuse
   - Easier to toggle doors on mobile
@@ -183,7 +168,27 @@ __Aim towards website release__.
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+- Fix dark-mode + Safari issue
+  - Safari Bug position fixed
+    - flickers dark (incorrect clip) on repeated wheel
+    - only happens when Tabs maximised
+    - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ Customizable light position via meta points
+- ✅ Improve track:
+  - **SMOOTHNESS FIRST** approach (mobile, in particular)
+  - ✅ Comment out `track` and `trackNew`
+  - ✅ `walk` animation (for global nav) is one large animation
+  - ✅ separate NPC out of NPCs
+  - ✅ use cancellable timeouts for events
+  - ✅ `track` panzoom-to
+  - ✅ `track`awaits termination
+  - ✅ view "{ zoom: 2, point: $(click 1),  ms: 1000 }" working
+  - ✅ New `track`follows whole walk
+    - ✅ CssPanZoom: simplify panZoomTo
+    - ✅ CssPanZoom: converts future npc path into keyframes
+    - ✅ CssPanZoom can play specified path translation anim
+    - ✅ Fix speed of path traversal
 - ✅ craft navmesh with door rects (2 tris) manually
   - triangulate each room and then join
   - careful e.g. 302
