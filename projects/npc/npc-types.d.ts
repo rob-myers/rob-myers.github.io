@@ -83,6 +83,7 @@ declare namespace NPC {
     /** Radians */
     getAngle(): number;
     getAnimDef(): TypeUtil.AnimDef;
+    getBounds(): Geom.Rect;
     getPosition(): Geom.Vect;
     getTargets(): { point: Geom.VectJson; arriveMs: number }[];
     npcRef(el: HTMLDivElement | null): void;
@@ -118,8 +119,8 @@ declare namespace NPC {
   export interface DoorsProps {
     gms: Geomorph.GeomorphDataInstance[];
     gmGraph: Graph.GmGraph;
-    // wire: NavWire;
     initOpen: { [gmId: number]: number[] }
+    npcsKey: string;
     onLoad: (api: DoorsApi) => void;
   }
 
@@ -229,6 +230,7 @@ declare namespace NPC {
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
     getNpcGlobalNav(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }): GlobalNavPath;
     getNpc(e: { npcKey: string }): NPC.NPC;
+    getNpcsIntersecting(convexPoly: Geom.Poly): NPC.NPC[];
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;
     async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;

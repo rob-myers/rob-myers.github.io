@@ -6,8 +6,9 @@ import { filter, first, map, take } from "rxjs/operators";
 import { testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
-import { Poly, Rect, Vect } from "../geom";
+import { geom } from "../service/geom";
 import { animScaleFactor, isGlobalNavPath, isLocalNavPath } from "../service/npc";
+import { Poly, Rect, Vect } from "../geom";
 import createNpc from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -153,6 +154,10 @@ export default function NPCs(props) {
         throw Error(`npc "${e.npcKey}" does not exist`);
       }
       return npc;
+    },
+    getNpcsIntersecting(convexPoly) {
+      return Object.values(state.npc)
+        .filter(x => geom.rectIntersectsConvexPoly(x.getBounds(), convexPoly.outline));
     },
     getPanZoomApi() {
       return props.panZoomApi;
@@ -315,9 +320,9 @@ export default function NPCs(props) {
 
         } else if (e.key === 'local-nav') {
           for (const [i, vectPath] of e.fullPath.entries()) {
-            /**
-             * TODO
-             */
+            
+            // TODO
+
           }
         }
       } catch (err) {

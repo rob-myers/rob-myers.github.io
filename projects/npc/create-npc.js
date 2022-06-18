@@ -1,4 +1,4 @@
-import { Poly, Vect } from '../geom';
+import { Poly, Rect, Vect } from '../geom';
 import { animScaleFactor } from "../service/npc";
 
 /**
@@ -166,6 +166,11 @@ import npcJson from '../../public/npc/first-npc.json'
         opts: { duration: aux.total * animScaleFactor, direction: 'normal', fill: 'forwards' },
       };
     },
+    getBounds() {
+      const center = this.getPosition();
+      const radius = npcOrigRadius * npcScale * npcJson.zoom;
+      return new Rect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+    },
     getPosition() {
       const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
       return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
@@ -242,7 +247,12 @@ import npcJson from '../../public/npc/first-npc.json'
   };
 }
 
-/** Scale the sprites */
+/**
+ * Scale factor we'll apply to sprites.
+ * Beware that sprites may themselves be scaled up,
+ * see `zoom` in {npcKey}.json
+ */
 const npcScale = 0.2;
+const npcOrigRadius = 40;
 /** Ensure NPC faces along positive x-axis */
 const npcOffsetAngleDeg = 0;

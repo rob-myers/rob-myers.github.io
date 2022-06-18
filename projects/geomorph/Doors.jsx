@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { Subject } from "rxjs";
 import { assertNonNull } from "../service/generic";
 import { strokePolygon } from "../service/dom";
+import { getCached } from "../service/query-client";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 
@@ -43,18 +44,25 @@ export default function Doors(props) {
       rootEl: /** @type {HTMLDivElement} */ ({}),
   
       onToggleDoor(e) {
-        const gmIndexAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
-        const gmId = Number(gmIndexAttr);
+        const gmIdAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
+        const gmId = Number(gmIdAttr);
         const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
         const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-id'));
         const gmDoorNode = hullDoorId === -1 ? null : props.gmGraph.getDoorNodeByIds(gmId, hullDoorId);
   
-        if (gmIndexAttr === null || !state.vis[gmId][doorId] || gmDoorNode?.sealed) {
-          return;
+        if (gmIdAttr === null || !state.vis[gmId][doorId] || gmDoorNode?.sealed) {
+          return; // Not a door, not visible, or sealed permanently
+        }
+
+        const door = props.gms[gmId].doors[doorId];
+        const closeNpcs = /** @type {NPC.FullApi} */ (getCached(props.npcsKey)).getNpcsIntersecting(door.poly);
+        // console.log('closeNpcs', closeNpcs);
+        if (closeNpcs.length) {
+          return; // Cannot close door when some npc nearby
         }
   
-        const adjHull = hullDoorId !== -1
-          ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
+        // Hull doors have an adjacent door which must also be toggled
+        const adjHull = hullDoorId !== -1 ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
   
         if (state.open[gmId][doorId]) {
           delete state.open[gmId][doorId]

@@ -225,6 +225,7 @@ export default function NavDemo1(props) {
         gms={gms}
         gmGraph={gmGraph}
         initOpen={state.initOpen}
+        npcsKey={npcsKey}
         onLoad={api => { state.doorsApi = api; render(); }}
       />
       

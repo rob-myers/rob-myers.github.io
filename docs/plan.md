@@ -23,15 +23,14 @@ __Aim towards website release__.
     - Copy across and get working
   - Continue migration
 
-- now npc larger, increase nav inset
-  - try 301
+- now npc larger, increase nav inset (try 301)
 
 - 🚧 avoid player moving thru closed doors
   - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
-  - can only open door when player stationary/nearby
-  - cannot close door if some npc close
+  - ✅ cannot close door if some npc nearby
   - trigger event when npc close to door
   - npc will stop if about to go through closed door
+  - can only open door when player stationary/nearby
 
 - can turn andros when idle
 - can toggle NPC speech bubbles
@@ -46,6 +45,7 @@ __Aim towards website release__.
 
 - fix NavDemo1 useGeomorphs HMR
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
+  - Fix HMR as far as we can
 
 - Blog
   - ✅ Revisit first page
