@@ -27,8 +27,8 @@ export default function NavDemo1(props) {
 
   const state = useStateRef(() => {
     return {
-      // gmId: 0, roomId: 2,
       gmId: 0, roomId: 9,
+      // gmId: 0, roomId: 2,
       // gmId: 0, roomId: 15, // ISSUE
       // gmId: 1, roomId: 5,
       // gmId: 1, roomId: 22,
@@ -58,8 +58,10 @@ export default function NavDemo1(props) {
         // Compute respective maskPolys
         gms.forEach((otherGm, otherGmId) => {
           const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
-          if (otherGm === gm) {// Lights for current geomorph includes _current room_
-            maskPolys[otherGmId] = Poly.cutOut(polys.concat(gm.roomsWithDoors[state.roomId]), [otherGm.hullOutline]);
+          if (otherGm === gm) {
+            // Lights for current geomorph includes _current room_ and any pillars
+            const roomWithDoorsPillars = new Poly(gm.roomsWithDoors[state.roomId].outline);
+            maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoorsPillars), [otherGm.hullOutline]);
           } else {
             maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
           }
@@ -101,7 +103,7 @@ export default function NavDemo1(props) {
         });
 
       const npcsSub = state.npcsApi.events.subscribe((e) => {
-        if (e.key === 'set-player') {
+        if (e.key === 'set-player' && e.npcKey) {
           // Infer current room
           const npc = state.npcsApi.npc[e.npcKey];
           const position = npc.getPosition();
@@ -417,7 +419,7 @@ function Debug(props) {
         {props.showIds && (
           <div
             className="debug-room-id-icon"
-            style={{ left: roomNavAabb.x + roomNavAabb.width - 5, top: roomNavAabb.y + 20 }}
+            style={{ left: roomNavAabb.x + roomNavAabb.width - 35, top: roomNavAabb.y + 25 }}
           >
             {props.roomId}
           </div>
