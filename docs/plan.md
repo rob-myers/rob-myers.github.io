@@ -12,18 +12,26 @@ __Aim towards website release__.
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
   - ✅ Fix dark mode by not inverting Tabs
       - apply filter provides new context for position fixed
-  - 🚧 Terminal migration
+  - 🚧 article styling missing on SSR
+    - tried @emotion/react but not working yet
+  - Fix top bar vertical align in large viewport
+  - change icons
+    - dark mode icon
+    - mini nav central icon
+  - Terminal migration
     - Simplify in original repo
     - Copy across and get working
   - Continue migration
 
-- ✅ clean and simplify render-npc
-- ✅ larger character?
+- now npc larger, increase nav inset
+  - try 301
 
-- can only open door when player is close
+- 🚧 avoid player moving thru closed doors
   - move playerNpcKey to NPCs
-  - only applies when there is a player
-    - `npc set-player andros`
+  - can only open door when player stationary/nearby
+  - cannot close door if some npc close
+  - trigger event when npc close to door
+  - npc will stop if about to go through closed door
 
 - can turn andros when idle
 - can toggle NPC speech bubbles
@@ -140,11 +148,6 @@ __Aim towards website release__.
   - Andros is __situated__
   - `NavDemo1` has other NPCs
 
-- bring back `say`
-- ❌ start using `yarn inspect` as in BFF for server side debug
-- 🤔 NPCs have label
-  - NPCs label tracks them as they move
-- ✅ user can only move npcs via terminal e.g. `click`...
 - ❌ maybe consider shadows and door shadows (doors can fade)
 - can pause it
 - can write script manually or continually `look`ing
@@ -169,12 +172,15 @@ __Aim towards website release__.
 - GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
-- Fix dark-mode + Safari issue
-  - Safari Bug position fixed
-    - flickers dark (incorrect clip) on repeated wheel
-    - only happens when Tabs maximised
-    - https://bugs.webkit.org/show_bug.cgi?id=160953
+- Safari Bug position fixed
+  - flickers dark (incorrect clip) on repeated wheel
+  - only happens when Tabs maximised
+  - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ user can only move npcs via terminal e.g. `click`...
+- ✅ clean and simplify render-npc
+- ✅ larger character?
+  - but did not change speed
 - ✅ don't darken "holes" in geomorph png
   - ignore roomWithDoors holes for current room light
 - ✅ `npc {npcKey} {act}` -> `npc {act} [{npcKey}]`
