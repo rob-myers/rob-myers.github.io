@@ -54,11 +54,13 @@ export default function Doors(props) {
           return; // Not a door, not visible, or sealed permanently
         }
 
+        // Cannot close door when some npc nearby
         const door = props.gms[gmId].doors[doorId];
-        const closeNpcs = /** @type {NPC.FullApi} */ (getCached(props.npcsKey)).getNpcsIntersecting(door.poly);
+        const convexPoly = door.poly.clone().applyMatrix(props.gms[gmId].matrix);
+        const closeNpcs = /** @type {NPC.FullApi} */ (getCached(props.npcsKey)).getNpcsIntersecting(convexPoly);
         // console.log('closeNpcs', closeNpcs);
         if (closeNpcs.length) {
-          return; // Cannot close door when some npc nearby
+          return;
         }
   
         // Hull doors have an adjacent door which must also be toggled
