@@ -18,7 +18,7 @@ __Aim towards website release__.
   - Continue migration
 
 - ✅ clean and simplify render-npc
-- 🚧 larger character?
+- ✅ larger character?
 
 - can only open door when player is close
   - move playerNpcKey to NPCs
@@ -28,6 +28,10 @@ __Aim towards website release__.
 - can turn andros when idle
 - can toggle NPC speech bubbles
 - can pause/resume NPC
+
+- modularise {npc}.json
+  - NPC.jsx
+  - create-npc.js
 
 - pause/resume Tabs pause/resumes any sessions
      i.e. pause/resume foreground and all background processes

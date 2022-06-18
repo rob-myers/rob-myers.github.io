@@ -1,7 +1,9 @@
 import { Poly, Vect } from '../geom';
 import { animScaleFactor } from "../service/npc";
 
-// TODO modularise
+/**
+ * TODO modularise
+ */
 import npcJson from '../../public/npc/first-npc.json'
 
 /**
@@ -241,6 +243,6 @@ import npcJson from '../../public/npc/first-npc.json'
 }
 
 /** Scale the sprites */
-const npcScale = 0.17;
+const npcScale = 0.2;
 /** Ensure NPC faces along positive x-axis */
 const npcOffsetAngleDeg = 0;

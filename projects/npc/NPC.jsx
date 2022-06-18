@@ -2,7 +2,9 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 
-// TODO modularise
+/**
+ * TODO modularise
+ */
 import npcJson from '../../public/npc/first-npc.json'
 const { animLookup, zoom } = npcJson;
 
