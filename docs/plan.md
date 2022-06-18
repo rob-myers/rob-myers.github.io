@@ -27,7 +27,7 @@ __Aim towards website release__.
   - try 301
 
 - 🚧 avoid player moving thru closed doors
-  - move playerNpcKey to NPCs
+  - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
   - can only open door when player stationary/nearby
   - cannot close door if some npc close
   - trigger event when npc close to door

@@ -188,17 +188,3 @@ export function isGlobalNavPath(input) {
     // TODO check navMetas
     || false;
 }
-
-/** @param {string} input */
-export function isNpcActionKey(input) {
-  return input in fromNavActionKey ? true : false;
-}
-
-/** @type {Record<NPC.NpcActionKey, true>} */
-const fromNavActionKey = {
-  cancel: true,
-  get: true,
-  pause: true,
-  play: true,
-  'set-player': true,
-};

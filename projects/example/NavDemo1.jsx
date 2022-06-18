@@ -37,7 +37,6 @@ export default function NavDemo1(props) {
 
       initOpen: { 0: [24] },
       clipPath: gms.map(_ => 'none'),
-      playerNpcKey: /** @type {null | string} */ (null),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       panZoomApi: /** @type {PanZoom.CssApi} */ ({}),
@@ -103,19 +102,24 @@ export default function NavDemo1(props) {
         });
 
       const npcsSub = state.npcsApi.events.subscribe((e) => {
-        if (e.key === 'set-player' && e.npcKey) {
-          // Infer current room
-          const npc = state.npcsApi.npc[e.npcKey];
-          const position = npc.getPosition();
-          const found = gmGraph.findRoomContaining(position);
-          if (found) {
-            state.playerNpcKey = e.npcKey;
-            [state.gmId, state.roomId] = [found.gmId, found.roomId];
-            state.update();
+        if (e.key === 'set-player') {
+          if (e.npcKey) {
+            // Infer current room
+            const npc = state.npcsApi.getNpc({ npcKey: e.npcKey });
+            const position = npc.getPosition();
+            const found = gmGraph.findRoomContaining(position);
+            if (found) {
+              state.npcsApi.playerKey = e.npcKey;
+              [state.gmId, state.roomId] = [found.gmId, found.roomId];
+              state.update();
+            } else {// TODO send to terminal?
+              console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
+            }
           } else {
-            console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
+            state.npcsApi.playerKey = null;
           }
-        } else if (e.key === 'way-point' && e.npcKey === state.playerNpcKey) {
+        }
+        if (e.key === 'way-point' && e.npcKey === state.npcsApi.playerKey) {
           if (e.meta.key === 'exit-room') {
             if (e.meta.otherRoomId !== null) {
               state.gmId = e.meta.gmId;

@@ -7,7 +7,7 @@ import { testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { Poly, Rect, Vect } from "../geom";
-import { animScaleFactor, isGlobalNavPath, isLocalNavPath, isNpcActionKey } from "../service/npc";
+import { animScaleFactor, isGlobalNavPath, isLocalNavPath } from "../service/npc";
 import createNpc from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -25,6 +25,7 @@ export default function NPCs(props) {
     npc: {},
     path: {}, 
     events: new Subject,
+    playerKey: /** @type {null | string} */ (null),
 
     ready: true,
     class: { Vect },

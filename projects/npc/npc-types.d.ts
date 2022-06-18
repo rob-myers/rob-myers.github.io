@@ -210,8 +210,8 @@ declare namespace NPC {
     npc: Record<string, NPC.NPC>;
     path: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
     events: import('rxjs').Subject<NPC.NPCsMessage>;
+    playerKey: null | string;
     ready: boolean;
-
     class: {
       Vect: typeof Geom.Vect;
     };
