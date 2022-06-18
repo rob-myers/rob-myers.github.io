@@ -47,38 +47,6 @@ export class floorGraphClass extends BaseGraph {
     });
   }
 
-  // /**
-  //  * Mutates the alternating sequence `seq`.
-  //  * @param {NPC.LocalNavPath['seq']} seq 
-  //  */
-  // cleanStringPull(seq) {
-  //   for (const entry of seq.entries()) {
-  //     if (!Array.isArray(entry[1])) {
-  //       continue;
-  //     } else if (entry[1].length <= 1) {
-  //       warn(`cleanStringPull: short pulledPath ${JSON.stringify(entry[1])}`);
-  //       continue;
-  //     }
-  //     const [itemId, path] = entry;
-
-  //     // If just traversed an edge, ensure 2nd point not inside doorway
-  //     let roomEdge = /** @type {NPC.NavRoomTransition | undefined} */ (seq[itemId - 1]);
-  //     if (roomEdge) {
-  //       const door = this.gm.doors[roomEdge.doorId];
-  //       if (door.rect.contains(path[1])) path.splice(1, 1);
-  //     }
-  //     // If will traverse an edge, ensure penultimate point not inside doorway
-  //     roomEdge = /** @type {NPC.NavRoomTransition | undefined} */ (seq[itemId + 1]);
-  //     if (roomEdge) {
-  //       const door = this.gm.doors[roomEdge.doorId];
-  //       if (door.rect.contains(path[path.length - 2])) path.splice(path.length - 2, 1);
-  //     }
-
-  //     // Avoid duplicate adjacent vertices (they can happen)
-  //     seq[itemId] = geom.removePathReps(path);
-  //   }
-  // }
-
   /**
    * @param {Geom.Vect} src in geomorph local coords
    * @param {Geom.Vect} dst in geomorph local coords
@@ -91,7 +59,7 @@ export class floorGraphClass extends BaseGraph {
       return null;
     }
     /**
-     * Apply astar implementation originally from:
+     * Apply A-Star implementation originally from:
      * https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L106
      */
     const nodePath = AStar.search(this, srcNode, dstNode);
@@ -128,21 +96,6 @@ export class floorGraphClass extends BaseGraph {
 
         if (i > 0) {// We exited previous room
           const roomId = /** @type {{ roomId: number }} */ (partition[i - 1]).roomId;
-          /**
-           * TODO
-           * - need to skip doorEntry when start inside doorway
-           * - need door exit when start inside doorway
-           */
-          // const roomIdIndex = door.roomIds.findIndex(x => x === roomId);
-          // const dp = dst.clone().sub(door.entries[roomIdIndex]).dot(door.normal);
-          // const sign = roomIdIndex === 0 ? 1 : -1;
-          // if (!partition[i + 1] && dp * sign > 0) {
-          //   // Dst has not reached door rect, so discard prev door entry
-          //   console.log('IN DOORWAY BUT NOT DOOR RECT');
-          //   fullPath.pop();
-          //   fullPath.push(dst.clone());
-          //   break;
-          // }
           navMetas.push({
             key: 'exit-room',
             index: fullPath.length - 1,
@@ -163,7 +116,7 @@ export class floorGraphClass extends BaseGraph {
         
         /** Have next node with nextRoomId */
         const nextRoomId = /** @type {{ roomId: number }} */ (partition[i + 1]).roomId;
-        const doorExit =door.entries[door.roomIds.findIndex(x => x === nextRoomId)];
+        const doorExit = door.entries[door.roomIds.findIndex(x => x === nextRoomId)];
         
         // Avoid case where just entered geomorph and doorExit ~ src
         if (!(i == 0 && src.distanceTo(doorExit) < 0.1)) {
@@ -208,8 +161,8 @@ export class floorGraphClass extends BaseGraph {
         const stringPull = /** @type {Geom.VectJson[]} */ (
           this.computeStringPull(pathSrc, pathDst, item.nodes).path
         ).map(Vect.from);
-
-        fullPath.push(...stringPull.slice(1));
+        // We remove adjacent repetitions which can occur
+        fullPath.push(...geom.removePathReps(stringPull.slice(1)));
       }
     }
 
