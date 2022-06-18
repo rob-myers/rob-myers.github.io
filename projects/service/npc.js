@@ -2,17 +2,17 @@ import cheerio, { CheerioAPI, Element } from 'cheerio';
 import { Image, createCanvas, Canvas } from 'canvas';
 import path from 'path';
 
-import { Poly, Vect } from '../geom';
-import { extractDeepMetas, extractGeomsAt, hasTitle } from './cheerio';
+import { Vect } from '../geom';
+import { extractGeomsAt, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
 import { warn } from './log';
 
 /**
- * @param {ServerTypes.ParsedNpc} parsed 
+ * @param {ServerTypes.ParsedNpcCheerio} parsed 
  * @param {string} outputDir 
  * @param {{ zoom?: number; animNames?: string[] }} [opts]
  */
-export function renderNpcSpriteSheets(parsed, outputDir, opts = {}) {
+export async function renderNpcSpriteSheets(parsed, outputDir, opts = {}) {
   const {
     zoom = 1,
     animNames = Object.keys(parsed.animLookup),
@@ -21,23 +21,23 @@ export function renderNpcSpriteSheets(parsed, outputDir, opts = {}) {
   const anims = Object.values(parsed.animLookup).filter(x => animNames.includes(x.animName));
 
   for (const anim of anims) {
-    const canvas = drawAnimSpriteSheet(anim, zoom);
+    const canvas = await drawAnimSpriteSheet(anim, zoom);
     const outputPath = path.resolve(outputDir, `${parsed.npcName}--${anim.animName}.png`);
     saveCanvasAsFile(canvas, outputPath);
   }
 }
 
 /**
- * @param {ServerTypes.NpcAnim} anim 
+ * @param {ServerTypes.NpcAnimCheerio} anim 
  * @param {number} [zoom] 
  */
-function drawAnimSpriteSheet(anim, zoom = 1) {
-  const frameCount = anim.frames.length;
+async function drawAnimSpriteSheet(anim, zoom = 1) {
+  const frameCount = anim.frameCount;
   const canvas = createCanvas(anim.aabb.width * zoom * frameCount, anim.aabb.height * zoom);
 
   const ctxt = canvas.getContext('2d');
   for (let i = 0; i < frameCount; i++) {
-    drawFrameAt(anim, i, canvas, zoom);
+    await drawFrameAtNew(anim, i, canvas, zoom);
     ctxt.translate(anim.aabb.width * zoom, 0);
   }
   ctxt.restore();
@@ -47,37 +47,35 @@ function drawAnimSpriteSheet(anim, zoom = 1) {
 /**
  * Render by recreating an SVG and assigning as Image src.
  * Permits complex SVG <path>s, non-trivial to draw directly into canvas.
- * @param {ServerTypes.NpcAnim} anim 
+ * @param {ServerTypes.NpcAnimCheerio} anim 
  * @param {number} frameId 0-based frame index
  * @param {Canvas} canvas 
  * @param {number} [zoom] 
  */
-function drawFrameAt(anim, frameId, canvas, zoom = 1) {
-  const frame = anim.frames[frameId];
-
-  const svgItems = frame.geoms.map(item => {
-    const style = Object.entries(item.style).map(x => x.join(': ')).join(';');
-    const transform = item.transform ? `matrix(${item.transform})` : '';
-    if (item.tagName === 'ellipse') {
-      return `<ellipse cx="${item.cx}" cy="${item.cy}" rx="${item.rx}" ry="${item.ry}" style="${style}" transform="${transform}" />`;
-    } else if (item.tagName === 'path') {
-      return `<path d="${item.d}" style="${style}" transform="${transform}" />`;
-      // return `<path data-tags="${item.tags}" d="${item.d}" style="${style}" transform="${transform}" />`;
-    } else if (item.tagName === 'rect') {
-      return `<rect x="${item.x}" y="${item.y}" width="${item.width}" height="${item.height}" style="${style}" transform="${transform}" />`;
-    }
-  });
+async function drawFrameAtNew(anim, frameId, canvas, zoom = 1) {
+  const group = anim.frameNodes[frameId];
 
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="${anim.aabb.toString()}" width="${anim.aabb.width * zoom}" height="${anim.aabb.height * zoom}">
-      <g transform="matrix(${frame.transform})">
-        ${svgItems.join('\n' + ' '.repeat(6))}
-      </g>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:bx="https://boxy-svg.com"
+      viewBox="${anim.aabb.toString()}"
+      width="${anim.aabb.width * zoom}"
+      height="${anim.aabb.height * zoom}"
+    >
+      ${anim.defsNode ? cheerio.html(anim.defsNode) : ''}
+      ${cheerio.html(group)}
     </svg>
   `;
+  // console.log(svg)
 
   const image = new Image;
-  image.src = Buffer.from(svg, 'utf-8');
+  await new Promise(resolve => {
+    image.onload = () => /** @type {*} */ (resolve)();
+    image.src = Buffer.from(svg, 'utf-8');
+  });
+
   canvas.getContext('2d').drawImage(image, 0, 0);
 }
 
@@ -85,7 +83,7 @@ function drawFrameAt(anim, frameId, canvas, zoom = 1) {
  * @param {string} npcName 
  * @param {string} svgContents
  * @param {number} [zoom] 
- * @returns {ServerTypes.ParsedNpc}
+ * @returns {ServerTypes.ParsedNpcCheerio}
  */
 export function parseNpc(npcName, svgContents, zoom = 1) {
   const $ = cheerio.load(svgContents);
@@ -97,16 +95,27 @@ export function parseNpc(npcName, svgContents, zoom = 1) {
   const symbolLookup = extractDefSymbols($, topNodes);
   console.log('parseNpc found:', { animMetas, symbolLookup });
 
+  // Remove <image>s with visibility hidden (probably used for tracing)
+  // They slow the rendering process
+  Array.from($('image'))
+    .filter(x => (x.attribs.style || '').includes('visibility: hidden;'))
+    .map(x => $(x).remove());
+
   return {
     npcName,
     animLookup: animMetas
-      .reduce((agg, { animName, aabb,  }) => ({ ...agg,
-        [animName]: {
+      .reduce((agg, { animName, aabb }) => {
+        const defsNode = topNodes.find(x => x.type === 'tag' && x.name === 'defs') || null;
+        const frameNodes = extractNpcFrameNodes($, topNodes, animName);
+        agg[animName] = {
           animName,
           aabb,
-          frames: extractNpcFrames($, topNodes, animName, symbolLookup),
-        },
-      }), /** @type {ServerTypes.ParsedNpc['animLookup']} */ ({})),
+          frameCount: frameNodes.length,
+          defsNode,
+          frameNodes: frameNodes,
+        };
+        return agg;
+      }, /** @type {ServerTypes.ParsedNpcCheerio['animLookup']} */ ({})),
     zoom,
   };
 }
@@ -137,10 +146,8 @@ function extractDefSymbols(api, topNodes) {
  * @param {CheerioAPI} api Cheerio
  * @param {Element[]} topNodes Topmost children of <svg>
  * @param {string} title Title of <g> to extract
- * @param {Record<string, Element[]>} symbolLookup
- * @returns {ServerTypes.NpcAnimFrame[]}
  */
-function extractNpcFrames(api, topNodes, title, symbolLookup) {
+function extractNpcFrameNodes(api, topNodes, title) {
   /**
    * The group named `title` (e.g. `"walk"`), itself containing
    * groups of frames named e.g. `"npc-1"`, `"npc-2"`, etc.
@@ -151,11 +158,14 @@ function extractNpcFrames(api, topNodes, title, symbolLookup) {
    * The 1st one might be named `"npc-1"`.
    */
   const groups = /** @type {Element[]} */ (animGroup?.children??[])
-    .filter(x => x.name === 'g');
-
-  return groups.map((group) =>
-    extractDeepMetas(api, symbolLookup, group)
-  );
+    .filter(x => x.name === 'g')
+  
+  // Override visibility: hidden
+  groups.forEach(group => {
+    group.attribs.style = (group.attribs.style || '')
+      + 'visibility: visible;'
+  });
+  return groups;
 }
 
 /** Scale up how long it should take to move along navpath */

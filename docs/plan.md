@@ -17,7 +17,7 @@ __Aim towards website release__.
     - Copy across and get working
   - Continue migration
 
-- 🚧 clean and simplify render-npc
+- ✅ clean and simplify render-npc
 - 🚧 larger character?
 
 - can only open door when player is close

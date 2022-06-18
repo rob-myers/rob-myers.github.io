@@ -208,8 +208,8 @@ import npcJson from '../../public/npc/first-npc.json'
         const { animLookup, zoom: animZoom } = npcJson;
         anim.body = this.el.body.animate([
           { offset: 0, backgroundPosition: '0px' },
-          { offset: 1, backgroundPosition: `${-animLookup.walk.frames.length * animLookup.walk.aabb.width * animZoom}px` },
-        ], { easing: `steps(${animLookup.walk.frames.length})`, duration: 0.625 * 1000, iterations: Infinity });
+          { offset: 1, backgroundPosition: `${-animLookup.walk.frameCount * animLookup.walk.aabb.width * animZoom}px` },
+        ], { easing: `steps(${animLookup.walk.frameCount})`, duration: 0.625 * 1000, iterations: Infinity });
 
       } else if (anim.spriteSheet === 'idle') {
         // TODO put somewhere better?
