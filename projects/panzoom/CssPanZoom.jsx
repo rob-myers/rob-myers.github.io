@@ -346,9 +346,9 @@ export default function CssPanZoom(props) {
       >
         <div className="panzoom-scale">
           <div className="origin" />
-          {/* <div className="small-grid" /> */}
           {props.children}
-          <div className="large-grid" />
+          {props.grid && <div className="small-grid" />}
+          {props.grid && <div className="large-grid" />}
         </div>
       </div>
     </div>
@@ -391,8 +391,8 @@ const rootCss = css`
     }
     .small-grid {
       background-image:
-        linear-gradient(to right, rgba(200, 200, 200, 0.15) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
+        linear-gradient(to right, rgba(200, 200, 200, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(200, 200, 200, 0.08) 1px, transparent 1px);
         background-size: 10px 10px;
       }
       .large-grid {
@@ -416,6 +416,7 @@ const backgroundCss = (props) => css`
  * @typedef Props @type {object}
  * @property {string} [className]
  * @property {boolean} [dark]
+ * @property {boolean} [grid]
  * @property {number} [initZoom] e.g. `1`
  * @property {Geom.VectJson} [initCenter]
  * @property {(api: PanZoom.CssApi) => void} [onLoad]

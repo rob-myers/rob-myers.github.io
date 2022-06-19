@@ -28,7 +28,7 @@ __Aim towards website release__.
 - 🚧 avoid player moving thru closed doors
   - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
   - ✅ cannot close door if some npc nearby
-  - ✅ trigger event when npc about to go thru door
+  - ✅ trigger event `pre-exit-room` when npc about to go thru door
   - 🚧 npc will stop if about to go through closed door
   - can only open door when player stationary/nearby
   - prevent navigation to under closed doors
@@ -113,7 +113,6 @@ __Aim towards website release__.
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
 - BUG sometimes adjacent light is inside hull door, rather than outside
-- Draw grid over dark png, so not over light geomorph png
 - mobile-friendly command links (session must be open)
 
 - Clean
@@ -179,6 +178,7 @@ __Aim towards website release__.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ CssPanZoom grid off by default
 - ✅ user can only move npcs via terminal e.g. `click`...
 - ✅ clean and simplify render-npc
 - ✅ larger character?
