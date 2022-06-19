@@ -58,16 +58,16 @@
     <rect x="1167.458" width="5.584" height="240" style="">
       <title>wall</title>
     </rect>
-    <rect x="-6" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="-6" y="250" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door hull</title>
     </rect>
-    <rect x="1194" y="251" width="12" height="98" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="1194" y="250" width="12" height="100" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door hull</title>
     </rect>
-    <rect x="249.996" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="249.996" y="594" width="100" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door hull</title>
     </rect>
-    <rect x="850" y="594" width="98" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="850" y="594" width="100" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door hull</title>
     </rect>
     <rect x="485" y="414" width="50" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
