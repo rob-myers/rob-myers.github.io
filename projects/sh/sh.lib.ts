@@ -250,7 +250,7 @@ walk: `{
 
     if (api.isTtyAt(0)) {
       const points = api.safeJsonParse(args[1])
-      await npcs.walkNpc({ npcKey, points })
+      await npcs.walkNpc({ npcKey, key: "global-nav", fullPath: points, navMetas: [] })
     } else {
       datum = await api.read()
       while (datum !== null) {

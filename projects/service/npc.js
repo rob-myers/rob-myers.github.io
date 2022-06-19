@@ -182,6 +182,7 @@ export function isGlobalNavPath(input) {
   let x = /** @type {Partial<NPC.GlobalNavPath>} */ (input);
   return x?.key === 'global-nav'
     && x.fullPath?.every?.(Vect.isVectJson)
+    && Array.isArray(x.navMetas)
     // TODO check navMetas
     || false;
 }

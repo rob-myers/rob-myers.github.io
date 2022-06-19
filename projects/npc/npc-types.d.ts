@@ -238,11 +238,7 @@ declare namespace NPC {
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
     trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): import('rxjs').Subscription;
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
-    async walkNpc(e: { npcKey: string } & (
-      | { points: Geom.VectJson[] }
-      | GlobalNavPath
-      | LocalNavPath
-    )): Promise<void>;
+    async walkNpc(e: { npcKey: string } & GlobalNavPath): Promise<void>;
   }
 
   type NpcAction = (

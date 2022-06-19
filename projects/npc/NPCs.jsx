@@ -289,46 +289,22 @@ export default function NPCs(props) {
       return subscription;
     },
     async walkNpc(e) {
-      const npc = state.npc[e.npcKey];
-      if (!npc) {
-        throw Error(`npc "${e.npcKey}" does not exist`);
-      } else if ('key' in e) {
-        if (!(e.key === 'local-nav' || e.key === 'global-nav')) {
-          throw Error(`invalid key: ${JSON.stringify(e)}`);
-        } else if (e.key === 'local-nav' && !isLocalNavPath(e)) {
-          throw Error(`invalid local navpath: ${JSON.stringify(e)}`);
-        } else if (e.key === 'global-nav' && !isGlobalNavPath(e)) {
-          throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
-        }
-      } else if ('points' in e && !(e.points?.every?.(Vect.isVectJson))) {
-        throw Error(`invalid points: ${JSON.stringify(e.points)}`);
+      const npc = state.getNpc(e.npcKey);
+      if (!isGlobalNavPath(e)) {
+        throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
       }
 
       try {
-        if ('points' in e) {// Walk along path `points`, ignoring doors
-          
-          await npc.followNavPath(e.points);
+        // Walk along a global navpath
+        const globalNavPath = e;
+        const allPoints = globalNavPath.fullPath;
+        console.log('global navMetas', globalNavPath.navMetas); // DEBUG
+        await npc.followNavPath(allPoints, { globalNavMetas: globalNavPath.navMetas });
 
-        } else if (e.key === 'global-nav') {// Walk along a global navpath
-          
-          const globalNavPath = e;
-          const allPoints = globalNavPath.fullPath;
-          console.log('global navMetas', globalNavPath.navMetas); // DEBUG
-
-          // Below finishes by setting spriteSheet idle
-          await npc.followNavPath(allPoints, { globalNavMetas: globalNavPath.navMetas });
-
-        } else if (e.key === 'local-nav') {
-          for (const [i, vectPath] of e.fullPath.entries()) {
-            
-            // TODO
-
-          }
-        }
       } catch (err) {
-        state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
+        // state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
         if (err instanceof Error && err.message === 'cancelled') {
-          console.log(`${e.npcKey}: walkNpc cancelled`);
+          console.info(`${e.npcKey}: walkNpc cancelled`);
         } else {
           throw err;
         }
