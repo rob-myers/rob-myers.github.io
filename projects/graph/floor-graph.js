@@ -3,8 +3,6 @@ import { BaseGraph } from "./graph";
 import { Utils } from "../pathfinding/Utils";
 import { AStar } from "../pathfinding/AStar";
 import { Channel } from "../pathfinding/Channel";
-import { assertDefined, assertNonNull, extantLast } from "../service/generic";
-import { warn } from "../service/log";
 import { geom } from "../service/geom";
 
 /**
@@ -96,14 +94,16 @@ export class floorGraphClass extends BaseGraph {
 
         if (i > 0) {// We exited previous room
           const roomId = /** @type {{ roomId: number }} */ (partition[i - 1]).roomId;
-          navMetas.push({
-            key: 'exit-room',
+
+          const baseMeta = {
             index: fullPath.length - 1,
             doorId: item.doorId,
             hullDoorId: this.gm.hullDoors.indexOf(door),
-            exitedRoomId: roomId,
             otherRoomId: door.roomIds[1 - door.roomIds.findIndex(x => x === roomId)],
-          });
+          };
+          navMetas.push({ key: 'pre-exit-room', ...baseMeta, willExitRoomId: roomId });
+          navMetas.push({ key: 'exit-room', ...baseMeta, exitedRoomId: roomId });
+
         } else {
           startDoorId = item.doorId;
         }

@@ -168,9 +168,6 @@ function extractNpcFrameNodes(api, topNodes, title) {
   return groups;
 }
 
-/** Scale up how long it should take to move along navpath */
-export const animScaleFactor = 15;
-
 /** @param {any} input */
 export function isLocalNavPath(input) {
   let x = /** @type {Partial<NPC.LocalNavPath>} */ (input);

@@ -28,9 +28,11 @@ __Aim towards website release__.
 - 🚧 avoid player moving thru closed doors
   - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
   - ✅ cannot close door if some npc nearby
-  - trigger event when npc close to door
-  - npc will stop if about to go through closed door
+  - ✅ trigger event when npc about to go thru door
+  - 🚧 npc will stop if about to go through closed door
   - can only open door when player stationary/nearby
+  - prevent navigation to under closed doors
+  - prevent navigation to sealed hull doors
 
 - can turn andros when idle
 - can toggle NPC speech bubbles

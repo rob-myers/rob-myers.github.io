@@ -1,5 +1,4 @@
 import { Poly, Rect, Vect } from '../geom';
-import { animScaleFactor } from "../service/npc";
 
 /**
  * TODO modularise
@@ -116,8 +115,10 @@ import npcJson from '../../public/npc/first-npc.json'
       if (opts?.globalNavMetas) {
         anim.wayMetas = opts.globalNavMetas.map((navMeta) => ({
           ...navMeta,
-          // Slightly early to ensure it is triggered
-          length: Math.max(anim.aux.sofars[navMeta.index] - 0.1, 0)
+          length: navMeta.key === 'pre-exit-room'
+            ? Math.max(anim.aux.sofars[navMeta.index] - (npcRadius + 5), 0)
+            // Slightly early to ensure it is triggered
+            : Math.max(anim.aux.sofars[navMeta.index] - 0.1, 0)
         }));
       }
 
@@ -168,8 +169,7 @@ import npcJson from '../../public/npc/first-npc.json'
     },
     getBounds() {
       const center = this.getPosition();
-      const radius = npcOrigRadius * npcScale * npcJson.zoom;
-      return new Rect(center.x - radius, center.y - radius, 2 * radius, 2 * radius);
+      return new Rect(center.x - npcRadius, center.y - npcRadius, 2 * npcRadius, 2 * npcRadius);
     },
     getPosition() {
       const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
@@ -256,3 +256,8 @@ const npcScale = 0.2;
 const npcOrigRadius = 40;
 /** Ensure NPC faces along positive x-axis */
 const npcOffsetAngleDeg = 0;
+
+export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
+
+/** Scale up how long it should take to move along navpath */
+export const animScaleFactor = 15;
