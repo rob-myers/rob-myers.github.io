@@ -92,15 +92,15 @@ export default function NPCs(props) {
           }
 
           if (gmEdge) {
-            navMetas.push({
-              key: 'exit-room',
+            const baseMeta = {
               gmId: gmEdge.srcGmId,
               doorId: gmEdge.srcDoorId,
-              exitedRoomId: gmEdge.srcRoomId,
               hullDoorId: gmEdge.srcHullDoorId,
               index: fullPath.length - 1,
               otherRoomId: null,
-            });
+            };
+            navMetas.push({ key: 'pre-exit-room', willExitRoomId: gmEdge.srcRoomId, ...baseMeta });
+            navMetas.push({ key: 'exit-room', exitedRoomId: gmEdge.srcRoomId, ...baseMeta });
           }
         }
         
