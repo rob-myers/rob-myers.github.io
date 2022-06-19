@@ -73,10 +73,10 @@ export default function NPCs(props) {
 
           const gmEdge = gmEdges[k];
           
-          if (k === 0 && localNavPath.startEndDoorIds[0] >= 0) {
+          if (k === 0 && localNavPath.doorIds[0] >= 0) {
             // console.log('STARTED IN HULL DOOR');
             fullPath.push(Vect.from(src));
-          } else if (k === gmEdges.length && localNavPath.startEndDoorIds[1] >= 0) {
+          } else if (k === gmEdges.length && localNavPath.doorIds[1] >= 0) {
             // console.log('ENDED IN HULL DOOR');
             fullPath.push(Vect.from(dst));
           } else {
@@ -127,7 +127,7 @@ export default function NPCs(props) {
           fullPath: result.fullPath.map(p => gm.matrix.transformPoint(Vect.from(p)).precision(3)),
         };
       } else {
-        return { key: 'local-nav', gmId, fullPath: [], navMetas: [], startEndDoorIds: [-1, -1] };
+        return { key: 'local-nav', gmId, fullPath: [], navMetas: [], doorIds: [-1, -1] };
       }
     },
     /**

@@ -186,7 +186,7 @@ declare namespace NPC {
     fullPath: Geom.Vect[];
     navMetas: LocalNavMeta[];
     /** [startDoorId, endDoorId] respectively, both possibly -1 */
-    startEndDoorIds: [number, number];
+    doorIds: [number, number];
   }
 
   type LocalNavMeta =

@@ -114,12 +114,11 @@ export class floorGraphClass extends BaseGraph {
           break;
         } 
         
-        /** Have next node with nextRoomId */
         const nextRoomId = /** @type {{ roomId: number }} */ (partition[i + 1]).roomId;
         const doorExit = door.entries[door.roomIds.findIndex(x => x === nextRoomId)];
         
         // Avoid case where just entered geomorph and doorExit ~ src
-        if (!(i == 0 && src.distanceTo(doorExit) < 0.1)) {
+        if (!(i === 0 && src.distanceTo(doorExit) < 0.1)) {
           fullPath.push(doorExit.clone());
         }
 
@@ -171,7 +170,7 @@ export class floorGraphClass extends BaseGraph {
     return {
       fullPath, // May contain adjacent dups
       navMetas,
-      startEndDoorIds: [startDoorId, endDoorId],
+      doorIds: [startDoorId, endDoorId],
     };
   }
 
