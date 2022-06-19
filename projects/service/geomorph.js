@@ -133,15 +133,19 @@ export async function createLayout(def, lookup, triangleService) {
     .filter(x => x.tags.includes('ignore-nav')).map(x => x.poly.center);
 
   /**
-   * Navigation polygon obtained by cutting walls and obstacles
+   * Navigation polygon obtained by cutting outset walls and outset obstacles
    * from `hullOutline`, thereby creating doorways (including doors).
    * We also discard polygons intersecting ignoreNavPoints,
    * or if they are deemed too small.
    */
   const navPolyWithDoors = Poly.cutOut(/** @type {Poly[]} */([]).concat(
-    // Use non-unioned walls to avoid outset issue
-    unjoinedWalls.flatMap(x => x.createOutset(12)),
-    groups.obstacles.flatMap(x => x.createOutset(8)),
+    // Non-unioned walls avoids outset issue (self-intersection)
+    unjoinedWalls.flatMap(x =>
+      x.createOutset(wallOutsetAmount)
+    ),
+    groups.obstacles.flatMap(x =>
+      x.createOutset(obstacleOutsetAmount)
+    ),
   ), hullOutline).map(
     x => x.cleanFinalReps().fixOrientation().precision(4)
   ).filter(poly => 
@@ -639,3 +643,7 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
     roomNodeIds,
   };
 }
+
+const wallOutsetAmount = 13;
+
+const obstacleOutsetAmount = 10;

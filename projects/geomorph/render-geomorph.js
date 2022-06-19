@@ -1,5 +1,5 @@
 import { Poly, Vect } from "../geom";
-import { filterSingles, labelMeta } from './geomorph.model';
+import { labelMeta } from './geomorph.model';
 import { error } from "../service/log";
 import { singlesToPolys } from '../geomorph/geomorph.model';
 import { drawLine, drawTriangulation, fillPolygon, fillRing, setStyle, strokePolygon } from '../service/dom';
