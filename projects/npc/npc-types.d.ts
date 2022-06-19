@@ -211,7 +211,7 @@ declare namespace NPC {
   export interface FullApi {
     npc: Record<string, NPC.NPC>;
     path: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
-    events: import('rxjs').Subject<NPC.NPCsMessage>;
+    events: import('rxjs').Subject<NPC.NPCsEvent>;
     playerKey: null | string;
     ready: boolean;
     class: {
@@ -256,7 +256,7 @@ declare namespace NPC {
 
   type NpcActionKey = NpcAction['action'];
 
-  type NPCsMessage = (
+  type NPCsEvent = (
     | { key: 'set-player'; npcKey: string | null; }
     | { key: 'started-walking'; npcKey: string; }
     | { key: 'stopped-walking'; npcKey: string; }

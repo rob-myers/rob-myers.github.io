@@ -2,6 +2,7 @@ import React from "react";
 import { css } from "goober";
 import { filter } from "rxjs/operators";
 
+import { testNever } from "../service/generic";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
@@ -42,6 +43,51 @@ export default function NavDemo1(props) {
       panZoomApi: /** @type {PanZoom.CssApi} */ ({}),
       npcsApi: /** @type {NPC.FullApi} */  ({ ready: false }),
 
+      /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
+      handlePlayerWayEvent(e) {
+        switch (e.meta.key) {
+          case 'exit-room':
+            if (e.meta.otherRoomId !== null) {
+              [state.gmId, state.roomId] = [e.meta.gmId, e.meta.otherRoomId];
+            } else {// Handle hull doors
+              const adjCtxt = gmGraph.getAdjacentRoomCtxt(e.meta.gmId, e.meta.hullDoorId);
+              if (adjCtxt) {
+                [state.gmId, state.roomId] = [adjCtxt.adjGmId, adjCtxt.adjRoomId];
+              }
+            }
+            state.update();
+            break;
+          case 'enter-room':
+            // Can re-enter room from doorway without entering/exiting other
+            if (!(state.gmId === e.meta.gmId && state.roomId === e.meta.enteredRoomId)) {
+              state.gmId = e.meta.gmId;
+              state.roomId = e.meta.enteredRoomId;
+              state.update();
+            }
+            break;
+          case 'pre-exit-room':
+            /**
+             * TODO
+             */
+            break;
+          default:
+            throw testNever(e.meta);
+        }
+      },
+
+      /** @param {string} npcKey */
+      setRoomByNpc(npcKey) {
+        const npc = state.npcsApi.getNpc({ npcKey });
+        const position = npc.getPosition();
+        const found = gmGraph.findRoomContaining(position);
+        if (found) {
+          [state.gmId, state.roomId] = [found.gmId, found.roomId];
+          state.update();
+        } else {// TODO error in terminal?
+          console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
+        }
+      },
+
       update() {
         state.updateClipPath();
         state.updateVisibleDoors();
@@ -60,6 +106,7 @@ export default function NavDemo1(props) {
           if (otherGm === gm) {
             // Lights for current geomorph includes _current room_ and any pillars
             const roomWithDoorsPillars = new Poly(gm.roomsWithDoors[state.roomId].outline);
+            // const roomWithDoorsPillars = gm.roomsWithDoors[state.roomId]
             maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoorsPillars), [otherGm.hullOutline]);
           } else {
             maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
@@ -95,51 +142,19 @@ export default function NavDemo1(props) {
     if (gms.length && state.doorsApi.ready && state.npcsApi.ready) {
       state.update();
 
+      // Update Door graphics on change
       const doorsSub = state.doorsApi.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
-        .subscribe(() => {
-          state.update();
-        });
+        .subscribe(() => state.update());
 
+      // React to NPC events
       const npcsSub = state.npcsApi.events.subscribe((e) => {
         if (e.key === 'set-player') {
-          if (e.npcKey) {
-            // Infer current room
-            const npc = state.npcsApi.getNpc({ npcKey: e.npcKey });
-            const position = npc.getPosition();
-            const found = gmGraph.findRoomContaining(position);
-            if (found) {
-              state.npcsApi.playerKey = e.npcKey;
-              [state.gmId, state.roomId] = [found.gmId, found.roomId];
-              state.update();
-            } else {// TODO send to terminal?
-              console.error(`set-player ${e.npcKey}: no room contains ${JSON.stringify(position)}`)
-            }
-          } else {
-            state.npcsApi.playerKey = null;
-          }
+          state.npcsApi.playerKey = e.npcKey || null;
+          e.npcKey && state.setRoomByNpc(e.npcKey)
         }
         if (e.key === 'way-point' && e.npcKey === state.npcsApi.playerKey) {
-          if (e.meta.key === 'exit-room') {
-            if (e.meta.otherRoomId !== null) {
-              state.gmId = e.meta.gmId;
-              state.roomId = e.meta.otherRoomId;
-            } else {// Handle hull doors
-              const adjCtxt = gmGraph.getAdjacentRoomCtxt(e.meta.gmId, e.meta.hullDoorId);
-              if (adjCtxt) {
-                state.gmId = adjCtxt.adjGmId;
-                state.roomId = adjCtxt.adjRoomId;
-              }
-            }
-            state.update();
-          } else if (e.meta.key === 'enter-room') {
-            // Can re-enter room from doorway without entering/exiting other
-            if (!(state.gmId === e.meta.gmId && state.roomId === e.meta.enteredRoomId)) {
-              state.gmId = e.meta.gmId;
-              state.roomId = e.meta.enteredRoomId;
-              state.update();
-            }
-          }
+          state.handlePlayerWayEvent(e);
         }
       });
 
@@ -156,6 +171,7 @@ export default function NavDemo1(props) {
       initZoom={1.5}
       initCenter={{ x: 300, y: 300 }}
       dark
+      // grid
       onLoad={api => state.panZoomApi = api}
     >
       {gms.map(gm =>
