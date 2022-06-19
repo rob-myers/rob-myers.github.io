@@ -44,9 +44,10 @@ export default function NavDemo1(props) {
       npcsApi: /** @type {NPC.FullApi} */  ({ ready: false }),
 
       /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
-      handlePlayerWayEvent(e) {
+      async handlePlayerWayEvent(e) {
         switch (e.meta.key) {
           case 'exit-room':
+            // Player left a room
             if (e.meta.otherRoomId !== null) {
               [state.gmId, state.roomId] = [e.meta.gmId, e.meta.otherRoomId];
             } else {// Handle hull doors
@@ -58,7 +59,7 @@ export default function NavDemo1(props) {
             state.update();
             break;
           case 'enter-room':
-            // Can re-enter room from doorway without entering/exiting other
+            // Player can re-enter room from doorway without entering/exiting other
             if (!(state.gmId === e.meta.gmId && state.roomId === e.meta.enteredRoomId)) {
               state.gmId = e.meta.gmId;
               state.roomId = e.meta.enteredRoomId;
@@ -66,9 +67,11 @@ export default function NavDemo1(props) {
             }
             break;
           case 'pre-exit-room':
-            /**
-             * TODO
-             */
+            // If upcoming door closed stop player
+            if (!(e.meta.doorId in state.doorsApi.open[e.meta.gmId])) {
+              const player = state.npcsApi.getNpc(e.npcKey);
+              await player.cancel();
+            }
             break;
           default:
             throw testNever(e.meta);
@@ -77,7 +80,7 @@ export default function NavDemo1(props) {
 
       /** @param {string} npcKey */
       setRoomByNpc(npcKey) {
-        const npc = state.npcsApi.getNpc({ npcKey });
+        const npc = state.npcsApi.getNpc(npcKey);
         const position = npc.getPosition();
         const found = gmGraph.findRoomContaining(position);
         if (found) {

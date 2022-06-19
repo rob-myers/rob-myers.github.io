@@ -138,6 +138,7 @@ export default function LightsTest(props) {
         <Doors
           gms={gms}
           gmGraph={gmGraph}
+          npcsKey="__NONE__"
           onLoad={api => state.doorsApi = api}
           initOpen={{}}
         />

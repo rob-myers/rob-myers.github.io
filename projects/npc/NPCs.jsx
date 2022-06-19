@@ -148,10 +148,10 @@ export default function NPCs(props) {
       }
       return result;
     },
-    getNpc(e) {
-      const npc = state.npc[e.npcKey];
+    getNpc(npcKey) {
+      const npc = state.npc[npcKey];
       if (!npc) {
-        throw Error(`npc "${e.npcKey}" does not exist`);
+        throw Error(`npc "${npcKey}" does not exist`);
       }
       return npc;
     },
@@ -172,15 +172,15 @@ export default function NPCs(props) {
     async npcAct(e) {
       switch (e.action) {
         case 'cancel':// Cancel current animation
-          await state.getNpc(e).cancel();
+          await state.getNpc(e.npcKey).cancel();
           break;
         case 'get':
-          return state.getNpc(e);
+          return state.getNpc(e.npcKey);
         case 'pause':// Pause current animation
-          await state.getNpc(e).pause();
+          await state.getNpc(e.npcKey).pause();
           break;
         case 'play':// Resume current animation
-          await state.getNpc(e).play();
+          await state.getNpc(e.npcKey).play();
           break;
         case 'set-player':
           state.events.next({ key: 'set-player', npcKey: e.npcKey??null });
@@ -361,7 +361,7 @@ export default function NPCs(props) {
       {Object.values(state.npc).map(npc => (
         <NPC
           // Respawn remounts
-          key={`${npc.key}@${npc.spawnedAt}`}
+          key={`${npc.key}@${npc.epochMs}`}
           npc={npc}
         />
       ))}

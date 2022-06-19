@@ -7,20 +7,20 @@ import npcJson from '../../public/npc/first-npc.json'
 
 /**
  * @param {string} npcKey 
- * @param {Geom.VectJson} at 
+ * @param {Geom.VectJson} position 
  * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; npcs: NPC.FullApi; }} deps
  * @returns {NPC.NPC}
  */
  export default function createNpc(
   npcKey,
-  at,
+  position,
   { disabled, panZoomApi, npcs },
 ) {
   return {
     key: npcKey,
-    spawnedAt: Date.now(),
+    epochMs: Date.now(),
     // TODO hook up angle
-    def: { key: npcKey, position: at, angle: 0, paused: !!disabled },
+    def: { key: npcKey, position, angle: 0, paused: !!disabled },
     el: {
       root: /** @type {HTMLDivElement} */ ({}),
       body: /** @type {HTMLDivElement} */ ({}),
@@ -28,7 +28,6 @@ import npcJson from '../../public/npc/first-npc.json'
     anim: {
       animPath: [],
       aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
-      origPath: [],
       spriteSheet: 'idle',
       root: new Animation,
       body: new Animation,
@@ -41,13 +40,14 @@ import npcJson from '../../public/npc/first-npc.json'
     },
     async cancel() {
       console.log(`cancel: cancelling ${this.def.key}`);
+
       const { anim } = this;
-      // Commit position and rotation
-      anim.root.commitStyles();
+      anim.root.commitStyles(); // Commit position and rotation
+      anim.wayMetas.length = 0;
+
       await/** @type {Promise<void>} */ (new Promise(resolve => {
         anim.root.addEventListener('cancel', () => resolve());
         anim.root.cancel();
-        anim.body.cancel();
       }));
     },
     pause() {
@@ -104,8 +104,7 @@ import npcJson from '../../public/npc/first-npc.json'
 
     async followNavPath(path, opts) {
       const { anim } = this;
-      anim.origPath = path.map(Vect.from);
-      anim.animPath = anim.origPath.slice();
+      anim.animPath = path.map(Vect.from);
       anim.wayMetas.length = 0;
       this.updateAnimAux();
       if (anim.animPath.length <= 1 || anim.aux.total === 0) {
@@ -128,23 +127,25 @@ import npcJson from '../../public/npc/first-npc.json'
       console.log(`followNavPath: ${this.def.key} started walk`);
       this.nextWayTimeout();
 
-      await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
-        anim.root.addEventListener("finish", () => {
-          // We don't cancel, so we don't pass control back to styles
-          console.log(`followNavPath: ${this.def.key} finished walk`);
-          resolve();
-        });
-        anim.root.addEventListener("cancel", () => {
-          // Cancel only when _actually_ cancelled, not when finished
-          console.log(`followNavPath: ${this.def.key} cancelled walk`);
-          reject(new Error('cancelled'));
-        });
-      }));
+      try {
+        await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
+          anim.root.addEventListener("finish", () => {
+            // We don't cancel, so we don't pass control back to styles
+            console.log(`followNavPath: ${this.def.key} finished walk`);
+            resolve();
+          });
+          anim.root.addEventListener("cancel", () => {
+            // Cancel only when _actually_ cancelled, not when finished
+            console.log(`followNavPath: ${this.def.key} cancelled walk`);
+            reject(new Error('cancelled'));
+          });
+        }));
+      } finally {
+        this.setSpritesheet('idle');
+        this.startAnimation();
+        npcs.events.next({ key: 'stopped-walking', npcKey: this.def.key });
+      }
 
-      // TODO what about when cancel walk?
-      this.setSpritesheet('idle');
-      this.startAnimation();
-      npcs.events.next({ key: 'stopped-walking', npcKey: this.def.key });
     },
     getAngle() {
       const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);
@@ -187,7 +188,7 @@ import npcJson from '../../public/npc/first-npc.json'
       }
     },
     npcRef(rootEl) {
-      if (rootEl) {
+      if (rootEl && this.anim.aux.count === 0) {
         this.el.root = rootEl;
         this.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
         this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
@@ -203,7 +204,10 @@ import npcJson from '../../public/npc/first-npc.json'
     },
     startAnimation() {
       const { anim } = this;
-      anim.aux.count++;
+      if (anim.aux.count) {
+        anim.root.commitStyles();
+        anim.root.cancel();
+      }
 
       if (anim.spriteSheet === 'walk') {
         // Animate position and rotation
@@ -219,13 +223,14 @@ import npcJson from '../../public/npc/first-npc.json'
         ], { easing: `steps(${animLookup.walk.frameCount})`, duration: 0.625 * 1000, iterations: Infinity });
 
       } else if (anim.spriteSheet === 'idle') {
-        // TODO put somewhere better?
         anim.wayMetas.length = 0;
 
         anim.root = this.el.root.animate([], { duration: 2 * 1000, iterations: Infinity });
         // TODO induced by animLookup
         anim.body = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
       }
+
+      anim.aux.count++;
     },
     updateAnimAux() {
       const { anim } = this, {  aux } = anim;
@@ -250,7 +255,7 @@ import npcJson from '../../public/npc/first-npc.json'
 /**
  * Scale factor we'll apply to sprites.
  * Beware that sprites may themselves be scaled up,
- * see `zoom` in {npcKey}.json
+ * see `zoom` in npc json
  */
 const npcScale = 0.2;
 const npcOrigRadius = 40;

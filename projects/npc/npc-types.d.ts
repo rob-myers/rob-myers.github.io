@@ -35,7 +35,7 @@ declare namespace NPC {
     /** User specified e.g. `andros` */
     key: string;
     /** Epoch ms */
-    spawnedAt: number;
+    epochMs: number;
     /** Definition of NPC */
     def: NPCDef;
     el: {
@@ -59,7 +59,6 @@ declare namespace NPC {
         sofars: number[];
         total: number;
       };
-      origPath: Geom.Vect[];
       spriteSheet: SpriteSheetKey;
       
       root: Animation;
@@ -230,7 +229,7 @@ declare namespace NPC {
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
     getNpcGlobalNav(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }): GlobalNavPath;
-    getNpc(e: { npcKey: string }): NPC.NPC;
+    getNpc(npcKey: string): NPC.NPC;
     getNpcsIntersecting(convexPoly: Geom.Poly): NPC.NPC[];
     getPanZoomApi(): PanZoom.CssApi;
     isPointLegal(p: Geom.VectJson): boolean;

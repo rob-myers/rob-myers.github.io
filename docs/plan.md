@@ -23,13 +23,14 @@ __Aim towards website release__.
     - Copy across and get working
   - Continue migration
 
-- now npc larger, increase nav inset (try 301)
+- now npc larger, increase nav inset (try gm 301)
 
 - 🚧 avoid player moving thru closed doors
   - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
   - ✅ cannot close door if some npc nearby
   - ✅ trigger event `pre-exit-room` when npc about to go thru door
-  - 🚧 npc will stop if about to go through closed door
+  - ✅ player will stop if about to go through closed door
+  - camera stops tracking when player stops
   - can only open door when player stationary/nearby
   - prevent navigation to under closed doors
   - prevent navigation to sealed hull doors
