@@ -23,23 +23,28 @@ __Aim towards website release__.
     - Copy across and get working
   - Continue migration
 
-- ✅ increase nav inset (now npc larger)
-  - ✅ try gm 301
-  - ✅ confirm others
-
 - 🚧 avoid player moving thru closed doors
   - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
   - ✅ cannot close door if some npc nearby
   - ✅ trigger event `pre-exit-room` when npc about to go thru door
   - ✅ player will stop if about to go through closed door
+  - ✅ player stops at closed hull door
   - 🚧 can only open door when player stationary/nearby
   - prevent underneath closed doors (nav close)
   - player should not stop underneath closed door
-  - camera retracks when player stops
+  - camera pauses/resumes when player pauses/resumes
+  - camera retracks when player cancels
 
 - can turn andros when idle
+  - ✅ rotate icon appears when click (then fades)
+  - 🚧 can drag icon to change angle
 - can toggle NPC speech bubbles
-- can pause/resume NPC
+- ✅ can pause/resume NPC
+  - `npc pause andros`
+  - `npc play andros`
+  - `npc cancel andros`
+
+- migrate to free icons
 
 - modularise {npc}.json
   - NPC.jsx
@@ -181,6 +186,9 @@ __Aim towards website release__.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ increase nav inset (since npc larger)
+  - ✅ try gm 301
+  - ✅ confirm others
 - ✅ CssPanZoom grid off by default
 - ✅ user can only move npcs via terminal e.g. `click`...
 - ✅ clean and simplify render-npc

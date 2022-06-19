@@ -31,6 +31,14 @@ export default function NPC(props) {
         className={classNames('body', npc.key, 'no-select')}
         data-npc-key={npc.key}
       />
+      <div
+        className="icon"
+        onClick={(e) => {
+          const target = /** @type {HTMLElement} */ (e.target);
+          target.classList.toggle('visible');
+          setTimeout(() => target.classList.remove('visible'), 1000);
+        }}
+      />
     </div>
   );
 }
@@ -61,5 +69,36 @@ const npcCss = css`
 
   &.disabled .body {
     animation-play-state: paused;
+  }
+
+  .icon {
+    position: absolute;
+    left: calc(-7px - 0 * 7px);
+    top: -7px;
+    border-radius: 7px;
+    width: 14px;
+    height: 14px;
+    
+    pointer-events: all;
+    cursor: pointer;
+    opacity: 1;
+    transition: opacity 1s;
+  }
+  .icon:not(.visible) {
+    opacity: 0;
+  }
+
+  &.idle .icon {
+    background: rgba(255, 255, 255, 0.4);
+
+    &::after {
+      display: block;
+      content: '';
+      background-image: url(/icon/arrow-rotate-both.svg);
+      background-size: 14px 14px;
+      height: 14px;
+      width: 14px;
+      transform: scale(0.4);
+    }
   }
 `;
