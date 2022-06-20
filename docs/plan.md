@@ -12,9 +12,8 @@ __Aim towards website release__.
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
   - ✅ Fix dark mode by not inverting Tabs
       - apply filter provides new context for position fixed
-  - 🚧 article styling missing on SSR
-    - tried @emotion/react but not working yet
-  - Fix top bar vertical align in large viewport
+  - ✅ article styling missing on SSR
+  - 🚧 Fix top bar vertical align in large viewport
   - change icons
     - dark mode icon
     - mini nav central icon
@@ -22,6 +21,25 @@ __Aim towards website release__.
     - Simplify in original repo
     - Copy across and get working
   - Continue migration
+
+- can toggle NPC speech bubbles
+  - 🚧 can attach html at world point
+  - can attach html to bot
+
+- pause/resume Tabs pause/resumes any sessions
+  - pause/resume foreground and all background processes
+  - npcs should pause/resume
+  - try with some bots too
+
+- migrate to free icons
+
+- modularise npc json
+  - NPC.jsx
+  - create-npc.js
+
+- fix NavDemo1 useGeomorphs HMR
+  - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
+  - Fix HMR as far as we can
 
 - 🚧 avoid player moving thru closed doors
   - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
@@ -35,21 +53,6 @@ __Aim towards website release__.
   - camera pauses/resumes when player pauses/resumes
   - camera retracks when player cancels
 
-- can toggle NPC speech bubbles
-
-- migrate to free icons
-
-- modularise {npc}.json
-  - NPC.jsx
-  - create-npc.js
-
-- pause/resume Tabs pause/resumes any sessions
-     i.e. pause/resume foreground and all background processes
-
-- fix NavDemo1 useGeomorphs HMR
-  - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
-  - Fix HMR as far as we can
-
 - Blog
   - ✅ Revisit first page
   - "1st meaningful example"
@@ -61,42 +64,6 @@ __Aim towards website release__.
   - Story
     - Anapanasati training
     - 5 watchers as Jhanic hindrances
-
-- 🚧 Andros is situated
-  - ✅ CssPanZoom returns to andros
-
-  - CssPanZoom tracks npc in better way
-    - ✅ simplify/improve ui-idle event
-      - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
-      - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
-    - ✅ if idle and cam not close enough, transition to npc, polling per second
-      - ✅ support pausing: `api.sleep` + `api.reqRes`
-    - ✅ can choose transition timing function
-    - ❌ try providing future position of npc
-      > implemented `npc.getFuturePosition(inMs)` but looked worse
-    - ❌ replace polling by npc move event
-    - can stop walk
-  - implement simple walk loop `goLoop andros`
-    - ✅ permit shell `while`
-    - ✅ Error should propagate from pipeline
-      - Could Ctrl-C `while true; do nav '' $( click 1 ); done`
-      - But not `while true; do nav '' $( click 1 ) | map 'x => x'; done`
-    - ✅ BUG pointerup on debug arrow
-    - ✅ BUG `declare` of `goLoop`
-    - 🚧 BUG poor animation on mobile
-      - ✅ CssPanZoom can play `Animation` on translateRoot
-      - ✅ CssPanZoom can play `Animation` on scaleRoot
-      - ✅ `Animation`s interrupted by ui
-      - ✅ Replace `style.transition` approach
-    - Click while moving cancels and replans
-      - ✅ use `click | ...` pattern instead of `while`
-      - ✅ remove `WhileClause`
-    - ✅ `state.events` sends point, not `evt.pointerup`
-
-  - Can only move to point within lit area
-    - Then Andros must open doors to go through them
-    - Andros cannot close door when walking
-  - When Andros moves through doorway, lighting changes
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
@@ -115,41 +82,12 @@ __Aim towards website release__.
 
 - BUG sometimes adjacent light is inside hull door, rather than outside
 - mobile-friendly command links (session must be open)
-
-- Clean
-  - ✅ Rename `holes` -> `rooms` etc.
-  - ✅ Remove: refs to holeId and holeIndex.
-  - ✅ Rooms can themselves have holes (from allWalls[i] where i ≥ 1)
-    - ✅ Examples: 101, 102, 302
-    - ✅ Important for _visibility ray casts_
-  - ✅ identify scale/translate timeouts in CssPanZoom
-  - 🤔 Saw empty roomId in 301 i.e. `15`
-  - BUG `render-npc` cannot deal with nested transforms
-    - g.transform inside a use
-    - g.transform of frame
-  - careful about game function exit codes
-  - navPoly must be a single polygon?
-  - Support window tags `dark-front` and `dark-back` instead of `one-way`
-  - Move light polygon computations into `lazy` i.e. reuse
-  - Easier to toggle doors on mobile
-
-- 🚧 `NavDemo1`
-  - ✅ Circle with heart-beat and breath
-    > https://stackoverflow.com/questions/34762009/pulsing-heart-css-animation
-  - ✅ Remove heart/breath
-  - ✅ `NavDemo1` has Andros
-    > First approximation i.e. first-npc
-  - ✅ TTY script places navpath from Andros on click
-    - ✅ expose use-query cache in terminal
-    - ✅ move `stage` lookup into individual items in use-query cache
-    - ✅ script needs position of Andros
-      - `<NPCs>` has stageKey `nav-demo-1`, registering Andros
-    ✅ script needs access to NavMesh
-      - access pathfinding from `use-query` cache
-  - 🤔 TTY script restrict navpath from Andros to lit area
-  - Andros is __situated__
-  - `NavDemo1` has other NPCs
-
+- careful about game function exit codes
+- navPoly must be a single polygon?
+- Support window tags `dark-front` and `dark-back` instead of `one-way`
+- Move light polygon computations into `lazy` i.e. reuse
+- Easier to toggle doors on mobile
+- `NavDemo1` has other NPCs
 - ❌ maybe consider shadows and door shadows (doors can fade)
 - can pause it
 - can write script manually or continually `look`ing
@@ -179,6 +117,43 @@ __Aim towards website release__.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- Clean
+  - ✅ Rename `holes` -> `rooms` etc.
+  - ✅ Remove: refs to holeId and holeIndex.
+  - ✅ Rooms can themselves have holes (from allWalls[i] where i ≥ 1)
+    - ✅ Examples: 101, 102, 302
+    - ✅ Important for _visibility ray casts_
+  - ✅ identify scale/translate timeouts in CssPanZoom
+  - 🤔 Saw empty roomId in 301 i.e. `15`
+- ✅ Andros is situated
+  - ✅ CssPanZoom returns to andros
+  - CssPanZoom tracks npc in better way
+    - ✅ simplify/improve ui-idle event
+      - ✅ CssPanZoom.events has {completed,cancelled}-transition, ui-idle
+      - ✅ `track` uses CssPanZoom.{events,idleTimeoutId}
+    - ✅ if idle and cam not close enough, transition to npc, polling per second
+      - ✅ support pausing: `api.sleep` + `api.reqRes`
+    - ✅ can choose transition timing function
+    - ❌ try providing future position of npc
+      > implemented `npc.getFuturePosition(inMs)` but looked worse
+    - ❌ replace polling by npc move event
+    - can stop walk
+  - implement simple walk loop `goLoop andros`
+    - ✅ permit shell `while`
+    - ✅ Error should propagate from pipeline
+      - Could Ctrl-C `while true; do nav '' $( click 1 ); done`
+      - But not `while true; do nav '' $( click 1 ) | map 'x => x'; done`
+    - ✅ BUG pointerup on debug arrow
+    - ✅ BUG `declare` of `goLoop`
+    - 🚧 BUG poor animation on mobile
+      - ✅ CssPanZoom can play `Animation` on translateRoot
+      - ✅ CssPanZoom can play `Animation` on scaleRoot
+      - ✅ `Animation`s interrupted by ui
+      - ✅ Replace `style.transition` approach
+    - Click while moving cancels and replans
+      - ✅ use `click | ...` pattern instead of `while`
+      - ✅ remove `WhileClause`
+    - ✅ `state.events` sends point, not `evt.pointerup`
 - ✅ can turn andros when idle
   - ✅ rotate icon appears when click (then fades)
   - ✅ remove icon approach
