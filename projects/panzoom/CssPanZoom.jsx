@@ -337,7 +337,7 @@ export default function CssPanZoom(props) {
   return (
     <div
       className={classNames("panzoom-parent", rootCss, backgroundCss(props))}
-      data-tags="floor"
+      data-tags="no-ui"
       ref={measureRef}
     >
       <div

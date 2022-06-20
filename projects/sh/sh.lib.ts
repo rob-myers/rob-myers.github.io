@@ -28,6 +28,8 @@ track andros &
 
 # click to move
 goLoop andros &
+# click to look
+lookLoop andros &
 `,
 };
 
@@ -174,7 +176,11 @@ click: `{
       npcs.getPanZoomApi().events.pipe(
         filter(x => x.key === "pointerup" && x.distance < 5 && process.status === 1),
         take(numClicks),
-        map(e => ({ x: Number(e.point.x.toFixed(2)), y: Number(e.point.y.toFixed(2)), tags: e.tags })),
+        map(e => ({
+          x: Number(e.point.x.toFixed(2)),
+          y: Number(e.point.y.toFixed(2)),
+          tags: [...e.tags, ...npcs.getPointTags(e.point)],
+        })),
       ),
       (deferred, subscription) => (
         process.cleanups.push(
@@ -188,7 +194,7 @@ click: `{
 
 goLoop: `{
   click |
-    filter 'x => x.tags.includes("floor")' |
+    filter 'x => ["no-ui", "nav"].every(tag => x.tags.includes(tag))' |
     map 'x => ({ npcKey: "'$1'", point: x })' |
     nav |
     walk $1
@@ -211,6 +217,12 @@ look: `{
       }
     }
   }' "$@"
+}`,
+
+lookLoop: `{
+  click |
+    filter 'x => !x.tags.includes("nav")' |
+    look $1
 }`,
 
 /**

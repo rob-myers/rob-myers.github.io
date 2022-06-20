@@ -35,12 +35,6 @@ __Aim towards website release__.
   - camera pauses/resumes when player pauses/resumes
   - camera retracks when player cancels
 
-- can turn andros when idle
-  - ✅ rotate icon appears when click (then fades)
-  - ✅ remove icon approach
-  - ✅ implement `look`
-  - 🚧 `lookLoop` filters non-floor clicks
-
 - can toggle NPC speech bubbles
 
 - migrate to free icons
@@ -185,6 +179,12 @@ __Aim towards website release__.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ can turn andros when idle
+  - ✅ rotate icon appears when click (then fades)
+  - ✅ remove icon approach
+  - ✅ implement `look`
+  - ✅ `click` provides tag "nav"
+  - ✅ `lookLoop` filters clicks without "nav"
 - ✅ can pause/resume NPC
   - `npc pause andros`
   - `npc play andros`

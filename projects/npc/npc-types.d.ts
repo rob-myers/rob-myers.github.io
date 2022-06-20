@@ -234,6 +234,7 @@ declare namespace NPC {
     getNpc(npcKey: string): NPC.NPC;
     getNpcsIntersecting(convexPoly: Geom.Poly): NPC.NPC[];
     getPanZoomApi(): PanZoom.CssApi;
+    getPointTags(point: Geom.VectJson): string[];
     isPointLegal(p: Geom.VectJson): boolean;
     async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;

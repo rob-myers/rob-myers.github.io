@@ -162,6 +162,14 @@ export default function NPCs(props) {
     getPanZoomApi() {
       return props.panZoomApi;
     },
+    getPointTags(point) {
+      const tags = /** @type {string[]} */ ([]);
+      if (state.isPointLegal(point)) tags.push('nav');
+      /**
+       * TODO e.g. table, chair, door, npc etc.
+       */
+      return tags;
+    },
     isPointLegal(p) {
       const gmId = props.gmGraph.gms.findIndex(x => x.gridRect.contains(p));
       if (gmId === -1) return false;
@@ -302,15 +310,13 @@ export default function NPCs(props) {
         throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
       }
 
-      try {
-        // Walk along a global navpath
+      try {// Walk along a global navpath
         const globalNavPath = e;
         const allPoints = globalNavPath.fullPath;
         console.log('global navMetas', globalNavPath.navMetas); // DEBUG
         await npc.followNavPath(allPoints, { globalNavMetas: globalNavPath.navMetas });
 
       } catch (err) {
-        // state.events.next({ key: 'stopped-walking', npcKey: e.npcKey });
         if (err instanceof Error && err.message === 'cancelled') {
           console.info(`${e.npcKey}: walkNpc cancelled`);
         } else {
