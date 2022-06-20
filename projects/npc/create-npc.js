@@ -135,8 +135,9 @@ import npcJson from '../../public/npc/first-npc.json'
             resolve();
           });
           anim.root.addEventListener("cancel", () => {
-            // Cancel only when _actually_ cancelled, not when finished
-            console.log(`followNavPath: ${this.def.key} cancelled walk`);
+            if (!anim.root.finished) {
+              console.log(`followNavPath: ${this.def.key} cancelled walk`);
+            } // We also cancel when finished to release control to styles
             reject(new Error('cancelled'));
           });
         }));
