@@ -154,6 +154,7 @@ log: `{
 
 export const gameFunctions = [
 {
+
 /**
  * Output world position clicks sent via panZoomApi.events.
  * e.g. `click`, `click 1`
@@ -185,23 +186,16 @@ click: `{
   }' "$@"
 }`,
 
-/**
- * Spawn character(s) at a position(s),
- * - e.g. `spawn andros "$( click 1 )"`
- * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | spawn`
- */
-spawn: `{
-  run '({ api, args, home, datum }) {
-    const npcs = api.getCached(home.NPCS_KEY)
-    if (api.isTtyAt(0)) {
-      const npcKey = args[0]
-      const point = api.safeJsonParse(args[1])
-      npcs.spawn({ npcKey, point })
-    } else {
-      while ((datum = await api.read()) !== null)
-        npcs.spawn(datum)
-    }
-  }' "$@"
+goLoop: `{
+  click |
+    filter 'x => x.tags.includes("floor")' |
+    map 'x => ({ npcKey: "'$1'", point: x })' |
+    nav |
+    walk $1
+}`,
+
+goOnce: `{
+  nav $1 $(click 1) | walk $1
 }`,
 
 /**
@@ -210,7 +204,7 @@ spawn: `{
  * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | nav`
  * - e.g. `click | map 'x => ({ npcKey: "andros", point: x })' | nav`
  */
-nav: `{
+ nav: `{
   run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
     if (api.isTtyAt(0)) {
@@ -230,6 +224,72 @@ nav: `{
   }' "$@"
 }`,
 
+/** npc {action} [{npcKey}] */
+npc: `{
+  run '({ api, args, home }) {
+    const npcs = api.getCached(home.NPCS_KEY)
+    yield await npcs.npcAct({ action: args[0], npcKey: args[1] })
+  }' "$@"
+}`,
+
+/** Ping per second until query NPCS_KEY found */
+ready: `{
+  run '({ api, home }) {
+    const cacheKey = home.NPCS_KEY
+    yield \`ℹ️  polling for cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
+    while (!api.getCached(cacheKey)) yield* await api.sleep(1)
+    yield \`✅  found cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
+  }' "$@"
+}`,
+
+/**
+ * Spawn character(s) at a position(s),
+ * - e.g. `spawn andros "$( click 1 )"`
+ * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | spawn`
+ */
+ spawn: `{
+  run '({ api, args, home, datum }) {
+    const npcs = api.getCached(home.NPCS_KEY)
+    if (api.isTtyAt(0)) {
+      const npcKey = args[0]
+      const point = api.safeJsonParse(args[1])
+      npcs.spawn({ npcKey, point })
+    } else {
+      while ((datum = await api.read()) !== null)
+        npcs.spawn(datum)
+    }
+  }' "$@"
+}`,
+
+/**
+ * Track npc
+ */
+track: `{
+  run '({ api, args, home }) {
+    const npcKey = args[0]
+    const npcs = api.getCached(home.NPCS_KEY)
+    const process = api.getProcess()
+    const subscription = npcs.trackNpc({ npcKey, process })
+    await new Promise(resolve =>
+      process.cleanups.push(
+        () => subscription.unsubscribe(),
+        resolve,
+      )
+    )
+  }' "$@"
+}`,
+
+/**
+ * TODO handle multiple reads?
+ */
+ view: `{
+  run '({ api, args, home }) {
+    const opts = Function(\`return \${args[0]} \`)()
+    const npcs = api.getCached(home.NPCS_KEY)
+    npcs.panZoomTo(opts) // Returns "cancelled" or "completed"
+  }' "$@"
+}`,
+
 /**
  * Move a specific npc along path(s) e.g.
  * - `walk andros "[$( click 1 ), $( click 1 )]"'
@@ -237,7 +297,7 @@ nav: `{
  *
  * `npcKey` must be fixed via 1st arg
  */
-walk: `{
+ walk: `{
   run '({ api, args, home, datum, promises = [] }) {
     const npcs = api.getCached(home.NPCS_KEY)
     const npcKey = args[0]
@@ -269,65 +329,6 @@ walk: `{
         }
       }
     }
-  }' "$@"
-}`,
-
-goOnce: `{
-  nav $1 $(click 1) | walk $1
-}`,
-
-goLoop: `{
-  click |
-    filter 'x => x.tags.includes("floor")' |
-    map 'x => ({ npcKey: "'$1'", point: x })' |
-    nav |
-    walk $1
-}`,
-
-/**
- * TODO handle multiple reads?
- */
-view: `{
-  run '({ api, args, home }) {
-    const opts = Function(\`return \${args[0]} \`)()
-    const npcs = api.getCached(home.NPCS_KEY)
-    npcs.panZoomTo(opts) // Returns "cancelled" or "completed"
-  }' "$@"
-}`,
-
-/** npc {action} [{npcKey}] */
-npc: `{
-  run '({ api, args, home }) {
-    const npcs = api.getCached(home.NPCS_KEY)
-    yield await npcs.npcAct({ action: args[0], npcKey: args[1] })
-  }' "$@"
-}`,
-
-/** Ping per second until query NPCS_KEY found */
-ready: `{
-  run '({ api, home }) {
-    const cacheKey = home.NPCS_KEY
-    yield \`ℹ️  polling for cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
-    while (!api.getCached(cacheKey)) yield* await api.sleep(1)
-    yield \`✅  found cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
-  }' "$@"
-}`,
-
-/**
- * Track npc
- */
-track: `{
-  run '({ api, args, home }) {
-    const npcKey = args[0]
-    const npcs = api.getCached(home.NPCS_KEY)
-    const process = api.getProcess()
-    const subscription = npcs.trackNpc({ npcKey, process })
-    await new Promise(resolve =>
-      process.cleanups.push(
-        () => subscription.unsubscribe(),
-        resolve,
-      )
-    )
   }' "$@"
 }`,
 
