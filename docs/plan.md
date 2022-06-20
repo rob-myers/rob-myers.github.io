@@ -38,7 +38,8 @@ __Aim towards website release__.
 - can turn andros when idle
   - ✅ rotate icon appears when click (then fades)
   - ✅ remove icon approach
-  - 🚧 implement `look` and filter non-floor clicks
+  - ✅ implement `look`
+  - 🚧 `lookLoop` filters non-floor clicks
 
 - can toggle NPC speech bubbles
 

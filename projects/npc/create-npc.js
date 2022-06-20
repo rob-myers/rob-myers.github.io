@@ -189,13 +189,15 @@ import npcJson from '../../public/npc/first-npc.json'
       }
     },
     lookAt(point) {
-      /**
-       * TODO
-       */
-      console.log({
-        lookAt: point,
-      })
-      return 0;
+      const position = this.getPosition();
+      const direction = Vect.from(point).sub(position);
+      if (direction.length === 0) {
+        return this.getAngle();
+      }
+      const radians = Math.atan2(direction.y, direction.x);
+      // Only works when idle, otherwise overridden/overwritten
+      this.el.root.style.transform = `translate(${position.x}px, ${position.y}px) rotate(${radians}rad)`;
+      return radians;
     },
     npcRef(rootEl) {
       if (rootEl && this.anim.aux.count === 0) {
