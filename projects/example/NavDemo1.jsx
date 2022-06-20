@@ -45,6 +45,8 @@ export default function NavDemo1(props) {
 
       /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
       async handlePlayerWayEvent(e) {
+        // console.log('player way event', e);
+
         switch (e.meta.key) {
           case 'exit-room':
             // Player left a room

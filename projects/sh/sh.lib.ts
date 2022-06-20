@@ -198,6 +198,21 @@ goOnce: `{
   nav $1 $(click 1) | walk $1
 }`,
 
+look: `{
+  run '({ api, args, home }) {
+    const npcs = api.getCached(home.NPCS_KEY)
+    const npcKey = args[0]
+    if (api.isTtyAt(0)) {
+      const point = api.safeJsonParse(args[1])
+      await npcs.npcAct({ action: "look-at", npcKey, point })
+    } else {
+      while ((datum = await api.read()) !== null) {
+        await npcs.npcAct({ action: "look-at", npcKey, point: datum })
+      }
+    }
+  }' "$@"
+}`,
+
 /**
  * Request navpath(s) to position(s) for character(s),
  * - e.g. `nav andros "$( click 1 )"'

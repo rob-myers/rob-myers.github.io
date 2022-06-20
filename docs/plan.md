@@ -37,12 +37,10 @@ __Aim towards website release__.
 
 - can turn andros when idle
   - ✅ rotate icon appears when click (then fades)
-  - 🚧 can drag icon to change angle
+  - ✅ remove icon approach
+  - 🚧 implement `look` and filter non-floor clicks
+
 - can toggle NPC speech bubbles
-- ✅ can pause/resume NPC
-  - `npc pause andros`
-  - `npc play andros`
-  - `npc cancel andros`
 
 - migrate to free icons
 
@@ -186,6 +184,10 @@ __Aim towards website release__.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ can pause/resume NPC
+  - `npc pause andros`
+  - `npc play andros`
+  - `npc cancel andros`
 - ✅ increase nav inset (since npc larger)
   - ✅ try gm 301
   - ✅ confirm others

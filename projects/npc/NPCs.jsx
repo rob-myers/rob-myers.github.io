@@ -176,6 +176,14 @@ export default function NPCs(props) {
           break;
         case 'get':
           return state.getNpc(e.npcKey);
+        case 'look-at': {
+          const npc = state.getNpc(e.npcKey);
+          if (!Vect.isVectJson(e.point)) {
+            throw Error(`invalid point: ${JSON.stringify(e.point)}`);
+          }
+          await npc.lookAt(e.point);
+          break;
+        }
         case 'pause':// Pause current animation
           await state.getNpc(e.npcKey).pause();
           break;

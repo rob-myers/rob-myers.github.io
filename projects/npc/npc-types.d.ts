@@ -85,6 +85,8 @@ declare namespace NPC {
     getBounds(): Geom.Rect;
     getPosition(): Geom.Vect;
     getTargets(): { point: Geom.VectJson; arriveMs: number }[];
+    /** Returns destination angle in radians */
+    lookAt(point: Geom.VectJson): number;
     npcRef(el: HTMLDivElement | null): void;
     startAnimation(): void;
     updateAnimAux(): void;
@@ -244,6 +246,7 @@ declare namespace NPC {
   type NpcAction = (
     | { action: 'cancel'; npcKey: string }
     | { action: 'get'; npcKey: string }
+    | { action: 'look-at'; npcKey: string; point: Geom.VectJson }
     | { action: 'pause'; npcKey: string }
     | { action: 'play'; npcKey: string }
     | { action: 'set-player'; npcKey?: string }

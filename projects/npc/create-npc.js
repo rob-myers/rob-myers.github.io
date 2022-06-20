@@ -188,6 +188,15 @@ import npcJson from '../../public/npc/first-npc.json'
           .filter(x => x.arriveMs >= 0)
       }
     },
+    lookAt(point) {
+      /**
+       * TODO
+       */
+      console.log({
+        lookAt: point,
+      })
+      return 0;
+    },
     npcRef(rootEl) {
       if (rootEl && this.anim.aux.count === 0) {
         this.el.root = rootEl;
