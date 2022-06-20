@@ -128,3 +128,18 @@ npc andros | map 'x => x.getPosition()'
 
 click | map 'x => ({ npcKey: "andros", point: x })' | nav
 ```
+
+```sh
+
+html foo \
+	'<div
+		style="line-height: 1.4;
+		font-size: 10px;
+		background: white;
+		padding: 8px;">
+		Abandon all hope!
+	</div>' \
+	"$( click 1)"
+
+
+```

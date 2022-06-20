@@ -204,6 +204,16 @@ goOnce: `{
   nav $1 $(click 1) | walk $1
 }`,
 
+html: `{
+  run '({ args, api, home }) {
+    const className = args[0]
+    const html = args[1] || null
+    const point = api.safeJsonParse(args[2])
+    const npcs = api.getCached(home.NPCS_KEY)
+    npcs.events.next({ key: "html", className, html, point })
+  }' "$@"
+}`,
+
 look: `{
   run '({ api, args, home }) {
     const npcs = api.getCached(home.NPCS_KEY)
@@ -231,7 +241,7 @@ lookLoop: `{
  * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | nav`
  * - e.g. `click | map 'x => ({ npcKey: "andros", point: x })' | nav`
  */
- nav: `{
+nav: `{
   run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
     if (api.isTtyAt(0)) {
@@ -274,7 +284,7 @@ ready: `{
  * - e.g. `spawn andros "$( click 1 )"`
  * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | spawn`
  */
- spawn: `{
+spawn: `{
   run '({ api, args, home, datum }) {
     const npcs = api.getCached(home.NPCS_KEY)
     if (api.isTtyAt(0)) {
@@ -309,7 +319,7 @@ track: `{
 /**
  * TODO handle multiple reads?
  */
- view: `{
+view: `{
   run '({ api, args, home }) {
     const opts = Function(\`return \${args[0]} \`)()
     const npcs = api.getCached(home.NPCS_KEY)
@@ -324,7 +334,7 @@ track: `{
  *
  * `npcKey` must be fixed via 1st arg
  */
- walk: `{
+walk: `{
   run '({ api, args, home, datum, promises = [] }) {
     const npcs = api.getCached(home.NPCS_KEY)
     const npcKey = args[0]

@@ -2,7 +2,7 @@ import React from "react";
 import { css } from "goober";
 import { filter } from "rxjs/operators";
 
-import { testNever } from "../service/generic";
+import { assertNonNull, testNever } from "../service/generic";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
@@ -15,7 +15,7 @@ import NPCs from "../npc/NPCs";
 /** @param {{ disabled?: boolean }} props */
 export default function NavDemo1(props) {
 
-  const render = useUpdate();
+  const update = useUpdate();
 
   const { gms, gmGraph } = useGeomorphs([
     { layoutKey: 'g-301--bridge' },
@@ -42,6 +42,8 @@ export default function NavDemo1(props) {
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       panZoomApi: /** @type {PanZoom.CssApi} */ ({}),
       npcsApi: /** @type {NPC.FullApi} */  ({ ready: false }),
+      /** Container for HTML attached via terminal */
+      hud: /** @type {HTMLDivElement} */ ({}),
 
       /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
       async handlePlayerWayEvent(e) {
@@ -58,14 +60,14 @@ export default function NavDemo1(props) {
                 [state.gmId, state.roomId] = [adjCtxt.adjGmId, adjCtxt.adjRoomId];
               }
             }
-            state.update();
+            state.updateAll();
             break;
           case 'enter-room':
             // Player can re-enter room from doorway without entering/exiting other
             if (!(state.gmId === e.meta.gmId && state.roomId === e.meta.enteredRoomId)) {
               state.gmId = e.meta.gmId;
               state.roomId = e.meta.enteredRoomId;
-              state.update();
+              state.updateAll();
             }
             break;
           case 'pre-exit-room':
@@ -79,7 +81,6 @@ export default function NavDemo1(props) {
             throw testNever(e.meta);
         }
       },
-
       /** @param {string} npcKey */
       setRoomByNpc(npcKey) {
         const npc = state.npcsApi.getNpc(npcKey);
@@ -87,16 +88,15 @@ export default function NavDemo1(props) {
         const found = gmGraph.findRoomContaining(position);
         if (found) {
           [state.gmId, state.roomId] = [found.gmId, found.roomId];
-          state.update();
+          state.updateAll();
         } else {// TODO error in terminal?
           console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
         }
       },
-
-      update() {
+      updateAll() {
         state.updateClipPath();
         state.updateVisibleDoors();
-        render();
+        update();
       },
       updateClipPath() {
         const gm = gms[state.gmId]
@@ -108,11 +108,9 @@ export default function NavDemo1(props) {
         // Compute respective maskPolys
         gms.forEach((otherGm, otherGmId) => {
           const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
-          if (otherGm === gm) {
-            // Lights for current geomorph includes _current room_ and any pillars
-            const roomWithDoorsPillars = new Poly(gm.roomsWithDoors[state.roomId].outline);
-            // const roomWithDoorsPillars = gm.roomsWithDoors[state.roomId]
-            maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoorsPillars), [otherGm.hullOutline]);
+          if (otherGm === gm) {// Lights for current geomorph includes _current room_
+            const roomWithDoors = gm.roomsWithDoors[state.roomId]
+            maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoors), [otherGm.hullOutline]);
           } else {
             maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
           }
@@ -145,12 +143,12 @@ export default function NavDemo1(props) {
 
   React.useEffect(() => {
     if (gms.length && state.doorsApi.ready && state.npcsApi.ready) {
-      state.update();
+      state.updateAll();
 
       // Update Door graphics on change
       const doorsSub = state.doorsApi.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
-        .subscribe(() => state.update());
+        .subscribe(() => state.updateAll());
 
       // React to NPC events
       const npcsSub = state.npcsApi.events.subscribe((e) => {
@@ -161,7 +159,20 @@ export default function NavDemo1(props) {
         if (e.key === 'way-point' && e.npcKey === state.npcsApi.playerKey) {
           state.handlePlayerWayEvent(e);
         }
+        if (e.key === 'html') {
+          if (e.html) {
+            state.hud.innerHTML += e.html;
+            const el = /** @type {HTMLElement} */ (state.hud.lastChild);
+            e.className.split(' ').map(x => el.classList.add(x));
+            el.style.position = 'absolute';
+            el.style.transform = `translate(${e.point.x}px, ${e.point.y}px)`;
+          } else {
+            state.hud.querySelectorAll(`:scope > .${e.className.split(' ').join('.')}`).forEach(x => x.remove());
+          }
+        }
       });
+
+      state.hud = assertNonNull(state.panZoomApi.parent.querySelector('div.HUD'));
 
       return () => {
         doorsSub.unsubscribe();
@@ -209,7 +220,7 @@ export default function NavDemo1(props) {
           roomId={state.roomId}
           setRoom={(gmId, roomId) => {
             [state.gmId, state.roomId] = [gmId, roomId];
-            state.update();
+            state.updateAll();
           }}
         />
       )}
@@ -220,7 +231,7 @@ export default function NavDemo1(props) {
         gmGraph={gmGraph}
         npcsKey={npcsKey}
         panZoomApi={state.panZoomApi}
-        onLoad={api => { state.npcsApi = api; render(); }}
+        onLoad={api => { state.npcsApi = api; update(); }}
       />
 
       {gms.map((gm, gmIndex) =>
@@ -247,8 +258,10 @@ export default function NavDemo1(props) {
         gmGraph={gmGraph}
         initOpen={state.initOpen}
         npcsKey={npcsKey}
-        onLoad={api => { state.doorsApi = api; render(); }}
+        onLoad={api => { state.doorsApi = api; update(); }}
       />
+
+      <div className="HUD" />
       
     </CssPanZoom>
   ) : null;
@@ -315,6 +328,9 @@ const rootCss = css`
     }
   }
 
+  div.HUD {
+    position: relative;
+  }
 `;
 
 /** @param {DebugProps} props Debug current geomorph */

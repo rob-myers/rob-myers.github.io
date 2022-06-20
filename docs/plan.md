@@ -13,22 +13,25 @@ __Aim towards website release__.
   - ✅ Fix dark mode by not inverting Tabs
       - apply filter provides new context for position fixed
   - ✅ article styling missing on SSR
-  - 🚧 Fix top bar vertical align in large viewport
-  - change icons
+  - ✅ Fix top bar vertical align in large viewport
+  - ✅ change icons
     - dark mode icon
     - mini nav central icon
   - Terminal migration
     - Simplify in original repo
     - Copy across and get working
-  - Continue migration
+  - Show GitHub comments from the-last-redoubt issues
+  - Can redirect to GitHub the-last-redoubt issues
 
-- can toggle NPC speech bubbles
-  - 🚧 can attach html at world point
-  - can attach html to bot
+- 🚧 can toggle NPC speech bubbles
+  - ✅ can attach/remove html at world point
+  - 🚧 can attach/remove html to npc
+  - shell function converts text to speech bubble
 
 - pause/resume Tabs pause/resumes any sessions
   - pause/resume foreground and all background processes
   - npcs should pause/resume
+    - camera should pause/resume
   - try with some bots too
 
 - migrate to free icons
@@ -106,13 +109,13 @@ __Aim towards website release__.
   - Tabs disable on scroll out of view
 - GitHub Comments
 - tech1: mention React "polyfill" of events, and why we avoid
-- finish geomorph 101
 - implement front page
+  - include videos of gameplay
 - visibility polygon should have truncated precision
-- GitHub Pages TTL is 10mins; Could use CDN:
+- ❌ GitHub Pages TTL is 10mins; Could use CDN:
   > https://rogue-markup.imgix.net/
   > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
-- Safari Bug position fixed
+- Safari Bug for `position: fixed`
   - flickers dark (incorrect clip) on repeated wheel
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953

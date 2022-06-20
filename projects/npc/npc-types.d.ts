@@ -259,7 +259,8 @@ declare namespace NPC {
     | { key: 'set-player'; npcKey: string | null; }
     | { key: 'started-walking'; npcKey: string; }
     | { key: 'stopped-walking'; npcKey: string; }
-    | { key: 'way-point'; npcKey: string; meta: WayPointMeta }
+    | { key: 'way-point'; npcKey: string; meta: WayPointMeta; }
+    | { key: 'html'; className: string; html: string | null; point: Geom.VectJson; }
   );
 
 }
