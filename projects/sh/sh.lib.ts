@@ -233,13 +233,12 @@ nav: `{
 /**
  * Move a specific npc along path(s) e.g.
  * - `walk andros "[$( click 1 ), $( click 1 )]"'
- * - `expr "{ points: [$( click 1 ), $( click 1 )] }" | walk andros`
- * - `expr "{ key: 'global-nav', paths: [{ key: 'local-nav', paths: [[$( click 1 ), $( click 1 )]], edges: [] }], edges: [] }" | walk andros`
+ * - `expr "{ key: 'global-nav', fullPath: [$( click 1 ), $( click 1 )], navMetas: [] }" | walk andros`
  *
  * `npcKey` must be fixed via 1st arg
  */
 walk: `{
-  run '({ api, args, home, datum, promise }) {
+  run '({ api, args, home, datum, promises = [] }) {
     const npcs = api.getCached(home.NPCS_KEY)
     const npcKey = args[0]
 
@@ -256,11 +255,14 @@ walk: `{
       while (datum !== null) {
         // Subsequent reads can interrupt walk
         const resolved = await Promise.race([
-          npcs.walkNpc({ npcKey, ...datum }),
-          promise = api.read(),
+          promises[0] = npcs.walkNpc({ npcKey, ...datum }),
+          promises[1] = api.read(),
         ])
         if (resolved === undefined) {// Finished walk
-          datum = await promise;
+          datum = await promises[1];
+        } else if (resolved === null) {// EOF so finish walk
+          await promises[0]
+          datum = resolved
         } else {// We read something before walk finished
           await npcs.npcAct({ npcKey, action: "cancel" })
           datum = resolved
@@ -270,22 +272,10 @@ walk: `{
   }' "$@"
 }`,
 
-// IN PROGRESS
-go: `{
-  nav $1 $(click 1) |
-    walk $1
+goOnce: `{
+  nav $1 $(click 1) | walk $1
 }`,
-/**
- * Basic because we just join navpaths, ignoring doors.
- */
-goBasic: `{
-  nav $1 $(click 1) |
-    map 'x => ({
-      points: x.paths.reduce((agg, item) => agg.concat(...item.paths), []),
-    })' |
-    walk $1
-}`,
-// IN PROGRESS
+
 goLoop: `{
   click |
     filter 'x => x.tags.includes("floor")' |
@@ -293,21 +283,10 @@ goLoop: `{
     nav |
     walk $1
 }`,
-/**
- * Basic because we just join navpaths, ignoring doors.
- */
-goLoopBasic: `{
-  click |
-    filter 'x => x.tags.includes("floor")' |
-    map 'x => ({ npcKey: "'$1'", point: x })' |
-    nav |
-    map 'x => ({
-      points: x.paths.reduce((agg, item) => agg.concat(...item.paths), []),
-    })' |
-    walk $1
-}`,
 
-// TODO handle multiple reads?
+/**
+ * TODO handle multiple reads?
+ */
 view: `{
   run '({ api, args, home }) {
     const opts = Function(\`return \${args[0]} \`)()
@@ -324,7 +303,7 @@ npc: `{
   }' "$@"
 }`,
 
-/** Ping every second until found */
+/** Ping per second until query NPCS_KEY found */
 ready: `{
   run '({ api, home }) {
     const cacheKey = home.NPCS_KEY
@@ -335,7 +314,7 @@ ready: `{
 }`,
 
 /**
- * IN PROGRESS
+ * Track npc
  */
 track: `{
   run '({ api, args, home }) {
