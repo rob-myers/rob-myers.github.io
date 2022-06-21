@@ -194,7 +194,6 @@ const rootCss = css`
 
     &:not(.iris) {
       background: #fff;
-      border: 1px solid #555;
 
       transition: width 300ms ease-in;
       &.open {
@@ -203,9 +202,8 @@ const rootCss = css`
     }
 
     &.iris {
-      background-image: linear-gradient(45deg, #888 33.33%, #333 33.33%, #333 50%, #888 50%, #888 83.33%, #333 83.33%, #333 100%);
+      background-image: linear-gradient(45deg, #fff 33.33%, #666 33.33%, #666 50%, #fff 50%, #fff 83.33%, #666 83.33%, #666 100%);
       background-size: 4.24px 4.24px;
-      border: 1px solid #fff;
       
       opacity: 1;
       transition: opacity 300ms ease;
