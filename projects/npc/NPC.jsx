@@ -39,6 +39,7 @@ const npcCss = css`
   .body {
     position: absolute;
     filter: grayscale(100%) brightness(140%);
+    transition: transform 1s;
   }
   
   &.walk .body {

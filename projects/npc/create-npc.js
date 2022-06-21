@@ -28,52 +28,62 @@ import npcJson from '../../public/npc/first-npc.json'
     anim: {
       animPath: [],
       aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
+
       spriteSheet: 'idle',
-      root: new Animation,
-      body: new Animation,
+
+      translate: new Animation,
+      rotate: new Animation,
+      sprites: new Animation,
+
       wayMetas: [],
       wayTimeoutId: 0,
+      lookAngle: 0,
     },
 
     get paused() {
-      return this.anim.root.playState === 'paused';
+      return this.anim.translate.playState === 'paused';
     },
     async cancel() {
       console.log(`cancel: cancelling ${this.def.key}`);
 
       const { anim } = this;
-      anim.root.commitStyles(); // Commit position and rotation
+      anim.translate.commitStyles(); // Commit position and rotation
+      anim.rotate.commitStyles();
       anim.wayMetas.length = 0;
 
       await/** @type {Promise<void>} */ (new Promise(resolve => {
-        anim.root.addEventListener('cancel', () => resolve());
-        anim.root.cancel();
+        anim.translate.addEventListener('cancel', () => resolve());
+        anim.translate.cancel();
+        anim.rotate.cancel();
       }));
     },
     pause() {
       console.log(`pause: pausing ${this.def.key}`);
       const { anim } = this;
-      anim.root.pause();
-      anim.body.pause();
-      anim.root.commitStyles();
+      anim.translate.pause();
+      anim.rotate.pause();
+      anim.sprites.pause();
+      anim.translate.commitStyles();
+      anim.rotate.commitStyles();
       window.clearTimeout(anim.wayTimeoutId);
     },
     play() {
       console.log(`play: resuming ${this.def.key}`);
       const { anim } = this;
-      anim.root.play();
-      anim.body.play();
+      anim.translate.play();
+      anim.rotate.play();
+      anim.sprites.play();
       this.nextWayTimeout();
     },
     nextWayTimeout() {
       const { anim } = this;
-      if (anim.root.currentTime === null) {
+      if (anim.translate.currentTime === null) {
         return console.warn('nextWayTimeout: anim.root.currentTime is null')
       }
       if (anim.wayMetas[0]) {
         anim.wayTimeoutId = window.setTimeout(
           this.wayTimeout.bind(this),
-          (anim.wayMetas[0].length * animScaleFactor) - anim.root.currentTime,
+          (anim.wayMetas[0].length * animScaleFactor) - anim.translate.currentTime,
         );
       }
     },
@@ -87,14 +97,14 @@ import npcJson from '../../public/npc/first-npc.json'
       if (
         anim.wayMetas.length === 0
         || anim.spriteSheet === 'idle'
-        || anim.root.currentTime === null
-        || anim.root.playState === 'paused'
+        || anim.translate.currentTime === null
+        || anim.translate.playState === 'paused'
       ) {
         if (anim.wayMetas.length === 0) console.warn('wayTimeout: empty anim.wayMetas');
-        if (anim.root.currentTime === null) console.warn('wayTimeout: anim.root.currentTime is null');
+        if (anim.translate.currentTime === null) console.warn('wayTimeout: anim.root.currentTime is null');
         if (anim.spriteSheet === 'idle') console.warn('wayTimeout: anim.spriteSheet is "idle"');
         return;
-      } else if (anim.root.currentTime >= (anim.wayMetas[0].length * animScaleFactor) - 1) {
+      } else if (anim.translate.currentTime >= (anim.wayMetas[0].length * animScaleFactor) - 1) {
         const wayMeta = /** @type { NPC.WayPointMeta} */ (anim.wayMetas.shift());
         console.log(wayMeta); // DEBUG
         npcs.events.next({ key: 'way-point', npcKey: this.def.key, meta: wayMeta });
@@ -129,13 +139,13 @@ import npcJson from '../../public/npc/first-npc.json'
 
       try {
         await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
-          anim.root.addEventListener("finish", () => {
+          anim.translate.addEventListener("finish", () => {
             // We don't cancel, so we don't pass control back to styles
             console.log(`followNavPath: ${this.def.key} finished walk`);
             resolve();
           });
-          anim.root.addEventListener("cancel", () => {
-            if (!anim.root.finished) {
+          anim.translate.addEventListener("cancel", () => {
+            if (!anim.translate.finished) {
               console.log(`followNavPath: ${this.def.key} cancelled walk`);
             } // We also cancel when finished to release control to styles
             reject(new Error('cancelled'));
@@ -149,21 +159,24 @@ import npcJson from '../../public/npc/first-npc.json'
 
     },
     getAngle() {
-      const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.root).transform);
+      const matrix = new DOMMatrixReadOnly(window.getComputedStyle(this.el.body).transform);
       return Math.atan2(matrix.m12, matrix.m11);
     },
     getAnimDef() {
-      // NOTE Web Animations polyfill may require ≥ 2 frames
-      const { anim } = this, { aux } = anim;
+      const { anim, anim: { aux } } = this;
       return {
-        keyframes: anim.animPath.flatMap((p, i) => [
+        translateKeyframes: anim.animPath.flatMap((p, i) => [
+          { offset: aux.sofars[i] / aux.total, transform: `translate(${p.x}px, ${p.y}px)` },
+          { offset: aux.sofars[i] / aux.total, transform: `translate(${p.x}px, ${p.y}px)` },
+        ]),
+        rotateKeyframes: anim.animPath.flatMap((p, i) => [
           {
             offset: aux.sofars[i] / aux.total,
-            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i - 1] || aux.angs[i] || 0}rad)`
+            transform: `rotateZ(${aux.angs[i - 1] || aux.angs[i] || 0}rad) scale(${npcScale})`
           },
           {
             offset: aux.sofars[i] / aux.total,
-            transform: `translate(${p.x}px, ${p.y}px) rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad)`
+            transform: `rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad) scale(${npcScale})`
           },
         ]),
         opts: { duration: aux.total * animScaleFactor, direction: 'normal', fill: 'forwards' },
@@ -179,10 +192,10 @@ import npcJson from '../../public/npc/first-npc.json'
     },
     getTargets() {
       const { anim } = this;
-      if (anim.spriteSheet === "idle" || anim.root.currentTime === null) {
+      if (anim.spriteSheet === "idle" || anim.translate.currentTime === null) {
         return [];
       } else {
-        const soFarMs = anim.root.currentTime;
+        const soFarMs = anim.translate.currentTime;
         return anim.aux.sofars
           .map((sofar, i) => ({ point: anim.animPath[i], arriveMs: (sofar * animScaleFactor) - soFarMs }))
           .filter(x => x.arriveMs >= 0)
@@ -194,9 +207,15 @@ import npcJson from '../../public/npc/first-npc.json'
       if (direction.length === 0) {
         return this.getAngle();
       }
-      const radians = Math.atan2(direction.y, direction.x);
+
+      // Ensure we don't turn more than 180 deg
+      let radians = Math.atan2(direction.y, direction.x);
+      while (radians - this.anim.lookAngle > Math.PI) radians -= 2 * Math.PI;
+      while (this.anim.lookAngle - radians > Math.PI) radians += 2 * Math.PI;
+      this.anim.lookAngle = radians;
+
       // Only works when idle, otherwise overridden/overwritten
-      this.el.root.style.transform = `translate(${position.x}px, ${position.y}px) rotate(${radians}rad)`;
+      this.el.body.style.transform = `rotate(${npcOffsetRadians + radians}rad) scale(${npcScale})`;
       return radians;
     },
     npcRef(rootEl) {
@@ -204,7 +223,7 @@ import npcJson from '../../public/npc/first-npc.json'
         this.el.root = rootEl;
         this.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
         this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
-        this.el.body.style.transform = `scale(${npcScale}) rotate(${npcOffsetAngleDeg}deg)`;
+        this.el.body.style.transform = `rotate(${npcOffsetRadians}rad) scale(${npcScale})`;
       }
     },
     setSpritesheet(spriteSheet) {
@@ -217,29 +236,33 @@ import npcJson from '../../public/npc/first-npc.json'
     startAnimation() {
       const { anim } = this;
       if (anim.aux.count) {
-        anim.root.commitStyles();
-        anim.root.cancel();
+        anim.translate.commitStyles();
+        anim.rotate.commitStyles();
+        anim.translate.cancel();
+        anim.rotate.cancel();
       }
 
       if (anim.spriteSheet === 'walk') {
         // Animate position and rotation
-        const { keyframes, opts } = this.getAnimDef();
-        anim.root = this.el.root.animate(keyframes, opts);
-        // anim.root.play();
+        const { translateKeyframes, rotateKeyframes, opts } = this.getAnimDef();
+        anim.translate = this.el.root.animate(translateKeyframes, opts);
+        anim.rotate = this.el.body.animate(rotateKeyframes, opts);
 
         // Animate spritesheet
         const { animLookup, zoom: animZoom } = npcJson;
-        anim.body = this.el.body.animate([
+        anim.sprites = this.el.body.animate([
           { offset: 0, backgroundPosition: '0px' },
           { offset: 1, backgroundPosition: `${-animLookup.walk.frameCount * animLookup.walk.aabb.width * animZoom}px` },
         ], { easing: `steps(${animLookup.walk.frameCount})`, duration: 0.625 * 1000, iterations: Infinity });
 
       } else if (anim.spriteSheet === 'idle') {
         anim.wayMetas.length = 0;
+        anim.lookAngle = this.getAngle();
 
-        anim.root = this.el.root.animate([], { duration: 2 * 1000, iterations: Infinity });
-        // TODO induced by animLookup
-        anim.body = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
+        // Below needed?
+        anim.translate = this.el.root.animate([], { duration: 2 * 1000, iterations: Infinity });
+        anim.rotate = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
+        anim.sprites = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
       }
 
       anim.aux.count++;
@@ -272,7 +295,7 @@ import npcJson from '../../public/npc/first-npc.json'
 const npcScale = 0.19;
 const npcOrigRadius = 40;
 /** Ensure NPC faces along positive x-axis */
-const npcOffsetAngleDeg = 0;
+const npcOffsetRadians = 0;
 
 export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
 

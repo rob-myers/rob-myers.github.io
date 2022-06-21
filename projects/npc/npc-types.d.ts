@@ -59,12 +59,19 @@ declare namespace NPC {
         sofars: number[];
         total: number;
       };
-      spriteSheet: SpriteSheetKey;
       
-      root: Animation;
-      body: Animation;
+      spriteSheet: SpriteSheetKey;
+      translate: Animation;
+      rotate: Animation;
+      sprites: Animation;
+
       wayMetas: WayPointMeta[];
       wayTimeoutId: number;
+      /**
+       * The angle of body when last idle. Carries additional info,
+       * i.e. modulus of 2*PI. We use it to ensure we turn the smaller angle.
+       */
+      lookAngle: number;
     };
     //#endregion
 
@@ -81,7 +88,7 @@ declare namespace NPC {
     ): Promise<void>;
     /** Radians */
     getAngle(): number;
-    getAnimDef(): TypeUtil.AnimDef;
+    getAnimDef(): NpcAnimDef;
     getBounds(): Geom.Rect;
     getPosition(): Geom.Vect;
     getTargets(): { point: Geom.VectJson; arriveMs: number }[];
@@ -91,6 +98,12 @@ declare namespace NPC {
     startAnimation(): void;
     updateAnimAux(): void;
     setSpritesheet(spriteSheet: SpriteSheetKey): void;
+  }
+
+  export interface NpcAnimDef {
+    translateKeyframes: Keyframe[];
+    rotateKeyframes: Keyframe[];
+    opts: KeyframeAnimationOptions;
   }
 
   type SpriteSheetKey = (
