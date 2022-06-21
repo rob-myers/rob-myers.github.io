@@ -202,7 +202,7 @@ const rootCss = css`
     }
 
     &.iris {
-      background-image: linear-gradient(45deg, #fff 33.33%, #666 33.33%, #666 50%, #fff 50%, #fff 83.33%, #666 83.33%, #666 100%);
+      background-image: linear-gradient(45deg, #fff 33.33%, #aaa 33.33%, #aaa 50%, #fff 50%, #fff 83.33%, #aaa 83.33%, #aaa 100%);
       background-size: 4.24px 4.24px;
       
       opacity: 1;
