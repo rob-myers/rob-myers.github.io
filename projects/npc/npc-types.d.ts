@@ -73,6 +73,7 @@ declare namespace NPC {
        */
       lookAngle: number;
     };
+    indicators: boolean;
     //#endregion
 
     get paused(): boolean;
@@ -259,6 +260,7 @@ declare namespace NPC {
 
   type NpcAction = (
     | { action: 'cancel'; npcKey: string }
+    | { action: 'debug'; npcKey: string; value?: boolean }
     | { action: 'get'; npcKey: string }
     | { action: 'look-at'; npcKey: string; point: Geom.VectJson }
     | { action: 'pause'; npcKey: string }

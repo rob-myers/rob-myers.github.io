@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 
+import { npcInteractRadius } from "./create-npc";
 /**
  * TODO modularise
  */
@@ -31,14 +32,21 @@ export default function NPC(props) {
         className={classNames('body', npc.key, 'no-select')}
         data-npc-key={npc.key}
       />
+      {npc.indicators && <>
+        <div className="interact-circle" />
+      </>}
     </div>
   );
 }
 
 const npcCss = css`
+  position: absolute;
+  pointer-events: none;
+
   .body {
     position: absolute;
     filter: grayscale(100%) brightness(140%);
+    /** Animate turning */
     transition: transform 1s;
   }
   
@@ -60,5 +68,15 @@ const npcCss = css`
 
   &.disabled .body {
     animation-play-state: paused;
+  }
+
+  .interact-circle {
+    position: absolute;
+    width: ${2 * npcInteractRadius}px;
+    height: ${2 * npcInteractRadius}px;
+    left: -${npcInteractRadius}px;
+    top: -${npcInteractRadius}px;
+    border-radius: ${2 * npcInteractRadius}px;
+    border: 1px solid rgba(0, 0, 255, 0.25);
   }
 `;

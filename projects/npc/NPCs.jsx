@@ -182,6 +182,14 @@ export default function NPCs(props) {
         case 'cancel':// Cancel current animation
           await state.getNpc(e.npcKey).cancel();
           break;
+        case 'debug': {
+          const npc = state.getNpc(e.npcKey);
+          npc.indicators = typeof e.value === 'undefined'
+            ? !npc.indicators
+            : Boolean(e.value);
+          update();
+          break;
+        }
         case 'get':
           return state.getNpc(e.npcKey);
         case 'look-at': {
@@ -365,9 +373,13 @@ const rootCss = css`
     position: absolute;
     pointer-events: none;
   }
-  .npc {
+  div.debug-npc {
     position: absolute;
-    pointer-events: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 30px;
+    border: 1px solid red;
+    transform: translate(-15px, -15px);
   }
   svg.debug-path {
     position: absolute;
@@ -375,9 +387,7 @@ const rootCss = css`
   }
 `;
 
-/**
- * @param {{ debugPath: Record<string, { path: Geom.Vect[]; aabb: Rect; }> }} props 
- */
+/** @param {Props} props  */
 function Debug(props) {
   return <>
     {Object.entries(props.debugPath).map(([key, {path, aabb}]) => (
@@ -398,3 +408,8 @@ function Debug(props) {
     ))}  
   </>
 }
+
+/**
+ * @typedef Props @type {object}
+ * @property {Record<string, { path: Geom.Vect[]; aabb: Rect; }>} debugPath 
+ */

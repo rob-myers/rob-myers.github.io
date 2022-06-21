@@ -19,7 +19,7 @@ import npcJson from '../../public/npc/first-npc.json'
   return {
     key: npcKey,
     epochMs: Date.now(),
-    // TODO hook up angle
+    // TODO hook up initial angle
     def: { key: npcKey, position, angle: 0, paused: !!disabled },
     el: {
       root: /** @type {HTMLDivElement} */ ({}),
@@ -39,10 +39,8 @@ import npcJson from '../../public/npc/first-npc.json'
       wayTimeoutId: 0,
       lookAngle: 0,
     },
+    indicators: false,
 
-    get paused() {
-      return this.anim.translate.playState === 'paused';
-    },
     async cancel() {
       console.log(`cancel: cancelling ${this.def.key}`);
 
@@ -57,61 +55,6 @@ import npcJson from '../../public/npc/first-npc.json'
         anim.rotate.cancel();
       }));
     },
-    pause() {
-      console.log(`pause: pausing ${this.def.key}`);
-      const { anim } = this;
-      anim.translate.pause();
-      anim.rotate.pause();
-      anim.sprites.pause();
-      anim.translate.commitStyles();
-      anim.rotate.commitStyles();
-      window.clearTimeout(anim.wayTimeoutId);
-    },
-    play() {
-      console.log(`play: resuming ${this.def.key}`);
-      const { anim } = this;
-      anim.translate.play();
-      anim.rotate.play();
-      anim.sprites.play();
-      this.nextWayTimeout();
-    },
-    nextWayTimeout() {
-      const { anim } = this;
-      if (anim.translate.currentTime === null) {
-        return console.warn('nextWayTimeout: anim.root.currentTime is null')
-      }
-      if (anim.wayMetas[0]) {
-        anim.wayTimeoutId = window.setTimeout(
-          this.wayTimeout.bind(this),
-          (anim.wayMetas[0].length * animScaleFactor) - anim.translate.currentTime,
-        );
-      }
-    },
-    /**
-     * TODO cleanup
-     */
-    wayTimeout() {
-      const { anim } = this;
-      // TODO avoid many short timeouts
-      // console.log('anim.wayMetas[0]', anim.wayMetas[0]);
-      if (
-        anim.wayMetas.length === 0
-        || anim.spriteSheet === 'idle'
-        || anim.translate.currentTime === null
-        || anim.translate.playState === 'paused'
-      ) {
-        if (anim.wayMetas.length === 0) console.warn('wayTimeout: empty anim.wayMetas');
-        if (anim.translate.currentTime === null) console.warn('wayTimeout: anim.root.currentTime is null');
-        if (anim.spriteSheet === 'idle') console.warn('wayTimeout: anim.spriteSheet is "idle"');
-        return;
-      } else if (anim.translate.currentTime >= (anim.wayMetas[0].length * animScaleFactor) - 1) {
-        const wayMeta = /** @type { NPC.WayPointMeta} */ (anim.wayMetas.shift());
-        console.log(wayMeta); // DEBUG
-        npcs.events.next({ key: 'way-point', npcKey: this.def.key, meta: wayMeta });
-      }
-      this.nextWayTimeout();
-    },
-
     async followNavPath(path, opts) {
       const { anim } = this;
       anim.animPath = path.map(Vect.from);
@@ -187,7 +130,8 @@ import npcJson from '../../public/npc/first-npc.json'
       return new Rect(center.x - npcRadius, center.y - npcRadius, 2 * npcRadius, 2 * npcRadius);
     },
     getPosition() {
-      const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect());
+      // TODO avoid getBoundingClientRect undefined
+      const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect?.() || [0, 0]);
       return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
     },
     getTargets() {
@@ -218,6 +162,18 @@ import npcJson from '../../public/npc/first-npc.json'
       this.el.body.style.transform = `rotate(${npcOffsetRadians + radians}rad) scale(${npcScale})`;
       return radians;
     },
+    nextWayTimeout() {
+      const { anim } = this;
+      if (anim.translate.currentTime === null) {
+        return console.warn('nextWayTimeout: anim.root.currentTime is null')
+      }
+      if (anim.wayMetas[0]) {
+        anim.wayTimeoutId = window.setTimeout(
+          this.wayTimeout.bind(this),
+          (anim.wayMetas[0].length * animScaleFactor) - anim.translate.currentTime,
+        );
+      }
+    },
     npcRef(rootEl) {
       if (rootEl && this.anim.aux.count === 0) {
         this.el.root = rootEl;
@@ -225,6 +181,27 @@ import npcJson from '../../public/npc/first-npc.json'
         this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
         this.el.body.style.transform = `rotate(${npcOffsetRadians}rad) scale(${npcScale})`;
       }
+    },
+    pause() {
+      console.log(`pause: pausing ${this.def.key}`);
+      const { anim } = this;
+      anim.translate.pause();
+      anim.rotate.pause();
+      anim.sprites.pause();
+      anim.translate.commitStyles();
+      anim.rotate.commitStyles();
+      window.clearTimeout(anim.wayTimeoutId);
+    },
+    get paused() {
+      return this.anim.translate.playState === 'paused';
+    },
+    play() {
+      console.log(`play: resuming ${this.def.key}`);
+      const { anim } = this;
+      anim.translate.play();
+      anim.rotate.play();
+      anim.sprites.play();
+      this.nextWayTimeout();
     },
     setSpritesheet(spriteSheet) {
       if (spriteSheet !== this.anim.spriteSheet) {
@@ -284,6 +261,30 @@ import npcJson from '../../public/npc/first-npc.json'
       aux.sofars = reduced.sofars
       aux.total = reduced.total;
     },
+    /**
+     * TODO cleanup
+     */
+    wayTimeout() {
+      const { anim } = this;
+      // TODO avoid many short timeouts
+      // console.log('anim.wayMetas[0]', anim.wayMetas[0]);
+      if (
+        anim.wayMetas.length === 0
+        || anim.spriteSheet === 'idle'
+        || anim.translate.currentTime === null
+        || anim.translate.playState === 'paused'
+      ) {
+        if (anim.wayMetas.length === 0) console.warn('wayTimeout: empty anim.wayMetas');
+        if (anim.translate.currentTime === null) console.warn('wayTimeout: anim.root.currentTime is null');
+        if (anim.spriteSheet === 'idle') console.warn('wayTimeout: anim.spriteSheet is "idle"');
+        return;
+      } else if (anim.translate.currentTime >= (anim.wayMetas[0].length * animScaleFactor) - 1) {
+        const wayMeta = /** @type { NPC.WayPointMeta} */ (anim.wayMetas.shift());
+        console.log(wayMeta); // DEBUG
+        npcs.events.next({ key: 'way-point', npcKey: this.def.key, meta: wayMeta });
+      }
+      this.nextWayTimeout();
+    },
   };
 }
 
@@ -298,6 +299,8 @@ const npcOrigRadius = 40;
 const npcOffsetRadians = 0;
 
 export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
+
+export const npcInteractRadius = npcRadius * 2;
 
 /** Scale up how long it should take to move along navpath */
 export const animScaleFactor = 15;

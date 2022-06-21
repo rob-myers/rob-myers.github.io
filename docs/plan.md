@@ -46,7 +46,10 @@ His brain-element aptitude necessitates his ordination as a Novice in the Upper 
   - ✅ player stops at closed hull door
   - ✅ player should not stop underneath closed door
     - will reduce door size for each door
-  - can only open door when player stationary/nearby
+  - reduce door size for each door
+  - 🚧 can only open nearby doors (modulo env var)
+    - ✅ can show circular outline via `npc debug andros`
+    - restrict open door to radius
   - prevent underneath closed doors (nav close)
   - camera pauses/resumes when player pauses/resumes
   - camera retracks when player cancels
