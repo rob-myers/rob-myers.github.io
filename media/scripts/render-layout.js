@@ -36,11 +36,15 @@ const outputPath =  path.resolve(outputDir, `${layoutDef.key}${
 }.png`);
 
 (async function run() {
-  const { layout, canvas } = await renderLayout(layoutDef);
-  // Also done in svg-meta.js
-  const geomorphJsonPath = path.resolve(outputDir, `${layoutDef.key}.json`);
-  writeAsJson(serializeLayout(layout), geomorphJsonPath);
-  await saveCanvasAsFile(canvas, outputPath);
+  try {
+    const { layout, canvas } = await renderLayout(layoutDef);
+    // Also done in svg-meta.js
+    const geomorphJsonPath = path.resolve(outputDir, `${layoutDef.key}.json`);
+    writeAsJson(serializeLayout(layout), geomorphJsonPath);
+    await saveCanvasAsFile(canvas, outputPath);
+  } catch (e) {
+    console.log('ERROR', e)
+  }
 })();
 
 /**
