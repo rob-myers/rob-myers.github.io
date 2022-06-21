@@ -116,11 +116,11 @@ export async function createLayout(def, lookup, triangleService) {
     }
   });
 
-  const doors = groups.singles.filter(x => x.tags.includes('door'))
-    .map((x) => singleToConnectorRect(x, rooms)
+  const doors = groups.singles.filter(x => x.tags.includes('door')).map(
+    x => singleToConnectorRect(x, rooms)
   );
-  const windows = groups.singles.filter(x => x.tags.includes('window'))
-    .map((x) => singleToConnectorRect(x, rooms)
+  const windows = groups.singles.filter(x => x.tags.includes('window')).map(
+    x => singleToConnectorRect(x, rooms)
   );
 
   const hullRect = Rect.from(...hullSym.hull.concat(doorPolys).map(x => x.rect));
@@ -592,8 +592,8 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
    * There may be overlap i.e. the two triangles corresponding
    * to a particular doorId may overlap the rooms they connect.
    */
-  const nodeDoorIds = /** @type {number[][]} */ ([]);
-  const nodeRoomIds = /** @type {number[][]} */ ([]);
+  const nodeDoorIds = navNodes.map(_ => /** @type {number[]} */ ([]));
+  const nodeRoomIds = navNodes.map(_ => /** @type {number[]} */ ([]));
 
   // Construct doorNodeIds
   const tempTri = new Poly;
@@ -603,7 +603,7 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
       tempTri.outline = node.vertexIds.map(vid => navZone.vertices[vid]);
       if (geom.lineSegIntersectsPolygon(u, v, tempTri)) {
         doorNodeIds[doorId].push(nodeId);
-        if ((nodeDoorIds[nodeId] = nodeDoorIds[nodeId] || []).push(doorId) > 1) {
+        if (nodeDoorIds[nodeId].push(doorId) > 1) {
           warn('nav node', node, 'has multiple doorIds', nodeDoorIds[nodeId]);
         }
       }
@@ -623,7 +623,7 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
       if (node.vertexIds.some(id => poly.outlineContains(navZone.vertices[id]))) {
         roomNodeIds[roomId].push(nodeId);
         if (
-          (nodeRoomIds[nodeId] = nodeRoomIds[nodeId] || []).push(roomId) > 1
+          nodeRoomIds[nodeId].push(roomId) > 1
           && nodeDoorIds[nodeId].length === 0 // nodes with a doorId may have 2 roomIds
         ) {
           warn('nav node', node.id, 'has no doorId and multiple roomIds', nodeRoomIds[nodeId]);
@@ -644,6 +644,6 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
   };
 }
 
-const wallOutsetAmount = 13;
+const wallOutsetAmount = 15;
 
 const obstacleOutsetAmount = 10;

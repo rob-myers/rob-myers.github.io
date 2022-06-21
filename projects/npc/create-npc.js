@@ -269,7 +269,7 @@ import npcJson from '../../public/npc/first-npc.json'
  * Beware that sprites may themselves be scaled up,
  * see `zoom` in npc json
  */
-const npcScale = 0.2;
+const npcScale = 0.19;
 const npcOrigRadius = 40;
 /** Ensure NPC faces along positive x-axis */
 const npcOffsetAngleDeg = 0;
