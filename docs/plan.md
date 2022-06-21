@@ -44,11 +44,20 @@ His brain-element aptitude necessitates his ordination as a Novice in the Upper 
   - ✅ trigger event `pre-exit-room` when npc about to go thru door
   - ✅ player will stop if about to go through closed door
   - ✅ player stops at closed hull door
-  - 🚧 player should not stop underneath closed door
+  - ✅ player should not stop underneath closed door
+    - will reduce door size for each door
   - can only open door when player stationary/nearby
   - prevent underneath closed doors (nav close)
   - camera pauses/resumes when player pauses/resumes
   - camera retracks when player cancels
+
+- 🚧 avoid nav node long thin bits
+  - sometimes reduce obstacle size
+  - sometimes eliminate and permit teleport (e.g. to urinal)
+  - 🚧 301
+  - the rest
+
+- show nav node ids in `SvgNavGraph` (debug 101)
 
 - 🚧 can toggle NPC speech bubbles
   - ✅ can attach/remove html at world point via `html`
