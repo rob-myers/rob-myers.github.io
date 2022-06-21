@@ -1,11 +1,26 @@
 # Plan
 
-__Aim towards website release__.
+__Aim towards website release__
 
-### 🚧 _Technology (Part 2)_ i.e. nav and raycast
-### 🚧 _Starship Geomorphs_ i.e. how we enrich symbols and geomorphs
+## TODO (story-mechanics)
 
-## TODO (unsorted)
+### Backdrop
+
+The Last Redoubt in The Night Land.
+> https://www.gutenberg.org/cache/epub/10662/pg10662.html
+
+### Story Objective
+
+The protagonist (Andros) has just travelled through the first 1000 cities i.e. The Ziggurat.
+
+> And this story I heard everywhere in my travels through the cities of the Great Redoubt, which travels began when I came upon my seventeenth year, and continued for ~~three~~ _two_ years and two hundred and ~~twenty five~~ _seventy_ days, being even then but one day in each city, as was the custom in the training of every child.
+
+His brain-element aptitude necessitates his ordination as a Novice in the Upper Pyramid.
+
+...
+
+
+## TODO (low-level)
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
@@ -23,18 +38,28 @@ __Aim towards website release__.
   - Show GitHub comments from the-last-redoubt issues
   - Can redirect to GitHub the-last-redoubt issues
 
+- 🚧 avoid player moving thru closed doors
+  - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
+  - ✅ cannot close door if some npc nearby
+  - ✅ trigger event `pre-exit-room` when npc about to go thru door
+  - ✅ player will stop if about to go through closed door
+  - ✅ player stops at closed hull door
+  - 🚧 player should not stop underneath closed door
+  - can only open door when player stationary/nearby
+  - prevent underneath closed doors (nav close)
+  - camera pauses/resumes when player pauses/resumes
+  - camera retracks when player cancels
+
 - 🚧 can toggle NPC speech bubbles
-  - ✅ can attach/remove html at world point
-  - 🚧 can attach/remove html to npc
-  - shell function converts text to speech bubble
+  - ✅ can attach/remove html at world point via `html`
+  - 🚧 remove `html` (will use hand-crafted instead)
+  - `msg` converts text to speech-bubble at world point
 
 - pause/resume Tabs pause/resumes any sessions
   - pause/resume foreground and all background processes
   - npcs should pause/resume
     - camera should pause/resume
   - try with some bots too
-
-- migrate to free icons
 
 - modularise npc json
   - NPC.jsx
@@ -43,18 +68,6 @@ __Aim towards website release__.
 - fix NavDemo1 useGeomorphs HMR
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Fix HMR as far as we can
-
-- 🚧 avoid player moving thru closed doors
-  - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
-  - ✅ cannot close door if some npc nearby
-  - ✅ trigger event `pre-exit-room` when npc about to go thru door
-  - ✅ player will stop if about to go through closed door
-  - ✅ player stops at closed hull door
-  - 🚧 can only open door when player stationary/nearby
-  - prevent underneath closed doors (nav close)
-  - player should not stop underneath closed door
-  - camera pauses/resumes when player pauses/resumes
-  - camera retracks when player cancels
 
 - Blog
   - ✅ Revisit first page
@@ -83,6 +96,7 @@ __Aim towards website release__.
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
+- migrate to free icons
 - BUG sometimes adjacent light is inside hull door, rather than outside
 - mobile-friendly command links (session must be open)
 - careful about game function exit codes
@@ -120,7 +134,7 @@ __Aim towards website release__.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
-- Clean
+- ✅ Clean
   - ✅ Rename `holes` -> `rooms` etc.
   - ✅ Remove: refs to holeId and holeIndex.
   - ✅ Rooms can themselves have holes (from allWalls[i] where i ≥ 1)
