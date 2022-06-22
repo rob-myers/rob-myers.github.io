@@ -110,7 +110,9 @@ export default function NavDemo1(props) {
           const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
           if (otherGm === gm) {// Lights for current geomorph includes _current room_
             const roomWithDoors = gm.roomsWithDoors[state.roomId]
-            maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoors), [otherGm.hullOutline]);
+            // Cut one-by-one prevents Error like https://github.com/mfogel/polygon-clipping/issues/115
+            maskPolys[otherGmId] = polys.concat(roomWithDoors).reduce((agg, cutPoly) => Poly.cutOut([cutPoly], agg), [otherGm.hullOutline])
+            // maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoors), [otherGm.hullOutline]);
           } else {
             maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
           }
