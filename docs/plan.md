@@ -15,7 +15,11 @@ The protagonist (Andros) has just travelled through the first 1000 cities i.e. T
 
 > And this story I heard everywhere in my travels through the cities of the Great Redoubt, which travels began when I came upon my seventeenth year, and continued for ~~three~~ _two_ years and two hundred and ~~twenty five~~ _seventy_ days, being even then but one day in each city, as was the custom in the training of every child.
 
-His brain-element aptitude necessitates his ordination as a Novice in the Upper Pyramid.
+Andros is known for the uncanny nature of his Brain-Elements.
+He has exhibited remote transmission and hearing, with unconfirmed relic manifestation and prior life memories.
+In so far as these memories are concerned, the Historians apparently want to believe him -- a rare event in itself!
+
+Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ...
 
@@ -47,8 +51,9 @@ His brain-element aptitude necessitates his ordination as a Novice in the Upper 
   - ✅ player should not stop underneath closed door
     - will reduce door size for each door
   - reduce door size for each door
-  - 🚧 can only open nearby doors (modulo env var)
-    - ✅ can show circular outline via `npc debug andros`
+  - 🚧 can only open nearby doors (modulo DOOR_UI=true)
+    - ✅ toggle npc circular outlines via `npc debug`
+    - can test intersection circle vs polygon (sans holes)
     - restrict open door to radius
   - prevent underneath closed doors (nav close)
   - camera pauses/resumes when player pauses/resumes

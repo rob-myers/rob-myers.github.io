@@ -183,10 +183,11 @@ export default function NPCs(props) {
           await state.getNpc(e.npcKey).cancel();
           break;
         case 'debug': {
-          const npc = state.getNpc(e.npcKey);
-          npc.indicators = typeof e.value === 'undefined'
-            ? !npc.indicators
-            : Boolean(e.value);
+          Object.values(state.npc).forEach(npc =>
+            npc.indicators = typeof e.value === 'undefined'
+              ? !npc.indicators
+              : Boolean(e.value)
+          );
           update();
           break;
         }
