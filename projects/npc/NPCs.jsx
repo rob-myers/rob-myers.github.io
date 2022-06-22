@@ -27,8 +27,9 @@ export default function NPCs(props) {
     path: {}, 
     events: new Subject,
     playerKey: /** @type {null | string} */ (null),
-
     ready: true,
+    debug: false,
+
     class: { Vect },
     rxjs: { filter, first, map, take, otag }, // TODO remove?
 
@@ -183,11 +184,7 @@ export default function NPCs(props) {
           await state.getNpc(e.npcKey).cancel();
           break;
         case 'debug': {
-          Object.values(state.npc).forEach(npc =>
-            npc.indicators = typeof e.value === 'undefined'
-              ? !npc.indicators
-              : Boolean(e.value)
-          );
+          state.debug = typeof e.value === 'undefined' ? !state.debug : Boolean(e.value);
           update();
           break;
         }
@@ -362,6 +359,7 @@ export default function NPCs(props) {
           // Respawn remounts
           key={`${npc.key}@${npc.epochMs}`}
           npc={npc}
+          debug={state.debug}
         />
       ))}
     </div>

@@ -73,7 +73,6 @@ declare namespace NPC {
        */
       lookAngle: number;
     };
-    indicators: boolean;
     //#endregion
 
     get paused(): boolean;
@@ -229,6 +228,8 @@ declare namespace NPC {
     events: import('rxjs').Subject<NPC.NPCsEvent>;
     playerKey: null | string;
     ready: boolean;
+    debug: boolean;
+
     class: {
       Vect: typeof Geom.Vect;
     };

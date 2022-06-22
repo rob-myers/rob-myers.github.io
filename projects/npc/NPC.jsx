@@ -9,7 +9,7 @@ import { npcInteractRadius } from "./create-npc";
 import npcJson from '../../public/npc/first-npc.json'
 const { animLookup, zoom } = npcJson;
 
-/** @param {{ npc: NPC.NPC }} props  */
+/** @param {{ npc: NPC.NPC; debug: boolean }} props  */
 export default function NPC(props) {
   const { npc } = props;
 
@@ -32,7 +32,7 @@ export default function NPC(props) {
         className={classNames('body', npc.key, 'no-select')}
         data-npc-key={npc.key}
       />
-      {npc.indicators && <>
+      {props.debug && <>
         <div className="interact-circle" />
       </>}
     </div>

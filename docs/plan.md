@@ -52,12 +52,13 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - will reduce door size for each door
   - reduce door size for each door
   - 🚧 can only open nearby doors (modulo DOOR_UI=true)
-    - ✅ toggle npc circular outlines via `npc debug`
-    - can test intersection circle vs polygon (sans holes)
-    - restrict open door to radius
-  - prevent underneath closed doors (nav close)
-  - camera pauses/resumes when player pauses/resumes
-  - camera retracks when player cancels
+    - ✅ `npc debug` shows npc circular outlines 
+    - can `npc global '{ interactRadius: 20 }'`
+    - can test interact circle vs polygon (sans holes)
+    - can only open door if npc circle intersects door poly
+  - cannot get too close to closed doors
+    - nav nodes have nextToDoorId inducing `near-door` event
+    - if door closed, event should stop player
 
 - 🚧 avoid nav node long thin bits
   - sometimes reduce obstacle size
