@@ -8,8 +8,9 @@ import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
 import { isGlobalNavPath, isLocalNavPath } from "../service/npc";
+import { cssName } from "../service/css-names";
 import { Poly, Rect, Vect } from "../geom";
-import createNpc, { animScaleFactor } from "./create-npc";
+import createNpc, { npcAnimScaleFactor } from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
@@ -183,11 +184,15 @@ export default function NPCs(props) {
         case 'cancel':// Cancel current animation
           await state.getNpc(e.npcKey).cancel();
           break;
-        case 'debug': {
+        case 'config':
+          if (typeof e.interactRadius === 'number') {
+            document.documentElement.style.setProperty(cssName.npcInteractRadius, `${e.interactRadius}px`);
+          }
+          break;
+        case 'debug':
           state.debug = typeof e.value === 'undefined' ? !state.debug : Boolean(e.value);
           update();
           break;
-        }
         case 'get':
           return state.getNpc(e.npcKey);
         case 'look-at': {
@@ -302,7 +307,7 @@ export default function NPCs(props) {
             console.warn('@', status);
             try {
               const path = npc.getTargets().map(x => Vect.from(x.point)); // TODO arriveMs?
-              await props.panZoomApi.followPath(path, { animScaleFactor });
+              await props.panZoomApi.followPath(path, { animScaleFactor: npcAnimScaleFactor });
             } catch {} // Ignore Error('cancelled')
           }
         },

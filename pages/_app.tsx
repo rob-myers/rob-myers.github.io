@@ -44,6 +44,8 @@ import { QueryClientProvider } from 'react-query';
 
 import { Nav, Portals } from 'components/dynamic';
 import { queryClient } from 'projects/service/query-client';
+import { cssName } from 'projects/service/css-names';
+import { defaultNpcInteractRadius } from 'projects/npc/create-npc';
 
 import 'components/globals.css';
 import 'xterm/css/xterm.css';
@@ -52,6 +54,12 @@ import 'codemirror/lib/codemirror.css';
 import 'components/code/codemirror/custom-theme.css';
 
 export default function PagesRoot({ Component, pageProps }: RootProps) {
+
+  React.useEffect(() => {// Initialize CSS Variables
+    const root = document.documentElement;
+    root.style.setProperty(cssName.npcInteractRadius, `${defaultNpcInteractRadius}px`);
+  }, []);
+
   return <>
     <Head>
       <title>

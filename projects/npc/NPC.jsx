@@ -2,7 +2,6 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 
-import { npcInteractRadius } from "./create-npc";
 /**
  * TODO modularise
  */
@@ -72,11 +71,11 @@ const npcCss = css`
 
   .interact-circle {
     position: absolute;
-    width: ${2 * npcInteractRadius}px;
-    height: ${2 * npcInteractRadius}px;
-    left: -${npcInteractRadius}px;
-    top: -${npcInteractRadius}px;
-    border-radius: ${2 * npcInteractRadius}px;
+    width: calc(2 * var(--npc-interact-radius));
+    height: calc(2 * var(--npc-interact-radius));
+    left: calc(-1 * var(--npc-interact-radius));
+    top: calc(-1 * var(--npc-interact-radius));
+    border-radius: calc(2 * var(--npc-interact-radius));
     border: 1px solid rgba(0, 0, 255, 0.25);
   }
 `;

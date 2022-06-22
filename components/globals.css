@@ -2,6 +2,8 @@
   --article-border-color: #ccc;
   /** Saw white lines at 8px and zoomed */
   --tabs-border-width: 6px;
+  /** Initialized via JS */
+  --npc-interact-radius: 0;
 }
 
 * {

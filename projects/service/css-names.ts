@@ -3,4 +3,5 @@ export const cssName = {
   navMainOpen: 'open',
   navMainClosed: 'closed',
   navMini: 'nav-mini',
+  npcInteractRadius: '--npc-interact-radius',
 } as const;

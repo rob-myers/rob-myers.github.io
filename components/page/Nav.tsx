@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { css } from 'goober';
 
 import useSiteStore from 'store/site.store';
-import { cssName } from '../css-names';
+import { cssName } from 'projects/service/css-names';
 import NavItems from './NavItems';
 
 export default function Nav() {

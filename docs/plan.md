@@ -53,8 +53,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - reduce door size for each door
   - 🚧 can only open nearby doors (modulo DOOR_UI=true)
     - ✅ `npc debug` shows npc circular outlines 
-    - can `npc global '{ interactRadius: 20 }'`
-    - can test interact circle vs polygon (sans holes)
+    - ✅ can `npc config '{ interactRadius: 20 }'`
+    - 🚧 can test interact circle vs polygon (sans holes)
     - can only open door if npc circle intersects door poly
   - cannot get too close to closed doors
     - nav nodes have nextToDoorId inducing `near-door` event

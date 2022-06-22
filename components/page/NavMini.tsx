@@ -2,7 +2,7 @@ import { css } from "goober";
 import classNames from "classnames";
 import { articlesMeta, getArticleHref } from "articles/index";
 import useSiteStore from "store/site.store";
-import { cssName } from "../css-names";
+import { cssName } from "projects/service/css-names";
 import Link from "./Link";
 import { barHeight } from "./Nav";
 
