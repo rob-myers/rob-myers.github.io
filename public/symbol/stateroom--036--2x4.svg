@@ -23,10 +23,10 @@
   </g>
   <g style="pointer-events: none;">
     <title>singles</title>
-    <rect x="340" y="276" width="220" height="48" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;">
+    <rect x="340" y="288" width="220" height="24" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;">
       <title>door</title>
     </rect>
-    <rect x="330" y="1176" width="230" height="48" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;">
+    <rect x="330" y="1188" width="230" height="24" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0); fill-opacity: 0.8; stroke-width: 4px;">
       <title>door</title>
     </rect>
     <rect y="290" width="600" height="20" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);">
