@@ -158,8 +158,6 @@ const rootCss = css`
     margin: 40px 0 32px 0;
   }
 
-  background: var(--focus-bg);
-
   position: relative;
   > span.anchor {
     position: absolute;
