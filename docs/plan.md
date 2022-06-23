@@ -51,15 +51,18 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ player should not stop underneath closed door
     - will reduce door size for each door
   - reduce door size for each door
+    - ❌ cannot reduce size of hull doors due to `hull` outset
+    - would not help for hull doors anyway
   - 🚧 can only open nearby doors (modulo css var)
     - ✅ `npc debug` shows npc circular outlines 
     - ✅ can `npc config '{ interactRadius: 20 }'`
     - ✅ use css vars in `<NPCs>`
     - 🚧 can test interact circle vs polygon (sans holes)
+      - https://github.com/davidfig/intersects/blob/master/polygon-circle.js
     - can only open door if npc circle intersects door poly
-  - cannot get too close to closed doors
-    - nav nodes have nextToDoorId inducing `near-door` event
-    - if door closed, event should stop player
+  - prevent get too close to closed doors
+    - nav nodes have nextToDoorId with (early) `near-door` event
+    - stop navigation when door closed at event
 
 - 🚧 avoid nav node long thin bits
   - sometimes reduce obstacle size
