@@ -3,7 +3,7 @@ import { css } from "goober";
 import classNames from "classnames";
 import { Subject } from "rxjs";
 import { assertNonNull } from "../service/generic";
-import { strokePolygon } from "../service/dom";
+import { fillPolygon } from "../service/dom";
 import { getCached } from "../service/query-client";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -90,14 +90,11 @@ export default function Doors(props) {
         ctxt.setTransform(1, 0, 0, 1, 0, 0);
         ctxt.clearRect(0, 0, canvas.width, canvas.height);
         ctxt.setTransform(1, 0, 0, 1, -gm.pngRect.x, -gm.pngRect.y);
-        ctxt.strokeStyle = '#ffd';
-        ctxt.fillStyle = '#aaaaaa44';
-        ctxt.lineWidth = 0.5;
+        ctxt.fillStyle = '#555';
   
         gm.doors.forEach(({ poly }, i) => {
           if (!state.vis[gmId][i]) {
-            strokePolygon(ctxt, [poly]);
-            ctxt.fill()
+            fillPolygon(ctxt, [poly]);
           }
         });
       },
@@ -193,7 +190,8 @@ const rootCss = css`
     }
 
     &:not(.iris) {
-      background: #fff;
+      background: #444;
+      border: 1px solid #999;
 
       transition: width 300ms ease-in;
       &.open {
@@ -202,8 +200,9 @@ const rootCss = css`
     }
 
     &.iris {
-      background-image: linear-gradient(45deg, #fff 33.33%, #aaa 33.33%, #aaa 50%, #fff 50%, #fff 83.33%, #aaa 83.33%, #aaa 100%);
+      background-image: linear-gradient(45deg, #000 33.33%, #888 33.33%, #888 50%, #000 50%, #000 83.33%, #888 83.33%, #aaa 100%);
       background-size: 4.24px 4.24px;
+      border: 1px solid #aaa;
       
       opacity: 1;
       transition: opacity 300ms ease;
