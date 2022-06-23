@@ -40,7 +40,7 @@ export default function NavDemo1(props) {
       clipPath: gms.map(_ => 'none'),
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
-      panZoomApi: /** @type {PanZoom.CssApi} */ ({}),
+      panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
       npcsApi: /** @type {NPC.FullApi} */  ({ ready: false }),
       /** Container for HTML attached via terminal */
       hud: /** @type {HTMLDivElement} */ ({}),
@@ -174,6 +174,7 @@ export default function NavDemo1(props) {
         }
       });
 
+      // TODO remove, use terminal for messaging instead
       state.hud = assertNonNull(state.panZoomApi.parent.querySelector('div.HUD'));
 
       return () => {
@@ -190,7 +191,7 @@ export default function NavDemo1(props) {
       initCenter={{ x: 300, y: 300 }}
       dark
       // grid
-      onLoad={api => state.panZoomApi = api}
+      onLoad={api => {state.panZoomApi = api; update(); }}
     >
       {gms.map(gm =>
         <img
@@ -227,14 +228,17 @@ export default function NavDemo1(props) {
         />
       )}
 
-      <NPCs
-        disabled={props.disabled}
-        doorsApi={state.doorsApi}
-        gmGraph={gmGraph}
-        npcsKey={npcsKey}
-        panZoomApi={state.panZoomApi}
-        onLoad={api => { state.npcsApi = api; update(); }}
-      />
+      {state.panZoomApi.ready && (
+        <NPCs
+          disabled={props.disabled}
+          doorsApi={state.doorsApi}
+          gmGraph={gmGraph}
+          npcsKey={npcsKey}
+          panZoomApi={state.panZoomApi}
+          // Prevent reinvoke update() or HMR breaks
+          onLoad={api => { !state.npcsApi.ready && (state.npcsApi = api) && update(); }}
+        />
+      )}
 
       {gms.map((gm, gmIndex) =>
         <img

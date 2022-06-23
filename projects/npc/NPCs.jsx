@@ -29,10 +29,10 @@ export default function NPCs(props) {
     events: new Subject,
     playerKey: /** @type {null | string} */ (null),
     ready: true,
-    debug: false,
+    debug: false, // TODO use css var instead
 
     class: { Vect },
-    rxjs: { filter, first, map, take, otag }, // TODO remove?
+    rxjs: { filter, first, map, take, otag },
 
     getGlobalNavPath(src, dst) {
       const {gms} = props.gmGraph
@@ -337,21 +337,13 @@ export default function NPCs(props) {
     },
   }), { deps: [nav, props.doorsApi] });
   
-  
   React.useEffect(() => {
     setCached(props.npcsKey, state);
     props.onLoad(state);
-
-    // On HMR, refresh each npc via remount
-    Object.values(state.npc).forEach(npc => {
-      delete state.npc[npc.key];
-      state.spawn({ npcKey: npc.key, point: npc.getPosition() });
-    });
-
     return () => {
       removeCached(props.npcsKey);
     };
-  }, [props.panZoomApi]);
+  }, []);
 
   return (
     <div className={classNames('npcs', rootCss)}>

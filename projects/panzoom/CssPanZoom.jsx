@@ -15,6 +15,7 @@ export default function CssPanZoom(props) {
   const state = useStateRef(() => {
     /** @type {PanZoom.CssApi} */
     const output = {
+      ready: true,
       parent: /** @type {HTMLDivElement} */ ({}),
       translateRoot: /** @type {HTMLDivElement} */ ({}),
       scaleRoot: /** @type {HTMLDivElement} */ ({}),

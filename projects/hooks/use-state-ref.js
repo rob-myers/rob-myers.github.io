@@ -8,7 +8,7 @@ import { equals, isPlainObject } from '../service/generic';
  * - On HMR it will update these properties "suitably", relative to options.
  * 
  * @template State 
- * @param {() => State} initializer Should be side-effect free...
+ * @param {() => State} initializer Should be side-effect free.
  * @param {{ overwrite?: TypeUtil.KeyedTrue<State>; deps?: any[]; deeper?: (keyof State)[] }} [opts]
  */
 export default function useStateRef(
@@ -18,7 +18,10 @@ export default function useStateRef(
     const [state] = /**
       @type {[State & { _prevFn?: string; _prevInit?: State; }, any]}
     */ (
-      React.useState(initializer)
+      React.useState(() => {
+        // console.warn('useState reinit', initializer); // DEBUG
+        return initializer();
+      })
     );
 
     React.useMemo(() => {

@@ -1,6 +1,7 @@
 declare namespace PanZoom {
 
   export interface CssApi {
+    ready: boolean;
     parent: HTMLDivElement;
     translateRoot: HTMLDivElement;
     scaleRoot: HTMLDivElement;
