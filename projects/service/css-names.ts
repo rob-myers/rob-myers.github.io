@@ -1,4 +1,5 @@
 export const cssName = {
+  doors: 'doors',
   navMain: 'nav-main',
   navMainOpen: 'open',
   navMainClosed: 'closed',

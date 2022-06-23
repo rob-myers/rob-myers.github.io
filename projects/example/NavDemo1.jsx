@@ -264,7 +264,7 @@ export default function NavDemo1(props) {
         gmGraph={gmGraph}
         initOpen={state.initOpen}
         npcsKey={npcsKey}
-        onLoad={api => { state.doorsApi = api; update(); }}
+        onLoad={api => { !state.doorsApi.ready && (state.doorsApi = api) && update(); }}
       />
 
       <div className="HUD" />

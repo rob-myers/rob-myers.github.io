@@ -5,6 +5,7 @@ import { Subject } from "rxjs";
 import { assertNonNull } from "../service/generic";
 import { fillPolygon } from "../service/dom";
 import { getCached } from "../service/query-client";
+import { cssName } from "../service/css-names";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 
@@ -15,93 +16,87 @@ import useUpdate from "../hooks/use-update";
 export default function Doors(props) {
   const update = useUpdate();
 
-  const state = useStateRef(() => {
-    /** @type {NPC.DoorsApi} */
-    const output = {
-      events: new Subject,
-      ready: true,
-      getClosed(gmIndex) {
-        const open = state.open[gmIndex];
-        return props.gms[gmIndex].doors.map((_, i) => i).filter(i => !open[i]);
-      },
-      getOpen(gmIndex) {
-        return Object.keys(state.open[gmIndex]).map(Number);
-      },
-      getVisible(gmIndex) {
-        return Object.keys(state.vis[gmIndex]).map(Number);
-      },
-      setVisible(gmId, doorIds) {
-        state.vis[gmId] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
-        state.drawInvisibleInCanvas(gmId);
-        update();
-      },
+  const state = useStateRef(/** @type {() => NPC.DoorsApi} */ () => ({
+    canvas: [],
+    events: new Subject,
+    open: props.gms
+      .map((_, gmId) => (props.initOpen[gmId] || [])
+      .reduce((agg, doorId) => ({ ...agg, [doorId]: true }), {})),
+    ready: true,
+    rootEl: /** @type {HTMLDivElement} */ ({}),
+    vis: props.gms.map(_ => ({})),
 
-      canvas: [],
-      open: props.gms.map((_, gmId) => (props.initOpen[gmId] || [])
-        .reduce((agg, doorId) => ({ ...agg, [doorId]: true }), {})),
-      vis: props.gms.map(_ => ({})),
-  
-      rootEl: /** @type {HTMLDivElement} */ ({}),
-  
-      onToggleDoor(e) {
-        const gmIdAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
-        const gmId = Number(gmIdAttr);
-        const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
-        const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-id'));
-        const gmDoorNode = hullDoorId === -1 ? null : props.gmGraph.getDoorNodeByIds(gmId, hullDoorId);
-  
-        if (gmIdAttr === null || !state.vis[gmId][doorId] || gmDoorNode?.sealed) {
-          return; // Not a door, not visible, or sealed permanently
-        }
+    /** @param {number} gmId */
+    drawInvisibleInCanvas(gmId) {
+      const canvas = state.canvas[gmId];
+      const ctxt = assertNonNull(canvas.getContext('2d'));
+      const gm = props.gms[gmId];
 
-        // Cannot close door when some npc nearby
-        // TODO provide props.haveCloseNpcs(gmId, doorId)
-        if (state.open[gmId][doorId]) {
-          const door = props.gms[gmId].doors[doorId];
-          const convexPoly = door.poly.clone().applyMatrix(props.gms[gmId].matrix);
-          const closeNpcs = /** @type {NPC.FullApi} */ (getCached(props.npcsKey)).getNpcsIntersecting(convexPoly);
-          if (closeNpcs.length) {
-            return;
-          }
-        }
-  
-        // Hull doors have an adjacent door which must also be toggled
-        const adjHull = hullDoorId !== -1 ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
-  
-        if (state.open[gmId][doorId]) {
-          delete state.open[gmId][doorId]
-          adjHull && (delete state.open[adjHull.adjGmId][adjHull.adjDoorId]);
-        } else {
-          state.open[gmId][doorId] = true;
-          adjHull && (state.open[adjHull.adjGmId][adjHull.adjDoorId] = true);
-        }
-        const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
-        state.events.next({ key, gmIndex: gmId, index: doorId });
-        adjHull && state.events.next({ key, gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId });
-  
-        state.drawInvisibleInCanvas(gmId);
-      },
-      /** @param {number} gmId */
-      drawInvisibleInCanvas(gmId) {
-        const canvas = state.canvas[gmId];
-        const ctxt = assertNonNull(canvas.getContext('2d'));
-        const gm = props.gms[gmId];
-  
-        ctxt.setTransform(1, 0, 0, 1, 0, 0);
-        ctxt.clearRect(0, 0, canvas.width, canvas.height);
-        ctxt.setTransform(1, 0, 0, 1, -gm.pngRect.x, -gm.pngRect.y);
-        ctxt.fillStyle = '#555';
-  
-        gm.doors.forEach(({ poly }, i) => {
-          if (!state.vis[gmId][i]) {
-            fillPolygon(ctxt, [poly]);
-          }
-        });
-      },
-    };
+      ctxt.setTransform(1, 0, 0, 1, 0, 0);
+      ctxt.clearRect(0, 0, canvas.width, canvas.height);
+      ctxt.setTransform(1, 0, 0, 1, -gm.pngRect.x, -gm.pngRect.y);
+      ctxt.fillStyle = '#555';
 
-    return output;
-  });
+      gm.doors.forEach(({ poly }, i) => {
+        if (!state.vis[gmId][i]) {
+          fillPolygon(ctxt, [poly]);
+        }
+      });
+    },
+    getClosed(gmIndex) {
+      const open = state.open[gmIndex];
+      return props.gms[gmIndex].doors.map((_, i) => i).filter(i => !open[i]);
+    },
+    getOpen(gmIndex) {
+      return Object.keys(state.open[gmIndex]).map(Number);
+    },
+    getVisible(gmIndex) {
+      return Object.keys(state.vis[gmIndex]).map(Number);
+    },
+    onToggleDoor(e) {
+      const gmIdAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
+      const gmId = Number(gmIdAttr);
+      const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
+      const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-id'));
+      const gmDoorNode = hullDoorId === -1 ? null : props.gmGraph.getDoorNodeByIds(gmId, hullDoorId);
+
+      if (gmIdAttr === null || !state.vis[gmId][doorId] || gmDoorNode?.sealed) {
+        return; // Not a door, not visible, or sealed permanently
+      }
+
+      // Cannot close door when some npc nearby
+      // TODO provide props.haveCloseNpcs(gmId, doorId)
+      if (state.open[gmId][doorId]) {
+        const door = props.gms[gmId].doors[doorId];
+        const convexPoly = door.poly.clone().applyMatrix(props.gms[gmId].matrix);
+        const closeNpcs = /** @type {NPC.FullApi} */ (getCached(props.npcsKey)).getNpcsIntersecting(convexPoly);
+        if (closeNpcs.length) {
+          return;
+        }
+      }
+
+      // Hull doors have an adjacent door which must also be toggled
+      const adjHull = hullDoorId !== -1 ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
+
+      if (state.open[gmId][doorId]) {
+        delete state.open[gmId][doorId]
+        adjHull && (delete state.open[adjHull.adjGmId][adjHull.adjDoorId]);
+      } else {
+        state.open[gmId][doorId] = true;
+        adjHull && (state.open[adjHull.adjGmId][adjHull.adjDoorId] = true);
+      }
+      const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
+      state.events.next({ key, gmIndex: gmId, index: doorId });
+      adjHull && state.events.next({ key, gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId });
+
+      state.drawInvisibleInCanvas(gmId);
+    },
+    setVisible(gmId, doorIds) {
+      state.vis[gmId] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
+      state.drawInvisibleInCanvas(gmId);
+      update();
+    },
+  }));
 
   React.useEffect(() => {
     props.onLoad(state);
@@ -116,7 +111,7 @@ export default function Doors(props) {
   return (
     <div
       ref={el => el && (state.rootEl = el)}
-      className={classNames("doors", rootCss)}
+      className={classNames(cssName.doors, rootCss)}
     >
       {props.gms.map((gm, gmId) => (
         <div
@@ -163,9 +158,9 @@ export default function Doors(props) {
   );
 }
 
-const doorTouchRadius = 10;
-
 const rootCss = css`
+  --npc-door-touch-radius: 10px;
+
   position: absolute;
 
   canvas {
@@ -181,12 +176,15 @@ const rootCss = css`
       cursor: pointer;
       pointer-events: all;
       position: absolute;
-      left: calc(50% - ${doorTouchRadius * 2}px);
-      top: calc(50% - ${doorTouchRadius}px);
-      width: ${doorTouchRadius * 4}px;
-      height: 20px;
+
+      width: calc(100% + var(--npc-door-touch-radius));
+      min-width: calc( 2 * var(--npc-door-touch-radius) );
+      top: calc(-1 * var(--npc-door-touch-radius));
+      left: calc(-1 * var(--npc-door-touch-radius));
+      height: calc(2 * var(--npc-door-touch-radius));
+
       background: rgba(100, 0, 0, 0.1);
-      border-radius: ${doorTouchRadius}px;
+      border-radius: var(--npc-door-touch-radius);
     }
 
     &:not(.iris) {
