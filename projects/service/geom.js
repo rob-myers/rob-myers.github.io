@@ -12,6 +12,27 @@ class geomServiceClass {
     poly.translate(input.baseRect.x, input.baseRect.y);
     return poly;
   }
+  
+  /**
+   * https://github.com/davidfig/intersects/blob/master/polygon-circle.js
+   * @param {Geom.VectJson} center 
+   * @param {number} radius 
+   * @param {Geom.Poly} convexPoly 
+   */
+  circleIntersectsConvexPolygon(center, radius, convexPoly) {
+    if (convexPoly.outlineContains(center)) {
+      return true;
+    }
+    const vs = convexPoly.outline;
+    const count = vs.length;
+
+    for (let i = 0; i < count - 1; i ++) {
+      if (geom.lineSegIntersectsCircle(vs[i], vs[i + 1], center, radius)) {
+        return true;
+      }
+    }
+    return geom.lineSegIntersectsCircle(vs[0], vs[count - 1], center, radius);
+  }
 
   /**
    * Return the two compass points with angle
@@ -132,6 +153,25 @@ class geomServiceClass {
       u1 = v1;
     }
     return false;
+  }
+
+  /**
+   * https://github.com/davidfig/intersects/blob/master/line-circle.js
+   * @param {Geom.VectJson} u 
+   * @param {Geom.VectJson} v 
+   * @param {Geom.VectJson} center 
+   * @param {number} radius 
+   */
+  lineSegIntersectsCircle(u, v, center, radius) {
+    const ab = tempVect.set(center.x - u.x, center.y - u.y);
+    const ac = tempVect2.copy(v).sub(u);
+    const ab2 = ab.dot(ab); // |ab|^2
+    const acab = ac.dot(ab);
+    let t = acab / ab2;
+    t = (t < 0) ? 0 : t;
+    t = (t > 1) ? 1 : t;
+    const h = tempVect.set((ab.x * t + u.x) - center.x, (ab.y * t + u.y) - center.y);
+    return h.dot(h) <= radius * radius;
   }
 
   /**
