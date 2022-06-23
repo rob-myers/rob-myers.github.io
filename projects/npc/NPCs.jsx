@@ -10,7 +10,7 @@ import { geom } from "../service/geom";
 import { isGlobalNavPath, isLocalNavPath } from "../service/npc";
 import { cssName } from "../service/css-names";
 import { Poly, Rect, Vect } from "../geom";
-import createNpc, { npcAnimScaleFactor } from "./create-npc";
+import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor } from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
@@ -30,6 +30,7 @@ export default function NPCs(props) {
     playerKey: /** @type {null | string} */ (null),
     ready: true,
     debug: false, // TODO use css var instead
+    rootEl: /** @type {HTMLDivElement} */ ({}),
 
     class: { Vect },
     rxjs: { filter, first, map, take, otag },
@@ -186,7 +187,7 @@ export default function NPCs(props) {
           break;
         case 'config':
           if (typeof e.interactRadius === 'number') {
-            document.documentElement.style.setProperty(cssName.npcInteractRadius, `${e.interactRadius}px`);
+            state.rootEl.style.setProperty(cssName.npcInteractRadius, `${e.interactRadius}px`);
           }
           break;
         case 'debug':
@@ -340,13 +341,15 @@ export default function NPCs(props) {
   React.useEffect(() => {
     setCached(props.npcsKey, state);
     props.onLoad(state);
-    return () => {
-      removeCached(props.npcsKey);
-    };
+    return () => removeCached(props.npcsKey);
   }, []);
 
   return (
-    <div className={classNames('npcs', rootCss)}>
+    <div
+      className={classNames('npcs', rootCss)}
+      ref={(el) => el && (state.rootEl = el)}
+    >
+
       <Debug
         debugPath={state.path}
       />
@@ -364,6 +367,8 @@ export default function NPCs(props) {
 }
 
 const rootCss = css`
+  --npc-interact-radius: ${defaultNpcInteractRadius}px;
+
   position: absolute;
   canvas {
     position: absolute;

@@ -51,9 +51,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ player should not stop underneath closed door
     - will reduce door size for each door
   - reduce door size for each door
-  - 🚧 can only open nearby doors (modulo DOOR_UI=true)
+  - 🚧 can only open nearby doors (modulo css var)
     - ✅ `npc debug` shows npc circular outlines 
     - ✅ can `npc config '{ interactRadius: 20 }'`
+    - ✅ use css vars in `<NPCs>`
     - 🚧 can test interact circle vs polygon (sans holes)
     - can only open door if npc circle intersects door poly
   - cannot get too close to closed doors
@@ -70,8 +71,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 - 🚧 can toggle NPC speech bubbles
   - ✅ can attach/remove html at world point via `html`
-  - 🚧 remove `html` (will use hand-crafted instead)
-  - `msg` converts text to speech-bubble at world point
+  - 🚧 remove `html` command
+  - use terminal instead with links to sayer
 
 - pause/resume Tabs pause/resumes any sessions
   - pause/resume foreground and all background processes

@@ -229,6 +229,7 @@ declare namespace NPC {
     playerKey: null | string;
     ready: boolean;
     debug: boolean;
+    rootEl: HTMLElement;
 
     class: {
       Vect: typeof Geom.Vect;
