@@ -710,7 +710,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628},
-    "lastModified": 1655831912125.702
+    "lastModified": 1655983530702.0977
   },
   "302--hull": {
     "key": "302--hull",
@@ -5705,7 +5705,7 @@
         "tags": ["door"],
         "poly": {
           "type": "Polygon",
-          "coordinates": [[[330, 275], [330, 323], [560, 323], [560, 275]]]
+          "coordinates": [[[330, 288], [330, 312], [560, 312], [560, 288]]]
         }
       },
       {
@@ -5731,7 +5731,7 @@
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1655805088049.5063
+    "lastModified": 1655983590415.3374
   },
   "stateroom--018--2x3": {
     "key": "stateroom--018--2x3",
