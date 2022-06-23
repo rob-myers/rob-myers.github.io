@@ -49,8 +49,8 @@ export async function createLayout(def, lookup, triangleService) {
         ...walls.map(x => x.clone().applyMatrix(m)),
         // singles can also have walls e.g. to support optional doors
         ...singlesToPolys(restricted, 'wall'),
-        // The hull symbol (the 1st symbol) has "hull" walls
-        ...hull.flatMap(x => x.createOutset(2)).map(x => x.applyMatrix(m)),
+        // Only the hull symbol (the 1st symbol) has "hull" walls.
+        ...hull.flatMap(x => x.createOutset(hullOutset)).map(x => x.applyMatrix(m)),
       ])
     );
   });
@@ -138,15 +138,15 @@ export async function createLayout(def, lookup, triangleService) {
    * We also discard polygons intersecting ignoreNavPoints,
    * or if they are deemed too small.
    */
-  const navPolyWithDoors = Poly.cutOut(/** @type {Poly[]} */([]).concat(
+  const navPolyWithDoors = Poly.cutOut([
     // Non-unioned walls avoids outset issue (self-intersection)
-    unjoinedWalls.flatMap(x =>
-      x.createOutset(wallOutsetAmount)
+    ...unjoinedWalls.flatMap(x =>
+      x.createOutset(wallOutset)
     ),
-    groups.obstacles.flatMap(x =>
-      x.createOutset(obstacleOutsetAmount)
+    ...groups.obstacles.flatMap(x =>
+      x.createOutset(obstacleOutset)
     ),
-  ), hullOutline).map(
+  ], hullOutline).map(
     x => x.cleanFinalReps().fixOrientation().precision(4)
   ).filter(poly => 
     !ignoreNavPoints.some(p => poly.contains(p))
@@ -644,6 +644,11 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
   };
 }
 
-const wallOutsetAmount = 15;
+/**
+ * Removing this outset breaks navigation i.e. walls of geomorph no longer connected.
+ */
+const hullOutset = 2;
 
-const obstacleOutsetAmount = 10;
+const wallOutset = 15;
+
+const obstacleOutset = 10;
