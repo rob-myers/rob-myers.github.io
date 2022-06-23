@@ -29,7 +29,6 @@ export default function NPCs(props) {
     events: new Subject,
     playerKey: /** @type {null | string} */ (null),
     ready: true,
-    debug: false, // TODO use css var instead
     rootEl: /** @type {HTMLDivElement} */ ({}),
 
     class: { Vect },
@@ -189,10 +188,9 @@ export default function NPCs(props) {
           if (typeof e.interactRadius === 'number') {
             state.rootEl.style.setProperty(cssName.npcInteractRadius, `${e.interactRadius}px`);
           }
-          break;
-        case 'debug':
-          state.debug = typeof e.value === 'undefined' ? !state.debug : Boolean(e.value);
-          update();
+          if (e.debug !== undefined) {
+            state.rootEl.style.setProperty(cssName.npcDebugDisplay, e.debug ? 'initial' : 'none');
+          }
           break;
         case 'get':
           return state.getNpc(e.npcKey);
@@ -359,7 +357,6 @@ export default function NPCs(props) {
           // Respawn remounts
           key={`${npc.key}@${npc.epochMs}`}
           npc={npc}
-          debug={state.debug}
         />
       ))}
     </div>
@@ -368,6 +365,7 @@ export default function NPCs(props) {
 
 const rootCss = css`
   --npc-interact-radius: ${defaultNpcInteractRadius}px;
+  --npc-debug-display: none;
 
   position: absolute;
   canvas {

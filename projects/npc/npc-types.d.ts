@@ -228,7 +228,6 @@ declare namespace NPC {
     events: import('rxjs').Subject<NPC.NPCsEvent>;
     playerKey: null | string;
     ready: boolean;
-    debug: boolean;
     rootEl: HTMLElement;
 
     class: {
@@ -262,8 +261,7 @@ declare namespace NPC {
 
   type NpcAction = (
     | { action: 'cancel'; npcKey: string }
-    | { action: 'config'; interactRadius?: number }
-    | { action: 'debug'; value?: boolean }
+    | { action: 'config'; debug?: boolean; interactRadius?: number }
     | { action: 'get'; npcKey: string }
     | { action: 'look-at'; npcKey: string; point: Geom.VectJson }
     | { action: 'pause'; npcKey: string }

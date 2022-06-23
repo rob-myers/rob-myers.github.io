@@ -8,7 +8,7 @@ import { css } from "goober";
 import npcJson from '../../public/npc/first-npc.json'
 const { animLookup, zoom } = npcJson;
 
-/** @param {{ npc: NPC.NPC; debug: boolean }} props  */
+/** @param {{ npc: NPC.NPC }} props  */
 export default function NPC(props) {
   const { npc } = props;
 
@@ -31,9 +31,7 @@ export default function NPC(props) {
         className={classNames('body', npc.key, 'no-select')}
         data-npc-key={npc.key}
       />
-      {props.debug && <>
-        <div className="interact-circle" />
-      </>}
+      <div className="interact-circle" />
     </div>
   );
 }
@@ -70,6 +68,7 @@ const npcCss = css`
   }
 
   .interact-circle {
+    display: var(--npc-debug-display);
     position: absolute;
     width: calc(2 * var(--npc-interact-radius));
     height: calc(2 * var(--npc-interact-radius));
