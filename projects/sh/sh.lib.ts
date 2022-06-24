@@ -255,10 +255,13 @@ nav: `{
 npc: `{
   run '({ api, args, home }) {
     const npcs = api.getCached(home.NPCS_KEY)
+    const action = args[0]
     const opts = api.parseJsArg(args[1])
     yield await npcs.npcAct({
-      action: args[0], // Interpret string options as key
-      ...typeof opts === "string" ? { key: opts } : opts,
+      action,
+      ...typeof opts === "string"
+        ? action.includes("decor") ? { decorKey: opts } : { npcKey: opts }
+        : opts,
     })
   }' "$@"
 }`,

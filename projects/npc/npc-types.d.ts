@@ -272,14 +272,14 @@ declare namespace NPC {
   /** Using `action` as key avoids name-collision */
   type NpcAction = (
     | { action: 'add-decor'; } & Decor
-    | { action: 'cancel'; key: string }
+    | { action: 'cancel'; npcKey: string }
     | { action: 'config'; debug?: boolean; interactRadius?: number }
-    | { action: 'get'; key: string }
-    | { action: 'look-at'; key: string; point: Geom.VectJson }
-    | { action: 'pause'; key: string }
-    | { action: 'play'; key: string }
-    | { action: 'remove-decor'; key: string; }
-    | { action: 'set-player'; key?: string }
+    | { action: 'get'; npcKey: string }
+    | { action: 'look-at'; npcKey: string; point: Geom.VectJson }
+    | { action: 'pause'; npcKey: string }
+    | { action: 'play'; npcKey: string }
+    | { action: 'remove-decor'; decorKey: string; }
+    | { action: 'set-player'; npcKey?: string }
   );
 
   type NpcActionKey = NpcAction['action'];

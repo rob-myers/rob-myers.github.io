@@ -168,8 +168,8 @@ function extractNpcFrameNodes(api, topNodes, title) {
   return groups;
 }
 
-/** @param {any} input */
-export function isLocalNavPath(input) {
+/** @param {NPC.LocalNavPath} input */
+export function verifyLocalNavPath(input) {
   let x = /** @type {Partial<NPC.LocalNavPath>} */ (input);
   return x?.key === 'local-nav'
     && x.fullPath?.every?.(Vect.isVectJson)
@@ -177,12 +177,22 @@ export function isLocalNavPath(input) {
     || false;
 }
 
-/** @param {any} input */
-export function isGlobalNavPath(input) {
+/** @param {NPC.GlobalNavPath} input */
+export function verifyGlobalNavPath(input) {
   let x = /** @type {Partial<NPC.GlobalNavPath>} */ (input);
   return x?.key === 'global-nav'
     && x.fullPath?.every?.(Vect.isVectJson)
     && Array.isArray(x.navMetas)
     // TODO check navMetas
     || false;
+}
+
+/** @param {NPC.Decor} input */
+export function verifyDecor(input) {
+  if (input && input.type === 'path' && input?.path?.every(/** @param {*} x */ (x) => Vect.isVectJson(x))) {
+    return true;
+  } else if (input && input.type === 'circle' && Vect.isVectJson(input.center) && typeof input.radius === 'number') {
+    return true;
+  }
+  return false;
 }

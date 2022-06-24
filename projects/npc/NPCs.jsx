@@ -7,7 +7,7 @@ import { assertNonNull, testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
-import { isGlobalNavPath } from "../service/npc";
+import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
 import { Poly, Rect, Vect } from "../geom";
 import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor } from "./create-npc";
@@ -191,7 +191,7 @@ export default function NPCs(props) {
           state.setDecor(e.key, e);
           break;
         case 'cancel':// Cancel current animation
-          await state.getNpc(e.key).cancel();
+          await state.getNpc(e.npcKey).cancel();
           break;
         case 'config':
           if (typeof e.interactRadius === 'number') {
@@ -202,9 +202,9 @@ export default function NPCs(props) {
           }
           break;
         case 'get':
-          return state.getNpc(e.key);
+          return state.getNpc(e.npcKey);
         case 'look-at': {
-          const npc = state.getNpc(e.key);
+          const npc = state.getNpc(e.npcKey);
           if (!Vect.isVectJson(e.point)) {
             throw Error(`invalid point: ${JSON.stringify(e.point)}`);
           }
@@ -212,16 +212,16 @@ export default function NPCs(props) {
           break;
         }
         case 'pause':// Pause current animation
-          await state.getNpc(e.key).pause();
+          await state.getNpc(e.npcKey).pause();
           break;
         case 'play':// Resume current animation
-          await state.getNpc(e.key).play();
+          await state.getNpc(e.npcKey).play();
           break;
         case 'remove-decor':
-          state.setDecor(e.key, null);
+          state.setDecor(e.decorKey, null);
           break;
         case 'set-player':
-          state.events.next({ key: 'set-player', npcKey: e.key??null });
+          state.events.next({ key: 'set-player', npcKey: e.npcKey??null });
           break;
         default:
           throw Error(testNever(e, `unrecognised action: "${JSON.stringify(e)}"`));
@@ -246,7 +246,14 @@ export default function NPCs(props) {
       }
     },
     setDecor(decorKey, decor) {
-      decor ? state.decor[decorKey] = decor : delete state.decor[decorKey];
+      if (decor) {
+        if (!verifyDecor(decor)) {
+          throw Error('invalid decor');
+        }
+        state.decor[decorKey] = decor;
+      } else {
+        delete state.decor[decorKey];
+      }
       update();
     },
     spawn(e) {
@@ -330,7 +337,7 @@ export default function NPCs(props) {
     },
     async walkNpc(e) {
       const npc = state.getNpc(e.npcKey);
-      if (!isGlobalNavPath(e)) {
+      if (!verifyGlobalNavPath(e)) {
         throw Error(`invalid global navpath: ${JSON.stringify(e)}`);
       }
 
@@ -390,24 +397,26 @@ const rootCss = css`
     border: 1px solid red;
     transform: translate(-15px, -15px);
   }
-  svg.debug-path {
+  svg {
     position: absolute;
     pointer-events: none;
+
+    .debug-circle {
+      fill: #ff000035;
+    }
   }
 `;
 
 /** @param {{ item: NPC.Decor }} props  */
 function DecorItem({ item }) {
-  if (item.type === 'path') {
-    const aabb = Rect.fromPoints(...item.path).outset(10);
-    return (
-      <svg
-        className="debug-path"
-        width={aabb.width}
-        height={aabb.height}
-        style={{ left: aabb.x, top: aabb.y }}
-      >
-        <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
+  /** @type {Rect} */ let aabb;
+  /** @type {React.ReactNode} */ let child;
+
+  switch (item.type) {
+    case 'path':
+      aabb = Rect.fromPoints(...item.path).outset(10);
+      child = (
+        <g className="debug-path">
           <polyline
             fill="none" stroke="#88f" strokeDasharray="2 2" strokeWidth={1}
             points={item.path.map(p => `${p.x},${p.y}`).join(' ')}
@@ -416,10 +425,32 @@ function DecorItem({ item }) {
             <circle key={i} fill="none" stroke="#ff444488" r={2} cx={p.x} cy={p.y} />
           ))}
         </g>
-      </svg>
-    );
+      );
+      break;
+    case 'circle':
+      aabb = new Rect(item.center.x - item.radius, item.center.y - item.radius, item.radius * 2, item.radius * 2);
+      child = (
+        <circle
+          className="debug-circle"
+          cx={item.center.x}
+          cy={item.center.y}
+          r={item.radius}
+        />
+      );
+      break;
+    default:
+      console.error(`unexpected decor`, item);
+      // throw testNever(item);
+      return null;
   }
-  return null;
+
+  return (
+    <svg width={aabb.width} height={aabb.height} style={{ left: aabb.x, top: aabb.y }}>
+      <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
+        {child}
+      </g>
+    </svg>
+  );
 }
 
 /**
