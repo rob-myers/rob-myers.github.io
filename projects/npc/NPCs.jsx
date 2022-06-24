@@ -146,7 +146,7 @@ export default function NPCs(props) {
       }
       const result = state.getGlobalNavPath(npc.getPosition(), e.point);
       if (e.debug) {
-        state.setDecor({ key: e.npcKey, type: 'path', path: result.fullPath, aabb: Rect.from(...result.fullPath).outset(10) });
+        state.setDecor(e.npcKey, { key: e.npcKey, type: 'path', path: result.fullPath });
       }
       return result;
     },
@@ -187,8 +187,11 @@ export default function NPCs(props) {
     },
     async npcAct(e) {
       switch (e.action) {
+        case 'add-decor':
+          state.setDecor(e.key, e);
+          break;
         case 'cancel':// Cancel current animation
-          await state.getNpc(e.npcKey).cancel();
+          await state.getNpc(e.key).cancel();
           break;
         case 'config':
           if (typeof e.interactRadius === 'number') {
@@ -199,9 +202,9 @@ export default function NPCs(props) {
           }
           break;
         case 'get':
-          return state.getNpc(e.npcKey);
+          return state.getNpc(e.key);
         case 'look-at': {
-          const npc = state.getNpc(e.npcKey);
+          const npc = state.getNpc(e.key);
           if (!Vect.isVectJson(e.point)) {
             throw Error(`invalid point: ${JSON.stringify(e.point)}`);
           }
@@ -209,13 +212,16 @@ export default function NPCs(props) {
           break;
         }
         case 'pause':// Pause current animation
-          await state.getNpc(e.npcKey).pause();
+          await state.getNpc(e.key).pause();
           break;
         case 'play':// Resume current animation
-          await state.getNpc(e.npcKey).play();
+          await state.getNpc(e.key).play();
+          break;
+        case 'remove-decor':
+          state.setDecor(e.key, null);
           break;
         case 'set-player':
-          state.events.next({ key: 'set-player', npcKey: e.npcKey??null });
+          state.events.next({ key: 'set-player', npcKey: e.key??null });
           break;
         default:
           throw Error(testNever(e, `unrecognised action: "${JSON.stringify(e)}"`));
@@ -239,8 +245,8 @@ export default function NPCs(props) {
         el.style.setProperty(cssName.npcDebugDisplay, 'none');
       }
     },
-    setDecor(e) {
-      state.decor[e.key] = e;
+    setDecor(decorKey, decor) {
+      decor ? state.decor[decorKey] = decor : delete state.decor[decorKey];
       update();
     },
     spawn(e) {
@@ -390,18 +396,22 @@ const rootCss = css`
   }
 `;
 
-/** @param {{ item: NPC.NpcsDecor }} props  */
+/** @param {{ item: NPC.Decor }} props  */
 function DecorItem({ item }) {
   if (item.type === 'path') {
+    const aabb = Rect.fromPoints(...item.path).outset(10);
     return (
       <svg
         className="debug-path"
-        width={item.aabb.width}
-        height={item.aabb.height}
-        style={{ left: item.aabb.x, top: item.aabb.y }}
+        width={aabb.width}
+        height={aabb.height}
+        style={{ left: aabb.x, top: aabb.y }}
       >
-        <g style={{ transform: `translate(${-item.aabb.x}px, ${-item.aabb.y}px)` }}>
-          <polyline fill="none" stroke="#88f" strokeDasharray="2 2" strokeWidth={1} points={`${item.path}`} />
+        <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
+          <polyline
+            fill="none" stroke="#88f" strokeDasharray="2 2" strokeWidth={1}
+            points={item.path.map(p => `${p.x},${p.y}`).join(' ')}
+          />
           {item.path.map((p, i) => (
             <circle key={i} fill="none" stroke="#ff444488" r={2} cx={p.x} cy={p.y} />
           ))}

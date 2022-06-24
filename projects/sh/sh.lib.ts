@@ -204,19 +204,6 @@ goOnce: `{
   nav $1 $(click 1) | walk $1
 }`,
 
-/**
- * TODO remove
- */
-html: `{
-  run '({ args, api, home }) {
-    const className = args[0]
-    const html = args[1] || null
-    const point = api.safeJsonParse(args[2])
-    const npcs = api.getCached(home.NPCS_KEY)
-    npcs.events.next({ key: "html", className, html, point })
-  }' "$@"
-}`,
-
 look: `{
   run '({ api, args, home }) {
     const npcs = api.getCached(home.NPCS_KEY)
@@ -270,8 +257,8 @@ npc: `{
     const npcs = api.getCached(home.NPCS_KEY)
     const opts = api.parseJsArg(args[1])
     yield await npcs.npcAct({
-      action: args[0],
-      ...typeof opts === "string" ? { npcKey: opts } : opts,
+      action: args[0], // Interpret string options as key
+      ...typeof opts === "string" ? { key: opts } : opts,
     })
   }' "$@"
 }`,

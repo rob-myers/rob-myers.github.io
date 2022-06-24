@@ -66,7 +66,7 @@ export class Poly {
   }
 
   get rect() {
-    return Rect.from(...this.outline);
+    return Rect.fromPoints(...this.outline);
   }
 
   get svgPath() {

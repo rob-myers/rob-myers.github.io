@@ -43,8 +43,6 @@ export default function NavDemo1(props) {
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
       npcsApi: /** @type {NPC.FullApi} */  ({ ready: false }),
-      /** Container for HTML attached via terminal */
-      hud: /** @type {HTMLDivElement} */ ({}),
 
       /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
       async handlePlayerWayEvent(e) {
@@ -194,21 +192,10 @@ export default function NavDemo1(props) {
         if (e.key === 'way-point' && e.npcKey === state.npcsApi.playerKey) {
           state.handlePlayerWayEvent(e);
         }
-        if (e.key === 'html') {
-          if (e.html) {
-            state.hud.innerHTML += e.html;
-            const el = /** @type {HTMLElement} */ (state.hud.lastChild);
-            e.className.split(' ').map(x => el.classList.add(x));
-            el.style.position = 'absolute';
-            el.style.transform = `translate(${e.point.x}px, ${e.point.y}px)`;
-          } else {
-            state.hud.querySelectorAll(`:scope > .${e.className.split(' ').join('.')}`).forEach(x => x.remove());
-          }
+        if (e.key === 'decor') {
+          state.npcsApi.setDecor(e.meta.key, e.meta);
         }
       });
-
-      // TODO remove, use terminal for messaging instead
-      state.hud = assertNonNull(state.panZoomApi.parent.querySelector('div.HUD'));
 
       return () => {
         doorsSub.unsubscribe();
@@ -302,8 +289,6 @@ export default function NavDemo1(props) {
         onLoad={api => { !state.doorsApi.ready && (state.doorsApi = api) && update(); }}
       />
 
-      <div className="HUD" />
-      
     </CssPanZoom>
   ) : null;
 }
@@ -367,10 +352,6 @@ const rootCss = css`
         stroke: red;
       }
     }
-  }
-
-  div.HUD {
-    position: relative;
   }
 `;
 

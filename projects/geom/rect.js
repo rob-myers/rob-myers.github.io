@@ -158,33 +158,41 @@ export class Rect {
     return this;
   }
 
+  /** @param {Geom.RectJson} _ */
+  static fromJson({ x, y, width, height }) {
+    return new Rect(x, y, width, height);
+  }
+
   /** 
-   * Returns `Rect2.zero` if no args.
-   * @param {Vect[] | Rect[]} items
+   * @param {Geom.VectJson[]} items
    */
-  static from(...items) {
+   static fromPoints(...items) {
     if (!items.length) {
       return Rect.zero;
-    } else if (items[0] instanceof Vect) {
+    } else {
       const vectors = /** @type {Vect[]} */ (items);
       const mx = Math.min(...vectors.map(({ x }) => x));
       const my = Math.min(...vectors.map(({ y }) => y));
       const Mx = Math.max(...vectors.map(({ x }) => x));
       const My = Math.max(...vectors.map(({ y }) => y));
       return new Rect(mx, my, Mx - mx, My - my);
+    }
+  }
+
+  /** 
+   * @param {Geom.RectJson[]} items
+   */
+   static fromRects(...items) {
+    if (!items.length) {
+      return Rect.zero;
     } else {
-      const rects = /** @type {Rect[]} */ (items);
+      const rects = /** @type {Geom.RectJson[]} */ (items);
       const mx = Math.min(...rects.map(({ x }) => x));
       const my = Math.min(...rects.map(({ y }) => y));
       const Mx = Math.max(...rects.map(({ x, width }) => x + width));
       const My = Math.max(...rects.map(({ y, height }) => y + height));
       return new Rect(mx, my, Mx - mx, My - my);
     }
-  }
-
-  /** @param {Geom.RectJson} _ */
-  static fromJson({ x, y, width, height }) {
-    return new Rect(x, y, width, height);
   }
 
   /**
@@ -214,6 +222,11 @@ export class Rect {
       Math.abs(this.cx - other.cx) * 2 <= this.width + other.width &&
       Math.abs(this.cy - other.cy) * 2 <= this.height + other.height
     );
+  }
+
+  /** @param {any} input */
+  static isRectJson(input) {
+    return input && typeof input.x === 'number' && typeof input.y === 'number' && typeof input.width === 'number' && typeof input.height === 'number';
   }
 
   /** @param {Geom.VectJson} _ */

@@ -125,7 +125,7 @@ export async function createLayout(def, lookup, triangleService) {
     x => singleToConnectorRect(x, rooms)
   );
 
-  const hullRect = Rect.from(...hullSym.hull.concat(doorPolys).map(x => x.rect));
+  const hullRect = Rect.fromRects(...hullSym.hull.concat(doorPolys).map(x => x.rect));
   doors.filter(x => x.tags.includes('hull')).forEach(door => {
     extendHullDoorTags(door, hullRect);
   });

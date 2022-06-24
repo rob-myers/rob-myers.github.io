@@ -225,7 +225,7 @@ declare namespace NPC {
   }
 
   export interface FullApi {
-    decor: Record<string, NpcsDecor>;
+    decor: Record<string, Decor>;
     events: import('rxjs').Subject<NPC.NPCsEvent>;
     npc: Record<string, NPC.NPC>;
     playerKey: null | string;
@@ -258,25 +258,28 @@ declare namespace NPC {
     async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;
     rootRef(el: null | HTMLDivElement): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
-    setDecor(e: NPC.NpcsDecor): void;
+    setDecor(decorKey: string, decor: null | NPC.Decor): void;
     trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): import('rxjs').Subscription;
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string } & GlobalNavPath): Promise<void>;
   }
 
-  type NpcsDecor = { key: string } & (
-    | { type: 'path'; path: Geom.Vect[]; aabb: Rect; }
-    | { type: 'circle'; center: Geom.Vect; radius: number; }
+  type Decor = { key: string } & (
+    | { type: 'path'; path: Geom.VectJson[]; }
+    | { type: 'circle'; center: Geom.VectJson; radius: number; }
   );
 
+  /** Using `action` as key avoids name-collision */
   type NpcAction = (
-    | { action: 'cancel'; npcKey: string }
+    | { action: 'add-decor'; } & Decor
+    | { action: 'cancel'; key: string }
     | { action: 'config'; debug?: boolean; interactRadius?: number }
-    | { action: 'get'; npcKey: string }
-    | { action: 'look-at'; npcKey: string; point: Geom.VectJson }
-    | { action: 'pause'; npcKey: string }
-    | { action: 'play'; npcKey: string }
-    | { action: 'set-player'; npcKey?: string }
+    | { action: 'get'; key: string }
+    | { action: 'look-at'; key: string; point: Geom.VectJson }
+    | { action: 'pause'; key: string }
+    | { action: 'play'; key: string }
+    | { action: 'remove-decor'; key: string; }
+    | { action: 'set-player'; key?: string }
   );
 
   type NpcActionKey = NpcAction['action'];
@@ -286,7 +289,7 @@ declare namespace NPC {
     | { key: 'started-walking'; npcKey: string; }
     | { key: 'stopped-walking'; npcKey: string; }
     | { key: 'way-point'; npcKey: string; meta: WayPointMeta; }
-    | { key: 'html'; className: string; html: string | null; point: Geom.VectJson; }
+    | { key: 'decor'; meta: Decor; }
   );
 
 }
