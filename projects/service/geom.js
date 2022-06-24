@@ -156,21 +156,22 @@ class geomServiceClass {
   }
 
   /**
+   * https://stackoverflow.com/a/1079478/2917822
    * https://github.com/davidfig/intersects/blob/master/line-circle.js
-   * @param {Geom.VectJson} u 
-   * @param {Geom.VectJson} v 
+   * @param {Geom.VectJson} a 
+   * @param {Geom.VectJson} b 
    * @param {Geom.VectJson} center 
    * @param {number} radius 
    */
-  lineSegIntersectsCircle(u, v, center, radius) {
-    const ab = tempVect.copy(center).sub(u);
-    const ac = tempVect2.copy(v).sub(u);
+  lineSegIntersectsCircle(a, b, center, radius) {
+    const ab = tempVect.copy(b).sub(a);
+    const ac = tempVect2.copy(center).sub(a);
     const ab2 = ab.dot(ab); // |ab|^2
     const acab = ac.dot(ab);
     let t = acab / ab2;
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
-    const h = tempVect2.set((ab.x * t + u.x) - center.x, (ab.y * t + u.y) - center.y);
+    const h = tempVect2.set((ab.x * t + a.x) - center.x, (ab.y * t + a.y) - center.y);
     return h.dot(h) <= radius * radius;
   }
 
