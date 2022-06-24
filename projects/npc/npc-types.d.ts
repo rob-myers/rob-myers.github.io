@@ -134,7 +134,7 @@ declare namespace NPC {
     gms: Geomorph.GeomorphDataInstance[];
     gmGraph: Graph.GmGraph;
     initOpen: { [gmId: number]: number[] }
-    npcsKey: string;
+    safeToCloseDoor: (gmId: number, doorId: number) => boolean;
     onLoad: (api: DoorsApi) => void;
   }
 

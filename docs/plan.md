@@ -59,8 +59,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - ✅ use css vars in `<NPCs>`
     - ✅ can test interact circle vs polygon (sans holes)
       - https://github.com/davidfig/intersects/blob/master/polygon-circle.js
+    - 🚧 can only open door if npc circle intersects door poly
   - ✅ move back to React from Preact to fix HMR
-  - 🚧 can only open door if npc circle intersects door poly
   - prevent get too close to closed doors
     - nav nodes have nextToDoorId with (early) `near-door` event
     - stop navigation when door closed at event

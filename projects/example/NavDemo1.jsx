@@ -81,6 +81,16 @@ export default function NavDemo1(props) {
             throw testNever(e.meta);
         }
       },
+      /**
+       * @param {number} gmId 
+       * @param {number} doorId 
+       */
+      safeToCloseDoor(gmId, doorId) {
+        const door = gms[gmId].doors[doorId];
+        const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
+        const closeNpcs = state.npcsApi.getNpcsIntersecting(convexPoly);
+        return closeNpcs.length === 0;
+      },
       /** @param {string} npcKey */
       setRoomByNpc(npcKey) {
         const npc = state.npcsApi.getNpc(npcKey);
@@ -264,7 +274,7 @@ export default function NavDemo1(props) {
         gms={gms}
         gmGraph={gmGraph}
         initOpen={state.initOpen}
-        npcsKey={npcsKey}
+        safeToCloseDoor={state.safeToCloseDoor}
         onLoad={api => { !state.doorsApi.ready && (state.doorsApi = api) && update(); }}
       />
 

@@ -4,7 +4,6 @@ import classNames from "classnames";
 import { Subject } from "rxjs";
 import { assertNonNull } from "../service/generic";
 import { fillPolygon } from "../service/dom";
-import { getCached } from "../service/query-client";
 import { cssName, doorWidth, hullDoorWidth } from "../service/const";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -51,8 +50,6 @@ export default function Doors(props) {
       return Object.keys(state.vis[gmIndex]).map(Number);
     },
     onToggleDoor(e) {
-      console.log('onToggleDoor')
-
       const gmIdAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
       const gmId = Number(gmIdAttr);
       const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
@@ -67,23 +64,17 @@ export default function Doors(props) {
        * TODO
        * - ✅ simplify state.open mutation
        * - ✅ fix hull door touch ui
-       * - player cannot open door if too far away (assuming toggled via UI)
-       * - provide props.haveCloseNpcs(gmId, doorId)
+       * - ✅ provide props.safeToCloseDoor(gmId, doorId)
+       * - 🚧 player cannot open door if too far away (assuming toggled via UI)
        */
 
-      // Cannot close door when some npc nearby
-      if (state.open[gmId][doorId]) {
-        const door = props.gms[gmId].doors[doorId];
-        const convexPoly = door.poly.clone().applyMatrix(props.gms[gmId].matrix);
-        const closeNpcs = /** @type {NPC.FullApi} */ (getCached(props.npcsKey)).getNpcsIntersecting(convexPoly);
-        if (closeNpcs.length) {
-          return;
-        }
+      if (state.open[gmId][doorId] && !props.safeToCloseDoor(gmId, doorId)) {
+        return; // Cannot close if npc nearby
       }
 
       state.open[gmId][doorId] = !state.open[gmId][doorId];
       const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
-      state.events.next({ key, gmIndex: gmId, index: doorId }); // <---
+      state.events.next({ key, gmIndex: gmId, index: doorId });
       // Hull doors have an adjacent door which must also be toggled
       const adjHull = hullDoorId !== -1 ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
       if (adjHull) {
