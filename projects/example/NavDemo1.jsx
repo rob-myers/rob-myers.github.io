@@ -97,7 +97,7 @@ export default function NavDemo1(props) {
         const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
         const intersects = geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
 
-        console.log({
+        console.log({// ISSUE
           center, radius, convexPoly, intersects
         })
 
@@ -472,7 +472,7 @@ function Debug(props) {
           const angle = Vect.from(normal).scale(-sign).angle;
           const arrowPos = poly.center.addScaledVector(normal, sign * debugDoorOffset);
           const idIconPos = poly.center.addScaledVector(normal, -sign * debugDoorOffset);
-          return <>
+          return [
             <div
               key={doorId}
               data-debug-door-index={doorId}
@@ -487,7 +487,8 @@ function Debug(props) {
                 // filter: 'invert(100%)',
               }}
             />
-            {props.showIds && (
+            ,
+            props.showIds && (
               <div
                 key={"icon" + doorId}
                 className="debug-door-id-icon"
@@ -495,8 +496,8 @@ function Debug(props) {
               >
                 {doorId}
               </div>
-            )}
-          </>;
+            )
+          ];
         })}
 
         {props.showIds && (
