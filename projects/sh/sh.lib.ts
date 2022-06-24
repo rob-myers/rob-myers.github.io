@@ -204,6 +204,9 @@ goOnce: `{
   nav $1 $(click 1) | walk $1
 }`,
 
+/**
+ * TODO remove
+ */
 html: `{
   run '({ args, api, home }) {
     const className = args[0]
@@ -261,11 +264,15 @@ nav: `{
   }' "$@"
 }`,
 
-/** npc {action} [{npcKey}] */
+/** npc {action} [{opts}] */
 npc: `{
   run '({ api, args, home }) {
     const npcs = api.getCached(home.NPCS_KEY)
-    yield await npcs.npcAct({ action: args[0], npcKey: args[1] })
+    const opts = api.parseJsArg(args[1])
+    yield await npcs.npcAct({
+      action: args[0],
+      ...typeof opts === "string" ? { npcKey: opts } : opts,
+    })
   }' "$@"
 }`,
 
