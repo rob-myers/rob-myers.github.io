@@ -65,8 +65,12 @@ export default function Doors(props) {
        * - ✅ simplify state.open mutation
        * - ✅ fix hull door touch ui
        * - ✅ provide props.safeToCloseDoor(gmId, doorId)
-       * - 🚧 player cannot open door if too far away (assuming toggled via UI)
+       * - 🚧 player cannot toggle door if too far away (assuming toggled via UI)
        */
+
+      if (!props.playerNearDoor(gmId, doorId)) {
+        return;
+      }
 
       if (state.open[gmId][doorId] && !props.safeToCloseDoor(gmId, doorId)) {
         return; // Cannot close if npc nearby
@@ -75,14 +79,13 @@ export default function Doors(props) {
       state.open[gmId][doorId] = !state.open[gmId][doorId];
       const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
       state.events.next({ key, gmIndex: gmId, index: doorId });
-      // Hull doors have an adjacent door which must also be toggled
+
+      // Unsealed hull doors have adjacent door, which must also be toggled
       const adjHull = hullDoorId !== -1 ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
       if (adjHull) {
         state.open[adjHull.adjGmId][adjHull.adjDoorId] = state.open[gmId][doorId];
         state.events.next({ key, gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId });
       }
-
-      state.drawInvisibleInCanvas(gmId);
     },
     setVisible(gmId, doorIds) {
       state.vis[gmId] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});

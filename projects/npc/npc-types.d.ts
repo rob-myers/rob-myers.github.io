@@ -134,6 +134,7 @@ declare namespace NPC {
     gms: Geomorph.GeomorphDataInstance[];
     gmGraph: Graph.GmGraph;
     initOpen: { [gmId: number]: number[] }
+    playerNearDoor: (gmId: number, doorId: number) => boolean;
     safeToCloseDoor: (gmId: number, doorId: number) => boolean;
     onLoad: (api: DoorsApi) => void;
   }
@@ -247,12 +248,15 @@ declare namespace NPC {
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
     getNpcGlobalNav(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }): GlobalNavPath;
+    getNpcInteractRadius(): number;
     getNpc(npcKey: string): NPC.NPC;
     getNpcsIntersecting(convexPoly: Geom.Poly): NPC.NPC[];
+    getPlayer(): null | NPC.NPC;
     getPanZoomApi(): PanZoom.CssApi;
     getPointTags(point: Geom.VectJson): string[];
     isPointLegal(p: Geom.VectJson): boolean;
     async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;
+    rootRef(el: null | HTMLDivElement): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
     trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): import('rxjs').Subscription;

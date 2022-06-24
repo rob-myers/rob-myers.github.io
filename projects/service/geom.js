@@ -26,7 +26,7 @@ class geomServiceClass {
     const vs = convexPoly.outline;
     const count = vs.length;
 
-    for (let i = 0; i < count - 1; i ++) {
+    for (let i = 0; i < count - 1; i++) {
       if (geom.lineSegIntersectsCircle(vs[i], vs[i + 1], center, radius)) {
         return true;
       }
@@ -163,14 +163,14 @@ class geomServiceClass {
    * @param {number} radius 
    */
   lineSegIntersectsCircle(u, v, center, radius) {
-    const ab = tempVect.set(center.x - u.x, center.y - u.y);
+    const ab = tempVect.copy(center).sub(u);
     const ac = tempVect2.copy(v).sub(u);
     const ab2 = ab.dot(ab); // |ab|^2
     const acab = ac.dot(ab);
     let t = acab / ab2;
     t = (t < 0) ? 0 : t;
     t = (t > 1) ? 1 : t;
-    const h = tempVect.set((ab.x * t + u.x) - center.x, (ab.y * t + u.y) - center.y);
+    const h = tempVect2.set((ab.x * t + u.x) - center.x, (ab.y * t + u.y) - center.y);
     return h.dot(h) <= radius * radius;
   }
 

@@ -3,6 +3,7 @@ import { css } from "goober";
 import { filter } from "rxjs/operators";
 
 import { assertNonNull, testNever } from "../service/generic";
+import { geom } from "../service/geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
@@ -80,6 +81,27 @@ export default function NavDemo1(props) {
           default:
             throw testNever(e.meta);
         }
+      },
+      /**
+       * @param {number} gmId 
+       * @param {number} doorId 
+       */
+      playerNearDoor(gmId, doorId) {
+        const player = state.npcsApi.getPlayer();
+        if (!player) { // If no player, we are "everywhere"
+          return true;
+        }
+        const center = player.getPosition();
+        const radius = state.npcsApi.getNpcInteractRadius();
+        const door = gms[gmId].doors[doorId];
+        const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
+        const intersects = geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
+
+        console.log({
+          center, radius, convexPoly, intersects
+        })
+
+        return true; // TODO
       },
       /**
        * @param {number} gmId 
@@ -204,8 +226,9 @@ export default function NavDemo1(props) {
       // grid
       onLoad={api => {state.panZoomApi = api; update(); }}
     >
-      {gms.map(gm =>
+      {gms.map((gm, gmId) =>
         <img
+          key={gmId}
           className="geomorph"
           src={geomorphPngPath(gm.key)}
           draggable={false}
@@ -251,17 +274,17 @@ export default function NavDemo1(props) {
         />
       )}
 
-      {gms.map((gm, gmIndex) =>
+      {gms.map((gm, gmId) =>
         <img
-          key={gmIndex}
+          key={gmId}
           className="geomorph-dark"
           src={geomorphPngPath(gm.key)}
           draggable={false}
           width={gm.pngRect.width}
           height={gm.pngRect.height}
           style={{
-            clipPath: state.clipPath[gmIndex],
-            WebkitClipPath: state.clipPath[gmIndex],
+            clipPath: state.clipPath[gmId],
+            WebkitClipPath: state.clipPath[gmId],
             left: gm.pngRect.x,
             top: gm.pngRect.y,
             transform: gm.transformStyle,
@@ -274,6 +297,7 @@ export default function NavDemo1(props) {
         gms={gms}
         gmGraph={gmGraph}
         initOpen={state.initOpen}
+        playerNearDoor={state.playerNearDoor}
         safeToCloseDoor={state.safeToCloseDoor}
         onLoad={api => { !state.doorsApi.ready && (state.doorsApi = api) && update(); }}
       />
@@ -385,9 +409,9 @@ function Debug(props) {
 
       }}
     >
-      {props.outlines && props.gms.map((gm, gmIndex) =>
+      {props.outlines && props.gms.map((gm, gmId) =>
         <div
-          key={gmIndex}
+          key={gmId}
           style={{
             position: 'absolute',
             left: gm.gridRect.x,
@@ -465,7 +489,7 @@ function Debug(props) {
             />
             {props.showIds && (
               <div
-                key="icon"
+                key={"icon" + doorId}
                 className="debug-door-id-icon"
                 style={{ left: idIconPos.x, top: idIconPos.y - 4 }}
               >

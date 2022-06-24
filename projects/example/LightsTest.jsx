@@ -139,6 +139,7 @@ export default function LightsTest(props) {
           gms={gms}
           gmGraph={gmGraph}
           onLoad={api => state.doorsApi = api}
+          playerNearDoor={() => true}
           safeToCloseDoor={() => true}
           initOpen={{}}
         />

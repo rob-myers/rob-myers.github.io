@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { css } from "goober";
 import { merge, of, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
-import { testNever } from "../service/generic";
+import { assertNonNull, testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
@@ -150,6 +150,9 @@ export default function NPCs(props) {
       }
       return result;
     },
+    getNpcInteractRadius() {
+      return parseFloat(assertNonNull(state.rootEl.style.getPropertyValue(cssName.npcInteractRadius)));
+    },
     getNpc(npcKey) {
       const npc = state.npc[npcKey];
       if (!npc) {
@@ -163,6 +166,9 @@ export default function NPCs(props) {
     },
     getPanZoomApi() {
       return props.panZoomApi;
+    },
+    getPlayer() {
+      return state.playerKey ? state.getNpc(state.playerKey) : null;
     },
     getPointTags(point) {
       const tags = /** @type {string[]} */ ([]);
@@ -224,6 +230,13 @@ export default function NPCs(props) {
         return 'completed';
       } catch (e) {
         return 'cancelled';
+      }
+    },
+    rootRef(el) {
+      if (el) {
+        state.rootEl = el;
+        el.style.setProperty(cssName.npcInteractRadius, `${defaultNpcInteractRadius}px`);
+        el.style.setProperty(cssName.npcDebugDisplay, 'none');
       }
     },
     spawn(e) {
@@ -345,7 +358,7 @@ export default function NPCs(props) {
   return (
     <div
       className={classNames('npcs', rootCss)}
-      ref={(el) => el && (state.rootEl = el)}
+      ref={state.rootRef}
     >
 
       <Debug
@@ -364,9 +377,6 @@ export default function NPCs(props) {
 }
 
 const rootCss = css`
-  --npc-interact-radius: ${defaultNpcInteractRadius}px;
-  --npc-debug-display: none;
-
   position: absolute;
   canvas {
     position: absolute;
