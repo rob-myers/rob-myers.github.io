@@ -8,7 +8,7 @@ import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
 import { isGlobalNavPath, isLocalNavPath } from "../service/npc";
-import { cssName } from "../service/css-names";
+import { cssName } from "../service/const";
 import { Poly, Rect, Vect } from "../geom";
 import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor } from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";

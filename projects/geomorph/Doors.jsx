@@ -5,7 +5,7 @@ import { Subject } from "rxjs";
 import { assertNonNull } from "../service/generic";
 import { fillPolygon } from "../service/dom";
 import { getCached } from "../service/query-client";
-import { cssName } from "../service/css-names";
+import { cssName, doorWidth, hullDoorWidth } from "../service/const";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 
@@ -66,7 +66,7 @@ export default function Doors(props) {
       /**
        * TODO
        * - ✅ simplify state.open mutation
-       * - fix hull door touch ui
+       * - ✅ fix hull door touch ui
        * - player cannot open door if too far away (assuming toggled via UI)
        * - provide props.haveCloseNpcs(gmId, doorId)
        */
@@ -128,9 +128,10 @@ export default function Doors(props) {
             state.vis[gmId][i] &&
               <div
                 key={i}
-                className={classNames("door", {
-                  open: state.open[gmId][i],
-                  iris: door.tags.includes('iris'),
+                className={classNames(cssName.door, {
+                  [cssName.hull]: door.tags.includes('hull'),
+                  [cssName.iris]: door.tags.includes('iris'),
+                  [cssName.open]: state.open[gmId][i],
                 })}
                 style={{
                   left: door.baseRect.x,
@@ -142,7 +143,7 @@ export default function Doors(props) {
                 }}
               >
                 <div
-                  className="door-touch-ui"
+                  className={cssName.doorTouchUi}
                   data-gm-id={gmId}
                   data-door-id={i}
                   data-hull-door-id={gm.hullDoors.indexOf(door)}
@@ -183,12 +184,16 @@ const rootCss = css`
 
       width: calc(100% + 2 * var(--npc-door-touch-radius));
       min-width: calc( 2 * var(--npc-door-touch-radius) );
-      top: calc(-1 * var(--npc-door-touch-radius) + 2px ); /** 5px for hull */
+      top: calc(-1 * var(--npc-door-touch-radius) + ${ doorWidth / 2 }px ); /** 5px for hull */
       left: calc(-1 * var(--npc-door-touch-radius));
       height: calc(2 * var(--npc-door-touch-radius));
 
       background: rgba(100, 0, 0, 0.1);
       border-radius: var(--npc-door-touch-radius);
+    }
+
+    &.hull .door-touch-ui {
+      top: calc(-1 * var(--npc-door-touch-radius) + ${ hullDoorWidth / 2 }px );
     }
 
     &:not(.iris) {

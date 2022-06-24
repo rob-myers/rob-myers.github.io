@@ -4,11 +4,11 @@ import { equals, isPlainObject } from '../service/generic';
 /**
  * This hook is a mixture between React.useState and React.useRef.
  * - It outputs an object `state` which is always the same object, but may be mutated.
- * - Its `initializer` is typically properties and an API for mutating it.
+ * - Its `initializer` typically consists of properties and an API for mutating it.
  * - On HMR it will update these properties "suitably", relative to options.
  * 
  * @template State 
- * @param {() => State} initializer Should be side-effect free.
+ * @param {() => State} initializer
  * @param {{ overwrite?: TypeUtil.KeyedTrue<State>; deps?: any[]; deeper?: (keyof State)[] }} [opts]
  */
 export default function useStateRef(

@@ -6,6 +6,7 @@ import { geom } from './geom';
 import { filterSingles, labelMeta, singlesToPolys } from '../geomorph/geomorph.model';
 import { RoomGraph } from '../graph/room-graph';
 import { Builder } from '../pathfinding/Builder';
+import { hullOutset, obstacleOutset, wallOutset } from './const';
 import { error, warn } from './log';
 
 /**
@@ -639,12 +640,3 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
     roomNodeIds,
   };
 }
-
-/**
- * Removing this outset breaks navigation i.e. walls of geomorph no longer connected.
- */
-const hullOutset = 2;
-
-const wallOutset = 15;
-
-const obstacleOutset = 10;
