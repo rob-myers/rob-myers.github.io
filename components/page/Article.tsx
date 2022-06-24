@@ -449,13 +449,13 @@ const articleComponents = (
       </h2>
       <time dateTime={meta.dateTime}>
         {meta.dateText.split(' ').map(
-          (word) => <span>
-            {Array.from(word).map(letter => <span>{letter}</span>)}
+          (word, i) => <span key={i}>
+            {Array.from(word).map((letter, j) => <span key={`${i}-${j}`}>{letter}</span>)}
           </span>
         )}
       </time>
       <div className="tags" title="tags">
-        {meta.tags.map(tag => <span>{tag}</span>)}
+        {meta.tags.map((tag, i) => <span key={i}>{tag}</span>)}
       </div>
     </>;
   },

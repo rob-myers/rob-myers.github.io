@@ -21,7 +21,7 @@ export default function Portals() {
   const [, setCount] = React.useState(0);
   React.useLayoutEffect(() => {
     items.forEach(async item => {
-      if (item.meta.key === 'component' && !item.component) {
+      if (item.meta.type === 'component' && !item.component) {
         const func = await getComponent(item.meta.filepath);
         item.component = func;
         setCount(x => ++x);
@@ -32,7 +32,7 @@ export default function Portals() {
   return <>
     {items.map((state) => {
       const { key, meta, portal } = state;
-      switch (meta.key) {
+      switch (meta.type) {
         case 'code':
           return (
             <portals.InPortal key={key} node={portal}>

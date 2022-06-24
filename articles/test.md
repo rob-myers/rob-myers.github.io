@@ -8,16 +8,17 @@
   show="2"
   tabs="[
     // { key: 'component', filepath: 'example/GeomorphEdit' },
-    { key: 'component', filepath: 'example/NavDemo1' },
-    // { key: 'component', filepath: 'example/LightsTest' },
+    { type: 'component', filepath: 'example/NavDemo1' },
+    // { key: 'component', filepath: 'example/LightsTest' }, // ISSUE 🚧
     // { key: 'component', filepath: 'example/Css3dForeignObject#301' },
     // { key: 'component', filepath: 'example/Pyramid3dDemo' },
-    // { key: 'component', filepath: 'example/SvgStringPull' },
     // { key: 'component', filepath: 'example/TriangleDev#301' },
-    { key: 'terminal', filepath: 'test', env: { NPCS_KEY: 'npcs-demo-1', PROFILE: 'profile-1-a' } },
+    { type: 'terminal', filepath: 'test', env: { NPCS_KEY: 'npcs-demo-1', PROFILE: 'profile-1-a' } },
+    // { key: 'component', filepath: 'example/SvgStringPull' },
     // { key: 'terminal', filepath: 'other', env: { NPCS_KEY: 'npcs-demo-1', PROFILE: 'profile-1' } },
     // { key: 'component', filepath: 'example/SvgDoorsDemo#101' },
     // { key: 'component', filepath: 'example/SvgNavGraph#301' },
+    // { key: 'component', filepath: 'example/SvgNavGraph#101' },
     // { key: 'component', filepath: 'example/SvgPanZoomDemo' },
     // { key: 'component', filepath: 'example/SvgVisibilityDemo#301' },
   ]"
