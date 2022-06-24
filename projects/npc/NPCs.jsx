@@ -7,7 +7,7 @@ import { assertNonNull, testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
-import { isGlobalNavPath, isLocalNavPath } from "../service/npc";
+import { isGlobalNavPath } from "../service/npc";
 import { cssName } from "../service/const";
 import { Poly, Rect, Vect } from "../geom";
 import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor } from "./create-npc";
@@ -24,9 +24,9 @@ export default function NPCs(props) {
   const nav = useGeomorphsNav(props.gmGraph, props.disabled);
 
   const state = useStateRef(/** @type {() => NPC.FullApi} */ () => ({
-    npc: {},
-    path: {}, 
+    decor: {},
     events: new Subject,
+    npc: {},
     playerKey: /** @type {null | string} */ (null),
     ready: true,
     rootEl: /** @type {HTMLDivElement} */ ({}),
@@ -146,7 +146,7 @@ export default function NPCs(props) {
       }
       const result = state.getGlobalNavPath(npc.getPosition(), e.point);
       if (e.debug) {
-        state.toggleDebugPath({ pathKey: e.npcKey, points: result.fullPath })
+        state.setDecor({ key: e.npcKey, type: 'path', path: result.fullPath, aabb: Rect.from(...result.fullPath).outset(10) });
       }
       return result;
     },
@@ -239,6 +239,10 @@ export default function NPCs(props) {
         el.style.setProperty(cssName.npcDebugDisplay, 'none');
       }
     },
+    setDecor(e) {
+      state.decor[e.key] = e;
+      update();
+    },
     spawn(e) {
       if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
         throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
@@ -252,15 +256,6 @@ export default function NPCs(props) {
         panZoomApi: props.panZoomApi,
         npcs: state,
       });
-      update();
-    },
-    toggleDebugPath(e) {
-      if (e.points) {
-        const path = e.points.map(Vect.from);
-        state.path[e.pathKey] = { path, aabb: Rect.from(...path).outset(10) };
-      } else {
-        delete state.path[e.pathKey];
-      }
       update();
     },
     /**
@@ -361,13 +356,12 @@ export default function NPCs(props) {
       ref={state.rootRef}
     >
 
-      <Debug
-        debugPath={state.path}
-      />
+      {Object.entries(state.decor).map(([key, item]) =>
+        <DecorItem key={key} item={item} />
+      )}
 
       {Object.values(state.npc).map(npc => (
-        <NPC
-          // Respawn remounts
+        <NPC // Respawn remounts
           key={`${npc.key}@${npc.epochMs}`}
           npc={npc}
         />
@@ -396,26 +390,26 @@ const rootCss = css`
   }
 `;
 
-/** @param {Props} props  */
-function Debug(props) {
-  return <>
-    {Object.entries(props.debugPath).map(([key, {path, aabb}]) => (
+/** @param {{ item: NPC.NpcsDecor }} props  */
+function DecorItem({ item }) {
+  if (item.type === 'path') {
+    return (
       <svg
-        key={key}
         className="debug-path"
-        width={aabb.width}
-        height={aabb.height}
-        style={{ left: aabb.x, top: aabb.y }}
+        width={item.aabb.width}
+        height={item.aabb.height}
+        style={{ left: item.aabb.x, top: item.aabb.y }}
       >
-        <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
-          <polyline fill="none" stroke="#88f" strokeDasharray="2 2" strokeWidth={1} points={`${path}`} />
-          {path.map(p => (
-            <circle fill="none" stroke="#ff444488" r={2} cx={p.x} cy={p.y} />
+        <g style={{ transform: `translate(${-item.aabb.x}px, ${-item.aabb.y}px)` }}>
+          <polyline fill="none" stroke="#88f" strokeDasharray="2 2" strokeWidth={1} points={`${item.path}`} />
+          {item.path.map((p, i) => (
+            <circle key={i} fill="none" stroke="#ff444488" r={2} cx={p.x} cy={p.y} />
           ))}
         </g>
       </svg>
-    ))}  
-  </>
+    );
+  }
+  return null;
 }
 
 /**

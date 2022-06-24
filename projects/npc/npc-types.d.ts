@@ -225,9 +225,9 @@ declare namespace NPC {
   }
 
   export interface FullApi {
-    npc: Record<string, NPC.NPC>;
-    path: Record<string, { path: Geom.Vect[]; aabb: Rect; }>;
+    decor: Record<string, NpcsDecor>;
     events: import('rxjs').Subject<NPC.NPCsEvent>;
+    npc: Record<string, NPC.NPC>;
     playerKey: null | string;
     ready: boolean;
     rootEl: HTMLElement;
@@ -258,11 +258,16 @@ declare namespace NPC {
     async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;
     rootRef(el: null | HTMLDivElement): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
-    toggleDebugPath(e: { pathKey: string; points?: Geom.VectJson[] }): void;
+    setDecor(e: NPC.NpcsDecor): void;
     trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): import('rxjs').Subscription;
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string } & GlobalNavPath): Promise<void>;
   }
+
+  type NpcsDecor = { key: string } & (
+    | { type: 'path'; path: Geom.Vect[]; aabb: Rect; }
+    | { type: 'circle'; center: Geom.Vect; radius: number; }
+  );
 
   type NpcAction = (
     | { action: 'cancel'; npcKey: string }
