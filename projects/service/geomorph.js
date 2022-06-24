@@ -87,22 +87,23 @@ export async function createLayout(def, lookup, triangleService) {
   const windowPolys = singlesToPolys(groups.singles, 'window');
 
   // Labels
+  // TODO remove measurements?
   const measurer = createCanvas(0, 0).getContext('2d');
   measurer.font = labelMeta.font;
   /** @type {Geomorph.LayoutLabel[]} */
   const labels = filterSingles(groups.singles, 'label')
     .map(({ poly, tags }) => {
-      const center = poly.rect.center.json;
+      const center = poly.rect.center.precision(4).json;
       const text = tags.filter(x => x !== 'label').join(' ');
       const noTail = !text.match(/[gjpqy]/);
       const dim = { x: measurer.measureText(text).width, y: noTail ? labelMeta.noTailPx : labelMeta.sizePx };
-      const rect = { x: center.x - 0.5 * dim.x, y: center.y - 0.5 * dim.y, width: dim.x, height: dim.y };
+      const rect = Rect.fromJson({ x: center.x - 0.5 * dim.x, y: center.y - 0.5 * dim.y, width: dim.x, height: dim.y }).precision(4).json;
       const padded = (new Rect).copy(rect).outset(labelMeta.padX, labelMeta.padY).json;
       return { text, center, rect, padded };
     });
 
   // Rooms (induced by all walls)
-  const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys));
+  const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys)).map(x => x.precision(4));
   allWalls.sort((a, b) => a.rect.area > b.rect.area ? -1 : 1); // Descending by area
   const rooms = allWalls[0].holes.map(ring => new Poly(ring));
   // Finally, internal pillars are converted into holes inside room
@@ -182,9 +183,9 @@ export async function createLayout(def, lookup, triangleService) {
    * Extend navDecomp with 2 triangles for each door
    * - We assume well-formedness i.e. exactly 2 edges already present
    *   in the triangulation. If not we warn and skip the door.
+   * - We do not ensure the sign of these triangles (e.g. clockwise)
    */
   const tempVect = new Vect;
-  // const tempPoly = new Poly([new Vect, new Vect, new Vect]);
   for (const [i, { outline }] of navDoorPolys.entries()) {
     if (outline.length !== 4) {
       error(`door ${i} nav skipped: expected 4 vertices but saw ${outline.length}`);
@@ -204,11 +205,6 @@ export async function createLayout(def, lookup, triangleService) {
     const triB = /** @type {[number, number, number]} */ (
       [ids[3]].concat(idDists.slice(0, 2).map(x => x[0]))
     );
-    // triA.forEach((id, j) => tempPoly.outline[j].copy(navDecomp.vs[id]));
-    // if (tempPoly.anticlockwise()) triA.reverse();
-    // triB.forEach((id, j) => tempPoly.outline[j].copy(navDecomp.vs[id]));
-    // if (tempPoly.anticlockwise()) triB.reverse();
-    // console.log(ids.length, { ids, triA, triB });
     navDecomp.tris.push(triA, triB);
   }
 
@@ -298,7 +294,7 @@ function singleToConnectorRect(single, rooms) {
     angle,
     baseRect: baseRect.precision(3),
     poly,
-    rect: poly.rect,
+    rect: poly.rect.precision(4),
     tags,
     seg: [u.precision(3), v.precision(3)],
     normal: normal.precision(3),
@@ -418,9 +414,9 @@ export function parseStarshipSymbol(symbolName, svgContents, lastModified) {
   return {
     key: symbolName,
     pngRect,
-    hull: Poly.union(hull),
-    obstacles: Poly.union(obstacles),
-    walls: Poly.union(walls),
+    hull: Poly.union(hull).map(x => x.precision(4)),
+    obstacles: Poly.union(obstacles).map(x => x.precision(4)),
+    walls: Poly.union(walls).map(x => x.precision(4)),
     singles: singles.map((/** @type {*} */ poly) => ({ tags: poly._ownTags, poly })),
     lastModified,
   };
