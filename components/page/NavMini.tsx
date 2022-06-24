@@ -20,8 +20,8 @@ export default function NavMini() {
           </Link>
         </li>
         <li>
-          <Link href={getArticleHref(meta)}>
-            <a className="primary">{meta.index}</a>
+          <Link href={getArticleHref(meta)} className="primary">
+            {meta.index}
           </Link>
         </li>
         <li>

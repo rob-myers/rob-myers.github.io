@@ -39,6 +39,6 @@ public/svg
   enabled="false"
   height="400"
   tabs="[
-    { key: 'component', filepath: 'example/GeomorphEdit' },
+    { type: 'component', filepath: 'example/GeomorphEdit' },
   ]"
 ></div>

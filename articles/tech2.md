@@ -51,8 +51,8 @@ For example, the grey triangles below collectively induce the red navgraph.
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'example/SvgNavGraph#301' },
-     { key: 'component', filepath: 'example/SvgNavGraph#302' },
+     { type: 'component', filepath: 'example/SvgNavGraph#301' },
+     { type: 'component', filepath: 'example/SvgNavGraph#302' },
    ]"
 ></div>
 
@@ -98,7 +98,7 @@ Drag the nodes below to see _string-pulling_ in action.
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'example/SvgStringPull' },
+     { type: 'component', filepath: 'example/SvgStringPull' },
    ]"
 ></div>
 
@@ -181,7 +181,7 @@ __TODO__
   height="400"
   enabled="false"
   tabs="[
-     { key: 'component', filepath: 'example/SvgDoorsDemo#101' },
-     { key: 'component', filepath: 'example/SvgDoorsDemo#301' },
+     { type: 'component', filepath: 'example/SvgDoorsDemo#101' },
+     { type: 'component', filepath: 'example/SvgDoorsDemo#301' },
    ]"
 ></div>

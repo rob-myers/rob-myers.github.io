@@ -444,7 +444,7 @@ const articleComponents = (
     return <>
       <h2>
         <Link href={`#${articleKey}`}>
-          <a>{children}</a>
+          {children}
         </Link>
       </h2>
       <time dateTime={meta.dateTime}>
@@ -471,7 +471,7 @@ const articleComponents = (
       <h3>
         <span id={id} className="anchor" />
         <Link href={`#${id}`}>
-          <a>{children}</a>
+          {children}
         </Link>
       </h3>
     );

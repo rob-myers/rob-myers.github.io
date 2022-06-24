@@ -150,8 +150,8 @@ export function Grid(props) {
   const uid = React.useMemo(() => gridPatternCount++, []);
 
   return <>
-    {[10, 60].flatMap(dim => [
-      <defs>
+    {[10, 60].flatMap((dim, i) => [
+      <defs key={dim + i}>
         <pattern
           id={`pattern-grid-${dim}x${dim}--${uid}`}
           width={dim}
@@ -167,6 +167,7 @@ export function Grid(props) {
         </pattern>
       </defs>,
       <rect
+        key={dim + i + 1}
         className="grid"
         x={props.bounds.x}
         y={props.bounds.y}
