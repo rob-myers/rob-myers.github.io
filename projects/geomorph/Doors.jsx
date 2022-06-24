@@ -19,9 +19,9 @@ export default function Doors(props) {
   const state = useStateRef(/** @type {() => NPC.DoorsApi} */ () => ({
     canvas: [],
     events: new Subject,
-    open: props.gms
-      .map((_, gmId) => (props.initOpen[gmId] || [])
-      .reduce((agg, doorId) => ({ ...agg, [doorId]: true }), {})),
+    open: props.gms.map((gm, gmId) =>
+      gm.doors.map((_, doorId) => props.initOpen[gmId]?.includes(doorId) || false)
+    ),
     ready: true,
     rootEl: /** @type {HTMLDivElement} */ ({}),
     vis: props.gms.map(_ => ({})),
@@ -38,22 +38,21 @@ export default function Doors(props) {
       ctxt.fillStyle = '#555';
 
       gm.doors.forEach(({ poly }, i) => {
-        if (!state.vis[gmId][i]) {
-          fillPolygon(ctxt, [poly]);
-        }
+        if (!state.vis[gmId][i]) fillPolygon(ctxt, [poly]);
       });
     },
-    getClosed(gmIndex) {
-      const open = state.open[gmIndex];
-      return props.gms[gmIndex].doors.map((_, i) => i).filter(i => !open[i]);
+    getClosed(gmId) {
+      return state.open[gmId].flatMap((open, doorId) => open ? [] : doorId);
     },
-    getOpen(gmIndex) {
-      return Object.keys(state.open[gmIndex]).map(Number);
+    getOpen(gmId) {
+      return state.open[gmId].flatMap((open, doorId) => open ? doorId : []);
     },
     getVisible(gmIndex) {
       return Object.keys(state.vis[gmIndex]).map(Number);
     },
     onToggleDoor(e) {
+      console.log('onToggleDoor')
+
       const gmIdAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
       const gmId = Number(gmIdAttr);
       const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
@@ -64,8 +63,15 @@ export default function Doors(props) {
         return; // Not a door, not visible, or sealed permanently
       }
 
+      /**
+       * TODO
+       * - ✅ simplify state.open mutation
+       * - fix hull door touch ui
+       * - player cannot open door if too far away (assuming toggled via UI)
+       * - provide props.haveCloseNpcs(gmId, doorId)
+       */
+
       // Cannot close door when some npc nearby
-      // TODO provide props.haveCloseNpcs(gmId, doorId)
       if (state.open[gmId][doorId]) {
         const door = props.gms[gmId].doors[doorId];
         const convexPoly = door.poly.clone().applyMatrix(props.gms[gmId].matrix);
@@ -75,19 +81,15 @@ export default function Doors(props) {
         }
       }
 
+      state.open[gmId][doorId] = !state.open[gmId][doorId];
+      const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
+      state.events.next({ key, gmIndex: gmId, index: doorId }); // <---
       // Hull doors have an adjacent door which must also be toggled
       const adjHull = hullDoorId !== -1 ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
-
-      if (state.open[gmId][doorId]) {
-        delete state.open[gmId][doorId]
-        adjHull && (delete state.open[adjHull.adjGmId][adjHull.adjDoorId]);
-      } else {
-        state.open[gmId][doorId] = true;
-        adjHull && (state.open[adjHull.adjGmId][adjHull.adjDoorId] = true);
+      if (adjHull) {
+        state.open[adjHull.adjGmId][adjHull.adjDoorId] = state.open[gmId][doorId];
+        state.events.next({ key, gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId });
       }
-      const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
-      state.events.next({ key, gmIndex: gmId, index: doorId });
-      adjHull && state.events.next({ key, gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId });
 
       state.drawInvisibleInCanvas(gmId);
     },
@@ -103,9 +105,11 @@ export default function Doors(props) {
   }, []);
 
   React.useEffect(() => {
-    props.gms.forEach((_, gmIndex) => state.drawInvisibleInCanvas(gmIndex));
-    state.rootEl.addEventListener('pointerup', state.onToggleDoor);
-    return () => void state.rootEl.removeEventListener('pointerup', state.onToggleDoor);
+    props.gms.forEach((_, gmId) => state.drawInvisibleInCanvas(gmId));
+    /** @param {PointerEvent} e */
+    const cb = (e) => state.onToggleDoor(e);
+    state.rootEl.addEventListener('pointerup', cb);
+    return () => void state.rootEl.removeEventListener('pointerup', cb);
   }, [props.gms]);
   
   return (
@@ -177,9 +181,9 @@ const rootCss = css`
       pointer-events: all;
       position: absolute;
 
-      width: calc(100% + var(--npc-door-touch-radius));
+      width: calc(100% + 2 * var(--npc-door-touch-radius));
       min-width: calc( 2 * var(--npc-door-touch-radius) );
-      top: calc(-1 * var(--npc-door-touch-radius));
+      top: calc(-1 * var(--npc-door-touch-radius) + 2px ); /** 5px for hull */
       left: calc(-1 * var(--npc-door-touch-radius));
       height: calc(2 * var(--npc-door-touch-radius));
 

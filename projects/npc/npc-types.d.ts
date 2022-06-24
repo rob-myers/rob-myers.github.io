@@ -140,7 +140,8 @@ declare namespace NPC {
 
   export interface DoorsApi {
     canvas: HTMLCanvasElement[];
-    open: { [doorId: number]: true }[];
+    /** open[gmId][doorId] */
+    open: boolean[][];
     vis: { [doorId: number]: true }[];
     rootEl: HTMLDivElement;
     onToggleDoor(e: PointerEvent): void;

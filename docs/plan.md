@@ -57,9 +57,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - ✅ `npc debug` shows npc circular outlines 
     - ✅ can `npc config '{ interactRadius: 20 }'`
     - ✅ use css vars in `<NPCs>`
-    - 🚧 can test interact circle vs polygon (sans holes)
+    - ✅ can test interact circle vs polygon (sans holes)
       - https://github.com/davidfig/intersects/blob/master/polygon-circle.js
-    - can only open door if npc circle intersects door poly
+  - ✅ move back to React from Preact to fix HMR
+  - 🚧 can only open door if npc circle intersects door poly
   - prevent get too close to closed doors
     - nav nodes have nextToDoorId with (early) `near-door` event
     - stop navigation when door closed at event
@@ -118,6 +119,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
+- make minimal repro of Preact HMR issue
 - migrate to free icons
 - BUG sometimes adjacent light is inside hull door, rather than outside
 - mobile-friendly command links (session must be open)

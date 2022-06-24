@@ -71,8 +71,8 @@ export default function NavDemo1(props) {
             }
             break;
           case 'pre-exit-room':
-            // If upcoming door closed stop player
-            if (!(e.meta.doorId in state.doorsApi.open[e.meta.gmId])) {
+            // If upcoming door is closed, stop player
+            if (!state.doorsApi.open[e.meta.gmId][e.meta.doorId]) {
               const player = state.npcsApi.getNpc(e.npcKey);
               await player.cancel();
             }
@@ -148,6 +148,7 @@ export default function NavDemo1(props) {
       state.updateAll();
 
       // Update Door graphics on change
+      // Saw HMR issue here when edit Doors and toggle door
       const doorsSub = state.doorsApi.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
         .subscribe(() => state.updateAll());
