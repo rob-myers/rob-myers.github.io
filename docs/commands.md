@@ -131,15 +131,7 @@ click | map 'x => ({ npcKey: "andros", point: x })' | nav
 
 ```sh
 
-html foo \
-	'<div
-		style="line-height: 1.4;
-		font-size: 10px;
-		background: white;
-		padding: 8px;">
-		Abandon all hope!
-	</div>' \
-	"$( click 1)"
-
+npc add-decor '{ key: "foo", type: "circle", center: {"x":207.83,"y":384.43}, radius: 30 }'
+npc remove-decor foo
 
 ```

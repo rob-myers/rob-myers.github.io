@@ -93,13 +93,7 @@ export default function NavDemo1(props) {
         const radius = state.npcsApi.getNpcInteractRadius();
         const door = gms[gmId].doors[doorId];
         const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
-        const intersects = geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
-
-        console.log({// ISSUE
-          center, radius, convexPoly, intersects
-        })
-
-        return true; // TODO
+        return geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
       },
       /**
        * @param {number} gmId 

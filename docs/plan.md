@@ -53,13 +53,16 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - reduce door size for each door
     - ❌ cannot reduce size of hull doors due to `hull` outset
     - would not help for hull doors anyway
-  - 🚧 can only open nearby doors (modulo css var)
+  - ✅ can only open nearby doors (modulo css var)
     - ✅ `npc debug` shows npc circular outlines 
     - ✅ can `npc config '{ interactRadius: 20 }'`
     - ✅ use css vars in `<NPCs>`
     - ✅ can test interact circle vs polygon (sans holes)
       - https://github.com/davidfig/intersects/blob/master/polygon-circle.js
-    - 🚧 can only open door if npc circle intersects door poly
+    - ✅ can only open door if npc circle intersects door poly
+  - ✅ can show circle via decor
+    - `npc add-decor '{ key: "foo", type: "circle", center: {"x":207.83,"y":384.43}, radius: 30 }'`
+    - `npc remove-decor foo`
   - ✅ move back to React from Preact to fix HMR
   - prevent get too close to closed doors
     - nav nodes have nextToDoorId with (early) `near-door` event
