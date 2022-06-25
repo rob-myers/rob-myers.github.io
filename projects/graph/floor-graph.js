@@ -35,10 +35,15 @@ export class floorGraphClass extends BaseGraph {
      * Compute `this.nodeToMeta` via `gm.navZone.{doorNodeIds,roomNodeIds}`.
      * Observe that a nodeId can e.g. point to a node in 2nd group.
      */
-    const preNavNodes = gm.navZone.groups.flatMap(x => x);
-    this.nodeToMeta = preNavNodes.map((_) => ({ doorId: -1, roomId: -1 }));
+    const navNodes = gm.navZone.groups.flatMap(x => x);
+    this.nodeToMeta = navNodes.map((_) => ({ doorId: -1, roomId: -1 }));
     gm.navZone.doorNodeIds.forEach((nodeIds, doorId) => {
-      nodeIds.forEach(nodeId => this.nodeToMeta[nodeId].doorId = doorId);
+      nodeIds.forEach(nodeId => {
+        this.nodeToMeta[nodeId].doorId = doorId
+        // Actually includes nodes ≤ 2 steps away from one with a doorId
+        const twoStepsAwayIds = navNodes[nodeId].neighbours.flatMap(otherId => navNodes[otherId].neighbours);
+        twoStepsAwayIds.forEach(nborId => this.nodeToMeta[nborId].nearDoorId = doorId);
+      });
     });
     gm.navZone.roomNodeIds.forEach((nodeIds, roomId) => {
       nodeIds.forEach(nodeId => this.nodeToMeta[nodeId].roomId = roomId);
@@ -81,7 +86,7 @@ export class floorGraphClass extends BaseGraph {
         }
       }
       return agg;
-    }, /** @type {({ nodes: Graph.FloorGraphNode[] } & ({ key: 'door'; doorId: number } | { key: 'room'; roomId: number }))[]} */ ([]));
+    }, /** @type {NPC.NavPartition} */ ([]));
 
     const fullPath = [src.clone()];
     const navMetas = /** @type {NPC.BaseLocalNavPath['navMetas']} */ ([]);
@@ -148,24 +153,44 @@ export class floorGraphClass extends BaseGraph {
           });
         }
 
-        // Can we simply walk straight through the room?
         const roomNavPoly = this.gm.lazy.roomNavPoly[roomId];
         const directPath = !geom.lineSegCrossesPolygon(pathSrc, pathDst, roomNavPoly);
         if (directPath) {
+          /**
+           * We can simply walk straight through the room
+           */
           fullPath.push(pathDst.clone());
-          continue;
+        } else {
+          /**
+           * Otherwise, use "simple stupid funnel algorithm"
+           */
+          const stringPull = /** @type {Geom.VectJson[]} */ (
+            this.computeStringPull(pathSrc, pathDst, item.nodes).path
+          ).map(Vect.from);
+          // We remove adjacent repetitions which can occur
+          fullPath.push(...geom.removePathReps(stringPull.slice(1)));
         }
 
-        // Otherwise, use "simple stupid funnel algorithm"
-        const stringPull = /** @type {Geom.VectJson[]} */ (
-          this.computeStringPull(pathSrc, pathDst, item.nodes).path
-        ).map(Vect.from);
-        // We remove adjacent repetitions which can occur
-        fullPath.push(...geom.removePathReps(stringPull.slice(1)));
+        if (!partition[i + 1]) {// Finish in room
+          const finalMeta = this.nodeToMeta[item.nodes[item.nodes.length - 1].index];
+          if (finalMeta.nearDoorId !== undefined && finalMeta.nearDoorId >= 0) {
+            const door = this.gm.doors[finalMeta.nearDoorId];
+            navMetas.push({
+              key: 'pre-near-door',
+              index: fullPath.length - 1,
+              doorId: finalMeta.nearDoorId,
+              hullDoorId: this.gm.hullDoors.indexOf(door),
+              currentRoomId: roomId,
+              otherRoomId: door.roomIds[1 - door.roomIds.findIndex(x => x === roomId)],
+            });
+          }
+        }
+
       }
     }
 
-    console.log('findPath', {nodePath, nodeMetas: nodePath.map(x => this.nodeToMeta[x.index]) , partition, fullPath, navMetas}); // DEBUG 🚧
+    // DEBUG 🚧
+    console.log('findPath', {nodePath, nodeMetas: nodePath.map(x => this.nodeToMeta[x.index]) , partition, fullPath, navMetas});
 
     return {
       fullPath, // May contain adjacent dups

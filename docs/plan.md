@@ -42,32 +42,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - Show GitHub comments from the-last-redoubt issues
   - Can redirect to GitHub the-last-redoubt issues
 
-- 🚧 avoid player moving thru closed doors
-  - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
-  - ✅ cannot close door if some npc nearby
-  - ✅ trigger event `pre-exit-room` when npc about to go thru door
-  - ✅ player will stop if about to go through closed door
-  - ✅ player stops at closed hull door
-  - ✅ player should not stop underneath closed door
-    - will reduce door size for each door
-  - reduce door size for each door
-    - ❌ cannot reduce size of hull doors due to `hull` outset
-    - would not help for hull doors anyway
-  - ✅ can only open nearby doors (modulo css var)
-    - ✅ `npc debug` shows npc circular outlines 
-    - ✅ can `npc config '{ interactRadius: 20 }'`
-    - ✅ use css vars in `<NPCs>`
-    - ✅ can test interact circle vs polygon (sans holes)
-      - https://github.com/davidfig/intersects/blob/master/polygon-circle.js
-    - ✅ can only open door if npc circle intersects door poly
-  - ✅ can show circle via decor
-    - `npc add-decor '{ key: "foo", type: "circle", center: {"x":207.83,"y":384.43}, radius: 30 }'`
-    - `npc remove-decor foo`
-  - ✅ move back to React from Preact to fix HMR
-  - prevent get too close to closed doors
-    - nav nodes have nextToDoorId with (early) `near-door` event
-    - stop navigation when door closed at event
-
 - 🚧 avoid nav node long thin bits
   - sometimes reduce obstacle size
   - sometimes eliminate and permit teleport (e.g. to urinal)
@@ -122,6 +96,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
+- improve offset length for `pre-exit-room` and `pre-near-door`
 - make minimal repro of Preact HMR issue
 - migrate to free icons
 - BUG sometimes adjacent light is inside hull door, rather than outside
@@ -161,6 +136,31 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ avoid player moving thru closed doors
+  - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
+  - ✅ cannot close door if some npc nearby
+  - ✅ trigger event `pre-exit-room` when npc about to go thru door
+  - ✅ player will stop if about to go through closed door
+  - ✅ player stops at closed hull door
+  - ✅ player should not stop underneath closed door
+    - will reduce door size for each door
+  - reduce door size for each door
+    - ❌ cannot reduce size of hull doors due to `hull` outset
+    - would not help for hull doors anyway
+  - ✅ can only open nearby doors (modulo css var)
+    - ✅ `npc debug` shows npc circular outlines 
+    - ✅ can `npc config '{ interactRadius: 20 }'`
+    - ✅ use css vars in `<NPCs>`
+    - ✅ can test interact circle vs polygon (sans holes)
+      - https://github.com/davidfig/intersects/blob/master/polygon-circle.js
+    - ✅ can only open door if npc circle intersects door poly
+  - ✅ can show circle via decor
+    - `npc add-decor '{ key: "foo", type: "circle", center: {"x":207.83,"y":384.43}, radius: 30 }'`
+    - `npc remove-decor foo`
+  - ✅ move back to React from Preact to fix HMR
+  - ✅ prevent get too close to closed doors
+    - ✅ nav nodes have nearDoorId with (early) `near-door` event
+    - ✅ stop navigation when door closed at event
 - ✅ Clean
   - ✅ Rename `holes` -> `rooms` etc.
   - ✅ Remove: refs to holeId and holeIndex.

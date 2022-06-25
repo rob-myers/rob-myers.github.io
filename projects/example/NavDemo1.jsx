@@ -70,6 +70,7 @@ export default function NavDemo1(props) {
             }
             break;
           case 'pre-exit-room':
+          case 'pre-near-door':
             // If upcoming door is closed, stop player
             if (!state.doorsApi.open[e.meta.gmId][e.meta.doorId]) {
               const player = state.npcsApi.getNpc(e.npcKey);

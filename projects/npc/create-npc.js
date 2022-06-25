@@ -66,8 +66,8 @@ import npcJson from '../../public/npc/first-npc.json'
       if (opts?.globalNavMetas) {
         anim.wayMetas = opts.globalNavMetas.map((navMeta) => ({
           ...navMeta,
-          length: navMeta.key === 'pre-exit-room'
-            ? Math.max(anim.aux.sofars[navMeta.index] - (npcRadius + 5), 0)
+          length: navMeta.key === 'pre-exit-room' || navMeta.key === 'pre-near-door'
+            ? Math.max(anim.aux.sofars[navMeta.index] - (npcRadius + 10), 0)
             // Slightly early to ensure it is triggered
             : Math.max(anim.aux.sofars[navMeta.index] - 0.1, 0)
         }));
@@ -299,7 +299,7 @@ const npcOffsetRadians = 0;
 
 export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
 
-export const defaultNpcInteractRadius = npcRadius * 2;
+export const defaultNpcInteractRadius = npcRadius * 3;
 
 /** Scale up how long it should take to move along navpath */
 export const npcAnimScaleFactor = 15;
