@@ -397,8 +397,8 @@ export class TtyXterm {
     }
   }
 
-  public hasInput() {
-    return this.input.length > 0;
+  public hasUnsentInput() {
+    return this.promptReady;
   }
 
   /**

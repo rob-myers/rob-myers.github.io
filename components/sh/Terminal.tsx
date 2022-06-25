@@ -5,7 +5,7 @@ import { debounce } from 'debounce';
 
 import { TtyXterm } from 'projects/sh/tty.xterm';
 import { canTouchDevice } from 'projects/service/dom';
-import useSession, { Session } from 'projects/sh/session.store';
+import useSession, { ProcessStatus, Session } from 'projects/sh/session.store';
 import useOnResize from 'projects/hooks/use-on-resize';
 import { XTerm } from 'components/dynamic';
 import { TouchHelperUI } from './TouchHelperUi';
@@ -18,10 +18,11 @@ export default function Terminal(props: Props) {
   const update = useUpdate();
 
   const state = useStateRef(() => ({
-    offset: 0,
-    xtermReady: false,
     isTouchDevice: canTouchDevice(),
+    offset: 0,
     session: null as null | Session,
+    wasDisabled: false,
+    xtermReady: false,
   }));
 
   useOnResize(() => state.isTouchDevice = canTouchDevice());
@@ -34,11 +35,26 @@ export default function Terminal(props: Props) {
 
   React.useEffect(() => {
     if (props.disabled) {
-      useSession.api.writeMsg(props.sessionKey, 'Pausing session...', 'warn')
-      // TODO
-    } else {
-      useSession.api.writeMsg(props.sessionKey, 'Resuming session...', 'warn')
-      // TODO
+      state.wasDisabled = true;
+      useSession.api.writeMsgCleanly(props.sessionKey, 'Paused session', 'warn');
+
+      // Pause running processes
+      const processes = Object.values((state.session?.process)??{});
+      processes.filter(p => p.status === ProcessStatus.Running).forEach(p => {
+        p.onSuspends = p.onSuspends.filter(onSuspend => onSuspend());
+        p.status = ProcessStatus.Suspended;
+      });
+
+    } else if (!props.disabled && state.wasDisabled) {
+      useSession.api.writeMsgCleanly(props.sessionKey, 'Resumed session', 'warn');
+      
+      // Resume suspended processes
+      // TODO what if previously suspended?
+      const processes = Object.values((state.session?.process)??{});
+      processes.filter(p => p.status === ProcessStatus.Suspended).forEach(p => {
+        p.onResumes = p.onResumes.filter(onResume => onResume());
+        p.status = ProcessStatus.Running;
+      });
     }
   }, [props.disabled]);
 

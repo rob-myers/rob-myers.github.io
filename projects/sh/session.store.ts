@@ -300,8 +300,11 @@ const useStore = create<State>(devtools((set, get) => ({
 
     writeMsgCleanly(sessionKey, msg, level) {
       const { xterm } = api.getSession(sessionKey).ttyShell;
-      api.writeMsg(sessionKey, xterm.hasInput() ? `\n\r${msg}` : msg, level);
-      setTimeout(() => xterm.showPendingInput()); // Hack: prompts after .write
+      api.writeMsg(sessionKey, xterm.hasUnsentInput() ? `\n\r${msg}` : msg, level);
+      setTimeout(() => {
+        xterm.showPendingInput(); // Hack: prompts after .write
+        xterm.xterm.scrollToBottom();
+      }); 
     },
   },
 

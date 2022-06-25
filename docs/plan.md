@@ -27,10 +27,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 ## TODO (low-level)
 
 - 🚧 pause/resume Tabs pause/resumes NavDemo1
-  - npcs should pause/resume
-    - camera should pause/resume
+  - ✅ npcs should pause/resume
+  - 🚧 camera should pause/resume
   - try with some bots too
-- 🚧 pause/resume Tabs pause/resumes sessions
+- ✅ pause/resume Tabs pause/resumes sessions
   - pause/resume foreground and all background processes
 
 - 🚧 Gatsby
