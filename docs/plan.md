@@ -26,6 +26,12 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- 🚧 pause/resume Tabs pause/resumes any sessions
+  - pause/resume foreground and all background processes
+  - npcs should pause/resume
+    - camera should pause/resume
+  - try with some bots too
+
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
@@ -39,8 +45,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - Terminal migration
     - Simplify in original repo
     - Copy across and get working
-  - Show GitHub comments from the-last-redoubt issues
-  - Can redirect to GitHub the-last-redoubt issues
+  - ...
 
 - 🚧 avoid nav node long thin bits
   - sometimes reduce obstacle size
@@ -48,18 +53,11 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - 🚧 301
   - the rest
 
-- show nav node ids in `SvgNavGraph` (debug 101)
 
 - 🚧 can toggle NPC speech bubbles
   - ✅ can attach/remove html at world point via `html`
-  - 🚧 remove `html` command
-  - use terminal instead with links to sayer
-
-- pause/resume Tabs pause/resumes any sessions
-  - pause/resume foreground and all background processes
-  - npcs should pause/resume
-    - camera should pause/resume
-  - try with some bots too
+  - ✅ remove `html` command
+  - use terminal instead, with links to sayer
 
 - modularise npc json
   - NPC.jsx
@@ -68,18 +66,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 - fix NavDemo1 useGeomorphs HMR
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Fix HMR as far as we can
-
-- Blog
-  - ✅ Revisit first page
-  - "1st meaningful example"
-    - `NavDemo1`+ TTY + __SITUATED__
-    - Tab portals can move down page (?)
-  - Revisit second page
-    - Discuss constraints as before
-    - Decompose __SITUATED__
-  - Story
-    - Anapanasati training
-    - 5 watchers as Jhanic hindrances
 
 - 🚧 Improve look of first-npc
   - ✅ try 10 frame walk cycle
@@ -96,6 +82,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
+
+- @`the-last-redoubt`: show GitHub comments from the-last-redoubt issues
+- @`the-last-redoubt`: can redirect to GitHub the-last-redoubt issues
+- show nav node ids in `SvgNavGraph` (debug 101)
 - improve offset length for `pre-exit-room` and `pre-near-door`
 - make minimal repro of Preact HMR issue
 - migrate to free icons
