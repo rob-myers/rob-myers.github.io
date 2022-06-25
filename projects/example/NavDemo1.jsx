@@ -2,7 +2,7 @@ import React from "react";
 import { css } from "goober";
 import { filter } from "rxjs/operators";
 
-import { assertNonNull, testNever } from "../service/generic";
+import { testNever } from "../service/generic";
 import { geom } from "../service/geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";

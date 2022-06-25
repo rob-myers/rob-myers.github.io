@@ -47,8 +47,8 @@ export type State = {
     resolve: (fd: number, meta: BaseMeta) => Device;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     setVarDeep: (sessionKey: string, varPath: string, varValue: any) => void;
-    warn: (sessionKey: string, msg: string) => void;
-    warnCleanly: (sessionKey: string, msg: string) => void;
+    writeMsg: (sessionKey: string, msg: string, level: 'warn' | 'error') => void;
+    writeMsgCleanly: (sessionKey: string, msg: string, level: 'warn' | 'error') => void;
   }
 }
 
@@ -294,16 +294,13 @@ const useStore = create<State>(devtools((set, get) => ({
       }
     },
 
-    warn(sessionKey, msg) {
-      api.getSession(sessionKey).ttyIo.write({ key: 'warn', msg });
+    writeMsg(sessionKey, msg, level) {
+      api.getSession(sessionKey).ttyIo.write({ key: level, msg });
     },
 
-    warnCleanly(sessionKey, msg) {
+    writeMsgCleanly(sessionKey, msg, level) {
       const { xterm } = api.getSession(sessionKey).ttyShell;
-      if (xterm.hasInput()) {
-        msg = '\n\r' + msg;
-      }
-      api.getSession(sessionKey).ttyIo.write({ key: 'warn', msg });
+      api.writeMsg(sessionKey, xterm.hasInput() ? `\n\r${msg}` : msg, level);
       setTimeout(() => xterm.showPendingInput()); // Hack: prompts after .write
     },
   },

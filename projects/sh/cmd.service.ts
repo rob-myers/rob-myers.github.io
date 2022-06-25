@@ -203,7 +203,7 @@ class CmdService {
         const { ttyShell } = useSession.api.getSession(node.meta.sessionKey);
         for (const [i, obj] of roots.entries()) {
           if (obj === undefined) {
-            useSession.api.warn(meta.sessionKey, `ls: "${queries[i]}" is not defined`);
+            useSession.api.writeMsg(meta.sessionKey, `ls: "${queries[i]}" is not defined`, 'error');
             continue;
           }
 
@@ -317,9 +317,9 @@ class CmdService {
       case 'source': {
         const script = this.get(node, [args[0]])[0];
         if (script === undefined) {
-          useSession.api.warn(meta.sessionKey, `source: "${args[0]}" not found`);
+          useSession.api.writeMsg(meta.sessionKey, `source: "${args[0]}" not found`, 'error');
         } else if (typeof script !== 'string') {
-          useSession.api.warn(meta.sessionKey, `source: "${args[0]}" is not a string`);
+          useSession.api.writeMsg(meta.sessionKey, `source: "${args[0]}" is not a string`, 'error');
         } else {
           // We cache scripts
           const parsed = parseService.parse(script, true);
@@ -435,7 +435,7 @@ class CmdService {
     throwError,
 
     warn(message: string) {
-      useSession.api.warn(this.meta.sessionKey, message);
+      useSession.api.writeMsg(this.meta.sessionKey, message, 'warn');
     },
   };
 

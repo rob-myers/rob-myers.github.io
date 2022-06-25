@@ -49,12 +49,12 @@ class SemanticsService {
       throw e; // Propagate signal (KILL)
     } else if (e instanceof ShError) {
       const message = [prefix, e.message].filter(Boolean).join(': ');
-      useSession.api.warn(node.meta.sessionKey, message);
+      useSession.api.writeMsg(node.meta.sessionKey, message, 'error');
       console.error(`ShError: ${node.meta.sessionKey}: ${message}`);
       node.exitCode = e.exitCode;
     } else {
       const message = [prefix, e?.message].filter(Boolean).join(': ');
-      useSession.api.warn(node.meta.sessionKey, message);
+      useSession.api.writeMsg(node.meta.sessionKey, message, 'error');
       console.error(`Internal ShError: ${node.meta.sessionKey}: ${message}`);
       console.error(e);
       node.exitCode = 2;

@@ -13,7 +13,7 @@ import useStateRef from 'projects/hooks/use-state-ref';
 import useUpdate from 'projects/hooks/use-update';
 import { assertNonNull } from 'projects/service/generic';
 
-export default function Terminal({ sessionKey, env }: Props) {
+export default function Terminal(props: Props) {
 
   const update = useUpdate();
 
@@ -27,10 +27,20 @@ export default function Terminal({ sessionKey, env }: Props) {
   useOnResize(() => state.isTouchDevice = canTouchDevice());
 
   React.useEffect(() => {
-    state.session = useSession.api.createSession(sessionKey, env);
+    state.session = useSession.api.createSession(props.sessionKey, props.env);
     update();
-    return () => useSession.api.removeSession(sessionKey);
-  }, [sessionKey]);
+    return () => useSession.api.removeSession(props.sessionKey);
+  }, [props.sessionKey]);
+
+  React.useEffect(() => {
+    if (props.disabled) {
+      useSession.api.writeMsg(props.sessionKey, 'Pausing session...', 'warn')
+      // TODO
+    } else {
+      useSession.api.writeMsg(props.sessionKey, 'Resuming session...', 'warn')
+      // TODO
+    }
+  }, [props.disabled]);
 
   return (
     <Root>
@@ -69,6 +79,7 @@ export default function Terminal({ sessionKey, env }: Props) {
 };
 
 interface Props {
+  disabled?: boolean;
   sessionKey: string;
   /** Can initialize variables */
   env: {
