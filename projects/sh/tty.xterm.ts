@@ -398,7 +398,7 @@ export class TtyXterm {
   }
 
   public hasUnsentInput() {
-    return this.promptReady;
+    return this.promptReady && this.input.length > 0;
   }
 
   /**
