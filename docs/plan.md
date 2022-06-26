@@ -33,10 +33,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 - ✅ pause/resume Tabs pause/resumes sessions
   - pause/resume foreground and all background processes
 
-- lighting issues
+- 🚧 lighting issues
   - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
   - ✅ fix curved window office
-  - 🚧 fix double doors
+  - ✅ fix double doors
   - show extra light when inside a "cupboard"
   - show extra light when "cupboard" open in adjacent
 
