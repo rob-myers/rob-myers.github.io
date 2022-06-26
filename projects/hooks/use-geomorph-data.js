@@ -3,6 +3,7 @@ import { geomorphJsonPath } from "../geomorph/geomorph.model";
 import { Poly, Rect } from "../geom";
 import { warn } from "../service/log";
 import { parseLayout } from "../service/geomorph";
+import { geom } from "../service/geom";
 
 /**
  * NOTE saw issue when `geomorphJsonPath(layoutKey)`
@@ -30,10 +31,15 @@ export default function useGeomorphData(layoutKey) {
       .filter(x => x.tags.includes('spawn')).map(x => x.poly.center);
     const switchPoints = layout.groups.singles
       .filter(x => x.tags.includes('switch')).map(x => x.poly.center);
-    // Rect should cover door and have center inside room
+    /**
+     * Convex polygon `poly` should cover door and have center inside room.
+     * Can probably restrict to rotated rectangles.
+     */
     const lightMetas = layout.groups.singles
       .filter(x => x.tags.includes('light'))
-      .map(({ poly: { rect } }) => /** @type {const} */ ([rect.center, rect]));
+      .map(({ poly, tags }) => /** @type {const} */ (
+        { center: poly.center, poly, reverse: tags.includes('reverse') }
+      ));
 
     /** @type {Geomorph.GeomorphData} */
     const output = {
@@ -46,17 +52,29 @@ export default function useGeomorphData(layoutKey) {
 
       point: {
         all: /** @type {Geom.Vect[]} */ ([]).concat(
-          lightMetas.map(x => x[0]),
+          lightMetas.map(x => x.center),
           spawnPoints,
           switchPoints,
         ),
-        light: lightMetas.reduce((agg, [p, rect], i) => {
-          const roomId = layout.rooms.findIndex(poly => poly.contains(p));
-          const doorId = layout.doors.findIndex((door) => door.rect.intersects(rect));
-          if (roomId >= 0 && doorId >= 0) (agg[roomId] = agg[roomId] || {})[doorId] = p;
-          else console.warn(`useGeomorphData: light ${i} roomId/doorId ${roomId}/${doorId}`);
+
+        light: lightMetas.reduce((agg, { center: p, poly, reverse }, i) => {
+          let roomId = layout.rooms.findIndex(poly => poly.contains(p));
+          const doorId = layout.doors.findIndex((door) => geom.convexPolysIntersect(poly.outline, door.poly.outline));
+
+          if (roomId === -1 || doorId === -1) {
+            console.warn(`useGeomorphData: light ${i} has room/doorId ${roomId}/${doorId}`);
+          } else if (reverse) {// Reversed light comes from otherRoomId
+            const otherRoomId = layout.doors[doorId].roomIds.find(x => x !== roomId);
+            if (typeof otherRoomId !== 'number') {
+              console.warn(`useGeomorphData: reverse light ${i} lacks other roomId (room/doorId ${roomId}/${doorId})`);
+            } else {
+              roomId = otherRoomId;
+            }
+          }// NOTE roomId could be -1
+          (agg[roomId] = agg[roomId] || {})[doorId] = p;
           return agg;
         }, /** @type {Record<number, Record<number, Geom.Vect>>} */ ({})),
+
         spawn: layout.rooms.map((poly) =>
           spawnPoints.filter(p => poly.contains(p))
         ),
