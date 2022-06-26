@@ -35,7 +35,7 @@
     "codemirror": "^5.62.0",
     "debounce": "^1.2.1",
     "earcut": "^2.2.3",
-    "flexlayout-react": "^0.6.5",
+    "flexlayout-react": "^0.7.3",
     "getopts": "^2.3.0",
     "goober": "^2.0.41",
     "json-stringify-pretty-compact": "^3.0.0",
