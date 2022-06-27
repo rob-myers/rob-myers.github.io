@@ -45,15 +45,21 @@ export async function createLayout(def, lookup, triangleService) {
       });
     groups.singles.push(...restricted);
     groups.obstacles.push(...obstacles.map(x => x.clone().applyMatrix(m)));
-    groups.walls.push(
-      ...Poly.union([
-        ...walls.map(x => x.clone().applyMatrix(m)),
-        // singles can also have walls e.g. to support optional doors
-        ...singlesToPolys(restricted, 'wall'),
-        // Only the hull symbol (the 1st symbol) has "hull" walls.
-        ...hull.flatMap(x => x.createOutset(hullOutset)).map(x => x.applyMatrix(m)),
-      ])
-    );
+
+    /**
+     * Only the hull symbol (the 1st symbol) has "hull" walls.
+     * Outset the hull __inwards__ to ensure clean union with other walls.
+     * We avoid outwards outset for cleanliness.
+     */
+    const transformedHull = hull.map(x => x.applyMatrix(m));
+    const inwardsOutsetHull = Poly.intersect(transformedHull.map(x => x.clone().removeHoles()), transformedHull.flatMap(x => x.createOutset(hullOutset)));
+    groups.walls.push(...Poly.union([
+      ...walls.map(x => x.clone().applyMatrix(m)),
+      // singles can also have walls e.g. to support optional doors
+      ...singlesToPolys(restricted, 'wall'),
+      // ...hull.flatMap(x => x.createOutset(hullOutset)).map(x => x.applyMatrix(m)),
+      ...inwardsOutsetHull,
+    ]));
   });
 
   // Ensure well-signed polygons

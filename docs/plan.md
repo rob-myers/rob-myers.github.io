@@ -26,12 +26,14 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- ✅ remove outer hull outset
+
 - 🚧 lighting issues
   - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
   - ✅ fix curved window office
   - ✅ fix double doors
-  - show extra light when inside a "cupboard"
-  - show extra light when "cupboard" open in adjacent
+  - 🚧 show extra light when inside a "cupboard"
+  - 🚧 show extra light when "cupboard" open in adjacent
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby

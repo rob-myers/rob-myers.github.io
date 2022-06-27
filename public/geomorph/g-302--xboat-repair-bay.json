@@ -805,18 +805,20 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [-6, -6],
-            [64.8284, -6],
-            [126, 55.1716],
-            [126, 124],
-            [122, 124],
-            [122, 234.3],
-            [124.3154, 237.1273],
-            [239.5029, 407.9],
-            [420.7398, 407.9],
-            [427.7415, 413.9014],
-            [479.4019, 414],
-            [485, 414],
+            [-4, -4],
+            [64, -4],
+            [124, 56],
+            [124, 122],
+            [120, 122],
+            [120, 235.0144],
+            [122.7092, 238.3226],
+            [238.7976, 410.4309],
+            [240, 411.3371],
+            [240, 409.9],
+            [420, 409.9],
+            [427, 415.9],
+            [479.4, 416],
+            [485, 416],
             [485, 426],
             [482, 426],
             [482, 538],
@@ -866,14 +868,8 @@
             [12, 242],
             [6, 242],
             [6, 250],
-            [-6, 250],
-            [-6, -6]
-          ],
-          [
-            [238, 407.3254],
-            [238.1476, 407.9],
-            [238.7624, 407.9],
-            [238, 407.3254]
+            [-4, 250],
+            [-4, -4]
           ]
         ]
       },
@@ -881,13 +877,13 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [-6, 350],
+            [-4, 350],
             [6, 350],
             [6, 594],
             [249.996, 594],
-            [249.996, 606],
-            [-6, 606],
-            [-6, 350]
+            [249.996, 604],
+            [-4, 604],
+            [-4, 350]
           ]
         ]
       },
@@ -897,8 +893,8 @@
           [
             [349.996, 594],
             [850, 594],
-            [850, 606],
-            [349.996, 606],
+            [850, 604],
+            [349.996, 604],
             [349.996, 594]
           ]
         ]
@@ -921,10 +917,10 @@
             [538, 430],
             [538, 426],
             [535, 426],
-            [535, 414],
-            [598.4544, 414],
-            [1074, 295.4374],
-            [1074, 109.1006],
+            [535, 416],
+            [598.7, 416],
+            [1076, 297],
+            [1076, 109.1006],
             [1086, 109.1006],
             [1086, 238],
             [1088, 238],
@@ -991,9 +987,9 @@
             [950, 594],
             [1194, 594],
             [1194, 350],
-            [1206, 350],
-            [1206, 606],
-            [950, 606],
+            [1204, 350],
+            [1204, 604],
+            [950, 604],
             [950, 594]
           ]
         ]
@@ -1002,9 +998,9 @@
         "type": "Polygon",
         "coordinates": [
           [
-            [1074, -6],
-            [1206, -6],
-            [1206, 250],
+            [1076, -4],
+            [1204, -4],
+            [1204, 250],
             [1194, 250],
             [1194, 242],
             [1134, 242],
@@ -1045,8 +1041,8 @@
             [1167.458, 6],
             [1086, 6],
             [1086, 12.0006],
-            [1074, 12.0006],
-            [1074, -6]
+            [1076, 12.0006],
+            [1076, -4]
           ]
         ]
       }
@@ -1088,12 +1084,6 @@
           [60.595, 242],
           [6, 242]
         ]
-      ]
-    },
-    {
-      "type": "Polygon",
-      "coordinates": [
-        [[238, 407.3254], [238.1476, 407.9], [238.7624, 407.9], [238, 407.3254]]
       ]
     },
     {
@@ -1286,7 +1276,7 @@
       "tags": ["door", "iris"],
       "seg": [{"x": 535, "y": 420}, {"x": 485, "y": 420}],
       "normal": {"x": 0, "y": -1},
-      "roomIds": [null, 5],
+      "roomIds": [null, 4],
       "entries": [{"x": 510, "y": 413.95}, {"x": 510, "y": 426.05}]
     },
     {
@@ -1302,7 +1292,7 @@
       "tags": ["door"],
       "seg": [{"x": 1080, "y": 109.101}, {"x": 1080, "y": 12.001}],
       "normal": {"x": 1, "y": 0},
-      "roomIds": [9, null],
+      "roomIds": [8, null],
       "entries": [{"x": 1086.05, "y": 60.551}, {"x": 1073.95, "y": 60.551}]
     },
     {
@@ -1316,7 +1306,7 @@
       "tags": ["door"],
       "seg": [{"x": 772, "y": 540}, {"x": 728, "y": 540}],
       "normal": {"x": 0, "y": -1},
-      "roomIds": [7, 2],
+      "roomIds": [6, 2],
       "entries": [{"x": 750, "y": 535.95}, {"x": 750, "y": 544.05}]
     },
     {
@@ -1330,7 +1320,7 @@
       "tags": ["door"],
       "seg": [{"x": 900, "y": 472}, {"x": 900, "y": 428}],
       "normal": {"x": 1, "y": 0},
-      "roomIds": [8, 7],
+      "roomIds": [7, 6],
       "entries": [{"x": 904.05, "y": 450}, {"x": 895.95, "y": 450}]
     },
     {
@@ -1344,7 +1334,7 @@
       "tags": ["door"],
       "seg": [{"x": 1080, "y": 472}, {"x": 1080, "y": 367}],
       "normal": {"x": 1, "y": 0},
-      "roomIds": [2, 8],
+      "roomIds": [2, 7],
       "entries": [{"x": 1084.05, "y": 419.5}, {"x": 1075.95, "y": 419.5}]
     },
     {
@@ -1358,7 +1348,7 @@
       "tags": ["door"],
       "seg": [{"x": 1170, "y": 231}, {"x": 1170, "y": 187}],
       "normal": {"x": 1, "y": 0},
-      "roomIds": [13, 9],
+      "roomIds": [12, 8],
       "entries": [{"x": 1174.05, "y": 209}, {"x": 1165.95, "y": 209}]
     },
     {
@@ -1372,7 +1362,7 @@
       "tags": ["door"],
       "seg": [{"x": 1170, "y": 171}, {"x": 1170, "y": 127}],
       "normal": {"x": 1, "y": 0},
-      "roomIds": [12, 9],
+      "roomIds": [11, 8],
       "entries": [{"x": 1174.05, "y": 149}, {"x": 1165.95, "y": 149}]
     },
     {
@@ -1386,7 +1376,7 @@
       "tags": ["door"],
       "seg": [{"x": 1170, "y": 111}, {"x": 1170, "y": 67}],
       "normal": {"x": 1, "y": 0},
-      "roomIds": [11, 9],
+      "roomIds": [10, 8],
       "entries": [{"x": 1174.05, "y": 89}, {"x": 1165.95, "y": 89}]
     },
     {
@@ -1400,7 +1390,7 @@
       "tags": ["door"],
       "seg": [{"x": 1170, "y": 52}, {"x": 1170, "y": 8}],
       "normal": {"x": 1, "y": 0},
-      "roomIds": [10, 9],
+      "roomIds": [9, 8],
       "entries": [{"x": 1174.05, "y": 30}, {"x": 1165.95, "y": 30}]
     },
     {
@@ -1442,7 +1432,7 @@
       "tags": ["door", "s"],
       "seg": [{"x": 1134, "y": 240}, {"x": 1088, "y": 240}],
       "normal": {"x": 0, "y": -1},
-      "roomIds": [9, 2],
+      "roomIds": [8, 2],
       "entries": [{"x": 1111, "y": 235.95}, {"x": 1111, "y": 244.05}]
     },
     {
@@ -1456,7 +1446,7 @@
       "tags": ["door"],
       "seg": [{"x": 420.2, "y": 533}, {"x": 420.2, "y": 487}],
       "normal": {"x": 1, "y": 0},
-      "roomIds": [4, 2],
+      "roomIds": [3, 2],
       "entries": [{"x": 425.05, "y": 510}, {"x": 415.35, "y": 510}]
     },
     {
@@ -1472,7 +1462,7 @@
       "tags": ["door", "e"],
       "seg": [{"x": 487, "y": 539.993}, {"x": 533, "y": 539.993}],
       "normal": {"x": 0, "y": 1},
-      "roomIds": [2, 5],
+      "roomIds": [2, 4],
       "entries": [{"x": 510, "y": 544.043}, {"x": 510, "y": 535.943}]
     },
     {
@@ -1488,7 +1478,7 @@
       "tags": ["door"],
       "seg": [{"x": 539.8, "y": 430}, {"x": 539.8, "y": 470}],
       "normal": {"x": -1, "y": 0},
-      "roomIds": [5, 6],
+      "roomIds": [4, 5],
       "entries": [{"x": 535.75, "y": 450}, {"x": 543.85, "y": 450}]
     },
     {
@@ -1504,7 +1494,7 @@
       "tags": ["door"],
       "seg": [{"x": 539.8, "y": 490}, {"x": 539.8, "y": 530}],
       "normal": {"x": -1, "y": 0},
-      "roomIds": [5, 6],
+      "roomIds": [4, 5],
       "entries": [{"x": 535.75, "y": 510}, {"x": 543.85, "y": 510}]
     }
   ],
@@ -4565,7 +4555,6 @@
         317,
         318
       ],
-      [],
       [
         32,
         38,
@@ -4738,7 +4727,6 @@
       {"id": "room-10", "type": "room", "roomId": 10},
       {"id": "room-11", "type": "room", "roomId": 11},
       {"id": "room-12", "type": "room", "roomId": 12},
-      {"id": "room-13", "type": "room", "roomId": 13},
       {"id": "door-0", "type": "door", "doorId": 0},
       {"id": "door-1", "type": "door", "doorId": 1},
       {"id": "door-2", "type": "door", "doorId": 2},
@@ -4771,38 +4759,38 @@
       {"dst": "room-2", "src": "door-2", "id": "door-2->room-2"},
       {"src": "room-2", "dst": "door-3", "id": "room-2->door-3"},
       {"dst": "room-2", "src": "door-3", "id": "door-3->room-2"},
-      {"src": "room-5", "dst": "door-4", "id": "room-5->door-4"},
-      {"dst": "room-5", "src": "door-4", "id": "door-4->room-5"},
-      {"src": "room-9", "dst": "door-5", "id": "room-9->door-5"},
-      {"dst": "room-9", "src": "door-5", "id": "door-5->room-9"},
+      {"src": "room-4", "dst": "door-4", "id": "room-4->door-4"},
+      {"dst": "room-4", "src": "door-4", "id": "door-4->room-4"},
+      {"src": "room-8", "dst": "door-5", "id": "room-8->door-5"},
+      {"dst": "room-8", "src": "door-5", "id": "door-5->room-8"},
       {"src": "room-2", "dst": "door-6", "id": "room-2->door-6"},
       {"dst": "room-2", "src": "door-6", "id": "door-6->room-2"},
-      {"src": "room-7", "dst": "door-6", "id": "room-7->door-6"},
-      {"dst": "room-7", "src": "door-6", "id": "door-6->room-7"},
+      {"src": "room-6", "dst": "door-6", "id": "room-6->door-6"},
+      {"dst": "room-6", "src": "door-6", "id": "door-6->room-6"},
+      {"src": "room-6", "dst": "door-7", "id": "room-6->door-7"},
+      {"dst": "room-6", "src": "door-7", "id": "door-7->room-6"},
       {"src": "room-7", "dst": "door-7", "id": "room-7->door-7"},
       {"dst": "room-7", "src": "door-7", "id": "door-7->room-7"},
-      {"src": "room-8", "dst": "door-7", "id": "room-8->door-7"},
-      {"dst": "room-8", "src": "door-7", "id": "door-7->room-8"},
       {"src": "room-2", "dst": "door-8", "id": "room-2->door-8"},
       {"dst": "room-2", "src": "door-8", "id": "door-8->room-2"},
-      {"src": "room-8", "dst": "door-8", "id": "room-8->door-8"},
-      {"dst": "room-8", "src": "door-8", "id": "door-8->room-8"},
-      {"src": "room-9", "dst": "door-9", "id": "room-9->door-9"},
-      {"dst": "room-9", "src": "door-9", "id": "door-9->room-9"},
-      {"src": "room-13", "dst": "door-9", "id": "room-13->door-9"},
-      {"dst": "room-13", "src": "door-9", "id": "door-9->room-13"},
-      {"src": "room-9", "dst": "door-10", "id": "room-9->door-10"},
-      {"dst": "room-9", "src": "door-10", "id": "door-10->room-9"},
-      {"src": "room-12", "dst": "door-10", "id": "room-12->door-10"},
-      {"dst": "room-12", "src": "door-10", "id": "door-10->room-12"},
-      {"src": "room-9", "dst": "door-11", "id": "room-9->door-11"},
-      {"dst": "room-9", "src": "door-11", "id": "door-11->room-9"},
-      {"src": "room-11", "dst": "door-11", "id": "room-11->door-11"},
-      {"dst": "room-11", "src": "door-11", "id": "door-11->room-11"},
+      {"src": "room-7", "dst": "door-8", "id": "room-7->door-8"},
+      {"dst": "room-7", "src": "door-8", "id": "door-8->room-7"},
+      {"src": "room-8", "dst": "door-9", "id": "room-8->door-9"},
+      {"dst": "room-8", "src": "door-9", "id": "door-9->room-8"},
+      {"src": "room-12", "dst": "door-9", "id": "room-12->door-9"},
+      {"dst": "room-12", "src": "door-9", "id": "door-9->room-12"},
+      {"src": "room-8", "dst": "door-10", "id": "room-8->door-10"},
+      {"dst": "room-8", "src": "door-10", "id": "door-10->room-8"},
+      {"src": "room-11", "dst": "door-10", "id": "room-11->door-10"},
+      {"dst": "room-11", "src": "door-10", "id": "door-10->room-11"},
+      {"src": "room-8", "dst": "door-11", "id": "room-8->door-11"},
+      {"dst": "room-8", "src": "door-11", "id": "door-11->room-8"},
+      {"src": "room-10", "dst": "door-11", "id": "room-10->door-11"},
+      {"dst": "room-10", "src": "door-11", "id": "door-11->room-10"},
+      {"src": "room-8", "dst": "door-12", "id": "room-8->door-12"},
+      {"dst": "room-8", "src": "door-12", "id": "door-12->room-8"},
       {"src": "room-9", "dst": "door-12", "id": "room-9->door-12"},
       {"dst": "room-9", "src": "door-12", "id": "door-12->room-9"},
-      {"src": "room-10", "dst": "door-12", "id": "room-10->door-12"},
-      {"dst": "room-10", "src": "door-12", "id": "door-12->room-10"},
       {"src": "room-1", "dst": "door-13", "id": "room-1->door-13"},
       {"dst": "room-1", "src": "door-13", "id": "door-13->room-1"},
       {"src": "room-2", "dst": "door-13", "id": "room-2->door-13"},
@@ -4813,24 +4801,24 @@
       {"dst": "room-1", "src": "door-14", "id": "door-14->room-1"},
       {"src": "room-2", "dst": "door-15", "id": "room-2->door-15"},
       {"dst": "room-2", "src": "door-15", "id": "door-15->room-2"},
-      {"src": "room-9", "dst": "door-15", "id": "room-9->door-15"},
-      {"dst": "room-9", "src": "door-15", "id": "door-15->room-9"},
+      {"src": "room-8", "dst": "door-15", "id": "room-8->door-15"},
+      {"dst": "room-8", "src": "door-15", "id": "door-15->room-8"},
       {"src": "room-2", "dst": "door-16", "id": "room-2->door-16"},
       {"dst": "room-2", "src": "door-16", "id": "door-16->room-2"},
-      {"src": "room-4", "dst": "door-16", "id": "room-4->door-16"},
-      {"dst": "room-4", "src": "door-16", "id": "door-16->room-4"},
+      {"src": "room-3", "dst": "door-16", "id": "room-3->door-16"},
+      {"dst": "room-3", "src": "door-16", "id": "door-16->room-3"},
       {"src": "room-2", "dst": "door-17", "id": "room-2->door-17"},
       {"dst": "room-2", "src": "door-17", "id": "door-17->room-2"},
-      {"src": "room-5", "dst": "door-17", "id": "room-5->door-17"},
-      {"dst": "room-5", "src": "door-17", "id": "door-17->room-5"},
+      {"src": "room-4", "dst": "door-17", "id": "room-4->door-17"},
+      {"dst": "room-4", "src": "door-17", "id": "door-17->room-4"},
+      {"src": "room-4", "dst": "door-18", "id": "room-4->door-18"},
+      {"dst": "room-4", "src": "door-18", "id": "door-18->room-4"},
       {"src": "room-5", "dst": "door-18", "id": "room-5->door-18"},
       {"dst": "room-5", "src": "door-18", "id": "door-18->room-5"},
-      {"src": "room-6", "dst": "door-18", "id": "room-6->door-18"},
-      {"dst": "room-6", "src": "door-18", "id": "door-18->room-6"},
+      {"src": "room-4", "dst": "door-19", "id": "room-4->door-19"},
+      {"dst": "room-4", "src": "door-19", "id": "door-19->room-4"},
       {"src": "room-5", "dst": "door-19", "id": "room-5->door-19"},
-      {"dst": "room-5", "src": "door-19", "id": "door-19->room-5"},
-      {"src": "room-6", "dst": "door-19", "id": "room-6->door-19"},
-      {"dst": "room-6", "src": "door-19", "id": "door-19->room-6"}
+      {"dst": "room-5", "src": "door-19", "id": "door-19->room-5"}
     ]
   },
   "hullPoly": [
