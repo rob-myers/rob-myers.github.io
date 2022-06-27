@@ -30,8 +30,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
   - ✅ fix curved window office
   - ✅ fix double doors
-  - 🚧 show extra light when inside a "cupboard"
-  - 🚧 show extra light when "cupboard" open in adjacent
+  - 🚧 can relate two doorIds via rect
+  - 🚧 extend light doorIds via relation
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby

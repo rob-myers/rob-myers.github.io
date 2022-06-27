@@ -17,6 +17,7 @@ export default function useGeomorphData(layoutKey) {
     const layout = parseLayout(await fetch(geomorphJsonPath(layoutKey)).then(x => x.json()));
 
     const roomGraph = layout.roomGraph;
+
     const roomsWithDoors = roomGraph.nodesArray
       .filter(node => node.type === 'room') // Aligned to `rooms`
       .map((node, roomNodeId) => {
@@ -29,17 +30,37 @@ export default function useGeomorphData(layoutKey) {
 
     const spawnPoints = layout.groups.singles
       .filter(x => x.tags.includes('spawn')).map(x => x.poly.center);
+
     const switchPoints = layout.groups.singles
       .filter(x => x.tags.includes('switch')).map(x => x.poly.center);
+
     /**
-     * Convex polygon `poly` should cover door and have center inside room.
-     * Can probably restrict to rotated rectangles.
+     * TODO move to json?
+     * `light`s override light position
+     * Convex polygon `poly` (e.g. rotated rect) should cover door and have center inside room.
      */
     const lightMetas = layout.groups.singles
       .filter(x => x.tags.includes('light'))
       .map(({ poly, tags }) => /** @type {const} */ (
         { center: poly.center, poly, reverse: tags.includes('reverse') }
       ));
+
+    /**
+     * `extender`s relate doorIds, and are used to extend the light polygon. 
+     */
+    const extenderMetas = layout.groups.singles
+      .filter(x => x.tags.includes('extender'))
+      .flatMap(({ poly }) => {
+        const doorIds = layout.doors.flatMap((door, doorId) => geom.convexPolysIntersect(door.poly.outline, poly.outline) ? doorId : []);
+        if (doorIds.length >= 2) return [doorIds];
+        console.error(`ignoring extender intersecting ≤ 1 doorsIds: ${doorIds}`);
+        return [];
+      });
+    
+    // TODO
+    // - aggregate into { [doorId: number]: number[] }
+    // - computeLightPolygons extends using this
+    console.log({extenderMetas})
 
     /** @type {Geomorph.GeomorphData} */
     const output = {
@@ -78,11 +99,13 @@ export default function useGeomorphData(layoutKey) {
         spawn: layout.rooms.map((poly) =>
           spawnPoints.filter(p => poly.contains(p))
         ),
+
         switch: layout.rooms.map((poly) => {
           const found = switchPoints.find(p => poly.contains(p));
           return found || poly.rect.center;
         }),
       },
+
       lazy: /** @type {*} */ (null),
     };
 

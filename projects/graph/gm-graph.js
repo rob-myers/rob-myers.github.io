@@ -338,6 +338,7 @@ export class gmGraphClass extends BaseGraph {
     const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode)
       .map(x => x.doorId).filter(id => openDoorIds.includes(id));
 
+    /** Each doorway is joined with its adjacent room polygons */
     const areas = adjOpenDoorIds
       .flatMap(doorId => this.getOpenDoorArea(gmId, doorId) || []);
 

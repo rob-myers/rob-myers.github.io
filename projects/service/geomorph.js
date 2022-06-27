@@ -241,7 +241,7 @@ export async function createLayout(def, lookup, triangleService) {
     doors,
     windows,
     labels,
-    // navPoly: navPolySansDoors,
+
     navPoly: navPolyWithDoors,
     navZone,
     roomGraph,
