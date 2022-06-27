@@ -46,7 +46,7 @@ import npcJson from '../../public/npc/first-npc.json'
       const { anim } = this;
       anim.translate.commitStyles(); // Commit position and rotation
       anim.rotate.commitStyles();
-      anim.wayMetas.length = 0;
+      this.clearWayMetas();
 
       await/** @type {Promise<void>} */ (new Promise(resolve => {
         anim.translate.addEventListener('cancel', () => resolve());
@@ -54,10 +54,13 @@ import npcJson from '../../public/npc/first-npc.json'
         anim.rotate.cancel();
       }));
     },
+    clearWayMetas() {
+      this.anim.wayMetas.length = 0;
+    },
     async followNavPath(path, opts) {
       const { anim } = this;
       anim.animPath = path.map(Vect.from);
-      anim.wayMetas.length = 0;
+      this.clearWayMetas();
       this.updateAnimAux();
       if (anim.animPath.length <= 1 || anim.aux.total === 0) {
         return;
@@ -189,7 +192,15 @@ import npcJson from '../../public/npc/first-npc.json'
       anim.sprites.pause();
       anim.translate.commitStyles();
       anim.rotate.commitStyles();
+      /**
+       * Pending wayMeta is at anim.wayMetas[0].
+       * No need to adjust its `length` because we use animation currentTime.
+       */
       window.clearTimeout(anim.wayTimeoutId);
+      if (this.def.key === npcs.playerKey) {
+        // Pause camera tracking
+        npcs.getPanZoomApi().animationAction('pause');
+      }
     },
     get paused() {
       return this.anim.translate.playState === 'paused';
@@ -201,6 +212,10 @@ import npcJson from '../../public/npc/first-npc.json'
       anim.rotate.play();
       anim.sprites.play();
       this.nextWayTimeout();
+      if (this.def.key === npcs.playerKey) {
+        // Resume camera tracking
+        npcs.getPanZoomApi().animationAction('play');
+      }
     },
     setSpritesheet(spriteSheet) {
       if (spriteSheet !== this.anim.spriteSheet) {
@@ -232,7 +247,7 @@ import npcJson from '../../public/npc/first-npc.json'
         ], { easing: `steps(${animLookup.walk.frameCount})`, duration: 0.625 * 1000, iterations: Infinity });
 
       } else if (anim.spriteSheet === 'idle') {
-        anim.wayMetas.length = 0;
+        this.clearWayMetas();
         anim.lookAngle = this.getAngle();
 
         // Below needed?
@@ -279,7 +294,7 @@ import npcJson from '../../public/npc/first-npc.json'
         return;
       } else if (anim.translate.currentTime >= (anim.wayMetas[0].length * npcAnimScaleFactor) - 1) {
         const wayMeta = /** @type { NPC.WayPointMeta} */ (anim.wayMetas.shift());
-        console.log(wayMeta); // DEBUG
+        console.log(wayMeta); // DEBUG 🚧
         npcs.events.next({ key: 'way-point', npcKey: this.def.key, meta: wayMeta });
       }
       this.nextWayTimeout();

@@ -68,6 +68,7 @@ declare namespace NPC {
       wayMetas: WayPointMeta[];
       wayTimeoutId: number;
       /**
+       * TODO use css var
        * The angle of body when last idle. Carries additional info,
        * i.e. modulus of 2*PI. We use it to ensure we turn the smaller angle.
        */
@@ -75,17 +76,14 @@ declare namespace NPC {
     };
     //#endregion
 
-    get paused(): boolean;
-    async cancel(): Promise<void>;
-    pause(): void;
-    play(): void;
-    nextWayTimeout(): void;
-    wayTimeout(): void;
 
+    async cancel(): Promise<void>;
+    clearWayMetas(): void;
     async followNavPath(
       path: Geom.VectJson[],
       opts?: { globalNavMetas?: NPC.GlobalNavMeta[]; },
     ): Promise<void>;
+    get paused(): boolean;
     /** Radians */
     getAngle(): number;
     getAnimDef(): NpcAnimDef;
@@ -94,10 +92,14 @@ declare namespace NPC {
     getTargets(): { point: Geom.VectJson; arriveMs: number }[];
     /** Returns destination angle in radians */
     lookAt(point: Geom.VectJson): number;
+    pause(): void;
+    play(): void;
+    nextWayTimeout(): void;
     npcRef(el: HTMLDivElement | null): void;
     startAnimation(): void;
-    updateAnimAux(): void;
     setSpritesheet(spriteSheet: SpriteSheetKey): void;
+    updateAnimAux(): void;
+    wayTimeout(): void;
   }
 
   export interface NpcAnimDef {
@@ -267,6 +269,7 @@ declare namespace NPC {
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     setDecor(decorKey: string, decor: null | NPC.Decor): void;
     trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): import('rxjs').Subscription;
+    /** Used by command `view` */
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string } & GlobalNavPath): Promise<void>;
   }

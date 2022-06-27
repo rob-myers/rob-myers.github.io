@@ -6,6 +6,7 @@ import classNames from "classnames";
 import { css } from "goober";
 import { Subject } from 'rxjs';
 import useMeasure from 'react-use-measure';
+import { testNever } from '../service/generic';
 import { Vect } from "../geom";
 import useStateRef from "../hooks/use-state-ref";
 
@@ -13,6 +14,7 @@ import useStateRef from "../hooks/use-state-ref";
 export default function CssPanZoom(props) {
 
   const state = useStateRef(() => {
+
     /** @type {PanZoom.CssApi} */
     const output = {
       ready: true,
@@ -43,13 +45,13 @@ export default function CssPanZoom(props) {
       evt: {
         wheel(e) {
           state.delayIdle();
-          state.cancelAnimations();
+          state.animationAction('cancel');
           state.zoomWithWheel(e);
         },
         pointerdown(e) {
           // if (e.target !== state.parent) return;
           state.delayIdle();
-          state.cancelAnimations();
+          state.animationAction('cancel');
           // e.preventDefault();
           ensurePointer(state.pointers, e);
 
@@ -130,12 +132,24 @@ export default function CssPanZoom(props) {
         },
       },
 
-      cancelAnimations() {
-        // We are (or were) animating iff state.anims[0] non-null
-        if (state.anims[0]) {
-          state.syncStyles(); // Remember current translate/scale
-          state.anims.forEach(anim => anim?.cancel());
-          state.anims = [null, null];
+      animationAction(type) {
+        if (!state.anims[0]) {
+          return; // We are (or were) animating iff state.anims[0] non-null
+        }
+        switch (type) {
+          case 'cancel':
+            state.syncStyles(); // Remember current translate/scale
+            state.anims.forEach(anim => anim?.cancel());
+            state.anims = [null, null];
+            break;
+          case 'pause':
+            state.anims.forEach(anim => anim?.pause());
+            break;
+          case 'play':
+            state.anims.forEach(anim => anim?.play());
+            break;
+          default:
+            throw testNever(type);
         }
       },
       // TODO support changing scale
@@ -166,7 +180,7 @@ export default function CssPanZoom(props) {
         return worldPosition.distanceTo(state.getWorldAtCenter());
       },
       async followPath(path, { animScaleFactor }) {
-        state.cancelAnimations();
+        state.animationAction('cancel');
 
         const { keyframes, distance } = state.computePathKeyframes(path);
         const duration = distance * animScaleFactor;
@@ -229,7 +243,7 @@ export default function CssPanZoom(props) {
         scale = scale || state.scale;
         worldPoint = worldPoint || state.getWorldAtCenter();
         easing = easing || 'ease';
-        state.cancelAnimations();
+        state.animationAction('cancel');
 
         /**
          * Trying to compute (x, y) s.t. target transform

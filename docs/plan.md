@@ -26,13 +26,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- 🚧 pause/resume Tabs pause/resumes NavDemo1
-  - ✅ npcs should pause/resume
-  - 🚧 camera should pause/resume
-  - try with some bots too
-- ✅ pause/resume Tabs pause/resumes sessions
-  - pause/resume foreground and all background processes
-
 - 🚧 lighting issues
   - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
   - ✅ fix curved window office
@@ -60,7 +53,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - sometimes eliminate and permit teleport (e.g. to urinal)
   - 🚧 301
   - the rest
-
 
 - 🚧 can toggle NPC speech bubbles
   - ✅ can attach/remove html at world point via `html`
@@ -134,6 +126,11 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ pause/resume Tabs pause/resumes NavDemo1
+  - ✅ npcs should pause/resume
+  - ✅ camera should pause/resume
+- ✅ pause/resume Tabs pause/resumes sessions
+  - pause/resume foreground and all background processes
 - ✅ avoid player moving thru closed doors
   - ✅ NavDemo1.playerNpcKey -> NPCs.playerKey
   - ✅ cannot close door if some npc nearby

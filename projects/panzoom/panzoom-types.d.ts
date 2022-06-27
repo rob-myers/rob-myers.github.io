@@ -38,7 +38,7 @@ declare namespace PanZoom {
     anims: [null | Animation, null | Animation];
     worldPointerDown: Geom.Vect;
 
-    cancelAnimations(): void;
+    animationAction(type: 'cancel' | 'pause' | 'play'): void;
     private computePathKeyframes(path: Geom.Vect[]): { keyframes: Keyframe[]; distance: number; };
     private delayIdle(): void;
     distanceTo(worldPosition: Geom.Vect): number;
