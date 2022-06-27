@@ -3,6 +3,7 @@ import { BaseGraph } from "./graph";
 import { geom, directionChars } from "../service/geom";
 import { computeLightPosition } from "../service/geomorph";
 import { error } from "../service/log";
+import { lightDoorOffset, lightWindowOffset } from "../service/const";
 
 /**
  * `gmGraph` is short for _Geomorph Graph_
@@ -229,7 +230,7 @@ export class gmGraphClass extends BaseGraph {
   /**
    * @param {number} gmId 
    * @param {number} hullDoorId 
-   * @returns {{ adjGmId: number; adjRoomId: number; adjHullId: number; adjDoorId: number } | null}
+   * @returns {Graph.GmAdjRoomCtxt | null}
    */
   getAdjacentRoomCtxt(gmId, hullDoorId) {
     const gm = this.gms[gmId];
@@ -237,12 +238,12 @@ export class gmGraphClass extends BaseGraph {
     const doorNodeId = getGmDoorNodeId(gm.key, gm.transform, hullDoorId);
     const doorNode = this.getNodeById(doorNodeId);
     if (!doorNode) {
-      console.error(`GmGraph: failed to find hull door node: ${doorNodeId}`);
+      console.error(`${gmGraphClass.name}: failed to find hull door node: ${doorNodeId}`);
       return null;
     }
     const otherDoorNode = /** @type {undefined | Graph.GmGraphNodeDoor} */ (this.getSuccs(doorNode).find(x => x !== gmNode));
     if (!otherDoorNode) {
-      console.info(`GmGraph hull door: ${doorNodeId} on boundary`);
+      console.info(`${gmGraphClass.name}: hull door ${doorNodeId} on boundary`);
       return null;
     }
     // `door` is a hull door and connected to another
@@ -280,7 +281,7 @@ export class gmGraphClass extends BaseGraph {
    * In case of a hull door, we transform into other geomorph.
    * @param {number} gmId 
    * @param {number} doorId
-   * @returns {null | { gmIndex: number; doorIndex: number; adjRoomId: null | number; poly: Geom.Poly }}
+   * @returns {null | Graph.OpenDoorArea}
    */
   getOpenDoorArea(gmId, doorId) {
     const gm = this.gms[gmId];
@@ -290,7 +291,7 @@ export class gmGraphClass extends BaseGraph {
       const adjRoomNodes = gm.roomGraph.getAdjacentRooms(gm.roomGraph.getDoorNode(doorId));
       const adjRooms = adjRoomNodes.map(x => gm.roomsWithDoors[x.roomId]);
       // const adjRoomsSansHoles = adjRoomNodes.map(x => new Poly(gm.roomsWithDoors[x.roomId].outline));
-      return { gmIndex: gmId, doorIndex: doorId, adjRoomId: null, poly: Poly.union(adjRooms)[0] };
+      return { gmId, doorId, adjRoomId: null, poly: Poly.union(adjRooms)[0] };
     }
 
     const result = this.getAdjacentRoomCtxt(gmId, hullDoorId);
@@ -304,9 +305,9 @@ export class gmGraphClass extends BaseGraph {
         otherGmRoom,
       ])[0];
 
-      return { gmIndex: result.adjGmId, doorIndex: result.adjDoorId, adjRoomId: result.adjRoomId, poly };
+      return { gmId: result.adjGmId, doorId: result.adjDoorId, adjRoomId: result.adjRoomId, poly };
     } else {
-      console.error(`GmGraph: getOpenDoorArea: failed to get context`, { gmIndex: gmId, doorIndex: doorId, hullDoorIndex: hullDoorId });
+      console.error(`${gmGraphClass.name}: getOpenDoorArea failed to get context`, { gmIndex: gmId, doorIndex: doorId, hullDoorIndex: hullDoorId });
       return null;
     }
   }
@@ -341,23 +342,23 @@ export class gmGraphClass extends BaseGraph {
       .flatMap(doorId => this.getOpenDoorArea(gmId, doorId) || []);
 
     const doorLights = areas.map((area) => {
-      const doors = this.gms[area.gmIndex].doors;
+      const doors = this.gms[area.gmId].doors;
       /**
+       * TODO restrict to fewer doors
        * These additional line segments are needed when 2 doors
        * adjoin a single room e.g. double doors.
-       * TODO restrict to fewer doors
        */
-      const closedDoorSegs = doors.filter((_, id) => id !== area.doorIndex).map(x => x.seg);
-      const roomId = area.adjRoomId??rootRoomId; // TODO avoid nullable `adjRoomId` (?)
+      const closedDoorSegs = doors.filter((_, id) => id !== area.doorId).map(x => x.seg);
       /**
        * By default we move light inside current room by constant amount.
-       * Sometimes this breaks (lies outside current room), so can override via 'light' tagged rects.
+       * Sometimes this breaks (lies outside current room) or looks bad when combined,
+       * so can override via 'light' tagged rects.
        */
-      const lightPosition = gm.point.light[rootRoomId]?.[area.doorIndex] ||
-        computeLightPosition(doors[area.doorIndex], roomId, 40);
+      const lightPosition = gm.point.light[rootRoomId]?.[area.doorId] ||
+        computeLightPosition(doors[area.doorId], rootRoomId, lightDoorOffset);
 
       return {
-        gmIndex: area.gmIndex,
+        gmIndex: area.gmId,
         poly: geom.lightPolygon({
           position: lightPosition,
           range: 2000,
@@ -381,8 +382,8 @@ export class gmGraphClass extends BaseGraph {
     const windowLights = adjWindowIds.map(windowIndex => ({
       gmIndex: gmId,
       poly: geom.lightPolygon({
-        // Move light inside current room i.e. `20`
-        position: computeLightPosition(gm.windows[windowIndex], rootRoomId, 20),
+        // We move light inside current room
+        position: computeLightPosition(gm.windows[windowIndex], rootRoomId, lightWindowOffset),
         range: 1000,
         exterior: this.getOpenWindowPolygon(gmId, windowIndex),
       }),

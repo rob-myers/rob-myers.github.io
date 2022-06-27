@@ -27,3 +27,7 @@ export const hullOutset = 2;
 export const wallOutset = 15;
 
 export const obstacleOutset = 10;
+
+export const lightDoorOffset = 40;
+
+export const lightWindowOffset = 20;

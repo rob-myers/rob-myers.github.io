@@ -136,6 +136,23 @@ declare namespace Graph {
 
   export type GmGraph = import('./gm-graph').gmGraphClass;
 
+  export interface OpenDoorArea {
+    gmId: number;
+    doorId: number;
+    /** For hull doors, the roomId of adjacent room in adjacent geomorph */
+    adjRoomId: null | number;
+    /** The area in world coords */
+    poly: Geom.Poly;
+  }
+
+  /** Given a hull door, the respective ids in adjacent geomorph */
+  export interface GmAdjRoomCtxt {
+    adjGmId: number;
+    adjRoomId: number;
+    adjHullId: number;
+    adjDoorId: number;
+  }
+
   //#endregion
   
   //#region FloorGraph

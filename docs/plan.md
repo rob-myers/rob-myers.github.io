@@ -26,8 +26,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- ✅ remove outer hull outset
-
 - 🚧 lighting issues
   - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
   - ✅ fix curved window office
@@ -60,6 +58,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ can attach/remove html at world point via `html`
   - ✅ remove `html` command
   - use terminal instead, with links to sayer
+
+- ✅ remove outwards hull outset
+- better approach? inset holes, warning if non-unique
 
 - modularise npc json
   - NPC.jsx

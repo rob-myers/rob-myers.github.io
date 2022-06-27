@@ -519,18 +519,13 @@ export function geomorphDataToInstance(gm, transform) {
 }
 
 /**
- * Lockers in bridge--042--8x9 need ~20.
  * @param {Geomorph.ParsedConnectorRect} connector 
- * @param {number} srcRoomId 
- * @param {number} lightOffset In direction from srcRoomId through connector 
+ * @param {number} srcRoomId Must lie in @see connector roomIds
+ * @param {number} lightOffset In direction from @see srcRoomId through @see connector 
  */
 export function computeLightPosition(connector, srcRoomId, lightOffset) {
-  const roomSign = connector.roomIds[0] === srcRoomId
-    ? 1 : connector.roomIds[1] === srcRoomId ? -1 : null;
-  if (roomSign === null) {
-    console.warn(`room ${srcRoomId}: connector: `, connector ,`: roomSign is null`);
-  }
-  return connector.poly.center.addScaledVector(connector.normal, lightOffset * (roomSign || 0));
+  const roomSign = connector.roomIds[0] === srcRoomId ? 1 : -1;
+  return connector.poly.center.addScaledVector(connector.normal, lightOffset * roomSign);
 }
 
 /**
