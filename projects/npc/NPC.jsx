@@ -2,6 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 
+import { npcOffsetRadians, npcScale } from "./create-npc";
 /**
  * TODO modularise
  */
@@ -39,12 +40,13 @@ export default function NPC(props) {
 const npcCss = css`
   position: absolute;
   pointer-events: none;
-
+  
   .body {
     position: absolute;
     filter: grayscale(100%) brightness(140%);
     /** Animate turning */
     transition: transform 1s;
+    transform: rotate(calc(${npcOffsetRadians}rad + var(--npc-target-look-angle))) scale(${npcScale});
   }
   
   &.walk .body {

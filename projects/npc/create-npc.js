@@ -1,4 +1,6 @@
 import { Poly, Rect, Vect } from '../geom';
+import { cssName } from '../service/const';
+import { getNumericCssVar } from '../service/dom';
 
 /**
  * TODO modularise
@@ -37,19 +39,18 @@ import npcJson from '../../public/npc/first-npc.json'
 
       wayMetas: [],
       wayTimeoutId: 0,
-      lookAngle: 0,
     },
 
     async cancel() {
       console.log(`cancel: cancelling ${this.def.key}`);
       this.clearWayMetas();
-      if (!(this.el.root instanceof HTMLDivElement)) {
-        return;
-      }
       const { anim } = this;
-      anim.translate.commitStyles();
-      anim.rotate.commitStyles();
-
+      if (this.el.root?.getAnimations().includes(anim.translate)) {
+        anim.translate.commitStyles();
+      }
+      if (this.el.body instanceof HTMLDivElement) {
+        this.setLookTarget(this.getAngle());
+      }
       await/** @type {Promise<void>} */ (new Promise(resolve => {
         anim.translate.addEventListener('cancel', () => resolve());
         anim.translate.cancel();
@@ -87,7 +88,6 @@ import npcJson from '../../public/npc/first-npc.json'
       try {
         await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
           anim.translate.addEventListener("finish", () => {
-            // We don't cancel, so we don't pass control back to styles
             console.log(`followNavPath: ${this.def.key} finished walk`);
             resolve();
           });
@@ -157,13 +157,11 @@ import npcJson from '../../public/npc/first-npc.json'
       }
 
       // Ensure we don't turn more than 180 deg
+      const targetLookRadians = getNumericCssVar(this.el.root, cssName.npcTargetLookAngle);
       let radians = Math.atan2(direction.y, direction.x);
-      while (radians - this.anim.lookAngle > Math.PI) radians -= 2 * Math.PI;
-      while (this.anim.lookAngle - radians > Math.PI) radians += 2 * Math.PI;
-      this.anim.lookAngle = radians;
-
-      // Only works when idle, otherwise overridden/overwritten
-      this.el.body.style.transform = `rotate(${npcOffsetRadians + radians}rad) scale(${npcScale})`;
+      while (radians - targetLookRadians > Math.PI) radians -= 2 * Math.PI;
+      while (targetLookRadians - radians > Math.PI) radians += 2 * Math.PI;
+      this.setLookTarget(radians); // Only works when idle, otherwise overridden
       return radians;
     },
     nextWayTimeout() {
@@ -183,7 +181,7 @@ import npcJson from '../../public/npc/first-npc.json'
         this.el.root = rootEl;
         this.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
         this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
-        this.el.body.style.transform = `rotate(${npcOffsetRadians}rad) scale(${npcScale})`;
+        this.setLookTarget(0);
       }
     },
     pause() {
@@ -193,7 +191,7 @@ import npcJson from '../../public/npc/first-npc.json'
       anim.rotate.pause();
       anim.sprites.pause();
       anim.translate.commitStyles();
-      anim.rotate.commitStyles();
+      this.setLookTarget(this.getAngle());
       /**
        * Pending wayMeta is at anim.wayMetas[0].
        * No need to adjust its `length` because we use animation currentTime.
@@ -219,6 +217,9 @@ import npcJson from '../../public/npc/first-npc.json'
         npcs.getPanZoomApi().animationAction('play');
       }
     },
+    setLookTarget(radians) {
+      this.el.root.style.setProperty(cssName.npcTargetLookAngle, `${radians}rad`);
+    },
     setSpritesheet(spriteSheet) {
       if (spriteSheet !== this.anim.spriteSheet) {
         this.el.root.classList.remove(this.anim.spriteSheet);
@@ -230,7 +231,7 @@ import npcJson from '../../public/npc/first-npc.json'
       const { anim } = this;
       if (anim.aux.count) {
         anim.translate.commitStyles();
-        anim.rotate.commitStyles();
+        this.setLookTarget(this.getAngle());
         anim.translate.cancel();
         anim.rotate.cancel();
       }
@@ -250,7 +251,8 @@ import npcJson from '../../public/npc/first-npc.json'
 
       } else if (anim.spriteSheet === 'idle') {
         this.clearWayMetas();
-        anim.lookAngle = this.getAngle();
+        // Post walk, set target as current angle 
+        this.setLookTarget(this.getAngle());
 
         // Below needed?
         anim.translate = this.el.root.animate([], { duration: 2 * 1000, iterations: Infinity });
@@ -309,10 +311,10 @@ import npcJson from '../../public/npc/first-npc.json'
  * Beware that sprites may themselves be scaled up,
  * see `zoom` in npc json
  */
-const npcScale = 0.19;
+export const npcScale = 0.19;
 const npcOrigRadius = 40;
 /** Ensure NPC faces along positive x-axis */
-const npcOffsetRadians = 0;
+export const npcOffsetRadians = 0;
 
 export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
 

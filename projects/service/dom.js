@@ -2,6 +2,7 @@ import { parseSVG, makeAbsolute, MoveToCommand } from 'svg-path-parser';
 import { Vect } from '../geom/vect';
 import { Poly } from '../geom/poly';
 import { warn } from './log';
+import { assertNonNull } from './generic';
 
 /** @param {WheelEvent | PointerEvent | React.WheelEvent} e */
 export function isSvgEvent(e) {
@@ -235,4 +236,13 @@ export function canTouchDevice() {
     || navigator.maxTouchPoints > 0
     || /** @type {*} */ (navigator).msMaxTouchPoints > 0
   ));
+}
+
+/**
+ * Extract numeric part of a css variable
+ * @param {HTMLElement} el 
+ * @param {string} varName e.g. `--my-css-var`
+ */
+export function getNumericCssVar(el, varName) {
+	return parseFloat(assertNonNull(el.style.getPropertyValue(varName)));
 }

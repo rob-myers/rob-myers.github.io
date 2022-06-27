@@ -9,6 +9,7 @@ import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
+import { getNumericCssVar } from "../service/dom";
 import { Poly, Rect, Vect } from "../geom";
 import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor } from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
@@ -151,7 +152,7 @@ export default function NPCs(props) {
       return result;
     },
     getNpcInteractRadius() {
-      return parseFloat(assertNonNull(state.rootEl.style.getPropertyValue(cssName.npcsInteractRadius)));
+      return getNumericCssVar(state.rootEl, cssName.npcsInteractRadius);
     },
     getNpc(npcKey) {
       const npc = state.npc[npcKey];

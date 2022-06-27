@@ -11,8 +11,10 @@ export const cssName = {
   npcsInteractRadius: '--npcs-interact-radius',
   npcsDebugDisplay: '--npcs-debug-display',
   /**
-   * TODO npcLookAngle
+   * Angle of body when last idle e.g. `0rad`. Carries additional info,
+   * i.e. modulus of `2 * Math.PI`, ensuring we turn the smaller angle.
    */
+  npcTargetLookAngle: '--npc-target-look-angle',
   open: 'open',
 } as const;
 

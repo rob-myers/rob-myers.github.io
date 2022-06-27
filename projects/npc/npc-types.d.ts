@@ -67,12 +67,6 @@ declare namespace NPC {
 
       wayMetas: WayPointMeta[];
       wayTimeoutId: number;
-      /**
-       * TODO use css var
-       * The angle of body when last idle. Carries additional info,
-       * i.e. modulus of 2*PI. We use it to ensure we turn the smaller angle.
-       */
-      lookAngle: number;
     };
     //#endregion
 
@@ -97,6 +91,7 @@ declare namespace NPC {
     nextWayTimeout(): void;
     npcRef(el: HTMLDivElement | null): void;
     startAnimation(): void;
+    setLookTarget(radians: number): void;
     setSpritesheet(spriteSheet: SpriteSheetKey): void;
     updateAnimAux(): void;
     wayTimeout(): void;
