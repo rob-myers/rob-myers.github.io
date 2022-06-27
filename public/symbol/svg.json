@@ -5854,10 +5854,19 @@
           "type": "Polygon",
           "coordinates": [[[400, 400], [400, 500], [500, 500], [500, 400]]]
         }
+      },
+      {
+        "tags": ["extender"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[440, 263.709], [440, 643.709], [460, 643.709], [460, 263.709]]
+          ]
+        }
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 620, "height": 620},
-    "lastModified": 1655983590415.3374
+    "lastModified": 1656332134059.4172
   },
   "stateroom--018--2x3": {
     "key": "stateroom--018--2x3",
