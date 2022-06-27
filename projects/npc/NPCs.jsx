@@ -151,7 +151,7 @@ export default function NPCs(props) {
       return result;
     },
     getNpcInteractRadius() {
-      return parseFloat(assertNonNull(state.rootEl.style.getPropertyValue(cssName.npcInteractRadius)));
+      return parseFloat(assertNonNull(state.rootEl.style.getPropertyValue(cssName.npcsInteractRadius)));
     },
     getNpc(npcKey) {
       const npc = state.npc[npcKey];
@@ -195,10 +195,10 @@ export default function NPCs(props) {
           break;
         case 'config':
           if (typeof e.interactRadius === 'number') {
-            state.rootEl.style.setProperty(cssName.npcInteractRadius, `${e.interactRadius}px`);
+            state.rootEl.style.setProperty(cssName.npcsInteractRadius, `${e.interactRadius}px`);
           }
           if (e.debug !== undefined) {
-            state.rootEl.style.setProperty(cssName.npcDebugDisplay, e.debug ? 'initial' : 'none');
+            state.rootEl.style.setProperty(cssName.npcsDebugDisplay, e.debug ? 'initial' : 'none');
           }
           break;
         case 'get':
@@ -241,8 +241,8 @@ export default function NPCs(props) {
     rootRef(el) {
       if (el) {
         state.rootEl = el;
-        el.style.setProperty(cssName.npcInteractRadius, `${defaultNpcInteractRadius}px`);
-        el.style.setProperty(cssName.npcDebugDisplay, 'none');
+        el.style.setProperty(cssName.npcsInteractRadius, `${defaultNpcInteractRadius}px`);
+        el.style.setProperty(cssName.npcsDebugDisplay, 'none');
       }
     },
     setDecor(decorKey, decor) {

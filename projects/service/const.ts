@@ -8,8 +8,11 @@ export const cssName = {
   navMainOpen: 'open',
   navMainClosed: 'closed',
   navMini: 'nav-mini',
-  npcInteractRadius: '--npc-interact-radius',
-  npcDebugDisplay: '--npc-debug-display',
+  npcsInteractRadius: '--npcs-interact-radius',
+  npcsDebugDisplay: '--npcs-debug-display',
+  /**
+   * TODO npcLookAngle
+   */
   open: 'open',
 } as const;
 

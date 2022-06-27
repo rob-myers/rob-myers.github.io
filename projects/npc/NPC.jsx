@@ -68,13 +68,13 @@ const npcCss = css`
   }
 
   .interact-circle {
-    display: var(--npc-debug-display);
+    display: var(--npcs-debug-display);
     position: absolute;
-    width: calc(2 * var(--npc-interact-radius));
-    height: calc(2 * var(--npc-interact-radius));
-    left: calc(-1 * var(--npc-interact-radius));
-    top: calc(-1 * var(--npc-interact-radius));
-    border-radius: calc(2 * var(--npc-interact-radius));
+    width: calc(2 * var(--npcs-interact-radius));
+    height: calc(2 * var(--npcs-interact-radius));
+    left: calc(-1 * var(--npcs-interact-radius));
+    top: calc(-1 * var(--npcs-interact-radius));
+    border-radius: calc(2 * var(--npcs-interact-radius));
     border: 1px solid rgba(0, 0, 255, 0.25);
   }
 `;
