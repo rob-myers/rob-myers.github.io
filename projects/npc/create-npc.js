@@ -42,11 +42,13 @@ import npcJson from '../../public/npc/first-npc.json'
 
     async cancel() {
       console.log(`cancel: cancelling ${this.def.key}`);
-
-      const { anim } = this;
-      anim.translate.commitStyles(); // Commit position and rotation
-      anim.rotate.commitStyles();
       this.clearWayMetas();
+      if (!(this.el.root instanceof HTMLDivElement)) {
+        return;
+      }
+      const { anim } = this;
+      anim.translate.commitStyles();
+      anim.rotate.commitStyles();
 
       await/** @type {Promise<void>} */ (new Promise(resolve => {
         anim.translate.addEventListener('cancel', () => resolve());
