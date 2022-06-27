@@ -4,6 +4,7 @@ import { geom, directionChars } from "../service/geom";
 import { computeLightPosition } from "../service/geomorph";
 import { error } from "../service/log";
 import { lightDoorOffset, lightWindowOffset } from "../service/const";
+import { assertNonNull } from "../service/generic";
 
 /**
  * `gmGraph` is short for _Geomorph Graph_
@@ -294,16 +295,25 @@ export class gmGraphClass extends BaseGraph {
    */
   computeLightPolygons(gmId, rootRoomId, openDoorIds) {
     const gm = this.gms[gmId];
-    const roomNode = gm.roomGraph.nodesArray[rootRoomId];
+    const roomNode = /** @type {Graph.RoomGraphNodeRoom} */ (gm.roomGraph.nodesArray[rootRoomId]);
 
-    const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode)
-      .map(x => x.doorId).filter(id => openDoorIds.includes(id));
+    const enterable = gm.roomGraph.getEnterableRooms(roomNode, openDoorIds);
+    const adjOpenDoorIds = enterable.map(x => x.doorId);
 
-    /** Each doorway is joined with its adjacent room polygons */
-    const areas = adjOpenDoorIds
-      .flatMap(doorId => this.getOpenDoorArea(gmId, doorId) || []);
+    const preDoorLights = enterable
+      .flatMap(({ doorId, roomId }) => [
+        // Light from current room through open door
+        { roomId: rootRoomId, area: this.getOpenDoorArea(gmId, doorId) },
+        // Light from adjacent rooms through related doors
+        ...(gm.extendDoorId?.[doorId] || [])
+          .filter(relDoorId => openDoorIds.includes(relDoorId) && !adjOpenDoorIds.includes(relDoorId))
+          .map(relDoorId => ({ roomId, area: this.getOpenDoorArea(gmId, relDoorId) })),
+      ]);
 
-    const doorLights = areas.map((area) => {
+    const doorLights = preDoorLights.flatMap(({ roomId, area }) => {
+      if (!area) {
+        return [];
+      }
       const doors = this.gms[area.gmId].doors;
       /**
        * TODO restrict to fewer doors
@@ -316,8 +326,8 @@ export class gmGraphClass extends BaseGraph {
        * Sometimes this breaks (lies outside current room) or looks bad when combined,
        * so can override via 'light' tagged rects.
        */
-      const lightPosition = gm.point.light[rootRoomId]?.[area.doorId] ||
-        computeLightPosition(doors[area.doorId], rootRoomId, lightDoorOffset);
+      const lightPosition = gm.point.light[roomId]?.[area.doorId] ||
+        computeLightPosition(doors[area.doorId], roomId, lightDoorOffset);
 
       return {
         gmIndex: area.gmId,
@@ -329,7 +339,7 @@ export class gmGraphClass extends BaseGraph {
         }),
       };
     });
-    
+
     const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode)
       .filter(x => {
         const connector = gm.windows[x.windowIndex];

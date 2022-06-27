@@ -12,6 +12,7 @@ import { geom } from "../service/geom";
  * @param {Geomorph.LayoutKey} layoutKey
  */
 export default function useGeomorphData(layoutKey) {
+  
   return useQuery(geomorphJsonPath(layoutKey), async () => {
     
     const layout = parseLayout(await fetch(geomorphJsonPath(layoutKey)).then(x => x.json()));
@@ -46,22 +47,18 @@ export default function useGeomorphData(layoutKey) {
       ));
 
     /**
+     * TODO move to json?
      * `extender`s relate doorIds, and are used to extend the light polygon. 
      */
-    const extenderMetas = layout.groups.singles
+    const extendDoorId = layout.groups.singles
       .filter(x => x.tags.includes('extender'))
-      .flatMap(({ poly }) => {
+      .reduce((agg, { poly }) => {
         const doorIds = layout.doors.flatMap((door, doorId) => geom.convexPolysIntersect(door.poly.outline, poly.outline) ? doorId : []);
-        if (doorIds.length >= 2) return [doorIds];
-        console.error(`ignoring extender intersecting ≤ 1 doorsIds: ${doorIds}`);
-        return [];
-      });
+        doorIds.forEach(doorId => (agg[doorId] || (agg[doorId] = [])).push(...doorIds.filter(x => x !== doorId)) );
+        if (doorIds.length <= 1) console.warn(`saw extender intersecting ≤ 1 doorIds: ${doorIds}`);
+        return agg;
+      }, /** @type {Record<number, number[]>} */ ({}));
     
-    // TODO
-    // - aggregate into { [doorId: number]: number[] }
-    // - computeLightPolygons extends using this
-    console.log({extenderMetas})
-
     /** @type {Geomorph.GeomorphData} */
     const output = {
       ...layout,
@@ -70,6 +67,7 @@ export default function useGeomorphData(layoutKey) {
       hullOutline: layout.hullPoly[0].removeHoles(),
       pngRect: Rect.fromJson(layout.items[0].pngRect),
       roomsWithDoors,
+      extendDoorId,
 
       point: {
         all: /** @type {Geom.Vect[]} */ ([]).concat(

@@ -36,8 +36,15 @@ export default function Doors(props) {
       ctxt.setTransform(1, 0, 0, 1, -gm.pngRect.x, -gm.pngRect.y);
       ctxt.fillStyle = '#555';
 
-      gm.doors.forEach(({ poly }, i) => {
-        if (!state.vis[gmId][i]) fillPolygon(ctxt, [poly]);
+      // Handle extension of open visible doors (orig via `extender` tag)
+      const relDoorIds = gm.doors.flatMap((_, i) =>
+        state.vis[gmId][i] && state.open[gmId][i] && gm.extendDoorId?.[i] || []
+      ).filter(doorId => state.open[gmId][doorId]);
+      
+      gm.doors.forEach(({ poly }, doorId) => {
+        if (!state.vis[gmId][doorId] && !relDoorIds.includes(doorId)) {
+          fillPolygon(ctxt, [poly]);
+        }
       });
     },
     getClosed(gmId) {
@@ -59,14 +66,6 @@ export default function Doors(props) {
       if (gmIdAttr === null || !state.vis[gmId][doorId] || gmDoorNode?.sealed) {
         return; // Not a door, not visible, or sealed permanently
       }
-
-      /**
-       * TODO
-       * - ✅ simplify state.open mutation
-       * - ✅ fix hull door touch ui
-       * - ✅ provide props.safeToCloseDoor(gmId, doorId)
-       * - 🚧 player cannot toggle door if too far away (assuming toggled via UI)
-       */
 
       if (!props.playerNearDoor(gmId, doorId)) {
         return;

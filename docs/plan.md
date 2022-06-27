@@ -30,8 +30,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
   - ✅ fix curved window office
   - ✅ fix double doors
-  - 🚧 can relate two doorIds via rect
-  - 🚧 extend light doorIds via relation
+  - ✅ can relate two doorIds via rect
+    - tag `extender`
+  - ✅ extend light doorIds via relation
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
