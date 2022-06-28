@@ -62,7 +62,8 @@ export default function Terminal(props: Props) {
     <Root>
       {state.session && (
         <XTerm
-          onMount={(xterm) => {// `xterm` is an xterm.js instance
+          // `xterm` is an xterm.js instance
+          onMount={(xterm) => {
             const session = assertNonNull(state.session);
             const ttyXterm = new TtyXterm(xterm, {
               key: session.key,
@@ -98,9 +99,7 @@ interface Props {
   disabled?: boolean;
   sessionKey: string;
   /** Can initialize variables */
-  env: {
-    [envVarName: string]: any;
-  };
+  env: { [envVarName: string]: any; };
 }
 
 const Root = styled('div')<{}>`

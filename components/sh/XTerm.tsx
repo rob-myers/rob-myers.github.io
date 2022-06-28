@@ -1,9 +1,11 @@
 import React from 'react';
 import { css } from 'goober';
 import classNames from 'classnames';
+import { withSize } from 'react-sizeme';
+
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { withSize } from 'react-sizeme';
+import {LinkProvider} from 'xterm-link-provider';
 
 export default withSize({ monitorHeight: true, monitorWidth: true })(
   function XTermComponent(props: Props) {
@@ -14,11 +16,16 @@ export default withSize({ monitorHeight: true, monitorWidth: true })(
     React.useEffect(() => {
       const xterm = xtermRef.current = new Terminal(props.options);
     
-      // Saw Uncaught Error: This API only accepts integers
       const fitAddon = new FitAddon;
-      xterm.loadAddon(fitAddon);
+      xterm.loadAddon(fitAddon); // Saw error: This API only accepts integers
       resizeRef.current = () => { try { fitAddon.fit(); } catch {} };
       window.addEventListener('resize', resizeRef.current);
+
+      xterm.registerLinkProvider(new LinkProvider(
+        xterm,
+        /(npc:\S+)/gu,
+        (e, text) => console.log('clicked', text),
+      ));
       
       xterm.open(containerRef.current!);
       resizeRef.current();

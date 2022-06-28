@@ -26,9 +26,11 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- ✅ fix bug with extended lighting
-  - ✅ should extend area instead of creating new areas
-  - ✅ fix hull issue
+- 🚧 npcs can send messages to terminal
+  - ✅ terminal can show regex-specified links which run code
+  - terminal can show link which navigates camera to point
+  - terminal can be associated to NPCs via `ready` 
+  - when click npc Cartesius, he says something in terminal 
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
@@ -51,10 +53,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - 🚧 301
   - the rest
 
-- 🚧 can toggle NPC speech bubbles
-  - ✅ can attach/remove html at world point via `html`
-  - ✅ remove `html` command
-  - use terminal instead, with links to sayer
 
 - ✅ remove outwards hull outset
 - better approach? inset holes, warning if non-unique
@@ -126,6 +124,11 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ remove `html` command (decided to use terminal instead)
+- ✅ can attach/remove html at world point via `html`
+- ✅ fix bug with extended lighting
+  - ✅ should extend area instead of creating new areas
+  - ✅ fix hull issue
 - ✅ lighting issues
   - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
   - ✅ fix curved window office
