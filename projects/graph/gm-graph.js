@@ -296,38 +296,44 @@ export class gmGraphClass extends BaseGraph {
   computeLightPolygons(gmId, rootRoomId, openDoorIds) {
     const gm = this.gms[gmId];
     const roomNode = /** @type {Graph.RoomGraphNodeRoom} */ (gm.roomGraph.nodesArray[rootRoomId]);
+    const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode).flatMap(({ doorId }) => openDoorIds.includes(doorId) ? doorId : []);
 
-    const enterable = gm.roomGraph.getEnterableRooms(roomNode, openDoorIds);
-    const adjOpenDoorIds = enterable.map(x => x.doorId);
-
-    const preDoorLights = enterable
-      .flatMap(({ doorId, roomId }) => [
-        // Light from current room through open door
-        { roomId: rootRoomId, area: this.getOpenDoorArea(gmId, doorId) },
-        // Light from adjacent rooms through related doors
-        ...(gm.extendDoorId?.[doorId] || [])
-          .filter(relDoorId => openDoorIds.includes(relDoorId) && !adjOpenDoorIds.includes(relDoorId))
-          .map(relDoorId => ({ roomId, area: this.getOpenDoorArea(gmId, relDoorId) })),
-      ]);
-
-    const doorLights = preDoorLights.flatMap(({ roomId, area }) => {
-      if (!area) {
-        return [];
+    const preDoorLights = adjOpenDoorIds.flatMap((doorId) => {
+      const area = this.getOpenDoorArea(gmId, doorId);
+      if (!area) return [];
+      /**
+       * - Originally, `relate-doors` tag induced a relation between two doorIds.
+       *   We extend light area when exactly one of them is in @see adjOpenDoorIds.
+       * - Light is extended through a door in an adjacent room, non-adjacent to current room.
+       */
+      const relDoorIds = (gm.relDoorId?.[doorId] || [])
+        .filter(relDoorId => openDoorIds.includes(relDoorId) && !adjOpenDoorIds.includes(relDoorId));
+      if (relDoorIds.length) {
+        area.poly = Poly.union([area.poly, ...relDoorIds
+          .flatMap(relDoorId => this.getOpenDoorArea(gmId, relDoorId)?.poly || [])])[0];
       }
+      return { area, relDoorIds };
+    });
+
+    const doorLights = preDoorLights.flatMap(({ area, relDoorIds }) => {
       const doors = this.gms[area.gmId].doors;
       /**
-       * TODO restrict to fewer doors
+       * TODO fewer segments
        * These additional line segments are needed when 2 doors
        * adjoin a single room e.g. double doors.
        */
-      const closedDoorSegs = doors.filter((_, id) => id !== area.doorId).map(x => x.seg);
+      const closedDoorSegs = doors.filter((_, id) =>
+        id !== area.doorId && !relDoorIds.includes(id)
+      ).map(x => x.seg);
       /**
        * By default we move light inside current room by constant amount.
        * Sometimes this breaks (lies outside current room) or looks bad when combined,
        * so can override via 'light' tagged rects.
        */
-      const lightPosition = gm.point.light[roomId]?.[area.doorId] ||
-        computeLightPosition(doors[area.doorId], roomId, lightDoorOffset);
+      const lightPosition = (
+        gm.point.light[rootRoomId]?.[area.doorId]
+        || computeLightPosition(doors[area.doorId], rootRoomId, lightDoorOffset)
+      );
 
       return {
         gmIndex: area.gmId,

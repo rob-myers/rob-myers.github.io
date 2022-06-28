@@ -1684,7 +1684,7 @@
         }
       },
       {
-        "tags": ["extender"],
+        "tags": ["relate-doors"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -1754,7 +1754,7 @@
         }
       },
       {
-        "tags": ["extender"],
+        "tags": ["relate-doors"],
         "poly": {
           "type": "Polygon",
           "coordinates": [

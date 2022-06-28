@@ -26,13 +26,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- 🚧 lighting issues
-  - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
-  - ✅ fix curved window office
-  - ✅ fix double doors
-  - ✅ can relate two doorIds via rect
-    - tag `extender`
-  - ✅ extend light doorIds via relation
+- ✅ fix bug with extended lighting
+  - ✅ should extend area instead of creating new areas
+  - ✅ fix hull issue
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
@@ -130,6 +126,13 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ lighting issues
+  - ✅ support `light reverse` i.e. light position placed _inside_ adjacent room
+  - ✅ fix curved window office
+  - ✅ fix double doors
+  - ✅ can relate two doorIds via rect
+    - tag `relate-doors`
+  - ✅ extend light doorIds via relation
 - ✅ pause/resume Tabs pause/resumes NavDemo1
   - ✅ npcs should pause/resume
   - ✅ camera should pause/resume

@@ -71,19 +71,6 @@ export class RoomGraph extends BaseGraph {
   }
 
   /**
-   * Given a 'room' node, find all other rooms connected via an open 'door' node.
-   * We assume the undirected graph is bipartite i.e. rooms only connect to doors.
-   * @param {Graph.RoomGraphNodeRoom} roomNode
-   * @param {number[]} openDoorIds
-   */
-  getEnterableRooms(roomNode, openDoorIds) {
-    return this.getAdjacentDoors(roomNode)
-      .filter(node => openDoorIds.includes(node.doorId))
-      .flatMap(doorNode => this.getAdjacentRooms(doorNode).map(x => ({ doorId: doorNode.doorId, roomId: x.roomId })))
-      .filter(x => x.roomId !== roomNode.roomId);
-  }
-
-  /**
    * @param {Graph.RoomGraphJson} json 
    */  
   static from(json) {

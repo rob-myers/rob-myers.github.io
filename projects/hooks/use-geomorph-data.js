@@ -48,14 +48,15 @@ export default function useGeomorphData(layoutKey) {
 
     /**
      * TODO move to json?
-     * `extender`s relate doorIds, and are used to extend the light polygon. 
+     * `relate-doors`s relates two doorIds.
+     * We'll use it to extend the light polygon.
      */
-    const extendDoorId = layout.groups.singles
-      .filter(x => x.tags.includes('extender'))
+    const relDoorId = layout.groups.singles
+      .filter(x => x.tags.includes('relate-doors'))
       .reduce((agg, { poly }) => {
         const doorIds = layout.doors.flatMap((door, doorId) => geom.convexPolysIntersect(door.poly.outline, poly.outline) ? doorId : []);
         doorIds.forEach(doorId => (agg[doorId] || (agg[doorId] = [])).push(...doorIds.filter(x => x !== doorId)) );
-        if (doorIds.length <= 1) console.warn(`saw extender intersecting ≤ 1 doorIds: ${doorIds}`);
+        if (doorIds.length <= 1) console.warn(`poly tagged 'relate-doors' intersects ≤ 1 doorIds: ${doorIds}`);
         return agg;
       }, /** @type {Record<number, number[]>} */ ({}));
     
@@ -67,7 +68,7 @@ export default function useGeomorphData(layoutKey) {
       hullOutline: layout.hullPoly[0].removeHoles(),
       pngRect: Rect.fromJson(layout.items[0].pngRect),
       roomsWithDoors,
-      extendDoorId,
+      relDoorId,
 
       point: {
         all: /** @type {Geom.Vect[]} */ ([]).concat(

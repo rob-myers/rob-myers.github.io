@@ -114,7 +114,7 @@ declare namespace Geomorph {
     hullDoors: ConnectorRect<Poly, Geom.Vect, Geom.Rect>[];
     hullOutline: Poly;
     pngRect: Geom.Rect;
-    extendDoorId: Record<number, number[]>;
+    relDoorId: Record<number, number[]>;
     
     point: {
       all: Vect[];
