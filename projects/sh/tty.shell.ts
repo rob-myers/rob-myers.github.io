@@ -102,6 +102,60 @@ export class TtyShell implements Device {
     }
   }
 
+  private getHistoryLine(lineIndex: number) {
+    const maxIndex = this.history.length - 1;
+    return {
+      line: this.history[maxIndex - lineIndex] || '',
+      nextIndex: lineIndex < 0 ? 0 : lineIndex > maxIndex ? maxIndex : lineIndex,
+    };
+  }
+
+  getHistory() {
+    return this.history.slice();
+  }
+
+  /** Input is a lookup `{ foo: '{ echo foo; }' }` */
+  loadShellFuncs(funcDefs: { [funcName: string]: string }) {
+    for (const [funcName, funcBody] of Object.entries(funcDefs)) {
+      try {
+        const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
+        const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
+        const wrappedBody = wrapInFile(parsedBody);
+        useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
+      } catch (e) {
+        console.error(`loadShellFuncs: failed to load function "${funcName}"`);
+        console.error(e);
+      }
+    }
+  }
+
+  /** `prompt` must not contain non-readable characters e.g. ansi color codes */
+  private prompt(prompt: string) {
+    this.io.write({
+      key: 'send-xterm-prompt',
+      prompt: `${prompt} `,
+    });    
+  }
+
+  private provideContextToParsed(parsed: Sh.FileWithMeta) {
+    Object.assign<Sh.BaseMeta, Sh.BaseMeta>(parsed.meta, {
+      sessionKey: this.sessionKey,
+      pid: 0,
+      ppid: 0,
+      pgid: 0,
+      fd: { 0: this.key, 1: this.key, 2: this.key },
+      stack: [],
+      verbose: false, // TODO runtime configurable
+    });
+  }
+
+  private async runProfile() {
+    const profile = useSession.api.getVar(this.sessionKey, 'PROFILE') || '';
+    const parsed = parseService.parse(profile);
+    this.provideContextToParsed(parsed);
+    await this.spawn(parsed, { leading: true });
+  }
+
   /** Spawn a process, assigning pid to non-leading ones */
   async spawn(
     parsed: Sh.FileWithMeta,
@@ -137,6 +191,16 @@ export class TtyShell implements Device {
       // const process = useSession.api.getProcess(meta);
       // process.cleanups.forEach(cleanup => cleanup());
       !opts.leading && useSession.api.removeProcess(meta.pid, this.sessionKey);
+    }
+  }
+
+  private storeSrcLine(srcLine: string) {
+    const prev = this.history.pop();
+    prev && this.history.push(prev);
+    if (prev !== srcLine) {
+      this.history.push(srcLine);
+      while (this.history.length > this.maxLines) this.history.shift();
+      useSession.api.persist(this.sessionKey);
     }
   }
 
@@ -188,70 +252,6 @@ export class TtyShell implements Device {
       this.input?.resolve();
       this.input = null;
       this.process.status = ProcessStatus.Suspended;
-    }
-  }
-
-  /** `prompt` must not contain non-readable characters e.g. ansi color codes */
-  private prompt(prompt: string) {
-    this.io.write({
-      key: 'send-xterm-prompt',
-      prompt: `${prompt} `,
-    });    
-  }
-
-  /** Input is a lookup `{ foo: '{ echo foo; }' }` */
-  loadShellFuncs(funcDefs: { [funcName: string]: string }) {
-    for (const [funcName, funcBody] of Object.entries(funcDefs)) {
-      try {
-        const parsed = parseService.parse(`${funcName} () ${funcBody.trim()}`);
-        const parsedBody = (parsed.Stmts[0].Cmd as Sh.FuncDecl).Body;
-        const wrappedBody = wrapInFile(parsedBody);
-        useSession.api.addFunc(this.sessionKey, funcName, wrappedBody);
-      } catch (e) {
-        console.error(`loadShellFuncs: failed to load function "${funcName}"`);
-        console.error(e);
-      }
-    }
-  }
-
-  private async runProfile() {
-    const profile = useSession.api.getVar(this.sessionKey, 'PROFILE') || '';
-    const parsed = parseService.parse(profile);
-    this.provideContextToParsed(parsed);
-    await this.spawn(parsed, { leading: true });
-  }
-
-  private provideContextToParsed(parsed: Sh.FileWithMeta) {
-    Object.assign<Sh.BaseMeta, Sh.BaseMeta>(parsed.meta, {
-      sessionKey: this.sessionKey,
-      pid: 0,
-      ppid: 0,
-      pgid: 0,
-      fd: { 0: this.key, 1: this.key, 2: this.key },
-      stack: [],
-      verbose: false, // TODO runtime configurable
-    });
-  }
-
-  private getHistoryLine(lineIndex: number) {
-    const maxIndex = this.history.length - 1;
-    return {
-      line: this.history[maxIndex - lineIndex] || '',
-      nextIndex: lineIndex < 0 ? 0 : lineIndex > maxIndex ? maxIndex : lineIndex,
-    };
-  }
-
-  getHistory() {
-    return this.history.slice();
-  }
-
-  private storeSrcLine(srcLine: string) {
-    const prev = this.history.pop();
-    prev && this.history.push(prev);
-    if (prev !== srcLine) {
-      this.history.push(srcLine);
-      while (this.history.length > this.maxLines) this.history.shift();
-      useSession.api.persist(this.sessionKey);
     }
   }
 
