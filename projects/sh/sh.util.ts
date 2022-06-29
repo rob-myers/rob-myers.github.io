@@ -11,6 +11,8 @@ export const ansiWarn = '\x1b[30;104m';
 export const ansiWhite = '\x1b[0;37m';
 export const ansiYellow = '\x1b[93m';
 
+export const xtermLinkCallback = 'xtermLinkCallback';
+
 export function normalizeWhitespace(word: string, trim = true): string[] {
   if (!word.trim()) {// Prevent [''].
     return [];

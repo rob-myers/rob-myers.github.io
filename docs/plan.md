@@ -29,8 +29,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 - 🚧 npcs can send messages to terminal
   - ✅ terminal can show regex-specified links which run code
   - ✅ XTerm component has optional props.linkProvider
-  - 🚧 props.linkProvider.callback tries to execute `xterm_link_callback {text}`
-  - `xterm_link_callback` alters view when `@{npc}`
+  - ✅ props.linkProvider.callback tries to execute `home.xtermLinkCallback(text)`
+  - 🚧 `xtermLinkCallback` provided via profile and alters view when text is `@{npc}`
   - terminal session associated to NPCs via `ready`
   - npc can have mini speech bubble, onclick sends message to tty
 
@@ -38,6 +38,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - navmeta `start-line-seg` for all waypoints except last
   - on `start-line-seg` show angled rectangle (collision space)
   - ...
+
+- try sorting out shell HMR
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby

@@ -18,6 +18,8 @@ export const cssName = {
   open: 'open',
 } as const;
 
+//#region npcs
+
 /** `24 / 5` because we scale down SVG symbols */
 export const doorWidth = 4.8;
 
@@ -36,3 +38,5 @@ export const obstacleOutset = 10;
 export const lightDoorOffset = 40;
 
 export const lightWindowOffset = 20;
+
+//#endregion

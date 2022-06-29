@@ -4,6 +4,7 @@ import type { ITerminalOptions } from 'xterm';
 import { debounce } from 'debounce';
 
 import { TtyXterm } from 'projects/sh/tty.xterm';
+import { xtermLinkCallback } from 'projects/sh/sh.util';
 import { canTouchDevice } from 'projects/service/dom';
 import useSession, { ProcessStatus, Session } from 'projects/sh/session.store';
 import useOnResize from 'projects/hooks/use-on-resize';
@@ -89,11 +90,14 @@ export default function Terminal(props: Props) {
           linkProviderDef={{
             regex: /(?:^|\s)(@[a-z]+)/gu,
             callback(e, text) {
-              /**
-               * TODO execute shell func
-               */
-              console.log('text', text);
-              useSession.api.writeMsgCleanly(props.sessionKey, text, 'warn');
+              // console.log('text', text);
+              const session = assertNonNull(state.session);
+              const cb = session.var[xtermLinkCallback];
+              if (typeof cb === 'function') {
+                cb(text);
+              } else {
+                useSession.api.writeMsgCleanly(props.sessionKey, `function home.${xtermLinkCallback} not found`, 'warn');
+              }
             },
           }}
         />
