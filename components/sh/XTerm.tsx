@@ -5,7 +5,7 @@ import { withSize } from 'react-sizeme';
 
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import {LinkProvider} from 'xterm-link-provider';
+import { LinkProvider } from 'xterm-link-provider';
 
 export default withSize({ monitorHeight: true, monitorWidth: true })(
   function XTermComponent(props: Props) {
