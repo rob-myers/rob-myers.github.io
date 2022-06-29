@@ -1,5 +1,3 @@
-import { ansiBlue, ansiWhite } from "./sh.util";
-
 /** Can be specified via terminal env.PROFILE */
 export const profileLookup = {
   'profile-1': () => `
@@ -95,133 +93,16 @@ lookLoop: `{
     look $1
 }`,
 
-/**
- * TODO migrate from here
- */
-
-/** npc {action} [{opts}] */
-npc: `{
-  run '({ api, args, home }) {
-    const npcs = api.getCached(home.NPCS_KEY)
-    const action = args[0]
-    const opts = api.parseJsArg(args[1])
-    yield await npcs.npcAct({
-      action,
-      ...typeof opts === "string"
-        ? action.includes("decor") ? { decorKey: opts } : { npcKey: opts }
-        : opts,
-    })
-  }' "$@"
-}`,
-
-/** Ping per second until query NPCS_KEY found */
-ready: `{
-  run '({ api, home }) {
-    const cacheKey = home.NPCS_KEY
-    yield \`ℹ️  polling for cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
-    while (!api.getCached(cacheKey)) yield* await api.sleep(1)
-    yield \`✅  found cached query ${ansiBlue}\${cacheKey}${ansiWhite}\`
-  }' "$@"
-}`,
-
-/**
- * Spawn character(s) at a position(s),
- * - e.g. `spawn andros "$( click 1 )"`
- * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | spawn`
- */
-spawn: `{
-  run '({ api, args, home, datum }) {
-    const npcs = api.getCached(home.NPCS_KEY)
-    if (api.isTtyAt(0)) {
-      const npcKey = args[0]
-      const point = api.safeJsonParse(args[1])
-      npcs.spawn({ npcKey, point })
-    } else {
-      while ((datum = await api.read()) !== null)
-        npcs.spawn(datum)
-    }
-  }' "$@"
-}`,
-
-/**
- * Track npc
- */
-track: `{
-  run '({ api, args, home }) {
-    const npcKey = args[0]
-    const npcs = api.getCached(home.NPCS_KEY)
-    const process = api.getProcess()
-    const subscription = npcs.trackNpc({ npcKey, process })
-    await new Promise(resolve =>
-      process.cleanups.push(
-        () => subscription.unsubscribe(),
-        resolve,
-      )
-    )
-  }' "$@"
-}`,
-
-/**
- * TODO handle multiple reads?
- */
-view: `{
-  run '({ api, args, home }) {
-    const opts = Function(\`return \${args[0]} \`)()
-    const npcs = api.getCached(home.NPCS_KEY)
-    npcs.panZoomTo(opts) // Returns "cancelled" or "completed"
-  }' "$@"
-}`,
-
-/**
- * Move a specific npc along path(s) e.g.
- * - `walk andros "[$( click 1 ), $( click 1 )]"'
- * - `expr "{ key: 'global-nav', fullPath: [$( click 1 ), $( click 1 )], navMetas: [] }" | walk andros`
- *
- * `npcKey` must be fixed via 1st arg
- */
-walk: `{
-  run '({ api, args, home, datum, promises = [] }) {
-    const npcs = api.getCached(home.NPCS_KEY)
-    const npcKey = args[0]
-
-    const process = api.getProcess()
-    process.cleanups.push(() => npcs.npcAct({ npcKey, action: "cancel" }))
-    process.onSuspends.push(() => npcs.npcAct({ npcKey, action: "pause" }))
-    process.onResumes.push(() => npcs.npcAct({ npcKey, action: "play" }))
-
-    if (api.isTtyAt(0)) {
-      const points = api.safeJsonParse(args[1])
-      await npcs.walkNpc({ npcKey, key: "global-nav", fullPath: points, navMetas: [] })
-    } else {
-      datum = await api.read()
-      while (datum !== null) {
-        // Subsequent reads can interrupt walk
-        const resolved = await Promise.race([
-          promises[0] = npcs.walkNpc({ npcKey, ...datum }),
-          promises[1] = api.read(),
-        ])
-        if (resolved === undefined) {// Finished walk
-          datum = await promises[1];
-        } else if (resolved === null) {// EOF so finish walk
-          await promises[0]
-          datum = resolved
-        } else {// We read something before walk finished
-          await npcs.npcAct({ npcKey, action: "cancel" })
-          datum = resolved
-        }
-      }
-    }
-  }' "$@"
-}`,
-
 },
-
 ];
 
 //@ts-ignore
 import rawLoaderJs from './raw-loader';
-Function('utilFunctions', 'gameFunctions', rawLoaderJs)(utilFunctions, gameFunctions);
-console.log({ utilFunctions })
+Function(
+  'utilFunctions',
+  'gameFunctions',
+  rawLoaderJs,
+)(utilFunctions, gameFunctions);
 
 /** This is `/etc` */
 export const scriptLookup = {

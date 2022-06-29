@@ -2,7 +2,7 @@ import { Terminal } from 'xterm';
 import { MessageFromShell, MessageFromXterm } from './tty.model';
 import { safeStringify, testNever } from '../service/generic';
 import { scrollback, ShellIo, DataChunk, isDataChunk } from './io/io.model';
-import { ansiWhite, ansiBlue, ansiReset, ansiYellow, ansiRed, ansiWarn } from './sh.util';
+import { ansiColor } from './sh.util';
 
 /**
  * Wraps xtermjs `Terminal`.
@@ -78,7 +78,7 @@ export class TtyXterm {
     this.session.io.handleWriters(this.onMessage.bind(this));
 
     this.xterm.writeln(
-      `${ansiWhite}Connected to session ${ansiBlue}${this.session.key}${ansiReset}`);
+      `${ansiColor.White}Connected to session ${ansiColor.Blue}${this.session.key}${ansiColor.Reset}`);
     this.clearInput();
     this.cursorRow = 2;
   }
@@ -280,7 +280,7 @@ export class TtyXterm {
       return;
     }
 
-    if (ord == 0x1b) { // ANSI escape sequences
+    if (ord == 0x1b) { // ansiColor. escape sequences
       switch (data.slice(1)) {
         case '[A': {// Up arrow
           if (this.promptReady) {
@@ -439,12 +439,12 @@ export class TtyXterm {
   private onMessage(msg: MessageFromShell | string) {
     if (typeof msg === 'string') {
       const lines = msg.split('\n');
-      const commands = lines.map(line => ({ key: 'line' as const, line: `${ansiWhite}${line}${ansiReset}` }));
+      const commands = lines.map(line => ({ key: 'line' as const, line: `${ansiColor.White}${line}${ansiColor.Reset}` }));
       // this.session.rememberLastValue(lines[lines.length - 1]);
       return this.queueCommands(commands);
     } else if (msg === null) {
       this.session.rememberLastValue(null);
-      return this.queueCommands([{ key: 'line', line: `${ansiYellow}null${ansiReset}` }]);
+      return this.queueCommands([{ key: 'line', line: `${ansiColor.Yellow}null${ansiColor.Reset}` }]);
     } else if (msg === undefined) {
       return;
     }
@@ -488,14 +488,14 @@ export class TtyXterm {
       case 'error': {
         this.queueCommands([{
           key: 'line',
-          line: `${ansiRed}${msg.msg}${ansiReset}`,
+          line: `${ansiColor.Red}${msg.msg}${ansiColor.Reset}`,
         }]);
         break;
       }
       case 'warn': {
         this.queueCommands([{
           key: 'line',
-          line: `${ansiWarn}${msg.msg}${ansiReset}`,
+          line: `${ansiColor.Warn}${msg.msg}${ansiColor.Reset}`,
         }]);
         break;
       }
@@ -506,7 +506,7 @@ export class TtyXterm {
         } else {
           this.queueCommands([{
             key: 'line',
-            line: `${ansiYellow}${safeStringify(msg)}${ansiReset}`,
+            line: `${ansiColor.Yellow}${safeStringify(msg)}${ansiColor.Reset}`,
           }]);
           typeof msg !== 'string' && this.session.rememberLastValue(msg);
         }

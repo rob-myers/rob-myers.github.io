@@ -8,7 +8,7 @@ import useSession, { ProcessStatus } from './session.store';
 import { computeNormalizedParts, killError as killError, normalizeAbsParts, ProcessError, resolveNormalized, resolvePath, ShError } from './sh.util';
 import { cloneParsed, getOpts } from './parse/parse.util';
 import { parseService } from './parse/parse.service';
-import { ansiBlue, ansiYellow, ansiReset, ansiWhite } from './sh.util';
+import { ansiColor } from './sh.util';
 import { TtyShell } from './tty.shell';
 
 import { scriptLookup } from './sh.lib';
@@ -102,7 +102,7 @@ class CmdService {
       case 'declare': {
         const funcs = useSession.api.getFuncs(meta.sessionKey);
         for (const { key, src } of funcs) {
-          const lines = `${ansiBlue}${key}${ansiWhite} () ${src}`.split(/\r?\n/);
+          const lines = `${ansiColor.Blue}${key}${ansiColor.White} () ${src}`.split(/\r?\n/);
           for (const line of lines) yield line;
           yield '';
         } 
@@ -134,9 +134,9 @@ class CmdService {
         const { ttyShell } = useSession.api.getSession(meta.sessionKey);
         yield `The following commands are supported:`;
         const commands = cliColumns(Object.keys(commandKeys), { width: ttyShell.xterm.xterm.cols }).split(/\r?\n/);
-        for (const line of commands) yield `${ansiBlue}${line}`;
+        for (const line of commands) yield `${ansiColor.Blue}${line}`;
         // yield `Traverse context via \`ls\` or \`ls -l var.foo.bar\` (Object.keys).` 
-        yield `\n\rView shell functions via ${ansiBlue}declare${ansiWhite}.`
+        yield `\n\rView shell functions via ${ansiColor.Blue}declare${ansiColor.White}.`
         // yield `Use Ctrl-c to interrupt and Ctrl-l to clear screen.`
         // yield `View history via up/down or \`history\`.`
         // yield `Traverse input using Option-left/right and Ctrl-{a,e}.`
@@ -207,7 +207,7 @@ class CmdService {
             continue;
           }
 
-          if (roots.length > 1) yield `${ansiBlue}${queries[i]}:`;
+          if (roots.length > 1) yield `${ansiColor.Blue}${queries[i]}:`;
           let keys = (opts.r ? keysDeep(obj) : Object.keys(obj)).sort();
           let items = [] as string[];
           if (pwd === 'home' && !opts.a) keys = keys.filter(x => x.toUpperCase() !== x || /^[0-9]/.test(x));
@@ -218,7 +218,7 @@ class CmdService {
               ? keys.map(x => deepGet(obj, x.split('/'))?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'))
               : keys.map(x => obj[x]?.constructor?.name || (obj[x] === null ? 'null' : 'undefined'));
             const metasWidth = Math.max(...metas.map(x => x.length));
-            items = keys.map((x, i) => `${ansiYellow}${metas[i].padEnd(metasWidth)}${ansiWhite} ${x}`);
+            items = keys.map((x, i) => `${ansiColor.Yellow}${metas[i].padEnd(metasWidth)}${ansiColor.White} ${x}`);
           } else if (opts[1]) {
             items = keys;
           } else {
@@ -241,12 +241,12 @@ class CmdService {
           for (const { key: pid, ppid, pgid, status, src } of processes) {
             const icon = getProcessStatusIcon(status);
             const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ')
-            yield `${ansiBlue}${title}${ansiReset}`;
+            yield `${ansiColor.Blue}${title}${ansiColor.Reset}`;
             yield `${info}${icon}`;
             yield src + '\n';
           }
         } else {
-          yield `${ansiBlue}${title}${ansiReset}`;
+          yield `${ansiColor.Blue}${title}${ansiColor.Reset}`;
           for (const { key: pid, ppid, pgid, status, src } of processes) {
             const icon = getProcessStatusIcon(status);
             const info = [pid, ppid, pgid].map(String).map(x => x.padEnd(5)).join(' ');
@@ -384,6 +384,10 @@ class CmdService {
     parent: this,
 
     getCached,
+
+    getColors() {
+      return ansiColor;
+    },
   
     getKillError() {
       return killError(this.meta);
