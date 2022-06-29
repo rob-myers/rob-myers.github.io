@@ -30,7 +30,10 @@ export default function Terminal(props: Props) {
   React.useEffect(() => {
     state.session = useSession.api.createSession(props.sessionKey, props.env);
     update();
-    return () => useSession.api.removeSession(props.sessionKey);
+    return () => {
+      useSession.api.removeSession(props.sessionKey);
+      state.xtermReady = false;
+    };
   }, [props.sessionKey]);
 
   React.useEffect(() => {
@@ -45,7 +48,7 @@ export default function Terminal(props: Props) {
         p.status = ProcessStatus.Suspended;
       });
 
-    } else if (!props.disabled && state.wasDisabled) {
+    } else if (!props.disabled && state.wasDisabled && state.xtermReady) {
       useSession.api.writeMsgCleanly(props.sessionKey, 'Resumed session', 'warn');
       
       // Resume suspended processes
@@ -83,6 +86,16 @@ export default function Terminal(props: Props) {
             }, 100));
           }}
           options={options}
+          linkProviderDef={{
+            regex: /(?:^|\s)(@[a-z]+)/gu,
+            callback(e, text) {
+              /**
+               * TODO execute shell func
+               */
+              console.log('text', text);
+              useSession.api.writeMsgCleanly(props.sessionKey, text, 'warn');
+            },
+          }}
         />
       )}
       {state.isTouchDevice && state.session && state.xtermReady &&

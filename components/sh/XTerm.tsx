@@ -21,11 +21,12 @@ export default withSize({ monitorHeight: true, monitorWidth: true })(
       resizeRef.current = () => { try { fitAddon.fit(); } catch {} };
       window.addEventListener('resize', resizeRef.current);
 
-      xterm.registerLinkProvider(new LinkProvider(
-        xterm,
-        /(npc:\S+)/gu,
-        (e, text) => console.log('clicked', text),
-      ));
+      props.linkProviderDef &&
+        xterm.registerLinkProvider(new LinkProvider(
+          xterm,
+          props.linkProviderDef.regex,
+          props.linkProviderDef.callback,
+        ));
       
       xterm.open(containerRef.current!);
       resizeRef.current();
@@ -54,9 +55,17 @@ export default withSize({ monitorHeight: true, monitorWidth: true })(
 );
 
 interface Props {
-  onMount: (xterm: Terminal) => void;
+  linkProviderDef?: {
+    regex: RegExp;
+    callback(event: MouseEvent, text: string): void;
+  };
   options?: ITerminalOptions;
-  size: { width?: number; height?: number; };
+  onMount: (xterm: Terminal) => void;
+  /** @see withSize */
+  size: {
+    width?: number;
+    height?: number;
+  };
 }
 
 const rootCss = css`

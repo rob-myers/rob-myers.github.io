@@ -28,9 +28,16 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 - 🚧 npcs can send messages to terminal
   - ✅ terminal can show regex-specified links which run code
-  - terminal can show link which navigates camera to point
-  - terminal can be associated to NPCs via `ready` 
-  - when click npc Cartesius, he says something in terminal 
+  - ✅ XTerm component has optional props.linkProvider
+  - 🚧 props.linkProvider.callback tries to execute `xterm_link_callback {text}`
+  - `xterm_link_callback` alters view when `@{npc}`
+  - terminal session associated to NPCs via `ready`
+  - npc can have mini speech bubble, onclick sends message to tty
+
+- npc walk collision prevention
+  - navmeta `start-line-seg` for all waypoints except last
+  - on `start-line-seg` show angled rectangle (collision space)
+  - ...
 
 - 🚧 Gatsby
   - ✅ Start migration to Gatsby
@@ -52,7 +59,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - sometimes eliminate and permit teleport (e.g. to urinal)
   - 🚧 301
   - the rest
-
 
 - ✅ remove outwards hull outset
 - better approach? inset holes, warning if non-unique
