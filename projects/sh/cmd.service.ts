@@ -583,3 +583,5 @@ function throwError(message: string, exitCode?: number) {
 //#endregion
 
 export const cmdService = new CmdService;
+
+export type CmdServiceType = typeof cmdService;

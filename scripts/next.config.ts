@@ -37,6 +37,7 @@ export default (_phase: Phase, _ctxt: NextJsConfigCtxt): NextJsConfig => {
           module: {
             rules: [
               { test: /\.md$/, use: 'raw-loader' },
+              { test: /\/raw-loader.js$/, use: 'raw-loader' },
             ],
           },
         },

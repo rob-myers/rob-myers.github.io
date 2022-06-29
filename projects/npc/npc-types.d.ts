@@ -1,10 +1,6 @@
 
 declare namespace NPC {
   
-  // TODO types issue
-  import type { filter, first, map, take } from 'rxjs/operators';
-  import type { otag } from '../service/rxjs';
-  
   export interface NPCsProps {
     disabled?: boolean;
     gmGraph: Graph.GmGraph;
@@ -241,12 +237,12 @@ declare namespace NPC {
     };
     rxjs: {
       //#region rxjs/operators
-      filter: filter;
-      first: first;
-      map: map;
-      take: take;
+      filter: import('../service/rxjs').filter;
+      first: import('../service/rxjs').first;
+      map: import('../service/rxjs').map;
+      take: import('../service/rxjs').take;
       //#endregion
-      otag: otag;
+      otag: import('../service/rxjs').otag;
     };
 
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;

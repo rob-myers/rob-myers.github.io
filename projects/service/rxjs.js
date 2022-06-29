@@ -72,3 +72,16 @@ export default function defer() {
 
 	return Object.assign(promise, transit);
 }
+
+/**
+ * We now provide various types which can be imported into namespaces.
+ */
+
+/** @typedef {typeof otag} otag */
+
+import { filter, first, map, take } from 'rxjs/operators';
+
+/** @typedef {typeof filter} filter */
+/** @typedef {typeof first} first */
+/** @typedef {typeof map} map */
+/** @typedef {typeof take} take */
