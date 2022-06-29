@@ -1,6 +1,8 @@
 /**
  * This file is loaded via webpack `raw-loader` to avoid function transpilation.
  * 
+ * __BEWARE__ currently must avoid single-quotes inside function bodies
+ * 
  * - `utilFunctions` is provided by the context
  * - We'll extend it using @see utilFunctionsRunDefs
  * - They are both arrays in order to support future versions of the named functions.
@@ -15,7 +17,7 @@
  * @typedef RunArg @type {object}
  * @property {import('./cmd.service').CmdServiceType['processApi']} api
  * @property {string[]} args
- * @property {Record<string, any>} home
+ * @property {{ [key: string]: any; 'NPCS_KEY': string; }} home
  * @property {*} [datum] A shortcut for declaring a variable
  * @property {*[]} [promises] Another shortcut
  */
@@ -290,6 +292,17 @@ const gameFunctionsRunDefs = [
           datum = resolved
         }
       }
+    }
+  },
+
+  // TODO link with const `xtermLinkCallback`
+  ['xtermLinkCallback']: async function* ({ api, args, home }) {
+    const linkText = args[0]
+    if (linkText.startsWith("@")) {
+      const npcKey = linkText.slice(1)
+      const npcs = /** @type {NPC.FullApi} */ (api.getCached(home.NPCS_KEY));
+      const npc = npcs.getNpc(npcKey);
+      await npcs.panZoomTo({ ms: 2000, point: npc.getPosition() });
     }
   },
 

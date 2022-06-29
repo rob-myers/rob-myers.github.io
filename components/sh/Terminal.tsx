@@ -89,14 +89,14 @@ export default function Terminal(props: Props) {
           options={options}
           linkProviderDef={{
             regex: /(?:^|\s)(@[a-z]+)/gu,
-            callback(e, text) {
+            async callback(e, text) {
               // console.log('text', text);
-              const session = assertNonNull(state.session);
-              const cb = session.var[xtermLinkCallback];
-              if (typeof cb === 'function') {
-                cb(text);
+              const func = useSession.api.getFunc(props.sessionKey, xtermLinkCallback);
+              if (func) {
+                const session = assertNonNull(state.session);
+              await session.ttyShell.triggerScriptExternally(`${xtermLinkCallback} ${text}`);
               } else {
-                useSession.api.writeMsgCleanly(props.sessionKey, `function home.${xtermLinkCallback} not found`, 'warn');
+                useSession.api.writeMsgCleanly(props.sessionKey, `shell function ${xtermLinkCallback} not found`, 'warn');
               }
             },
           }}

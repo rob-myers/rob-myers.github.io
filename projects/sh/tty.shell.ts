@@ -156,6 +156,16 @@ export class TtyShell implements Device {
     await this.spawn(parsed, { leading: true });
   }
 
+  /**
+   * This should only be used when there is no process/session context,
+   * e.g. a script triggered by clicking on a link in terminal. 
+   */
+  async triggerScriptExternally(script: string) {
+    const parsed = parseService.parse(script);
+    this.provideContextToParsed(parsed);
+    await this.spawn(parsed, { leading: false });
+  }
+
   /** Spawn a process, assigning pid to non-leading ones */
   async spawn(
     parsed: Sh.FileWithMeta,

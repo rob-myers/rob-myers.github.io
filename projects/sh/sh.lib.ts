@@ -15,7 +15,6 @@ ${profileLookup["profile-1"]()}
 # await world
 ready
 
-# hard-coded spawn (TODO spawn points)
 spawn andros '{"x":185,"y":390}'
 # spawn andros '{"x":598.95,"y":1160.13}'
 npc set-player andros
@@ -23,9 +22,10 @@ npc set-player andros
 # camera follows andros
 track andros &
 
-# click to move
+# click navmesh to move
 goLoop andros &
-# click to look
+
+# click outside navmesh to look
 lookLoop andros &
 `,
 };
@@ -95,6 +95,14 @@ lookLoop: `{
 
 },
 ];
+
+/**
+ * Shell function bodies with format
+ * ```sh
+ * { run '{async function* suffix}' "$@" }
+ * ```
+ * are derived from raw-loader.js
+ */
 
 //@ts-ignore
 import rawLoaderJs from './raw-loader';

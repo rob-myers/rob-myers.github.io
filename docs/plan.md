@@ -30,7 +30,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ terminal can show regex-specified links which run code
   - ✅ XTerm component has optional props.linkProvider
   - ✅ props.linkProvider.callback tries to execute `home.xtermLinkCallback(text)`
-  - 🚧 `xtermLinkCallback` provided via profile and alters view when text is `@{npc}`
+  - ✅ `xtermLinkCallback` provided via _game functions_
+  - ✅ `xtermLinkCallback` zooms to `@{npc}` when npc exists
   - terminal session associated to NPCs via `ready`
   - npc can have mini speech bubble, onclick sends message to tty
 
@@ -39,6 +40,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - on `start-line-seg` show angled rectangle (collision space)
   - ...
 
+- ✅ migrate `run` code from sh.lib into raw-loader.js
 - try sorting out shell HMR
 
 - 🚧 Gatsby
