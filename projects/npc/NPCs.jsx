@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { css } from "goober";
 import { merge, of, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
-import { assertNonNull, testNever } from "../service/generic";
+import { testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
@@ -28,9 +28,10 @@ export default function NPCs(props) {
     decor: {},
     events: new Subject,
     npc: {},
-    playerKey: /** @type {null | string} */ (null),
-    ready: true,
     rootEl: /** @type {HTMLDivElement} */ ({}),
+    ready: true,
+    playerKey: /** @type {null | string} */ (null),
+    sessionKeys: new Set,
 
     class: { Vect },
     rxjs: { filter, first, map, take, otag },

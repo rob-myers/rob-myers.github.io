@@ -209,7 +209,9 @@ const gameFunctionsRunDefs = [
     const cacheKey = home.NPCS_KEY
     const ansiColor = api.getColors();
     yield `ℹ️  polling for cached query ${ansiColor.Blue}${cacheKey}${ansiColor.White}`
-    while (!api.getCached(cacheKey)) yield* await api.sleep(1)
+    /** @type {NPC.FullApi} */ let npcs;
+    while (!(npcs = api.getCached(cacheKey))) yield* api.sleep(1)
+    npcs.sessionKeys.add(api.getProcess().sessionKey)
     yield `✅  found cached query ${ansiColor.Blue}${cacheKey}${ansiColor.White}`
   },
 

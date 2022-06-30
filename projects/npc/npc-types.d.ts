@@ -228,9 +228,10 @@ declare namespace NPC {
     decor: Record<string, Decor>;
     events: import('rxjs').Subject<NPC.NPCsEvent>;
     npc: Record<string, NPC.NPC>;
-    playerKey: null | string;
-    ready: boolean;
     rootEl: HTMLElement;
+    ready: boolean;
+    playerKey: null | string;
+    sessionKeys: Set<string>;
 
     class: {
       Vect: typeof Geom.Vect;

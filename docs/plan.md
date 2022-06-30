@@ -26,13 +26,12 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- 🚧 npcs can send messages to terminal
+- ✅ can execute code by clicking terminal links
+- 🚧 clicking room "info label" sends messages to terminal
   - ✅ terminal can show regex-specified links which run code
   - ✅ XTerm component has optional props.linkProvider
-  - ✅ props.linkProvider.callback tries to execute `home.xtermLinkCallback(text)`
-  - ✅ `xtermLinkCallback` provided via _game functions_
-  - ✅ `xtermLinkCallback` zooms to `@{npc}` when npc exists
-  - terminal session associated to NPCs via `ready`
+  - ✅ props.linkProvider.callback invokes xterm.autoSendCode
+  - ✅ terminal session associated to NPCs via `ready`
   - npc can have mini speech bubble, onclick sends message to tty
 
 - npc walk collision prevention
