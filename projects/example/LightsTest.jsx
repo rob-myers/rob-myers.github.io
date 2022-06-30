@@ -87,7 +87,12 @@ export default function LightsTest(props) {
   }, [gm]);
 
   return (
-    <CssPanZoom dark className={rootCss}>
+    <CssPanZoom
+      dark
+      className={rootCss}
+      initCenter={{ x: 600, y: 300 }}
+      initZoom={0.5}
+    >
       {gm && <>
 
         <img
