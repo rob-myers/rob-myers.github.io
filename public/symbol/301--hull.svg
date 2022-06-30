@@ -68,16 +68,16 @@
       <title>door iris</title>
     </rect>
     <rect x="290" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
-      <title>switch</title>
+      <title>label study</title>
     </rect>
-    <rect x="240" y="360" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
-      <title>switch</title>
+    <rect x="240" y="360" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);" transform="matrix(0, -1, 1, 0, -120, 610)">
+      <title>label corridor</title>
     </rect>
     <rect x="1080" y="350" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
-      <title>switch</title>
+      <title>label corridor</title>
     </rect>
     <rect x="900" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
-      <title>switch</title>
+      <title>label study</title>
     </rect>
     <rect x="60" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">
       <title>spawn</title>

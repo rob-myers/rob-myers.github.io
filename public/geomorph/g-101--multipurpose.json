@@ -1081,7 +1081,7 @@
         }
       },
       {
-        "tags": ["switch"],
+        "tags": ["label", "corridor"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[310, 200], [310, 210], [300, 210], [300, 200]]]
@@ -4149,6 +4149,12 @@
     }
   ],
   "labels": [
+    {
+      "text": "corridor",
+      "center": {"x": 305, "y": 205},
+      "rect": {"x": 286, "y": 200, "width": 38, "height": 10},
+      "padded": {"x": 282, "y": 198, "width": 46, "height": 14}
+    },
     {
       "text": "fuel",
       "center": {"x": 120, "y": 28},

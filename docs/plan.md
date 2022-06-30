@@ -32,7 +32,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ XTerm component has optional props.linkProvider
   - ✅ props.linkProvider.callback invokes xterm.autoSendCode
   - ✅ terminal session associated to NPCs via `ready`
-  - npc can have mini speech bubble, onclick sends message to tty
+  - ✅ remove tag `switch`
+  - remove label measure?
+  - info icons at room labels, onclick sends message to tty
 
 - npc walk collision prevention
   - navmeta `start-line-seg` for all waypoints except last

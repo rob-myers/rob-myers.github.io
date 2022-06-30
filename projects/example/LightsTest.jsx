@@ -16,7 +16,8 @@ export default function LightsTest(props) {
   const update = useUpdate();
 
   const { gms, gmGraph } = useGeomorphs([
-    { layoutKey: 'g-101--multipurpose' },
+    // { layoutKey: 'g-101--multipurpose' },
+    { layoutKey: 'g-301--bridge' },
   ]);
 
   const gm = gms[0];
