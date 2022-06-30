@@ -97,6 +97,16 @@ export class TtyXterm {
     return this.prompt + input;
   }
 
+  autoSendCode(input: string) {
+    if (this.promptReady) {
+      this.clearInput();
+      this.input = input
+      this.sendLine();
+    } else {
+      this.onMessage({ key: 'warn', msg: `not ready, ignored code: ${input}` });
+    }
+  }
+
   /**
    * Clears the input possibly over many lines.
    * Returns the cursor to the start of the input.

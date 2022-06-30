@@ -156,16 +156,6 @@ export class TtyShell implements Device {
     await this.spawn(parsed, { leading: true });
   }
 
-  /**
-   * This should only be used when there is no process/session context,
-   * e.g. a script triggered by clicking on a link in terminal. 
-   */
-  async triggerScriptExternally(script: string) {
-    const parsed = parseService.parse(script);
-    this.provideContextToParsed(parsed);
-    await this.spawn(parsed, { leading: false });
-  }
-
   /** Spawn a process, assigning pid to non-leading ones */
   async spawn(
     parsed: Sh.FileWithMeta,
@@ -200,7 +190,9 @@ export class TtyShell implements Device {
     } finally {
       // const process = useSession.api.getProcess(meta);
       // process.cleanups.forEach(cleanup => cleanup());
-      !opts.leading && useSession.api.removeProcess(meta.pid, this.sessionKey);
+      
+      // TODO why is opts.leading false and meta.pid 0
+      !opts.leading && meta.pid && useSession.api.removeProcess(meta.pid, this.sessionKey);
     }
   }
 

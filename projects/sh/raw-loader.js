@@ -295,17 +295,6 @@ const gameFunctionsRunDefs = [
     }
   },
 
-  // TODO link with const `xtermLinkCallback`
-  ['xtermLinkCallback']: async function* ({ api, args, home }) {
-    const linkText = args[0]
-    if (linkText.startsWith("@")) {
-      const npcKey = linkText.slice(1)
-      const npcs = /** @type {NPC.FullApi} */ (api.getCached(home.NPCS_KEY));
-      const npc = npcs.getNpc(npcKey);
-      await npcs.panZoomTo({ ms: 2000, point: npc.getPosition() });
-    }
-  },
-
 },
 ];
 
