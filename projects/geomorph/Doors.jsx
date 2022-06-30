@@ -61,9 +61,11 @@ export default function Doors(props) {
       const gmId = Number(gmIdAttr);
       const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
       const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-id'));
-      const gmDoorNode = hullDoorId === -1 ? null : props.gmGraph.getDoorNodeByIds(gmId, hullDoorId);
 
-      if (gmIdAttr === null || !state.vis[gmId][doorId] || gmDoorNode?.sealed) {
+      const gmDoorNode = hullDoorId === -1 ? null : props.gmGraph.getDoorNodeByIds(gmId, hullDoorId);
+      const sealed = gmDoorNode?.sealed || props.gms[gmId].doors[doorId].tags.includes('sealed');
+
+      if (gmIdAttr === null || !state.vis[gmId][doorId] || sealed) {
         return; // Not a door, not visible, or sealed permanently
       }
 
