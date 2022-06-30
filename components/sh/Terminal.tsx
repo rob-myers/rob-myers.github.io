@@ -88,9 +88,10 @@ export default function Terminal(props: Props) {
           }}
           options={options}
           linkProviderDef={{
-            regex: /\*\*([^*]+)\*\*/g,
+            // regex: /\*\*([^*]+)\*\*/g,
+            regex: /(?:^|\s)\*([^*]+)\*(?:$|\s)/g,
             async callback(e, text) {
-              // console.log('link text', text);
+              // console.log('link text', e, text);
               const session = assertNonNull(state.session);
               session.ttyShell.xterm.autoSendCode(text);
             },
