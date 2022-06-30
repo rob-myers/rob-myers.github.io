@@ -71,30 +71,30 @@
       <title>door hull</title>
     </rect>
     <rect x="485" y="414" width="50" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
-      <title>door iris</title>
+      <title>door iris sealed</title>
     </rect>
-    <rect x="1936.1" y="804" width="97.1" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1890, -1924.099365)">
+    <rect x="1934.106" y="804" width="97" height="12" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1890, -1922.105469)">
       <title>door</title>
     </rect>
-    <rect x="728" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
+    <rect x="728" y="537" width="44" height="5" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);">
       <title>door</title>
     </rect>
-    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1440, -450)">
+    <rect x="878" y="335" width="44" height="5" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1237.5, -450)">
       <title>door</title>
     </rect>
-    <rect x="2093.7" y="536" width="105" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1620, -1726.699951)">
+    <rect x="2093.7" y="335" width="105" height="5" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1417.5, -1726.699951)">
       <title>door</title>
     </rect>
-    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1710, -691)">
+    <rect x="878" y="335" width="44" height="5" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1507.75, -691)">
       <title>door</title>
     </rect>
-    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1710, -751)">
+    <rect x="878" y="335" width="44" height="5" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1507.75, -751)">
       <title>door</title>
     </rect>
-    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1710, -811)">
+    <rect x="878" y="335" width="44" height="5" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1507.75, -811)">
       <title>door</title>
     </rect>
-    <rect x="878" y="536" width="44" height="8" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1710, -870)">
+    <rect x="878" y="335" width="44" height="5" style="fill: rgb(255, 255, 255); stroke: rgb(0, 0, 0);" transform="matrix(0, 1, -1, 0, 1507.75, -870)">
       <title>door</title>
     </rect>
     <rect width="22" height="22" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1159.1" y="18.6">
