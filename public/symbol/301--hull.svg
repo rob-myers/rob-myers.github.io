@@ -61,10 +61,10 @@
     <rect x="240.2" y="238.5" width="59.8" height="3.5" style="fill-opacity: 0.5; stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0);">
       <title>wall</title>
     </rect>
-    <rect x="160.201" y="254" width="5.546" height="46" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9;" transform="matrix(0, 1, -1, 0, 546.757263, 77.519539)">
+    <rect x="173.315" y="254" width="6" height="46" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9;" transform="matrix(0, 1, -1, 0, 546.757263, 64.184998)">
       <title>door iris</title>
     </rect>
-    <rect x="147.1" y="-300" width="5.091" height="46" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9;" transform="matrix(0, 1, -1, 0, 653.757263, 90.634743)">
+    <rect x="173.365" y="-300" width="6" height="46" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9;" transform="matrix(0, 1, -1, 0, 653.757263, 64.135231)">
       <title>door iris</title>
     </rect>
     <rect x="270" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">

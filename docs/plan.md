@@ -26,6 +26,13 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- normalize door width
+  - standard `24` (`4.8` in hull)
+    - OR? standard `25` (`5` in hull)
+  - iris `30` (`6` in hull)
+  - hull `12`
+  - sealed standard/iris on hull `12`
+
 - ✅ can execute code by clicking terminal links
 - 🚧 clicking room "info label" sends messages to terminal
   - ✅ terminal can show regex-specified links which run code
