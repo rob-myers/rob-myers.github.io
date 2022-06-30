@@ -67,16 +67,16 @@
     <rect x="147.1" y="-300" width="5.091" height="46" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 255); fill-opacity: 0.9;" transform="matrix(0, 1, -1, 0, 653.757263, 90.634743)">
       <title>door iris</title>
     </rect>
-    <rect x="290" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
+    <rect x="270" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
       <title>label study</title>
     </rect>
-    <rect x="240" y="360" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);" transform="matrix(0, -1, 1, 0, -120, 610)">
+    <rect x="240" y="360" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);" transform="matrix(0, -1, 1, 0, -120, 550)">
       <title>label corridor</title>
     </rect>
-    <rect x="1080" y="350" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
+    <rect x="950" y="300" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
       <title>label corridor</title>
     </rect>
-    <rect x="900" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
+    <rect x="930" y="194" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
       <title>label study</title>
     </rect>
     <rect x="60" y="290" width="10" height="10" style="fill-opacity: 0.9; stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(153, 153, 255);">

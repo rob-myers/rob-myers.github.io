@@ -33,7 +33,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ props.linkProvider.callback invokes xterm.autoSendCode
   - ✅ terminal session associated to NPCs via `ready`
   - ✅ remove tag `switch`
-  - remove label measure?
+  - ✅ clarify label measure
   - info icons at room labels, onclick sends message to tty
 
 - npc walk collision prevention

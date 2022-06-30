@@ -172,14 +172,20 @@ declare namespace Geomorph {
     pngHref: string;
   }
 
+  /**
+   * Includes measurements for canvas-based
+   * debug geomorph rendering. In practice,
+   * labels would be should via CSS if at all.
+   */
   export interface LayoutLabel {
-    /** Originally specified in symbol svg */
-    center: Geom.VectJson;
     /** The label */
     text: string;
-    /** World rect containing text */
+    /** Originally specified in symbol svg */
+    center: Geom.VectJson;
+
+    /** Measured world rect containing text */
     rect: Geom.RectJson;
-    /** Padded world rect containing text */
+    /** Measured padded world rect containing text */
     padded: Geom.RectJson;
   }
 

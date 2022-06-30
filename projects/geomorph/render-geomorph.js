@@ -118,9 +118,9 @@ export async function renderGeomorph(
   if (doors) {
     const doors = singlesToPolys(singles, 'door');
     ctxt.fillStyle = 'rgba(0, 0, 0, 1)';
-    fillPolygon(ctxt, doors);
+    fillPolygon(ctxt, doors.flatMap(x => x.createOutset(1)));
     ctxt.fillStyle = 'rgba(255, 255, 255, 1)';
-    fillPolygon(ctxt, doors.flatMap(x => x.createInset(2)));
+    fillPolygon(ctxt, doors);
   }
 
   if (labels) {
