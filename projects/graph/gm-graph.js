@@ -331,7 +331,7 @@ export class gmGraphClass extends BaseGraph {
        * so can override via 'light' tagged rects.
        */
       const lightPosition = (
-        gm.point.light[rootRoomId]?.[area.doorId]
+        gm.point[rootRoomId]?.light[area.doorId]
         || computeLightPosition(doors[area.doorId], rootRoomId, lightDoorOffset)
       );
 

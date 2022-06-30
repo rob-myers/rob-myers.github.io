@@ -26,13 +26,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- normalize door width
-  - standard `24` (`4.8` in hull)
-    - OR? standard `25` (`5` in hull)
-  - iris `30` (`6` in hull)
-  - hull `12`
-  - sealed standard/iris on hull `12`
-
 - ✅ can execute code by clicking terminal links
 - 🚧 clicking room "info label" sends messages to terminal
   - ✅ terminal can show regex-specified links which run code
@@ -78,6 +71,14 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 - modularise npc json
   - NPC.jsx
   - create-npc.js
+
+- 🚧 CLEAN: normalize door width
+  - standard `24` (`4.8` in hull)
+    - OR? standard `25` (`5` in hull)
+  - iris `30` (`6` in hull)
+  - hull `12`
+  - sealed standard/iris on hull `12`
+  - ✅ 301 and 302 hull
 
 - fix NavDemo1 useGeomorphs HMR
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)

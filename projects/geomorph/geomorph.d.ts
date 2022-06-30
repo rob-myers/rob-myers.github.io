@@ -116,15 +116,17 @@ declare namespace Geomorph {
     pngRect: Geom.Rect;
     relDoorId: Record<number, number[]>;
     
+    /** Points grouped by room */
     point: {
-      all: Vect[];
       /** Can specify light position from room through door */
-      light: { [roomId?: number]: { [doorId?: number]: Vect } };
-      /** Aligned to `rooms`; possibly many. */
-      spawn: Vect[][];
-      /** Aligned to `rooms`, default to room's center. */
-      switch: Vect[];
-    };
+      light: { [doorId?: number]: Vect };
+      /** `labels` inside room. */
+      labels: LayoutLabel[];
+      /** Spawn points inside room. */
+      spawn: Vect[];
+
+      default: Vect;
+    }[];
 
     /** Proxy for lazy cached data */
     lazy: {

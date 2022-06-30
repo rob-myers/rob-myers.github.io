@@ -126,14 +126,14 @@ export default function LightsTest(props) {
           className="light-toggles"
           onClick={state.onToggleLight}
         >
-          {gm.point.switch.map((center, roomId) => {
+          {gm.point.map((meta, roomId) => {
             return <div
               key={roomId}
               data-index={roomId}
               className="toggle"
               style={{
-                left: center.x - 5,
-                top: center.y - 5,
+                left: meta.default.x - 5,
+                top: meta.default.y - 5,
                 borderColor: state.roomShown[roomId] ? '#5f5' : 'rgba(200, 0, 0, 0.3)',
                 outline: state.roomShown[roomId] ? '1px solid black' : '1px solid rgba(255, 255, 255, 0.5)',
               }}
@@ -200,7 +200,7 @@ function DebugGraph({ gm }) {
           fill="none"
           r={5}
           {...node.type === 'room'
-            && { cx: gm.point.switch[i].x, cy: gm.point.switch[i].y,  }}
+            && { cx: gm.point[i].default.x, cy: gm.point[i].default.y,  }}
           {...node.type === 'door'
             && { cx: gm.doors[node.doorId].poly.center.x, cy: gm.doors[node.doorId].poly.center.y }}
           {...node.type === 'window'
@@ -219,10 +219,10 @@ function DebugGraph({ gm }) {
           .map((edge) =>
             <line
               stroke="red"
-              x1={gm.point.switch[
-                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].x}
-              y1={gm.point.switch[
-                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].y}
+              x1={gm.point[
+                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].default.x}
+              y1={gm.point[
+                /** @type {Graph.RoomGraphNodeRoom} */ (edge.src).roomId].default.y}
               x2={gm.doors[
                 /** @type {Graph.RoomGraphNodeDoor} */ (edge.dst).doorId].poly.center.x}
               y2={gm.doors[
