@@ -292,7 +292,7 @@ export default function NavDemo1(props) {
 
 const npcsKey = 'npcs-demo-1';
 const debugRadius = 5;
-const debugDoorOffset = 18;
+const debugDoorOffset = 10;
 
 /** @param {Geomorph.GeomorphData} gm */
 const rootCss = css`
@@ -369,29 +369,29 @@ function Debug(props) {
   const roomPoly = gm.rooms[props.roomId];
   const { labels } = gm.point[props.roomId];
 
-  return (
-    <div
-      className="debug-parent"
-      onClick={(e) => {
-        const target = (/** @type {HTMLElement} */ (e.target));
-        if (!target.hasAttribute('data-debug-door-index')) {
-          return;
-        }
-        const door = gm.doors[Number(target.getAttribute('data-debug-door-index'))];
-        const [otherRoomId] = door.roomIds.filter(id => id !== props.roomId);
-        if (otherRoomId !== null) {// `door` is not a hull door
-          return props.setRoom(props.gmId, otherRoomId);
-        }
+  const onClick = React.useCallback(/** @param {React.MouseEvent<HTMLDivElement>} e */ (e) => {
+    const target = (/** @type {HTMLElement} */ (e.target));
 
-        const hullDoorId = gm.hullDoors.indexOf(door);
+    if (target.className === 'debug-door-arrow') {
+      const door = gm.doors[Number(target.getAttribute('data-debug-door-id'))];
+      const hullDoorId = gm.getHullDoorId(door);
+      if (hullDoorId >= 0) {
         const ctxt = props.gmGraph.getAdjacentRoomCtxt(props.gmId, hullDoorId);
-        if (ctxt) {
-          props.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
-        } else {
-          console.info('hull door is isolated', props.gmId, hullDoorId);
-        }
-      }}
-    >
+        if (ctxt) props.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
+        else console.info('hull door is isolated', props.gmId, hullDoorId);
+      } else {
+        return props.setRoom(props.gmId, gm.getOtherRoomId(door, props.roomId));
+      }
+    }
+
+    if (target.className === 'debug-label-info') {
+      // TODO
+    }
+
+  }, [gm, props]);
+
+  return (
+    <div className="debug-parent" onClick={onClick}>
       {props.outlines && props.gms.map((gm, gmId) =>
         <div
           key={gmId}
@@ -458,7 +458,7 @@ function Debug(props) {
           return [
             <div
               key={doorId}
-              data-debug-door-index={doorId}
+              data-debug-door-id={doorId}
               data-tags="debug door-arrow"
               className="debug-door-arrow"
               style={{

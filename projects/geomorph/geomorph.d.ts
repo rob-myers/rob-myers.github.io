@@ -135,6 +135,15 @@ declare namespace Geomorph {
         [roomId: number]: Poly;
       };
     };
+
+    /** Returns -1 if not a hull door */
+    getHullDoorId(doorOrId: Geomorph.ParsedConnectorRect | number): number;
+    /**
+     * `roomId` must reside in non-hull-door's roomIds.
+     * Returns -1 if not a hull door.
+     */
+    getOtherRoomId(doorOrId: Geomorph.ParsedConnectorRect | number, roomId: number): number;
+    isHullDoor(doorOrId: Geomorph.ParsedConnectorRect | number): boolean;
   }
 
   export interface UseGeomorphsDefItem {

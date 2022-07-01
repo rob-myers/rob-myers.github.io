@@ -107,7 +107,20 @@ export default function useGeomorphData(layoutKey) {
       roomsWithDoors,
       relDoorId,
       point: pointsByRoom,
-      lazy: /** @type {*} */ (null),
+      lazy: /** @type {*} */ (null), // Overwritten below
+
+      getHullDoorId(doorOrId) {
+        const door = typeof doorOrId === 'number' ? this.doors[doorOrId] : doorOrId
+        return this.hullDoors.findIndex(x => x === door);
+      },
+      getOtherRoomId(doorOrId, roomId) {
+        return (typeof doorOrId === 'number' ? this.doors[doorOrId] : doorOrId)
+          .roomIds.find(id => id !== roomId) || -1;
+      },
+      isHullDoor(doorOrId) {
+        return (typeof doorOrId === 'number' ? this.doors[doorOrId] : doorOrId)
+          .roomIds.includes(null);
+      },
     };
 
     output.lazy = createLazyProxy(output);
