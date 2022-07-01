@@ -51,6 +51,33 @@ export class floorGraphClass extends BaseGraph {
   }
 
   /**
+   * @param {Geom.VectJson} src
+   * @param {Geom.VectJson} dst
+   * @param {Graph.FloorGraphNode[]} nodePath 
+   */
+   computeStringPull(src, dst, nodePath) {
+    // We have the corridor, now pull the rope
+    const channel = new Channel;
+    channel.push(src);
+    for (let i = 0; i < nodePath.length; i++) {
+      const polygon = nodePath[i];
+      const nextPolygon = nodePath[i + 1];
+
+      if (nextPolygon) {
+        const portals = /** @type {number[]} */ (this.getPortalFromTo(polygon, nextPolygon));
+        channel.push(
+          this.vectors[portals[0]],
+          this.vectors[portals[1]],
+        );
+      }
+    }
+    channel.push(dst);
+    channel.stringPull();
+    return channel;
+  }
+
+
+  /**
    * @param {Geom.Vect} src in geomorph local coords
    * @param {Geom.Vect} dst in geomorph local coords
    * @returns {null | NPC.BaseLocalNavPath}
@@ -200,6 +227,49 @@ export class floorGraphClass extends BaseGraph {
   }
 
   /**
+   * We assume `gm.navZone` has exactly one group,
+   * i.e. floor of geomorph (sans doors) is connected.
+   * @param {Geomorph.GeomorphData} gm
+   * @returns {Graph.FloorGraph}
+   */
+   static fromZone(gm) {
+    const zone = gm.navZone;
+
+    const { groups: navNodeGroups, vertices } = zone;
+    const graph = new floorGraphClass(gm);
+    const navNodes = navNodeGroups.flatMap(x => x);
+
+    for (const [nodeId, node] of Object.entries(navNodes)) {
+      graph.registerNode({
+        type: 'tri',
+        id: `tri-${nodeId}`,
+        index: Number(nodeId),
+        vertexIds: node.vertexIds.slice(),
+        portals: node.portals.map(x => x.slice()),
+
+        cost: 1,
+        visited: false,
+        closed: false,
+        parent: null,
+        centroid: Vect.from(node.centroid),
+
+        neighbours: node.neighbours.slice(),
+      });
+    }
+
+    for (const [nodeId, node] of Object.entries(navNodes)) {
+      const graphNodeId = `tri-${nodeId}`;
+      const neighbourIds = node.neighbours.map(otherNodeId => `tri-${otherNodeId}`);
+      // Nav.Zone already "symmetric", so no need for double edges
+      neighbourIds.forEach(nhbrNodeId =>
+        graph.registerEdge({ src: graphNodeId, dst: nhbrNodeId })
+      );
+    }
+
+    return graph;
+  }
+
+  /**
    * https://github.com/donmccurdy/three-pathfinding/blob/ca62716aa26d78ad8641d6cebb393de49dd70e21/src/Pathfinding.js#L78
    * Returns the closest node to the target position.
    * @param  {Geom.VectJson} position
@@ -242,75 +312,6 @@ export class floorGraphClass extends BaseGraph {
         return a.portals[i];
       }
     }
-  }
-
-  /**
-   * @param {Geom.VectJson} src
-   * @param {Geom.VectJson} dst
-   * @param {Graph.FloorGraphNode[]} nodePath 
-   */
-  computeStringPull(src, dst, nodePath) {
-    // We have the corridor, now pull the rope
-    const channel = new Channel;
-    channel.push(src);
-    for (let i = 0; i < nodePath.length; i++) {
-      const polygon = nodePath[i];
-      const nextPolygon = nodePath[i + 1];
-
-      if (nextPolygon) {
-        const portals = /** @type {number[]} */ (this.getPortalFromTo(polygon, nextPolygon));
-        channel.push(
-          this.vectors[portals[0]],
-          this.vectors[portals[1]],
-        );
-      }
-    }
-    channel.push(dst);
-    channel.stringPull();
-    return channel;
-  }
-
-  /**
-   * We assume `gm.navZone` has exactly one group,
-   * i.e. floor of geomorph (sans doors) is connected.
-   * @param {Geomorph.GeomorphData} gm
-   * @returns {Graph.FloorGraph}
-   */
-  static fromZone(gm) {
-    const zone = gm.navZone;
-
-    const { groups: navNodeGroups, vertices } = zone;
-    const graph = new floorGraphClass(gm);
-    const navNodes = navNodeGroups.flatMap(x => x);
-
-    for (const [nodeId, node] of Object.entries(navNodes)) {
-      graph.registerNode({
-        type: 'tri',
-        id: `tri-${nodeId}`,
-        index: Number(nodeId),
-        vertexIds: node.vertexIds.slice(),
-        portals: node.portals.map(x => x.slice()),
-
-        cost: 1,
-        visited: false,
-        closed: false,
-        parent: null,
-        centroid: Vect.from(node.centroid),
-
-        neighbours: node.neighbours.slice(),
-      });
-    }
-
-    for (const [nodeId, node] of Object.entries(navNodes)) {
-      const graphNodeId = `tri-${nodeId}`;
-      const neighbourIds = node.neighbours.map(otherNodeId => `tri-${otherNodeId}`);
-      // Nav.Zone already "symmetric", so no need for double edges
-      neighbourIds.forEach(nhbrNodeId =>
-        graph.registerEdge({ src: graphNodeId, dst: nhbrNodeId })
-      );
-    }
-
-    return graph;
   }
 
 }
