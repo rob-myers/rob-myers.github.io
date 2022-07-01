@@ -36,6 +36,9 @@ export default function NPCs(props) {
     class: { Vect },
     rxjs: { filter, first, map, take, otag },
 
+    getGmGraph() {
+      return props.gmGraph;
+    },
     getGlobalNavPath(src, dst) {
       const {gms} = props.gmGraph
       const srcGmId = gms.findIndex(x => x.gridRect.contains(src));

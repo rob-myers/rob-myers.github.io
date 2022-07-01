@@ -88,8 +88,11 @@ export default function Terminal(props: Props) {
           }}
           options={options}
           linkProviderDef={{
-            // regex: /\*\*([^*]+)\*\*/g,
-            regex: /(?:^|\s)\*([^*]+)\*(?:$|\s)/g,
+            // regex: /(?:^|\s)_([^_]+)_(?:$|\s)/g,
+            /**
+             * 🔎 will panzoom to e.g. rooms
+             */
+            regex: /(🔎 [^;]+);/g,
             async callback(e, text) {
               // console.log('link text', e, text);
               const session = assertNonNull(state.session);

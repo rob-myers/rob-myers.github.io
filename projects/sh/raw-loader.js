@@ -15,9 +15,9 @@
 
 /**
  * @typedef RunArg @type {object}
- * @property {import('./cmd.service').CmdServiceType['processApi']} api
+ * @property {import('./cmd.service').CmdServiceType['processApi'] & { getCached(key: '__NPCS_KEY_VALUE__'): NPC.NPCs }} api
  * @property {string[]} args
- * @property {{ [key: string]: any; 'NPCS_KEY': string; }} home
+ * @property {{ [key: string]: any; 'NPCS_KEY': '__NPCS_KEY_VALUE__'; }} home
  * @property {*} [datum] A shortcut for declaring a variable
  * @property {*[]} [promises] Another shortcut
  */
@@ -119,6 +119,20 @@ const gameFunctionsRunDefs = [
 {
 
   /**
+   * View something
+   */
+  '🔎': async function* ({ args: [arg], api, home }) {
+    const npcs = api.getCached(home.NPCS_KEY)
+    const grMatched = arg.match(/^g(\d+)r(\d+)$/)
+    if (grMatched) {
+      const [, gmId, roomId] = grMatched.map(Number);
+      const gm = npcs.getGmGraph().gms[gmId];
+      const point = gm.matrix.transformPoint(gm.point[roomId].default.clone());
+      npcs.panZoomTo({ zoom: 2, ms: 2000, point });
+    }
+  },
+
+  /**
    * Output world position clicks sent via panZoomApi.events.
    * e.g. `click`, `click 1`
    */
@@ -127,7 +141,6 @@ const gameFunctionsRunDefs = [
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
-    /** @type {NPC.NPCs} */
     const npcs = api.getCached(home.NPCS_KEY)
     const { filter, map, take, otag } = npcs.rxjs
     const process = api.getProcess()
@@ -270,8 +283,8 @@ const gameFunctionsRunDefs = [
 
     const process = api.getProcess()
     process.cleanups.push(() => npcs.npcAct({ npcKey, action: "cancel" }))
-    process.onSuspends.push(() => npcs.npcAct({ npcKey, action: "pause" }))
-    process.onResumes.push(() => npcs.npcAct({ npcKey, action: "play" }))
+    process.onSuspends.push(() => void npcs.npcAct({ npcKey, action: "pause" }))
+    process.onResumes.push(() => void npcs.npcAct({ npcKey, action: "play" }))
 
     if (api.isTtyAt(0)) {
       const points = api.safeJsonParse(args[1])

@@ -6,6 +6,7 @@ import { testNever } from "../service/generic";
 import { geom } from "../service/geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
+import { ansiColor } from "../sh/sh.util";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../hooks/use-geomorphs";
@@ -152,12 +153,11 @@ export default function NavDemo1(props) {
       },
       updateVisibleDoors() {
         const gm = gms[state.gmId]
-        const roomNode = gm.roomGraph.nodesArray[state.roomId];
 
         /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
         const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
-        nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(roomNode).map(x => x.doorId);
-        gm.roomGraph.getAdjacentHullDoorIds(gm, roomNode).flatMap(({ hullDoorIndex }) =>
+        nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(state.roomId).map(x => x.doorId);
+        gm.roomGraph.getAdjacentHullDoorIds(gm, state.roomId).flatMap(({ hullDoorIndex }) =>
           gmGraph.getAdjacentRoomCtxt(state.gmId, hullDoorIndex) || []
         ).forEach(({ adjGmId, adjDoorId }) => (nextVis[adjGmId] = nextVis[adjGmId] || []).push(adjDoorId));
 
@@ -375,6 +375,9 @@ function Debug(props) {
     const target = (/** @type {HTMLElement} */ (e.target));
 
     if (target.className === 'debug-door-arrow') {
+      /**
+       * Manual light control.
+       */
       const door = gm.doors[Number(target.getAttribute('data-debug-door-id'))];
       const hullDoorId = gm.getHullDoorId(door);
       if (hullDoorId >= 0) {
@@ -387,9 +390,13 @@ function Debug(props) {
     }
 
     if (target.className === 'debug-label-info') {
+      /**
+       * Send our first rich message.
+       */
       const label = gm.labels[Number(target.getAttribute('data-debug-label-id'))];
-      // TODO
-      const msg = `${label.text} *@ gm${props.gmId}-room${props.roomId}*`;
+      const msg = `${label.text} 🔎 ${ansiColor.White}g${props.gmId}r${props.roomId}${
+        ansiColor.Reset}; (${gm.roomGraph.getAdjacentDoors(props.roomId).length} doors)`;
+
       props.npcsApi.sessionKeys.forEach(sessionKey => {
         useSessionStore.api.writeMsgCleanly(sessionKey, msg);
       });

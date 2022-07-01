@@ -27,7 +27,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 ## TODO (low-level)
 
 - ✅ can execute code by clicking terminal links
-- 🚧 clicking room "info label" sends messages to terminal
+- ✅ clicking room "info label" sends messages to terminal
   - ✅ terminal can show regex-specified links which run code
   - ✅ XTerm component has optional props.linkProvider
   - ✅ props.linkProvider.callback invokes xterm.autoSendCode
@@ -36,7 +36,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ clarify label measure
   - ✅ show info icons at room labels
   - ✅ onclick info icon, send message to tty
-  - 🚧 message includes clickable code to view room, plus door metadata
+  - ✅ message includes clickable code to view room, plus door metadata
 
 - npc walk collision prevention
   - navmeta `start-line-seg` for all waypoints except last
@@ -101,7 +101,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - 🚧 anim time defined via anim meta
     e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
 
-
+- BUG write too big `get /cache/queriesMap`
 - @`the-last-redoubt`: show GitHub comments from the-last-redoubt issues
 - @`the-last-redoubt`: can redirect to GitHub the-last-redoubt issues
 - show nav node ids in `SvgNavGraph` (debug 101)

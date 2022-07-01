@@ -295,8 +295,7 @@ export class gmGraphClass extends BaseGraph {
    */
   computeLightPolygons(gmId, rootRoomId, openDoorIds) {
     const gm = this.gms[gmId];
-    const roomNode = /** @type {Graph.RoomGraphNodeRoom} */ (gm.roomGraph.nodesArray[rootRoomId]);
-    const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(roomNode).flatMap(({ doorId }) => openDoorIds.includes(doorId) ? doorId : []);
+    const adjOpenDoorIds = gm.roomGraph.getAdjacentDoors(rootRoomId).flatMap(({ doorId }) => openDoorIds.includes(doorId) ? doorId : []);
 
     const preDoorLights = adjOpenDoorIds.flatMap((doorId) => {
       const area = this.getOpenDoorArea(gmId, doorId);
@@ -346,7 +345,7 @@ export class gmGraphClass extends BaseGraph {
       };
     });
 
-    const adjWindowIds = gm.roomGraph.getAdjacentWindows(roomNode)
+    const adjWindowIds = gm.roomGraph.getAdjacentWindows(rootRoomId)
       .filter(x => {
         const connector = gm.windows[x.windowIndex];
           // Frosted windows opaque

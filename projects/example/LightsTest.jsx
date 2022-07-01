@@ -57,7 +57,7 @@ export default function LightsTest(props) {
           .concat(lightPolygons.map(x => x.poly)) // Each open door contribs a light polygon
           .map(x => x.precision(2));
 
-        const observableDoors = roomGraph.getAdjacentDoors(...rootRoomIds.map(id => roomGraph.nodesArray[id]));
+        const observableDoors = roomGraph.getAdjacentDoors(...rootRoomIds);
         this.doorsApi.setVisible(0, observableDoors.map(x => x.doorId));
         const maskPoly = Poly.cutOut(allRoomPolys, [hullOutline],)
           .map(poly => poly.translate(-pngRect.x, -pngRect.y));

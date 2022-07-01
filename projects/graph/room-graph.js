@@ -16,11 +16,11 @@ export class RoomGraph extends BaseGraph {
 
   /**
    * Given nodes, find all adjacent doors.
-   * @param {...Graph.RoomGraphNode} nodes
+   * @param {...number} roomIds
    */
-  getAdjacentDoors(...nodes) {
+  getAdjacentDoors(...roomIds) {
     const doors = /** @type {Set<Graph.RoomGraphNodeDoor>} */ (new Set);
-    nodes.forEach(node => this.getSuccs(node).forEach(other =>
+    roomIds.forEach(roomId => this.getSuccs(this.nodesArray[roomId]).forEach(other =>
       other.type === 'door' && doors.add(other))
     );
     return Array.from(doors);
@@ -28,10 +28,10 @@ export class RoomGraph extends BaseGraph {
   /**
    * Given parent `gm` and some nodes, find adjacent _hull door ids_ (if any).
    * @param {Geomorph.GeomorphDataInstance} gm
-   * @param {...Graph.RoomGraphNode} nodes
+   * @param {...number} roomIds
    */
-  getAdjacentHullDoorIds(gm, ...nodes) {
-    return this.getAdjacentDoors(...nodes)
+  getAdjacentHullDoorIds(gm, ...roomIds) {
+    return this.getAdjacentDoors(...roomIds)
       .map(node => /** @type {const} */ ([node, gm.doors[node.doorId]]))
       .flatMap(([{ doorId: doorIndex }, door]) => door.roomIds.some(x => x === null)
         ? { doorIndex, hullDoorIndex: gm.hullDoors.indexOf(door) } : []
@@ -40,11 +40,11 @@ export class RoomGraph extends BaseGraph {
 
   /**
    * Given nodes, find all adjacent windows.
-   * @param {...Graph.RoomGraphNode} nodes
+   * @param {...number} roomIds
    */
-  getAdjacentWindows(...nodes) {
+  getAdjacentWindows(...roomIds) {
     const windows = /** @type {Set<Graph.RoomGraphNodeWindow>} */ (new Set);
-    nodes.forEach(node => this.getSuccs(node).forEach(other =>
+    roomIds.forEach(roomId => this.getSuccs(this.nodesArray[roomId]).forEach(other =>
       other.type === 'window' && windows.add(other))
     );
     return Array.from(windows);
