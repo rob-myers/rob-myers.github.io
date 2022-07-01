@@ -13,7 +13,7 @@ import npcJson from '../../public/npc/first-npc.json'
  * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; npcs: NPC.NPCs; }} deps
  * @returns {NPC.NPC}
  */
- export default function createNpc(
+export default function createNpc(
   npcKey,
   position,
   { disabled, panZoomApi, npcs },
@@ -72,10 +72,7 @@ import npcJson from '../../public/npc/first-npc.json'
       if (opts?.globalNavMetas) {
         anim.wayMetas = opts.globalNavMetas.map((navMeta) => ({
           ...navMeta,
-          length: navMeta.key === 'pre-exit-room' || navMeta.key === 'pre-near-door'
-            ? Math.max(anim.aux.sofars[navMeta.index] - (npcRadius + 10), 0)
-            // Slightly early to ensure it is triggered
-            : Math.max(anim.aux.sofars[navMeta.index] - 0.1, 0)
+          length: Math.max(anim.aux.sofars[navMeta.index] - navMetaOffsets[navMeta.key], 0),
         }));
       }
 
@@ -322,3 +319,13 @@ export const defaultNpcInteractRadius = npcRadius * 3;
 
 /** Scale up how long it should take to move along navpath */
 export const npcAnimScaleFactor = 15;
+
+
+/** @type {Record<NPC.NavMetaKey, number>} */
+const navMetaOffsets = {
+  'enter-room': -0.02, // Ensure triggered
+  'exit-room': -0.02, // Ensure triggered
+  "pre-exit-room": - (npcRadius + 10), // TODO better way
+  "pre-near-door": - (npcRadius + 10), // TODO better way
+  "start-seg": 0,
+};

@@ -79,6 +79,11 @@ export default function NavDemo1(props) {
               await player.cancel();
             }
             break;
+          case 'start-seg':
+            /**
+             * TODO
+             */
+            break;
           default:
             throw testNever(e.meta);
         }

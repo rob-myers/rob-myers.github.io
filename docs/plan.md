@@ -27,12 +27,12 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 ## TODO (low-level)
 
 - 🚧 npc walk collision prevention
-  - navmeta `start-seg` for all waypoints except last
+  - ✅ navmeta `start-seg` for all waypoints except last
+  - 🚧 can slow down walk speed animation
   - on `start-seg` show capsule (collision space)
   - on `start-seg` solve quadratic equation
   - ...
 
-- ✅ migrate `run` code from sh.lib into raw-loader.js
 - try sorting out shell HMR
 
 - 🚧 Gatsby
@@ -134,6 +134,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ migrate `run` code from sh.lib into raw-loader.js
 - ✅ can execute code by clicking terminal links
 - ✅ clicking room "info label" sends messages to terminal
   - ✅ terminal can show regex-specified links which run code

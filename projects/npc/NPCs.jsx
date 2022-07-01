@@ -39,6 +39,7 @@ export default function NPCs(props) {
     getGmGraph() {
       return props.gmGraph;
     },
+
     getGlobalNavPath(src, dst) {
       const {gms} = props.gmGraph
       const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
@@ -81,14 +82,18 @@ export default function NPCs(props) {
           const gmEdge = gmEdges[k];
           
           if (k === 0 && localNavPath.doorIds[0] >= 0) {
-            // console.log('STARTED IN HULL DOOR');
+            // Started in hull door, so ignore `localNavPath`
             fullPath.push(Vect.from(src));
           } else if (k === gmEdges.length && localNavPath.doorIds[1] >= 0) {
-            // console.log('ENDED IN HULL DOOR');
+            // Ended in hull door, so ignore `localNavPath`
             fullPath.push(Vect.from(dst));
           } else {
             const indexOffset = fullPath.length;
             fullPath.push(...localNavPath.fullPath);
+            // Remove final 'start-seg'
+            const finalStartSegIndex = navMetas.findIndex(x => x.key === 'start-seg' && x.index === localNavPath.fullPath.length - 1)
+            navMetas.splice(finalStartSegIndex, 1);
+            // Globalise local navMetas
             navMetas.push(
               ...localNavPath.navMetas.map(x => ({
                 ...x,
@@ -118,6 +123,10 @@ export default function NPCs(props) {
         };
       }
     },
+
+    /**
+     * Wraps floorGraphClass.findPath
+     */
     getLocalNavPath(gmId, src, dst) {
       const gm = props.gmGraph.gms[gmId];
       const localSrc = gm.inverseMatrix.transformPoint(Vect.from(src));
@@ -139,6 +148,7 @@ export default function NPCs(props) {
     },
     /**
      * Used by shell function `nav`.
+     * Wraps `state.getGlobalNavPath`.
      */
     getNpcGlobalNav(e) {
       const npc = state.npc[e.npcKey];

@@ -77,6 +77,7 @@ export class floorGraphClass extends BaseGraph {
   }
 
   /**
+   * Find a path through a geomorph's navmesh
    * @param {Geom.Vect} src in geomorph local coords
    * @param {Geom.Vect} dst in geomorph local coords
    * @returns {null | NPC.BaseLocalNavPath}
@@ -115,7 +116,9 @@ export class floorGraphClass extends BaseGraph {
     }, /** @type {NPC.NavPartition} */ ([]));
 
     const fullPath = [src.clone()];
-    const navMetas = /** @type {NPC.BaseLocalNavPath['navMetas']} */ ([]);
+    const navMetas = /** @type {NPC.BaseLocalNavPath['navMetas']} */ ([
+      { key: 'start-seg', index: 0, },
+    ]);
     let startDoorId = -1, endDoorId = -1;
 
     for (const [i, item] of partition.entries()) {
@@ -140,7 +143,8 @@ export class floorGraphClass extends BaseGraph {
         }
 
         if (!partition[i + 1]) {// Finish in door
-          fullPath.push(dst.clone());
+          fullPath.push(dst.clone()); // May need to pop this navMeta later
+          navMetas.push({ key: 'start-seg', index: fullPath.length - 1 });
           endDoorId = item.doorId;
           break;
         } 
@@ -151,6 +155,7 @@ export class floorGraphClass extends BaseGraph {
         // Avoid case where just entered geomorph and doorExit ~ src
         if (!(i === 0 && src.distanceTo(doorExit) < 0.1)) {
           fullPath.push(doorExit.clone());
+          navMetas.push({ key: 'start-seg', index: fullPath.length - 1 });
         }
 
       } else {
@@ -186,6 +191,7 @@ export class floorGraphClass extends BaseGraph {
            * We can simply walk straight through the room
            */
           fullPath.push(pathDst.clone());
+          navMetas.push({ key: 'start-seg', index: fullPath.length - 1 });
         } else {
           /**
            * Otherwise, use "simple stupid funnel algorithm"
@@ -194,7 +200,10 @@ export class floorGraphClass extends BaseGraph {
             this.computeStringPull(pathSrc, pathDst, item.nodes).path
           ).map(Vect.from);
           // We remove adjacent repetitions which can occur
-          fullPath.push(...geom.removePathReps(stringPull.slice(1)));
+          geom.removePathReps(stringPull.slice(1)).forEach(p => {
+            fullPath.push(p);
+            navMetas.push({ key: 'start-seg', index: fullPath.length - 1 });
+          });
         }
 
         if (!partition[i + 1]) {// Finish in room
