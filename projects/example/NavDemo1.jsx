@@ -388,8 +388,10 @@ function Debug(props) {
 
     if (target.className === 'debug-label-info') {
       const label = gm.labels[Number(target.getAttribute('data-debug-label-id'))];
+      // TODO
+      const msg = `${label.text} *@ gm${props.gmId}-room${props.roomId}*`;
       props.npcsApi.sessionKeys.forEach(sessionKey => {
-        useSessionStore.api.writeMsgCleanly(sessionKey, `${label.text}`, 'warn');
+        useSessionStore.api.writeMsgCleanly(sessionKey, msg);
       });
     }
 

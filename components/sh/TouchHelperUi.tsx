@@ -20,7 +20,7 @@ export function TouchHelperUI(props: {
         if (target.classList.contains('lowercase')) {
           const forced = (xterm.forceLowerCase = !xterm.forceLowerCase);
           const message = `⚠️  input ${forced ? 'forced as' : 'not forced as'} lowercase`;
-          useSessionStore.api.writeMsgCleanly(props.session.key, message, 'warn');
+          useSessionStore.api.writeMsgCleanly(props.session.key, message);
           target.classList.toggle('enabled');
           tryLocalStorageSet(localStorageKey, `${forced}`);
         } else if (target.classList.contains('ctrl-c')) {

@@ -45,7 +45,7 @@ export class TtyXterm {
   private refreshMs = 0;
 
   /** Useful for mobile keyboard inputs */
-  public forceLowerCase = false;
+  forceLowerCase = false;
 
   constructor(
     public xterm: Terminal,
@@ -68,7 +68,7 @@ export class TtyXterm {
     this.preHistory = this.input;
   }
 
-  public initialise() {
+  initialise() {
     /**
      * xterm@4.14.1 onwards seems to fire onData twice when pasting text with spaces
      * Pinning xterm@4.10.1 seems to solve the issue.
@@ -111,7 +111,7 @@ export class TtyXterm {
    * Clears the input possibly over many lines.
    * Returns the cursor to the start of the input.
    */
-  private clearInput() {
+  clearInput() {
     // Return to start of input
     this.setCursor(0);
     // Compute number of lines to clear, starting at current
@@ -131,7 +131,7 @@ export class TtyXterm {
   /**
    * Clear the screen.
    */
-  public clearScreen() {
+  clearScreen() {
     for (let i = 0; i < this.xterm.rows; i++) {
       this.xterm.writeln(''); 
     }
@@ -407,10 +407,6 @@ export class TtyXterm {
     }
   }
 
-  public hasUnsentInput() {
-    return this.promptReady && this.input.length > 0;
-  }
-
   /**
    * Suppose we're about to write `nextInput` possibly after prompt.
    * If real input ends _exactly_ at right-hand edge, the cursor doesn't wrap.
@@ -505,7 +501,7 @@ export class TtyXterm {
       case 'warn': {
         this.queueCommands([{
           key: 'line',
-          line: `ℹ️  ${msg.msg}`,
+          line: `ℹ️  ${msg.msg}${ansiColor.Reset}`,
         }]);
         break;
       }
@@ -531,7 +527,25 @@ export class TtyXterm {
     return 1 + this.offsetToColRow(this.input, this.input.length + 2).row;
   }
 
-  public queueCommands(commands: XtermOutputCommand[]) {
+  prepareForCleanMsg() {
+    const hasUnsentInput = this.promptReady && this.input.length > 0;
+    if (hasUnsentInput) {
+      if (this.xterm.buffer.active.cursorX > 0) {
+        this.queueCommands([{ key: 'line', line: '' }]);
+      }
+    } else {
+      this.clearInput();
+    }
+  }
+
+  private printPending() {
+    if (this.commandBuffer.length && !this.nextPrintId) {
+      // console.log('about to print', this.commandBuffer);
+      this.nextPrintId = window.setTimeout(this.runCommands, this.refreshMs);
+    }
+  }
+
+  queueCommands(commands: XtermOutputCommand[]) {
     // We avoid stack overflow for push(...commands)
     for (const command of commands) {
       this.commandBuffer.push(command);
@@ -539,7 +553,7 @@ export class TtyXterm {
     this.printPending();
   }
 
-  public reqHistoryLine(dir: -1 | 1) {
+  reqHistoryLine(dir: -1 | 1) {
     this.session.io.writeToReaders({
       key: 'req-history-line',
       historyIndex: this.historyIndex + dir,
@@ -606,13 +620,6 @@ export class TtyXterm {
     }
 
     this.printPending();
-  }
-
-  private printPending() {
-    if (this.commandBuffer.length && !this.nextPrintId) {
-      // console.log('about to print', this.commandBuffer);
-      this.nextPrintId = window.setTimeout(this.runCommands, this.refreshMs);
-    }
   }
 
   /**
@@ -705,7 +712,7 @@ export class TtyXterm {
   }
 
   /** Set and print prompt, unblocking any 'await-prompt'. */
-  public setPrompt(prompt: string) {
+  setPrompt(prompt: string) {
     this.prompt = prompt;
     const [first] = this.commandBuffer;
     if (first && first.key === 'await-prompt') {
@@ -714,7 +721,7 @@ export class TtyXterm {
     this.queueCommands([{ key: 'prompt', prompt }]);
   }
 
-  public showPendingInput() {
+  showPendingInput() {
     if (this.promptReady) {
       this.setInput(this.input);
     }

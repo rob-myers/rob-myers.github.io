@@ -48,7 +48,7 @@ export type State = {
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     setVarDeep: (sessionKey: string, varPath: string, varValue: any) => void;
     writeMsg: (sessionKey: string, msg: string, level: 'warn' | 'error') => void;
-    writeMsgCleanly: (sessionKey: string, msg: string, level: 'warn' | 'error') => void;
+    writeMsgCleanly: (sessionKey: string, msg: string, opts?: { level?: 'warn' | 'error'; prompt?: boolean }) => void;
   }
 }
 
@@ -298,13 +298,14 @@ const useStore = create<State>(devtools((set, get) => ({
       api.getSession(sessionKey).ttyIo.write({ key: level, msg });
     },
 
-    writeMsgCleanly(sessionKey, msg, level) {
+    writeMsgCleanly(sessionKey, msg, opts) {
       const { xterm } = api.getSession(sessionKey).ttyShell;
-      api.writeMsg(sessionKey, xterm.hasUnsentInput() ? `\n\r${msg}` : msg, level);
+      xterm.prepareForCleanMsg();
+      api.writeMsg(sessionKey, msg, opts?.level??'warn');
       setTimeout(() => {
-        xterm.showPendingInput(); // Hack: prompts after .write
+        (opts?.prompt??true) && xterm.showPendingInput();
         xterm.xterm.scrollToBottom();
-      }); 
+      });
     },
   },
 
