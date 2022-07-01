@@ -136,4 +136,17 @@ npc remove-decor foo
 
 view "{ ms: 2000, point: $( npc get foo | map 'x => x.getPosition()' ) }"
 
+call '({ home, api }) => api.getCached(home.NPCS_KEY)' | log
+# or
+get /cache/queriesMap | map 'x => {
+  const key = `["npcs-demo-1"]`
+  return x[key].state.data
+}' | log
+# or
+cd home
+get /cache/queriesMap | map 'x => {
+  const key = `["'$NPCS_KEY'"]`
+  return x[key].state.data
+}' | log
+
 ```

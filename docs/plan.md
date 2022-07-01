@@ -26,21 +26,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- ✅ can execute code by clicking terminal links
-- ✅ clicking room "info label" sends messages to terminal
-  - ✅ terminal can show regex-specified links which run code
-  - ✅ XTerm component has optional props.linkProvider
-  - ✅ props.linkProvider.callback invokes xterm.autoSendCode
-  - ✅ terminal session associated to NPCs via `ready`
-  - ✅ remove tag `switch`
-  - ✅ clarify label measure
-  - ✅ show info icons at room labels
-  - ✅ onclick info icon, send message to tty
-  - ✅ message includes clickable code to view room, plus door metadata
-
-- npc walk collision prevention
-  - navmeta `start-line-seg` for all waypoints except last
-  - on `start-line-seg` show angled rectangle (collision space)
+- 🚧 npc walk collision prevention
+  - navmeta `start-seg` for all waypoints except last
+  - on `start-seg` show capsule (collision space)
+  - on `start-seg` solve quadratic equation
   - ...
 
 - ✅ migrate `run` code from sh.lib into raw-loader.js
@@ -145,6 +134,17 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ can execute code by clicking terminal links
+- ✅ clicking room "info label" sends messages to terminal
+  - ✅ terminal can show regex-specified links which run code
+  - ✅ XTerm component has optional props.linkProvider
+  - ✅ props.linkProvider.callback invokes xterm.autoSendCode
+  - ✅ terminal session associated to NPCs via `ready`
+  - ✅ remove tag `switch`
+  - ✅ clarify label measure
+  - ✅ show info icons at room labels
+  - ✅ onclick info icon, send message to tty
+  - ✅ message includes clickable code to view room, plus door metadata
 - ✅ remove `html` command (decided to use terminal instead)
 - ✅ can attach/remove html at world point via `html`
 - ✅ fix bug with extended lighting

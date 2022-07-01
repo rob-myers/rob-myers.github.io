@@ -9,7 +9,7 @@
   tabs="[
     // { type: 'component', filepath: 'example/GeomorphEdit' },
     { type: 'component', filepath: 'example/NavDemo1' },
-    // { type: 'component', filepath: 'example/LightsTest' }, // ISSUE 🚧
+    // { type: 'component', filepath: 'example/LightsTest' },
     // { type: 'component', filepath: 'example/Css3dForeignObject#301' },
     // { type: 'component', filepath: 'example/Pyramid3dDemo' },
     // { type: 'component', filepath: 'example/TriangleDev#301' },
