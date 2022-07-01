@@ -8,7 +8,7 @@ export const ansiColor = {
   Blue: '\x1b[1;34m',
   Red: '\x1b[31;1m',
   Reset: '\x1b[0m',
-  Warn: '\x1b[30;104m',
+  // Warn: '\x1b[30;104m',
   White: '\x1b[0;37m',
   Yellow: '\x1b[93m',
 };

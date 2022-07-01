@@ -505,7 +505,7 @@ export class TtyXterm {
       case 'warn': {
         this.queueCommands([{
           key: 'line',
-          line: `${ansiColor.Warn}${msg.msg}${ansiColor.Reset}`,
+          line: `ℹ️  ${msg.msg}`,
         }]);
         break;
       }
