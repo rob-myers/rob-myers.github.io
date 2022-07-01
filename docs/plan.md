@@ -34,7 +34,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ terminal session associated to NPCs via `ready`
   - ✅ remove tag `switch`
   - ✅ clarify label measure
-  - info icons at room labels, onclick sends message to tty
+  - ✅ show info icons at room labels
+  - onclick info icon, send message to tty
 
 - npc walk collision prevention
   - navmeta `start-line-seg` for all waypoints except last

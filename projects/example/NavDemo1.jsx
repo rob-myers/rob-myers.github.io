@@ -232,6 +232,8 @@ export default function NavDemo1(props) {
           // localNav
           // roomOutlines
           showIds
+          showLabels
+
           gms={gms}
           gmGraph={gmGraph}
           doorsApi={state.doorsApi}
@@ -309,12 +311,19 @@ const rootCss = css`
 
   div.debug {
     position: absolute;
-    div.debug-door-arrow {
+
+    div.debug-door-arrow, div.debug-label-info {
       cursor: pointer;
       position: absolute;
-      background-image: url('/icon/solid_arrow-circle-right.svg');
       border-radius: ${debugRadius}px;
     }
+    div.debug-door-arrow {
+      background-image: url('/icon/solid_arrow-circle-right.svg');
+    }
+    div.debug-label-info {
+      background-image: url('/icon/info-icon.svg');
+    }
+
     div.debug-door-id-icon, div.debug-room-id-icon {
       position: absolute;
       background: black;
@@ -358,6 +367,7 @@ function Debug(props) {
   const roomNavAabb = roomNavPoly.rect;
   const roomAabb = gm.rooms[props.roomId].rect;
   const roomPoly = gm.rooms[props.roomId];
+  const { labels } = gm.point[props.roomId];
 
   return (
     <div
@@ -367,22 +377,19 @@ function Debug(props) {
         if (!target.hasAttribute('data-debug-door-index')) {
           return;
         }
-
         const door = gm.doors[Number(target.getAttribute('data-debug-door-index'))];
-
         const [otherRoomId] = door.roomIds.filter(id => id !== props.roomId);
         if (otherRoomId !== null) {// `door` is not a hull door
           return props.setRoom(props.gmId, otherRoomId);
-        } else {
-          const hullDoorId = gm.hullDoors.indexOf(door);
-          const ctxt = props.gmGraph.getAdjacentRoomCtxt(props.gmId, hullDoorId);
-          if (ctxt) {
-            props.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
-          } else {
-            console.info('hull door is isolated', props.gmId, hullDoorId);
-          }
         }
 
+        const hullDoorId = gm.hullDoors.indexOf(door);
+        const ctxt = props.gmGraph.getAdjacentRoomCtxt(props.gmId, hullDoorId);
+        if (ctxt) {
+          props.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
+        } else {
+          console.info('hull door is isolated', props.gmId, hullDoorId);
+        }
       }}
     >
       {props.outlines && props.gms.map((gm, gmId) =>
@@ -485,6 +492,22 @@ function Debug(props) {
           </div>
         )}
 
+        {props.showLabels && labels.map(({ center, text }, i) => (
+          <div
+            key={i}
+            data-tags="debug label-icon"
+            className="debug-label-info"
+            title={text}
+            style={{
+              left: center.x - debugRadius,
+              top: center.y - debugRadius,
+              width: debugRadius * 2,
+              height: debugRadius * 2,
+              filter: 'invert(100%)',
+              }}
+            />
+        ))}
+
         {props.windows && gm.windows.map(({ baseRect, angle }, i) => {
           return (
             <div
@@ -518,5 +541,6 @@ function Debug(props) {
  * @property {boolean} [windows]
  * @property {boolean} [localNav]
  * @property {boolean} [showIds]
+ * @property {boolean} [showLabels]
  * @property {boolean} [roomOutlines]
  */
