@@ -8,6 +8,13 @@ import { error } from "../service/log";
 export class RoomGraph extends BaseGraph {
 
   /**
+   * @param {Graph.RoomGraphJson} json 
+   */  
+  static from(json) {
+    return (new RoomGraph).plainFrom(json);
+  }
+
+  /**
    * Given nodes, find all adjacent doors.
    * @param {...Graph.RoomGraphNode} nodes
    */
@@ -55,26 +62,19 @@ export class RoomGraph extends BaseGraph {
     return Array.from(rooms);
   }
 
-  /** @param {number} doorIndex */
-  getDoorNode(doorIndex) {
-    return /** @type {Graph.RoomGraphNodeDoor} */ (this.getNodeById(`door-${doorIndex}`));
+  /** @param {number} doorId */
+  getDoorNode(doorId) {
+    return /** @type {Graph.RoomGraphNodeDoor} */ (this.getNodeById(`door-${doorId}`));
+  }
+
+  /** @param {number} roomId */
+  getRoomNode(roomId) {
+    return /** @type {Graph.RoomGraphNodeRoom} */ (this.getNodeById(`room-${roomId}`));
   }
 
   /** @param {number} windowIndex */
   getWindowNode(windowIndex) {
     return /** @type {Graph.RoomGraphNodeWindow} */ (this.getNodeById(`window-${windowIndex}`));
-  }
-
-  /** @param {number} roomIndex */
-  getRoomNode(roomIndex) {
-    return /** @type {Graph.RoomGraphNodeRoom} */ (this.getNodeById(`room-${roomIndex}`));
-  }
-
-  /**
-   * @param {Graph.RoomGraphJson} json 
-   */  
-  static from(json) {
-    return (new RoomGraph).plainFrom(json);
   }
 
   /**
@@ -144,6 +144,6 @@ export class RoomGraph extends BaseGraph {
    };
 
    return roomGraphJson;
- }
+  }
 
 }

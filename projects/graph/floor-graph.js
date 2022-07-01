@@ -55,7 +55,7 @@ export class floorGraphClass extends BaseGraph {
    * @param {Geom.VectJson} dst
    * @param {Graph.FloorGraphNode[]} nodePath 
    */
-   computeStringPull(src, dst, nodePath) {
+  computeStringPull(src, dst, nodePath) {
     // We have the corridor, now pull the rope
     const channel = new Channel;
     channel.push(src);
@@ -75,7 +75,6 @@ export class floorGraphClass extends BaseGraph {
     channel.stringPull();
     return channel;
   }
-
 
   /**
    * @param {Geom.Vect} src in geomorph local coords
@@ -232,7 +231,7 @@ export class floorGraphClass extends BaseGraph {
    * @param {Geomorph.GeomorphData} gm
    * @returns {Graph.FloorGraph}
    */
-   static fromZone(gm) {
+  static fromZone(gm) {
     const zone = gm.navZone;
 
     const { groups: navNodeGroups, vertices } = zone;
@@ -313,5 +312,5 @@ export class floorGraphClass extends BaseGraph {
       }
     }
   }
-
+ 
 }
