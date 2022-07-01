@@ -3100,168 +3100,196 @@
     {
       "text": "study",
       "center": {"x": 275, "y": 199},
+      "index": 0,
       "rect": {"x": 261.5, "y": 193.5, "width": 27, "height": 11},
       "padded": {"x": 257.5, "y": 191.5, "width": 35, "height": 15}
     },
     {
       "text": "corridor",
       "center": {"x": 245, "y": 305},
+      "index": 1,
       "rect": {"x": 226, "y": 300, "width": 38, "height": 10},
       "padded": {"x": 222, "y": 298, "width": 46, "height": 14}
     },
     {
       "text": "corridor",
       "center": {"x": 955, "y": 305},
+      "index": 2,
       "rect": {"x": 936, "y": 300, "width": 38, "height": 10},
       "padded": {"x": 932, "y": 298, "width": 46, "height": 14}
     },
     {
       "text": "study",
       "center": {"x": 935, "y": 199},
+      "index": 3,
       "rect": {"x": 921.5, "y": 193.5, "width": 27, "height": 11},
       "padded": {"x": 917.5, "y": 191.5, "width": 35, "height": 15}
     },
     {
       "text": "bedroom",
       "center": {"x": 78, "y": 190},
+      "index": 4,
       "rect": {"x": 56.5, "y": 185, "width": 43, "height": 10},
       "padded": {"x": 52.5, "y": 183, "width": 51, "height": 14}
     },
     {
       "text": "bathroom",
       "center": {"x": 38.56, "y": 32.96},
+      "index": 5,
       "rect": {"x": 15.56, "y": 27.96, "width": 46, "height": 10},
       "padded": {"x": 11.56, "y": 25.96, "width": 54, "height": 14}
     },
     {
       "text": "office",
       "center": {"x": 216, "y": 138},
+      "index": 6,
       "rect": {"x": 202.5, "y": 133, "width": 27, "height": 10},
       "padded": {"x": 198.5, "y": 131, "width": 35, "height": 14}
     },
     {
       "text": "bridge",
       "center": {"x": 600.6, "y": 179.8},
+      "index": 7,
       "rect": {"x": 585.6, "y": 174.3, "width": 30, "height": 11},
       "padded": {"x": 581.6, "y": 172.3, "width": 38, "height": 15}
     },
     {
       "text": "locker",
       "center": {"x": 510.6, "y": 225},
+      "index": 8,
       "rect": {"x": 495.6, "y": 220, "width": 30, "height": 10},
       "padded": {"x": 491.6, "y": 218, "width": 38, "height": 14}
     },
     {
       "text": "locker",
       "center": {"x": 690.6, "y": 225},
+      "index": 9,
       "rect": {"x": 675.6, "y": 220, "width": 30, "height": 10},
       "padded": {"x": 671.6, "y": 218, "width": 38, "height": 14}
     },
     {
       "text": "locker",
       "center": {"x": 420.6, "y": 329.8},
+      "index": 10,
       "rect": {"x": 405.6, "y": 324.8, "width": 30, "height": 10},
       "padded": {"x": 401.6, "y": 322.8, "width": 38, "height": 14}
     },
     {
       "text": "toilet",
       "center": {"x": 780.6, "y": 315.8},
+      "index": 11,
       "rect": {"x": 769.6, "y": 310.8, "width": 22, "height": 10},
       "padded": {"x": 765.6, "y": 308.8, "width": 30, "height": 14}
     },
     {
       "text": "briefing",
       "center": {"x": 600.6, "y": 432.2},
+      "index": 12,
       "rect": {"x": 582.6, "y": 426.7, "width": 36, "height": 11},
       "padded": {"x": 578.6, "y": 424.7, "width": 44, "height": 15}
     },
     {
       "text": "fuel",
       "center": {"x": 450.4, "y": 569.8},
+      "index": 13,
       "rect": {"x": 441.9, "y": 564.8, "width": 17, "height": 10},
       "padded": {"x": 437.9, "y": 562.8, "width": 25, "height": 14}
     },
     {
       "text": "fuel",
       "center": {"x": 748.6, "y": 569.8},
+      "index": 14,
       "rect": {"x": 740.1, "y": 564.8, "width": 17, "height": 10},
       "padded": {"x": 736.1, "y": 562.8, "width": 25, "height": 14}
     },
     {
       "text": "bedroom",
       "center": {"x": 756.4, "y": 449.8},
+      "index": 15,
       "rect": {"x": 734.9, "y": 444.8, "width": 43, "height": 10},
       "padded": {"x": 730.9, "y": 442.8, "width": 51, "height": 14}
     },
     {
       "text": "office",
       "center": {"x": 450.6, "y": 449.8},
+      "index": 16,
       "rect": {"x": 437.1, "y": 444.8, "width": 27, "height": 10},
       "padded": {"x": 433.1, "y": 442.8, "width": 35, "height": 14}
     },
     {
       "text": "cpu",
       "center": {"x": 430, "y": 200},
+      "index": 17,
       "rect": {"x": 421, "y": 194.5, "width": 18, "height": 11},
       "padded": {"x": 417, "y": 192.5, "width": 26, "height": 15}
     },
     {
       "text": "cpu",
       "center": {"x": 770, "y": 200},
+      "index": 18,
       "rect": {"x": 761, "y": 194.5, "width": 18, "height": 11},
       "padded": {"x": 757, "y": 192.5, "width": 26, "height": 15}
     },
     {
       "text": "corridor",
       "center": {"x": 569.5712, "y": 247.7},
+      "index": 19,
       "rect": {"x": 550.5712, "y": 242.7, "width": 38, "height": 10},
       "padded": {"x": 546.5712, "y": 240.7, "width": 46, "height": 14}
     },
     {
       "text": "office",
       "center": {"x": 984, "y": 138},
+      "index": 20,
       "rect": {"x": 970.5, "y": 133, "width": 27, "height": 10},
       "padded": {"x": 966.5, "y": 131, "width": 35, "height": 14}
     },
     {
       "text": "bedroom",
       "center": {"x": 1122, "y": 190},
+      "index": 21,
       "rect": {"x": 1100.5, "y": 185, "width": 43, "height": 10},
       "padded": {"x": 1096.5, "y": 183, "width": 51, "height": 14}
     },
     {
       "text": "bathroom",
       "center": {"x": 1161.44, "y": 32.96},
+      "index": 22,
       "rect": {"x": 1138.44, "y": 27.96, "width": 46, "height": 10},
       "padded": {"x": 1134.44, "y": 25.96, "width": 54, "height": 14}
     },
     {
       "text": "bedroom",
       "center": {"x": 90, "y": 390},
+      "index": 23,
       "rect": {"x": 68.5, "y": 385, "width": 43, "height": 10},
       "padded": {"x": 64.5, "y": 383, "width": 51, "height": 14}
     },
     {
       "text": "bedroom",
       "center": {"x": 210, "y": 390},
+      "index": 24,
       "rect": {"x": 188.5, "y": 385, "width": 43, "height": 10},
       "padded": {"x": 184.5, "y": 383, "width": 51, "height": 14}
     },
     {
       "text": "bedroom",
       "center": {"x": 190, "y": 522},
+      "index": 25,
       "rect": {"x": 168.5, "y": 517, "width": 43, "height": 10},
       "padded": {"x": 164.5, "y": 515, "width": 51, "height": 14}
     },
     {
       "text": "bathroom",
       "center": {"x": 32.96, "y": 561.44},
+      "index": 26,
       "rect": {"x": 9.96, "y": 556.44, "width": 46, "height": 10},
       "padded": {"x": 5.960000000000001, "y": 554.44, "width": 54, "height": 14}
     },
     {
       "text": "stellar cartography",
       "center": {"x": 1113.2, "y": 418},
+      "index": 27,
       "rect": {"x": 1067.7, "y": 412.5, "width": 91, "height": 11},
       "padded": {"x": 1063.7, "y": 410.5, "width": 99, "height": 15}
     }

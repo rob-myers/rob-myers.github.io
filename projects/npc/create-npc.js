@@ -10,7 +10,7 @@ import npcJson from '../../public/npc/first-npc.json'
 /**
  * @param {string} npcKey 
  * @param {Geom.VectJson} position 
- * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; npcs: NPC.FullApi; }} deps
+ * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; npcs: NPC.NPCs; }} deps
  * @returns {NPC.NPC}
  */
  export default function createNpc(

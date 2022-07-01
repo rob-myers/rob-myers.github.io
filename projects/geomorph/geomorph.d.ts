@@ -193,6 +193,8 @@ declare namespace Geomorph {
     text: string;
     /** Originally specified in symbol svg */
     center: Geom.VectJson;
+    /** Index inside `Geomorph['labels']` */
+    index: number;
 
     /** Measured world rect containing text */
     rect: Geom.RectJson;

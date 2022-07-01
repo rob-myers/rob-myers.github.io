@@ -35,7 +35,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ remove tag `switch`
   - ✅ clarify label measure
   - ✅ show info icons at room labels
-  - onclick info icon, send message to tty
+  - ✅ onclick info icon, send message to tty
+  - 🚧 message includes clickable code to view room, plus door metadata
 
 - npc walk collision prevention
   - navmeta `start-line-seg` for all waypoints except last

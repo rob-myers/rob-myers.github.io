@@ -99,14 +99,14 @@ export async function createLayout(def, lookup, triangleService) {
   measurer.font = labelMeta.font;
   /** @type {Geomorph.LayoutLabel[]} */
   const labels = filterSingles(groups.singles, 'label')
-    .map(({ poly, tags }) => {
+    .map(({ poly, tags }, index) => {
       const center = poly.rect.center.precision(4).json;
       const text = tags.filter(x => x !== 'label').join(' ');
       const noTail = !text.match(/[gjpqy]/);
       const dim = { x: measurer.measureText(text).width, y: noTail ? labelMeta.noTailPx : labelMeta.sizePx };
       const rect = Rect.fromJson({ x: center.x - 0.5 * dim.x, y: center.y - 0.5 * dim.y, width: dim.x, height: dim.y }).precision(4).json;
       const padded = (new Rect).copy(rect).outset(labelMeta.padX, labelMeta.padY).json;
-      return { text, center, rect, padded };
+      return { text, center, index, rect, padded };
     });
 
   // Rooms (induced by all walls)

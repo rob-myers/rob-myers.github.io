@@ -7,7 +7,7 @@ declare namespace NPC {
     panZoomApi: PanZoom.CssApi;
     doorsApi: NPC.DoorsApi;
     npcsKey: string;
-    onLoad(api: NPC.FullApi): void;
+    onLoad(api: NPC.NPCs): void;
   }
 
   type WireMessage = (
@@ -224,7 +224,7 @@ declare namespace NPC {
     length: number;
   }
 
-  export interface FullApi {
+  export interface NPCs {
     decor: Record<string, Decor>;
     events: import('rxjs').Subject<NPC.NPCsEvent>;
     npc: Record<string, NPC.NPC>;

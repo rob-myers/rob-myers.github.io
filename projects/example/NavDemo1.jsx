@@ -9,6 +9,7 @@ import { Poly, Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../hooks/use-geomorphs";
+import useSessionStore from "../sh/session.store";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
@@ -42,7 +43,7 @@ export default function NavDemo1(props) {
 
       doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
       panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
-      npcsApi: /** @type {NPC.FullApi} */  ({ ready: false }),
+      npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
 
       /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
       async handlePlayerWayEvent(e) {
@@ -234,10 +235,11 @@ export default function NavDemo1(props) {
           showIds
           showLabels
 
+          doorsApi={state.doorsApi}
           gms={gms}
           gmGraph={gmGraph}
-          doorsApi={state.doorsApi}
           gmId={state.gmId}
+          npcsApi={state.npcsApi}
           roomId={state.roomId}
           setRoom={(gmId, roomId) => {
             [state.gmId, state.roomId] = [gmId, roomId];
@@ -385,7 +387,10 @@ function Debug(props) {
     }
 
     if (target.className === 'debug-label-info') {
-      // TODO
+      const label = gm.labels[Number(target.getAttribute('data-debug-label-id'))];
+      props.npcsApi.sessionKeys.forEach(sessionKey => {
+        useSessionStore.api.writeMsgCleanly(sessionKey, `${label.text}`, 'warn');
+      });
     }
 
   }, [gm, props]);
@@ -492,9 +497,10 @@ function Debug(props) {
           </div>
         )}
 
-        {props.showLabels && labels.map(({ center, text }, i) => (
+        {props.showLabels && labels.map(({ center, text, index }) => (
           <div
-            key={i}
+            key={index}
+            data-debug-label-id={index}
             data-tags="debug label-icon"
             className="debug-label-info"
             title={text}
@@ -532,9 +538,10 @@ function Debug(props) {
 /**
  * @typedef DebugProps @type {object}
  * @property {Geomorph.GeomorphDataInstance[]} gms
- * @property {Graph.GmGraph} gmGraph
  * @property {NPC.DoorsApi} doorsApi
+ * @property {Graph.GmGraph} gmGraph
  * @property {number} gmId
+ * @property {NPC.NPCs} npcsApi
  * @property {number} roomId
  * @property {(gmId: number, roomId: number) => void} setRoom
  * @property {boolean} [outlines]

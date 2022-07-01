@@ -127,7 +127,7 @@ const gameFunctionsRunDefs = [
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
-    /** @type {NPC.FullApi} */
+    /** @type {NPC.NPCs} */
     const npcs = api.getCached(home.NPCS_KEY)
     const { filter, map, take, otag } = npcs.rxjs
     const process = api.getProcess()
@@ -209,7 +209,7 @@ const gameFunctionsRunDefs = [
     const cacheKey = home.NPCS_KEY
     const ansiColor = api.getColors();
     yield `ℹ️  polling for cached query ${ansiColor.Blue}${cacheKey}${ansiColor.White}`
-    /** @type {NPC.FullApi} */ let npcs;
+    /** @type {NPC.NPCs} */ let npcs;
     while (!(npcs = api.getCached(cacheKey))) yield* api.sleep(1)
     npcs.sessionKeys.add(api.getProcess().sessionKey)
     yield `✅  found cached query ${ansiColor.Blue}${cacheKey}${ansiColor.White}`

@@ -24,7 +24,7 @@ export default function NPCs(props) {
 
   const nav = useGeomorphsNav(props.gmGraph, props.disabled);
 
-  const state = useStateRef(/** @type {() => NPC.FullApi} */ () => ({
+  const state = useStateRef(/** @type {() => NPC.NPCs} */ () => ({
     decor: {},
     events: new Subject,
     npc: {},
