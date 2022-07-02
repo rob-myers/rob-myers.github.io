@@ -4,7 +4,6 @@ import type { ITerminalOptions } from 'xterm';
 import { debounce } from 'debounce';
 
 import { TtyXterm } from 'projects/sh/tty.xterm';
-import { xtermLinkCallback } from 'projects/sh/sh.util';
 import { canTouchDevice } from 'projects/service/dom';
 import useSession, { ProcessStatus, Session } from 'projects/sh/session.store';
 import useOnResize from 'projects/hooks/use-on-resize';
@@ -93,8 +92,8 @@ export default function Terminal(props: Props) {
              * 🔎 will panzoom to e.g. rooms
              */
             regex: /(🔎 [^;]+);/g,
-            async callback(e, text) {
-              // console.log('link text', e, text);
+            async callback(e, text, lineNumber) {
+              console.log('clicked link', e, text, lineNumber);
               const session = assertNonNull(state.session);
               session.ttyShell.xterm.autoSendCode(text);
             },

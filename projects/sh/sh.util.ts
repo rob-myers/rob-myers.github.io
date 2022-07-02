@@ -13,8 +13,6 @@ export const ansiColor = {
   Yellow: '\x1b[93m',
 };
 
-export const xtermLinkCallback = 'xtermLinkCallback';
-
 export function normalizeWhitespace(word: string, trim = true): string[] {
   if (!word.trim()) {// Prevent [''].
     return [];

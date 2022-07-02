@@ -26,6 +26,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- ✅ xterm-link-provider provides line number
+
 - 🚧 npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
   - 🚧 can slow down walk speed animation

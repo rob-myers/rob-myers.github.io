@@ -5,7 +5,7 @@ import { withSize } from 'react-sizeme';
 
 import { Terminal, ITerminalOptions } from 'xterm';
 import { FitAddon } from 'xterm-addon-fit';
-import { LinkProvider } from 'xterm-link-provider';
+import { LinkProvider } from './xterm-link-provider';
 
 export default withSize({ monitorHeight: true, monitorWidth: true })(
   function XTermComponent(props: Props) {
@@ -57,7 +57,7 @@ export default withSize({ monitorHeight: true, monitorWidth: true })(
 interface Props {
   linkProviderDef?: {
     regex: RegExp;
-    callback(event: MouseEvent, text: string): void;
+    callback(event: MouseEvent, text: string, lineNumber: number): void;
   };
   options?: ITerminalOptions;
   onMount: (xterm: Terminal) => void;
