@@ -90,7 +90,7 @@ export default function Terminal(props: Props) {
           options={options}
           linkProviderDef={{
             // regex: /(🔎 [^;]+);/g,
-            regex: /(_[^_]+_)/g,
+            regex: /(\[[a-z][^\]]+\])/gi,
             async callback(event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines }) {
               // console.log('clicked link', event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines });
               const session = assertNonNull(state.session);
@@ -102,7 +102,7 @@ export default function Terminal(props: Props) {
                 // The "global" 1-based index of lines ever output by tty
                 priorOutputLines + outputLineNumber,
                 stripAnsi(lineText),
-                stripAnsi(linkText),
+                stripAnsi(linkText).slice(1, -1), // Omit square brackets
                 linkStartIndex,
               );
             },

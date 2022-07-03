@@ -252,11 +252,17 @@ export default function NPCs(props) {
     },
     onTtyLink(sessionKey, lineNumber, lineText, linkText, linkStartIndex) {
       // console.log('onTtyLink', { lineNumber, lineText, linkText, linkStartIndex });
-      const found = state.session[sessionKey]?.tty[lineNumber]?.find(x => x.line === lineText && x.linkStartIndex === linkStartIndex)
-      /**
-       * TODO
-       */
-      found && console.log('found', found);
+      const found = state.session[sessionKey]?.tty[lineNumber]?.find(x =>
+        x.line === lineText
+        && x.linkStartIndex === linkStartIndex
+        && x.link === linkText
+      );
+      if (found) {
+        console.log('onTtyLink found', found);
+        /**
+         * TODO
+         */
+      }
     },
     async panZoomTo(e) {
       if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {
