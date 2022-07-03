@@ -72,7 +72,7 @@ export default function createNpc(
       if (opts?.globalNavMetas) {
         anim.wayMetas = opts.globalNavMetas.map((navMeta) => ({
           ...navMeta,
-          length: Math.max(anim.aux.sofars[navMeta.index] - navMetaOffsets[navMeta.key], 0),
+          length: Math.max(0, anim.aux.sofars[navMeta.index] + navMetaOffsets[navMeta.key]),
         }));
       }
 
