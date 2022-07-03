@@ -249,7 +249,8 @@ declare namespace NPC {
       otag: import('../service/rxjs').otag;
     };
 
-    addTtyCtxt(sessionKey: string, ttyCtxt: NPC.SessionTtyCtxt)
+    /** Assume each `ctxts[i].lineNumber` is `lineNumber`  */
+    addTtyLineCtxts(sessionKey: string, lineNumber: number, ctxts: NPC.SessionTtyCtxt[])
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
     getGmGraph(): Graph.GmGraph;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
@@ -262,7 +263,11 @@ declare namespace NPC {
     getPointTags(point: Geom.VectJson): string[];
     isPointLegal(p: Geom.VectJson): boolean;
     async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;
-    onTtyLink(lineNumber: number, lineText: string, linkText: string, linkStartIndex: number);
+    /**
+     * @param {string} sessionKey The computations are specific to tty i.e. its parent session.
+     * @param {number} outputLineNumber The "global" 1-based index of "actual" lines ever output by tty
+     */
+    onTtyLink(sessionKey: string, outputLineNumber: number, lineText: string, linkText: string, linkStartIndex: number);
     rootRef(el: null | HTMLDivElement): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     setDecor(decorKey: string, decor: null | NPC.Decor): void;
@@ -277,12 +282,15 @@ declare namespace NPC {
     key: string;
     receiveMsgs: boolean;
 
-    tty: { [lineNumber: number]: SessionTtyCtxt }
+    tty: { [lineNumber: number]: SessionTtyCtxt[] }
   }
 
   export interface SessionTtyCtxt {
     lineNumber: number;
     line: string;
+    link: string;
+    /** Where `link` occurs in `line` */
+    linkStartIndex: number;
     /**
      * TODO discriminated union
      */

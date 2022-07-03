@@ -19,7 +19,7 @@ export function TouchHelperUI(props: {
         xterm.xterm.scrollToBottom();
         if (target.classList.contains('lowercase')) {
           const forced = (xterm.forceLowerCase = !xterm.forceLowerCase);
-          const message = `⚠️  input ${forced ? 'forced as' : 'not forced as'} lowercase`;
+          const message = `⚠️ input ${forced ? 'forced as' : 'not forced as'} lowercase`;
           useSessionStore.api.writeMsgCleanly(props.session.key, message);
           target.classList.toggle('enabled');
           tryLocalStorageSet(localStorageKey, `${forced}`);

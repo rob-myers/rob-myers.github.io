@@ -7,6 +7,7 @@ import { TtyXterm } from 'projects/sh/tty.xterm';
 import { canTouchDevice } from 'projects/service/dom';
 import { assertNonNull } from 'projects/service/generic';
 import { getCached } from 'projects/service/query-client';
+import { stripAnsi } from 'projects/sh/sh.util';
 import useSession, { ProcessStatus, Session } from 'projects/sh/session.store';
 import useOnResize from 'projects/hooks/use-on-resize';
 import { XTerm } from 'components/dynamic';
@@ -40,7 +41,7 @@ export default function Terminal(props: Props) {
   React.useEffect(() => {
     if (props.disabled) {
       state.wasDisabled = true;
-      useSession.api.writeMsgCleanly(props.sessionKey, 'Paused session', { prompt: false });
+      useSession.api.writeMsgCleanly(props.sessionKey, 'ℹ️ Paused session', { prompt: false });
 
       // Pause running processes
       const processes = Object.values((state.session?.process)??{});
@@ -50,7 +51,7 @@ export default function Terminal(props: Props) {
       });
 
     } else if (!props.disabled && state.wasDisabled && state.xtermReady) {
-      useSession.api.writeMsgCleanly(props.sessionKey, 'Resumed session');
+      useSession.api.writeMsgCleanly(props.sessionKey, 'ℹ️ Resumed session');
 
       // Resume suspended processes
       // TODO what if previously suspended?
@@ -90,11 +91,20 @@ export default function Terminal(props: Props) {
           linkProviderDef={{
             // regex: /(🔎 [^;]+);/g,
             regex: /(_[^_]+_)/g,
-            async callback(event, linkText, lineNumber, lineText, startLinkIndex) {
-              // console.log('clicked link', event, linkText, lineNumber, lineText, startLinkIndex);
+            async callback(event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines }) {
+              // console.log('clicked link', event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines });
               const session = assertNonNull(state.session);
               const npcs = getCached(session.var.NPCS_KEY) as NPC.NPCs;
-              npcs.onTtyLink(lineNumber, lineText, linkText, startLinkIndex);
+              /** Number of "actual" lines output, no longer entirely within tty's buffer  */
+              const priorOutputLines = Math.max(0, session.ttyShell.xterm.totalLinesOutput - bufferOutputLines);
+              npcs.onTtyLink(
+                props.sessionKey,
+                // The "global" 1-based index of lines ever output by tty
+                priorOutputLines + outputLineNumber,
+                stripAnsi(lineText),
+                stripAnsi(linkText),
+                linkStartIndex,
+              );
             },
           }}
         />

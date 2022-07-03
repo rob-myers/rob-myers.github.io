@@ -9,6 +9,23 @@ import type {IBufferCellPosition, ILink, ILinkProvider, Terminal} from 'xterm';
 
 type ILinkProviderOptions = Omit<ILink, 'range' | 'text' | 'activate'>;
 
+export interface ExtraHandlerContext {
+  /**
+   * Line number in buffer, viewing a wrapped line as a single line.
+   * That is, the _actual_ lines output, not their viewport-dependent cousins.
+   */
+  outputLineNumber: number;
+  /** Total number of entire "actual" lines output inside buffer */
+  bufferOutputLines: number;
+  /** Entire line text */
+  lineText: string;
+  /** 
+   * 0-based index of `text` within `lineText`.
+   * Seems to count unicode characters as 1 char.
+   */
+  linkStartIndex: number;
+}
+
 export class LinkProvider implements ILinkProvider {
   /**
    * Create a Link Provider for xterm.js
@@ -22,7 +39,7 @@ export class LinkProvider implements ILinkProvider {
     private readonly _terminal: Terminal,
     private readonly _regex: RegExp,
     // private readonly _handler: ILink['activate'],
-    private readonly _handler: (event: MouseEvent, text: string, lineNumber: number, lineText: string, linkStartIndex: number) => void,
+    private readonly _handler: (event: MouseEvent, text: string, extraCtxt: ExtraHandlerContext) => void,
     private readonly _options: ILinkProviderOptions = {},
     private readonly _matchIndex = 1
   ) {}
@@ -33,10 +50,22 @@ export class LinkProvider implements ILinkProvider {
         range: _link.range,
         text: _link.text,
         activate: (e, text) => {
-          const lineNumber = y;
-          const [lineText] = translateBufferLineToStringWithWrap(lineNumber - 1, this._terminal);
-          const linkStartIndex = _link.range.start.x - 1;
-          return this._handler(e, text, lineNumber, lineText, linkStartIndex);
+          /**
+           * Compute line number in buffer, viewing a wrapped line as a single line.
+           * In other words, we count the actual lines output.
+           */
+          const outputLineNumber = lineNumberSansWraps(y, this._terminal);
+          const bufferOutputLines = bufferLinesSansWraps(this._terminal);
+        
+          const [lineText] = translateBufferLineToStringWithWrap(y - 1, this._terminal);
+          // Importantly, this is counting unicode characters as 1 char.
+          const linkStartIndex = _link.range.start.x;
+          return this._handler(e, text, {
+            outputLineNumber,
+            bufferOutputLines,
+            lineText,
+            linkStartIndex,
+          });
         },
         ...this._options
       })
@@ -101,6 +130,22 @@ export const computeLink = (y: number, regex: RegExp, terminal: Terminal, matchI
 
   return result;
 };
+
+function lineNumberSansWraps(
+  lineNumber: number,
+  terminal: Terminal,
+) {
+  let lineIndex = lineNumber - 1;
+  for (let i = 0; i < lineNumber - 1; i++) {
+    if (terminal.buffer.active.getLine(i)?.isWrapped) lineIndex--;
+  }
+  return lineIndex + 1;
+}
+
+function bufferLinesSansWraps({ buffer: { active } }: Terminal) {
+  return [...Array(active.length)]
+    .reduce<number>((agg, _, i) => agg + (active.getLine(i)!.isWrapped ? 0 : 1), 0);
+}
 
 const translateBufferLineToStringWithWrap = (
   lineIndex: number,

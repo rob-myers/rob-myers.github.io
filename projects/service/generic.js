@@ -329,3 +329,19 @@ export function tryLocalStorageSet(key, value, logErr = true) {
 function zealousTrim(input) {
   return input.trim().replace(/\s\s+/g, ' ').trim();
 }
+
+/**
+ * Source:
+ * - https://stackoverflow.com/a/51396686/2917822
+ * - https://blog.jonnew.com/posts/poo-dot-length-equals-two
+ * 
+ * Apparently won't work for all unicode characters,
+ * but perhaps we can restrict them.
+ * @param {string} input
+ */
+export function visibleUnicodeLength(input){
+  const split = input.split("\u{200D}");
+  return split.reduce((sum, item) =>
+    sum + Array.from(item.split(/[\ufe00-\ufe0f]/).join("")).length
+  , 0) / split.length;
+}

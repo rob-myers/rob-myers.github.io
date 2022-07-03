@@ -3,6 +3,9 @@ import classNames from "classnames";
 import { css } from "goober";
 import { merge, of, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
+
+import { Poly, Rect, Vect } from "../geom";
+import { stripAnsi } from "../sh/sh.util";
 import { testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
@@ -10,7 +13,6 @@ import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
 import { getNumericCssVar } from "../service/dom";
-import { Poly, Rect, Vect } from "../geom";
 import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor } from "./create-npc";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -36,8 +38,11 @@ export default function NPCs(props) {
     class: { Vect },
     rxjs: { filter, first, map, take, otag },
 
-    addTtyCtxt(sessionKey, ctxt) {
-      state.session[sessionKey].tty[ctxt.lineNumber] = ctxt;
+    addTtyLineCtxts(sessionKey, lineNumber, ctxts) {
+      // We strip ANSI colour codes for string comparison
+      state.session[sessionKey].tty[lineNumber] = ctxts.map(x =>
+        ({ ...x, line: stripAnsi(x.line), link: stripAnsi(x.link) })
+      );
     },
     getGmGraph() {
       return props.gmGraph;
@@ -245,12 +250,13 @@ export default function NPCs(props) {
           throw Error(testNever(e, `unrecognised action: "${JSON.stringify(e)}"`));
       }
     },
-    onTtyLink(lineNumber, lineText, linkText, linkStartIndex) {
+    onTtyLink(sessionKey, lineNumber, lineText, linkText, linkStartIndex) {
+      // console.log('onTtyLink', { lineNumber, lineText, linkText, linkStartIndex });
+      const found = state.session[sessionKey]?.tty[lineNumber]?.find(x => x.line === lineText && x.linkStartIndex === linkStartIndex)
       /**
        * TODO
        */
-      // state.session
-      console.log({ lineNumber, lineText, linkText, linkStartIndex });
+      found && console.log('found', found);
     },
     async panZoomTo(e) {
       if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {

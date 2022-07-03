@@ -30,7 +30,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 - ✅ xterm tracks total number of lines so far
 - ✅ npcs has lookup `lineNumber -> ctxt`
 - ✅ onclick info sends message with link and adds context
-- onclick message link retrieve context and e.g. panzoom to room
+- ✅ onclick message link retrieve context
+- 🚧 onclick message link e.g. panzoom to room
 - onclick message link cleanup old contexts (modulo scrollback)
 
 - 🚧 npc walk collision prevention

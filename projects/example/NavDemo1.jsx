@@ -2,7 +2,7 @@ import React from "react";
 import { css } from "goober";
 import { filter } from "rxjs/operators";
 
-import { testNever } from "../service/generic";
+import { testNever, visibleUnicodeLength } from "../service/generic";
 import { geom } from "../service/geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
@@ -376,7 +376,7 @@ function Debug(props) {
   const roomPoly = gm.rooms[props.roomId];
   const { labels } = gm.point[props.roomId];
 
-  const onClick = React.useCallback(/** @param {React.MouseEvent<HTMLDivElement>} e */ (e) => {
+  const onClick = React.useCallback(/** @param {React.MouseEvent<HTMLDivElement>} e */ async (e) => {
     const target = (/** @type {HTMLElement} */ (e.target));
 
     if (target.className === 'debug-door-arrow') {
@@ -400,17 +400,20 @@ function Debug(props) {
        */
       const label = gm.labels[Number(target.getAttribute('data-debug-label-id'))];
 
-      const line = `We're in _${label.text}_ ${ansiColor.Reset} with ${
+      const line = `ℹ️ _${ansiColor.Blue}${label.text}${ansiColor.Reset}_ with ${
         gm.roomGraph.getAdjacentDoors(props.roomId).length
       } doors`;
         
-      Object.values(props.npcsApi.session).filter(x => x.receiveMsgs)
-        .forEach(async ({ key: sessionKey }) => {
-          const lineNumber = await useSessionStore.api.writeMsgCleanly(sessionKey, line);
-          props.npcsApi.addTtyCtxt(sessionKey, {
-            lineNumber, line, gmId: props.gmId, roomId: props.roomId,
-          });
-        });
+      const sessionCtxts = Object.values(props.npcsApi.session).filter(x => x.receiveMsgs);
+      for (const { key: sessionKey } of sessionCtxts) {
+        const globalLineNumber = await useSessionStore.api.writeMsgCleanly(sessionKey, line);
+        props.npcsApi.addTtyLineCtxts(sessionKey, globalLineNumber, [{
+          lineNumber: globalLineNumber, line, link: label.text,
+          // linkStartIndex: 'ℹ️ _'.length,
+          linkStartIndex: visibleUnicodeLength('ℹ️ _'),
+          gmId: props.gmId, roomId: props.roomId,
+        }]);
+      }
     }
 
   }, [gm, props]);

@@ -48,7 +48,10 @@ export type State = {
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     setVarDeep: (sessionKey: string, varPath: string, varValue: any) => void;
     writeMsg: (sessionKey: string, msg: string, level: 'info' | 'error') => void;
-    /** Returns line number of written message */
+    /**
+     * Returns global line number of written message,
+     * i.e. the 1-based index over all lines ever output in session's tty.
+     */
     writeMsgCleanly: (sessionKey: string, msg: string, opts?: { prompt?: boolean }) => Promise<number>;
   }
 }
@@ -299,13 +302,12 @@ const useStore = create<State>(devtools((set, get) => ({
       api.getSession(sessionKey).ttyIo.write({ key: level, msg });
     },
 
-    // NOTE currently always info
     async writeMsgCleanly(sessionKey, msg, opts) {
       const { xterm } = api.getSession(sessionKey).ttyShell;
       xterm.prepareForCleanMsg();
       const lineNumber = await new Promise<number>(resolve => {
         xterm.queueCommands([
-          { key: 'line', line: `ℹ️  ${msg}${ansiColor.Reset}` },
+          { key: 'line', line: `${msg}${ansiColor.Reset}` },
           { key: 'resolve', resolve: () => resolve(xterm.totalLinesOutput) }
         ])
       });
