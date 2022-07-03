@@ -438,8 +438,8 @@ class CmdService {
   
     throwError,
 
-    warn(message: string) {
-      useSession.api.writeMsg(this.meta.sessionKey, message, 'warn');
+    info(message: string) {
+      useSession.api.writeMsg(this.meta.sessionKey, message, 'info');
     },
   };
 

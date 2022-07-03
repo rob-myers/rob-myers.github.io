@@ -28,14 +28,17 @@ export default function NPCs(props) {
     decor: {},
     events: new Subject,
     npc: {},
+    playerKey: /** @type {null | string} */ (null),
     rootEl: /** @type {HTMLDivElement} */ ({}),
     ready: true,
-    playerKey: /** @type {null | string} */ (null),
-    sessionKeys: new Set,
+    session: {},
 
     class: { Vect },
     rxjs: { filter, first, map, take, otag },
 
+    addTtyCtxt(sessionKey, ctxt) {
+      state.session[sessionKey].tty[ctxt.lineNumber] = ctxt;
+    },
     getGmGraph() {
       return props.gmGraph;
     },
@@ -241,6 +244,13 @@ export default function NPCs(props) {
         default:
           throw Error(testNever(e, `unrecognised action: "${JSON.stringify(e)}"`));
       }
+    },
+    onTtyLink(lineNumber, lineText, linkText, linkStartIndex) {
+      /**
+       * TODO
+       */
+      // state.session
+      console.log({ lineNumber, lineText, linkText, linkStartIndex });
     },
     async panZoomTo(e) {
       if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {

@@ -5,13 +5,14 @@ import { debounce } from 'debounce';
 
 import { TtyXterm } from 'projects/sh/tty.xterm';
 import { canTouchDevice } from 'projects/service/dom';
+import { assertNonNull } from 'projects/service/generic';
+import { getCached } from 'projects/service/query-client';
 import useSession, { ProcessStatus, Session } from 'projects/sh/session.store';
 import useOnResize from 'projects/hooks/use-on-resize';
 import { XTerm } from 'components/dynamic';
 import { TouchHelperUI } from './TouchHelperUi';
 import useStateRef from 'projects/hooks/use-state-ref';
 import useUpdate from 'projects/hooks/use-update';
-import { assertNonNull } from 'projects/service/generic';
 
 export default function Terminal(props: Props) {
 
@@ -87,15 +88,13 @@ export default function Terminal(props: Props) {
           }}
           options={options}
           linkProviderDef={{
-            // regex: /(?:^|\s)_([^_]+)_(?:$|\s)/g,
-            /**
-             * 🔎 will panzoom to e.g. rooms
-             */
-            regex: /(🔎 [^;]+);/g,
-            async callback(e, text, lineNumber) {
-              console.log('clicked link', e, text, lineNumber);
+            // regex: /(🔎 [^;]+);/g,
+            regex: /(_[^_]+_)/g,
+            async callback(event, linkText, lineNumber, lineText, startLinkIndex) {
+              // console.log('clicked link', event, linkText, lineNumber, lineText, startLinkIndex);
               const session = assertNonNull(state.session);
-              session.ttyShell.xterm.autoSendCode(text);
+              const npcs = getCached(session.var.NPCS_KEY) as NPC.NPCs;
+              npcs.onTtyLink(lineNumber, lineText, linkText, startLinkIndex);
             },
           }}
         />

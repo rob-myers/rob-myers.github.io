@@ -1,6 +1,9 @@
 /**
  * Source https://github.com/LabhanshAgrawal/xterm-link-provider/blob/master/src/index.ts
- * We additionally provide lineNumber to @see _handler
+ * We provide additional args to @see _handler i.e.
+ * - lineNumber
+ * - lineText
+ * - linkStartIndex
  */
 import type {IBufferCellPosition, ILink, ILinkProvider, Terminal} from 'xterm';
 
@@ -19,7 +22,7 @@ export class LinkProvider implements ILinkProvider {
     private readonly _terminal: Terminal,
     private readonly _regex: RegExp,
     // private readonly _handler: ILink['activate'],
-    private readonly _handler: (event: MouseEvent, text: string, lineNumber: number) => void,
+    private readonly _handler: (event: MouseEvent, text: string, lineNumber: number, lineText: string, linkStartIndex: number) => void,
     private readonly _options: ILinkProviderOptions = {},
     private readonly _matchIndex = 1
   ) {}
@@ -29,7 +32,12 @@ export class LinkProvider implements ILinkProvider {
       (_link): ILink => ({
         range: _link.range,
         text: _link.text,
-        activate: (e, text) => this._handler(e, text, y),
+        activate: (e, text) => {
+          const lineNumber = y;
+          const [lineText] = translateBufferLineToStringWithWrap(lineNumber - 1, this._terminal);
+          const linkStartIndex = _link.range.start.x - 1;
+          return this._handler(e, text, lineNumber, lineText, linkStartIndex);
+        },
         ...this._options
       })
     );

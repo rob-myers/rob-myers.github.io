@@ -46,6 +46,11 @@ export class TtyXterm {
 
   /** Useful for mobile keyboard inputs */
   forceLowerCase = false;
+  /**
+   * Total number of lines output, excluding current possibly multi-line input.
+   * This makes sense because we monotonically output lines.
+   */
+  totalLinesOutput = 0;
 
   constructor(
     public xterm: Terminal,
@@ -69,18 +74,16 @@ export class TtyXterm {
   }
 
   initialise() {
-    /**
-     * xterm@4.14.1 onwards seems to fire onData twice when pasting text with spaces
-     * Pinning xterm@4.10.1 seems to solve the issue.
-     */
     // this.xterm.onData((data) => document.body.append('DATA: ' + data));
     this.xterm.onData(this.handleXtermInput.bind(this));
     this.session.io.handleWriters(this.onMessage.bind(this));
 
     this.xterm.writeln(
-      `${ansiColor.White}Connected to session ${ansiColor.Blue}${this.session.key}${ansiColor.Reset}`);
+      `${ansiColor.White}Connected to session ${ansiColor.Blue}${this.session.key}${ansiColor.Reset}`
+    );
     this.clearInput();
     this.cursorRow = 2;
+    this.trackTotalOutput(+1);
   }
 
   /**
@@ -97,13 +100,16 @@ export class TtyXterm {
     return this.prompt + input;
   }
 
+  /**
+   * TODO unused, but possibly useful for mobile.
+   */
   autoSendCode(input: string) {
     if (this.promptReady) {
       this.clearInput();
       this.input = input
       this.sendLine();
     } else {
-      this.onMessage({ key: 'warn', msg: `not ready, ignored code: ${input}` });
+      this.onMessage({ key: 'info', msg: `not ready, ignored code: ${input}` });
     }
   }
 
@@ -130,16 +136,20 @@ export class TtyXterm {
 
   /**
    * Clear the screen.
+   * A new prompt is shown with any pending input.
    */
   clearScreen() {
+    // Writing a line for each row moves visible lines just offscreen
     for (let i = 0; i < this.xterm.rows; i++) {
       this.xterm.writeln(''); 
     }
+    // Return to start of viewport
     this.xterm.write('\x1b[F'.repeat(this.xterm.rows));
     this.xterm.scrollToBottom();
     this.cursorRow = 1;
 
     this.showPendingInput();
+    this.trackTotalOutput(+1);
   }
 
   /**
@@ -498,7 +508,7 @@ export class TtyXterm {
         }]);
         break;
       }
-      case 'warn': {
+      case 'info': {
         this.queueCommands([{
           key: 'line',
           line: `ℹ️  ${msg.msg}${ansiColor.Reset}`,
@@ -507,8 +517,11 @@ export class TtyXterm {
       }
       default: {
         if (isDataChunk(msg)) {
-          (msg as DataChunk).items.slice(-2 * scrollback)
-            .forEach(x => this.onMessage(x));
+          const {items} = (msg as DataChunk);
+          if (items.length > 2 * scrollback) {// Pretend we output them
+            this.trackTotalOutput(items.length - 2 * scrollback);
+          }
+          items.slice(-2 * scrollback).forEach(x => this.onMessage(x));
         } else {
           this.queueCommands([{
             key: 'line',
@@ -528,8 +541,7 @@ export class TtyXterm {
   }
 
   prepareForCleanMsg() {
-    const hasUnsentInput = this.promptReady && this.input.length > 0;
-    if (hasUnsentInput) {
+    if (this.promptReady && this.input.length > 0) {
       if (this.xterm.buffer.active.cursorX > 0) {
         this.queueCommands([{ key: 'line', line: '' }]);
       }
@@ -585,6 +597,7 @@ export class TtyXterm {
         case 'line': {
           this.xterm.writeln(command.line);
           this.trackCursorRow(+1);
+          this.trackTotalOutput(+1);
           numLines++;
           break;
         }
@@ -596,12 +609,14 @@ export class TtyXterm {
 
           this.xterm.write('\r\n');
           this.trackCursorRow(+1);
+          this.trackTotalOutput(+1);
           this.sendLine();
           return;
         }
         case 'paste-line': {
           this.xterm.writeln(command.line);
           this.trackCursorRow(+1);
+          this.trackTotalOutput(+1);
           this.input = command.line;
           this.sendLine();
           return;
@@ -737,6 +752,11 @@ export class TtyXterm {
     } else if (this.cursorRow > this.xterm.rows) {
       this.cursorRow = this.xterm.rows;
     }
+  }
+
+  private trackTotalOutput(delta: number) {
+    this.totalLinesOutput += delta;
+    console.log(this.totalLinesOutput);
   }
 
   /**

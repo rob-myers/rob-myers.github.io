@@ -24,7 +24,7 @@ interface SendKillSignalToShell {
 
 export type MessageFromShell = (
   | SendXtermPrompt
-  | SendXtermWarn
+  | SendXtermInfo
   | SendXtermError
   | ClearXterm
   | TtyReceivedLine
@@ -37,8 +37,8 @@ interface SendXtermPrompt {
   prompt: string;
 }
 
-export interface SendXtermWarn {
-  key: 'warn';
+export interface SendXtermInfo {
+  key: 'info';
   msg: string;
 }
 

@@ -11,7 +11,7 @@ import { FifoDevice } from './io/fifo.device';
 import { VarDevice, VarDeviceMode } from './io/var.device';
 import { srcService } from './parse/src.service';
 import { NullDevice } from './io/null.device';
-import { computeNormalizedParts, resolveNormalized, ShError } from './sh.util';
+import { ansiColor, computeNormalizedParts, resolveNormalized, ShError } from './sh.util';
 
 export type State = {
   session: TypeUtil.KeyedLookup<Session>;
@@ -47,8 +47,9 @@ export type State = {
     resolve: (fd: number, meta: BaseMeta) => Device;
     setVar: (sessionKey: string, varName: string, varValue: any) => void;
     setVarDeep: (sessionKey: string, varPath: string, varValue: any) => void;
-    writeMsg: (sessionKey: string, msg: string, level: 'warn' | 'error') => void;
-    writeMsgCleanly: (sessionKey: string, msg: string, opts?: { level?: 'warn' | 'error'; prompt?: boolean }) => void;
+    writeMsg: (sessionKey: string, msg: string, level: 'info' | 'error') => void;
+    /** Returns line number of written message */
+    writeMsgCleanly: (sessionKey: string, msg: string, opts?: { prompt?: boolean }) => Promise<number>;
   }
 }
 
@@ -298,14 +299,21 @@ const useStore = create<State>(devtools((set, get) => ({
       api.getSession(sessionKey).ttyIo.write({ key: level, msg });
     },
 
-    writeMsgCleanly(sessionKey, msg, opts) {
+    // NOTE currently always info
+    async writeMsgCleanly(sessionKey, msg, opts) {
       const { xterm } = api.getSession(sessionKey).ttyShell;
       xterm.prepareForCleanMsg();
-      api.writeMsg(sessionKey, msg, opts?.level??'warn');
+      const lineNumber = await new Promise<number>(resolve => {
+        xterm.queueCommands([
+          { key: 'line', line: `ℹ️  ${msg}${ansiColor.Reset}` },
+          { key: 'resolve', resolve: () => resolve(xterm.totalLinesOutput) }
+        ])
+      });
       setTimeout(() => {
         (opts?.prompt??true) && xterm.showPendingInput();
         xterm.xterm.scrollToBottom();
       });
+      return lineNumber;
     },
   },
 

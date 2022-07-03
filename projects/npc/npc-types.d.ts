@@ -234,7 +234,7 @@ declare namespace NPC {
     rootEl: HTMLElement;
     ready: boolean;
     playerKey: null | string;
-    sessionKeys: Set<string>;
+    session: { [sessionKey: string]: NPC.SessionCtxt };
 
     class: {
       Vect: typeof Geom.Vect;
@@ -249,6 +249,7 @@ declare namespace NPC {
       otag: import('../service/rxjs').otag;
     };
 
+    addTtyCtxt(sessionKey: string, ttyCtxt: NPC.SessionTtyCtxt)
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
     getGmGraph(): Graph.GmGraph;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
@@ -261,6 +262,7 @@ declare namespace NPC {
     getPointTags(point: Geom.VectJson): string[];
     isPointLegal(p: Geom.VectJson): boolean;
     async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;
+    onTtyLink(lineNumber: number, lineText: string, linkText: string, linkStartIndex: number);
     rootRef(el: null | HTMLDivElement): void;
     spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     setDecor(decorKey: string, decor: null | NPC.Decor): void;
@@ -268,6 +270,24 @@ declare namespace NPC {
     /** Used by command `view` */
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
     async walkNpc(e: { npcKey: string } & GlobalNavPath): Promise<void>;
+  }
+
+  export interface SessionCtxt {
+    /** Session key */
+    key: string;
+    receiveMsgs: boolean;
+
+    tty: { [lineNumber: number]: SessionTtyCtxt }
+  }
+
+  export interface SessionTtyCtxt {
+    lineNumber: number;
+    line: string;
+    /**
+     * TODO discriminated union
+     */
+    gmId: number;
+    roomId: number;
   }
 
   type Decor = { key: string } & (

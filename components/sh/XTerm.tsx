@@ -57,7 +57,13 @@ export default withSize({ monitorHeight: true, monitorWidth: true })(
 interface Props {
   linkProviderDef?: {
     regex: RegExp;
-    callback(event: MouseEvent, text: string, lineNumber: number): void;
+    callback(
+      event: MouseEvent,
+      text: string,
+      lineNumber: number,
+      lineText: string,
+      linkStartIndex: number,
+    ): void;
   };
   options?: ITerminalOptions;
   onMount: (xterm: Terminal) => void;

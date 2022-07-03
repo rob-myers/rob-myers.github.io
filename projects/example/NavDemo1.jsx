@@ -399,12 +399,18 @@ function Debug(props) {
        * Send our first rich message.
        */
       const label = gm.labels[Number(target.getAttribute('data-debug-label-id'))];
-      const msg = `${label.text} 🔎 ${ansiColor.White}g${props.gmId}r${props.roomId}${
-        ansiColor.Reset}; (${gm.roomGraph.getAdjacentDoors(props.roomId).length} doors)`;
 
-      props.npcsApi.sessionKeys.forEach(sessionKey => {
-        useSessionStore.api.writeMsgCleanly(sessionKey, msg);
-      });
+      const line = `We're in _${label.text}_ ${ansiColor.Reset} with ${
+        gm.roomGraph.getAdjacentDoors(props.roomId).length
+      } doors`;
+        
+      Object.values(props.npcsApi.session).filter(x => x.receiveMsgs)
+        .forEach(async ({ key: sessionKey }) => {
+          const lineNumber = await useSessionStore.api.writeMsgCleanly(sessionKey, line);
+          props.npcsApi.addTtyCtxt(sessionKey, {
+            lineNumber, line, gmId: props.gmId, roomId: props.roomId,
+          });
+        });
     }
 
   }, [gm, props]);

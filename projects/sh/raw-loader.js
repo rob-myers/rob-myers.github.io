@@ -197,7 +197,7 @@ const gameFunctionsRunDefs = [
         try {
           yield npcs.getNpcGlobalNav({ debug: home.DEBUG === "true", ...datum })
         } catch (e) {
-          api.warn(`${e}`)
+          api.info(`${e}`)
           console.error(e)
         }
       }
@@ -218,14 +218,18 @@ const gameFunctionsRunDefs = [
   },
 
   /** Ping per second until query NPCS_KEY found */
-  ready: async function* ({ api, home }) {
-    const cacheKey = home.NPCS_KEY
+  ready: async function* ({ api, home: { NPCS_KEY } }) {
     const ansiColor = api.getColors();
-    api.warn(`polling for cached query ${ansiColor.Blue}${cacheKey}${ansiColor.White}`)
+    const { sessionKey } = api.getProcess();
+
+    api.info(`polling for cached query ${ansiColor.Blue}${NPCS_KEY}${ansiColor.White}`)
     /** @type {NPC.NPCs} */ let npcs;
-    while (!(npcs = api.getCached(cacheKey))) yield* api.sleep(1)
-    npcs.sessionKeys.add(api.getProcess().sessionKey)
-    api.warn(`found cached query ${ansiColor.Blue}${cacheKey}${ansiColor.White}`)
+    while (!(npcs = api.getCached(NPCS_KEY))) yield* api.sleep(1);
+
+    if (!npcs.session[sessionKey]) {
+      npcs.session[sessionKey] = { key: sessionKey, receiveMsgs: true, tty: {} };
+    }
+    api.info(`found cached query ${ansiColor.Blue}${NPCS_KEY}${ansiColor.White}`);
   },
 
   /**
