@@ -240,11 +240,14 @@ export default function createNpc(
         anim.rotate = this.el.body.animate(rotateKeyframes, opts);
 
         // Animate spritesheet
+        /**
+         * TODO try creating spritesheet animation where frames have different length
+         */
         const { animLookup, zoom: animZoom } = npcJson;
         anim.sprites = this.el.body.animate([
           { offset: 0, backgroundPosition: '0px' },
           { offset: 1, backgroundPosition: `${-animLookup.walk.frameCount * animLookup.walk.aabb.width * animZoom}px` },
-        ], { easing: `steps(${animLookup.walk.frameCount})`, duration: 0.625 * 1000, iterations: Infinity });
+        ], { easing: `steps(${animLookup.walk.frameCount})`, duration: animLookup.walk.frameCount * npcWalkFrameLengthMs, iterations: Infinity });
 
       } else if (anim.spriteSheet === 'idle') {
         this.clearWayMetas();
@@ -319,13 +322,20 @@ export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
 
 export const defaultNpcInteractRadius = npcRadius * 3;
 
-/** Originally `1000 / 15` */
+/**
+ * Number of world units per second.
+ * Originally `1000 / 15`
+ */
 export const npcAnimSpeed = 60;
 
-/** Scale up how long it should take to move along navpath */
+/** Used to scale up how long it takes to move along navpath */
 export const npcAnimScaleFactor = 1000 * (1 / npcAnimSpeed);
 
-// const npcWalkFrameLengthMs = 0.0625
+/**
+ * For the moment, assume each frame travels 34.9 world units.
+ * Originally `(0.625 * 1000) / 10` i.e. `62.5`
+ */
+const npcWalkFrameLengthMs = 34.9 * npcScale * (1 / npcAnimSpeed) * 1000;
 
 /** @type {Record<NPC.NavMetaKey, number>} */
 const navMetaOffsets = {
