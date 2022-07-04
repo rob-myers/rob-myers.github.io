@@ -26,14 +26,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- ✅ xterm-link-provider provides line number
-- ✅ xterm tracks total number of lines so far
-- ✅ npcs has lookup `lineNumber -> ctxt`
-- ✅ onclick info sends message with link and adds context
-- ✅ onclick message link retrieve context
-- 🚧 onclick message link e.g. panzoom to room
-- onclick message link cleanup old contexts (modulo scrollback)
-
 - 🚧 npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
   - 🚧 can slow down walk speed animation
@@ -142,6 +134,14 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ redo xterm-links
+  - ✅ xterm-link-provider provides line number
+  - ✅ xterm tracks total number of lines so far
+  - ✅ npcs has lookup `lineNumber -> ctxt`
+  - ✅ onclick info sends message with link and adds context
+  - ✅ onclick message link retrieve context
+  - ✅ onclick `room` message link then panzoom to room
+  - ✅ onclick message link cleanup old contexts (modulo scrollback)
 - ✅ migrate `run` code from sh.lib into raw-loader.js
 - ✅ can execute code by clicking terminal links
 - ✅ clicking room "info label" sends messages to terminal

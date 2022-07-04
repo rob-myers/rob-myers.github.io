@@ -408,10 +408,11 @@ function Debug(props) {
       for (const { key: sessionKey } of sessionCtxts) {
         const globalLineNumber = await useSessionStore.api.writeMsgCleanly(sessionKey, line);
         props.npcsApi.addTtyLineCtxts(sessionKey, globalLineNumber, [{
-          lineNumber: globalLineNumber, line, link: label.text,
-          // linkStartIndex: 'ℹ️ _'.length,
+          lineNumber: globalLineNumber,
+          lineText: line,
+          linkText: label.text,
           linkStartIndex: visibleUnicodeLength('ℹ️ ['),
-          gmId: props.gmId, roomId: props.roomId,
+          key: 'room', gmId: props.gmId, roomId: props.roomId,
         }]);
       }
     }

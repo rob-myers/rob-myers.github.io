@@ -250,7 +250,8 @@ declare namespace NPC {
     };
 
     /** Assume each `ctxts[i].lineNumber` is `lineNumber`  */
-    addTtyLineCtxts(sessionKey: string, lineNumber: number, ctxts: NPC.SessionTtyCtxt[])
+    addTtyLineCtxts(sessionKey: string, lineNumber: number, ctxts: NPC.SessionTtyCtxt[]): void;
+    cleanSessionCtxts(): void;
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
     getGmGraph(): Graph.GmGraph;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
@@ -281,22 +282,19 @@ declare namespace NPC {
     /** Session key */
     key: string;
     receiveMsgs: boolean;
-
     tty: { [lineNumber: number]: SessionTtyCtxt[] }
   }
 
-  export interface SessionTtyCtxt {
+  export type SessionTtyCtxt = {
     lineNumber: number;
-    line: string;
-    link: string;
-    /** Where `link` occurs in `line` */
+    lineText: string;
+    /** For example `[foo]` has link text `foo` */
+    linkText: string;
+    /** Where `linkText` occurs in `lineText` */
     linkStartIndex: number;
-    /**
-     * TODO discriminated union
-     */
-    gmId: number;
-    roomId: number;
-  }
+  } & (
+    | { key: 'room'; gmId: number; roomId: number; }
+  )
 
   type Decor = { key: string } & (
     | { type: 'path'; path: Geom.VectJson[]; }

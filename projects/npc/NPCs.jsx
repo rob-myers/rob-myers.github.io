@@ -14,9 +14,11 @@ import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
 import { getNumericCssVar } from "../service/dom";
 import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor } from "./create-npc";
+import { scrollback } from "../sh/io/io.model";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../hooks/use-geomorphs-nav";
+import useSessionStore from "../sh/session.store";
 import NPC from "./NPC";
 
 /** @param {NPC.NPCsProps} props */
@@ -41,8 +43,24 @@ export default function NPCs(props) {
     addTtyLineCtxts(sessionKey, lineNumber, ctxts) {
       // We strip ANSI colour codes for string comparison
       state.session[sessionKey].tty[lineNumber] = ctxts.map(x =>
-        ({ ...x, line: stripAnsi(x.line), link: stripAnsi(x.link) })
+        ({ ...x, lineText: stripAnsi(x.lineText), linkText: stripAnsi(x.linkText) })
       );
+    },
+    cleanSessionCtxts() {
+      for (const sessionKey of Object.keys(state.session)) {
+        const session = useSessionStore.api.getSession(sessionKey);
+        if (session) {
+          const { tty } = state.session[sessionKey];
+          /**
+           * Assuming xterm buffer no larger than 2 * scrollback,
+           * this lineNumber (ignoring wraps) is no longer visible.
+           */
+          const lowerBound = Math.max(0, session.ttyShell.xterm.totalLinesOutput - 2 * scrollback);
+          Object.values(tty).forEach(([{ lineNumber }]) =>
+            lineNumber <= lowerBound && delete tty[lineNumber]
+          );
+        } else delete state.session[sessionKey];
+      }
     },
     getGmGraph() {
       return props.gmGraph;
@@ -252,17 +270,26 @@ export default function NPCs(props) {
     },
     onTtyLink(sessionKey, lineNumber, lineText, linkText, linkStartIndex) {
       // console.log('onTtyLink', { lineNumber, lineText, linkText, linkStartIndex });
+      state.cleanSessionCtxts();
       const found = state.session[sessionKey]?.tty[lineNumber]?.find(x =>
-        x.line === lineText
+        x.lineText === lineText
         && x.linkStartIndex === linkStartIndex
-        && x.link === linkText
+        && x.linkText === linkText
       );
-      if (found) {
-        console.log('onTtyLink found', found);
-        /**
-         * TODO
-         */
+      if (!found) {
+        return;
       }
+      console.log('onTtyLink found', found);
+      switch (found.key) {
+        case 'room':
+          const gm = state.getGmGraph().gms[found.gmId];
+          const point = gm.matrix.transformPoint(gm.point[found.roomId].default.clone());
+          state.panZoomTo({ zoom: 2, ms: 2000, point });
+          break;
+      }
+      /**
+       * TODO
+       */
     },
     async panZoomTo(e) {
       if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {

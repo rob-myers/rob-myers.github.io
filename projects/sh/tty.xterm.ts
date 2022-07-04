@@ -517,17 +517,22 @@ export class TtyXterm {
       }
       default: {
         if (isDataChunk(msg)) {
+          /**
+           * We'll only process the last `2 * scrollback` items.
+           * This makes sense if screen rows no larger than scrollback.
+           * The buffer length consists of the screen rows (on resize)
+           * plus the scrollback.
+           */
           const {items} = (msg as DataChunk);
-          if (items.length > 2 * scrollback) {// Pretend we output them
-            this.trackTotalOutput(items.length - 2 * scrollback);
-          }
+          // Pretend we outputted them all
+          this.trackTotalOutput(+Math.max(0, items.length - 2 * scrollback));
           items.slice(-2 * scrollback).forEach(x => this.onMessage(x));
         } else {
           this.queueCommands([{
             key: 'line',
             line: `${ansiColor.Yellow}${safeStringify(msg)}${ansiColor.Reset}`,
           }]);
-          typeof msg !== 'string' && this.session.rememberLastValue(msg);
+          this.session.rememberLastValue(msg);
         }
       }
     }

@@ -9,6 +9,7 @@ import { assertNonNull } from 'projects/service/generic';
 import { getCached } from 'projects/service/query-client';
 import { stripAnsi } from 'projects/sh/sh.util';
 import useSession, { ProcessStatus, Session } from 'projects/sh/session.store';
+import { scrollback } from 'projects/sh/io/io.model';
 import useOnResize from 'projects/hooks/use-on-resize';
 import { XTerm } from 'components/dynamic';
 import { TouchHelperUI } from './TouchHelperUi';
@@ -146,6 +147,6 @@ const options: ITerminalOptions = {
     foreground: '#41FF00',
   },
   convertEol: false,
-  scrollback: 250,
+  scrollback: scrollback,
   rows: 50,
 };
