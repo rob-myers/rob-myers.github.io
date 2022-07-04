@@ -3,7 +3,8 @@ import { Image, createCanvas, Canvas } from 'canvas';
 import path from 'path';
 
 import { Vect } from '../geom';
-import { extractGeomsAt, hasTitle } from './cheerio';
+import { assertDefined } from './generic';
+import { extractGeom, extractGeomsAt, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
 import { warn } from './log';
 
@@ -34,25 +35,28 @@ export async function renderNpcSpriteSheets(parsed, outputDir, opts = {}) {
 async function drawAnimSpriteSheet(anim, zoom = 1) {
   const frameCount = anim.frameCount;
   const canvas = createCanvas(anim.aabb.width * zoom * frameCount, anim.aabb.height * zoom);
-
   const ctxt = canvas.getContext('2d');
+
   for (let i = 0; i < frameCount; i++) {
-    await drawFrameAtNew(anim, i, canvas, zoom);
+    await drawFrame(anim, i, canvas, zoom);
+    // Spritesheet rendered from left to right
     ctxt.translate(anim.aabb.width * zoom, 0);
   }
+
   ctxt.restore();
   return canvas;
 }
 
 /**
- * Render by recreating an SVG and assigning as Image src.
- * Permits complex SVG <path>s, non-trivial to draw directly into canvas.
+ * - Render by recreating an SVG and assigning as Image src.
+ * - Permits complex SVG <path>s, non-trivial to draw directly into canvas.
+ * - Need <def> e.g. for head symbol.
  * @param {ServerTypes.NpcAnimCheerio} anim 
  * @param {number} frameId 0-based frame index
  * @param {Canvas} canvas 
  * @param {number} [zoom] 
  */
-async function drawFrameAtNew(anim, frameId, canvas, zoom = 1) {
+async function drawFrame(anim, frameId, canvas, zoom = 1) {
   const group = anim.frameNodes[frameId];
 
   const svg = `
@@ -107,12 +111,37 @@ export function parseNpc(npcName, svgContents, zoom = 1) {
       .reduce((agg, { animName, aabb }) => {
         const defsNode = topNodes.find(x => x.type === 'tag' && x.name === 'defs') || null;
         const frameNodes = extractNpcFrameNodes($, topNodes, animName);
+
+        /** @type {ServerTypes.NpcAnimMeta['contacts']} */
+        const contacts = frameNodes.map((group, frameId) => {
+          const polys = $(group).find('rect').toArray()
+            .flatMap(x => extractGeom($, x)).filter(x => ['meta', 'contact']
+            .every(tag => x._ownTags.includes(tag)));
+          const left = polys.find(x => x._ownTags.includes('left'));
+          const right = polys.find(x => x._ownTags.includes('right'));
+          return {
+            left: left ? left.center.scale(zoom).json : undefined,
+            right: right ? right.center.scale(zoom).json : undefined,
+          };
+        });
+
+        const deltas = contacts.concat(contacts[0]).map(({ left: leftFoot, right: rightFoot }, i) => {
+          const [prevLeft, prevRight] = [contacts[i - 1]?.left, contacts[i - 1]?.right];
+          return (// For walk, exactly one of 1st two summands should be non-zero
+            (!leftFoot || !prevLeft ? 0 : Math.abs(leftFoot.x - prevLeft.x)) ||
+            (!rightFoot || !prevRight ? 0 : Math.abs(rightFoot.x - prevRight.x)) || 0
+          );
+        }); // 1st delta corresponds to "last -> first"
+        deltas[0] = assertDefined(deltas.pop());
+
         agg[animName] = {
           animName,
           aabb,
           frameCount: frameNodes.length,
           defsNode,
-          frameNodes: frameNodes,
+          frameNodes,
+          contacts,
+          deltas,
         };
         return agg;
       }, /** @type {ServerTypes.ParsedNpcCheerio['animLookup']} */ ({})),

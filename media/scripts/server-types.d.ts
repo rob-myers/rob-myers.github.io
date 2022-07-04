@@ -24,6 +24,13 @@ declare namespace ServerTypes {
     animName: string;
     aabb: Geom.Rect;
     frameCount: number;
+    /** Aligned to frames i.e. positions of feet contacts (if any) */
+    contacts: { left?: Geom.VectJson; right?: Geom.VectJson; }[];
+    /**
+     * Aligned to frames i.e. how far we move to the right.
+     * The 1st number corresponds to transition from last to first.
+     */
+    deltas: number[];
   }
 
   export interface NpcAnimCheerio extends NpcAnimMeta {

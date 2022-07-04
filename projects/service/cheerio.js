@@ -38,7 +38,7 @@ export function extractGeoms(api, parent, precisionDp = 4) {
  * @param {CheerioAPI} api
  * @param {Element} el
  */
-function extractGeom(api, el) {
+export function extractGeom(api, el) {
   const { tagName, attribs: a } = el;
   const output = /** @type {(Geom.Poly & { _ownTags: string[] })[]} */ ([]);
   const title = api(el).children('title').text() || null;

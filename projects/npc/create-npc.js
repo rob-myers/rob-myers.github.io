@@ -309,7 +309,9 @@ export default function createNpc(
  * see `zoom` in npc json
  */
 export const npcScale = 0.19;
+
 const npcOrigRadius = 40;
+
 /** Ensure NPC faces along positive x-axis */
 export const npcOffsetRadians = 0;
 

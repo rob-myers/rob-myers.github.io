@@ -15,7 +15,7 @@ import { error } from '../../projects/service/log';
 import { mapValues } from '../../projects/service/generic';
 
 const [,, npcName, ...animNames] = process.argv;
-const npcInputDir = 'media/npc'
+const npcInputDir = 'public/npc'
 const npcSvgFilepath = path.resolve(npcInputDir, npcName + '.svg');
 if (!npcName || !fs.existsSync(npcSvgFilepath)) {
   error(`error: usage: yarn render-npc {npc-name} {...anim-name-0} ... where
@@ -40,7 +40,16 @@ renderNpcSpriteSheets(parsed, npcOutputDir, {
 const serializable = {
   npcName: parsed.npcName,
   zoom: parsed.zoom,
-  animLookup: mapValues(parsed.animLookup, ({ animName, aabb, frameCount }) => ({ animName, aabb, frameCount })),
+  animLookup: mapValues(
+    parsed.animLookup,
+    ({ animName, aabb, frameCount, contacts, deltas }) => ({
+      animName,
+      aabb,
+      frameCount,
+      contacts,
+      deltas,
+    }),
+  ),
 };
 
 writeAsJson(serializable, path.resolve(npcOutputDir, npcName + '.json'));

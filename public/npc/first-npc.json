@@ -5,12 +5,30 @@
     "idle": {
       "animName": "idle",
       "aabb": {"x": 0, "y": 0, "width": 128, "height": 128},
-      "frameCount": 1
+      "frameCount": 1,
+      "contacts": [{}],
+      "deltas": [0]
     },
     "walk": {
       "animName": "walk",
       "aabb": {"x": 0, "y": 0, "width": 128, "height": 128},
-      "frameCount": 10
+      "frameCount": 10,
+      "contacts": [
+        {"right": {"x": 102.5, "y": 153.5}},
+        {"right": {"x": 72.5, "y": 153.5}},
+        {"right": {"x": 54.5, "y": 153.5}},
+        {"left": {"x": 218.5, "y": 114.5}, "right": {"x": 44.5, "y": 153.5}},
+        {"left": {"x": 202.5, "y": 116.5}},
+        {"left": {"x": 110.5, "y": 137.008}},
+        {"left": {"x": 60.5, "y": 145.008}},
+        {"left": {"x": 52.5, "y": 146.848}},
+        {
+          "left": {"x": 44.5, "y": 144.664},
+          "right": {"x": 219.5, "y": 107.666}
+        },
+        {"right": {"x": 188.5, "y": 105.98}}
+      ],
+      "deltas": [86, 30, 18, 10, 16, 92, 50, 8, 8, 31]
     }
   }
 }

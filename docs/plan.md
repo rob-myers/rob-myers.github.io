@@ -26,9 +26,15 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- 🚧 can slow down walk speed animation
+  - ✅ add walk contact metas to npc svg
+  - ✅ compute contact deltas in npc json
+  - 🚧 try translating in sync with frame deltas
+  - translate animation duration `aux.total * npcAnimScaleFactor`
+  - walk spritesheet animation duration `0.625 * 1000`
+
 - 🚧 npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
-  - 🚧 can slow down walk speed animation
   - on `start-seg` show capsule (collision space)
   - on `start-seg` solve quadratic equation
   - ...
