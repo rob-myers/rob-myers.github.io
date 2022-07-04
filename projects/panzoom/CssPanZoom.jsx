@@ -372,6 +372,7 @@ export default function CssPanZoom(props) {
 
 /** Must divide 60 */
 const gridExtent = 60 * 60;
+const gridColour = 'rgba(200, 0, 0, 0.15)';
 
 const rootCss = css`
   width: 100%;
@@ -406,14 +407,14 @@ const rootCss = css`
     }
     .small-grid {
       background-image:
-        linear-gradient(to right, rgba(200, 200, 200, 0.08) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(200, 200, 200, 0.08) 1px, transparent 1px);
+        linear-gradient(to right, ${gridColour} 1px, transparent 1px),
+        linear-gradient(to bottom, ${gridColour} 1px, transparent 1px);
         background-size: 10px 10px;
       }
       .large-grid {
       background-image:
-        linear-gradient(to right, rgba(200, 200, 200, 0.15) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(200, 200, 200, 0.15) 1px, transparent 1px);
+        linear-gradient(to right, ${gridColour} 1px, transparent 1px),
+        linear-gradient(to bottom, ${gridColour} 1px, transparent 1px);
       background-size: 60px 60px;
     }
     .origin {
