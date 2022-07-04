@@ -319,9 +319,13 @@ export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
 
 export const defaultNpcInteractRadius = npcRadius * 3;
 
-/** Scale up how long it should take to move along navpath */
-export const npcAnimScaleFactor = 15;
+/** Originally `1000 / 15` */
+export const npcAnimSpeed = 60;
 
+/** Scale up how long it should take to move along navpath */
+export const npcAnimScaleFactor = 1000 * (1 / npcAnimSpeed);
+
+// const npcWalkFrameLengthMs = 0.0625
 
 /** @type {Record<NPC.NavMetaKey, number>} */
 const navMetaOffsets = {
