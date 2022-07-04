@@ -761,7 +761,7 @@ export class TtyXterm {
 
   private trackTotalOutput(delta: number) {
     this.totalLinesOutput += delta;
-    console.log(this.totalLinesOutput);
+    // console.log(this.totalLinesOutput); // DEBUG
   }
 
   /**

@@ -96,8 +96,11 @@ export default function Terminal(props: Props) {
               // console.log('clicked link', event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines });
               const session = assertNonNull(state.session);
               const npcs = getCached(session.var.NPCS_KEY) as NPC.NPCs;
-              /** Number of "actual" lines output, no longer entirely within tty's buffer  */
-              const priorOutputLines = Math.max(0, session.ttyShell.xterm.totalLinesOutput - bufferOutputLines);
+              /**
+               * Number of "actual" lines output, no longer entirely within tty's buffer.
+               * Why do we need the +1?
+               */
+              const priorOutputLines = Math.max(0, session.ttyShell.xterm.totalLinesOutput - bufferOutputLines + 1);
               npcs.onTtyLink(
                 props.sessionKey,
                 // The "global" 1-based index of lines ever output by tty

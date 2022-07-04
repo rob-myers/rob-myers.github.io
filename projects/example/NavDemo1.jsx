@@ -400,7 +400,7 @@ function Debug(props) {
        */
       const label = gm.labels[Number(target.getAttribute('data-debug-label-id'))];
 
-      const line = `ℹ️ [${ansiColor.Blue}${label.text}${ansiColor.Reset}] with ${
+      const line = `ℹ️  [${ansiColor.Blue}${label.text}${ansiColor.Reset}] with ${
         gm.roomGraph.getAdjacentDoors(props.roomId).length
       } doors`;
         
@@ -409,9 +409,9 @@ function Debug(props) {
         const globalLineNumber = await useSessionStore.api.writeMsgCleanly(sessionKey, line);
         props.npcsApi.addTtyLineCtxts(sessionKey, globalLineNumber, [{
           lineNumber: globalLineNumber,
-          lineText: line,
+          lineText: line, 
           linkText: label.text,
-          linkStartIndex: visibleUnicodeLength('ℹ️ ['),
+          linkStartIndex: visibleUnicodeLength('ℹ️  ['),
           key: 'room', gmId: props.gmId, roomId: props.roomId,
         }]);
       }
