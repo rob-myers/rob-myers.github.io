@@ -14,6 +14,16 @@ export function hasTitle(api, node, title) {
 }
 
 /**
+ * Test if node has child <title>{nodeTitle}</title> matching regex
+ * @param {CheerioAPI} api 
+ * @param {Element} node 
+ * @param {RegExp} regex 
+ */
+export function matchesTitle(api, node, regex) {
+  return regex.test(api(node).children('title').text());
+}
+
+/**
  * @param {CheerioAPI} api
  * @param {Element[]} topNodes
  * @param {string} title

@@ -110,8 +110,10 @@ export default function createNpc(
       const { anim, anim: { aux } } = this;
       return {
         translateKeyframes: anim.animPath.flatMap((p, i) => [
-          { offset: aux.sofars[i] / aux.total, transform: `translate(${p.x}px, ${p.y}px)` },
-          { offset: aux.sofars[i] / aux.total, transform: `translate(${p.x}px, ${p.y}px)` },
+          {
+            offset: aux.sofars[i] / aux.total,
+            transform: `translate(${p.x}px, ${p.y}px)`,
+          },
         ]),
         rotateKeyframes: anim.animPath.flatMap((p, i) => [
           {

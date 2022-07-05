@@ -30,26 +30,14 @@ const svgContents = fs.readFileSync(npcSvgFilepath).toString();
 
 const zoom = 2;
 const parsed = parseNpc(npcName, svgContents, zoom);
-
-renderNpcSpriteSheets(parsed, npcOutputDir, {
-  zoom,
-  ...animNames.length && { animNames },
-});
+renderNpcSpriteSheets(parsed, npcOutputDir, { zoom, animNames });
 
 /** @type {ServerTypes.ParsedNpc} */
 const serializable = {
-  npcName: parsed.npcName,
-  zoom: parsed.zoom,
+  ...parsed,
   animLookup: mapValues(
     parsed.animLookup,
-    ({ animName, aabb, frameCount, contacts, deltas, totalDist }) => ({
-      animName,
-      aabb,
-      frameCount,
-      contacts,
-      deltas,
-      totalDist,
-    }),
+    ({ defsNode, frameNodes, ...rest }) => rest,
   ),
 };
 

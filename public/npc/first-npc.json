@@ -1,6 +1,5 @@
 {
   "npcName": "first-npc",
-  "zoom": 2,
   "animLookup": {
     "idle": {
       "animName": "idle",
@@ -32,5 +31,6 @@
       "deltas": [0, 30, 18, 10, 16, 92, 50, 8, 8, 31, 86],
       "totalDist": 349
     }
-  }
+  },
+  "zoom": 2
 }

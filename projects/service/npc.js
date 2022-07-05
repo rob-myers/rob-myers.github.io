@@ -3,7 +3,7 @@ import { Image, createCanvas, Canvas } from 'canvas';
 import path from 'path';
 
 import { Vect } from '../geom';
-import { extractGeom, extractGeomsAt, hasTitle } from './cheerio';
+import { extractGeom, extractGeomsAt, hasTitle, matchesTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
 import { warn } from './log';
 
@@ -13,9 +13,11 @@ import { warn } from './log';
  * @param {{ zoom: number; animNames: string[] }} opts
  */
 export async function renderNpcSpriteSheets(parsed, outputDir, opts) {
-  const { animNames = Object.keys(parsed.animLookup), zoom } = opts;
+  const { animNames, zoom } = opts;
 
-  const anims = Object.values(parsed.animLookup).filter(x => animNames.includes(x.animName));
+  const anims = animNames.length
+    ? Object.values(parsed.animLookup).filter(x => animNames.includes(x.animName))
+    : Object.values(parsed.animLookup);
 
   for (const anim of anims) {
     const canvas = await drawAnimSpriteSheet(anim, zoom);
@@ -60,7 +62,10 @@ async function drawFrame(anim, frameId, canvas, zoom) {
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:bx="https://boxy-svg.com"
-      viewBox="${anim.aabb.clone().scale(1/zoom).toString()}"
+      viewBox="${
+        // We zoom the SVG here
+        anim.aabb.clone().scale(1/zoom).toString()
+      }"
       width="${anim.aabb.width}"
       height="${anim.aabb.height}"
     >
@@ -99,7 +104,12 @@ export function parseNpc(npcName, svgContents, zoom = 1) {
   // They slow the rendering process
   Array.from($('image'))
     .filter(x => (x.attribs.style || '').includes('visibility: hidden;'))
-    .map(x => $(x).remove());
+    .forEach(x => $(x).remove());
+  
+  // Hide any rectangle with tag meta e.g. contact points in frames
+  Array.from($('rect'))
+    .filter(x => matchesTitle($, x, /(?:^| )meta(?:$| )/))
+    .forEach(x => x.attribs.style = (x.attribs.style || '') + 'visibility: hidden;')
 
   return {
     npcName,
