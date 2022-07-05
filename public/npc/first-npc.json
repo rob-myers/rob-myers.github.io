@@ -4,14 +4,15 @@
   "animLookup": {
     "idle": {
       "animName": "idle",
-      "aabb": {"x": 0, "y": 0, "width": 128, "height": 128},
+      "aabb": {"x": 0, "y": 0, "width": 256, "height": 256},
       "frameCount": 1,
       "contacts": [{}],
-      "deltas": [0]
+      "deltas": [0, 0],
+      "totalDist": 0
     },
     "walk": {
       "animName": "walk",
-      "aabb": {"x": 0, "y": 0, "width": 128, "height": 128},
+      "aabb": {"x": 0, "y": 0, "width": 256, "height": 256},
       "frameCount": 10,
       "contacts": [
         {"right": {"x": 102.5, "y": 153.5}},
@@ -28,7 +29,8 @@
         },
         {"right": {"x": 188.5, "y": 105.98}}
       ],
-      "deltas": [86, 30, 18, 10, 16, 92, 50, 8, 8, 31]
+      "deltas": [0, 30, 18, 10, 16, 92, 50, 8, 8, 31, 86],
+      "totalDist": 349
     }
   }
 }

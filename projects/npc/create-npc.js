@@ -228,8 +228,8 @@ export default function createNpc(
       const { anim } = this;
       if (anim.aux.count) {
         anim.translate.commitStyles();
-        this.setLookTarget(this.getAngle());
         anim.translate.cancel();
+        this.setLookTarget(this.getAngle());
         anim.rotate.cancel();
       }
 
@@ -240,14 +240,15 @@ export default function createNpc(
         anim.rotate = this.el.body.animate(rotateKeyframes, opts);
 
         // Animate spritesheet
-        /**
-         * TODO try creating spritesheet animation where frames have different length
-         */
-        const { animLookup, zoom: animZoom } = npcJson;
+        const { animLookup } = npcJson;
         anim.sprites = this.el.body.animate([
           { offset: 0, backgroundPosition: '0px' },
-          { offset: 1, backgroundPosition: `${-animLookup.walk.frameCount * animLookup.walk.aabb.width * animZoom}px` },
-        ], { easing: `steps(${animLookup.walk.frameCount})`, duration: animLookup.walk.frameCount * npcWalkFrameLengthMs, iterations: Infinity });
+          { offset: 1, backgroundPosition: `${-animLookup.walk.frameCount * animLookup.walk.aabb.width}px` },
+        ], {
+          easing: `steps(${animLookup.walk.frameCount})`,
+          duration: ( 1 / npcAnimSpeed ) * (animLookup.walk.totalDist * npcScale) * 1000,
+          iterations: Infinity,
+        });
 
       } else if (anim.spriteSheet === 'idle') {
         this.clearWayMetas();
@@ -308,8 +309,8 @@ export default function createNpc(
 
 /**
  * Scale factor we'll apply to sprites.
- * Beware that sprites may themselves be scaled up,
- * see `zoom` in npc json
+ * Beware that sprites are probably themselves scaled up relative to original SVG.
+ * See zoom factor in json.
  */
 export const npcScale = 0.19;
 
@@ -322,26 +323,17 @@ export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
 
 export const defaultNpcInteractRadius = npcRadius * 3;
 
-/**
- * Number of world units per second.
- * Originally `1000 / 15`
- */
+/** Number of world units per second. */
 export const npcAnimSpeed = 60;
 
 /** Used to scale up how long it takes to move along navpath */
 export const npcAnimScaleFactor = 1000 * (1 / npcAnimSpeed);
 
-/**
- * For the moment, assume each frame travels 34.9 world units.
- * Originally `(0.625 * 1000) / 10` i.e. `62.5`
- */
-const npcWalkFrameLengthMs = 34.9 * npcScale * (1 / npcAnimSpeed) * 1000;
-
 /** @type {Record<NPC.NavMetaKey, number>} */
 const navMetaOffsets = {
   'enter-room': -0.02, // Ensure triggered
   'exit-room': -0.02, // Ensure triggered
-  "pre-exit-room": - (npcRadius + 10), // TODO better way
-  "pre-near-door": - (npcRadius + 10), // TODO better way
+  "pre-exit-room": -(npcRadius + 10), // TODO better way
+  "pre-near-door": -(npcRadius + 10), // TODO better way
   "start-seg": 0,
 };

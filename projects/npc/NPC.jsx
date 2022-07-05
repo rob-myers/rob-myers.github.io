@@ -7,7 +7,7 @@ import { npcOffsetRadians, npcScale } from "./create-npc";
  * TODO modularise
  */
 import npcJson from '../../public/npc/first-npc.json'
-const { animLookup, zoom } = npcJson;
+const { animLookup } = npcJson;
 
 /** @param {{ npc: NPC.NPC }} props  */
 export default function NPC(props) {
@@ -50,18 +50,18 @@ const npcCss = css`
   }
   
   &.walk .body {
-    width: ${animLookup.walk.aabb.width * zoom}px;
-    height: ${animLookup.walk.aabb.height * zoom}px;
-    left: ${-animLookup.walk.aabb.width * zoom * 0.5}px;
-    top: ${-animLookup.walk.aabb.height * zoom * 0.5}px;
+    width: ${animLookup.walk.aabb.width}px;
+    height: ${animLookup.walk.aabb.height}px;
+    left: ${-animLookup.walk.aabb.width * 0.5}px;
+    top: ${-animLookup.walk.aabb.height * 0.5}px;
     background: url('/npc/first-npc--walk.png');
   }
 
   &.idle .body {
-    width: ${animLookup.idle.aabb.width * zoom}px;
-    height: ${animLookup.idle.aabb.height * zoom}px;
-    left: ${-animLookup.idle.aabb.width * zoom * 0.5}px;
-    top: ${-animLookup.idle.aabb.height * zoom * 0.5}px;
+    width: ${animLookup.idle.aabb.width}px;
+    height: ${animLookup.idle.aabb.height}px;
+    left: ${-animLookup.idle.aabb.width * 0.5}px;
+    top: ${-animLookup.idle.aabb.height * 0.5}px;
     background: url('/npc/first-npc--idle.png');
   }
 

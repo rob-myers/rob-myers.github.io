@@ -27,10 +27,12 @@ declare namespace ServerTypes {
     /** Aligned to frames i.e. positions of feet contacts (if any) */
     contacts: { left?: Geom.VectJson; right?: Geom.VectJson; }[];
     /**
-     * Aligned to frames i.e. how far we move to the right.
-     * The 1st number corresponds to transition from last to first.
+     * One more than number of frames i.e. how far we move to the right.
+     * Final number is distance from last to first.
      */
     deltas: number[];
+    /** The sum of `deltas` */
+    totalDist: number;
   }
 
   export interface NpcAnimCheerio extends NpcAnimMeta {
@@ -40,7 +42,7 @@ declare namespace ServerTypes {
   export interface ParsedNpcCheerio {
     npcName: string;
     animLookup: { [animName: string]: ServerTypes.NpcAnimCheerio };
-    /** How much the rendered PNGs have been scaled up. */
+    /** How much animLookup and rendered PNGs have been scaled up. */
     zoom: number;
   }
 

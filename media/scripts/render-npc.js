@@ -42,12 +42,13 @@ const serializable = {
   zoom: parsed.zoom,
   animLookup: mapValues(
     parsed.animLookup,
-    ({ animName, aabb, frameCount, contacts, deltas }) => ({
+    ({ animName, aabb, frameCount, contacts, deltas, totalDist }) => ({
       animName,
       aabb,
       frameCount,
       contacts,
       deltas,
+      totalDist,
     }),
   ),
 };

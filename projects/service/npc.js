@@ -3,7 +3,6 @@ import { Image, createCanvas, Canvas } from 'canvas';
 import path from 'path';
 
 import { Vect } from '../geom';
-import { assertDefined } from './generic';
 import { extractGeom, extractGeomsAt, hasTitle } from './cheerio';
 import { saveCanvasAsFile } from './file';
 import { warn } from './log';
@@ -11,13 +10,10 @@ import { warn } from './log';
 /**
  * @param {ServerTypes.ParsedNpcCheerio} parsed 
  * @param {string} outputDir 
- * @param {{ zoom?: number; animNames?: string[] }} [opts]
+ * @param {{ zoom: number; animNames: string[] }} opts
  */
-export async function renderNpcSpriteSheets(parsed, outputDir, opts = {}) {
-  const {
-    zoom = 1,
-    animNames = Object.keys(parsed.animLookup),
-  } = opts;
+export async function renderNpcSpriteSheets(parsed, outputDir, opts) {
+  const { animNames = Object.keys(parsed.animLookup), zoom } = opts;
 
   const anims = Object.values(parsed.animLookup).filter(x => animNames.includes(x.animName));
 
@@ -30,17 +26,17 @@ export async function renderNpcSpriteSheets(parsed, outputDir, opts = {}) {
 
 /**
  * @param {ServerTypes.NpcAnimCheerio} anim 
- * @param {number} [zoom] 
+ * @param {number} zoom
  */
-async function drawAnimSpriteSheet(anim, zoom = 1) {
+async function drawAnimSpriteSheet(anim, zoom) {
   const frameCount = anim.frameCount;
-  const canvas = createCanvas(anim.aabb.width * zoom * frameCount, anim.aabb.height * zoom);
+  const canvas = createCanvas(anim.aabb.width * frameCount, anim.aabb.height);
   const ctxt = canvas.getContext('2d');
 
   for (let i = 0; i < frameCount; i++) {
     await drawFrame(anim, i, canvas, zoom);
     // Spritesheet rendered from left to right
-    ctxt.translate(anim.aabb.width * zoom, 0);
+    ctxt.translate(anim.aabb.width, 0);
   }
 
   ctxt.restore();
@@ -54,9 +50,9 @@ async function drawAnimSpriteSheet(anim, zoom = 1) {
  * @param {ServerTypes.NpcAnimCheerio} anim 
  * @param {number} frameId 0-based frame index
  * @param {Canvas} canvas 
- * @param {number} [zoom] 
+ * @param {number} zoom
  */
-async function drawFrame(anim, frameId, canvas, zoom = 1) {
+async function drawFrame(anim, frameId, canvas, zoom) {
   const group = anim.frameNodes[frameId];
 
   const svg = `
@@ -64,9 +60,9 @@ async function drawFrame(anim, frameId, canvas, zoom = 1) {
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       xmlns:bx="https://boxy-svg.com"
-      viewBox="${anim.aabb.toString()}"
-      width="${anim.aabb.width * zoom}"
-      height="${anim.aabb.height * zoom}"
+      viewBox="${anim.aabb.clone().scale(1/zoom).toString()}"
+      width="${anim.aabb.width}"
+      height="${anim.aabb.height}"
     >
       ${anim.defsNode ? cheerio.html(anim.defsNode) : ''}
       ${cheerio.html(group)}
@@ -95,7 +91,7 @@ export function parseNpc(npcName, svgContents, zoom = 1) {
 
   const metaGeoms = extractGeomsAt($, topNodes, 'meta');
   const boundsGeoms = metaGeoms.filter(x => x._ownTags[1] === 'bounds');
-  const animMetas = boundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect }));
+  const animMetas = boundsGeoms.map(x => ({ animName: x._ownTags[0], aabb: x.rect.scale(zoom) }));
   const symbolLookup = extractDefSymbols($, topNodes);
   console.log('parseNpc found:', { animMetas, symbolLookup });
 
@@ -125,14 +121,14 @@ export function parseNpc(npcName, svgContents, zoom = 1) {
           };
         });
 
+        /** One more than frame count i.e. distances travelled from last -> first */
         const deltas = contacts.concat(contacts[0]).map(({ left: leftFoot, right: rightFoot }, i) => {
           const [prevLeft, prevRight] = [contacts[i - 1]?.left, contacts[i - 1]?.right];
           return (// For walk, exactly one of 1st two summands should be non-zero
             (!leftFoot || !prevLeft ? 0 : Math.abs(leftFoot.x - prevLeft.x)) ||
             (!rightFoot || !prevRight ? 0 : Math.abs(rightFoot.x - prevRight.x)) || 0
           );
-        }); // 1st delta corresponds to "last -> first"
-        deltas[0] = assertDefined(deltas.pop());
+        });
 
         agg[animName] = {
           animName,
@@ -142,6 +138,7 @@ export function parseNpc(npcName, svgContents, zoom = 1) {
           frameNodes,
           contacts,
           deltas,
+          totalDist: deltas.reduce((sum, x) => sum + x, 0),
         };
         return agg;
       }, /** @type {ServerTypes.ParsedNpcCheerio['animLookup']} */ ({})),
