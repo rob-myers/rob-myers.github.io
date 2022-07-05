@@ -339,7 +339,7 @@ export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
 export const defaultNpcInteractRadius = npcRadius * 3;
 
 /** Number of world units per second. */
-export const npcAnimSpeed = 60;
+export const npcAnimSpeed = 70;
 
 /** Used to scale up how long it takes to move along navpath */
 export const npcAnimScaleFactor = 1000 * (1 / npcAnimSpeed);
