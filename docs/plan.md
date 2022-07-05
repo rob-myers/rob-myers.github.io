@@ -26,13 +26,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- 🚧 can slow down walk speed animation
-  - ✅ add walk contact metas to npc svg
-  - ✅ compute contact deltas in npc json
-  - ❌ try playing spritesheet frames for different lengths of time
-  - ✅ spritesheet duration derived from npc speed and feet contact deltas
-  - one more try...
-
 - 🚧 npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
   - on `start-seg` show capsule (collision space)
@@ -81,21 +74,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
   - Fix HMR as far as we can
 
-- 🚧 Improve look of first-npc
-  - ✅ try 10 frame walk cycle
-    > https://mymblemoments.files.wordpress.com/2014/02/guard1_walk.png
-  - ✅ draw our own simplified 10 frame version
-  - ✅ use head symbol in our walk anim
-  - ✅ use in `NavDemo1`
-  - ✅ keep head still (like original anim)
-  - 🚧 graphical improvements
-    - ✅ head style
-    - 🚧 details: hands + feet
-    - details: body has texture
-    - drop shadow
-  - 🚧 anim time defined via anim meta
-    e.g. `(aux.total / 50) * 1000` if `50 world unit/s`
-
 - BUG write too big `get /cache/queriesMap`
 - @`the-last-redoubt`: show GitHub comments from the-last-redoubt issues
 - @`the-last-redoubt`: can redirect to GitHub the-last-redoubt issues
@@ -140,6 +118,25 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ improve walk animation
+  - ✅ add walk contact metas to npc svg
+  - ✅ compute contact deltas in npc json
+  - ❌ try playing spritesheet frames for different lengths of time
+  - ✅ spritesheet duration derived from npc speed and feet contact deltas
+  - ✅ always end on walk on 0-based frame 0 or 5
+- ✅ Improve look of first-npc
+  - ✅ try 10 frame walk cycle
+    > https://mymblemoments.files.wordpress.com/2014/02/guard1_walk.png
+  - ✅ draw our own simplified 10 frame version
+  - ✅ use head symbol in our walk anim
+  - ✅ use in `NavDemo1`
+  - ✅ keep head still (like original anim)
+  - 🚧 graphical improvements
+    - ✅ head style
+    - ❌ details: hands + feet
+    - ❌ details: body has texture
+    - ❌ drop shadow
+  - ✅ anim time defined via anim meta
 - ✅ redo xterm-links
   - ✅ xterm-link-provider provides line number
   - ✅ xterm tracks total number of lines so far

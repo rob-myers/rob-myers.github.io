@@ -6,6 +6,7 @@ import { getNumericCssVar } from '../service/dom';
  * TODO modularise
  */
 import npcJson from '../../public/npc/first-npc.json'
+const {animLookup} = npcJson;
 
 /**
  * @param {string} npcKey 
@@ -84,11 +85,11 @@ export default function createNpc(
 
       try {
         await /** @type {Promise<void>} */ (new Promise((resolve, reject) => {
-          anim.translate.addEventListener("finish", () => {
+          anim.translate.addEventListener('finish', () => {
             console.log(`followNavPath: ${this.def.key} finished walk`);
             resolve();
           });
-          anim.translate.addEventListener("cancel", () => {
+          anim.translate.addEventListener('cancel', () => {
             if (!anim.translate.finished) {
               console.log(`followNavPath: ${this.def.key} cancelled walk`);
             } // We also cancel when finished to release control to styles
@@ -238,17 +239,29 @@ export default function createNpc(
       if (anim.spriteSheet === 'walk') {
         // Animate position and rotation
         const { translateKeyframes, rotateKeyframes, opts } = this.getAnimDef();
+
+        /**
+         * Extend duration of translation slightly, to
+         * ensure we finish on a nice 0-based frame (0 or 5).
+         */
+        const spriteFrameId = Math.floor( animLookup.walk.frameCount * (((anim.aux.total * npcAnimScaleFactor) % npcWalkAnimDurationMs) / npcWalkAnimDurationMs) );
+        const frameLength = npcWalkAnimDurationMs / animLookup.walk.frameCount;
+        if (spriteFrameId > 5) {
+          /** @type {number} */ (opts.duration) += (10 - spriteFrameId) * frameLength;
+        } else if (spriteFrameId > 0) {
+          /** @type {number} */ (opts.duration) += (5 - spriteFrameId) * frameLength;
+        }
+
         anim.translate = this.el.root.animate(translateKeyframes, opts);
         anim.rotate = this.el.body.animate(rotateKeyframes, opts);
 
         // Animate spritesheet
-        const { animLookup } = npcJson;
         anim.sprites = this.el.body.animate([
           { offset: 0, backgroundPosition: '0px' },
           { offset: 1, backgroundPosition: `${-animLookup.walk.frameCount * animLookup.walk.aabb.width}px` },
         ], {
           easing: `steps(${animLookup.walk.frameCount})`,
-          duration: ( 1 / npcAnimSpeed ) * (animLookup.walk.totalDist * npcScale) * 1000,
+          duration: npcWalkAnimDurationMs,
           iterations: Infinity,
         });
 
@@ -330,6 +343,8 @@ export const npcAnimSpeed = 60;
 
 /** Used to scale up how long it takes to move along navpath */
 export const npcAnimScaleFactor = 1000 * (1 / npcAnimSpeed);
+
+const npcWalkAnimDurationMs = ( 1 / npcAnimSpeed ) * (animLookup.walk.totalDist * npcScale) * 1000;
 
 /** @type {Record<NPC.NavMetaKey, number>} */
 const navMetaOffsets = {
