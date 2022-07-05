@@ -143,8 +143,7 @@ export class floorGraphClass extends BaseGraph {
         }
 
         if (!partition[i + 1]) {// Finish in door
-          fullPath.push(dst.clone()); // May need to pop this navMeta later
-          navMetas.push({ key: 'start-seg', index: fullPath.length - 1 });
+          fullPath.push(dst.clone());
           endDoorId = item.doorId;
           break;
         } 
@@ -191,7 +190,6 @@ export class floorGraphClass extends BaseGraph {
            * We can simply walk straight through the room
            */
           fullPath.push(pathDst.clone());
-          navMetas.push({ key: 'start-seg', index: fullPath.length - 1 });
         } else {
           /**
            * Otherwise, use "simple stupid funnel algorithm"
@@ -204,6 +202,7 @@ export class floorGraphClass extends BaseGraph {
             fullPath.push(p);
             navMetas.push({ key: 'start-seg', index: fullPath.length - 1 });
           });
+          navMetas.pop();
         }
 
         if (!partition[i + 1]) {// Finish in room

@@ -116,9 +116,6 @@ export default function NPCs(props) {
           } else {
             const indexOffset = fullPath.length;
             fullPath.push(...localNavPath.fullPath);
-            // Remove final 'start-seg'
-            const finalStartSegIndex = navMetas.findIndex(x => x.key === 'start-seg' && x.index === localNavPath.fullPath.length - 1)
-            navMetas.splice(finalStartSegIndex, 1);
             // Globalise local navMetas
             navMetas.push(
               ...localNavPath.navMetas.map(x => ({
@@ -137,6 +134,7 @@ export default function NPCs(props) {
               index: fullPath.length - 1,
               otherRoomId: null,
             };
+            navMetas.push({ key: 'start-seg', index: fullPath.length - 1, gmId: gmEdge.srcGmId });
             navMetas.push({ key: 'pre-exit-room', willExitRoomId: gmEdge.srcRoomId, ...baseMeta });
             navMetas.push({ key: 'exit-room', exitedRoomId: gmEdge.srcRoomId, ...baseMeta });
           }
