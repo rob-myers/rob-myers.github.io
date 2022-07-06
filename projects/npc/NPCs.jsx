@@ -389,7 +389,7 @@ export default function NPCs(props) {
             status = 'follow-walk';
             console.warn('@', status);
             try {
-              const path = npc.getTargets().map(x => Vect.from(x.point)); // TODO arriveMs?
+              const path = npc.getTargets().map(x => x.point);
               await props.panZoomApi.followPath(path, { animScaleFactor: npcAnimScaleFactor });
             } catch {} // Ignore Error('cancelled')
           }

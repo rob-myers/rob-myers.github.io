@@ -19,6 +19,21 @@ export default function createNpc(
   position,
   { disabled, panZoomApi, npcs },
 ) {
+
+  /** @type {NPC.NPC['anim']} shortcut */
+  const anim = {
+    animPath: [],
+    aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
+    spriteSheet: 'idle',
+
+    translate: new Animation,
+    rotate: new Animation,
+    sprites: new Animation,
+
+    wayMetas: [],
+    wayTimeoutId: 0,
+  };
+
   return {
     key: npcKey,
     epochMs: Date.now(),
@@ -28,23 +43,11 @@ export default function createNpc(
       root: /** @type {HTMLDivElement} */ ({}),
       body: /** @type {HTMLDivElement} */ ({}),
     },
-    anim: {
-      animPath: [],
-      aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
-      spriteSheet: 'idle',
-
-      translate: new Animation,
-      rotate: new Animation,
-      sprites: new Animation,
-
-      wayMetas: [],
-      wayTimeoutId: 0,
-    },
+    anim,
 
     async cancel() {
       console.log(`cancel: cancelling ${this.def.key}`);
       this.clearWayMetas();
-      const { anim } = this;
       if (this.el.root?.getAnimations().includes(anim.translate)) {
         anim.translate.commitStyles();
       }
@@ -58,18 +61,34 @@ export default function createNpc(
       }));
     },
     clearWayMetas() {
-      this.anim.wayMetas.length = 0;
+      anim.wayMetas.length = 0;
     },
+    /**
+     * IN PROGRESS
+     */
     detectCollision(npcA, npcB) {
-      /**
-       * TODO
-       */
+      const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
+      let colliding = false, willCollide = false;
+      if (segA) {
+        if (segB) {
+          // TODO
+        } else {
+          // TODO
+        }
+      } else {
+        if (segB) {
+          // TODO
+        } else {
+          colliding = npcA.getPosition().distanceTo(npcB.getPosition()) <= npcRadius;
+        }
+      }
       return {
-        collide: false, // TODO
+        colliding,
+        willCollide,
+        // ...
       };
     },
     async followNavPath(path, opts) {
-      const { anim } = this;
       anim.animPath = path.map(Vect.from);
       this.clearWayMetas();
       this.updateAnimAux();
@@ -115,7 +134,7 @@ export default function createNpc(
       return Math.atan2(matrix.m12, matrix.m11);
     },
     getAnimDef() {
-      const { anim, anim: { aux } } = this;
+      const { aux } = anim;
       return {
         translateKeyframes: anim.animPath.flatMap((p, i) => [
           {
@@ -138,12 +157,17 @@ export default function createNpc(
     },
     getBounds() {
       const center = this.getPosition();
-      return new Rect(center.x - npcRadius, center.y - npcRadius, 2 * npcRadius, 2 * npcRadius);
+      return new Rect(
+        center.x - npcRadius,
+        center.y - npcRadius,
+        2 * npcRadius,
+        2 * npcRadius,
+      );
     },
-    getLineSeg(srcIndex) {
-      if (this.anim.spriteSheet === 'walk') {
+    getLineSeg() {
+      const dst = this.getTarget();
+      if (dst) {
         const src = this.getPosition();
-        const dst = this.anim.animPath[srcIndex + 1];
         return { src, dst, tangent: dst.clone().sub(src).normalize() };
       } else {
         return null;
@@ -167,20 +191,28 @@ export default function createNpc(
       const baseSpriteMs = npcWalkAnimDurationMs;
       const motionMs = nextMotionMs - (0.5 * (npcWalkAnimDurationMs / animLookup.walk.frameCount));
       return motionMs < baseSpriteMs / 2
-        // degenerate case
-        ? baseSpriteMs
-        // alt: Math.floor for longer
+        ? baseSpriteMs // degenerate case
+        // Alternatively, use Math.floor for longer duration
         : (2 * motionMs) / Math.ceil(2 * (motionMs / baseSpriteMs));
     },
-    getTargets() {
-      const { anim } = this;
-      if (anim.spriteSheet === "idle" || anim.translate.currentTime === null) {
-        return [];
+    getTarget() {
+      if (anim.spriteSheet === "walk" && anim.translate.currentTime !== null) {
+        const soFarMs = anim.translate.currentTime;
+        const nextIndex = anim.aux.sofars.findIndex(sofar => (sofar * npcAnimScaleFactor) > soFarMs);
+        // Expect -1 iff at final point
+        return nextIndex === -1 ? null : anim.animPath[nextIndex].clone();
       } else {
+        return null;
+      }
+    },
+    getTargets() {
+      if (anim.spriteSheet === "walk" && anim.translate.currentTime !== null) {
         const soFarMs = anim.translate.currentTime;
         return anim.aux.sofars
-          .map((sofar, i) => ({ point: anim.animPath[i], arriveMs: (sofar * npcAnimScaleFactor) - soFarMs }))
+          .map((sofar, i) => ({ point: anim.animPath[i].clone(), arriveMs: (sofar * npcAnimScaleFactor) - soFarMs }))
           .filter(x => x.arriveMs >= 0)
+      } else {
+        return [];
       }
     },
     lookAt(point) {
@@ -189,7 +221,6 @@ export default function createNpc(
       if (direction.length === 0) {
         return this.getAngle();
       }
-
       // Ensure we don't turn more than 180 deg
       const targetLookRadians = getNumericCssVar(this.el.root, cssName.npcTargetLookAngle);
       let radians = Math.atan2(direction.y, direction.x);
@@ -199,7 +230,6 @@ export default function createNpc(
       return radians;
     },
     nextWayTimeout() {
-      const { anim } = this;
       if (anim.translate.currentTime === null) {
         return console.warn('nextWayTimeout: anim.root.currentTime is null')
       }
@@ -220,7 +250,6 @@ export default function createNpc(
     },
     pause() {
       console.log(`pause: pausing ${this.def.key}`);
-      const { anim } = this;
       anim.translate.pause();
       anim.rotate.pause();
       anim.sprites.pause();
@@ -236,12 +265,8 @@ export default function createNpc(
         npcs.getPanZoomApi().animationAction('pause');
       }
     },
-    get paused() {
-      return this.anim.translate.playState === 'paused';
-    },
     play() {
       console.log(`play: resuming ${this.def.key}`);
-      const { anim } = this;
       anim.translate.play();
       anim.rotate.play();
       anim.sprites.play();
@@ -262,7 +287,6 @@ export default function createNpc(
       }
     },
     startAnimation() {
-      const { anim } = this;
       if (anim.aux.count) {
         anim.translate.commitStyles();
         anim.translate.cancel();
@@ -301,7 +325,7 @@ export default function createNpc(
       anim.aux.count++;
     },
     updateAnimAux() {
-      const { anim } = this, {  aux } = anim;
+      const { aux } = anim;
       aux.edges = anim.animPath.map((p, i) => ({ p, q: anim.animPath[i + 1] })).slice(0, -1);
       aux.angs = aux.edges.map(e => Number(Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2)));
       aux.elens = aux.edges.map(({ p, q }) => Number(p.distanceTo(q).toFixed(2)));
@@ -321,7 +345,6 @@ export default function createNpc(
      * TODO cleanup
      */
     wayTimeout() {
-      const { anim } = this;
       // TODO avoid many short timeouts
       // console.log('anim.wayMetas[0]', anim.wayMetas[0]);
       if (

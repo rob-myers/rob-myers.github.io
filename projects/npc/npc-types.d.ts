@@ -69,8 +69,9 @@ declare namespace NPC {
     async cancel(): Promise<void>;
     clearWayMetas(): void;
     detectCollision(npcA: NPC.NPC, npcB: NPC.NPC): {
-      collide: boolean;
-      /** TODO metadata about collision */
+      colliding: boolean;
+      willCollide: boolean;
+      // ...
     };
     async followNavPath(
       path: Geom.VectJson[],
@@ -80,8 +81,11 @@ declare namespace NPC {
     getAngle(): number;
     getAnimDef(): NpcAnimDef;
     getBounds(): Geom.Rect;
-    /** @param srcIndex pointer into anim.animPath */
-    getLineSeg(srcIndex): null | { src: Geom.Vect; dst: Geom.Vect; tangent: Geom.Vect };
+    getLineSeg(): null | {
+      src: Geom.Vect;
+      dst: Geom.Vect;
+      tangent: Geom.Vect;
+    };
     getPosition(): Geom.Vect;
     getSpeed(): number;
     /**
@@ -91,7 +95,8 @@ declare namespace NPC {
      * to end on a nice frame (avoids flicker).
      */
     getSpriteDuration(nextMotionMs: number): number;
-    getTargets(): { point: Geom.VectJson; arriveMs: number }[];
+    getTarget(): null | Geom.Vect;
+    getTargets(): { point: Geom.Vect; arriveMs: number }[];
     /** Returns destination angle in radians */
     lookAt(point: Geom.VectJson): number;
     pause(): void;
