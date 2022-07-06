@@ -196,6 +196,11 @@ export default function NavDemo1(props) {
         if (e.key === 'decor') {
           state.npcsApi.setDecor(e.meta.key, e.meta);
         }
+        if (e.key === 'spawned-npc') {
+          if (state.npcsApi.playerKey === e.npcKey) {
+            state.setRoomByNpc(e.npcKey);
+          }
+        }
       });
 
       return () => {

@@ -332,6 +332,7 @@ export default function NPCs(props) {
         npcs: state,
       });
       update();
+      state.events.next({ key: 'spawned-npc', npcKey: e.npcKey });
     },
     /**
      * TODO move to shell function?
