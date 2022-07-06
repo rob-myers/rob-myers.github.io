@@ -31,7 +31,6 @@ export default function createNpc(
     anim: {
       animPath: [],
       aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
-
       spriteSheet: 'idle',
 
       translate: new Animation,
@@ -60,6 +59,14 @@ export default function createNpc(
     },
     clearWayMetas() {
       this.anim.wayMetas.length = 0;
+    },
+    detectCollision(npcA, npcB) {
+      /**
+       * TODO
+       */
+      return {
+        collide: false, // TODO
+      };
     },
     async followNavPath(path, opts) {
       const { anim } = this;
@@ -133,10 +140,35 @@ export default function createNpc(
       const center = this.getPosition();
       return new Rect(center.x - npcRadius, center.y - npcRadius, 2 * npcRadius, 2 * npcRadius);
     },
+    getLineSeg(srcIndex) {
+      if (this.anim.spriteSheet === 'walk') {
+        const src = this.getPosition();
+        const dst = this.anim.animPath[srcIndex + 1];
+        return { src, dst, tangent: dst.clone().sub(src).normalize() };
+      } else {
+        return null;
+      }
+    },
     getPosition() {
       // TODO avoid getBoundingClientRect undefined
       const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect?.() || [0, 0]);
       return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
+    },
+    getSpeed() {
+      return npcAnimSpeed;
+    },
+    /**
+     * Shorten duration of anim.sprites slightly,
+     * ensuring we finish at nice 0-based frame (0 or 5).
+     */
+    getSpriteDuration(nextMotionMs) {
+      const motionMs = nextMotionMs;
+      const baseSpriteMs = npcWalkAnimDurationMs;
+      return motionMs < baseSpriteMs / 2
+        // degenerate case
+        ? baseSpriteMs
+        // alt: Math.floor for longer
+        : (2 * motionMs) / Math.ceil(2 * (motionMs / baseSpriteMs));
     },
     getTargets() {
       const { anim } = this;
@@ -239,29 +271,17 @@ export default function createNpc(
       if (anim.spriteSheet === 'walk') {
         // Animate position and rotation
         const { translateKeyframes, rotateKeyframes, opts } = this.getAnimDef();
-
-        /**
-         * Extend duration of translation slightly, to
-         * ensure we finish on a nice 0-based frame (0 or 5).
-         */
-        const spriteFrameId = Math.floor( animLookup.walk.frameCount * (((anim.aux.total * npcAnimScaleFactor) % npcWalkAnimDurationMs) / npcWalkAnimDurationMs) );
-        const frameLength = npcWalkAnimDurationMs / animLookup.walk.frameCount;
-        if (spriteFrameId > 5) {
-          /** @type {number} */ (opts.duration) += (10 - spriteFrameId) * frameLength;
-        } else if (spriteFrameId > 0) {
-          /** @type {number} */ (opts.duration) += (5 - spriteFrameId) * frameLength;
-        }
-
         anim.translate = this.el.root.animate(translateKeyframes, opts);
         anim.rotate = this.el.body.animate(rotateKeyframes, opts);
 
         // Animate spritesheet
+        const spriteMs = this.getSpriteDuration(opts.duration);
         anim.sprites = this.el.body.animate([
           { offset: 0, backgroundPosition: '0px' },
           { offset: 1, backgroundPosition: `${-animLookup.walk.frameCount * animLookup.walk.aabb.width}px` },
         ], {
           easing: `steps(${animLookup.walk.frameCount})`,
-          duration: npcWalkAnimDurationMs,
+          duration: spriteMs, // ~ npcWalkAnimDurationMs
           iterations: Infinity,
         });
 

@@ -28,8 +28,13 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 - 🚧 npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
-  - on `start-seg` show capsule (collision space)
-  - on `start-seg` solve quadratic equation
+  - ✅ implement `npc.getSpeed()` constant for each path, not over all paths
+  - ✅ implement `npc.getLineSeg()`
+  - ✅ speed-up anim.sprites instead of slow-down anim.translate/rotate
+    - then `npc.getSpeed()` is globally constant
+  - implement `npc.detectCollision()` when one npc static
+  - implement `npc.detectCollision()` in general case
+    - i.e. solve quadratic equation
   - ...
 
 - try sorting out shell HMR
