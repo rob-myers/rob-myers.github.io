@@ -119,20 +119,6 @@ const gameFunctionsRunDefs = [
 {
 
   /**
-   * View something
-   */
-  '🔎': async function* ({ args: [arg], api, home }) {
-    const npcs = api.getCached(home.NPCS_KEY)
-    const grMatched = arg.match(/^g(\d+)r(\d+)$/)
-    if (grMatched) {
-      const [, gmId, roomId] = grMatched.map(Number);
-      const gm = npcs.getGmGraph().gms[gmId];
-      const point = gm.matrix.transformPoint(gm.point[roomId].default.clone());
-      npcs.panZoomTo({ zoom: 2, ms: 2000, point });
-    }
-  },
-
-  /**
    * Output world position clicks sent via panZoomApi.events.
    * e.g. `click`, `click 1`
    */
