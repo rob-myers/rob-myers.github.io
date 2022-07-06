@@ -160,10 +160,12 @@ export default function createNpc(
     /**
      * Shorten duration of anim.sprites slightly,
      * ensuring we finish at nice 0-based frame (0 or 5).
+     * - we ensure half returned value divides `motionMs`
+     * - we also offset `motionMs` to end midframe
      */
     getSpriteDuration(nextMotionMs) {
-      const motionMs = nextMotionMs;
       const baseSpriteMs = npcWalkAnimDurationMs;
+      const motionMs = nextMotionMs - (0.5 * (npcWalkAnimDurationMs / animLookup.walk.frameCount));
       return motionMs < baseSpriteMs / 2
         // degenerate case
         ? baseSpriteMs
