@@ -22,8 +22,9 @@ export default function createNpc(
 
   /** @type {NPC.NPC['anim']} shortcut */
   const anim = {
-    animPath: [],
-    aux: { angs: [], count: 0, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
+    path: [],
+    count: 0,
+    aux: { angs: [], bounds: new Rect, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
     spriteSheet: 'idle',
 
     translate: new Animation,
@@ -67,32 +68,41 @@ export default function createNpc(
      * IN PROGRESS
      */
     detectCollision(npcA, npcB) {
+      if (!npcA.getWalkBounds().intersects(npcB.getWalkBounds())) {
+        return { collideAt: null };
+      }
+
       const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
-      let colliding = false, willCollide = false;
+      let collideAt = /** @type {null | number} */ (null);
       if (segA) {
         if (segB) {
-          // TODO
+          /**
+           * TODO seg vs seg
+           */
         } else {
-          // TODO
+          /**
+           * TODO detect when collision will occur
+           */
         }
       } else {
         if (segB) {
-          // TODO
+          /**
+           * TODO symmetric case
+           */
         } else {
-          colliding = npcA.getPosition().distanceTo(npcB.getPosition()) <= npcRadius;
+          collideAt = npcA.getPosition().distanceTo(npcB.getPosition()) <= npcRadius ? 0 : null;
         }
       }
       return {
-        colliding,
-        willCollide,
+        collideAt,
         // ...
       };
     },
     async followNavPath(path, opts) {
-      anim.animPath = path.map(Vect.from);
+      anim.path = path.map(Vect.from);
       this.clearWayMetas();
       this.updateAnimAux();
-      if (anim.animPath.length <= 1 || anim.aux.total === 0) {
+      if (anim.path.length <= 1 || anim.aux.total === 0) {
         return;
       }
             
@@ -136,13 +146,13 @@ export default function createNpc(
     getAnimDef() {
       const { aux } = anim;
       return {
-        translateKeyframes: anim.animPath.flatMap((p, i) => [
+        translateKeyframes: anim.path.flatMap((p, i) => [
           {
             offset: aux.sofars[i] / aux.total,
             transform: `translate(${p.x}px, ${p.y}px)`,
           },
         ]),
-        rotateKeyframes: anim.animPath.flatMap((p, i) => [
+        rotateKeyframes: anim.path.flatMap((p, i) => [
           {
             offset: aux.sofars[i] / aux.total,
             transform: `rotateZ(${aux.angs[i - 1] || aux.angs[i] || 0}rad) scale(${npcScale})`
@@ -200,7 +210,7 @@ export default function createNpc(
         const soFarMs = anim.translate.currentTime;
         const nextIndex = anim.aux.sofars.findIndex(sofar => (sofar * npcAnimScaleFactor) > soFarMs);
         // Expect -1 iff at final point
-        return nextIndex === -1 ? null : anim.animPath[nextIndex].clone();
+        return nextIndex === -1 ? null : anim.path[nextIndex].clone();
       } else {
         return null;
       }
@@ -209,11 +219,16 @@ export default function createNpc(
       if (anim.spriteSheet === "walk" && anim.translate.currentTime !== null) {
         const soFarMs = anim.translate.currentTime;
         return anim.aux.sofars
-          .map((sofar, i) => ({ point: anim.animPath[i].clone(), arriveMs: (sofar * npcAnimScaleFactor) - soFarMs }))
+          .map((sofar, i) => ({ point: anim.path[i].clone(), arriveMs: (sofar * npcAnimScaleFactor) - soFarMs }))
           .filter(x => x.arriveMs >= 0)
       } else {
         return [];
       }
+    },
+    getWalkBounds() {
+      return anim.spriteSheet === 'walk' && anim.translate.playState === 'running'
+        ? anim.aux.bounds
+        : this.getBounds();
     },
     lookAt(point) {
       const position = this.getPosition();
@@ -241,7 +256,7 @@ export default function createNpc(
       }
     },
     npcRef(rootEl) {
-      if (rootEl && this.anim.aux.count === 0) {
+      if (rootEl && this.anim.count === 0) {
         this.el.root = rootEl;
         this.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
         this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
@@ -287,7 +302,7 @@ export default function createNpc(
       }
     },
     startAnimation() {
-      if (anim.aux.count) {
+      if (anim.count) {
         anim.translate.commitStyles();
         anim.translate.cancel();
         this.setLookTarget(this.getAngle());
@@ -322,11 +337,12 @@ export default function createNpc(
         anim.sprites = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
       }
 
-      anim.aux.count++;
+      anim.count++;
     },
     updateAnimAux() {
       const { aux } = anim;
-      aux.edges = anim.animPath.map((p, i) => ({ p, q: anim.animPath[i + 1] })).slice(0, -1);
+      aux.bounds = Rect.fromPoints(...anim.path);
+      aux.edges = anim.path.map((p, i) => ({ p, q: anim.path[i + 1] })).slice(0, -1);
       aux.angs = aux.edges.map(e => Number(Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2)));
       aux.elens = aux.edges.map(({ p, q }) => Number(p.distanceTo(q).toFixed(2)));
       aux.navPathPolys = aux.edges.map(e => {

@@ -41,13 +41,14 @@ declare namespace NPC {
 
     //#region mutable
     anim: {
-      /** Initially `origPath` but may change on pause/unpause */
-      animPath: Geom.Vect[];
-      /** Data derived from `animPath` */
+      /** The path we'll walk along */
+      path: Geom.Vect[];
+      /** Data derived entirely from `anim.path` */
+      /** How many times has a new animation been created? */
+      count: number;
       aux: {
         angs: number[];
-        /** How many times has a new animation been created? */
-        count: number;
+        bounds: Geom.Rect;
         edges: ({ p: Geom.Vect; q: Geom.Vect })[];
         elens: number[];
         /** Outset version of `origPath` to detect progress on pause */
@@ -69,8 +70,16 @@ declare namespace NPC {
     async cancel(): Promise<void>;
     clearWayMetas(): void;
     detectCollision(npcA: NPC.NPC, npcB: NPC.NPC): {
-      colliding: boolean;
-      willCollide: boolean;
+      /**
+       * Time in seconds we'll collide (if any)
+       * - `initPosA + (willCollideAt * speed) . tangentA`
+       * - `initPosB + (willCollideAt * speed) . tangentB`
+       * 
+       * where:
+       * - `initPos{A,B}` are respective positions right now
+       * - `speed` in world-units per second
+       */
+      collideAt: null | number;
       // ...
     };
     async followNavPath(
@@ -97,6 +106,7 @@ declare namespace NPC {
     getSpriteDuration(nextMotionMs: number): number;
     getTarget(): null | Geom.Vect;
     getTargets(): { point: Geom.Vect; arriveMs: number }[];
+    getWalkBounds(): Geom.Rect;
     /** Returns destination angle in radians */
     lookAt(point: Geom.VectJson): number;
     pause(): void;
