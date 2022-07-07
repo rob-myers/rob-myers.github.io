@@ -69,19 +69,6 @@ declare namespace NPC {
 
     async cancel(): Promise<void>;
     clearWayMetas(): void;
-    detectCollision(npcA: NPC.NPC, npcB: NPC.NPC): {
-      /**
-       * Time in seconds we'll collide (if any)
-       * - `initPosA + (willCollideAt * speed) . tangentA`
-       * - `initPosB + (willCollideAt * speed) . tangentB`
-       * 
-       * where:
-       * - `initPos{A,B}` are respective positions right now
-       * - `speed` in world-units per second
-       */
-      collideAt: null | number;
-      // ...
-    };
     async followNavPath(
       path: Geom.VectJson[],
       opts?: { globalNavMetas?: NPC.GlobalNavMeta[]; },
@@ -279,6 +266,19 @@ declare namespace NPC {
     /** Assume each `ctxts[i].lineNumber` is `lineNumber`  */
     addTtyLineCtxts(sessionKey: string, lineNumber: number, ctxts: NPC.SessionTtyCtxt[]): void;
     cleanSessionCtxts(): void;
+    detectCollision(npcA: NPC.NPC, npcB: NPC.NPC): {
+      /**
+       * Time in seconds we'll collide (if any)
+       * - `initPosA + (collideAt * speed) . tangentA`
+       * - `initPosB + (collideAt * speed) . tangentB`
+       * 
+       * where:
+       * - `initPos{A,B}` are respective positions right now
+       * - `speed` in world-units per second
+       */
+      collideAt: null | number;
+      // ...
+    };
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
     getGmGraph(): Graph.GmGraph;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;

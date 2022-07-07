@@ -81,8 +81,13 @@ export default function NavDemo1(props) {
             break;
           case 'start-seg':
             /**
-             * TODO
+             * IN PROGRESS
              */
+            const player = state.npcsApi.getNpc(e.npcKey);
+            Object.values(state.npcsApi.npc).filter(x => x !== player).forEach(other => {
+              const { collideAt } = state.npcsApi.detectCollision(player, other);
+              console.warn('collideAt', other.key, collideAt);
+            });
             break;
           default:
             throw testNever(e.meta);

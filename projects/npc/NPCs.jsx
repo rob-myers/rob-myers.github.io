@@ -13,7 +13,7 @@ import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
 import { getNumericCssVar } from "../service/dom";
-import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor } from "./create-npc";
+import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor, npcAnimSpeed, npcRadius } from "./create-npc";
 import { scrollback } from "../sh/io/io.model";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -61,6 +61,64 @@ export default function NPCs(props) {
           );
         } else delete state.session[sessionKey];
       }
+    },
+    /**
+     * IN PROGRESS
+     */
+    detectCollision(npcA, npcB) {
+      if (!npcA.getWalkBounds().intersects(npcB.getWalkBounds())) {
+        return { collideAt: null };
+      }
+
+      const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
+      const initA = segA?.src || npcA.getPosition();
+      const initB = segB?.src || npcB.getPosition();
+      if (initA.distanceToSquared(initB) <= npcRadius * npcRadius) {
+        return { collideAt: 0 };
+      }
+
+      const [speed, radius] = [npcAnimSpeed, npcRadius];
+      const iAB = initA.clone().sub(initB);
+      const dotProd = segA ? segA.tangent.dot(iAB) : segB ? segB.tangent.dot(iAB) : 0;
+
+      if (segA && dotProd < 0) {// A moving towards B
+        if (segB) {
+          /**
+           * TODO seg vs seg
+           */
+          return { collideAt: null };
+
+        } else {// npcB static
+          /**
+           * TODO debug
+           */
+          console.warn('A MOVING, B STATIC')
+
+          const inSqrt = (radius ** 2) - iAB.lengthSquared + dotProd;
+          console.warn('inSqrt', inSqrt)
+          if (inSqrt > 0) {
+            /**
+             * Quadratic has solutions (-b ± 2.speed.√insideSqrt) / 2a.
+             * Know `dotProd < 0` and not currently intersecting.
+             * Time of 1st intersection is (-b - √insideSqrt)/2a seconds, i.e.
+             * ```js
+             * -(2 * speed * dotProd + Math.sqrt(inSqrt)) * 0.5 * (1 / (speed ** 2))
+             * ```
+             */
+            const timeSeconds = -(dotProd + 2 * speed * Math.sqrt(inSqrt)) * (1 / speed);
+            return { collideAt: timeSeconds <= iAB.length / speed ? timeSeconds : null };
+          }
+        }
+      } else if (!segA && segB && dotProd > 0) {// A moving towards from B
+        const inSqrt = (radius ** 2) - (iAB.lengthSquared + dotProd);
+        if (inSqrt > 0) {
+          const timeSeconds = (dotProd - 2 * speed * Math.sqrt(inSqrt)) * (1 / speed);
+          return { collideAt: timeSeconds <= iAB.length / speed ? timeSeconds : null };
+        }
+      } else {
+        // Either static not intersecting, or moving away from each other
+      }
+      return { collideAt: null };
     },
     getGmGraph() {
       return props.gmGraph;

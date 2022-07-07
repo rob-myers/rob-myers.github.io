@@ -64,40 +64,6 @@ export default function createNpc(
     clearWayMetas() {
       anim.wayMetas.length = 0;
     },
-    /**
-     * IN PROGRESS
-     */
-    detectCollision(npcA, npcB) {
-      if (!npcA.getWalkBounds().intersects(npcB.getWalkBounds())) {
-        return { collideAt: null };
-      }
-
-      const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
-      let collideAt = /** @type {null | number} */ (null);
-      if (segA) {
-        if (segB) {
-          /**
-           * TODO seg vs seg
-           */
-        } else {
-          /**
-           * TODO detect when collision will occur
-           */
-        }
-      } else {
-        if (segB) {
-          /**
-           * TODO symmetric case
-           */
-        } else {
-          collideAt = npcA.getPosition().distanceTo(npcB.getPosition()) <= npcRadius ? 0 : null;
-        }
-      }
-      return {
-        collideAt,
-        // ...
-      };
-    },
     async followNavPath(path, opts) {
       anim.path = path.map(Vect.from);
       this.clearWayMetas();
