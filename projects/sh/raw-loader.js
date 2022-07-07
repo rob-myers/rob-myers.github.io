@@ -262,8 +262,9 @@ const gameFunctionsRunDefs = [
 
   /**
    * Move a specific npc along path(s) e.g.
-   * - `walk andros "[$( click 1 ), $( click 1 )]"'
+   * - `walk andros "[$( click 1 ), $( click 1 )]"`
    * - `expr "{ key: 'global-nav', fullPath: [$( click 1 ), $( click 1 )], navMetas: [] }" | walk andros`
+   * - `nav andros $( click 1) | walk andros`
    *
    * `npcKey` must be fixed via 1st arg
    */
@@ -273,8 +274,8 @@ const gameFunctionsRunDefs = [
 
     const process = api.getProcess()
     process.cleanups.push(() => npcs.npcAct({ npcKey, action: "cancel" }))
-    process.onSuspends.push(() => void npcs.npcAct({ npcKey, action: "pause" }))
-    process.onResumes.push(() => void npcs.npcAct({ npcKey, action: "play" }))
+    process.onSuspends.push(() => { npcs.npcAct({ npcKey, action: "pause" }); return true; })
+    process.onResumes.push(() => { npcs.npcAct({ npcKey, action: "play" }); return true; })
 
     if (api.isTtyAt(0)) {
       const points = api.safeJsonParse(args[1])
