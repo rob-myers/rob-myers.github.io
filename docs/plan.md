@@ -86,7 +86,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 - BUG write too big `get /cache/queriesMap`
 - @`the-last-redoubt`: show GitHub comments from the-last-redoubt issues
 - @`the-last-redoubt`: can redirect to GitHub the-last-redoubt issues
-- show nav node ids in `SvgNavGraph` (debug 101)
 - improve offset length for `pre-exit-room` and `pre-near-door`
 - make minimal repro of Preact HMR issue
 - migrate to free icons
@@ -127,6 +126,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ show nav node ids and metas in `SvgNavGraph` (debug 101)
 - ✅ improve walk animation
   - ✅ add walk contact metas to npc svg
   - ✅ compute contact deltas in npc json

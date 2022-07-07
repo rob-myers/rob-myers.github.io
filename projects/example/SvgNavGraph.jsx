@@ -14,6 +14,8 @@ export default function SvgSvgNavGraph(props) {
   const { data: gm } = useGeomorphData(props.layoutKey);
   const { data: pf } = usePathfinding(props.layoutKey, gm, props.disabled);
 
+  const nodeMetas = pf ? pf.graph.nodesArray.map((_, i) => pf.graph.nodeToMeta[i]) : [];
+
   return (
     <PanZoom
       gridBounds={defaults.gridBounds}
@@ -52,14 +54,19 @@ export default function SvgSvgNavGraph(props) {
           />
         )}
 
-        {pf.graph.nodesArray.map(({ id, centroid }) =>
+        {pf.graph.nodesArray.map(({ id, centroid }, i) =>
           <circle
             key={id}
             className="node"
             cx={centroid.x}
             cy={centroid.y}
             r={2}
-          />
+          >
+            <title>
+              {i}:{' '}
+              {JSON.stringify(nodeMetas[i])}
+            </title>
+          </circle>
         )}
       </>
       }
@@ -73,7 +80,7 @@ const rootCss = css`
   }
   circle.node {
     fill: #ff000068;
-    pointer-events: none;
+    /* pointer-events: none; */
   }
   line.edge {
     stroke: #900;
