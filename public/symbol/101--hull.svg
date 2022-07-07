@@ -87,7 +87,7 @@
       <title>door</title>
     </rect>
     <rect x="300" y="200" width="10" height="10" style="fill-opacity: 0.9; fill: rgb(0, 255, 0); stroke: rgb(0, 0, 0);">
-      <title>label corridor</title>
+      <title>label corridor | room</title>
     </rect>
     <rect y="502.223" width="10" height="40" style="stroke: rgb(0, 0, 0); fill: rgb(255, 255, 0); fill-opacity: 0.5;" x="565">
       <title>light reverse</title>

@@ -35,10 +35,10 @@
       <title>wall</title>
     </rect>
     <rect width="50" height="50" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="875" y="275">
-      <title>label lounge</title>
+      <title>label lounge | room</title>
     </rect>
     <rect width="50" height="50" style="fill: rgb(216, 216, 216); fill-opacity: 0.5; pointer-events: auto;" x="136.8" y="60.4">
-      <title>label toilet</title>
+      <title>label toilet | room</title>
     </rect>
   </g>
 </svg>

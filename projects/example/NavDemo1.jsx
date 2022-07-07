@@ -379,7 +379,7 @@ function Debug(props) {
   const roomNavAabb = roomNavPoly.rect;
   const roomAabb = gm.rooms[props.roomId].rect;
   const roomPoly = gm.rooms[props.roomId];
-  const { labels } = gm.point[props.roomId];
+  const roomLabel = gm.point[props.roomId].labels.find(x => x.tags.includes('room'));
 
   const onClick = React.useCallback(/** @param {React.MouseEvent<HTMLDivElement>} e */ async (e) => {
     const target = (/** @type {HTMLElement} */ (e.target));
@@ -405,9 +405,9 @@ function Debug(props) {
        */
       const label = gm.labels[Number(target.getAttribute('data-debug-label-id'))];
 
-      const line = `ℹ️  [${ansiColor.Blue}${label.text}${ansiColor.Reset}] with ${
-        gm.roomGraph.getAdjacentDoors(props.roomId).length
-      } doors`;
+      const numDoors = gm.roomGraph.getAdjacentDoors(props.roomId).length;
+      const line = `ℹ️  [${ansiColor.Blue}${label.text}${ansiColor.Reset
+        }] with ${numDoors} door${numDoors > 1 ? 's' : ''}`;
         
       const sessionCtxts = Object.values(props.npcsApi.session).filter(x => x.receiveMsgs);
       for (const { key: sessionKey } of sessionCtxts) {
@@ -526,22 +526,22 @@ function Debug(props) {
           </div>
         )}
 
-        {props.showLabels && labels.map(({ center, text, index }) => (
+        {props.showLabels && roomLabel && (
           <div
-            key={index}
-            data-debug-label-id={index}
+            key={roomLabel.index}
+            data-debug-label-id={roomLabel.index}
             data-tags="debug label-icon"
             className="debug-label-info"
-            title={text}
+            title={roomLabel.text}
             style={{
-              left: center.x - debugRadius,
-              top: center.y - debugRadius,
+              left: roomLabel.center.x - debugRadius,
+              top: roomLabel.center.y - debugRadius,
               width: debugRadius * 2,
               height: debugRadius * 2,
               filter: 'invert(100%)',
-              }}
-            />
-        ))}
+            }}
+          />
+        )}
 
         {props.windows && gm.windows.map(({ baseRect, angle }, i) => {
           return (

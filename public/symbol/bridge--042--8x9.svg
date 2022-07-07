@@ -102,34 +102,34 @@
       <title>door iris</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1153" y="549">
-      <title>label bridge</title>
+      <title>label bridge | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="703" y="775">
-      <title>label locker</title>
+      <title>label locker | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1603" y="775">
-      <title>label locker</title>
+      <title>label locker | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="253" y="1299">
-      <title>label locker</title>
+      <title>label locker | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="2053" y="1229">
-      <title>label toilet</title>
+      <title>label toilet | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1153" y="1811">
-      <title>label briefing</title>
+      <title>label briefing | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="402" y="2499" bx:origin="0.5 0.5">
-      <title>label fuel</title>
+      <title>label fuel | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1893" y="2499">
-      <title>label fuel</title>
+      <title>label fuel | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="1932" y="1899">
-      <title>label bedroom</title>
+      <title>label bedroom | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="403" y="1899">
-      <title>label office</title>
+      <title>label office | room</title>
     </rect>
     <rect width="100" height="100" style="fill: rgb(216, 216, 216); fill-opacity: 0.5;" x="300" y="650">
       <title>label cpu</title>
@@ -144,7 +144,7 @@
       <title>wall</title>
     </rect>
     <rect x="1022.856" y="913.5" width="50" height="50" style="fill: rgb(2, 255, 2); stroke: rgb(0, 0, 0);">
-      <title>label corridor</title>
+      <title>label corridor | room</title>
     </rect>
     <rect x="1679.944" y="714.635" width="70" height="233.32" style="stroke: rgb(0, 0, 0); pointer-events: auto; fill: rgb(255, 255, 0); fill-opacity: 0.5;">
       <title>light</title>

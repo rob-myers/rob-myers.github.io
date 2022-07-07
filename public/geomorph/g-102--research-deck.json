@@ -678,7 +678,7 @@
         }
       },
       {
-        "tags": ["label", "lab"],
+        "tags": ["label", "lab", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -745,7 +745,7 @@
         }
       },
       {
-        "tags": ["label", "lab"],
+        "tags": ["label", "lab", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -784,7 +784,7 @@
         }
       },
       {
-        "tags": ["label", "office"],
+        "tags": ["label", "office", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -853,7 +853,7 @@
         }
       },
       {
-        "tags": ["label", "office"],
+        "tags": ["label", "office", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -936,7 +936,7 @@
         }
       },
       {
-        "tags": ["label", "bedroom"],
+        "tags": ["label", "bedroom", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -989,7 +989,7 @@
         }
       },
       {
-        "tags": ["label", "bedroom"],
+        "tags": ["label", "bedroom", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -1097,7 +1097,7 @@
         }
       },
       {
-        "tags": ["label", "stellar", "cartography"],
+        "tags": ["label", "stellar", "cartography", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[380, 820], [380, 840], [360, 840], [360, 820]]]
@@ -2103,7 +2103,7 @@
       "text": "lab",
       "center": {"x": 430, "y": 189.9419},
       "index": 0,
-      "tags": [],
+      "tags": ["room"],
       "rect": {"x": 423, "y": 184.9419, "width": 14, "height": 10},
       "padded": {"x": 419, "y": 182.9419, "width": 22, "height": 14}
     },
@@ -2111,7 +2111,7 @@
       "text": "lab",
       "center": {"x": 670, "y": 189.9419},
       "index": 1,
-      "tags": [],
+      "tags": ["room"],
       "rect": {"x": 663, "y": 184.9419, "width": 14, "height": 10},
       "padded": {"x": 659, "y": 182.9419, "width": 22, "height": 14}
     },
@@ -2119,7 +2119,7 @@
       "text": "office",
       "center": {"x": 446.5316, "y": 419.5648},
       "index": 2,
-      "tags": [],
+      "tags": ["room"],
       "rect": {"x": 433.0316, "y": 414.5648, "width": 27, "height": 10},
       "padded": {"x": 429.0316, "y": 412.5648, "width": 35, "height": 14}
     },
@@ -2127,7 +2127,7 @@
       "text": "office",
       "center": {"x": 566.5316, "y": 419.5648},
       "index": 3,
-      "tags": [],
+      "tags": ["room"],
       "rect": {"x": 553.0316, "y": 414.5648, "width": 27, "height": 10},
       "padded": {"x": 549.0316, "y": 412.5648, "width": 35, "height": 14}
     },
@@ -2135,7 +2135,7 @@
       "text": "bedroom",
       "center": {"x": 450.2424, "y": 530},
       "index": 4,
-      "tags": [],
+      "tags": ["room"],
       "rect": {"x": 428.7424, "y": 525, "width": 43, "height": 10},
       "padded": {"x": 424.7424, "y": 523, "width": 51, "height": 14}
     },
@@ -2143,7 +2143,7 @@
       "text": "bedroom",
       "center": {"x": 570.2424, "y": 530},
       "index": 5,
-      "tags": [],
+      "tags": ["room"],
       "rect": {"x": 548.7424, "y": 525, "width": 43, "height": 10},
       "padded": {"x": 544.7424, "y": 523, "width": 51, "height": 14}
     },
@@ -2151,7 +2151,7 @@
       "text": "stellar cartography",
       "center": {"x": 370, "y": 830},
       "index": 6,
-      "tags": [],
+      "tags": ["room"],
       "rect": {"x": 324.5, "y": 824.5, "width": 91, "height": 11},
       "padded": {"x": 320.5, "y": 822.5, "width": 99, "height": 15}
     }
