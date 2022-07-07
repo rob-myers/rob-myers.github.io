@@ -623,7 +623,12 @@ export function buildZoneWithMeta(navDecomp, doors, rooms) {
     roomNodeIds[roomId] = [];
     navNodes.forEach((node, nodeId) => {
       // if (node.vertexIds.filter(id => poly.outlineContains(navZone.vertices[id])).length >= 2) {
-      if (node.vertexIds.some(id => poly.outlineContains(navZone.vertices[id]))) {
+      // if (node.vertexIds.some(id => poly.outlineContains(navZone.vertices[id]))) {
+      /**
+       * ISSUE with `poly.outlineContains` in gm 101 room 10/14
+       * TODO open issue at https://github.com/davidfig/intersects
+       */
+      if (node.vertexIds.some(id => poly.contains(navZone.vertices[id]))) {
         roomNodeIds[roomId].push(nodeId);
         if (
           nodeRoomIds[nodeId].push(roomId) > 1
