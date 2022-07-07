@@ -195,6 +195,8 @@ declare namespace Geomorph {
     center: Geom.VectJson;
     /** Index inside `Geomorph['labels']` */
     index: number;
+    /** Original `label foo | bar baz` yields `['bar', 'baz']` */
+    tags: string[];
 
     /** Measured world rect containing text */
     rect: Geom.RectJson;

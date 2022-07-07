@@ -6,7 +6,7 @@ import { geom } from './geom';
 import { filterSingles, labelMeta, singlesToPolys } from '../geomorph/geomorph.model';
 import { RoomGraph } from '../graph/room-graph';
 import { Builder } from '../pathfinding/Builder';
-import { hullOutset, obstacleOutset, wallOutset } from './const';
+import { hullOutset, obstacleOutset, precision, wallOutset } from './const';
 import { error, warn } from './log';
 
 /**
@@ -35,7 +35,7 @@ export async function createLayout(def, lookup, triangleService) {
     }
     // Transform singles (restricting doors/walls by tags)
     const restricted = singles
-      .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m).precision(4) }))
+      .map(({ tags, poly }) => ({ tags, poly: poly.clone().applyMatrix(m).precision(precision) }))
       .filter(({ tags }) => {
         return item.doors && tags.includes('door')
           ? tags.some(tag => /** @type {string[]} */ (item.doors).includes(tag))
@@ -63,9 +63,9 @@ export async function createLayout(def, lookup, triangleService) {
   });
 
   // Ensure well-signed polygons
-  groups.singles.forEach(({ poly }) => poly.fixOrientation().precision(4));
-  groups.obstacles.forEach(poly => poly.fixOrientation().precision(4));
-  groups.walls.forEach((poly) => poly.fixOrientation().precision(4));
+  groups.singles.forEach(({ poly }) => poly.fixOrientation().precision(precision));
+  groups.obstacles.forEach(poly => poly.fixOrientation().precision(precision));
+  groups.walls.forEach((poly) => poly.fixOrientation().precision(precision));
   
   /**
    * Cut doors from walls, changing `groups.walls` and `groups.singles`.
@@ -94,23 +94,28 @@ export async function createLayout(def, lookup, triangleService) {
   const windowPolys = singlesToPolys(groups.singles, 'window');
 
   // Labels
-  // TODO remove measurements?
+  // TODO remove measurements
   const measurer = createCanvas(0, 0).getContext('2d');
   measurer.font = labelMeta.font;
-  /** @type {Geomorph.LayoutLabel[]} */
-  const labels = filterSingles(groups.singles, 'label')
+  /**
+   * @type {Geomorph.LayoutLabel[]}
+   * - 1st tag must be `'label'`
+   * - Subsequent tags make up label, up to optional `|`.
+   */
+  const labels = groups.singles.filter(x => x.tags[0] === 'label')
     .map(({ poly, tags }, index) => {
-      const center = poly.rect.center.precision(4).json;
-      const text = tags.filter(x => x !== 'label').join(' ');
+      const center = poly.rect.center.precision(precision).json;
+      const text = tags.slice(1, tags.includes('|') ? tags.indexOf('|') : undefined).join(' ');
+      const metaTags = tags.includes('|') ? tags.slice(tags.indexOf('|') + 1) : [];
       const noTail = !text.match(/[gjpqy]/);
       const dim = { x: measurer.measureText(text).width, y: noTail ? labelMeta.noTailPx : labelMeta.sizePx };
-      const rect = Rect.fromJson({ x: center.x - 0.5 * dim.x, y: center.y - 0.5 * dim.y, width: dim.x, height: dim.y }).precision(4).json;
+      const rect = Rect.fromJson({ x: center.x - 0.5 * dim.x, y: center.y - 0.5 * dim.y, width: dim.x, height: dim.y }).precision(precision).json;
       const padded = (new Rect).copy(rect).outset(labelMeta.padX, labelMeta.padY).json;
-      return { text, center, index, rect, padded };
+      return { text, center, index, tags: metaTags, rect, padded };
     });
 
   // Rooms (induced by all walls)
-  const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys)).map(x => x.precision(4));
+  const allWalls = Poly.union(hullSym.hull.concat(uncutWalls, windowPolys)).map(x => x.precision(precision));
   allWalls.sort((a, b) => a.rect.area > b.rect.area ? -1 : 1); // Descending by area
   const rooms = allWalls[0].holes.map(ring => new Poly(ring));
   // Finally, internal pillars are converted into holes inside room
@@ -155,7 +160,7 @@ export async function createLayout(def, lookup, triangleService) {
       x.createOutset(obstacleOutset)
     ),
   ], hullOutline).map(
-    x => x.cleanFinalReps().fixOrientation().precision(4)
+    x => x.cleanFinalReps().fixOrientation().precision(precision)
   ).filter(poly => 
     !ignoreNavPoints.some(p => poly.contains(p))
     && poly.rect.area > 20 * 20 // also ignore small areas
@@ -287,8 +292,8 @@ function singleToConnectorRect(single, rooms) {
   const normal = v.clone().sub(u).rotate(Math.PI / 2).normalize();
 
   const doorEntryDelta = (Math.min(baseRect.width, baseRect.height)/2) + 0.05
-  const infront = poly.center.addScaledVector(normal, doorEntryDelta).precision(3);
-  const behind = poly.center.addScaledVector(normal, -doorEntryDelta).precision(3);
+  const infront = poly.center.addScaledVector(normal, doorEntryDelta).precision(precision);
+  const behind = poly.center.addScaledVector(normal, -doorEntryDelta).precision(precision);
 
   /** @type {[null | number, null | number]} */
   const roomIds = rooms.reduce((agg, room, roomId) => {
@@ -299,12 +304,12 @@ function singleToConnectorRect(single, rooms) {
 
   return {
     angle,
-    baseRect: baseRect.precision(3),
+    baseRect: baseRect.precision(precision),
     poly,
-    rect: poly.rect.precision(4),
+    rect: poly.rect.precision(precision),
     tags,
-    seg: [u.precision(3), v.precision(3)],
-    normal: normal.precision(3),
+    seg: [u.precision(precision), v.precision(precision)],
+    normal: normal.precision(precision),
     roomIds: roomIds,
     entries: [infront, behind],
   };
@@ -421,9 +426,9 @@ export function parseStarshipSymbol(symbolName, svgContents, lastModified) {
   return {
     key: symbolName,
     pngRect,
-    hull: Poly.union(hull).map(x => x.precision(4)),
-    obstacles: Poly.union(obstacles).map(x => x.precision(4)),
-    walls: Poly.union(walls).map(x => x.precision(4)),
+    hull: Poly.union(hull).map(x => x.precision(precision)),
+    obstacles: Poly.union(obstacles).map(x => x.precision(precision)),
+    walls: Poly.union(walls).map(x => x.precision(precision)),
     singles: singles.map((/** @type {*} */ poly) => ({ tags: poly._ownTags, poly })),
     lastModified,
   };

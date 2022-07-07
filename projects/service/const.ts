@@ -18,6 +18,8 @@ export const cssName = {
   open: 'open',
 } as const;
 
+export const precision = 4;
+
 //#region npcs
 
 /** `24 / 5` because we scale down SVG symbols */

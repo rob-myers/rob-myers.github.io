@@ -751,28 +751,28 @@
         }
       },
       {
-        "tags": ["label", "study"],
+        "tags": ["label", "study", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[270, 194], [270, 204], [280, 204], [280, 194]]]
         }
       },
       {
-        "tags": ["label", "corridor"],
+        "tags": ["label", "corridor", "|", "room"],
         "poly": {
           "type": "Polygon",
-          "coordinates": [[[240, 310], [250, 310], [250, 300], [240, 300]]]
+          "coordinates": [[[240, 300], [240, 310], [250, 310], [250, 300]]]
         }
       },
       {
-        "tags": ["label", "corridor"],
+        "tags": ["label", "corridor", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[950, 300], [950, 310], [960, 310], [960, 300]]]
         }
       },
       {
-        "tags": ["label", "study"],
+        "tags": ["label", "study", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [[[930, 194], [930, 204], [940, 204], [940, 194]]]
@@ -794,7 +794,7 @@
       }
     ],
     "pngRect": {"x": -6, "y": -22, "width": 1212, "height": 628},
-    "lastModified": 1656595798348.4756
+    "lastModified": 1657192290411.1443
   },
   "302--hull": {
     "key": "302--hull",
@@ -5237,7 +5237,7 @@
         }
       },
       {
-        "tags": ["label", "office"],
+        "tags": ["label", "office", "|", "room"],
         "poly": {
           "type": "Polygon",
           "coordinates": [
@@ -5270,7 +5270,7 @@
       }
     ],
     "pngRect": {"x": -34, "y": -10, "width": 644, "height": 920},
-    "lastModified": 1657188486576.8865
+    "lastModified": 1657192208559.1433
   },
   "office--061--3x4": {
     "key": "office--061--3x4",
