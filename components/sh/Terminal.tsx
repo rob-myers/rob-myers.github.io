@@ -42,7 +42,7 @@ export default function Terminal(props: Props) {
   React.useEffect(() => {
     if (props.disabled) {
       state.wasDisabled = true;
-      useSession.api.writeMsgCleanly(props.sessionKey, 'ℹ️ Paused session', { prompt: false });
+      useSession.api.writeMsgCleanly(props.sessionKey, 'ℹ️  Paused session', { prompt: false });
 
       // Pause running processes
       const processes = Object.values((state.session?.process)??{});
@@ -52,7 +52,7 @@ export default function Terminal(props: Props) {
       });
 
     } else if (!props.disabled && state.wasDisabled && state.xtermReady) {
-      useSession.api.writeMsgCleanly(props.sessionKey, 'ℹ️ Resumed session');
+      useSession.api.writeMsgCleanly(props.sessionKey, 'ℹ️  Resumed session');
 
       // Resume suspended processes
       // TODO what if previously suspended?
