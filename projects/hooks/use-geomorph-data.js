@@ -42,18 +42,26 @@ export default function useGeomorphData(layoutKey) {
 
     /**
      * TODO move to json?
-     * `relate-doors`s relates two doorIds.
-     * We'll use it to extend the light polygon.
+     * `relate-connectors`s relates a doorId to other doorId(s) or windowId(s).
+     * We'll use it to extend the light polygon i.e. improve the look of lighting under certain circumstances.
      */
     const relDoorId = layout.groups.singles
-      .filter(x => x.tags.includes('relate-doors'))
+      .filter(x => x.tags.includes('relate-connectors'))
       .reduce((agg, { poly }) => {
         const doorIds = layout.doors.flatMap((door, doorId) => geom.convexPolysIntersect(door.poly.outline, poly.outline) ? doorId : []);
-        doorIds.forEach(doorId => (agg[doorId] || (agg[doorId] = [])).push(...doorIds.filter(x => x !== doorId)) );
-        if (doorIds.length <= 1) console.warn(`poly tagged 'relate-doors' intersects ≤ 1 doorIds: ${doorIds}`);
+        const windowIds = layout.windows.flatMap((window, windowId) => geom.convexPolysIntersect(window.poly.outline, poly.outline) ? windowId : []);
+        doorIds.forEach(doorId => {
+          agg[doorId] = agg[doorId] || { doorIds: [], windowIds: [] };
+          agg[doorId].doorIds.push(...doorIds.filter(x => x !== doorId));
+          agg[doorId].windowIds.push(...windowIds);
+        });
+        if (doorIds.length === 0)
+          console.warn(`poly tagged 'relate-connectors' doesn't intersect any door: (windowIds ${windowIds})`);
+        if (doorIds.length + windowIds.length <= 1)
+          console.warn(`poly tagged 'relate-connectors' should intersect ≥ 2 doors/windows (doorIds ${doorIds}, windowIds ${windowIds})`);
         return agg;
       },
-      /** @type {Record<number, number[]>} */ ({}),
+      /** @type {Geomorph.GeomorphData['relDoorId']} */ ({}),
     );
     
     //#region points by room

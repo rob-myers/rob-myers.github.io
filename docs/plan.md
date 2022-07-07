@@ -26,6 +26,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- ✅ `relate-doors` -> `relate-connectors`
+- 🚧 `relate-connectors` supports windows
+  - needs testing
+
 - 🚧 npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
   - ✅ implement `npc.getSpeed()` constant for each path, not over all paths

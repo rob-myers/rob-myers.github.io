@@ -301,15 +301,21 @@ export class gmGraphClass extends BaseGraph {
       const area = this.getOpenDoorArea(gmId, doorId);
       if (!area) return [];
       /**
-       * - Originally, `relate-doors` tag induced a relation between two doorIds.
-       *   We extend light area when exactly one of them is in @see adjOpenDoorIds.
+       * TODO test relations R(doorId, windowId)
+       * 
+       * - Originally, `relate-connectors` tag induced a relation between doorIds.
+       *   We _extend_ light area when exactly one of them is in @see adjOpenDoorIds.
        * - Light is extended through a door in an adjacent room, non-adjacent to current room.
        */
-      const relDoorIds = (gm.relDoorId?.[doorId] || [])
+      const relDoorIds = (gm.relDoorId[doorId]?.doorIds || [])
         .filter(relDoorId => openDoorIds.includes(relDoorId) && !adjOpenDoorIds.includes(relDoorId));
-      if (relDoorIds.length) {
-        area.poly = Poly.union([area.poly, ...relDoorIds
-          .flatMap(relDoorId => this.getOpenDoorArea(gmId, relDoorId)?.poly || [])])[0];
+      // Windows are always open, and assumed visible if related door open
+      const relWindowIds = (gm.relDoorId[doorId]?.windowIds || []);
+      if (relDoorIds.length || relWindowIds.length) {
+        area.poly = Poly.union([area.poly,
+          ...relDoorIds.flatMap(relDoorId => this.getOpenDoorArea(gmId, relDoorId)?.poly || []),
+          ...relWindowIds.flatMap(relWindowId => this.getOpenWindowPolygon(gmId, relWindowId)),
+        ])[0];
       }
       return { area, relDoorIds };
     });

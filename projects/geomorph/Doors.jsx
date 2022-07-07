@@ -36,9 +36,9 @@ export default function Doors(props) {
       ctxt.setTransform(1, 0, 0, 1, -gm.pngRect.x, -gm.pngRect.y);
       ctxt.fillStyle = '#555';
 
-      // Handle extension of open visible doors (orig via `relate-doors` tag)
+      // Handle extension of open visible doors (orig via `relate-connectors` tag)
       const relDoorIds = gm.doors.flatMap((_, i) =>
-        state.vis[gmId][i] && state.open[gmId][i] && gm.relDoorId?.[i] || []
+        state.vis[gmId][i] && state.open[gmId][i] && gm.relDoorId[i]?.doorIds || []
       ).filter(doorId => state.open[gmId][doorId]);
       
       gm.doors.forEach(({ poly }, doorId) => {
