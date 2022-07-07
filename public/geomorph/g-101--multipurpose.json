@@ -1756,6 +1756,40 @@
         }
       },
       {
+        "tags": ["light", "reverse"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[180, 564.0711], [200, 564.0711], [200, 572.0711], [180, 572.0711]]
+          ]
+        }
+      },
+      {
+        "tags": ["light", "reverse"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[160, 564.1947], [180, 564.1947], [180, 572.1947], [160, 572.1947]]
+          ]
+        }
+      },
+      {
+        "tags": ["light", "reverse"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[180, 624], [200, 624], [200, 632], [180, 632]]]
+        }
+      },
+      {
+        "tags": ["light", "reverse"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[160, 624.1236], [180, 624.1236], [180, 632.1236], [160, 632.1236]]
+          ]
+        }
+      },
+      {
         "tags": ["wall"],
         "poly": {
           "type": "Polygon",

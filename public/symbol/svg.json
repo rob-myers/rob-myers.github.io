@@ -2802,10 +2802,44 @@
           "type": "Polygon",
           "coordinates": [[[20, 630], [-20, 630], [-20, 850], [20, 850]]]
         }
+      },
+      {
+        "tags": ["light", "reverse"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[0, 420.3555], [-100, 420.3555], [-100, 460.3555], [0, 460.3555]]
+          ]
+        }
+      },
+      {
+        "tags": ["light", "reverse"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[100, 420.9735], [0, 420.9735], [0, 460.9735], [100, 460.9735]]
+          ]
+        }
+      },
+      {
+        "tags": ["light", "reverse"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[0, 720], [-100, 720], [-100, 760], [0, 760]]]
+        }
+      },
+      {
+        "tags": ["light", "reverse"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [
+            [[100, 720.618], [0, 720.618], [0, 760.618], [100, 760.618]]
+          ]
+        }
       }
     ],
     "pngRect": {"x": -10, "y": -10, "width": 920, "height": 1220},
-    "lastModified": 1646839468360.1382
+    "lastModified": 1657189770242.1782
   },
   "empty-room--060--4x4": {
     "key": "empty-room--060--4x4",
