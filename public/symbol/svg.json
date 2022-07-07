@@ -5226,10 +5226,17 @@
           "type": "Polygon",
           "coordinates": [[[-34, 147], [-34, 454], [33, 454], [33, 147]]]
         }
+      },
+      {
+        "tags": ["relate-connectors"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[600, 180], [0, 180], [0, 200], [600, 200]]]
+        }
       }
     ],
     "pngRect": {"x": -34, "y": -10, "width": 644, "height": 920},
-    "lastModified": 1649075689527.0405
+    "lastModified": 1657188486576.8865
   },
   "office--061--3x4": {
     "key": "office--061--3x4",

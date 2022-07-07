@@ -27,7 +27,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 ## TODO (low-level)
 
 - ✅ `relate-doors` -> `relate-connectors`
-- 🚧 `relate-connectors` supports windows
+- ✅ `relate-connectors` supports windows
   - needs testing
 
 - 🚧 npc walk collision prevention

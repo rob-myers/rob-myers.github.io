@@ -1974,6 +1974,13 @@
         }
       },
       {
+        "tags": ["relate-connectors"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[500, 780], [500, 660], [504, 660], [504, 780]]]
+        }
+      },
+      {
         "tags": ["door"],
         "poly": {
           "type": "Polygon",
@@ -2036,6 +2043,13 @@
           "coordinates": [
             [[689.4, 653.2], [750.8, 653.2], [750.8, 666.6], [689.4, 666.6]]
           ]
+        }
+      },
+      {
+        "tags": ["relate-connectors"],
+        "poly": {
+          "type": "Polygon",
+          "coordinates": [[[696, 780], [696, 660], [700, 660], [700, 780]]]
         }
       },
       {
