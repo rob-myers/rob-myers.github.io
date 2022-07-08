@@ -84,10 +84,14 @@ export default function NavDemo1(props) {
              * IN PROGRESS
              */
             const player = state.npcsApi.getNpc(e.npcKey);
-            Object.values(state.npcsApi.npc).filter(x => x !== player).forEach(other => {
-              const { collideAt } = state.npcsApi.detectCollision(player, other);
-              console.warn('collideAt', other.key, collideAt);
-            });
+            const others = Object.values(state.npcsApi.npc).filter(x => x !== player);
+            for (const other of others) {
+              const collision = state.npcsApi.detectCollision(player, other);
+              if (collision) {
+                console.warn('collision', other.key, collision);
+                // TODO add way-meta cancelling motion
+              }
+            }
             break;
           default:
             throw testNever(e.meta);

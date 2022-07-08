@@ -48,6 +48,9 @@ export default function createNpc(
 
     async cancel() {
       console.log(`cancel: cancelling ${this.def.key}`);
+      if (anim.spriteSheet === 'idle') {
+        return;
+      }
       this.clearWayMetas();
       if (this.el.root?.getAnimations().includes(anim.translate)) {
         anim.translate.commitStyles();
@@ -161,7 +164,7 @@ export default function createNpc(
      * Shorten duration of anim.sprites slightly,
      * ensuring we finish at nice 0-based frame (0 or 5).
      * - we ensure half returned value divides `motionMs`
-     * - we also offset `motionMs` to end midframe
+     * - we use an offset `motionMs` to end mid-frame
      */
     getSpriteDuration(nextMotionMs) {
       const baseSpriteMs = npcWalkAnimDurationMs;

@@ -266,17 +266,21 @@ declare namespace NPC {
     /** Assume each `ctxts[i].lineNumber` is `lineNumber`  */
     addTtyLineCtxts(sessionKey: string, lineNumber: number, ctxts: NPC.SessionTtyCtxt[]): void;
     cleanSessionCtxts(): void;
-    detectCollision(npcA: NPC.NPC, npcB: NPC.NPC): {
+    detectCollision(npcA: NPC.NPC, npcB: NPC.NPC): null | {
       /**
-       * Time in seconds we'll collide (if any)
+       * Time in seconds from now when we'll collide,
        * - `initPosA + (collideAt * speed) . tangentA`
        * - `initPosB + (collideAt * speed) . tangentB`
        * 
        * where:
-       * - `initPos{A,B}` are respective positions right now
+       * - `initPos{A,B}` are current positions
        * - `speed` in world-units per second
        */
-      collideAt: null | number;
+      seconds: number;
+      /** Distance from initPosA at which we will collide */
+      distA: number;
+      /** Distance from initPosB at which we will collide */
+      distB: number;
       // ...
     };
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;

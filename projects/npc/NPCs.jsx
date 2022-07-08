@@ -64,22 +64,23 @@ export default function NPCs(props) {
     },
     /**
      * IN PROGRESS
+     * TODO support different speeds
      */
     detectCollision(npcA, npcB) {
       if (!npcA.getWalkBounds().intersects(npcB.getWalkBounds())) {
-        return { collideAt: null };
+        return null;
       }
 
       const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
       const [iA, iB] = [segA?.src || npcA.getPosition(), segB?.src || npcB.getPosition()];
       const iAB = iA.clone().sub(iB), distABSq = iAB.lengthSquared;
       if (distABSq <= npcRadius * npcRadius) {
-        return { collideAt: 0 };
+        return { seconds: 0, distA: 0, distB: 0 };
       }
 
       const dotProd = segA ? segA.tangent.dot(iAB) : segB ? -segB.tangent.dot(iAB) : 0;
       if (dotProd >= 0) {// A not moving towards B or vice-versa
-        return { collideAt: null };
+        return null;
       }
 
       if (segA && segB) {
@@ -102,14 +103,19 @@ export default function NPCs(props) {
          * ```
          */
         const inSqrt = (dotProd ** 2) - distABSq + (npcRadius ** 2);
-        if (inSqrt > 0) {
-          const timeSecs = (-dotProd - 2 * Math.sqrt(inSqrt)) * (1 / npcSpeed);
-          return { collideAt: timeSecs <= Math.sqrt(distABSq) / npcSpeed ? timeSecs : null };
+        let seconds = 0;
+        if (// Real-valued solution(s) exist and occur during line seg
+          inSqrt > 0 && (
+            seconds = (-dotProd - 2 * Math.sqrt(inSqrt)) * (1 / npcSpeed)
+          ) <= Math.sqrt(distABSq) / npcSpeed
+        ) {
+          const distA = seconds * npcSpeed;
+          return { seconds, distA, distB: distA /** TODO different speeds */ };
         }
       } else {
-        // Either static and not intersecting, or moving away from each other
+        // Either static non-intersecting, or moving away from each other
       }
-      return { collideAt: null };
+      return null;
     },
     getGmGraph() {
       return props.gmGraph;
