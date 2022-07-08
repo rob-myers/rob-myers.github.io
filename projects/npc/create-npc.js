@@ -155,7 +155,7 @@ export default function createNpc(
       return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
     },
     getSpeed() {
-      return npcAnimSpeed;
+      return npcSpeed;
     },
     /**
      * Shorten duration of anim.sprites slightly,
@@ -366,12 +366,12 @@ export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
 export const defaultNpcInteractRadius = npcRadius * 3;
 
 /** Number of world units per second. */
-export const npcAnimSpeed = 70;
+export const npcSpeed = 70;
 
 /** Used to scale up how long it takes to move along navpath */
-export const npcAnimScaleFactor = 1000 * (1 / npcAnimSpeed);
+export const npcAnimScaleFactor = 1000 * (1 / npcSpeed);
 
-const npcWalkAnimDurationMs = ( 1 / npcAnimSpeed ) * (animLookup.walk.totalDist * npcScale) * 1000;
+const npcWalkAnimDurationMs = ( 1 / npcSpeed ) * (animLookup.walk.totalDist * npcScale) * 1000;
 
 /** @type {Record<NPC.NavMetaKey, number>} */
 const navMetaOffsets = {

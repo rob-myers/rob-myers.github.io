@@ -148,5 +148,10 @@ get /cache/queriesMap | map 'x => {
   const key = `["'$NPCS_KEY'"]`
   return x[key].state.data
 }' | log
+```
 
+```sh
+npc get andros | map 'x => x.getPosition()' >iA
+npc get foo | map 'x => x.getPosition()' >iB
+call '({ home }) => home.iA.distanceTo(home.iB)'
 ```

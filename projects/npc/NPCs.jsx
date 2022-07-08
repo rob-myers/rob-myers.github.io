@@ -13,7 +13,7 @@ import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
 import { getNumericCssVar } from "../service/dom";
-import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor, npcAnimSpeed, npcRadius } from "./create-npc";
+import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor, npcSpeed, npcRadius } from "./create-npc";
 import { scrollback } from "../sh/io/io.model";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -71,52 +71,43 @@ export default function NPCs(props) {
       }
 
       const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
-      const initA = segA?.src || npcA.getPosition();
-      const initB = segB?.src || npcB.getPosition();
-      if (initA.distanceToSquared(initB) <= npcRadius * npcRadius) {
+      const [iA, iB] = [segA?.src || npcA.getPosition(), segB?.src || npcB.getPosition()];
+      const iAB = iA.clone().sub(iB), distABSq = iAB.lengthSquared;
+      if (distABSq <= npcRadius * npcRadius) {
         return { collideAt: 0 };
       }
 
-      const [speed, radius] = [npcAnimSpeed, npcRadius];
-      const iAB = initA.clone().sub(initB);
-      const dotProd = segA ? segA.tangent.dot(iAB) : segB ? segB.tangent.dot(iAB) : 0;
+      const dotProd = segA ? segA.tangent.dot(iAB) : segB ? -segB.tangent.dot(iAB) : 0;
+      if (dotProd >= 0) {// A not moving towards B or vice-versa
+        return { collideAt: null };
+      }
 
-      if (segA && dotProd < 0) {// A moving towards B
-        if (segB) {
-          /**
-           * TODO seg vs seg
-           */
-          return { collideAt: null };
-
-        } else {// npcB static
-          /**
-           * TODO debug
-           */
-          console.warn('A MOVING, B STATIC')
-
-          const inSqrt = (radius ** 2) - iAB.lengthSquared + dotProd;
-          console.warn('inSqrt', inSqrt)
-          if (inSqrt > 0) {
-            /**
-             * Quadratic has solutions (-b ± 2.speed.√insideSqrt) / 2a.
-             * Know `dotProd < 0` and not currently intersecting.
-             * Time of 1st intersection is (-b - √insideSqrt)/2a seconds, i.e.
-             * ```js
-             * -(2 * speed * dotProd + Math.sqrt(inSqrt)) * 0.5 * (1 / (speed ** 2))
-             * ```
-             */
-            const timeSeconds = -(dotProd + 2 * speed * Math.sqrt(inSqrt)) * (1 / speed);
-            return { collideAt: timeSeconds <= iAB.length / speed ? timeSeconds : null };
-          }
-        }
-      } else if (!segA && segB && dotProd > 0) {// A moving towards from B
-        const inSqrt = (radius ** 2) - (iAB.lengthSquared + dotProd);
+      if (segA && segB) {
+        /**
+         * TODO seg vs seg
+         */
+      } else if (segA || segB) {
+        /**
+         * TODO seg vs static
+         * 
+         * Solving `a.t^2 + b.t + c ≤ 0`,
+         * - `a := npcSpeed^2`
+         * - `b := 2.npcSpeed.dotProd`
+         * - `c := distABSq - npcRadius^2`
+         * 
+         * Solutions are
+         * ```js
+         * (-b ± √(b^2 - 4ac)) / 2a // equivalently:
+         * (-b ± 2.npcSpeed.√inSqrt) / 2a
+         * ```
+         */
+        const inSqrt = (dotProd ** 2) - distABSq + (npcRadius ** 2);
         if (inSqrt > 0) {
-          const timeSeconds = (dotProd - 2 * speed * Math.sqrt(inSqrt)) * (1 / speed);
-          return { collideAt: timeSeconds <= iAB.length / speed ? timeSeconds : null };
+          const timeSecs = (-dotProd - 2 * Math.sqrt(inSqrt)) * (1 / npcSpeed);
+          return { collideAt: timeSecs <= Math.sqrt(distABSq) / npcSpeed ? timeSecs : null };
         }
       } else {
-        // Either static not intersecting, or moving away from each other
+        // Either static and not intersecting, or moving away from each other
       }
       return { collideAt: null };
     },
