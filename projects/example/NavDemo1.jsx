@@ -79,20 +79,37 @@ export default function NavDemo1(props) {
               await player.cancel();
             }
             break;
-          case 'start-seg':
-            /**
-             * IN PROGRESS
-             */
+          /**
+           * IN PROGRESS
+           */
+          case 'start-seg': {
             const player = state.npcsApi.getNpc(e.npcKey);
             const others = Object.values(state.npcsApi.npc).filter(x => x !== player);
             for (const other of others) {
               const collision = state.npcsApi.detectCollision(player, other);
               if (collision) {
-                console.warn('collision', other.key, collision);
-                // TODO add way-meta cancelling motion
+                console.warn('future collision', other.key, collision);
+                // Add wayMeta cancelling motion
+                const length = e.meta.length + collision.distA;
+                const insertIndex = player.anim.wayMetas.findIndex(x => x.length >= length);
+                player.anim.wayMetas.splice(insertIndex, 0, {
+                  key: 'pre-collide',
+                  index: e.meta.index,
+                  otherNpcKey: other.key,
+                  gmId: e.meta.gmId,
+                  length,
+                });
               }
             }
             break;
+          }
+          case 'pre-collide': {
+            const player = state.npcsApi.getNpc(e.npcKey);
+            const other = state.npcsApi.getNpc(e.meta.otherNpcKey);
+            player.cancel();
+            other.cancel();
+            break;
+          }
           default:
             throw testNever(e.meta);
         }

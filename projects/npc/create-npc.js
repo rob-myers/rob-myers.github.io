@@ -343,6 +343,10 @@ export default function createNpc(
         if (anim.spriteSheet === 'idle') console.warn('wayTimeout: anim.spriteSheet is "idle"');
         return;
       } else if (anim.translate.currentTime >= (anim.wayMetas[0].length * npcAnimScaleFactor) - 1) {
+        /**
+         * We've reached the wayMeta's `length`,
+         * so remove it and trigger respective event.
+         */
         const wayMeta = /** @type { NPC.WayPointMeta} */ (anim.wayMetas.shift());
         console.log(wayMeta); // DEBUG 🚧
         npcs.events.next({ key: 'way-point', npcKey: this.def.key, meta: wayMeta });
@@ -380,6 +384,7 @@ const npcWalkAnimDurationMs = ( 1 / npcSpeed ) * (animLookup.walk.totalDist * np
 const navMetaOffsets = {
   'enter-room': -0.02, // Ensure triggered
   'exit-room': -0.02, // Ensure triggered
+  'pre-collide': -0.02,
   "pre-exit-room": -(npcRadius + 10), // TODO better way
   "pre-near-door": -(npcRadius + 10), // TODO better way
   "start-seg": 0,

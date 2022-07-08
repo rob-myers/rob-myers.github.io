@@ -33,7 +33,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ speed-up anim.sprites instead of slow-down anim.translate/rotate
     - then `npc.getSpeed()` is globally constant
   - ✅ implement `npc.detectCollision()` when one npc static
-  - 🚧 cancel both npcs at collision point
+  - ✅ cancel both npcs at collision point
+  - 🚧 sometimes passes through e.g. radius too small?
   - implement `npc.detectCollision()` in general case
     - i.e. solve quadratic equation
   - ...
