@@ -74,13 +74,13 @@ export default function NPCs(props) {
       const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
       const [iA, iB] = [segA?.src || npcA.getPosition(), segB?.src || npcB.getPosition()];
       const iAB = iA.clone().sub(iB), distABSq = iAB.lengthSquared;
-      if (distABSq <= npcRadius * npcRadius) {
-        return { seconds: 0, distA: 0, distB: 0 };
-      }
 
       const dotProd = segA ? segA.tangent.dot(iAB) : segB ? -segB.tangent.dot(iAB) : 0;
-      if (dotProd >= 0) {// A not moving towards B or vice-versa
-        return null;
+      if (dotProd >= 0) {// Npcs not moving towards each other
+        return null; // Permits escape
+      }
+      if (distABSq <= (2 * npcRadius) * (2 * npcRadius)) {
+        return { seconds: 0, distA: 0, distB: 0 };
       }
 
       if (segA && segB) {
@@ -94,7 +94,7 @@ export default function NPCs(props) {
          * Solving `a.t^2 + b.t + c ≤ 0`,
          * - `a := npcSpeed^2`
          * - `b := 2.npcSpeed.dotProd`
-         * - `c := distABSq - npcRadius^2`
+         * - `c := distABSq - (2.npcRadius)^2`
          * 
          * Solutions are
          * ```js
@@ -102,11 +102,11 @@ export default function NPCs(props) {
          * (-b ± 2.npcSpeed.√inSqrt) / 2a
          * ```
          */
-        const inSqrt = (dotProd ** 2) - distABSq + (npcRadius ** 2);
+        const inSqrt = (dotProd ** 2) - distABSq + ((2 * npcRadius) ** 2);
         let seconds = 0;
         if (// Real-valued solution(s) exist and occur during line seg
           inSqrt > 0 && (
-            seconds = (-dotProd - 2 * Math.sqrt(inSqrt)) * (1 / npcSpeed)
+            seconds = (-dotProd - Math.sqrt(inSqrt)) * (1 / npcSpeed)
           ) <= Math.sqrt(distABSq) / npcSpeed
         ) {
           const distA = seconds * npcSpeed;

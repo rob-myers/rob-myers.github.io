@@ -310,7 +310,7 @@ export default function createNpc(
     },
     updateAnimAux() {
       const { aux } = anim;
-      aux.bounds = Rect.fromPoints(...anim.path);
+      aux.bounds = Rect.fromPoints(...anim.path).outset(npcRadius);
       aux.edges = anim.path.map((p, i) => ({ p, q: anim.path[i + 1] })).slice(0, -1);
       aux.angs = aux.edges.map(e => Number(Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2)));
       aux.elens = aux.edges.map(({ p, q }) => Number(p.distanceTo(q).toFixed(2)));
@@ -363,14 +363,16 @@ export default function createNpc(
  */
 export const npcScale = 0.19;
 
-const npcOrigRadius = 40;
+/** Radius inside SVG */
+const npcRadiusInSvg = 40;
 
 /** Ensure NPC faces along positive x-axis */
 export const npcOffsetRadians = 0;
 
-export const npcRadius = npcOrigRadius * npcScale * npcJson.zoom;
+export const npcRadius = npcRadiusInSvg * npcScale * npcJson.zoom;
 
 export const defaultNpcInteractRadius = npcRadius * 3;
+// export const defaultNpcInteractRadius = npcRadius;
 
 /** Number of world units per second. */
 export const npcSpeed = 70;

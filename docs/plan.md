@@ -34,10 +34,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - then `npc.getSpeed()` is globally constant
   - ✅ implement `npc.detectCollision()` when one npc static
   - ✅ cancel both npcs at collision point
-  - 🚧 sometimes passes through e.g. radius too small?
+  - ✅ sometimes passes through e.g. radius too small?
   - implement `npc.detectCollision()` in general case
-    - i.e. solve quadratic equation
-  - ...
+  - non-player npc avoids collisions too
 
 - try sorting out shell HMR
 
