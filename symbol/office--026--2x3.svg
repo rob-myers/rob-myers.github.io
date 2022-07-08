@@ -31,13 +31,16 @@
       <title>wall</title>
     </rect>
     <rect x="390.9" y="40.9" width="90.9" height="90.9" style="fill: rgb(216, 216, 216);">
-      <title>label office</title>
+      <title>label office | room</title>
     </rect>
     <rect x="300" y="699.9" width="90.9" height="90.9" style="fill: rgb(216, 216, 216);">
       <title>label cpu</title>
     </rect>
     <rect y="147" width="67" height="307" style="fill-opacity: 0.5;" x="-34">
       <title>window</title>
+    </rect>
+    <rect x="280" width="20" height="600" style="stroke: rgb(0, 0, 0); fill: rgb(221, 221, 221); fill-opacity: 0.3; pointer-events: auto;" transform="matrix(0, 1, -1, 0, 600, -100)">
+      <title>relate-connectors</title>
     </rect>
   </g>
 </svg>

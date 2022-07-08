@@ -28,7 +28,7 @@
       <title>door n</title>
     </rect>
     <rect x="209.1" y="209.1" width="90.9" height="90.9" style="fill: rgb(216, 216, 216);">
-      <title>label medical</title>
+      <title>label medical | room</title>
     </rect>
     <rect y="-10" width="20" height="610" style="fill-opacity: 0.5; fill: rgb(255, 255, 0);" x="-10">
       <title>wall</title>
