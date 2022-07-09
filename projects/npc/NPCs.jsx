@@ -13,7 +13,7 @@ import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
 import { getNumericCssVar } from "../service/dom";
-import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor, npcSpeed } from "./create-npc";
+import createNpc, { defaultNpcInteractRadius, npcSpeed } from "./create-npc";
 import { scrollback } from "../sh/io/io.model";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -122,6 +122,7 @@ export default function NPCs(props) {
         const speed = segA ? npcA.getSpeed() : npcB.getSpeed();
         /**
          * seg vs static
+         * TODO sometimes late collision
          * 
          * Solving `a.t^2 + b.t + c ≤ 0`,
          * - `a := speed^2`
@@ -479,7 +480,7 @@ export default function NPCs(props) {
             console.warn('@', status);
             try {
               const path = npc.getTargets().map(x => x.point);
-              await props.panZoomApi.followPath(path, { animScaleFactor: npcAnimScaleFactor });
+              await props.panZoomApi.followPath(path, { animScaleFactor: npc.getAnimScaleFactor() });
             } catch {} // Ignore Error('cancelled')
           }
         },

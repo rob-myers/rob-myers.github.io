@@ -76,6 +76,8 @@ declare namespace NPC {
     /** Radians */
     getAngle(): number;
     getAnimDef(): NpcAnimDef;
+    /** Used to scale up how long it takes to move along navpath */
+    getAnimScaleFactor(): number;
     getBounds(): Geom.Rect;
     getLineSeg(): null | {
       src: Geom.Vect;

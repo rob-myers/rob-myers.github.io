@@ -131,8 +131,11 @@ export default function createNpc(
             transform: `rotateZ(${aux.angs[i] || aux.angs[i - 1] || 0}rad) scale(${npcScale})`
           },
         ]),
-        opts: { duration: aux.total * npcAnimScaleFactor, direction: 'normal', fill: 'forwards' },
+        opts: { duration: aux.total * this.getAnimScaleFactor(), direction: 'normal', fill: 'forwards' },
       };
+    },
+    getAnimScaleFactor() {
+      return 1000 / this.getSpeed();
     },
     getBounds() {
       const center = this.getPosition();
@@ -171,6 +174,7 @@ export default function createNpc(
      * - we use an offset `motionMs` to end mid-frame
      */
     getSpriteDuration(nextMotionMs) {
+      const npcWalkAnimDurationMs = ( 1 / this.getSpeed() ) * (animLookup.walk.totalDist * npcScale) * 1000;
       const baseSpriteMs = npcWalkAnimDurationMs;
       const motionMs = nextMotionMs - (0.5 * (npcWalkAnimDurationMs / animLookup.walk.frameCount));
       return motionMs < baseSpriteMs / 2
@@ -181,7 +185,7 @@ export default function createNpc(
     getTarget() {
       if (anim.spriteSheet === "walk" && anim.translate.currentTime !== null) {
         const soFarMs = anim.translate.currentTime;
-        const nextIndex = anim.aux.sofars.findIndex(sofar => (sofar * npcAnimScaleFactor) > soFarMs);
+        const nextIndex = anim.aux.sofars.findIndex(sofar => (sofar * this.getAnimScaleFactor()) > soFarMs);
         // Expect -1 iff at final point
         return nextIndex === -1 ? null : anim.path[nextIndex].clone();
       } else {
@@ -191,8 +195,9 @@ export default function createNpc(
     getTargets() {
       if (anim.spriteSheet === "walk" && anim.translate.currentTime !== null) {
         const soFarMs = anim.translate.currentTime;
+        const animScaleFactor = this.getAnimScaleFactor();
         return anim.aux.sofars
-          .map((sofar, i) => ({ point: anim.path[i].clone(), arriveMs: (sofar * npcAnimScaleFactor) - soFarMs }))
+          .map((sofar, i) => ({ point: anim.path[i].clone(), arriveMs: (sofar * animScaleFactor) - soFarMs }))
           .filter(x => x.arriveMs >= 0)
       } else {
         return [];
@@ -224,7 +229,7 @@ export default function createNpc(
       if (anim.wayMetas[0]) {
         anim.wayTimeoutId = window.setTimeout(
           this.wayTimeout.bind(this),
-          (anim.wayMetas[0].length * npcAnimScaleFactor) - anim.translate.currentTime,
+          (anim.wayMetas[0].length * this.getAnimScaleFactor()) - anim.translate.currentTime,
         );
       }
     },
@@ -348,7 +353,10 @@ export default function createNpc(
         if (anim.translate.currentTime === null) console.warn('wayTimeout: anim.root.currentTime is null');
         if (anim.spriteSheet === 'idle') console.warn('wayTimeout: anim.spriteSheet is "idle"');
         return;
-      } else if (anim.translate.currentTime >= (anim.wayMetas[0].length * npcAnimScaleFactor) - 1) {
+      } else if (
+        anim.translate.currentTime >=
+        (anim.wayMetas[0].length * this.getAnimScaleFactor()) - 1
+      ) {
         /**
          * We've reached the wayMeta's `length`,
          * so remove it and trigger respective event.
@@ -382,11 +390,7 @@ export const defaultNpcInteractRadius = npcRadius * 3;
 
 /** Number of world units per second. */
 export const npcSpeed = 70;
-
-/** Used to scale up how long it takes to move along navpath */
-export const npcAnimScaleFactor = 1000 * (1 / npcSpeed);
-
-const npcWalkAnimDurationMs = ( 1 / npcSpeed ) * (animLookup.walk.totalDist * npcScale) * 1000;
+// export const npcSpeed = 10;
 
 /** @type {Record<NPC.NavMetaKey, number>} */
 const navMetaOffsets = {
