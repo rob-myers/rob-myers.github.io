@@ -75,8 +75,7 @@ export default function NPCs(props) {
       /** i_AB := iA - iB is actually vector from B to A */
       const iAB = iA.clone().sub(iB), distABSq = iAB.lengthSquared;
       /** Minimum non-colliding distance between npcs */
-      // const minDist = (npcA.getRadius() + npcB.getRadius()) * 0.9;
-      const minDist = (npcA.getRadius() + npcB.getRadius()) * 1;
+      const minDist = (npcA.getRadius() + npcB.getRadius()) * 0.9;
 
       const dpA = segA ? segA.tangent.dot(iAB) : NaN;
       const dpB = segB ? segB.tangent.dot(iAB) : NaN;
@@ -91,11 +90,11 @@ export default function NPCs(props) {
         const dirDp = segA.tangent.dot(segB.tangent);
         const [speedA, speedB] = [npcA.getSpeed(), npcB.getSpeed()];
         /**
-         * TODO seg vs seg 🚧
+         * seg vs seg
          * 
          * Solving `a.t^2 + b.t + c ≤ 0`,
          * - `a := speedA^2 + speedB^2 - 2.speedA.speedB.dirDp`
-         * - `b := 2.(speedA.dpA + speedB.dpB)`
+         * - `b := 2.(speedA.dpA - speedB.dpB)`
          * - `c := distABSq - minDist^2`
          * 
          * Solutions are
@@ -104,7 +103,7 @@ export default function NPCs(props) {
          * (-b ± √inSqrt) / 2a
          */
         const a = (speedA ** 2) + (speedB ** 2) - 2 * speedA * speedB * dirDp;
-        const b = 2 * (speedA * dpA + speedB * dpB);
+        const b = 2 * (speedA * dpA - speedB * dpB);
         const c = distABSq - (minDist ** 2);
         const inSqrt = (b ** 2) - (4 * a * c);
 
@@ -112,7 +111,7 @@ export default function NPCs(props) {
         if (
           inSqrt > 0 && (
             seconds = (-b - Math.sqrt(inSqrt)) / (2 * a)
-          ) <= Math.sqrt(distABSq) / speedA
+          ) <= segA.src.distanceTo(segA.dst) / speedA
         ) {
           return { seconds, distA: seconds * speedA, distB: seconds * speedB };
         }
@@ -123,7 +122,6 @@ export default function NPCs(props) {
         const seg = /** @type {NPC.NpcLineSeg} */ (segA || segB);
         /**
          * seg vs static
-         * TODO sometimes late collision
          * 
          * Solving `a.t^2 + b.t + c ≤ 0`,
          * - `a := speed^2`

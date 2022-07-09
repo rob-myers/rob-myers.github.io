@@ -26,7 +26,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- 🚧 npc walk collision prevention
+- ✅ debug moving collision 
+  - `b` was slightly wrong
+
+- ✅ npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
   - ✅ implement `npc.getSpeed()` constant for each path, not over all paths
   - ✅ implement `npc.getLineSeg()`
@@ -40,7 +43,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - ✅ npc radius comes from css var
     - ✅ write down general quadratic
       - some symmetry not understood...
-    - 🚧 implement code
+    - ✅ implement code
 
 - try sorting out shell HMR
 
