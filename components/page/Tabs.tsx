@@ -180,6 +180,16 @@ const rootCss = css`
 
   .flexlayout__layout {
     background: #444;
+    @media (max-width: 600px) {
+      .flexlayout__splitter.flexlayout__splitter_horz {
+        transform: translateY(-4px);
+        height: calc(12px + 4px) !important;
+      }
+      .flexlayout__splitter.flexlayout__splitter_vert {
+        transform: translateX(-4px);
+        width: calc(12px + 4px);
+      }
+    }
   }
   .flexlayout__tab {
     /** Pixel 5: white lines when 4px */
