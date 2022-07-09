@@ -75,11 +75,12 @@ export default function NPCs(props) {
       /** i_AB := iA - iB is actually vector from B to A */
       const iAB = iA.clone().sub(iB), distABSq = iAB.lengthSquared;
       /** Minimum non-colliding distance between npcs */
-      const minDist = (npcA.getRadius() + npcB.getRadius()) * 0.9;
+      // const minDist = (npcA.getRadius() + npcB.getRadius()) * 0.9;
+      const minDist = (npcA.getRadius() + npcB.getRadius()) * 1;
 
       const dpA = segA ? segA.tangent.dot(iAB) : NaN;
-      const dpB = segB ? -segB.tangent.dot(iAB) : NaN;
-      if (dpA >= 0 || dpB >= 0) {// Npcs not moving towards each other
+      const dpB = segB ? segB.tangent.dot(iAB) : NaN;
+      if (dpA >= 0 || dpB <= 0) {// Npcs not moving towards each other
         return null;
       }
       if (distABSq <= minDist ** 2) {
@@ -88,17 +89,36 @@ export default function NPCs(props) {
 
       if (segA && segB) {
         const dirDp = segA.tangent.dot(segB.tangent);
+        const [speedA, speedB] = [npcA.getSpeed(), npcB.getSpeed()];
         /**
-         * TODO seg vs seg
+         * TODO seg vs seg 🚧
          * 
          * Solving `a.t^2 + b.t + c ≤ 0`,
-         * - `a := sA^2 + sB^2 - 2.s_A.s_B. dirDp`
-         * - `b := 2.speed.dotProd` 🚧 
-         * - `c := distABSq - minDist^2`🚧
+         * - `a := speedA^2 + speedB^2 - 2.speedA.speedB.dirDp`
+         * - `b := 2.(speedA.dpA + speedB.dpB)`
+         * - `c := distABSq - minDist^2`
          * 
+         * Solutions are
+         * ```js
+         * (-b ± √(b^2 - 4ac)) / 2a // i.e.
+         * (-b ± √inSqrt) / 2a
          */
+        const a = (speedA ** 2) + (speedB ** 2) - 2 * speedA * speedB * dirDp;
+        const b = 2 * (speedA * dpA + speedB * dpB);
+        const c = distABSq - (minDist ** 2);
+        const inSqrt = (b ** 2) - (4 * a * c);
+
+        let seconds = 0;
+        if (
+          inSqrt > 0 && (
+            seconds = (-b - Math.sqrt(inSqrt)) / (2 * a)
+          ) <= Math.sqrt(distABSq) / speedA
+        ) {
+          return { seconds, distA: seconds * speedA, distB: seconds * speedB };
+        }
+
       } else if (segA || segB) {
-        const dp = /** @type {number} */ (segA ? dpA : dpB);
+        const dp = /** @type {number} */ (segA ? dpA : -dpB);
         const speed = segA ? npcA.getSpeed() : npcB.getSpeed();
         /**
          * seg vs static
@@ -110,7 +130,7 @@ export default function NPCs(props) {
          * 
          * Solutions are
          * ```js
-         * (-b ± √(b^2 - 4ac)) / 2a // equivalently:
+         * (-b ± √(b^2 - 4ac)) / 2a // i.e.
          * (-b ± 2.speed.√inSqrt) / 2a
          * ```
          */
@@ -122,7 +142,7 @@ export default function NPCs(props) {
           ) <= Math.sqrt(distABSq) / speed
         ) {
           const distA = seconds * speed;
-          return { seconds, distA, distB: distA /** TODO different speeds */ };
+          return { seconds, distA, distB: distA };
         }
       } else {
         // Either static non-intersecting, or moving away from each other

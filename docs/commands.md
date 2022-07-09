@@ -155,3 +155,9 @@ npc get andros | map 'x => x.getPosition()' >iA
 npc get foo | map 'x => x.getPosition()' >iB
 call '({ home }) => home.iA.distanceTo(home.iB)'
 ```
+
+```sh
+nav foo $( click 1 ) |
+  run '({ api }) { const datum = await api.read(); yield* api.sleep(2); yield datum; }' |
+  walk foo
+```

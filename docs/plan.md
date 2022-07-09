@@ -26,6 +26,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- static collision `length` issue
+  - should be at _current length_ plus distance...
+
 - 🚧 npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
   - ✅ implement `npc.getSpeed()` constant for each path, not over all paths
@@ -35,12 +38,12 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ implement `npc.detectCollision()` when one npc static
   - ✅ cancel both npcs at collision point
   - ✅ sometimes passes through e.g. radius too small?
+  - ✅ non-player npc avoids collisions too
   - implement `npc.detectCollision()` in general case
     - ✅ npc radius comes from css var
     - ✅ write down general quadratic
       - some symmetry not understood...
     - 🚧 implement code
-  - ✅ non-player npc avoids collisions too
 
 - try sorting out shell HMR
 

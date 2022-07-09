@@ -354,7 +354,7 @@ export default function createNpc(
          * so remove it and trigger respective event.
          */
         const wayMeta = /** @type { NPC.WayPointMeta} */ (anim.wayMetas.shift());
-        console.log(wayMeta); // DEBUG 🚧
+        console.log('WayMeta', this.key, wayMeta); // DEBUG 🚧
         npcs.events.next({ key: 'way-point', npcKey: this.def.key, meta: wayMeta });
       }
       this.nextWayTimeout();
@@ -395,5 +395,5 @@ const navMetaOffsets = {
   'pre-collide': -0.02,
   "pre-exit-room": -(npcRadius + 10), // TODO better way
   "pre-near-door": -(npcRadius + 10), // TODO better way
-  "start-seg": 0,
+  "start-seg": -0.2, // Prefer earlier collision
 };
