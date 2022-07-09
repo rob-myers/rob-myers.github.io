@@ -72,12 +72,14 @@ export default function NPCs(props) {
 
       const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
       const [iA, iB] = [segA?.src || npcA.getPosition(), segB?.src || npcB.getPosition()];
+      /** i_AB := iA - iB is actually vector from B to A */
       const iAB = iA.clone().sub(iB), distABSq = iAB.lengthSquared;
       /** Minimum non-colliding distance between npcs */
       const minDist = (npcA.getRadius() + npcB.getRadius()) * 0.9;
 
-      const dotProd = segA ? segA.tangent.dot(iAB) : segB ? -segB.tangent.dot(iAB) : 0;
-      if (dotProd >= 0) {// Npcs not moving towards each other
+      const dpA = segA ? segA.tangent.dot(iAB) : NaN;
+      const dpB = segB ? -segB.tangent.dot(iAB) : NaN;
+      if (dpA >= 0 || dpB >= 0) {// Npcs not moving towards each other
         return null;
       }
       if (distABSq <= minDist ** 2) {
@@ -85,32 +87,41 @@ export default function NPCs(props) {
       }
 
       if (segA && segB) {
+        const dirDp = segA.tangent.dot(segB.tangent);
         /**
          * TODO seg vs seg
+         * 
+         * Solving `a.t^2 + b.t + c ≤ 0`,
+         * - `a := sA^2 + sB^2 - 2.s_A.s_B. dirDp`
+         * - `b := 2.speed.dotProd` 🚧 
+         * - `c := distABSq - minDist^2`🚧
+         * 
          */
       } else if (segA || segB) {
+        const dp = /** @type {number} */ (segA ? dpA : dpB);
+        const speed = segA ? npcA.getSpeed() : npcB.getSpeed();
         /**
          * seg vs static
          * 
          * Solving `a.t^2 + b.t + c ≤ 0`,
-         * - `a := npcSpeed^2`
-         * - `b := 2.npcSpeed.dotProd`
+         * - `a := speed^2`
+         * - `b := 2.speed.dp`
          * - `c := distABSq - minDist^2`
          * 
          * Solutions are
          * ```js
          * (-b ± √(b^2 - 4ac)) / 2a // equivalently:
-         * (-b ± 2.npcSpeed.√inSqrt) / 2a
+         * (-b ± 2.speed.√inSqrt) / 2a
          * ```
          */
-        const inSqrt = (dotProd ** 2) - distABSq + (minDist ** 2);
+        const inSqrt = (dp ** 2) - distABSq + (minDist ** 2);
         let seconds = 0;
         if (// Real-valued solution(s) exist and occur during line seg
           inSqrt > 0 && (
-            seconds = (-dotProd - Math.sqrt(inSqrt)) * (1 / npcSpeed)
-          ) <= Math.sqrt(distABSq) / npcSpeed
+            seconds = (-dp - Math.sqrt(inSqrt)) * (1 / speed)
+          ) <= Math.sqrt(distABSq) / speed
         ) {
-          const distA = seconds * npcSpeed;
+          const distA = seconds * speed;
           return { seconds, distA, distB: distA /** TODO different speeds */ };
         }
       } else {
@@ -380,7 +391,11 @@ export default function NPCs(props) {
       } else if (!state.isPointLegal(e.point)) {
         throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.point)}`);
       }
-      state.npc[e.npcKey]= createNpc(e.npcKey, e.point, {
+      state.npc[e.npcKey]= createNpc(e.npcKey, {
+        position: e.point,
+        angle: 0,
+        speed: npcSpeed,
+      }, {
         disabled: props.disabled,
         panZoomApi: props.panZoomApi,
         npcs: state,

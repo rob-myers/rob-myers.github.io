@@ -10,13 +10,13 @@ const {animLookup} = npcJson;
 
 /**
  * @param {string} npcKey 
- * @param {Geom.VectJson} position 
+ * @param {{ position: Geom.VectJson; speed: number; angle: number; }} def 
  * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; npcs: NPC.NPCs; }} deps
  * @returns {NPC.NPC}
  */
 export default function createNpc(
   npcKey,
-  position,
+  def,
   { disabled, panZoomApi, npcs },
 ) {
 
@@ -39,7 +39,7 @@ export default function createNpc(
     key: npcKey,
     epochMs: Date.now(),
     // TODO hook up initial angle
-    def: { key: npcKey, position, angle: 0, paused: !!disabled },
+    def: { key: npcKey, position: def.position, angle: def.angle, paused: !!disabled },
     el: {
       root: /** @type {HTMLDivElement} */ ({}),
       body: /** @type {HTMLDivElement} */ ({}),
@@ -162,7 +162,7 @@ export default function createNpc(
       return getNumericCssVar(this.el.root, cssName.npcBoundsRadius);
     },
     getSpeed() {
-      return npcSpeed;
+      return def.speed;
     },
     /**
      * Shorten duration of anim.sprites slightly,
@@ -233,7 +233,7 @@ export default function createNpc(
         this.el.root = rootEl;
         this.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
         this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
-        this.setLookTarget(0); // Set CSS variable
+        this.setLookTarget(def.angle); // Set CSS variable
         this.el.root.style.setProperty(cssName.npcBoundsRadius, `${npcRadius}px`);
       }
     },

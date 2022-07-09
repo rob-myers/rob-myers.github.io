@@ -37,7 +37,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ sometimes passes through e.g. radius too small?
   - implement `npc.detectCollision()` in general case
     - ✅ npc radius comes from css var
-    - 🚧 write down general quadratic
+    - ✅ write down general quadratic
+      - some symmetry not understood...
+    - 🚧 implement code
   - ✅ non-player npc avoids collisions too
 
 - try sorting out shell HMR

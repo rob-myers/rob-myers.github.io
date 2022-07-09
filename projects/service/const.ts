@@ -21,6 +21,7 @@ export const cssName = {
   open: 'open',
 } as const;
 
+/** Decimal place precision */
 export const precision = 4;
 
 //#region npcs
