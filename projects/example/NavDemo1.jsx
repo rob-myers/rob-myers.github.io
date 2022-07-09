@@ -29,173 +29,181 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
-  const state = useStateRef(() => {
-    return {
-      gmId: 0, roomId: 9,
-      // gmId: 0, roomId: 2,
-      // gmId: 0, roomId: 15, // ISSUE
-      // gmId: 1, roomId: 5,
-      // gmId: 1, roomId: 22,
-      // gmId: 2, roomId: 2,
-      // gmId: 3, roomId: 26,
+  const state = useStateRef(() => ({
+    gmId: 0, roomId: 9,
+    // gmId: 0, roomId: 2,
+    // gmId: 0, roomId: 15, // ISSUE
+    // gmId: 1, roomId: 5,
+    // gmId: 1, roomId: 22,
+    // gmId: 2, roomId: 2,
+    // gmId: 3, roomId: 26,
 
-      initOpen: { 0: [24] },
-      clipPath: gms.map(_ => 'none'),
+    initOpen: { 0: [24] },
+    clipPath: gms.map(_ => 'none'),
 
-      doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
-      panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
-      npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
+    doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
+    panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
+    npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
 
-      /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
-      async handlePlayerWayEvent(e) {
-        // console.log('player way event', e);
-
-        switch (e.meta.key) {
-          case 'exit-room':
-            // Player left a room
-            if (e.meta.otherRoomId !== null) {
-              [state.gmId, state.roomId] = [e.meta.gmId, e.meta.otherRoomId];
-            } else {// Handle hull doors
-              const adjCtxt = gmGraph.getAdjacentRoomCtxt(e.meta.gmId, e.meta.hullDoorId);
-              if (adjCtxt) {
-                [state.gmId, state.roomId] = [adjCtxt.adjGmId, adjCtxt.adjRoomId];
-              }
-            }
-            state.updateAll();
-            break;
-          case 'enter-room':
-            // Player can re-enter room from doorway without entering/exiting other
-            if (!(state.gmId === e.meta.gmId && state.roomId === e.meta.enteredRoomId)) {
-              state.gmId = e.meta.gmId;
-              state.roomId = e.meta.enteredRoomId;
-              state.updateAll();
-            }
-            break;
-          case 'pre-exit-room':
-          case 'pre-near-door':
-            // If upcoming door is closed, stop player
-            if (!state.doorsApi.open[e.meta.gmId][e.meta.doorId]) {
-              const player = state.npcsApi.getNpc(e.npcKey);
-              await player.cancel();
-            }
-            break;
-          /**
-           * IN PROGRESS
-           */
-          case 'start-seg': {
-            const player = state.npcsApi.getNpc(e.npcKey);
-            const others = Object.values(state.npcsApi.npc).filter(x => x !== player);
-            for (const other of others) {
-              const collision = state.npcsApi.detectCollision(player, other);
-              if (collision) {
-                console.warn('future collision', other.key, collision);
-                // Add wayMeta cancelling motion
-                const length = e.meta.length + collision.distA;
-                const insertIndex = player.anim.wayMetas.findIndex(x => x.length >= length);
-                player.anim.wayMetas.splice(insertIndex, 0, {
-                  key: 'pre-collide',
-                  index: e.meta.index,
-                  otherNpcKey: other.key,
-                  gmId: e.meta.gmId,
-                  length,
-                });
-              }
-            }
-            break;
-          }
-          case 'pre-collide': {
-            const player = state.npcsApi.getNpc(e.npcKey);
-            const other = state.npcsApi.getNpc(e.meta.otherNpcKey);
-            player.cancel();
-            other.cancel();
-            break;
-          }
-          default:
-            throw testNever(e.meta);
+    /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
+    handleCollisions(e) {
+      switch (e.meta.key) {
+        case 'pre-collide': {
+          const npc = state.npcsApi.getNpc(e.npcKey);
+          const other = state.npcsApi.getNpc(e.meta.otherNpcKey);
+          npc.cancel();
+          other.cancel();
+          break;
         }
-      },
-      /**
-       * @param {number} gmId 
-       * @param {number} doorId 
-       */
-      playerNearDoor(gmId, doorId) {
-        const player = state.npcsApi.getPlayer();
-        if (!player) { // If no player, we are "everywhere"
-          return true;
+        /**
+         * IN PROGRESS
+         */
+        case 'start-seg': {
+          const npc = state.npcsApi.getNpc(e.npcKey);
+          const others = Object.values(state.npcsApi.npc).filter(x => x !== npc);
+
+          for (const other of others) {
+            const collision = state.npcsApi.detectCollision(npc, other);
+
+            if (collision) {// Add wayMeta cancelling motion
+              console.warn(`${npc.key} will collide with ${other.key}`, collision);
+              const length = e.meta.length + collision.distA;
+              const insertIndex = npc.anim.wayMetas.findIndex(x => x.length >= length);
+              npc.anim.wayMetas.splice(insertIndex, 0, {
+                key: 'pre-collide',
+                index: e.meta.index,
+                otherNpcKey: other.key,
+                gmId: e.meta.gmId,
+                length,
+              });
+            }
+          }
+          break;
         }
-        const center = player.getPosition();
-        const radius = state.npcsApi.getNpcInteractRadius();
-        const door = gms[gmId].doors[doorId];
-        const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
-        return geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
-      },
-      /**
-       * @param {number} gmId 
-       * @param {number} doorId 
-       */
-      safeToCloseDoor(gmId, doorId) {
-        const door = gms[gmId].doors[doorId];
-        const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
-        const closeNpcs = state.npcsApi.getNpcsIntersecting(convexPoly);
-        return closeNpcs.length === 0;
-      },
-      /** @param {string} npcKey */
-      setRoomByNpc(npcKey) {
-        const npc = state.npcsApi.getNpc(npcKey);
-        const position = npc.getPosition();
-        const found = gmGraph.findRoomContaining(position);
-        if (found) {
-          [state.gmId, state.roomId] = [found.gmId, found.roomId];
+      }
+    },
+
+    /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
+    async handlePlayerWayEvent(e) {
+      // console.log('player way event', e);
+
+      switch (e.meta.key) {
+        case 'exit-room':
+          // Player left a room
+          if (e.meta.otherRoomId !== null) {
+            [state.gmId, state.roomId] = [e.meta.gmId, e.meta.otherRoomId];
+          } else {// Handle hull doors
+            const adjCtxt = gmGraph.getAdjacentRoomCtxt(e.meta.gmId, e.meta.hullDoorId);
+            if (adjCtxt) {
+              [state.gmId, state.roomId] = [adjCtxt.adjGmId, adjCtxt.adjRoomId];
+            }
+          }
           state.updateAll();
-        } else {// TODO error in terminal?
-          console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
-        }
-      },
-      updateAll() {
-        state.updateClipPath();
-        state.updateVisibleDoors();
-        update();
-      },
-      updateClipPath() {
-        const gm = gms[state.gmId]
-        const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
-        const openDoorsIds = state.doorsApi.getOpen(state.gmId);
-
-        // Compute light polygons for current geomorph and possibly adjacent ones
-        const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.roomId, openDoorsIds);
-        // Compute respective maskPolys
-        gms.forEach((otherGm, otherGmId) => {
-          const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
-          if (otherGm === gm) {// Lights for current geomorph includes _current room_
-            const roomWithDoors = gm.roomsWithDoors[state.roomId]
-            // Cut one-by-one prevents Error like https://github.com/mfogel/polygon-clipping/issues/115
-            maskPolys[otherGmId] = polys.concat(roomWithDoors).reduce((agg, cutPoly) => Poly.cutOut([cutPoly], agg), [otherGm.hullOutline])
-            // maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoors), [otherGm.hullOutline]);
-          } else {
-            maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
+          break;
+        case 'enter-room':
+          // Player can re-enter room from doorway without entering/exiting other
+          if (!(state.gmId === e.meta.gmId && state.roomId === e.meta.enteredRoomId)) {
+            state.gmId = e.meta.gmId;
+            state.roomId = e.meta.enteredRoomId;
+            state.updateAll();
           }
-        });
-        // Set the clip-paths
-        maskPolys.forEach((maskPoly, gmId) => {// <img> top-left needn't be at world origin
-          maskPoly.forEach(poly => poly.translate(-gms[gmId].pngRect.x, -gms[gmId].pngRect.y));
-          const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
-          state.clipPath[gmId] = svgPaths.length ? `path('${svgPaths}')` : 'none';
-        });
-      },
-      updateVisibleDoors() {
-        const gm = gms[state.gmId]
+          break;
+        case 'pre-exit-room':
+        case 'pre-near-door':
+          // If upcoming door is closed, stop player
+          if (!state.doorsApi.open[e.meta.gmId][e.meta.doorId]) {
+            const player = state.npcsApi.getNpc(e.npcKey);
+            await player.cancel();
+          }
+          break;
+        case 'start-seg':
+        case 'pre-collide':
+          break;
+        default:
+          throw testNever(e.meta);
+      }
+    },
+    /**
+     * @param {number} gmId 
+     * @param {number} doorId 
+     */
+    playerNearDoor(gmId, doorId) {
+      const player = state.npcsApi.getPlayer();
+      if (!player) { // If no player, we are "everywhere"
+        return true;
+      }
+      const center = player.getPosition();
+      const radius = state.npcsApi.getNpcInteractRadius();
+      const door = gms[gmId].doors[doorId];
+      const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
+      return geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
+    },
+    /**
+     * @param {number} gmId 
+     * @param {number} doorId 
+     */
+    safeToCloseDoor(gmId, doorId) {
+      const door = gms[gmId].doors[doorId];
+      const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
+      const closeNpcs = state.npcsApi.getNpcsIntersecting(convexPoly);
+      return closeNpcs.length === 0;
+    },
+    /** @param {string} npcKey */
+    setRoomByNpc(npcKey) {
+      const npc = state.npcsApi.getNpc(npcKey);
+      const position = npc.getPosition();
+      const found = gmGraph.findRoomContaining(position);
+      if (found) {
+        [state.gmId, state.roomId] = [found.gmId, found.roomId];
+        state.updateAll();
+      } else {// TODO error in terminal?
+        console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
+      }
+    },
+    updateAll() {
+      state.updateClipPath();
+      state.updateVisibleDoors();
+      update();
+    },
+    updateClipPath() {
+      const gm = gms[state.gmId]
+      const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
+      const openDoorsIds = state.doorsApi.getOpen(state.gmId);
 
-        /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
-        const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
-        nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(state.roomId).map(x => x.doorId);
-        gm.roomGraph.getAdjacentHullDoorIds(gm, state.roomId).flatMap(({ hullDoorIndex }) =>
-          gmGraph.getAdjacentRoomCtxt(state.gmId, hullDoorIndex) || []
-        ).forEach(({ adjGmId, adjDoorId }) => (nextVis[adjGmId] = nextVis[adjGmId] || []).push(adjDoorId));
+      // Compute light polygons for current geomorph and possibly adjacent ones
+      const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.roomId, openDoorsIds);
+      // Compute respective maskPolys
+      gms.forEach((otherGm, otherGmId) => {
+        const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
+        if (otherGm === gm) {// Lights for current geomorph includes _current room_
+          const roomWithDoors = gm.roomsWithDoors[state.roomId]
+          // Cut one-by-one prevents Error like https://github.com/mfogel/polygon-clipping/issues/115
+          maskPolys[otherGmId] = polys.concat(roomWithDoors).reduce((agg, cutPoly) => Poly.cutOut([cutPoly], agg), [otherGm.hullOutline])
+          // maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoors), [otherGm.hullOutline]);
+        } else {
+          maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
+        }
+      });
+      // Set the clip-paths
+      maskPolys.forEach((maskPoly, gmId) => {// <img> top-left needn't be at world origin
+        maskPoly.forEach(poly => poly.translate(-gms[gmId].pngRect.x, -gms[gmId].pngRect.y));
+        const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
+        state.clipPath[gmId] = svgPaths.length ? `path('${svgPaths}')` : 'none';
+      });
+    },
+    updateVisibleDoors() {
+      const gm = gms[state.gmId]
 
-        gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextVis[gmId]));
-      },
-    };
-  }, {
+      /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
+      const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
+      nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(state.roomId).map(x => x.doorId);
+      gm.roomGraph.getAdjacentHullDoorIds(gm, state.roomId).flatMap(({ hullDoorIndex }) =>
+        gmGraph.getAdjacentRoomCtxt(state.gmId, hullDoorIndex) || []
+      ).forEach(({ adjGmId, adjDoorId }) => (nextVis[adjGmId] = nextVis[adjGmId] || []).push(adjDoorId));
+
+      gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextVis[gmId]));
+    },
+  }), {
     overwrite: { gmId: true, roomId: true },
     deps: [gms, gmGraph],
   });
@@ -212,20 +220,32 @@ export default function NavDemo1(props) {
 
       // React to NPC events
       const npcsSub = state.npcsApi.events.subscribe((e) => {
-        if (e.key === 'set-player') {
-          state.npcsApi.playerKey = e.npcKey || null;
-          e.npcKey && state.setRoomByNpc(e.npcKey)
-        }
-        if (e.key === 'way-point' && e.npcKey === state.npcsApi.playerKey) {
-          state.handlePlayerWayEvent(e);
-        }
-        if (e.key === 'decor') {
-          state.npcsApi.setDecor(e.meta.key, e.meta);
-        }
-        if (e.key === 'spawned-npc') {
-          if (state.npcsApi.playerKey === e.npcKey) {
-            state.setRoomByNpc(e.npcKey);
-          }
+        switch (e.key) {
+          case 'decor':
+            state.npcsApi.setDecor(e.meta.key, e.meta);
+            break;
+          case 'set-player':
+            state.npcsApi.playerKey = e.npcKey || null;
+            e.npcKey && state.setRoomByNpc(e.npcKey)
+            break;
+          case 'spawned-npc':
+            if (state.npcsApi.playerKey === e.npcKey) {
+              state.setRoomByNpc(e.npcKey);
+            }
+            break;
+          case 'started-walking':
+          case 'stopped-walking':
+            break;
+          case 'way-point':
+            if (e.npcKey === state.npcsApi.playerKey) {
+              state.handlePlayerWayEvent(e);
+            }
+            if (e.meta.key === 'start-seg' || e.meta.key === 'pre-collide') {
+              state.handleCollisions(e); // Player agnostic?
+            }
+            break;
+          default:
+            throw testNever(e);
         }
       });
 
