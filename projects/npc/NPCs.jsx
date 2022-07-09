@@ -6,7 +6,7 @@ import { filter, first, map, take } from "rxjs/operators";
 
 import { Poly, Rect, Vect } from "../geom";
 import { stripAnsi } from "../sh/sh.util";
-import { testNever } from "../service/generic";
+import { assertDefined, testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
@@ -120,6 +120,7 @@ export default function NPCs(props) {
       } else if (segA || segB) {
         const dp = /** @type {number} */ (segA ? dpA : -dpB);
         const speed = segA ? npcA.getSpeed() : npcB.getSpeed();
+        const seg = /** @type {NPC.NpcLineSeg} */ (segA || segB);
         /**
          * seg vs static
          * TODO sometimes late collision
@@ -140,7 +141,7 @@ export default function NPCs(props) {
         if (// Real-valued solution(s) exist and occur during line seg
           inSqrt > 0 && (
             seconds = (-dp - Math.sqrt(inSqrt)) * (1 / speed)
-          ) <= Math.sqrt(distABSq) / speed
+          ) <= seg.src.distanceTo(seg.dst) / speed
         ) {
           const distA = seconds * speed;
           return { seconds, distA, distB: distA };

@@ -26,9 +26,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- static collision `length` issue
-  - should be at _current length_ plus distance...
-
 - 🚧 npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
   - ✅ implement `npc.getSpeed()` constant for each path, not over all paths
@@ -130,6 +127,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ fix static collision issue
+  - earlier seg detecting collision beyond its endpoint
+  - fixed truncation
 - ✅ fix pausing
   - `goLoop` onSuspend/Resume no longer cleared
 - ✅ `relate-doors` -> `relate-connectors`

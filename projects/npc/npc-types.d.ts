@@ -79,11 +79,7 @@ declare namespace NPC {
     /** Used to scale up how long it takes to move along navpath */
     getAnimScaleFactor(): number;
     getBounds(): Geom.Rect;
-    getLineSeg(): null | {
-      src: Geom.Vect;
-      dst: Geom.Vect;
-      tangent: Geom.Vect;
-    };
+    getLineSeg(): null | NpcLineSeg;
     getPosition(): Geom.Vect;
     getRadius(): number;
     getSpeed(): number;
@@ -108,6 +104,12 @@ declare namespace NPC {
     setSpritesheet(spriteSheet: SpriteSheetKey): void;
     updateAnimAux(): void;
     wayTimeout(): void;
+  }
+
+  interface NpcLineSeg {
+    src: Geom.Vect;
+    dst: Geom.Vect;
+    tangent: Geom.Vect;
   }
 
   export interface NpcAnimDef {

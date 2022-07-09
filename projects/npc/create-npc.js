@@ -399,5 +399,5 @@ const navMetaOffsets = {
   'pre-collide': -0.02,
   "pre-exit-room": -(npcRadius + 10), // TODO better way
   "pre-near-door": -(npcRadius + 10), // TODO better way
-  "start-seg": -0.2, // Prefer earlier collision
+  "start-seg": 0,
 };
