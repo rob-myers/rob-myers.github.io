@@ -33,6 +33,7 @@ export default function NPC(props) {
         data-npc-key={npc.key}
       />
       <div className="interact-circle" />
+      <div className="bounds-circle" />
     </div>
   );
 }
@@ -78,5 +79,16 @@ const npcCss = css`
     top: calc(-1 * var(--npcs-interact-radius));
     border-radius: calc(2 * var(--npcs-interact-radius));
     border: 1px solid rgba(0, 0, 255, 0.25);
+  }
+
+  .bounds-circle {
+    display: var(--npcs-debug-display);
+    position: absolute;
+    width: calc(2 * var(--npc-bounds-radius));
+    height: calc(2 * var(--npc-bounds-radius));
+    left: calc(-1 * var(--npc-bounds-radius));
+    top: calc(-1 * var(--npc-bounds-radius));
+    border-radius: calc(2 * var(--npc-bounds-radius));
+    border: 1px solid rgba(255, 0, 0, 0.25);
   }
 `;

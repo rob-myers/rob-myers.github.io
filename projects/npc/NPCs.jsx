@@ -13,7 +13,7 @@ import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
 import { getNumericCssVar } from "../service/dom";
-import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor, npcSpeed, npcRadius } from "./create-npc";
+import createNpc, { defaultNpcInteractRadius, npcAnimScaleFactor, npcSpeed } from "./create-npc";
 import { scrollback } from "../sh/io/io.model";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
@@ -64,7 +64,6 @@ export default function NPCs(props) {
     },
     /**
      * IN PROGRESS
-     * TODO support different speeds
      */
     detectCollision(npcA, npcB) {
       if (!npcA.getWalkBounds().intersects(npcB.getWalkBounds())) {
@@ -74,12 +73,14 @@ export default function NPCs(props) {
       const [segA, segB] = [npcA.getLineSeg(), npcB.getLineSeg()];
       const [iA, iB] = [segA?.src || npcA.getPosition(), segB?.src || npcB.getPosition()];
       const iAB = iA.clone().sub(iB), distABSq = iAB.lengthSquared;
+      /** Minimum non-colliding distance between npcs */
+      const minDist = (npcA.getRadius() + npcB.getRadius()) * 0.9;
 
       const dotProd = segA ? segA.tangent.dot(iAB) : segB ? -segB.tangent.dot(iAB) : 0;
       if (dotProd >= 0) {// Npcs not moving towards each other
-        return null; // Permits escape
+        return null;
       }
-      if (distABSq <= (2 * npcRadius) * (2 * npcRadius)) {
+      if (distABSq <= minDist ** 2) {
         return { seconds: 0, distA: 0, distB: 0 };
       }
 
@@ -89,12 +90,12 @@ export default function NPCs(props) {
          */
       } else if (segA || segB) {
         /**
-         * TODO seg vs static
+         * seg vs static
          * 
          * Solving `a.t^2 + b.t + c ≤ 0`,
          * - `a := npcSpeed^2`
          * - `b := 2.npcSpeed.dotProd`
-         * - `c := distABSq - (2.npcRadius)^2`
+         * - `c := distABSq - minDist^2`
          * 
          * Solutions are
          * ```js
@@ -102,7 +103,7 @@ export default function NPCs(props) {
          * (-b ± 2.npcSpeed.√inSqrt) / 2a
          * ```
          */
-        const inSqrt = (dotProd ** 2) - distABSq + ((2 * npcRadius) ** 2);
+        const inSqrt = (dotProd ** 2) - distABSq + (minDist ** 2);
         let seconds = 0;
         if (// Real-valued solution(s) exist and occur during line seg
           inSqrt > 0 && (
@@ -120,7 +121,6 @@ export default function NPCs(props) {
     getGmGraph() {
       return props.gmGraph;
     },
-
     getGlobalNavPath(src, dst) {
       const {gms} = props.gmGraph
       const srcGmId = gms.findIndex(x => x.gridRect.contains(src));
@@ -202,7 +202,6 @@ export default function NPCs(props) {
         };
       }
     },
-
     /**
      * Wraps floorGraphClass.findPath
      */

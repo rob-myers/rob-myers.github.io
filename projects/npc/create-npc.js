@@ -136,11 +136,12 @@ export default function createNpc(
     },
     getBounds() {
       const center = this.getPosition();
+      const radius = this.getRadius();
       return new Rect(
-        center.x - npcRadius,
-        center.y - npcRadius,
-        2 * npcRadius,
-        2 * npcRadius,
+        center.x - radius,
+        center.y - radius,
+        2 * radius,
+        2 * radius,
       );
     },
     getLineSeg() {
@@ -156,6 +157,9 @@ export default function createNpc(
       // TODO avoid getBoundingClientRect undefined
       const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect?.() || [0, 0]);
       return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
+    },
+    getRadius() {
+      return getNumericCssVar(this.el.root, cssName.npcBoundsRadius);
     },
     getSpeed() {
       return npcSpeed;
@@ -229,7 +233,8 @@ export default function createNpc(
         this.el.root = rootEl;
         this.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
         this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
-        this.setLookTarget(0);
+        this.setLookTarget(0); // Set CSS variable
+        this.el.root.style.setProperty(cssName.npcBoundsRadius, `${npcRadius}px`);
       }
     },
     pause() {
@@ -310,7 +315,8 @@ export default function createNpc(
     },
     updateAnimAux() {
       const { aux } = anim;
-      aux.bounds = Rect.fromPoints(...anim.path).outset(npcRadius);
+      const radius = this.getRadius();
+      aux.bounds = Rect.fromPoints(...anim.path).outset(radius);
       aux.edges = anim.path.map((p, i) => ({ p, q: anim.path[i + 1] })).slice(0, -1);
       aux.angs = aux.edges.map(e => Number(Math.atan2(e.q.y - e.p.y, e.q.x - e.p.x).toFixed(2)));
       aux.elens = aux.edges.map(({ p, q }) => Number(p.distanceTo(q).toFixed(2)));

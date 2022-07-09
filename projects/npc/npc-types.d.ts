@@ -83,6 +83,7 @@ declare namespace NPC {
       tangent: Geom.Vect;
     };
     getPosition(): Geom.Vect;
+    getRadius(): number;
     getSpeed(): number;
     /**
      * Given duration of upcoming motion,

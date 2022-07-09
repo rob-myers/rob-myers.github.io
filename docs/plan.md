@@ -36,7 +36,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ cancel both npcs at collision point
   - ✅ sometimes passes through e.g. radius too small?
   - implement `npc.detectCollision()` in general case
-  - non-player npc avoids collisions too
+    - ✅ npc radius comes from css var
+    - 🚧 write down general quadratic
+  - ✅ non-player npc avoids collisions too
 
 - try sorting out shell HMR
 
