@@ -26,9 +26,86 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- ✅ debug moving collision 
-  - `b` was slightly wrong
+- Gatsby has terminal
+  - simplify during translation
+  - try sorting out shell HMR
 
+- Gatsby 1st article
+  - Reorg NavDemo1 so can have many instances
+  - New approach i.e. step-by-step world-and-tty
+
+- pre-1st-release
+  - 🚧 avoid nav node long thin bits
+    - sometimes reduce obstacle size
+    - sometimes eliminate and permit teleport (e.g. to urinal)
+  - ✅ remove outwards hull outset
+  - better approach? inset holes, warning if non-unique
+  - modularise npc json
+    - NPC.jsx
+    - create-npc.js
+  - 🚧 normalize door width
+    - standard `24` (`4.8` in hull)
+      - OR? standard `25` (`5` in hull)
+    - iris `30` (`6` in hull)
+    - hull `12`
+    - sealed standard/iris on hull `12`
+    - ✅ 301 and 302 hull
+
+- BUG write too big `get /cache/queriesMap`
+- @`the-last-redoubt`: show GitHub comments from the-last-redoubt issues
+- @`the-last-redoubt`: can redirect to GitHub the-last-redoubt issues
+- improve offset length for `pre-exit-room` and `pre-near-door`
+- make minimal repro of Preact HMR issue
+- make minimal repro of outlineContains issue (gm 101 room 14)
+- migrate to free icons
+- 🤔 BUG sometimes adjacent light is inside hull door, rather than outside
+- mobile-friendly command links (session must be open)
+  - based on `autoSendCode`
+- careful about game function exit codes
+- navPoly must be a single polygon?
+- Support window tags `dark-front` and `dark-back` instead of `one-way`
+- Move light polygon computations into `lazy` i.e. reuse
+- Easier to toggle doors on mobile
+- ✅ `NavDemo1` has other NPCs
+- ❌ maybe consider shadows and door shadows (doors can fade)
+- ✅ can pause it
+- ✅ can write script manually or continually `look`ing
+- can see: npcs, meta points
+- ✅ Implement TTY interaction
+- Write into blog 'objective'
+- ✅ Start Gatsby Project which aims to replace this one
+- ✅ After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
+- finish passenger-deck 303
+- mobile: issue with keyboard resizing screen and Xterm not resizing
+- geomorphs article can be "coming soon" with preview
+- geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
+- NPCs can connect to meta points
+- offscreen tabs get disabled + rendered after 5 secs
+  - Tabs don't load until scroll into view
+  - Tabs disable on scroll out of view
+- GitHub Comments
+- ❌ tech1: mention React "polyfill" of events, and why we avoid
+- implement front page
+  - include videos of gameplay
+- visibility polygon should have truncated precision
+- ❌ GitHub Pages TTL is 10mins; Could use CDN:
+  > https://rogue-markup.imgix.net/
+  > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
+- Safari Bug for `position: fixed`
+  - flickers dark (incorrect clip) on repeated wheel
+  - only happens when Tabs maximised
+  - https://bugs.webkit.org/show_bug.cgi?id=160953
+
+- ✅ Gatsby begin
+  - ✅ Start migration to Gatsby
+  - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
+  - ✅ Fix dark mode by not inverting Tabs
+      - apply filter provides new context for position fixed
+  - ✅ article styling missing on SSR
+  - ✅ Fix top bar vertical align in large viewport
+  - ✅ change icons
+    - dark mode icon
+    - mini nav central icon
 - ✅ npc walk collision prevention
   - ✅ navmeta `start-seg` for all waypoints except last
   - ✅ implement `npc.getSpeed()` constant for each path, not over all paths
@@ -44,92 +121,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - ✅ write down general quadratic
       - some symmetry not understood...
     - ✅ implement code
-
-- try sorting out shell HMR
-
-- 🚧 Gatsby
-  - ✅ Start migration to Gatsby
-  - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
-  - ✅ Fix dark mode by not inverting Tabs
-      - apply filter provides new context for position fixed
-  - ✅ article styling missing on SSR
-  - ✅ Fix top bar vertical align in large viewport
-  - ✅ change icons
-    - dark mode icon
-    - mini nav central icon
-  - Terminal migration
-    - Simplify in original repo
-    - Copy across and get working
-  - ...
-
-- 🚧 avoid nav node long thin bits
-  - sometimes reduce obstacle size
-  - sometimes eliminate and permit teleport (e.g. to urinal)
-  - 🚧 301
-  - the rest
-
-- ✅ remove outwards hull outset
-- better approach? inset holes, warning if non-unique
-
-- modularise npc json
-  - NPC.jsx
-  - create-npc.js
-
-- 🚧 CLEAN: normalize door width
-  - standard `24` (`4.8` in hull)
-    - OR? standard `25` (`5` in hull)
-  - iris `30` (`6` in hull)
-  - hull `12`
-  - sealed standard/iris on hull `12`
-  - ✅ 301 and 302 hull
-
-- fix NavDemo1 useGeomorphs HMR
-  - Fix HMR of NavDemo1 when remove a geomorph (out of order index?)
-  - Fix HMR as far as we can
-
-- BUG write too big `get /cache/queriesMap`
-- @`the-last-redoubt`: show GitHub comments from the-last-redoubt issues
-- @`the-last-redoubt`: can redirect to GitHub the-last-redoubt issues
-- improve offset length for `pre-exit-room` and `pre-near-door`
-- make minimal repro of Preact HMR issue
-- migrate to free icons
-- BUG sometimes adjacent light is inside hull door, rather than outside
-- mobile-friendly command links (session must be open)
-- careful about game function exit codes
-- navPoly must be a single polygon?
-- Support window tags `dark-front` and `dark-back` instead of `one-way`
-- Move light polygon computations into `lazy` i.e. reuse
-- Easier to toggle doors on mobile
-- `NavDemo1` has other NPCs
-- ❌ maybe consider shadows and door shadows (doors can fade)
-- can pause it
-- can write script manually or continually `look`ing
-- can see: npcs, meta points
-- Implement TTY interaction
-- Write into blog 'objective'
-- ✅ Start Gatsby Project which aims to replace this one
-- ✅ After testing CssPanZoom for a bit, remove PanZoomTest and @panzoom/panzoom
-- finish passenger-deck 303
-- mobile: issue with keyboard resizing screen and Xterm not resizing
-- geomorphs article can be "coming soon" with preview
-- geomorphs have meta points e.g. beds, chairs, spawn, wait, toilet, ...
-- NPCs can connect to meta points
-- offscreen tabs get disabled + rendered after 5 secs
-  - Tabs don't load until scroll into view
-  - Tabs disable on scroll out of view
-- GitHub Comments
-- tech1: mention React "polyfill" of events, and why we avoid
-- implement front page
-  - include videos of gameplay
-- visibility polygon should have truncated precision
-- ❌ GitHub Pages TTL is 10mins; Could use CDN:
-  > https://rogue-markup.imgix.net/
-  > https://console.cloud.google.com/storage/browser/rogue-markup;tab=objects?project=rogue-markup
-- Safari Bug for `position: fixed`
-  - flickers dark (incorrect clip) on repeated wheel
-  - only happens when Tabs maximised
-  - https://bugs.webkit.org/show_bug.cgi?id=160953
-
+- ✅ debug moving collision 
+  - `b` was slightly wrong
 - ✅ fix static collision issue
   - earlier seg detecting collision beyond its endpoint
   - fixed truncation
