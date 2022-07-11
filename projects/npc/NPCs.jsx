@@ -285,8 +285,13 @@ export default function NPCs(props) {
       return npc;
     },
     getNpcsIntersecting(convexPoly) {
+      const extraForWalk = 10;
       return Object.values(state.npc)
-        .filter(x => geom.rectIntersectsConvexPoly(x.getBounds(), convexPoly.outline));
+        .filter(x => geom.circleIntersectsConvexPolygon(
+          x.getPosition(),
+          x.getRadius() + (x.isWalking() ? extraForWalk : 0),
+          convexPoly
+        ));
     },
     getPanZoomApi() {
       return props.panZoomApi;

@@ -135,7 +135,8 @@ export default function createNpc(
       };
     },
     getAnimScaleFactor() {
-      return 1000 / this.getSpeed();
+      // We convert from seconds/world-unit to milliseconds/world-unit
+      return 1000 * (1 / this.getSpeed());
     },
     getBounds() {
       const center = this.getPosition();
@@ -204,9 +205,10 @@ export default function createNpc(
       }
     },
     getWalkBounds() {
-      return anim.spriteSheet === 'walk' && anim.translate.playState === 'running'
-        ? anim.aux.bounds
-        : this.getBounds();
+      return this.isWalking() ? anim.aux.bounds : this.getBounds();
+    },
+    isWalking() {
+      return anim.spriteSheet === 'walk' && anim.translate.playState === 'running';
     },
     lookAt(point) {
       const position = this.getPosition();

@@ -93,6 +93,7 @@ declare namespace NPC {
     getTarget(): null | Geom.Vect;
     getTargets(): { point: Geom.Vect; arriveMs: number }[];
     getWalkBounds(): Geom.Rect;
+    isWalking(): boolean;
     /** Returns destination angle in radians */
     lookAt(point: Geom.VectJson): number;
     pause(): void;

@@ -26,9 +26,15 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- Gatsby has terminal
+- NavDemo1 reorg as World
+
+- ✅ Cannot close door just before npc enters and npc goes thru door
+
+- 🚧 Gatsby MDX SSR issue
+  - `Tabs` not updating with props change
+- ✅ Gatsby has terminal
   - simplify during translation
-  - try sorting out shell HMR
+- ✅ try (basic) sorting out shell HMR
 
 - Gatsby 1st article
   - Reorg NavDemo1 so can have many instances
@@ -51,6 +57,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - sealed standard/iris on hull `12`
     - ✅ 301 and 302 hull
 
+- Door nodes have extra weight when door closed
+  - fixes e.g. double door nav issue
+- Canonical way to export class as type only?
 - BUG write too big `get /cache/queriesMap`
 - @`the-last-redoubt`: show GitHub comments from the-last-redoubt issues
 - @`the-last-redoubt`: can redirect to GitHub the-last-redoubt issues
