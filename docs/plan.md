@@ -34,8 +34,12 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - maybe in future but not needed now
   - ✅ npcsApi provided to `<Doors/>`
   - ✅ move playerNearDoor, safeToCloseDoor, updateVisibleDoors into `<Doors/>`
-  - 🚧 move setRoomByNpc into `<Fov/>`
+  - 🚧 move setRoomByNpc into `<FOV/>`
+  - NavDemo props.initOpen -> props.init.*
   - `<Debug/>` -> `<DebugWorld/>` in separate file
+  - `<NPC/>` into /version-1
+  - `<NPCs/>` into /version-1
+  - `<Doors/>` into /version-1
 
 - Careful about mutually dependent components in NavDemo1
   - why is it working?

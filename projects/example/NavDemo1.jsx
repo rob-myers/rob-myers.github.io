@@ -3,7 +3,6 @@ import { css } from "goober";
 import { filter } from "rxjs/operators";
 
 import { testNever, visibleUnicodeLength } from "../service/generic";
-import { geom } from "../service/geom";
 import { Poly, Vect } from "../geom";
 import { ansiColor } from "../sh/sh.util";
 import useUpdate from "../hooks/use-update";
@@ -33,7 +32,6 @@ export default function NavDemo1(props) {
   const state = useStateRef(() => ({
 
     initOpen: { 0: [24] },
-    clipPath: gms.map(_ => 'none'),
 
     doorsApi: /** @type {DoorsApi} */  ({ ready: false }),
     panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
@@ -219,8 +217,7 @@ export default function NavDemo1(props) {
           gmGraph={gmGraph}
           npcsKey={npcsKey}
           panZoomApi={state.panZoomApi}
-          // Prevent reinvoke update() or HMR breaks
-          onLoad={api => { !state.npcsApi.ready && (state.npcsApi = api) && update(); }}
+          onLoad={api => { state.npcsApi = api; update(); }}
         />
       )}
 
@@ -235,7 +232,7 @@ export default function NavDemo1(props) {
         fovApi={state.fovApi}
         npcsApi={state.npcsApi}
         initOpen={state.initOpen}
-        onLoad={api => { !state.doorsApi.ready && (state.doorsApi = api) && update(); }}
+        onLoad={api => { state.doorsApi = api; update(); }}
       />
 
     </CssPanZoom>
