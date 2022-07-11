@@ -142,15 +142,17 @@ export default function LightsTest(props) {
         </div>
 
         <Doors
-          fovApi={/** @type {import('../version-1/FOV').State} */ ({})}
-          npcsApi={/** @type {NPC.NPCs} */ ({
-            getPlayer() { return null },
-            getNpcInteractRadius() { return 10000 },
-            getNpcsIntersecting(..._args) { return /** @type {*} */ ([]) },
-          })}
           gmGraph={gmGraph}
-          onLoad={api => state.doorsApi = api}
           initOpen={{}}
+          onLoad={api => state.doorsApi = api}
+          worldApi={/** @type {import('../example/NavDemo1').State} */ ({
+            fovApi: {},
+            npcsApi: {
+              getPlayer() { return null },
+              getNpcInteractRadius() { return 10000 },
+              getNpcsIntersecting(..._args) { return /** @type {*} */ ([]) },
+            },
+          })}
         />
 
         {/* <DebugGraph gm={gm} /> */}
