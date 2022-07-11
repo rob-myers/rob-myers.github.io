@@ -108,18 +108,6 @@ export default function NavDemo1(props) {
           throw testNever(e.meta);
       }
     },
-    /** @param {string} npcKey */
-    setRoomByNpc(npcKey) {
-      const npc = state.npcsApi.getNpc(npcKey);
-      const position = npc.getPosition();
-      const found = gmGraph.findRoomContaining(position);
-      if (found) {
-        state.fovApi.setRoom(found.gmId, found.roomId);
-        state.updateAll();
-      } else {// TODO error in terminal?
-        console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
-      }
-    },
     updateAll() {
       state.fovApi.updateClipPath();
       state.doorsApi.updateVisibleDoors();
@@ -147,11 +135,15 @@ export default function NavDemo1(props) {
             break;
           case 'set-player':
             state.npcsApi.playerKey = e.npcKey || null;
-            e.npcKey && state.setRoomByNpc(e.npcKey)
+            if (e.npcKey) {
+              state.npcsApi.setRoomByNpc(e.npcKey);
+              state.updateAll();
+            }
             break;
           case 'spawned-npc':
             if (state.npcsApi.playerKey === e.npcKey) {
-              state.setRoomByNpc(e.npcKey);
+              state.npcsApi.setRoomByNpc(e.npcKey);
+              state.updateAll();
             }
             break;
           case 'started-walking':
@@ -214,6 +206,7 @@ export default function NavDemo1(props) {
         <NPCs
           disabled={props.disabled}
           doorsApi={state.doorsApi}
+          fovApi={state.fovApi}
           gmGraph={gmGraph}
           npcsKey={npcsKey}
           panZoomApi={state.panZoomApi}

@@ -1,14 +1,5 @@
 
 declare namespace NPC {
-  
-  export interface NPCsProps {
-    disabled?: boolean;
-    gmGraph: Graph.GmGraph;
-    panZoomApi: PanZoom.CssApi;
-    doorsApi: import('../geomorph/Doors').State;
-    npcsKey: string;
-    onLoad(api: NPC.NPCs): void;
-  }
 
   /** API for a single NPC */
   export interface NPC {
@@ -22,14 +13,13 @@ declare namespace NPC {
       root: HTMLDivElement;
       body: HTMLDivElement;
     };
+    mounted: boolean;
 
     //#region mutable
     anim: {
       /** The path we'll walk along */
       path: Geom.Vect[];
       /** Data derived entirely from `anim.path` */
-      /** How many times has a new animation been created? */
-      count: number;
       aux: {
         angs: number[];
         bounds: Geom.Rect;
@@ -53,6 +43,8 @@ declare namespace NPC {
 
     async cancel(): Promise<void>;
     clearWayMetas(): void;
+    /** Has respective el ever been animated? On remount this resets. */
+    everAnimated(): boolean;
     async followNavPath(
       path: Geom.VectJson[],
       opts?: { globalNavMetas?: NPC.GlobalNavMeta[]; },
@@ -265,8 +257,9 @@ declare namespace NPC {
      */
     onTtyLink(sessionKey: string, outputLineNumber: number, lineText: string, linkText: string, linkStartIndex: number);
     rootRef(el: null | HTMLDivElement): void;
-    spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     setDecor(decorKey: string, decor: null | NPC.Decor): void;
+    setRoomByNpc(npcKey: string): void;
+    spawn(e: { npcKey: string; point: Geom.VectJson }): void;
     trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): import('rxjs').Subscription;
     /** Used by command `view` */
     async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;

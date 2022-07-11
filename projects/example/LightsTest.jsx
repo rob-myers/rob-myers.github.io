@@ -142,6 +142,7 @@ export default function LightsTest(props) {
         </div>
 
         <Doors
+          fovApi={/** @type {import('../version-1/FOV').State} */ ({})}
           npcsApi={/** @type {NPC.NPCs} */ ({
             getPlayer() { return null },
             getNpcInteractRadius() { return 10000 },

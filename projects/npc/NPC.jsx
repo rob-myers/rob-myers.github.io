@@ -14,8 +14,8 @@ export default function NPC(props) {
   const { npc } = props;
 
   React.useEffect(() => {
-    if (npc.anim.spriteSheet === 'idle' && npc.anim.count === 0) {
-      npc.startAnimation(); // Start idle animation 
+    if (npc.anim.spriteSheet === 'idle') {
+      npc.startAnimation(); // Start idle animation
     }
     return () => {
       window.clearTimeout(npc.anim.wayTimeoutId);

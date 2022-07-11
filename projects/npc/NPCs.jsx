@@ -21,7 +21,7 @@ import useGeomorphsNav from "../hooks/use-geomorphs-nav";
 import useSessionStore from "../sh/session.store";
 import NPC from "./NPC";
 
-/** @param {NPC.NPCsProps} props */
+/** @param {Props} props */
 export default function NPCs(props) {
 
   const update = useUpdate();
@@ -408,6 +408,16 @@ export default function NPCs(props) {
       }
       update();
     },
+    setRoomByNpc(npcKey) {
+      const npc = state.getNpc(npcKey);
+      const position = npc.getPosition();
+      const found = props.gmGraph.findRoomContaining(position);
+      if (found) {
+        props.fovApi.setRoom(found.gmId, found.roomId);
+      } else {// TODO error in terminal?
+        console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
+      }
+    },
     spawn(e) {
       if (!(e.npcKey && typeof e.npcKey === 'string' && e.npcKey.trim())) {
         throw Error(`invalid npc key: ${JSON.stringify(e.npcKey)}`);
@@ -512,7 +522,7 @@ export default function NPCs(props) {
         }
       }
     },
-  }), { deps: [nav, props.doorsApi] });
+  }), { deps: [nav, props.doorsApi, props.fovApi] });
   
   React.useEffect(() => {
     setCached(props.npcsKey, state);
@@ -612,5 +622,16 @@ function DecorItem({ item }) {
 
 /**
  * @typedef Props @type {object}
+ * @property {boolean} [disabled] 
+ * @property {Graph.GmGraph} gmGraph
+ * @property {import('../geomorph/Doors').State} doorsApi
+ * @property {import('../version-1/FOV').State} fovApi
+ * @property {string} npcsKey
+ * @property {(api: NPC.NPCs) => void} onLoad
+ * @property {PanZoom.CssApi} panZoomApi
+ */
+
+/**
+ * @typedef DebugProps @type {object}
  * @property {Record<string, { path: Geom.Vect[]; aabb: Rect; }>} debugPath 
  */

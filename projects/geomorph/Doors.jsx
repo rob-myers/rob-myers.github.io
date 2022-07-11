@@ -8,7 +8,6 @@ import { cssName, doorWidth, hullDoorWidth } from "../service/const";
 import { geom } from "../service/geom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
-import { State as FovApi } from '../version-1/FOV';
 
 /**
  * @param {Props} props
@@ -253,7 +252,7 @@ const rootCss = css`
 /**
  * @typedef Props @type {object}
  * @property {Graph.GmGraph} gmGraph
- * @property {FovApi} fovApi
+ * @property {import('../version-1/FOV').State} fovApi
  * @property {NPC.NPCs} npcsApi
  * @property {{ [gmId: number]: number[] }} initOpen
  * @property {(doorsApi: State) => void} onLoad

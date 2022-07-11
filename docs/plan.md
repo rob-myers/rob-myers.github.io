@@ -34,8 +34,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - maybe in future but not needed now
   - ✅ npcsApi provided to `<Doors/>`
   - ✅ move playerNearDoor, safeToCloseDoor, updateVisibleDoors into `<Doors/>`
-  - 🚧 move setRoomByNpc into `<FOV/>`
-  - NavDemo props.initOpen -> props.init.*
+  - ✅ move setRoomByNpc into `<NPCs/>`
+  - NavDemo1 props.initOpen -> props.init.*
   - `<Debug/>` -> `<DebugWorld/>` in separate file
   - `<NPC/>` into /version-1
   - `<NPCs/>` into /version-1
@@ -76,6 +76,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - sealed standard/iris on hull `12`
     - ✅ 301 and 302 hull
 
+- Start going thru react source
+  - https://github.com/facebook/react/blob/main/packages/react/src/React.js
+  - Start by knowing what these mean 👆
 - Door nodes have extra weight when door closed
   - fixes e.g. double door nav issue
 - Canonical way to export class as type only?

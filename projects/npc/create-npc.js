@@ -23,7 +23,6 @@ export default function createNpc(
   /** @type {NPC.NPC['anim']} shortcut */
   const anim = {
     path: [],
-    count: 0,
     aux: { angs: [], bounds: new Rect, edges: [], elens: [], navPathPolys: [], sofars: [], total: 0 },
     spriteSheet: 'idle',
 
@@ -44,6 +43,7 @@ export default function createNpc(
       root: /** @type {HTMLDivElement} */ ({}),
       body: /** @type {HTMLDivElement} */ ({}),
     },
+    mounted: false,
     anim,
 
     async cancel() {
@@ -52,7 +52,7 @@ export default function createNpc(
         return;
       }
       this.clearWayMetas();
-      if (this.el.root?.getAnimations().includes(anim.translate)) {
+      if (this.everAnimated()) {
         anim.translate.commitStyles();
       }
       if (this.el.body instanceof HTMLDivElement) {
@@ -66,6 +66,9 @@ export default function createNpc(
     },
     clearWayMetas() {
       anim.wayMetas.length = 0;
+    },
+    everAnimated() {
+      return this.el.root?.getAnimations().includes(anim.translate);
     },
     async followNavPath(path, opts) {
       anim.path = path.map(Vect.from);
@@ -175,7 +178,7 @@ export default function createNpc(
      * - we use an offset `motionMs` to end mid-frame
      */
     getSpriteDuration(nextMotionMs) {
-      const npcWalkAnimDurationMs = ( 1 / this.getSpeed() ) * (animLookup.walk.totalDist * npcScale) * 1000;
+      const npcWalkAnimDurationMs = 1000 * ( 1 / this.getSpeed() ) * (animLookup.walk.totalDist * npcScale);
       const baseSpriteMs = npcWalkAnimDurationMs;
       const motionMs = nextMotionMs - (0.5 * (npcWalkAnimDurationMs / animLookup.walk.frameCount));
       return motionMs < baseSpriteMs / 2
@@ -184,8 +187,8 @@ export default function createNpc(
         : (2 * motionMs) / Math.ceil(2 * (motionMs / baseSpriteMs));
     },
     getTarget() {
-      if (anim.spriteSheet === "walk" && anim.translate.currentTime !== null) {
-        const soFarMs = anim.translate.currentTime;
+      if (this.isWalking()) {
+        const soFarMs = /** @type {number} */ (anim.translate.currentTime);
         const nextIndex = anim.aux.sofars.findIndex(sofar => (sofar * this.getAnimScaleFactor()) > soFarMs);
         // Expect -1 iff at final point
         return nextIndex === -1 ? null : anim.path[nextIndex].clone();
@@ -194,8 +197,8 @@ export default function createNpc(
       }
     },
     getTargets() {
-      if (anim.spriteSheet === "walk" && anim.translate.currentTime !== null) {
-        const soFarMs = anim.translate.currentTime;
+      if (this.isWalking()) {
+        const soFarMs = /** @type {number} */ (anim.translate.currentTime);
         const animScaleFactor = this.getAnimScaleFactor();
         return anim.aux.sofars
           .map((sofar, i) => ({ point: anim.path[i].clone(), arriveMs: (sofar * animScaleFactor) - soFarMs }))
@@ -236,12 +239,13 @@ export default function createNpc(
       }
     },
     npcRef(rootEl) {
-      if (rootEl && this.anim.count === 0) {
+      if (rootEl && !this.mounted) {
         this.el.root = rootEl;
         this.el.body = /** @type {HTMLDivElement} */ (rootEl.childNodes[0]);
         this.el.root.style.transform = `translate(${this.def.position.x}px, ${this.def.position.y}px)`;
         this.setLookTarget(def.angle); // Set CSS variable
         this.el.root.style.setProperty(cssName.npcBoundsRadius, `${npcRadius}px`);
+        this.mounted = true;
       }
     },
     pause() {
@@ -283,7 +287,7 @@ export default function createNpc(
       }
     },
     startAnimation() {
-      if (anim.count) {
+      if (this.everAnimated()) {
         anim.translate.commitStyles();
         anim.translate.cancel();
         this.setLookTarget(this.getAngle());
@@ -317,8 +321,6 @@ export default function createNpc(
         anim.rotate = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
         anim.sprites = this.el.body.animate([], { duration: 2 * 1000, iterations: Infinity });
       }
-
-      anim.count++;
     },
     updateAnimAux() {
       const { aux } = anim;

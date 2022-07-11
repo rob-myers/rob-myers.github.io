@@ -3,7 +3,6 @@ import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
-import { State as DoorsApi } from '../geomorph/Doors';
 
 /**
  * Field Of View i.e. the dark part of geomorphs 
@@ -77,7 +76,7 @@ export default function FOV(props) {
     deps: [gms, gmGraph, props.doorsApi],
   });
 
-  React.useMemo(() => {
+  React.useEffect(() => {
     props.onLoad(state);
   }, []);
 
@@ -105,7 +104,7 @@ export default function FOV(props) {
 
 /**
  * @typedef Props @type {object}
- * @property {DoorsApi} doorsApi
+ * @property {import('../geomorph/Doors').State} doorsApi
  * @property {Graph.GmGraph} gmGraph
  * @property {(fovApi: State) => void} onLoad
  */
