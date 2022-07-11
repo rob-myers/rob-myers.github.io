@@ -16,7 +16,6 @@ export default function FOV(props) {
   const update = useUpdate();
 
   const state = useStateRef(/** @type {() => State} */ () => ({
-    // TODO support multiple roots
     gmId: 0,
     roomId: 9,
     // gmId: 0, roomId: 2,
@@ -41,12 +40,17 @@ export default function FOV(props) {
     },
     updateClipPath() {
       const gm = gms[state.gmId]
-      const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
       const openDoorsIds = props.doorsApi.getOpen(state.gmId);
-
-      // Compute light polygons for current geomorph and possibly adjacent ones
+      /**
+       * Compute light polygons for current geomorph and possibly adjacent ones
+       */
       const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.roomId, openDoorsIds);
-      // Compute respective maskPolys
+      /**
+       * Compute mask polygons:
+       * - current room include roomWithDoor
+       * - compute darkness by cutting light from hullPolygon
+       */
+      const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
       gms.forEach((otherGm, otherGmId) => {
         const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
         if (otherGm === gm) {// Lights for current geomorph includes _current room_
@@ -58,7 +62,9 @@ export default function FOV(props) {
           maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
         }
       });
-      // Set the clip-paths
+      /**
+       * Finally, convert masks into a CSS format.
+       */
       maskPolys.forEach((maskPoly, gmId) => {// <img> top-left needn't be at world origin
         maskPoly.forEach(poly => poly.translate(-gms[gmId].pngRect.x, -gms[gmId].pngRect.y));
         const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
