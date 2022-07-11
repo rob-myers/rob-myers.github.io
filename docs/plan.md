@@ -35,6 +35,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ npcsApi provided to `<Doors/>`
   - ✅ move playerNearDoor, safeToCloseDoor, updateVisibleDoors into `<Doors/>`
   - ✅ move setRoomByNpc into `<NPCs/>`
+  - ✅ provide worldApi as prop instead of sub-apis (avoid initial race condition)
   - NavDemo1 props.initOpen -> props.init.*
   - `<Debug/>` -> `<DebugWorld/>` in separate file
   - `<NPC/>` into /version-1

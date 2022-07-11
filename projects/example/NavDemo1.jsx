@@ -29,7 +29,7 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
-  const state = useStateRef(() => ({
+  const state = useStateRef(() => /** @type {State} */ ({
 
     initOpen: { 0: [24] },
 
@@ -38,7 +38,6 @@ export default function NavDemo1(props) {
     npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
     fovApi: /** @type {FovApi} */  ({ ready: false }),
 
-    /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
     handleCollisions(e) {
       switch (e.meta.key) {
         case 'pre-collide': {
@@ -73,7 +72,6 @@ export default function NavDemo1(props) {
         }
       }
     },
-    /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
     async handlePlayerWayEvent(e) {
       // console.log('player way event', e);
 
@@ -122,7 +120,6 @@ export default function NavDemo1(props) {
       state.updateAll();
 
       // Update Door graphics on change
-      // Saw HMR issue here when edit Doors and toggle door
       const doorsSub = state.doorsApi.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
         .subscribe(() => state.updateAll());
@@ -135,15 +132,11 @@ export default function NavDemo1(props) {
             break;
           case 'set-player':
             state.npcsApi.playerKey = e.npcKey || null;
-            if (e.npcKey) {
-              state.npcsApi.setRoomByNpc(e.npcKey);
-              state.updateAll();
-            }
+            e.npcKey && state.npcsApi.setRoomByNpc(e.npcKey);
             break;
           case 'spawned-npc':
             if (state.npcsApi.playerKey === e.npcKey) {
               state.npcsApi.setRoomByNpc(e.npcKey);
-              state.updateAll();
             }
             break;
           case 'started-walking':
@@ -195,37 +188,29 @@ export default function NavDemo1(props) {
           gmId={state.fovApi.gmId}
           npcsApi={state.npcsApi}
           roomId={state.fovApi.roomId}
-          setRoom={(gmId, roomId) => {
-            state.fovApi.setRoom(gmId, roomId);
-            state.updateAll();
-          }}
+          setRoom={state.fovApi.setRoom}
         />
       )}
 
-      {state.panZoomApi.ready && (
-        <NPCs
-          disabled={props.disabled}
-          doorsApi={state.doorsApi}
-          fovApi={state.fovApi}
-          gmGraph={gmGraph}
-          npcsKey={npcsKey}
-          panZoomApi={state.panZoomApi}
-          onLoad={api => { state.npcsApi = api; update(); }}
-        />
-      )}
+      <NPCs
+        disabled={props.disabled}
+        gmGraph={gmGraph}
+        npcsKey={npcsKey}
+        onLoad={api => { state.npcsApi = api; update(); }}
+        worldApi={state}
+      />
 
       <FOV
-        doorsApi={state.doorsApi}
         gmGraph={gmGraph}
         onLoad={api => { state.fovApi = api; update(); }}
+        worldApi={state}
       />
 
       <Doors
         gmGraph={gmGraph}
-        fovApi={state.fovApi}
-        npcsApi={state.npcsApi}
         initOpen={state.initOpen}
         onLoad={api => { state.doorsApi = api; update(); }}
+        worldApi={state}
       />
 
     </CssPanZoom>
@@ -493,6 +478,18 @@ function Debug(props) {
     </div>
   );
 }
+
+/**
+ * @typedef State @type {object}
+ * @property {{ [gmId: number]: number[] }} initOpen
+ * @property {DoorsApi} doorsApi
+ * @property {PanZoom.CssApi} panZoomApi
+ * @property {NPC.NPCs} npcsApi
+ * @property {FovApi} fovApi
+ * @property {(e: Extract<NPC.NPCsEvent, { key: 'way-point' }>) => void} handleCollisions
+ * @property {(e: Extract<NPC.NPCsEvent, { key: 'way-point' }>) => void} handlePlayerWayEvent
+ * @property {() => void} updateAll
+ */
 
 /**
  * @typedef DebugProps @type {object}

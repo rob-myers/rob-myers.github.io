@@ -28,6 +28,8 @@ export default function NPCs(props) {
 
   const nav = useGeomorphsNav(props.gmGraph, props.disabled);
 
+  const { panZoomApi } = props.worldApi;
+
   const state = useStateRef(/** @type {() => NPC.NPCs} */ () => ({
     decor: {},
     events: new Subject,
@@ -294,7 +296,7 @@ export default function NPCs(props) {
         ));
     },
     getPanZoomApi() {
-      return props.panZoomApi;
+      return panZoomApi;
     },
     getPlayer() {
       return state.playerKey ? state.getNpc(state.playerKey) : null;
@@ -384,7 +386,7 @@ export default function NPCs(props) {
         throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
       }
       try {
-        await props.panZoomApi.panZoomTo(e.zoom, e.point, e.ms, e.easing);
+        await panZoomApi.panZoomTo(e.zoom, e.point, e.ms, e.easing);
         return 'completed';
       } catch (e) {
         return 'cancelled';
@@ -413,7 +415,8 @@ export default function NPCs(props) {
       const position = npc.getPosition();
       const found = props.gmGraph.findRoomContaining(position);
       if (found) {
-        props.fovApi.setRoom(found.gmId, found.roomId);
+        props.worldApi.fovApi.setRoom(found.gmId, found.roomId);
+        props.worldApi.updateAll();
       } else {// TODO error in terminal?
         console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
       }
@@ -432,7 +435,7 @@ export default function NPCs(props) {
         speed: npcSpeed,
       }, {
         disabled: props.disabled,
-        panZoomApi: props.panZoomApi,
+        panZoomApi,
         npcs: state,
       });
       update();
@@ -452,7 +455,7 @@ export default function NPCs(props) {
       const subscription = merge(
         of({ key: /** @type {const} */ ('init-track') }),
         state.events,
-        props.panZoomApi.events,
+        panZoomApi.events,
       ).pipe(
         filter(x => (
           process.status === 1 && (
@@ -468,7 +471,7 @@ export default function NPCs(props) {
       ).subscribe({
         async next(msg) {
           // console.log(msg); // DEBUG
-          if (!props.panZoomApi.isIdle() && msg.key !== 'started-walking') {
+          if (!panZoomApi.isIdle() && msg.key !== 'started-walking') {
             status = 'no-track';
             console.warn('@', status);
             return;
@@ -479,13 +482,13 @@ export default function NPCs(props) {
           
           if (// Only when: npc idle, camera not animating, camera not close
             npc.anim.spriteSheet === 'idle'
-            && (props.panZoomApi.anims[0] === null || props.panZoomApi.anims[0].playState === 'finished')
-            && props.panZoomApi.distanceTo(npcPosition) > 10
+            && (panZoomApi.anims[0] === null || panZoomApi.anims[0].playState === 'finished')
+            && panZoomApi.distanceTo(npcPosition) > 10
           ) {
             status = 'panzoom-to';
             console.warn('@', status);
             // Ignore Error('cancelled')
-            try { await props.panZoomApi.panZoomTo(2, npcPosition, 2000) } catch {}
+            try { await panZoomApi.panZoomTo(2, npcPosition, 2000) } catch {}
             status = 'no-track';
           }
 
@@ -494,7 +497,7 @@ export default function NPCs(props) {
             console.warn('@', status);
             try {
               const path = npc.getTargets().map(x => x.point);
-              await props.panZoomApi.followPath(path, { animScaleFactor: npc.getAnimScaleFactor() });
+              await panZoomApi.followPath(path, { animScaleFactor: npc.getAnimScaleFactor() });
             } catch {} // Ignore Error('cancelled')
           }
         },
@@ -522,7 +525,7 @@ export default function NPCs(props) {
         }
       }
     },
-  }), { deps: [nav, props.doorsApi, props.fovApi] });
+  }), { deps: [nav, props.worldApi] });
   
   React.useEffect(() => {
     setCached(props.npcsKey, state);
@@ -624,11 +627,9 @@ function DecorItem({ item }) {
  * @typedef Props @type {object}
  * @property {boolean} [disabled] 
  * @property {Graph.GmGraph} gmGraph
- * @property {import('../geomorph/Doors').State} doorsApi
- * @property {import('../version-1/FOV').State} fovApi
  * @property {string} npcsKey
  * @property {(api: NPC.NPCs) => void} onLoad
- * @property {PanZoom.CssApi} panZoomApi
+ * @property {import('../example/NavDemo1').State} worldApi
  */
 
 /**
