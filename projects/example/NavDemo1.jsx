@@ -14,6 +14,7 @@ import useSessionStore from "../sh/session.store";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
+import Floor from "projects/version-1/Floor";
 
 /** @param {{ disabled?: boolean }} props */
 export default function NavDemo1(props) {
@@ -28,6 +29,15 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-302--xboat-repair-bay', transform: [-1, 0, 0, 1, 1200 + 1200, 600] },
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
+
+  /**
+   * TODO 🚧 work towards <World/>
+   * - floor goes into <Floor/> ✅
+   * - lights go into <FOV/> 🚧
+   * - <FOV/> support multiple roots (as in <LightsTest/>)
+   * - npcsApi provided to <Doors/>
+   * - move playerNearDoor, safeToCloseDoor, updateVisibleDoors into <Doors/>
+   */
 
   const state = useStateRef(() => ({
     gmId: 0, roomId: 9,
@@ -55,13 +65,11 @@ export default function NavDemo1(props) {
           other.cancel();
           break;
         }
-        /**
-         * IN PROGRESS
-         */
         case 'start-seg': {
           const npc = state.npcsApi.getNpc(e.npcKey);
           const others = Object.values(state.npcsApi.npc).filter(x => x !== npc);
 
+          // TODO efficiency
           for (const other of others) {
             const collision = state.npcsApi.detectCollision(npc, other);
 
@@ -82,7 +90,6 @@ export default function NavDemo1(props) {
         }
       }
     },
-
     /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
     async handlePlayerWayEvent(e) {
       // console.log('player way event', e);
@@ -265,22 +272,7 @@ export default function NavDemo1(props) {
       // grid
       onLoad={api => {state.panZoomApi = api; update(); }}
     >
-      {gms.map((gm, gmId) =>
-        <img
-          key={gmId}
-          className="geomorph"
-          src={geomorphPngPath(gm.key)}
-          draggable={false}
-          width={gm.pngRect.width}
-          height={gm.pngRect.height}
-          style={{
-            left: gm.pngRect.x,
-            top: gm.pngRect.y,
-            transform: gm.transformStyle,
-            transformOrigin: gm.transformOrigin,
-          }}
-        />
-      )}
+      <Floor gms={gms} />
 
       {state.doorsApi.ready && (
         <Debug
