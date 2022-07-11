@@ -8,11 +8,13 @@ import { cssName, doorWidth, hullDoorWidth } from "../service/const";
 import { geom } from "../service/geom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
+import { State as FovApi } from '../version-1/FOV';
 
 /**
  * @param {Props} props
  */
 export default function Doors(props) {
+
   const update = useUpdate();
 
   const { gms } = props.gmGraph;
@@ -112,8 +114,20 @@ export default function Doors(props) {
       state.drawInvisibleInCanvas(gmId);
       update();
     },
+    updateVisibleDoors() {
+      const gm = gms[props.fovApi.gmId]
+
+      /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
+      const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
+      nextVis[props.fovApi.gmId] = gm.roomGraph.getAdjacentDoors(props.fovApi.roomId).map(x => x.doorId);
+      gm.roomGraph.getAdjacentHullDoorIds(gm, props.fovApi.roomId).flatMap(({ hullDoorIndex }) =>
+        props.gmGraph.getAdjacentRoomCtxt(props.fovApi.gmId, hullDoorIndex) || []
+      ).forEach(({ adjGmId, adjDoorId }) => (nextVis[adjGmId] = nextVis[adjGmId] || []).push(adjDoorId));
+
+      gms.forEach((_, gmId) => state.setVisible(gmId, nextVis[gmId]));
+    },
   }), {
-    deps: [props.npcsApi],
+    deps: [props.npcsApi, props.fovApi.gmId],
   });
 
   React.useEffect(() => {
@@ -239,6 +253,7 @@ const rootCss = css`
 /**
  * @typedef Props @type {object}
  * @property {Graph.GmGraph} gmGraph
+ * @property {FovApi} fovApi
  * @property {NPC.NPCs} npcsApi
  * @property {{ [gmId: number]: number[] }} initOpen
  * @property {(doorsApi: State) => void} onLoad
@@ -259,5 +274,6 @@ const rootCss = css`
  * @property {HTMLDivElement} rootEl
  * @property {(gmId: number, doorId: number) => boolean} safeToCloseDoor
  * @property {(gmId: number, doorIds: number[]) => void} setVisible
+ * @property {() => void} updateVisibleDoors
  * @property {{ [doorId: number]: true }[]} vis
  */

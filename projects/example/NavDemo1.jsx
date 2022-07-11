@@ -124,20 +124,8 @@ export default function NavDemo1(props) {
     },
     updateAll() {
       state.fovApi.updateClipPath();
-      state.updateVisibleDoors();
+      state.doorsApi.updateVisibleDoors();
       update();
-    },
-    updateVisibleDoors() {
-      const gm = gms[state.fovApi.gmId]
-
-      /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
-      const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
-      nextVis[state.fovApi.gmId] = gm.roomGraph.getAdjacentDoors(state.fovApi.roomId).map(x => x.doorId);
-      gm.roomGraph.getAdjacentHullDoorIds(gm, state.fovApi.roomId).flatMap(({ hullDoorIndex }) =>
-        gmGraph.getAdjacentRoomCtxt(state.fovApi.gmId, hullDoorIndex) || []
-      ).forEach(({ adjGmId, adjDoorId }) => (nextVis[adjGmId] = nextVis[adjGmId] || []).push(adjDoorId));
-
-      gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextVis[gmId]));
     },
   }), {
     deps: [gms, gmGraph],
@@ -236,16 +224,15 @@ export default function NavDemo1(props) {
         />
       )}
 
-      {state.doorsApi.ready && (
-        <FOV
-          doorsApi={state.doorsApi}
-          gmGraph={gmGraph}
-          onLoad={api => { state.fovApi = api; update(); }}
-        />
-      )}
+      <FOV
+        doorsApi={state.doorsApi}
+        gmGraph={gmGraph}
+        onLoad={api => { state.fovApi = api; update(); }}
+      />
 
       <Doors
         gmGraph={gmGraph}
+        fovApi={state.fovApi}
         npcsApi={state.npcsApi}
         initOpen={state.initOpen}
         onLoad={api => { !state.doorsApi.ready && (state.doorsApi = api) && update(); }}

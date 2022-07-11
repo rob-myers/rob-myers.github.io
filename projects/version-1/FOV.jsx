@@ -74,7 +74,7 @@ export default function FOV(props) {
     },
   }), {
     overwrite: { gmId: true, roomId: true },
-    deps: [gms, gmGraph],
+    deps: [gms, gmGraph, props.doorsApi],
   });
 
   React.useMemo(() => {
