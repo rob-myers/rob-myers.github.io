@@ -30,16 +30,6 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
-  /**
-   * TODO 🚧 work towards <World/>
-   * - floor goes into <Floor/> ✅
-   * - lights go into <FOV/> ✅
-   * - <FOV/> support multiple roots (as in <LightsTest/>)
-   * - npcsApi provided to <Doors/>
-   * - move playerNearDoor, safeToCloseDoor, updateVisibleDoors into <Doors/>
-   * - <Debug/> -> <DebugWorld/> in separate file
-   */
-
   const state = useStateRef(() => ({
 
     initOpen: { 0: [24] },
@@ -161,32 +151,6 @@ export default function NavDemo1(props) {
       state.fovApi.updateClipPath();
       state.updateVisibleDoors();
       update();
-    },
-    updateClipPath() {
-      const gm = gms[state.fovApi.gmId]
-      const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
-      const openDoorsIds = state.doorsApi.getOpen(state.fovApi.gmId);
-
-      // Compute light polygons for current geomorph and possibly adjacent ones
-      const lightPolys = gmGraph.computeLightPolygons(state.fovApi.gmId, state.fovApi.roomId, openDoorsIds);
-      // Compute respective maskPolys
-      gms.forEach((otherGm, otherGmId) => {
-        const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
-        if (otherGm === gm) {// Lights for current geomorph includes _current room_
-          const roomWithDoors = gm.roomsWithDoors[state.fovApi.roomId]
-          // Cut one-by-one prevents Error like https://github.com/mfogel/polygon-clipping/issues/115
-          maskPolys[otherGmId] = polys.concat(roomWithDoors).reduce((agg, cutPoly) => Poly.cutOut([cutPoly], agg), [otherGm.hullOutline])
-          // maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoors), [otherGm.hullOutline]);
-        } else {
-          maskPolys[otherGmId] = Poly.cutOut(polys, [otherGm.hullOutline]);
-        }
-      });
-      // Set the clip-paths
-      maskPolys.forEach((maskPoly, gmId) => {// <img> top-left needn't be at world origin
-        maskPoly.forEach(poly => poly.translate(-gms[gmId].pngRect.x, -gms[gmId].pngRect.y));
-        const svgPaths = maskPoly.map(poly => `${poly.svgPath}`).join(' ');
-        state.clipPath[gmId] = svgPaths.length ? `path('${svgPaths}')` : 'none';
-      });
     },
     updateVisibleDoors() {
       const gm = gms[state.fovApi.gmId]

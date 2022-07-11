@@ -26,7 +26,15 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
-- NavDemo1 reorg as World
+- 🚧 NavDemo1 reorg as World
+  - floor goes into `<Floor/>` ✅
+  - lights go into `<FOV/>` ✅
+  - `<FOV/>` support multiple roots (like `<LightsTest/>`) ❌
+    - complications e.g. still need "player room"
+    - maybe in future but not needed now
+  - npcsApi provided to `<Doors/>` 🚧
+  - move playerNearDoor, safeToCloseDoor, updateVisibleDoors into `<Doors/>`
+  - `<Debug/>` -> `<DebugWorld/>` in separate file
 
 - How to version typings e.g. NPC.NPCs ?
 
