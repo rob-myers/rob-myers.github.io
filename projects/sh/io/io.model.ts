@@ -78,7 +78,7 @@ export enum SigEnum {
 }
 
 /**
- * Redirect a node and its descendents e.g.
+ * Redirect a node and its descendants e.g.
  * - `echo foo; echo bar >/dev/null; echo baz`.
  * - `echo foo; { echo bar; } >/dev/null; echo baz`.
  */

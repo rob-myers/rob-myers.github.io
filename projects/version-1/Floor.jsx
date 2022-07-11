@@ -2,6 +2,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 /**
  * The floor images of each geomorph
+ * Styled earlier e.g. position absolute.
  * @param {Props} props 
  */
 export default function Floor(props) {
@@ -21,7 +22,7 @@ export default function Floor(props) {
           transformOrigin: gm.transformOrigin,
         }}
       />
-  ))}
+    ))}
   </>;
 }
 

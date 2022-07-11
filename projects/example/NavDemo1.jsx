@@ -4,7 +4,6 @@ import { filter } from "rxjs/operators";
 
 import { testNever, visibleUnicodeLength } from "../service/generic";
 import { geom } from "../service/geom";
-import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Poly, Vect } from "../geom";
 import { ansiColor } from "../sh/sh.util";
 import useUpdate from "../hooks/use-update";
@@ -14,7 +13,8 @@ import useSessionStore from "../sh/session.store";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
-import Floor from "projects/version-1/Floor";
+import Floor from "../version-1/Floor";
+import FOV, { State as FovApi } from "../version-1/FOV";
 
 /** @param {{ disabled?: boolean }} props */
 export default function NavDemo1(props) {
@@ -33,20 +33,14 @@ export default function NavDemo1(props) {
   /**
    * TODO 🚧 work towards <World/>
    * - floor goes into <Floor/> ✅
-   * - lights go into <FOV/> 🚧
+   * - lights go into <FOV/> ✅
    * - <FOV/> support multiple roots (as in <LightsTest/>)
    * - npcsApi provided to <Doors/>
    * - move playerNearDoor, safeToCloseDoor, updateVisibleDoors into <Doors/>
+   * - <Debug/> -> <DebugWorld/> in separate file
    */
 
   const state = useStateRef(() => ({
-    gmId: 0, roomId: 9,
-    // gmId: 0, roomId: 2,
-    // gmId: 0, roomId: 15, // ISSUE
-    // gmId: 1, roomId: 5,
-    // gmId: 1, roomId: 22,
-    // gmId: 2, roomId: 2,
-    // gmId: 3, roomId: 26,
 
     initOpen: { 0: [24] },
     clipPath: gms.map(_ => 'none'),
@@ -54,6 +48,7 @@ export default function NavDemo1(props) {
     doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
     panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
     npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
+    fovApi: /** @type {FovApi} */  ({ ready: false }),
 
     /** @param {Extract<NPC.NPCsEvent, { key: 'way-point' }>} e */
     handleCollisions(e) {
@@ -98,20 +93,15 @@ export default function NavDemo1(props) {
         case 'exit-room':
           // Player left a room
           if (e.meta.otherRoomId !== null) {
-            [state.gmId, state.roomId] = [e.meta.gmId, e.meta.otherRoomId];
+            state.fovApi.setRoom(e.meta.gmId, e.meta.otherRoomId);
           } else {// Handle hull doors
             const adjCtxt = gmGraph.getAdjacentRoomCtxt(e.meta.gmId, e.meta.hullDoorId);
-            if (adjCtxt) {
-              [state.gmId, state.roomId] = [adjCtxt.adjGmId, adjCtxt.adjRoomId];
-            }
+            adjCtxt && state.fovApi.setRoom(adjCtxt.adjGmId, adjCtxt.adjRoomId);
           }
           state.updateAll();
           break;
         case 'enter-room':
-          // Player can re-enter room from doorway without entering/exiting other
-          if (!(state.gmId === e.meta.gmId && state.roomId === e.meta.enteredRoomId)) {
-            state.gmId = e.meta.gmId;
-            state.roomId = e.meta.enteredRoomId;
+          if (state.fovApi.setRoom(e.meta.gmId, e.meta.enteredRoomId)) {
             state.updateAll();
           }
           break;
@@ -161,29 +151,29 @@ export default function NavDemo1(props) {
       const position = npc.getPosition();
       const found = gmGraph.findRoomContaining(position);
       if (found) {
-        [state.gmId, state.roomId] = [found.gmId, found.roomId];
+        state.fovApi.setRoom(found.gmId, found.roomId);
         state.updateAll();
       } else {// TODO error in terminal?
         console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
       }
     },
     updateAll() {
-      state.updateClipPath();
+      state.fovApi.updateClipPath();
       state.updateVisibleDoors();
       update();
     },
     updateClipPath() {
-      const gm = gms[state.gmId]
+      const gm = gms[state.fovApi.gmId]
       const maskPolys = /** @type {Poly[][]} */ (gms.map(_ => []));
-      const openDoorsIds = state.doorsApi.getOpen(state.gmId);
+      const openDoorsIds = state.doorsApi.getOpen(state.fovApi.gmId);
 
       // Compute light polygons for current geomorph and possibly adjacent ones
-      const lightPolys = gmGraph.computeLightPolygons(state.gmId, state.roomId, openDoorsIds);
+      const lightPolys = gmGraph.computeLightPolygons(state.fovApi.gmId, state.fovApi.roomId, openDoorsIds);
       // Compute respective maskPolys
       gms.forEach((otherGm, otherGmId) => {
         const polys = lightPolys.filter(x => otherGmId === x.gmIndex).map(x => x.poly.precision(2));
         if (otherGm === gm) {// Lights for current geomorph includes _current room_
-          const roomWithDoors = gm.roomsWithDoors[state.roomId]
+          const roomWithDoors = gm.roomsWithDoors[state.fovApi.roomId]
           // Cut one-by-one prevents Error like https://github.com/mfogel/polygon-clipping/issues/115
           maskPolys[otherGmId] = polys.concat(roomWithDoors).reduce((agg, cutPoly) => Poly.cutOut([cutPoly], agg), [otherGm.hullOutline])
           // maskPolys[otherGmId] = Poly.cutOut(polys.concat(roomWithDoors), [otherGm.hullOutline]);
@@ -199,19 +189,18 @@ export default function NavDemo1(props) {
       });
     },
     updateVisibleDoors() {
-      const gm = gms[state.gmId]
+      const gm = gms[state.fovApi.gmId]
 
       /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
       const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
-      nextVis[state.gmId] = gm.roomGraph.getAdjacentDoors(state.roomId).map(x => x.doorId);
-      gm.roomGraph.getAdjacentHullDoorIds(gm, state.roomId).flatMap(({ hullDoorIndex }) =>
-        gmGraph.getAdjacentRoomCtxt(state.gmId, hullDoorIndex) || []
+      nextVis[state.fovApi.gmId] = gm.roomGraph.getAdjacentDoors(state.fovApi.roomId).map(x => x.doorId);
+      gm.roomGraph.getAdjacentHullDoorIds(gm, state.fovApi.roomId).flatMap(({ hullDoorIndex }) =>
+        gmGraph.getAdjacentRoomCtxt(state.fovApi.gmId, hullDoorIndex) || []
       ).forEach(({ adjGmId, adjDoorId }) => (nextVis[adjGmId] = nextVis[adjGmId] || []).push(adjDoorId));
 
       gms.forEach((_, gmId) => this.doorsApi.setVisible(gmId, nextVis[gmId]));
     },
   }), {
-    overwrite: { gmId: true, roomId: true },
     deps: [gms, gmGraph],
   });
 
@@ -274,7 +263,7 @@ export default function NavDemo1(props) {
     >
       <Floor gms={gms} />
 
-      {state.doorsApi.ready && (
+      {state.doorsApi.ready && state.fovApi.ready && (
         <Debug
           // outlines
           // windows
@@ -286,11 +275,11 @@ export default function NavDemo1(props) {
           doorsApi={state.doorsApi}
           gms={gms}
           gmGraph={gmGraph}
-          gmId={state.gmId}
+          gmId={state.fovApi.gmId}
           npcsApi={state.npcsApi}
-          roomId={state.roomId}
+          roomId={state.fovApi.roomId}
           setRoom={(gmId, roomId) => {
-            [state.gmId, state.roomId] = [gmId, roomId];
+            state.fovApi.setRoom(gmId, roomId);
             state.updateAll();
           }}
         />
@@ -308,22 +297,12 @@ export default function NavDemo1(props) {
         />
       )}
 
-      {gms.map((gm, gmId) =>
-        <img
-          key={gmId}
-          className="geomorph-dark"
-          src={geomorphPngPath(gm.key)}
-          draggable={false}
-          width={gm.pngRect.width}
-          height={gm.pngRect.height}
-          style={{
-            clipPath: state.clipPath[gmId],
-            WebkitClipPath: state.clipPath[gmId],
-            left: gm.pngRect.x,
-            top: gm.pngRect.y,
-            transform: gm.transformStyle,
-            transformOrigin: gm.transformOrigin,
-          }}
+      {state.doorsApi.ready && (
+        <FOV
+          doorsApi={state.doorsApi}
+          gmGraph={gmGraph}
+          gms={gms}
+          onLoad={api => { state.fovApi = api; update(); }}
         />
       )}
 

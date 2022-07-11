@@ -53,8 +53,8 @@ export default function Doors(props) {
     getOpen(gmId) {
       return state.open[gmId].flatMap((open, doorId) => open ? doorId : []);
     },
-    getVisible(gmIndex) {
-      return Object.keys(state.vis[gmIndex]).map(Number);
+    getVisible(gmId) {
+      return Object.keys(state.vis[gmId]).map(Number);
     },
     onToggleDoor(e) {
       const gmIdAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');

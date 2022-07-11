@@ -10,22 +10,6 @@ declare namespace NPC {
     onLoad(api: NPC.NPCs): void;
   }
 
-  type WireMessage = (
-    | NPC.NpcEvent
-    | NPC.PtrEvent
-  );
-
-  type PtrEvent = {
-    point: Geom.VectJson;
-  } & (
-    | { key: 'pointerdown' }
-    | { key: 'pointerup' }
-    | { key: 'pointerleave' }
-    | { key: 'pointermove' }
-  );
-
-  type NpcEvent = never
-
   /** API for a single NPC */
   export interface NPC {
     /** User specified e.g. `andros` */
@@ -339,7 +323,7 @@ declare namespace NPC {
     | { type: 'circle'; center: Geom.VectJson; radius: number; }
   );
 
-  /** Using `action` as key avoids name-collision */
+  /** Using `action` instead of `key` to avoid name-collision */
   type NpcAction = (
     | { action: 'add-decor'; } & Decor
     | { action: 'cancel'; npcKey: string }

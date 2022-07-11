@@ -28,6 +28,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 - NavDemo1 reorg as World
 
+- How to version typings e.g. NPC.NPCs ?
+
 - ✅ Cannot close door just before npc enters and npc goes thru door
 
 - 🚧 Gatsby MDX SSR issue
