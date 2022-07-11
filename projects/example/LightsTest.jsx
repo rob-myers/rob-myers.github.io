@@ -142,11 +142,13 @@ export default function LightsTest(props) {
         </div>
 
         <Doors
-          gms={gms}
+          npcsApi={/** @type {NPC.NPCs} */ ({
+            getPlayer() { return null },
+            getNpcInteractRadius() { return 10000 },
+            getNpcsIntersecting(..._args) { return /** @type {*} */ ([]) },
+          })}
           gmGraph={gmGraph}
           onLoad={api => state.doorsApi = api}
-          playerNearDoor={() => true}
-          safeToCloseDoor={() => true}
           initOpen={{}}
         />
 

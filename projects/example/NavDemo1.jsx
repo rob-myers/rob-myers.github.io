@@ -265,17 +265,14 @@ export default function NavDemo1(props) {
         <FOV
           doorsApi={state.doorsApi}
           gmGraph={gmGraph}
-          gms={gms}
           onLoad={api => { state.fovApi = api; update(); }}
         />
       )}
 
       <Doors
-        gms={gms}
         gmGraph={gmGraph}
+        npcsApi={state.npcsApi}
         initOpen={state.initOpen}
-        playerNearDoor={state.playerNearDoor}
-        safeToCloseDoor={state.safeToCloseDoor}
         onLoad={api => { !state.doorsApi.ready && (state.doorsApi = api) && update(); }}
       />
 

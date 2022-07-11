@@ -5,31 +5,33 @@ import { Subject } from "rxjs";
 import { assertNonNull } from "../service/generic";
 import { fillPolygon } from "../service/dom";
 import { cssName, doorWidth, hullDoorWidth } from "../service/const";
+import { geom } from "../service/geom";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 
 /**
- * Doors for `Geomorph.UseGeomorphItems`.
- * @param {NPC.DoorsProps} props
+ * @param {Props} props
  */
 export default function Doors(props) {
   const update = useUpdate();
 
+  const { gms } = props.gmGraph;
+
   const state = useStateRef(/** @type {() => NPC.DoorsApi} */ () => ({
     canvas: [],
     events: new Subject,
-    open: props.gms.map((gm, gmId) =>
+    open: gms.map((gm, gmId) =>
       gm.doors.map((_, doorId) => props.initOpen[gmId]?.includes(doorId) || false)
     ),
     ready: true,
     rootEl: /** @type {HTMLDivElement} */ ({}),
-    vis: props.gms.map(_ => ({})),
+    vis: gms.map(_ => ({})),
 
     /** @param {number} gmId */
     drawInvisibleInCanvas(gmId) {
       const canvas = state.canvas[gmId];
       const ctxt = assertNonNull(canvas.getContext('2d'));
-      const gm = props.gms[gmId];
+      const gm = gms[gmId];
 
       ctxt.setTransform(1, 0, 0, 1, 0, 0);
       ctxt.clearRect(0, 0, canvas.width, canvas.height);
@@ -63,17 +65,17 @@ export default function Doors(props) {
       const hullDoorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-hull-door-id'));
 
       const gmDoorNode = hullDoorId === -1 ? null : props.gmGraph.getDoorNodeByIds(gmId, hullDoorId);
-      const sealed = gmDoorNode?.sealed || props.gms[gmId].doors[doorId].tags.includes('sealed');
+      const sealed = gmDoorNode?.sealed || gms[gmId].doors[doorId].tags.includes('sealed');
 
       if (gmIdAttr === null || !state.vis[gmId][doorId] || sealed) {
         return; // Not a door, not visible, or sealed permanently
       }
 
-      if (!props.playerNearDoor(gmId, doorId)) {
+      if (!state.playerNearDoor(gmId, doorId)) {
         return;
       }
 
-      if (state.open[gmId][doorId] && !props.safeToCloseDoor(gmId, doorId)) {
+      if (state.open[gmId][doorId] && !state.safeToCloseDoor(gmId, doorId)) {
         return; // Cannot close if npc nearby
       }
 
@@ -88,31 +90,50 @@ export default function Doors(props) {
         state.events.next({ key, gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId });
       }
     },
+    playerNearDoor(gmId, doorId) {
+      const player = props.npcsApi.getPlayer();
+      if (!player) { // If no player, we are "everywhere"
+        return true;
+      }
+      const center = player.getPosition();
+      const radius = props.npcsApi.getNpcInteractRadius();
+      const door = gms[gmId].doors[doorId];
+      const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
+      return geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
+    },
+    safeToCloseDoor(gmId, doorId) {
+      const door = gms[gmId].doors[doorId];
+      const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
+      const closeNpcs = props.npcsApi.getNpcsIntersecting(convexPoly);
+      return closeNpcs.length === 0;
+    },
     setVisible(gmId, doorIds) {
       state.vis[gmId] = doorIds.reduce((agg, id) => ({ ...agg, [id]: true }), {});
       state.drawInvisibleInCanvas(gmId);
       update();
     },
-  }));
+  }), {
+    deps: [props.npcsApi],
+  });
 
   React.useEffect(() => {
     props.onLoad(state);
   }, []);
 
   React.useEffect(() => {
-    props.gms.forEach((_, gmId) => state.drawInvisibleInCanvas(gmId));
+    gms.forEach((_, gmId) => state.drawInvisibleInCanvas(gmId));
     /** @param {PointerEvent} e */
     const cb = (e) => state.onToggleDoor(e);
     state.rootEl.addEventListener('pointerup', cb);
     return () => void state.rootEl.removeEventListener('pointerup', cb);
-  }, [props.gms]);
+  }, [gms]);
   
   return (
     <div
       ref={el => el && (state.rootEl = el)}
       className={classNames(cssName.doors, rootCss)}
     >
-      {props.gms.map((gm, gmId) => (
+      {gms.map((gm, gmId) => (
         <div
           key={gm.itemKey}
           style={{
@@ -214,3 +235,11 @@ const rootCss = css`
     }
   }
 `;
+
+/**
+ * @typedef Props @type {object}
+ * @property {Graph.GmGraph} gmGraph
+ * @property {NPC.NPCs} npcsApi
+ * @property {{ [gmId: number]: number[] }} initOpen
+ * @property {(api: NPC.DoorsApi) => void} onLoad
+ */

@@ -11,7 +11,7 @@ import useStateRef from "../hooks/use-state-ref";
  */
 export default function FOV(props) {
 
-  const { gms, gmGraph } = props;
+  const { gmGraph, gmGraph: { gms } } = props;
 
   const update = useUpdate();
 
@@ -105,7 +105,6 @@ export default function FOV(props) {
 /**
  * @typedef Props @type {object}
  * @property {NPC.DoorsApi} doorsApi
- * @property {Geomorph.GeomorphDataInstance[]} gms
  * @property {Graph.GmGraph} gmGraph
  * @property {(fovApi: State) => void} onLoad
  */
