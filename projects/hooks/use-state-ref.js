@@ -9,7 +9,7 @@ import { equals, isPlainObject } from '../service/generic';
  * 
  * @template State 
  * @param {() => State} initializer
- * @param {{ overwrite?: TypeUtil.KeyedTrue<State>; deps?: any[]; deeper?: (keyof State)[] }} [opts]
+ * @param {Opts<State>} [opts]
  */
 export default function useStateRef(
   initializer,
@@ -113,9 +113,17 @@ export default function useStateRef(
           }
         }
       }
-    }, opts.deps || []);
+    }, typeof opts.deps === 'function' ? opts.deps(state) : opts.deps || []);
 
     return /** @type {State} */ (state);
 }
 
 module.hot?.decline();
+
+/**
+ * @template State
+ * @typedef Opts @type {object}
+ * @property {TypeUtil.KeyedTrue<State>} [overwrite]
+ * @property {any[] | ((state: State) => any[])} [deps]
+ * @property {(keyof State)[]} [deeper]
+ */
