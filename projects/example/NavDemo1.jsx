@@ -11,7 +11,7 @@ import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../hooks/use-geomorphs";
 import useSessionStore from "../sh/session.store";
 import CssPanZoom from "../panzoom/CssPanZoom";
-import Doors from "../geomorph/Doors";
+import Doors, { State as DoorsApi } from "../geomorph/Doors";
 import NPCs from "../npc/NPCs";
 import Floor from "../version-1/Floor";
 import FOV, { State as FovApi } from "../version-1/FOV";
@@ -35,7 +35,7 @@ export default function NavDemo1(props) {
     initOpen: { 0: [24] },
     clipPath: gms.map(_ => 'none'),
 
-    doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
+    doorsApi: /** @type {DoorsApi} */  ({ ready: false }),
     panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
     npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
     fovApi: /** @type {FovApi} */  ({ ready: false }),
@@ -109,31 +109,6 @@ export default function NavDemo1(props) {
         default:
           throw testNever(e.meta);
       }
-    },
-    /**
-     * @param {number} gmId 
-     * @param {number} doorId 
-     */
-    playerNearDoor(gmId, doorId) {
-      const player = state.npcsApi.getPlayer();
-      if (!player) { // If no player, we are "everywhere"
-        return true;
-      }
-      const center = player.getPosition();
-      const radius = state.npcsApi.getNpcInteractRadius();
-      const door = gms[gmId].doors[doorId];
-      const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
-      return geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
-    },
-    /**
-     * @param {number} gmId 
-     * @param {number} doorId 
-     */
-    safeToCloseDoor(gmId, doorId) {
-      const door = gms[gmId].doors[doorId];
-      const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
-      const closeNpcs = state.npcsApi.getNpcsIntersecting(convexPoly);
-      return closeNpcs.length === 0;
     },
     /** @param {string} npcKey */
     setRoomByNpc(npcKey) {
@@ -545,7 +520,7 @@ function Debug(props) {
 /**
  * @typedef DebugProps @type {object}
  * @property {Geomorph.GeomorphDataInstance[]} gms
- * @property {NPC.DoorsApi} doorsApi
+ * @property {DoorsApi} doorsApi
  * @property {Graph.GmGraph} gmGraph
  * @property {number} gmId
  * @property {NPC.NPCs} npcsApi

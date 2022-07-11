@@ -17,7 +17,7 @@ export default function Doors(props) {
 
   const { gms } = props.gmGraph;
 
-  const state = useStateRef(/** @type {() => NPC.DoorsApi} */ () => ({
+  const state = useStateRef(/** @type {() => State} */ () => ({
     canvas: [],
     events: new Subject,
     open: gms.map((gm, gmId) =>
@@ -241,5 +241,23 @@ const rootCss = css`
  * @property {Graph.GmGraph} gmGraph
  * @property {NPC.NPCs} npcsApi
  * @property {{ [gmId: number]: number[] }} initOpen
- * @property {(api: NPC.DoorsApi) => void} onLoad
+ * @property {(doorsApi: State) => void} onLoad
+ */
+
+/**
+ * @typedef State @type {object}
+ * @property {HTMLCanvasElement[]} canvas
+ * @property {(gmId: number) => void} drawInvisibleInCanvas
+ * @property {import('rxjs').Subject<NPC.DoorMessage>} events
+ * @property {(gmId: number) => number[]} getClosed
+ * @property {(gmId: number) => number[]} getOpen Get ids of open doors
+ * @property {(gmId: number) => number[]} getVisible
+ * @property {(e: PointerEvent) => void} onToggleDoor
+ * @property {(gmId: number, doorId: number) => boolean} playerNearDoor
+ * @property {boolean[][]} open open[gmId][doorId]
+ * @property {boolean} ready
+ * @property {HTMLDivElement} rootEl
+ * @property {(gmId: number, doorId: number) => boolean} safeToCloseDoor
+ * @property {(gmId: number, doorIds: number[]) => void} setVisible
+ * @property {{ [doorId: number]: true }[]} vis
  */

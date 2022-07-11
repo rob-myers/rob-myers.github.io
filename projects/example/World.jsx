@@ -11,6 +11,7 @@ import { geom } from "../service/geom";
 import useUpdate from "../hooks/use-update";
 import useGeomorphs from "../hooks/use-geomorphs";
 import useStateRef from "../hooks/use-state-ref";
+import { State as DoorsApi } from '../geomorph/Doors';
 
 /** @param {Props} props */
 export default function World(props) {
@@ -30,7 +31,7 @@ export default function World(props) {
     initOpen: props.init.openDoors || {},
     clipPath: gms.map(_ => 'none'),
 
-    doorsApi: /** @type {NPC.DoorsApi} */  ({ ready: false }),
+    doorsApi: /** @type {DoorsApi} */  ({ ready: false }),
     panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
     npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
 

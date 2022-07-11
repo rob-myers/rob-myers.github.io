@@ -5,7 +5,7 @@ declare namespace NPC {
     disabled?: boolean;
     gmGraph: Graph.GmGraph;
     panZoomApi: PanZoom.CssApi;
-    doorsApi: NPC.DoorsApi;
+    doorsApi: import('../geomorph/Doors').State;
     npcsKey: string;
     onLoad(api: NPC.NPCs): void;
   }
@@ -131,29 +131,6 @@ declare namespace NPC {
     key: 'opened-door' | 'closed-door';
     gmIndex: number;
     index: number;
-  }
-
-  /**
-   * TODO move to component
-   */
-  export interface DoorsApi {
-    canvas: HTMLCanvasElement[];
-    /** open[gmId][doorId] */
-    open: boolean[][];
-    vis: { [doorId: number]: true }[];
-    rootEl: HTMLDivElement;
-    events: import('rxjs').Subject<NPC.DoorMessage>;
-    ready: boolean;
-
-    drawInvisibleInCanvas(gmId: number): void;
-    getClosed(gmIndex: number): number[];
-    /** Get ids of open doors */
-    getOpen(gmIndex: number): number[];
-    getVisible(gmIndex: number): number[];
-    onToggleDoor(e: PointerEvent): void;
-    playerNearDoor(gmId: number, doorId: number): boolean;
-    safeToCloseDoor(gmId: number, doorId: number): boolean;
-    setVisible(gmIndex: number, doorIds: number[]): void ;
   }
 
   export interface UseGeomorphsNav {

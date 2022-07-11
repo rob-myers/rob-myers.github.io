@@ -33,7 +33,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - complications e.g. still need "player room"
     - maybe in future but not needed now
   - ✅ npcsApi provided to `<Doors/>`
-  - move playerNearDoor, safeToCloseDoor, updateVisibleDoors into `<Doors/>`
+  - 🚧 move playerNearDoor, safeToCloseDoor, updateVisibleDoors into `<Doors/>`
   - `<Debug/>` -> `<DebugWorld/>` in separate file
 
 - How to version typings e.g. NPC.NPCs ?

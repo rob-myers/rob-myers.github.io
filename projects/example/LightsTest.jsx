@@ -8,7 +8,7 @@ import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
-import Doors from "../geomorph/Doors";
+import Doors, { State as DoorsApi } from "../geomorph/Doors";
 
 /** @param {{ disabled?: boolean }} props */
 export default function LightsTest(props) {
@@ -25,7 +25,7 @@ export default function LightsTest(props) {
   const state = useStateRef(() => {
     return {
       clipPath: 'none',
-      doorsApi: /** @type {NPC.DoorsApi} */ ({}),
+      doorsApi: /** @type {DoorsApi} */ ({}),
       roomShown: /** @type {{ [roomId: number]: true }} */ ({
         0: true,
         2: true,
