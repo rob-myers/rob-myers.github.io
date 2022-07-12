@@ -7,9 +7,9 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
  * Styled earlier e.g. position absolute.
  * @param {Props} props 
  */
-export default function Floor(props) {
+export default function Geomorphs(props) {
   return (
-    <div className={classNames("floor", rootCss)}>
+    <div className={classNames("geomorphs", rootCss)}>
       {props.gms.map((gm, gmId) => (
         <img
           key={gmId}

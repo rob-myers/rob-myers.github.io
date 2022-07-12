@@ -309,8 +309,14 @@ declare namespace NPC {
     | { key: 'spawned-npc'; npcKey: string; }
     | { key: 'started-walking'; npcKey: string; }
     | { key: 'stopped-walking'; npcKey: string; }
-    | { key: 'way-point'; npcKey: string; meta: WayPointMeta; }
+    | NPCsWayEvent
     | { key: 'decor'; meta: Decor; }
   );
+
+  interface NPCsWayEvent {
+    key: 'way-point';
+    npcKey: string;
+    meta: WayPointMeta;
+  }
 
 }

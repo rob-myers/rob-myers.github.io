@@ -8,7 +8,7 @@ import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import NPCs from "../npc/NPCs";
 import Doors, { State as DoorsApi } from "../geomorph/Doors";
-import Floor from "../vs-1/Floor";
+import Geomorphs from "../vs-1/Floor";
 import FOV, { State as FovApi } from "../vs-1/FOV";
 import DebugWorld from "../vs-1/DebugWorld";
 
@@ -167,7 +167,7 @@ export default function NavDemo1(props) {
       // grid
       onLoad={api => {state.panZoom = api; update(); }}
     >
-      <Floor
+      <Geomorphs
         gms={gms}
       />
 
@@ -216,7 +216,7 @@ const npcsKey = 'npcs-demo-1';
  * @property {PanZoom.CssApi} panZoom
  * @property {NPC.NPCs} npcs
  * @property {FovApi} fov
- * @property {(e: Extract<NPC.NPCsEvent, { key: 'way-point' }>) => void} handleCollisions
- * @property {(e: Extract<NPC.NPCsEvent, { key: 'way-point' }>) => void} handlePlayerWayEvent
+ * @property {(e: NPC.NPCsWayEvent) => void} handleCollisions
+ * @property {(e: NPC.NPCsWayEvent) => void} handlePlayerWayEvent
  * @property {() => void} updateAll
  */
