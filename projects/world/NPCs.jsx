@@ -7,7 +7,6 @@ import { filter, first, map, take } from "rxjs/operators";
 import { Rect, Vect } from "../geom";
 import { stripAnsi } from "../sh/sh.util";
 import { testNever } from "../service/generic";
-import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
@@ -38,9 +37,6 @@ export default function NPCs(props) {
     rootEl: /** @type {HTMLDivElement} */ ({}),
     ready: true,
     session: {},
-
-    class: { Vect },
-    rxjs: { filter, first, map, take, otag },
 
     addTtyLineCtxts(sessionKey, lineNumber, ctxts) {
       // We strip ANSI colour codes for string comparison
@@ -340,6 +336,7 @@ export default function NPCs(props) {
           await state.getNpc(e.npcKey).play();
           break;
         case 'remove-decor':
+        case 'rm-decor':
           state.setDecor(e.decorKey, null);
           break;
         case 'set-player':
@@ -618,6 +615,19 @@ function DecorItem({ item }) {
  * @property {boolean} [disabled] 
  * @property {Graph.GmGraph} gmGraph
  * @property {(api: NPC.NPCs) => void} onLoad
+ */
+
+/**
+ * @typedef State @type {object}
+ * @property {Record<string, NPC.Decor>} decor
+ * @property {import('rxjs').Subject<NPC.NPCsEvent>} events
+ * @property {Record<string, NPC.NPC>} npc
+ * @property {null | string} playerKey
+ * @property {boolean} ready
+ * @property {HTMLElement} rootEl
+ * @property {{ [sessionKey: string]: NPC.SessionCtxt }} session
+ * 
+ * // IN PROGRESS...
  */
 
 /**

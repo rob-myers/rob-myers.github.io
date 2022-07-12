@@ -206,19 +206,6 @@ declare namespace NPC {
     playerKey: null | string;
     session: { [sessionKey: string]: NPC.SessionCtxt };
 
-    class: {
-      Vect: typeof Geom.Vect;
-    };
-    rxjs: {
-      //#region rxjs/operators
-      filter: import('../service/rxjs').filter;
-      first: import('../service/rxjs').first;
-      map: import('../service/rxjs').map;
-      take: import('../service/rxjs').take;
-      //#endregion
-      otag: import('../service/rxjs').otag;
-    };
-
     /** Assume each `ctxts[i].lineNumber` is `lineNumber`  */
     addTtyLineCtxts(sessionKey: string, lineNumber: number, ctxts: NPC.SessionTtyCtxt[]): void;
     cleanSessionCtxts(): void;
@@ -297,6 +284,7 @@ declare namespace NPC {
     | { action: 'pause'; npcKey: string }
     | { action: 'play'; npcKey: string }
     | { action: 'remove-decor'; decorKey: string; }
+    | { action: 'rm-decor'; decorKey: string; }
     | { action: 'set-player'; npcKey?: string }
   );
 

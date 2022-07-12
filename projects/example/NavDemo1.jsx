@@ -1,6 +1,9 @@
 import React from "react";
+import { filter, first, map, take } from "rxjs/operators";
 
 import { removeCached, setCached } from "../service/query-client";
+import { otag } from "../service/rxjs";
+import { Vect } from "../geom";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../geomorph/use-geomorphs";
@@ -32,6 +35,11 @@ export default function NavDemo1(props) {
     fov: /** @type {FovApi} */  ({ ready: false }),
     npcs: /** @type {NPC.NPCs} */  ({ ready: false }),
     panZoom: /** @type {PanZoom.CssApi} */ ({ ready: false }),
+
+    lib: {
+      Vect,
+      filter, first, map, take, otag,
+    },
 
     updateAll() {
       state.fov.updateClipPath();
@@ -111,4 +119,16 @@ const worldKey = 'world-demo-1';
  * @property {NPC.NPCs} npcs
  * @property {FovApi} fov
  * @property {() => void} updateAll
+ * @property {StateUtil} lib
+ */
+
+/**
+ * @typedef StateUtil Utility classes and `rxjs` functions
+ * @type {object}
+ * @property {typeof import('../geom').Vect} Vect
+ * @property {import('../service/rxjs').filter} filter
+ * @property {import('../service/rxjs').first} first
+ * @property {import('../service/rxjs').map} map
+ * @property {import('../service/rxjs').otag} otag
+ * @property {import('../service/rxjs').take} take
  */

@@ -127,8 +127,8 @@ const gameFunctionsRunDefs = [
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
-    const { npcs, panZoom } = api.getCached(home.WORLD_KEY)
-    const { filter, map, take, otag } = npcs.rxjs
+    const { lib, npcs, panZoom } = api.getCached(home.WORLD_KEY)
+    const { filter, map, take, otag } = lib
     const process = api.getProcess()
     
     yield* otag(
