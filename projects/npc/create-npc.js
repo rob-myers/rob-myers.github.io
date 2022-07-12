@@ -260,7 +260,7 @@ export default function createNpc(
       window.clearTimeout(anim.wayTimeoutId);
       if (this.def.key === api.npcs.playerKey) {
         // Pause camera tracking
-        api.npcs.getPanZoomApi().animationAction('pause');
+        api.panZoom.animationAction('pause');
       }
     },
     play() {
@@ -271,7 +271,7 @@ export default function createNpc(
       this.nextWayTimeout();
       if (this.def.key === api.npcs.playerKey) {
         // Resume camera tracking
-        api.npcs.getPanZoomApi().animationAction('play');
+        api.panZoom.animationAction('play');
       }
     },
     setLookTarget(radians) {

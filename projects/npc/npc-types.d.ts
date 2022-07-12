@@ -240,7 +240,6 @@ declare namespace NPC {
       // ...
     };
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
-    getGmGraph(): Graph.GmGraph;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
     getNpcGlobalNav(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }): GlobalNavPath;
     getNpcInteractRadius(): number;

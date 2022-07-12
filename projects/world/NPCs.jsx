@@ -64,9 +64,6 @@ export default function NPCs(props) {
         } else delete state.session[sessionKey];
       }
     },
-    /**
-     * IN PROGRESS
-     */
     detectCollision(npcA, npcB) {
       if (!npcA.getWalkBounds().intersects(npcB.getWalkBounds())) {
         return null;
@@ -150,9 +147,6 @@ export default function NPCs(props) {
         // Either static non-intersecting, or moving away from each other
       }
       return null;
-    },
-    getGmGraph() {
-      return props.gmGraph;
     },
     getGlobalNavPath(src, dst) {
       const {gms} = props.gmGraph
@@ -369,17 +363,17 @@ export default function NPCs(props) {
       if (!found) {
         return;
       }
-      console.log('onTtyLink found', found);
+      console.info('onTtyLink found', found); // DEBUG 🚧
       switch (found.key) {
         case 'room':
-          const gm = state.getGmGraph().gms[found.gmId];
+          const gm = props.gmGraph.gms[found.gmId];
           const point = gm.matrix.transformPoint(gm.point[found.roomId].default.clone());
           state.panZoomTo({ zoom: 2, ms: 2000, point });
           break;
+        /**
+         * ...
+         */
       }
-      /**
-       * TODO
-       */
     },
     async panZoomTo(e) {
       if (!e || (e.zoom && !Number.isFinite(e.zoom)) || (e.point && !Vect.isVectJson(e.point)) || (e.ms && !Number.isFinite(e.ms))) {
@@ -437,16 +431,13 @@ export default function NPCs(props) {
           speed: npcSpeed,
         },
         {
-          disabled: props.disabled,
           api: props.api,
+          disabled: props.disabled,
         },
       );
       update();
       state.events.next({ key: 'spawned-npc', npcKey: e.npcKey });
     },
-    /**
-     * TODO move to shell function?
-     */
     trackNpc(opts) {
       const { npcKey, process } = opts;
       if (!state.npc[npcKey]) {
