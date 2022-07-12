@@ -95,7 +95,7 @@ export default function Terminal(props: Props) {
             async callback(event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines }) {
               // console.log('clicked link', event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines });
               const session = assertNonNull(state.session);
-              const npcs = getCached(session.var.NPCS_KEY) as NPC.NPCs;
+              const npcs = getCached(session.var.WORLD_KEY).npcs as NPC.NPCs;
               /**
                * Number of "actual" lines output, no longer entirely within tty's buffer.
                * Why do we need the +1?

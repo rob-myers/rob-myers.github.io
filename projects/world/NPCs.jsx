@@ -522,9 +522,7 @@ export default function NPCs(props) {
   }), { deps: [nav, props.api] });
   
   React.useEffect(() => {
-    setCached(props.npcsKey, state);
     props.onLoad(state);
-    return () => removeCached(props.npcsKey);
   }, []);
 
   return (
@@ -622,7 +620,6 @@ function DecorItem({ item }) {
  * @property {import('../example/NavDemo1').State} api
  * @property {boolean} [disabled] 
  * @property {Graph.GmGraph} gmGraph
- * @property {string} npcsKey
  * @property {(api: NPC.NPCs) => void} onLoad
  */
 

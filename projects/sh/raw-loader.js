@@ -15,9 +15,9 @@
 
 /**
  * @typedef RunArg @type {object}
- * @property {import('./cmd.service').CmdServiceType['processApi'] & { getCached(key: '__NPCS_KEY_VALUE__'): NPC.NPCs }} api
+ * @property {import('./cmd.service').CmdServiceType['processApi'] & { getCached(key: '__WORLD_KEY_VALUE__'): import('../example/NavDemo1').State }} api
  * @property {string[]} args
- * @property {{ [key: string]: any; 'NPCS_KEY': '__NPCS_KEY_VALUE__'; }} home
+ * @property {{ [key: string]: any; 'WORLD_KEY': '__WORLD_KEY_VALUE__'; }} home
  * @property {*} [datum] A shortcut for declaring a variable
  * @property {*[]} [promises] Another shortcut
  */
@@ -127,7 +127,7 @@ const gameFunctionsRunDefs = [
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
-    const npcs = api.getCached(home.NPCS_KEY)
+    const { npcs } = api.getCached(home.WORLD_KEY)
     const { filter, map, take, otag } = npcs.rxjs
     const process = api.getProcess()
     
@@ -154,7 +154,7 @@ const gameFunctionsRunDefs = [
   },
 
   look: async function* ({ api, args, datum, home }) {
-    const npcs = api.getCached(home.NPCS_KEY)
+    const { npcs } = api.getCached(home.WORLD_KEY)
     const npcKey = args[0]
     if (api.isTtyAt(0)) {
       const point = api.safeJsonParse(args[1])
@@ -173,7 +173,7 @@ const gameFunctionsRunDefs = [
    * - e.g. `click | map 'x => ({ npcKey: "andros", point: x })' | nav`
    */
   nav: async function* ({ api, args, home, datum }) {
-    const npcs = api.getCached(home.NPCS_KEY)
+    const { npcs } = api.getCached(home.WORLD_KEY)
     if (api.isTtyAt(0)) {
       const npcKey = args[0]
       const point = api.safeJsonParse(args[1])
@@ -192,7 +192,7 @@ const gameFunctionsRunDefs = [
 
   /** npc {action} [{opts}] */
   npc: async function* ({ api, args, home }) {
-    const npcs = api.getCached(home.NPCS_KEY)
+    const { npcs } = api.getCached(home.WORLD_KEY)
     const action = args[0]
     const opts = api.parseJsArg(args[1])
     yield await npcs.npcAct({
@@ -203,19 +203,19 @@ const gameFunctionsRunDefs = [
     })
   },
 
-  /** Ping per second until query NPCS_KEY found */
-  ready: async function* ({ api, home: { NPCS_KEY } }) {
+  /** Ping per second until query WORLD_KEY found */
+  ready: async function* ({ api, home: { WORLD_KEY } }) {
     const ansiColor = api.getColors();
     const { sessionKey } = api.getProcess();
 
-    api.info(`polling for cached query ${ansiColor.Blue}${NPCS_KEY}${ansiColor.White}`)
+    api.info(`polling for cached query ${ansiColor.Blue}${WORLD_KEY}${ansiColor.White}`)
     /** @type {NPC.NPCs} */ let npcs;
-    while (!(npcs = api.getCached(NPCS_KEY))) yield* api.sleep(1);
+    while (!(npcs = api.getCached(WORLD_KEY).npcs)) yield* api.sleep(1);
 
     if (!npcs.session[sessionKey]) {
       npcs.session[sessionKey] = { key: sessionKey, receiveMsgs: true, tty: {} };
     }
-    api.info(`found cached query ${ansiColor.Blue}${NPCS_KEY}${ansiColor.White}`);
+    api.info(`found cached query ${ansiColor.Blue}${WORLD_KEY}${ansiColor.White}`);
   },
 
   /**
@@ -224,7 +224,7 @@ const gameFunctionsRunDefs = [
    * - e.g. `expr '{"npcKey":"andros","point":{"x":300,"y":300}}' | spawn`
    */
   spawn: async function* ({ api, args, home, datum }) {
-    const npcs = api.getCached(home.NPCS_KEY)
+    const { npcs } = api.getCached(home.WORLD_KEY)
     if (api.isTtyAt(0)) {
       const npcKey = args[0]
       const point = api.safeJsonParse(args[1])
@@ -240,7 +240,7 @@ const gameFunctionsRunDefs = [
    */
   track: async function* ({ api, args, home }) {
     const npcKey = args[0]
-    const npcs = api.getCached(home.NPCS_KEY)
+    const { npcs } = api.getCached(home.WORLD_KEY)
     const process = api.getProcess()
     const subscription = npcs.trackNpc({ npcKey, process })
     await /** @type {Promise<void>} */ (new Promise(resolve =>
@@ -256,7 +256,7 @@ const gameFunctionsRunDefs = [
    */
   view: function* ({ api, args, home }) {
     const opts = Function(`return ${args[0]} `)()
-    const npcs = api.getCached(home.NPCS_KEY)
+    const { npcs } = api.getCached(home.WORLD_KEY)
     npcs.panZoomTo(opts) // Returns "cancelled" or "completed"
   },
 
@@ -269,7 +269,7 @@ const gameFunctionsRunDefs = [
    * `npcKey` must be fixed via 1st arg
    */
   walk: async function* ({ api, args, home, datum, promises = [] }) {
-    const npcs = api.getCached(home.NPCS_KEY)
+    const { npcs } = api.getCached(home.WORLD_KEY)
     const npcKey = args[0]
 
     const process = api.getProcess()

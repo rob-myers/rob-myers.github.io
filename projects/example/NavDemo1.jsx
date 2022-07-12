@@ -1,5 +1,6 @@
 import React from "react";
 
+import { removeCached, setCached } from "../service/query-client";
 import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../geomorph/use-geomorphs";
@@ -9,7 +10,7 @@ import Doors, { State as DoorsApi } from "../world/Doors";
 import Geomorphs from "../world/Floor";
 import FOV, { State as FovApi } from "../world/FOV";
 import DebugWorld from "../world/DebugWorld";
-import useHandleEvents from "projects/world/use-handle-events";
+import useHandleEvents from "../world/use-handle-events";
 
 /** @param {Props} props */
 export default function NavDemo1(props) {
@@ -42,6 +43,11 @@ export default function NavDemo1(props) {
 
   useHandleEvents(state, gmGraph);
 
+  React.useEffect(() => {
+    setCached(worldKey, state);
+    return () => removeCached(worldKey);
+  }, []);
+
   return gms.length ? (
     <CssPanZoom
       initZoom={1.5}
@@ -69,7 +75,6 @@ export default function NavDemo1(props) {
         api={state}
         disabled={props.disabled}
         gmGraph={gmGraph}
-        npcsKey={npcsKey}
         onLoad={api => { state.npcs = api; update(); }}
       />
 
@@ -90,7 +95,8 @@ export default function NavDemo1(props) {
   ) : null;
 }
 
-const npcsKey = 'npcs-demo-1';
+// TODO should be prop
+const worldKey = 'world-demo-1';
 
 /**
  * @typedef Props @type {object}

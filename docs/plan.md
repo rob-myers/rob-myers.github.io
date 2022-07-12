@@ -42,6 +42,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ doors close before doors model changes and light updates
   - ✅ NavDemo1 state.initOpen -> props.init.open
   - ✅ NavDemo1 handleCollisions, handlePlayerWayEvent, useEffect into custom hook
+  - ✅ replace NPCS_KEY by WORLD_KEY
   - Copy NavDemo1 to World 
   - World has props.npcsKey and props.gms
 
