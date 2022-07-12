@@ -241,14 +241,14 @@ declare namespace NPC {
     | { key: 'room'; gmId: number; roomId: number; }
   )
 
-  type Decor = { key: string } & (
+  type DecorDef = { key: string } & (
     | { type: 'path'; path: Geom.VectJson[]; }
     | { type: 'circle'; center: Geom.VectJson; radius: number; }
   );
 
   /** Using `action` instead of `key` to avoid name-collision */
   type NpcAction = (
-    | { action: 'add-decor'; } & Decor
+    | { action: 'add-decor'; } & DecorDef
     | { action: 'cancel'; npcKey: string }
     | { action: 'config'; debug?: boolean; interactRadius?: number }
     | { action: 'get'; npcKey: string }
@@ -268,7 +268,7 @@ declare namespace NPC {
     | { key: 'started-walking'; npcKey: string; }
     | { key: 'stopped-walking'; npcKey: string; }
     | NPCsWayEvent
-    | { key: 'decor'; meta: Decor; }
+    | { key: 'decor'; meta: DecorDef; }
   );
 
   interface NPCsWayEvent {

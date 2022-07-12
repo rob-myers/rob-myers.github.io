@@ -18,6 +18,7 @@ import useUpdate from "../hooks/use-update";
 import useGeomorphsNav from "../geomorph/use-geomorphs-nav";
 import useSessionStore from "../sh/session.store";
 import NPC from "./NPC";
+import Decor from "./Decor";
 
 /** @param {Props} props */
 export default function NPCs(props) {
@@ -525,7 +526,7 @@ export default function NPCs(props) {
     >
 
       {Object.entries(state.decor).map(([key, item]) =>
-        <DecorItem key={key} item={item} />
+        <Decor key={key} item={item} />
       )}
 
       {Object.values(state.npc).map(npc => (
@@ -562,52 +563,6 @@ const rootCss = css`
   }
 `;
 
-/** @param {{ item: NPC.Decor }} props  */
-function DecorItem({ item }) {
-  /** @type {Rect} */ let aabb;
-  /** @type {React.ReactNode} */ let child;
-
-  switch (item.type) {
-    case 'path':
-      aabb = Rect.fromPoints(...item.path).outset(10);
-      child = (
-        <g className="debug-path">
-          <polyline
-            fill="none" stroke="#88f" strokeDasharray="2 2" strokeWidth={1}
-            points={item.path.map(p => `${p.x},${p.y}`).join(' ')}
-          />
-          {item.path.map((p, i) => (
-            <circle key={i} fill="none" stroke="#ff444488" r={2} cx={p.x} cy={p.y} />
-          ))}
-        </g>
-      );
-      break;
-    case 'circle':
-      aabb = new Rect(item.center.x - item.radius, item.center.y - item.radius, item.radius * 2, item.radius * 2);
-      child = (
-        <circle
-          className="debug-circle"
-          cx={item.center.x}
-          cy={item.center.y}
-          r={item.radius}
-        />
-      );
-      break;
-    default:
-      console.error(`unexpected decor`, item);
-      // throw testNever(item);
-      return null;
-  }
-
-  return (
-    <svg width={aabb.width} height={aabb.height} style={{ left: aabb.x, top: aabb.y }}>
-      <g style={{ transform: `translate(${-aabb.x}px, ${-aabb.y}px)` }}>
-        {child}
-      </g>
-    </svg>
-  );
-}
-
 /**
  * @typedef Props @type {object}
  * @property {import('../example/NavDemo1').State} api
@@ -618,7 +573,7 @@ function DecorItem({ item }) {
 
 /**
  * @typedef State @type {object}
- * @property {Record<string, NPC.Decor>} decor
+ * @property {Record<string, NPC.DecorDef>} decor
  * @property {import('rxjs').Subject<NPC.NPCsEvent>} events
  * @property {Record<string, NPC.NPC>} npc
  * @property {null | string} playerKey
@@ -641,7 +596,7 @@ function DecorItem({ item }) {
  * @property {NPC.OnTtyLink} onTtyLink
  * @property {(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }) => Promise<'cancelled' | 'completed'>} panZoomTo
  * @property {(el: null | HTMLDivElement) => void} rootRef
- * @property {(decorKey: string, decor: null | NPC.Decor) => void} setDecor
+ * @property {(decorKey: string, decor: null | NPC.DecorDef) => void} setDecor
  * @property {(npcKey: string) => void} setRoomByNpc
  * @property {(e: { npcKey: string; point: Geom.VectJson }) => void} spawn
  * @property {(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }) => import('rxjs').Subscription} trackNpc

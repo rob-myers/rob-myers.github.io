@@ -44,6 +44,23 @@ const component = {
     .then(x => x.default),
   'example/NavDemo1': () => import('projects/example/NavDemo1')
       .then(x => (props: any) => <x.default disabled init={{ open: { 0: [24] } }} {...props} />),
+  'example/World': () => import('projects/world/World')
+      .then(x => (props: any) =>
+      <x.default
+        disabled
+        init={{ open: { 0: [24] } }}
+        worldKey="world-demo-2"
+        gms={[
+        { layoutKey: 'g-301--bridge' },
+        { layoutKey: 'g-101--multipurpose', transform: [1, 0, 0, 1, 0, 600] },
+        { layoutKey: 'g-302--xboat-repair-bay', transform: [1, 0, 0, 1, -1200, 600] },
+        { layoutKey: 'g-303--passenger-deck', transform: [1, 0, 0, -1, -1200, 1200 + 600] },
+        { layoutKey: 'g-302--xboat-repair-bay', transform: [-1, 0, 0, 1, 1200 + 1200, 600] },
+        { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
+        ]}
+        {...props}
+      />
+    ),
   'example/TriangleDev#301': () => import('projects/example/TriangleDev')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/TriangleDev#101': () => import('projects/example/TriangleDev')

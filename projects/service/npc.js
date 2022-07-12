@@ -223,7 +223,7 @@ export function verifyGlobalNavPath(input) {
     || false;
 }
 
-/** @param {NPC.Decor} input */
+/** @param {NPC.DecorDef} input */
 export function verifyDecor(input) {
   if (input && input.type === 'path' && input?.path?.every(/** @param {*} x */ (x) => Vect.isVectJson(x))) {
     return true;
