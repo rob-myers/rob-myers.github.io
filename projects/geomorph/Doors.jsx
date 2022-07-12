@@ -82,13 +82,13 @@ export default function Doors(props) {
 
       state.open[gmId][doorId] = !state.open[gmId][doorId];
       const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
-      state.events.next({ key, gmIndex: gmId, index: doorId });
+      state.events.next({ key, gmId, doorId });
 
       // Unsealed hull doors have adjacent door, which must also be toggled
       const adjHull = hullDoorId !== -1 ? props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId) : null;
       if (adjHull) {
         state.open[adjHull.adjGmId][adjHull.adjDoorId] = state.open[gmId][doorId];
-        state.events.next({ key, gmIndex: adjHull.adjGmId, index: adjHull.adjDoorId });
+        state.events.next({ key, gmId: adjHull.adjGmId, doorId: adjHull.adjDoorId });
       }
     },
     playerNearDoor(gmId, doorId) {
@@ -222,10 +222,6 @@ const rootCss = css`
       border-radius: var(--npc-door-touch-radius);
     }
 
-    &.hull .door-touch-ui {
-      top: calc(-1 * var(--npc-door-touch-radius) + ${ hullDoorWidth / 2 }px );
-    }
-
     &:not(.iris) {
       background: #444;
       border: 1px solid #999;
@@ -233,6 +229,13 @@ const rootCss = css`
       transition: width 300ms ease-in;
       &.open {
         width: 4px !important;
+      }
+    }
+
+    &.hull {
+      transition: width 600ms ease-in;
+      .door-touch-ui {
+        top: calc(-1 * var(--npc-door-touch-radius) + ${ hullDoorWidth / 2 }px );
       }
     }
 

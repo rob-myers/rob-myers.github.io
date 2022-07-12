@@ -121,8 +121,8 @@ declare namespace NPC {
 
   export interface DoorMessage {
     key: 'opened-door' | 'closed-door';
-    gmIndex: number;
-    index: number;
+    gmId: number;
+    doorId: number;
   }
 
   export interface UseGeomorphsNav {
