@@ -40,11 +40,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ remove `<DebugWorld/>` guard
   - ✅ Move styles into FOV and Floor
   - ✅ doors close before doors model changes and light updates
-  - NavDemo1 state.initOpen -> props.init.*
+  - ✅ NavDemo1 state.initOpen -> props.init.open
   - NavDemo1 handleCollisions, handlePlayerWayEvent, useEffect into custom hook
   - Copy NavDemo1 to World 
   - World has props.gm
-
 
 - ✅ Cannot close door just before npc enters and npc goes thru door
 

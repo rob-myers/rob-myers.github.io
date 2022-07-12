@@ -22,7 +22,7 @@ export default function Doors(props) {
     canvas: [],
     events: new Subject,
     open: gms.map((gm, gmId) =>
-      gm.doors.map((_, doorId) => props.initOpen[gmId]?.includes(doorId) || false)
+      gm.doors.map((_, doorId) => props.init?.[gmId]?.includes(doorId) || false)
     ),
     ready: true,
     rootEl: /** @type {HTMLDivElement} */ ({}),
@@ -265,7 +265,7 @@ const rootCss = css`
  * @typedef Props @type {object}
  * @property {Graph.GmGraph} gmGraph
  * @property {import('../example/NavDemo1').State} api
- * @property {{ [gmId: number]: number[] }} initOpen
+ * @property {{ [gmId: number]: number[] }} [init]
  * @property {(doorsApi: State) => void} onLoad
  */
 

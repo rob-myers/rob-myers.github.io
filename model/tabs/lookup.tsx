@@ -43,7 +43,7 @@ const component = {
   'example/LightsTest': () => import('projects/example/LightsTest')
     .then(x => x.default),
   'example/NavDemo1': () => import('projects/example/NavDemo1')
-      .then(x => (props: any) => <x.default disabled {...props} />),
+      .then(x => (props: any) => <x.default disabled init={{ open: { 0: [24] } }} {...props} />),
   'example/TriangleDev#301': () => import('projects/example/TriangleDev')
     .then(x => (props: any) => <x.default disabled {...props} layoutKey='g-301--bridge' />),
   'example/TriangleDev#101': () => import('projects/example/TriangleDev')

@@ -12,7 +12,7 @@ import Geomorphs from "../vs-1/Floor";
 import FOV, { State as FovApi } from "../vs-1/FOV";
 import DebugWorld from "../vs-1/DebugWorld";
 
-/** @param {{ disabled?: boolean }} props */
+/** @param {Props} props */
 export default function NavDemo1(props) {
 
   const update = useUpdate();
@@ -27,8 +27,6 @@ export default function NavDemo1(props) {
   ]);
 
   const state = useStateRef(() => /** @type {State} */ ({
-
-    initOpen: { 0: [24] },
 
     doors: /** @type {DoorsApi} */  ({ ready: false }),
     fov: /** @type {FovApi} */  ({ ready: false }),
@@ -199,7 +197,7 @@ export default function NavDemo1(props) {
       <Doors
         api={state}
         gmGraph={gmGraph}
-        initOpen={state.initOpen}
+        init={props.init.open}
         onLoad={api => { state.doors = api; update(); }}
       />
 
@@ -210,8 +208,13 @@ export default function NavDemo1(props) {
 const npcsKey = 'npcs-demo-1';
 
 /**
+ * @typedef Props @type {object}
+ * @property {boolean} [disabled]
+ * @property {{ open?: {[gmId: number]: number[]} }} init
+ */
+
+/**
  * @typedef State @type {object}
- * @property {{ [gmId: number]: number[] }} initOpen
  * @property {DoorsApi} doors
  * @property {PanZoom.CssApi} panZoom
  * @property {NPC.NPCs} npcs
