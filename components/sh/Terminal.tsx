@@ -41,7 +41,7 @@ export default function Terminal(props: Props) {
   }, [props.sessionKey]);
 
   React.useEffect(() => {
-    if (props.disabled) {
+    if (props.disabled && state.xtermReady) {
       state.wasDisabled = true;
       useSession.api.writeMsgCleanly(props.sessionKey, 'ℹ️  Paused session', { prompt: false });
 
