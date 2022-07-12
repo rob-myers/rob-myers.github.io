@@ -217,5 +217,5 @@ export default function DebugWorld(props) {
  * @property {import('../example/NavDemo1').State} worldApi
  */
 
- const debugRadius = 5;
+const debugRadius = 5;
 const debugDoorOffset = 10;
