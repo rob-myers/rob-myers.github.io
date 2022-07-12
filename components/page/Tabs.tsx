@@ -3,7 +3,7 @@ import { css } from 'goober';
 import classNames from 'classnames';
 import { enableBodyScroll, disableBodyScroll } from 'body-scroll-lock';
 
-import type { TabMeta } from 'model/tabs/tabs.model';
+import { getTabName, TabMeta } from 'model/tabs/tabs.model';
 import useSiteStore from 'store/site.store';
 import { tryLocalStorageGet, tryLocalStorageSet } from 'projects/service/generic';
 import useUpdate from 'projects/hooks/use-update';
@@ -24,7 +24,29 @@ export default function Tabs(props: Props) {
     colour: 'black' as 'black' | 'faded' | 'clear',
     expanded: false,
     contentDiv: undefined as undefined | HTMLDivElement,
+    reset: 0,
 
+    // TODO doesn't fire if click on Tabs
+    onKeyUp(e: React.KeyboardEvent) {
+      if (state.expanded && e.key === 'Escape') {
+        state.toggleExpand();
+      }
+    },
+    onModalBgPress() {
+      if (state.expanded) {
+        state.toggleExpand();
+      }
+    },
+    preventTouch(e: React.TouchEvent) {
+      e.preventDefault();
+    },
+
+    resetTabs() {
+      const portalKeys = props.tabs.flatMap(x => x.map(y => getTabName(y)));
+      useSiteStore.api.removePortals(...portalKeys);
+      state.reset++;
+      update();
+    },
     toggleEnabled() {
       state.enabled = !state.enabled;
       state.colour = state.colour === 'clear' ? 'faded' : 'clear';
@@ -64,20 +86,7 @@ export default function Tabs(props: Props) {
       }
       update();
     },
-    // TODO doesn't fire if click on Tabs
-    onKeyUp(e: React.KeyboardEvent) {
-      if (state.expanded && e.key === 'Escape') {
-        state.toggleExpand();
-      }
-    },
-    onModalBgPress() {
-      if (state.expanded) {
-        state.toggleExpand();
-      }
-    },
-    preventTouch(e: React.TouchEvent) {
-      e.preventDefault();
-    },
+
   }));
 
   React.useEffect(() => {// Initially trigger CSS animation
@@ -103,6 +112,7 @@ export default function Tabs(props: Props) {
       className={classNames("tabs", "scrollable", rootCss)}
       onKeyUp={state.onKeyUp}
       tabIndex={0}
+      key={`${props.id}-${state.reset}`}
     >
       <span id={props.id} className="anchor" />
 
@@ -132,6 +142,7 @@ export default function Tabs(props: Props) {
           enabled={state.enabled}
           expanded={state.expanded}
           parentTabsId={props.id}
+          resetTabs={state.resetTabs}
           toggleExpand={state.toggleExpand}
           toggleEnabled={state.toggleEnabled}
         />

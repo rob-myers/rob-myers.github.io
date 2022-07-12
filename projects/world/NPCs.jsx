@@ -27,8 +27,6 @@ export default function NPCs(props) {
 
   const nav = useGeomorphsNav(props.gmGraph, props.disabled);
 
-  const { panZoom } = props.api;
-
   const state = useStateRef(/** @type {() => State} */ () => ({
     decor: {},
     events: new Subject,
@@ -374,7 +372,7 @@ export default function NPCs(props) {
         throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
       }
       try {
-        await panZoom.panZoomTo(e.zoom, e.point, e.ms, e.easing);
+        await props.api.panZoom.panZoomTo(e.zoom, e.point, e.ms, e.easing);
         return 'completed';
       } catch (e) {
         return 'cancelled';
@@ -439,6 +437,7 @@ export default function NPCs(props) {
       }
 
       let status = /** @type {'no-track' | 'follow-walk' | 'panzoom-to'} */ ('no-track');
+      const { panZoom } = props.api
 
       const subscription = merge(
         of({ key: /** @type {const} */ ('init-track') }),

@@ -19,7 +19,8 @@ export type State = {
   tabs: TypeUtil.KeyedLookup<TabsState>;
 
   readonly api: {
-    updateArticleKey: () => void;
+    removePortals(...portalKeys: string[]): void;
+    updateArticleKey(): void;
   };
 };
 
@@ -31,7 +32,16 @@ const useStore = create<State>(devtools((set, get) => ({
   tabs: {},
 
   api: {
-    updateArticleKey: () => {
+    removePortals(...portalKeys) {
+      const { portal: portalLookup } = get();
+      portalKeys.forEach(portalKey => {
+        const portal = portalLookup[portalKey];
+        portal.portal.unmount();
+        delete portalLookup[portalKey];
+      });
+      set({});
+    },
+    updateArticleKey() {
       const articles = Object.values(get().articles);
       let article = undefined as undefined | ArticleState;
       const offset = 64; // Offset must cover `article > div.anchor`

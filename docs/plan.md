@@ -26,6 +26,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- ✅ can reset Tabs
+- migrate reset Tabs to Gatsby
+
 - ✅ BUG when terminal open initially without World
 - ✅ Avoid casting useStateRef
 

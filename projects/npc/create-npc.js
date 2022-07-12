@@ -248,11 +248,13 @@ export default function createNpc(
     },
     pause() {
       console.log(`pause: pausing ${this.def.key}`);
-      anim.translate.pause();
-      anim.rotate.pause();
-      anim.sprites.pause();
-      anim.translate.commitStyles();
-      this.setLookTarget(this.getAngle());
+      if (this.everAnimated()) {
+        anim.translate.pause();
+        anim.rotate.pause();
+        anim.sprites.pause();
+        anim.translate.commitStyles();
+        this.setLookTarget(this.getAngle());
+      }
       /**
        * Pending wayMeta is at anim.wayMetas[0].
        * No need to adjust its `length` because we use animation currentTime.

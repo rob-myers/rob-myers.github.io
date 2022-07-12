@@ -2,6 +2,7 @@ import Router from 'next/router';
 import React from 'react';
 import { Actions, IJsonModel, Layout as FlexLayout, Model, Node, TabNode } from 'flexlayout-react';
 import { useBeforeunload } from 'react-beforeunload';
+import { debounce } from 'debounce';
 
 import { tryLocalStorageGet, tryLocalStorageSet } from 'projects/service/generic';
 import { TabMeta, computeJsonModel, getTabName } from 'model/tabs/tabs.model';
@@ -38,8 +39,7 @@ export default function Layout(props: Props) {
     });
 
     return output;
-  }, [JSON.stringify(props.tabs)],
-  );
+  }, [JSON.stringify(props.tabs)]);
   
   useRegisterTabs(props, model);
 
@@ -48,6 +48,7 @@ export default function Layout(props: Props) {
       model={model}
       factory={factory}
       realtimeResize
+      onModelChange={debounce(() => storeModelAsJson(props.id, model), 300)}
     />
   );
 }
@@ -62,6 +63,7 @@ interface Props extends Pick<TabsProps, 'tabs'> {
  * e.g. so can select a particular tab programmatically.
  */
 function useRegisterTabs(props: Props, model: Model) {
+
   React.useEffect(() => {
     const { tabs } = useSiteStore.getState();
     if (!props.id) {
@@ -96,9 +98,7 @@ function useRegisterTabs(props: Props, model: Model) {
     return () => void delete useSiteStore.getState().tabs[props.id];
   }, [model]);
 
-  useBeforeunload(() => {
-    tryLocalStorageSet(`model@${props.id}`, JSON.stringify(model.toJson()));
-  });
+  useBeforeunload(() => storeModelAsJson(props.id, model));
 }
 
 function factory(node: TabNode) {
@@ -143,4 +143,8 @@ function restoreJsonModel(props: Props) {
     }
   }
   return Model.fromJson(computeJsonModel(props.tabs));
+}
+
+function storeModelAsJson(id: string, model: Model) {
+  tryLocalStorageSet(`model@${id}`, JSON.stringify(model.toJson()));
 }
