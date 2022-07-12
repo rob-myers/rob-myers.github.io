@@ -8,9 +8,9 @@ import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import NPCs from "../npc/NPCs";
 import Doors, { State as DoorsApi } from "../geomorph/Doors";
-import Geomorphs from "../vs-1/Floor";
-import FOV, { State as FovApi } from "../vs-1/FOV";
-import DebugWorld from "../vs-1/DebugWorld";
+import Geomorphs from "../world/Floor";
+import FOV, { State as FovApi } from "../world/FOV";
+import DebugWorld from "../world/DebugWorld";
 
 /** @param {Props} props */
 export default function NavDemo1(props) {

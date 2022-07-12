@@ -3,8 +3,7 @@ import { css } from "goober";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
 /**
- * The floor images of each geomorph
- * Styled earlier e.g. position absolute.
+ * The images of each geomorph
  * @param {Props} props 
  */
 export default function Geomorphs(props) {
