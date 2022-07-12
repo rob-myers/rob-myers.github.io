@@ -11,7 +11,7 @@ import { geom } from "../service/geom";
 import useUpdate from "../hooks/use-update";
 import useGeomorphs from "../hooks/use-geomorphs";
 import useStateRef from "../hooks/use-state-ref";
-import { State as DoorsApi } from '../geomorph/Doors';
+import { State as DoorsApi } from '../world/Doors';
 
 /** @param {Props} props */
 export default function World(props) {

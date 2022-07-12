@@ -13,7 +13,7 @@ import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
 import { getNumericCssVar } from "../service/dom";
-import createNpc, { defaultNpcInteractRadius, npcSpeed } from "./create-npc";
+import createNpc, { defaultNpcInteractRadius, npcSpeed } from "../npc/create-npc";
 import { scrollback } from "../sh/io/io.model";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";

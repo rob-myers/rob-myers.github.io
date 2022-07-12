@@ -2,7 +2,7 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 
-import { npcOffsetRadians, npcScale } from "./create-npc";
+import { npcOffsetRadians, npcScale } from "../npc/create-npc";
 /**
  * TODO modularise
  */

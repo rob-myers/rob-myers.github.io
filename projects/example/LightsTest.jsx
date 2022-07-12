@@ -8,7 +8,7 @@ import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
 import useGeomorphs from "../hooks/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
-import Doors, { State as DoorsApi } from "../geomorph/Doors";
+import Doors, { State as DoorsApi } from "../world/Doors";
 
 /** @param {{ disabled?: boolean }} props */
 export default function LightsTest(props) {
@@ -143,7 +143,7 @@ export default function LightsTest(props) {
 
         <Doors
           gmGraph={gmGraph}
-          initOpen={{}}
+          init={{}}
           onLoad={api => state.doorsApi = api}
           api={/** @type {import('../example/NavDemo1').State} */ ({
             fov: {},
