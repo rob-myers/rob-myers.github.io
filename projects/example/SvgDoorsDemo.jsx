@@ -3,7 +3,7 @@ import { css } from "goober";
 import { gridBounds, initViewBox } from "./defaults";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import PanZoom from "../panzoom/PanZoom";
-import useGeomorphData from "../hooks/use-geomorph-data";
+import useGeomorphData from "../geomorph/use-geomorph-data";
 
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */

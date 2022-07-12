@@ -17,7 +17,7 @@ import createNpc, { defaultNpcInteractRadius, npcSpeed } from "../npc/create-npc
 import { scrollback } from "../sh/io/io.model";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
-import useGeomorphsNav from "../hooks/use-geomorphs-nav";
+import useGeomorphsNav from "../geomorph/use-geomorphs-nav";
 import useSessionStore from "../sh/session.store";
 import NPC from "./NPC";
 

@@ -41,9 +41,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ Move styles into FOV and Floor
   - ✅ doors close before doors model changes and light updates
   - ✅ NavDemo1 state.initOpen -> props.init.open
-  - NavDemo1 handleCollisions, handlePlayerWayEvent, useEffect into custom hook
+  - ✅ NavDemo1 handleCollisions, handlePlayerWayEvent, useEffect into custom hook
   - Copy NavDemo1 to World 
-  - World has props.gm
+  - World has props.npcsKey and props.gms
 
 - ✅ Cannot close door just before npc enters and npc goes thru door
 

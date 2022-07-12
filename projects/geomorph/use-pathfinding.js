@@ -10,7 +10,7 @@ import { useQuery } from "react-query";
 export default function usePathfinding(zoneKey, gm, disabled) {
   return useQuery(zoneKeyToQueryKey(zoneKey), () => {
     return {
-      graph : floorGraphClass.fromZone(/** @type {Geomorph.GeomorphData} */ (gm))
+      graph: floorGraphClass.fromZone(/** @type {Geomorph.GeomorphData} */ (gm))
     };
   }, {
     enabled: !!gm && !disabled,

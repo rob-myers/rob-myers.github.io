@@ -6,7 +6,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { assertDefined } from "../service/generic";
 import useStateRef from "../hooks/use-state-ref";
 import useUpdate from "../hooks/use-update";
-import useGeomorphs from "../hooks/use-geomorphs";
+import useGeomorphs from "../geomorph/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
 import Doors, { State as DoorsApi } from "../world/Doors";
 

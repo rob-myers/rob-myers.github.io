@@ -5,8 +5,8 @@ import * as defaults from './defaults';
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 import { Rect } from "../geom";
 import PanZoom from "../panzoom/PanZoom";
-import useGeomorphData from "../hooks/use-geomorph-data";
-import usePathfinding from "../hooks/use-pathfinding";
+import useGeomorphData from "../geomorph/use-geomorph-data";
+import usePathfinding from "../geomorph/use-pathfinding";
 
 /** @param {{ layoutKey: Geomorph.LayoutKey; disabled?: boolean; }} props */
 export default function SvgSvgNavGraph(props) {

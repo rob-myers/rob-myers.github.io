@@ -6,8 +6,8 @@ import * as defaults from "./defaults";
 import { Rect, Vect } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
 
-import useGeomorphData from "../hooks/use-geomorph-data";
-import usePathfinding from "../hooks/use-pathfinding";
+import useGeomorphData from "../geomorph/use-geomorph-data";
+import usePathfinding from "../geomorph/use-pathfinding";
 import useStateRef from "../hooks/use-state-ref";
 import PanZoom from "../panzoom/PanZoom";
 import DraggableNode from "./DraggableNode";

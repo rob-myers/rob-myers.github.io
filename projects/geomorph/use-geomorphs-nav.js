@@ -1,6 +1,6 @@
 import React from "react";
 import { assertDefined } from "../service/generic";
-import usePathfinding from "./use-pathfinding";
+import usePathfinding from "../geomorph/use-pathfinding";
 
 // TODO
 // - ✅ provide local pathfindings

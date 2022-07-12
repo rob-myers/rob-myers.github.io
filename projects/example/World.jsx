@@ -9,7 +9,7 @@ import { Poly } from "../geom";
 import { testNever } from "../service/generic";
 import { geom } from "../service/geom";
 import useUpdate from "../hooks/use-update";
-import useGeomorphs from "../hooks/use-geomorphs";
+import useGeomorphs from "../geomorph/use-geomorphs";
 import useStateRef from "../hooks/use-state-ref";
 import { State as DoorsApi } from '../world/Doors';
 
