@@ -1,5 +1,7 @@
 import React from "react";
-import { testNever, visibleUnicodeLength } from "../service/generic";
+import classNames from "classnames";
+import { css } from "goober";
+import { visibleUnicodeLength } from "../service/generic";
 import { Vect } from "../geom";
 import { ansiColor } from "../sh/sh.util";
 import useSessionStore from "../sh/session.store";
@@ -65,7 +67,10 @@ export default function DebugWorld(props) {
   }, [gm, props, gmId, roomId]);
 
   return (
-    <div className="debug-parent" onClick={onClick}>
+    <div
+      className={classNames("debug-parent", rootCss)}
+      onClick={onClick}
+    >
       {props.outlines && props.gms.map((gm, gmId) =>
         <div
           key={gmId}
@@ -219,3 +224,54 @@ export default function DebugWorld(props) {
 
 const debugRadius = 5;
 const debugDoorOffset = 10;
+
+const rootCss = css`
+  div.debug {
+    position: absolute;
+
+    div.debug-door-arrow, div.debug-label-info {
+      cursor: pointer;
+      position: absolute;
+      border-radius: ${debugRadius}px;
+    }
+    div.debug-door-arrow {
+      background-image: url('/icon/solid_arrow-circle-right.svg');
+    }
+    div.debug-label-info {
+      background-image: url('/icon/info-icon.svg');
+    }
+
+    div.debug-door-id-icon, div.debug-room-id-icon {
+      position: absolute;
+      background: black;
+      color: white;
+      font-size: 8px;
+      line-height: 1;
+      border: 1px solid black;
+    }
+    div.debug-room-id-icon {
+      color: #4f4;
+    }
+    div.debug-window {
+      position: absolute;
+      background: #0000ff40;
+      border: 1px solid white;
+      pointer-events: none;
+      transform-origin: top left;
+    }
+    svg.debug-room-nav, svg.debug-room-outline {
+      position: absolute;
+      pointer-events: none;
+      path.nav-poly {
+        pointer-events: none;
+        fill: rgba(255, 0, 0, 0.1);
+        stroke: blue;
+      }
+      path.room-outline {
+        pointer-events: none;
+        fill: rgba(0, 0, 255, 0.1);
+        stroke: red;
+      }
+    }
+  }  
+`;

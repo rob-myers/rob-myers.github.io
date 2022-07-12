@@ -38,10 +38,11 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ provide worldApi as prop instead of sub-apis (avoid initial race condition)
   - ✅ `<Debug/>` -> `<DebugWorld/>` in separate file
   - ✅ remove `<DebugWorld/>` guard
+  - ✅ Move styles into FOV and Floor
   - NavDemo1 props.initOpen -> props.init.*
-  - `<NPC/>` into /version-1
-  - `<NPCs/>` into /version-1
-  - `<Doors/>` into /version-1
+  - `<NPC/>` into /vs-1
+  - `<NPCs/>` into /vs-1
+  - `<Doors/>` into /vs-1
 
 - Careful about mutually dependent components in NavDemo1
   - why is it working?

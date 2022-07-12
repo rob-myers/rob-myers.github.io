@@ -1,7 +1,8 @@
 import React from "react";
+import classNames from "classnames";
+import { css } from "goober";
 import { Poly } from "../geom";
 import { geomorphPngPath } from "../geomorph/geomorph.model";
-import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 
 /**
@@ -12,8 +13,6 @@ import useStateRef from "../hooks/use-state-ref";
 export default function FOV(props) {
 
   const { gmGraph, gmGraph: { gms } } = props;
-
-  const update = useUpdate();
 
   const state = useStateRef(/** @type {() => State} */ () => ({
     gmId: 0,
@@ -80,26 +79,28 @@ export default function FOV(props) {
     props.onLoad(state);
   }, []);
 
-  return <>
-    {gms.map((gm, gmId) =>
-      <img
-        key={gmId}
-        className="geomorph-dark"
-        src={geomorphPngPath(gm.key)}
-        draggable={false}
-        width={gm.pngRect.width}
-        height={gm.pngRect.height}
-        style={{
-          clipPath: state.clipPath[gmId],
-          WebkitClipPath: state.clipPath[gmId],
-          left: gm.pngRect.x,
-          top: gm.pngRect.y,
-          transform: gm.transformStyle,
-          transformOrigin: gm.transformOrigin,
-        }}
-      />
-    )}
-  </>;
+  return (
+    <div className={classNames("FOV", rootCss)}>
+      {gms.map((gm, gmId) =>
+        <img
+          key={gmId}
+          className="geomorph-dark"
+          src={geomorphPngPath(gm.key)}
+          draggable={false}
+          width={gm.pngRect.width}
+          height={gm.pngRect.height}
+          style={{
+            clipPath: state.clipPath[gmId],
+            WebkitClipPath: state.clipPath[gmId],
+            left: gm.pngRect.x,
+            top: gm.pngRect.y,
+            transform: gm.transformStyle,
+            transformOrigin: gm.transformOrigin,
+          }}
+        />
+      )}
+    </div>
+  );
 }
 
 /**
@@ -118,3 +119,13 @@ export default function FOV(props) {
  * @property {(gmId: number, roomId: number) => boolean} setRoom
  * @property {() => void} updateClipPath
  */
+
+ const rootCss = css`
+  img.geomorph-dark {
+    position: absolute;
+    transform-origin: top left;
+    pointer-events: none;
+    /* filter: invert(100%) brightness(34%); */
+    filter: invert(100%) brightness(55%) contrast(200%) brightness(70%);
+  }
+`;

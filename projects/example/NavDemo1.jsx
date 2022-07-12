@@ -1,5 +1,4 @@
 import React from "react";
-import { css } from "goober";
 import { filter } from "rxjs/operators";
 
 import { testNever } from "../service/generic";
@@ -162,7 +161,6 @@ export default function NavDemo1(props) {
 
   return gms.length ? (
     <CssPanZoom
-      className={rootCss}
       initZoom={1.5}
       initCenter={{ x: 300, y: 300 }}
       dark
@@ -210,73 +208,6 @@ export default function NavDemo1(props) {
 }
 
 const npcsKey = 'npcs-demo-1';
-const debugRadius = 5;
-const debugDoorOffset = 10;
-
-/** @param {Geomorph.GeomorphData} gm */
-const rootCss = css`
-  img {
-    position: absolute;
-    transform-origin: top left;
-    pointer-events: none;
-  }
-  img.geomorph {
-    filter: brightness(80%);
-  }
-  img.geomorph-dark {
-    filter: invert(100%) brightness(34%);
-    /* filter: invert(100%) brightness(55%) contrast(200%) brightness(60%); */
-  }
-
-  div.debug {
-    position: absolute;
-
-    div.debug-door-arrow, div.debug-label-info {
-      cursor: pointer;
-      position: absolute;
-      border-radius: ${debugRadius}px;
-    }
-    div.debug-door-arrow {
-      background-image: url('/icon/solid_arrow-circle-right.svg');
-    }
-    div.debug-label-info {
-      background-image: url('/icon/info-icon.svg');
-    }
-
-    div.debug-door-id-icon, div.debug-room-id-icon {
-      position: absolute;
-      background: black;
-      color: white;
-      font-size: 8px;
-      line-height: 1;
-      border: 1px solid black;
-    }
-    div.debug-room-id-icon {
-      color: #4f4;
-    }
-    div.debug-window {
-      position: absolute;
-      background: #0000ff40;
-      border: 1px solid white;
-      pointer-events: none;
-      transform-origin: top left;
-    }
-    svg.debug-room-nav, svg.debug-room-outline {
-      position: absolute;
-      pointer-events: none;
-      path.nav-poly {
-        pointer-events: none;
-        fill: rgba(255, 0, 0, 0.1);
-        stroke: blue;
-      }
-      path.room-outline {
-        pointer-events: none;
-        fill: rgba(0, 0, 255, 0.1);
-        stroke: red;
-      }
-    }
-  }
-`;
 
 /**
  * @typedef State @type {object}
