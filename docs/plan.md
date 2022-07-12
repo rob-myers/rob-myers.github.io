@@ -39,16 +39,19 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ `<Debug/>` -> `<DebugWorld/>` in separate file
   - ✅ remove `<DebugWorld/>` guard
   - ✅ Move styles into FOV and Floor
-  - NavDemo1 props.initOpen -> props.init.*
-  - `<NPC/>` into /vs-1
-  - `<NPCs/>` into /vs-1
-  - `<Doors/>` into /vs-1
+  - ✅ doors close before doors model changes and light updates
+  - NavDemo1 state.initOpen -> props.init.*
+  - NavDemo1 handleCollisions, handlePlayerWayEvent, useEffect into custom hook
+  - Different versions of subcomponents without different version of super?
+    - maybe avoid versioning?
+  - Copy NavDemo1 to World 
+  - World has props.gm
 
-- Careful about mutually dependent components in NavDemo1
-  - why is it working?
+- support sit on chair
+  - ✅ Floor -> Geomorphs
+  - one frame animation
+  - Geomorphs has extra z-indexed layer with desks, bunk beds, tables
 
-- How to version typings e.g. NPC.NPCs
-  - IDEA include types inside versioned components
 
 - ✅ Cannot close door just before npc enters and npc goes thru door
 
@@ -79,9 +82,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - sealed standard/iris on hull `12`
     - ✅ 301 and 302 hull
 
-- Start going thru react source
-  - https://github.com/facebook/react/blob/main/packages/react/src/React.js
-  - Start by knowing what these mean 👆
+- Sitting animation (single pose)
+  - https://www.123rf.com/photo_101532699_top-view-people-sitting-on-chair-vector-illustration.html
+- Lighter grey nav triangles
+- Check can raycast to door when try open
 - Door nodes have extra weight when door closed
   - fixes e.g. double door nav issue
 - Canonical way to export class as type only?
