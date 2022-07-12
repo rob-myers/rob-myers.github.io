@@ -92,22 +92,21 @@ export default function Doors(props) {
       }
     },
     playerNearDoor(gmId, doorId) {
-      const { npcsApi } = props.worldApi;
-      const player = npcsApi.getPlayer();
+      const { npcs } = props.api;
+      const player = npcs.getPlayer();
       if (!player) { // If no player, we are "everywhere"
         return true;
       }
       const center = player.getPosition();
-      const radius = npcsApi.getNpcInteractRadius();
+      const radius = npcs.getNpcInteractRadius();
       const door = gms[gmId].doors[doorId];
       const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
       return geom.circleIntersectsConvexPolygon(center, radius, convexPoly);
     },
     safeToCloseDoor(gmId, doorId) {
-      const { npcsApi } = props.worldApi;
       const door = gms[gmId].doors[doorId];
       const convexPoly = door.poly.clone().applyMatrix(gms[gmId].matrix);
-      const closeNpcs = npcsApi.getNpcsIntersecting(convexPoly);
+      const closeNpcs = props.api.npcs.getNpcsIntersecting(convexPoly);
       return closeNpcs.length === 0;
     },
     setVisible(gmId, doorIds) {
@@ -116,20 +115,19 @@ export default function Doors(props) {
       update();
     },
     updateVisibleDoors() {
-      const { fovApi } = props.worldApi;
-      const gm = gms[fovApi.gmId]
-
+      const { fov } = props.api;
+      const gm = gms[fov.gmId]
       /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
       const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
-      nextVis[fovApi.gmId] = gm.roomGraph.getAdjacentDoors(fovApi.roomId).map(x => x.doorId);
-      gm.roomGraph.getAdjacentHullDoorIds(gm, fovApi.roomId).flatMap(({ hullDoorIndex }) =>
-        props.gmGraph.getAdjacentRoomCtxt(fovApi.gmId, hullDoorIndex) || []
+      nextVis[fov.gmId] = gm.roomGraph.getAdjacentDoors(fov.roomId).map(x => x.doorId);
+      gm.roomGraph.getAdjacentHullDoorIds(gm, fov.roomId).flatMap(({ hullDoorIndex }) =>
+        props.gmGraph.getAdjacentRoomCtxt(fov.gmId, hullDoorIndex) || []
       ).forEach(({ adjGmId, adjDoorId }) => (nextVis[adjGmId] = nextVis[adjGmId] || []).push(adjDoorId));
 
       gms.forEach((_, gmId) => state.setVisible(gmId, nextVis[gmId]));
     },
   }), {
-    deps: [props.worldApi],
+    deps: [props.api],
   });
 
   React.useEffect(() => {
@@ -255,7 +253,7 @@ const rootCss = css`
 /**
  * @typedef Props @type {object}
  * @property {Graph.GmGraph} gmGraph
- * @property {import('../example/NavDemo1').State} worldApi
+ * @property {import('../example/NavDemo1').State} api
  * @property {{ [gmId: number]: number[] }} initOpen
  * @property {(doorsApi: State) => void} onLoad
  */

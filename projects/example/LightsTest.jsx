@@ -145,9 +145,9 @@ export default function LightsTest(props) {
           gmGraph={gmGraph}
           initOpen={{}}
           onLoad={api => state.doorsApi = api}
-          worldApi={/** @type {import('../example/NavDemo1').State} */ ({
-            fovApi: {},
-            npcsApi: {
+          api={/** @type {import('../example/NavDemo1').State} */ ({
+            fov: {},
+            npcs: {
               getPlayer() { return null },
               getNpcInteractRadius() { return 10000 },
               getNpcsIntersecting(..._args) { return /** @type {*} */ ([]) },

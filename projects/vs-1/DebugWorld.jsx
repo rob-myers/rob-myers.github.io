@@ -9,14 +9,14 @@ import useSessionStore from "../sh/session.store";
 /** @param {Props} props */
 export default function DebugWorld(props) {
 
-  const { fovApi } = props.worldApi;
-  const { gmId, roomId } = fovApi;
+  const { fov } = props.api;
+  const { gmId, roomId } = fov;
   if (typeof gmId !== 'number') {
     return null;
   }
 
   const gm = props.gms[gmId];
-  const visDoorIds = props.worldApi.doorsApi.getVisible(gmId);
+  const visDoorIds = props.api.doors.getVisible(gmId);
   const roomNavPoly = gm.lazy.roomNavPoly[roomId];
   const roomNavAabb = roomNavPoly.rect;
   const roomAabb = gm.rooms[roomId].rect;
@@ -34,10 +34,10 @@ export default function DebugWorld(props) {
       const hullDoorId = gm.getHullDoorId(door);
       if (hullDoorId >= 0) {
         const ctxt = props.gmGraph.getAdjacentRoomCtxt(gmId, hullDoorId);
-        if (ctxt) fovApi.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
+        if (ctxt) fov.setRoom(ctxt.adjGmId, ctxt.adjRoomId);
         else console.info('hull door is isolated', gmId, hullDoorId);
       } else {
-        return fovApi.setRoom(gmId, gm.getOtherRoomId(door, roomId));
+        return fov.setRoom(gmId, gm.getOtherRoomId(door, roomId));
       }
     }
 
@@ -51,10 +51,10 @@ export default function DebugWorld(props) {
       const line = `ℹ️  [${ansiColor.Blue}${label.text}${ansiColor.Reset
         }] with ${numDoors} door${numDoors > 1 ? 's' : ''}`;
         
-      const sessionCtxts = Object.values(props.worldApi.npcsApi.session).filter(x => x.receiveMsgs);
+      const sessionCtxts = Object.values(props.api.npcs.session).filter(x => x.receiveMsgs);
       for (const { key: sessionKey } of sessionCtxts) {
         const globalLineNumber = await useSessionStore.api.writeMsgCleanly(sessionKey, line);
-        props.worldApi.npcsApi.addTtyLineCtxts(sessionKey, globalLineNumber, [{
+        props.api.npcs.addTtyLineCtxts(sessionKey, globalLineNumber, [{
           lineNumber: globalLineNumber,
           lineText: line, 
           linkText: label.text,
@@ -219,7 +219,7 @@ export default function DebugWorld(props) {
  * @property {boolean} [showIds]
  * @property {boolean} [showLabels]
  * @property {boolean} [windows]
- * @property {import('../example/NavDemo1').State} worldApi
+ * @property {import('../example/NavDemo1').State} api
  */
 
 const debugRadius = 5;

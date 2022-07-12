@@ -30,27 +30,27 @@ export default function NavDemo1(props) {
 
     initOpen: { 0: [24] },
 
-    doorsApi: /** @type {DoorsApi} */  ({ ready: false }),
-    panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
-    npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
-    fovApi: /** @type {FovApi} */  ({ ready: false }),
+    doors: /** @type {DoorsApi} */  ({ ready: false }),
+    panZoom: /** @type {PanZoom.CssApi} */ ({ ready: false }),
+    npcs: /** @type {NPC.NPCs} */  ({ ready: false }),
+    fov: /** @type {FovApi} */  ({ ready: false }),
 
     handleCollisions(e) {
       switch (e.meta.key) {
         case 'pre-collide': {
-          const npc = state.npcsApi.getNpc(e.npcKey);
-          const other = state.npcsApi.getNpc(e.meta.otherNpcKey);
+          const npc = state.npcs.getNpc(e.npcKey);
+          const other = state.npcs.getNpc(e.meta.otherNpcKey);
           npc.cancel();
           other.cancel();
           break;
         }
         case 'start-seg': {
-          const npc = state.npcsApi.getNpc(e.npcKey);
-          const others = Object.values(state.npcsApi.npc).filter(x => x !== npc);
+          const npc = state.npcs.getNpc(e.npcKey);
+          const others = Object.values(state.npcs.npc).filter(x => x !== npc);
 
           // TODO efficiency
           for (const other of others) {
-            const collision = state.npcsApi.detectCollision(npc, other);
+            const collision = state.npcs.detectCollision(npc, other);
 
             if (collision) {// Add wayMeta cancelling motion
               console.warn(`${npc.key} will collide with ${other.key}`, collision);
@@ -76,23 +76,23 @@ export default function NavDemo1(props) {
         case 'exit-room':
           // Player left a room
           if (e.meta.otherRoomId !== null) {
-            state.fovApi.setRoom(e.meta.gmId, e.meta.otherRoomId);
+            state.fov.setRoom(e.meta.gmId, e.meta.otherRoomId);
           } else {// Handle hull doors
             const adjCtxt = gmGraph.getAdjacentRoomCtxt(e.meta.gmId, e.meta.hullDoorId);
-            adjCtxt && state.fovApi.setRoom(adjCtxt.adjGmId, adjCtxt.adjRoomId);
+            adjCtxt && state.fov.setRoom(adjCtxt.adjGmId, adjCtxt.adjRoomId);
           }
           state.updateAll();
           break;
         case 'enter-room':
-          if (state.fovApi.setRoom(e.meta.gmId, e.meta.enteredRoomId)) {
+          if (state.fov.setRoom(e.meta.gmId, e.meta.enteredRoomId)) {
             state.updateAll();
           }
           break;
         case 'pre-exit-room':
         case 'pre-near-door':
           // If upcoming door is closed, stop player
-          if (!state.doorsApi.open[e.meta.gmId][e.meta.doorId]) {
-            const player = state.npcsApi.getNpc(e.npcKey);
+          if (!state.doors.open[e.meta.gmId][e.meta.doorId]) {
+            const player = state.npcs.getNpc(e.npcKey);
             await player.cancel();
           }
           break;
@@ -104,8 +104,8 @@ export default function NavDemo1(props) {
       }
     },
     updateAll() {
-      state.fovApi.updateClipPath();
-      state.doorsApi.updateVisibleDoors();
+      state.fov.updateClipPath();
+      state.doors.updateVisibleDoors();
       update();
     },
   }), {
@@ -113,34 +113,34 @@ export default function NavDemo1(props) {
   });
 
   React.useEffect(() => {
-    if (gms.length && state.doorsApi.ready && state.npcsApi.ready) {
+    if (gms.length && state.doors.ready && state.npcs.ready) {
       state.updateAll();
 
       // Update Door graphics on change
-      const doorsSub = state.doorsApi.events
+      const doorsSub = state.doors.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
         .subscribe(() => state.updateAll());
 
       // React to NPC events
-      const npcsSub = state.npcsApi.events.subscribe((e) => {
+      const npcsSub = state.npcs.events.subscribe((e) => {
         switch (e.key) {
           case 'decor':
-            state.npcsApi.setDecor(e.meta.key, e.meta);
+            state.npcs.setDecor(e.meta.key, e.meta);
             break;
           case 'set-player':
-            state.npcsApi.playerKey = e.npcKey || null;
-            e.npcKey && state.npcsApi.setRoomByNpc(e.npcKey);
+            state.npcs.playerKey = e.npcKey || null;
+            e.npcKey && state.npcs.setRoomByNpc(e.npcKey);
             break;
           case 'spawned-npc':
-            if (state.npcsApi.playerKey === e.npcKey) {
-              state.npcsApi.setRoomByNpc(e.npcKey);
+            if (state.npcs.playerKey === e.npcKey) {
+              state.npcs.setRoomByNpc(e.npcKey);
             }
             break;
           case 'started-walking':
           case 'stopped-walking':
             break;
           case 'way-point':
-            if (e.npcKey === state.npcsApi.playerKey) {
+            if (e.npcKey === state.npcs.playerKey) {
               state.handlePlayerWayEvent(e);
             }
             if (e.meta.key === 'start-seg' || e.meta.key === 'pre-collide') {
@@ -157,7 +157,7 @@ export default function NavDemo1(props) {
         npcsSub.unsubscribe();
       };
     }
-  }, [gms, state.doorsApi.ready, state.npcsApi.ready]);
+  }, [gms, state.doors.ready, state.npcs.ready]);
 
   return gms.length ? (
     <CssPanZoom
@@ -165,9 +165,11 @@ export default function NavDemo1(props) {
       initCenter={{ x: 300, y: 300 }}
       dark
       // grid
-      onLoad={api => {state.panZoomApi = api; update(); }}
+      onLoad={api => {state.panZoom = api; update(); }}
     >
-      <Floor gms={gms} />
+      <Floor
+        gms={gms}
+      />
 
       <DebugWorld
         // outlines
@@ -177,30 +179,30 @@ export default function NavDemo1(props) {
         showIds
         showLabels
 
+        api={state}
         gms={gms}
         gmGraph={gmGraph}
-        worldApi={state}
       />
 
       <NPCs
+        api={state}
         disabled={props.disabled}
         gmGraph={gmGraph}
         npcsKey={npcsKey}
-        onLoad={api => { state.npcsApi = api; update(); }}
-        worldApi={state}
+        onLoad={api => { state.npcs = api; update(); }}
       />
 
       <FOV
+        api={state}
         gmGraph={gmGraph}
-        onLoad={api => { state.fovApi = api; update(); }}
-        worldApi={state}
+        onLoad={api => { state.fov = api; update(); }}
       />
 
       <Doors
+        api={state}
         gmGraph={gmGraph}
         initOpen={state.initOpen}
-        onLoad={api => { state.doorsApi = api; update(); }}
-        worldApi={state}
+        onLoad={api => { state.doors = api; update(); }}
       />
 
     </CssPanZoom>
@@ -212,10 +214,10 @@ const npcsKey = 'npcs-demo-1';
 /**
  * @typedef State @type {object}
  * @property {{ [gmId: number]: number[] }} initOpen
- * @property {DoorsApi} doorsApi
- * @property {PanZoom.CssApi} panZoomApi
- * @property {NPC.NPCs} npcsApi
- * @property {FovApi} fovApi
+ * @property {DoorsApi} doors
+ * @property {PanZoom.CssApi} panZoom
+ * @property {NPC.NPCs} npcs
+ * @property {FovApi} fov
  * @property {(e: Extract<NPC.NPCsEvent, { key: 'way-point' }>) => void} handleCollisions
  * @property {(e: Extract<NPC.NPCsEvent, { key: 'way-point' }>) => void} handlePlayerWayEvent
  * @property {() => void} updateAll

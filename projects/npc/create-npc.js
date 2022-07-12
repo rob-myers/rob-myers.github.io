@@ -9,15 +9,13 @@ import npcJson from '../../public/npc/first-npc.json'
 const {animLookup} = npcJson;
 
 /**
- * @param {string} npcKey 
- * @param {{ position: Geom.VectJson; speed: number; angle: number; }} def 
- * @param {{ disabled?: boolean; panZoomApi: PanZoom.CssApi; npcs: NPC.NPCs; }} deps
+ * @param {{ npcKey: string; position: Geom.VectJson; speed: number; angle: number; }} def 
+ * @param {{ disabled?: boolean; api: import('../example/NavDemo1').State; }} deps
  * @returns {NPC.NPC}
  */
 export default function createNpc(
-  npcKey,
   def,
-  { disabled, panZoomApi, npcs },
+  { disabled, api },
 ) {
 
   /** @type {NPC.NPC['anim']} shortcut */
@@ -35,10 +33,10 @@ export default function createNpc(
   };
 
   return {
-    key: npcKey,
+    key: def.npcKey,
     epochMs: Date.now(),
     // TODO hook up initial angle
-    def: { key: npcKey, position: def.position, angle: def.angle, paused: !!disabled },
+    def: { key: def.npcKey, position: def.position, angle: def.angle, paused: !!disabled },
     el: {
       root: /** @type {HTMLDivElement} */ ({}),
       body: /** @type {HTMLDivElement} */ ({}),
@@ -87,7 +85,7 @@ export default function createNpc(
 
       this.setSpritesheet('walk');
       this.startAnimation();
-      npcs.events.next({ key: 'started-walking', npcKey: this.def.key });
+      api.npcs.events.next({ key: 'started-walking', npcKey: this.def.key });
       console.log(`followNavPath: ${this.def.key} started walk`);
       this.nextWayTimeout();
 
@@ -107,7 +105,7 @@ export default function createNpc(
       } finally {
         this.setSpritesheet('idle');
         this.startAnimation();
-        npcs.events.next({ key: 'stopped-walking', npcKey: this.def.key });
+        api.npcs.events.next({ key: 'stopped-walking', npcKey: this.def.key });
       }
 
     },
@@ -163,7 +161,7 @@ export default function createNpc(
     getPosition() {
       // TODO avoid getBoundingClientRect undefined
       const { x: clientX, y: clientY } = Vect.from(this.el.root.getBoundingClientRect?.() || [0, 0]);
-      return Vect.from(panZoomApi.getWorld({ clientX, clientY })).precision(2);
+      return Vect.from(api.panZoom.getWorld({ clientX, clientY })).precision(2);
     },
     getRadius() {
       return getNumericCssVar(this.el.root, cssName.npcBoundsRadius);
@@ -260,9 +258,9 @@ export default function createNpc(
        * No need to adjust its `length` because we use animation currentTime.
        */
       window.clearTimeout(anim.wayTimeoutId);
-      if (this.def.key === npcs.playerKey) {
+      if (this.def.key === api.npcs.playerKey) {
         // Pause camera tracking
-        npcs.getPanZoomApi().animationAction('pause');
+        api.npcs.getPanZoomApi().animationAction('pause');
       }
     },
     play() {
@@ -271,9 +269,9 @@ export default function createNpc(
       anim.rotate.play();
       anim.sprites.play();
       this.nextWayTimeout();
-      if (this.def.key === npcs.playerKey) {
+      if (this.def.key === api.npcs.playerKey) {
         // Resume camera tracking
-        npcs.getPanZoomApi().animationAction('play');
+        api.npcs.getPanZoomApi().animationAction('play');
       }
     },
     setLookTarget(radians) {
@@ -367,7 +365,7 @@ export default function createNpc(
          */
         const wayMeta = /** @type { NPC.WayPointMeta} */ (anim.wayMetas.shift());
         console.log('WayMeta', this.key, wayMeta); // DEBUG 🚧
-        npcs.events.next({ key: 'way-point', npcKey: this.def.key, meta: wayMeta });
+        api.npcs.events.next({ key: 'way-point', npcKey: this.def.key, meta: wayMeta });
       }
       this.nextWayTimeout();
     },

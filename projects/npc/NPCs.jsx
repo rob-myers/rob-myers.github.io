@@ -28,7 +28,7 @@ export default function NPCs(props) {
 
   const nav = useGeomorphsNav(props.gmGraph, props.disabled);
 
-  const { panZoomApi } = props.worldApi;
+  const { panZoom } = props.api;
 
   const state = useStateRef(/** @type {() => NPC.NPCs} */ () => ({
     decor: {},
@@ -296,7 +296,7 @@ export default function NPCs(props) {
         ));
     },
     getPanZoomApi() {
-      return panZoomApi;
+      return panZoom;
     },
     getPlayer() {
       return state.playerKey ? state.getNpc(state.playerKey) : null;
@@ -386,7 +386,7 @@ export default function NPCs(props) {
         throw Error(`expected format: { zoom?: number; point?: { x: number; y: number }; ms: number; easing?: string }`);
       }
       try {
-        await panZoomApi.panZoomTo(e.zoom, e.point, e.ms, e.easing);
+        await panZoom.panZoomTo(e.zoom, e.point, e.ms, e.easing);
         return 'completed';
       } catch (e) {
         return 'cancelled';
@@ -415,8 +415,8 @@ export default function NPCs(props) {
       const position = npc.getPosition();
       const found = props.gmGraph.findRoomContaining(position);
       if (found) {
-        props.worldApi.fovApi.setRoom(found.gmId, found.roomId);
-        props.worldApi.updateAll();
+        props.api.fov.setRoom(found.gmId, found.roomId);
+        props.api.updateAll();
       } else {// TODO error in terminal?
         console.error(`set-player ${npcKey}: no room contains ${JSON.stringify(position)}`)
       }
@@ -429,15 +429,18 @@ export default function NPCs(props) {
       } else if (!state.isPointLegal(e.point)) {
         throw Error(`cannot spawn outside navPoly: ${JSON.stringify(e.point)}`);
       }
-      state.npc[e.npcKey]= createNpc(e.npcKey, {
-        position: e.point,
-        angle: 0,
-        speed: npcSpeed,
-      }, {
-        disabled: props.disabled,
-        panZoomApi,
-        npcs: state,
-      });
+      state.npc[e.npcKey]= createNpc(
+        {
+          npcKey: e.npcKey,
+          position: e.point,
+          angle: 0,
+          speed: npcSpeed,
+        },
+        {
+          disabled: props.disabled,
+          api: props.api,
+        },
+      );
       update();
       state.events.next({ key: 'spawned-npc', npcKey: e.npcKey });
     },
@@ -455,7 +458,7 @@ export default function NPCs(props) {
       const subscription = merge(
         of({ key: /** @type {const} */ ('init-track') }),
         state.events,
-        panZoomApi.events,
+        panZoom.events,
       ).pipe(
         filter(x => (
           process.status === 1 && (
@@ -471,7 +474,7 @@ export default function NPCs(props) {
       ).subscribe({
         async next(msg) {
           // console.log(msg); // DEBUG
-          if (!panZoomApi.isIdle() && msg.key !== 'started-walking') {
+          if (!panZoom.isIdle() && msg.key !== 'started-walking') {
             status = 'no-track';
             console.warn('@', status);
             return;
@@ -482,13 +485,13 @@ export default function NPCs(props) {
           
           if (// Only when: npc idle, camera not animating, camera not close
             npc.anim.spriteSheet === 'idle'
-            && (panZoomApi.anims[0] === null || panZoomApi.anims[0].playState === 'finished')
-            && panZoomApi.distanceTo(npcPosition) > 10
+            && (panZoom.anims[0] === null || panZoom.anims[0].playState === 'finished')
+            && panZoom.distanceTo(npcPosition) > 10
           ) {
             status = 'panzoom-to';
             console.warn('@', status);
             // Ignore Error('cancelled')
-            try { await panZoomApi.panZoomTo(2, npcPosition, 2000) } catch {}
+            try { await panZoom.panZoomTo(2, npcPosition, 2000) } catch {}
             status = 'no-track';
           }
 
@@ -497,7 +500,7 @@ export default function NPCs(props) {
             console.warn('@', status);
             try {
               const path = npc.getTargets().map(x => x.point);
-              await panZoomApi.followPath(path, { animScaleFactor: npc.getAnimScaleFactor() });
+              await panZoom.followPath(path, { animScaleFactor: npc.getAnimScaleFactor() });
             } catch {} // Ignore Error('cancelled')
           }
         },
@@ -525,7 +528,7 @@ export default function NPCs(props) {
         }
       }
     },
-  }), { deps: [nav, props.worldApi] });
+  }), { deps: [nav, props.api] });
   
   React.useEffect(() => {
     setCached(props.npcsKey, state);
@@ -629,7 +632,7 @@ function DecorItem({ item }) {
  * @property {Graph.GmGraph} gmGraph
  * @property {string} npcsKey
  * @property {(api: NPC.NPCs) => void} onLoad
- * @property {import('../example/NavDemo1').State} worldApi
+ * @property {import('../example/NavDemo1').State} api
  */
 
 /**

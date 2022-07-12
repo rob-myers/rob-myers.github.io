@@ -31,7 +31,7 @@ export default function FOV(props) {
       if (state.gmId !== gmId || state.roomId !== roomId) {
         state.gmId = gmId;
         state.roomId = roomId;
-        props.worldApi.updateAll();
+        props.api.updateAll();
         return true;
       } else {
         return false;
@@ -39,7 +39,7 @@ export default function FOV(props) {
     },
     updateClipPath() {
       const gm = gms[state.gmId];
-      const openDoorsIds = props.worldApi.doorsApi.getOpen(state.gmId);
+      const openDoorsIds = props.api.doors.getOpen(state.gmId);
       /**
        * Compute light polygons for current geomorph and possibly adjacent ones
        */
@@ -72,7 +72,7 @@ export default function FOV(props) {
     },
   }), {
     overwrite: { gmId: true, roomId: true },
-    deps: [gms, gmGraph, props.worldApi],
+    deps: [gms, gmGraph, props.api],
   });
 
   React.useEffect(() => {
@@ -105,7 +105,7 @@ export default function FOV(props) {
 
 /**
  * @typedef Props @type {object}
- * @property {import('../example/NavDemo1').State} worldApi
+ * @property {import('../example/NavDemo1').State} api
  * @property {Graph.GmGraph} gmGraph
  * @property {(fovApi: State) => void} onLoad
  */
