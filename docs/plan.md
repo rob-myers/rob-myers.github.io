@@ -42,15 +42,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ doors close before doors model changes and light updates
   - NavDemo1 state.initOpen -> props.init.*
   - NavDemo1 handleCollisions, handlePlayerWayEvent, useEffect into custom hook
-  - Different versions of subcomponents without different version of super?
-    - maybe avoid versioning?
   - Copy NavDemo1 to World 
   - World has props.gm
-
-- support sit on chair
-  - ✅ Floor -> Geomorphs
-  - one frame animation
-  - Geomorphs has extra z-indexed layer with desks, bunk beds, tables
 
 
 - ✅ Cannot close door just before npc enters and npc goes thru door
@@ -82,7 +75,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
     - sealed standard/iris on hull `12`
     - ✅ 301 and 302 hull
 
-- Sitting animation (single pose)
+- support sit on chair
+  - one frame sit animation
+  - can sit on chairs
+  - different legs for different chairs
   - https://www.123rf.com/photo_101532699_top-view-people-sitting-on-chair-vector-illustration.html
 - Lighter grey nav triangles
 - Check can raycast to door when try open
@@ -134,6 +130,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ Floor -> Geomorphs
 - ✅ Gatsby begin
   - ✅ Start migration to Gatsby
   - ✅ Use preact https://www.gatsbyjs.com/plugins/gatsby-plugin-preact/
