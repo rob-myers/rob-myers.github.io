@@ -4,9 +4,9 @@ import { css } from "goober";
 import { merge, of, Subject } from "rxjs";
 import { filter, first, map, take } from "rxjs/operators";
 
-import { Poly, Rect, Vect } from "../geom";
+import { Rect, Vect } from "../geom";
 import { stripAnsi } from "../sh/sh.util";
-import { assertDefined, testNever } from "../service/generic";
+import { testNever } from "../service/generic";
 import { removeCached, setCached } from "../service/query-client";
 import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
@@ -628,11 +628,11 @@ function DecorItem({ item }) {
 
 /**
  * @typedef Props @type {object}
+ * @property {import('../example/NavDemo1').State} api
  * @property {boolean} [disabled] 
  * @property {Graph.GmGraph} gmGraph
  * @property {string} npcsKey
  * @property {(api: NPC.NPCs) => void} onLoad
- * @property {import('../example/NavDemo1').State} api
  */
 
 /**

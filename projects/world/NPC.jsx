@@ -9,7 +9,7 @@ import { npcOffsetRadians, npcScale } from "../npc/create-npc";
 import npcJson from '../../public/npc/first-npc.json'
 const { animLookup } = npcJson;
 
-/** @param {{ npc: NPC.NPC }} props  */
+/** @param {Props} props  */
 export default function NPC(props) {
   const { npc } = props;
 
@@ -37,6 +37,12 @@ export default function NPC(props) {
     </div>
   );
 }
+
+/**
+ * @typedef Props @type {object}
+ * @property {NPC.NPC} npc
+ */
+
 
 const npcCss = css`
   position: absolute;

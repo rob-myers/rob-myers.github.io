@@ -263,8 +263,8 @@ const rootCss = css`
 
 /**
  * @typedef Props @type {object}
- * @property {Graph.GmGraph} gmGraph
  * @property {import('../example/NavDemo1').State} api
+ * @property {Graph.GmGraph} gmGraph
  * @property {{ [gmId: number]: number[] }} [init]
  * @property {(doorsApi: State) => void} onLoad
  */

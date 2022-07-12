@@ -61,8 +61,8 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - 🚧 avoid nav node long thin bits
     - sometimes reduce obstacle size
     - sometimes eliminate and permit teleport (e.g. to urinal)
-  - ✅ remove outwards hull outset
-  - better approach? inset holes, warning if non-unique
+  - remove outwards hull outset via better approach?
+    - inset holes, warning if non-unique
   - modularise npc json
     - NPC.jsx
     - create-npc.js

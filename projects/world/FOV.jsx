@@ -6,7 +6,7 @@ import { geomorphPngPath } from "../geomorph/geomorph.model";
 import useStateRef from "../hooks/use-state-ref";
 
 /**
- * Field Of View, implemented by drawing the dark part of geomorphs
+ * Field Of View, implemented via dark parts of geomorphs
  * @param {Props} props 
  */
 export default function FOV(props) {

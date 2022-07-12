@@ -1,6 +1,7 @@
 
 declare namespace NPC {
 
+
   /** API for a single NPC */
   export interface NPC {
     /** User specified e.g. `andros` */
@@ -14,32 +15,7 @@ declare namespace NPC {
       body: HTMLDivElement;
     };
     mounted: boolean;
-
-    //#region mutable
-    anim: {
-      /** The path we'll walk along */
-      path: Geom.Vect[];
-      /** Data derived entirely from `anim.path` */
-      aux: {
-        angs: number[];
-        bounds: Geom.Rect;
-        edges: ({ p: Geom.Vect; q: Geom.Vect })[];
-        elens: number[];
-        /** Outset version of `origPath` to detect progress on pause */
-        navPathPolys: Geom.Poly[];
-        sofars: number[];
-        total: number;
-      };
-
-      spriteSheet: SpriteSheetKey;
-      translate: Animation;
-      rotate: Animation;
-      sprites: Animation;
-
-      wayMetas: WayPointMeta[];
-      wayTimeoutId: number;
-    };
-    //#endregion
+    anim: NPCAnimData;
 
     async cancel(): Promise<void>;
     clearWayMetas(): void;
@@ -81,6 +57,30 @@ declare namespace NPC {
     setSpritesheet(spriteSheet: SpriteSheetKey): void;
     updateAnimAux(): void;
     wayTimeout(): void;
+  }
+
+  export interface NPCAnimData {
+    /** The path we'll walk along */
+    path: Geom.Vect[];
+    /** Data derived entirely from `anim.path` */
+    aux: {
+      angs: number[];
+      bounds: Geom.Rect;
+      edges: ({ p: Geom.Vect; q: Geom.Vect })[];
+      elens: number[];
+      /** Outset version of `origPath` to detect progress on pause */
+      navPathPolys: Geom.Poly[];
+      sofars: number[];
+      total: number;
+    };
+
+    spriteSheet: SpriteSheetKey;
+    translate: Animation;
+    rotate: Animation;
+    sprites: Animation;
+
+    wayMetas: WayPointMeta[];
+    wayTimeoutId: number;
   }
 
   interface NpcLineSeg {
