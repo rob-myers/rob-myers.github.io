@@ -209,7 +209,7 @@ const gameFunctionsRunDefs = [
     const { sessionKey } = api.getProcess();
 
     api.info(`polling for cached query ${ansiColor.Blue}${WORLD_KEY}${ansiColor.White}`)
-    /** @type {NPC.NPCs} */ let npcs;
+    /** @type {import('../world/NPCs').State} */ let npcs;
     while (!(npcs = api.getCached(WORLD_KEY).npcs)) yield* api.sleep(1);
 
     if (!npcs.session[sessionKey]) {

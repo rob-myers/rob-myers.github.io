@@ -28,7 +28,7 @@ export default function NPCs(props) {
 
   const { panZoom } = props.api;
 
-  const state = useStateRef(/** @type {() => NPC.NPCs} */ () => ({
+  const state = useStateRef(/** @type {() => State} */ () => ({
     decor: {},
     events: new Subject,
     npc: {},
@@ -613,7 +613,7 @@ function DecorItem({ item }) {
  * @property {import('../example/NavDemo1').State} api
  * @property {boolean} [disabled] 
  * @property {Graph.GmGraph} gmGraph
- * @property {(api: NPC.NPCs) => void} onLoad
+ * @property {(api: State) => void} onLoad
  */
 
 /**
@@ -625,6 +625,25 @@ function DecorItem({ item }) {
  * @property {boolean} ready
  * @property {HTMLElement} rootEl
  * @property {{ [sessionKey: string]: NPC.SessionCtxt }} session
- * 
- * // IN PROGRESS...
+ * @property {(sessionKey: string, lineNumber: number, ctxts: NPC.SessionTtyCtxt[]) => void} addTtyLineCtxts
+ * @property {() => void} cleanSessionCtxts
+ * @property {(npcA: NPC.NPC, npcB: NPC.NPC) => null | NPC.NpcCollision} detectCollision
+ * @property {(src: Geom.VectJson, dst: Geom.VectJson) => NPC.GlobalNavPath} getGlobalNavPath
+ * @property {(gmId: number, src: Geom.VectJson, dst: Geom.VectJson) => NPC.LocalNavPath} getLocalNavPath
+ * @property {(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }) => NPC.GlobalNavPath} getNpcGlobalNav
+ * @property {() => number} getNpcInteractRadius
+ * @property {(npcKey: string) => NPC.NPC} getNpc
+ * @property {(convexPoly: Geom.Poly) => NPC.NPC[]} getNpcsIntersecting
+ * @property {() => null | NPC.NPC} getPlayer
+ * @property {(point: Geom.VectJson) => string[]} getPointTags
+ * @property {(p: Geom.VectJson) => boolean} isPointLegal
+ * @property {(e: NPC.NpcAction) => Promise<undefined | NPC.NPC>} npcAct
+ * @property {NPC.OnTtyLink} onTtyLink
+ * @property {(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }) => Promise<'cancelled' | 'completed'>} panZoomTo
+ * @property {(el: null | HTMLDivElement) => void} rootRef
+ * @property {(decorKey: string, decor: null | NPC.Decor) => void} setDecor
+ * @property {(npcKey: string) => void} setRoomByNpc
+ * @property {(e: { npcKey: string; point: Geom.VectJson }) => void} spawn
+ * @property {(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }) => import('rxjs').Subscription} trackNpc
+ * @property {(e: { npcKey: string } & NPC.GlobalNavPath) => Promise<void>} walkNpc
  */

@@ -12,6 +12,7 @@ import useUpdate from "../hooks/use-update";
 import useGeomorphs from "../geomorph/use-geomorphs";
 import useStateRef from "../hooks/use-state-ref";
 import { State as DoorsApi } from '../world/Doors';
+import { State as NpcsApi } from '../world/NPCs';
 
 /** @param {Props} props */
 export default function World(props) {
@@ -33,7 +34,7 @@ export default function World(props) {
 
     doorsApi: /** @type {DoorsApi} */  ({ ready: false }),
     panZoomApi: /** @type {PanZoom.CssApi} */ ({ ready: false }),
-    npcsApi: /** @type {NPC.NPCs} */  ({ ready: false }),
+    npcsApi: /** @type {NpcsApi} */  ({ ready: false }),
 
     /**
      * Handle waypoint metas concerning collisions with other npcs

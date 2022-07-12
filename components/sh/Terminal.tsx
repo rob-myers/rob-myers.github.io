@@ -8,13 +8,14 @@ import { canTouchDevice } from 'projects/service/dom';
 import { assertNonNull } from 'projects/service/generic';
 import { getCached } from 'projects/service/query-client';
 import { stripAnsi } from 'projects/sh/sh.util';
-import useSession, { ProcessStatus, Session } from 'projects/sh/session.store';
 import { scrollback } from 'projects/sh/io/io.model';
-import useOnResize from 'projects/hooks/use-on-resize';
-import { XTerm } from 'components/dynamic';
-import { TouchHelperUI } from './TouchHelperUi';
+import useSession, { ProcessStatus, Session } from 'projects/sh/session.store';
 import useStateRef from 'projects/hooks/use-state-ref';
 import useUpdate from 'projects/hooks/use-update';
+import useOnResize from 'projects/hooks/use-on-resize';
+import type { State as NpcsApi } from 'projects/world/NPCs';
+import { XTerm } from 'components/dynamic';
+import { TouchHelperUI } from './TouchHelperUi';
 
 export default function Terminal(props: Props) {
 
@@ -95,7 +96,7 @@ export default function Terminal(props: Props) {
             async callback(event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines }) {
               // console.log('clicked link', event, linkText, { outputLineNumber, lineText, linkStartIndex, bufferOutputLines });
               const session = assertNonNull(state.session);
-              const npcs = getCached(session.var.WORLD_KEY).npcs as NPC.NPCs;
+              const npcs = getCached(session.var.WORLD_KEY).npcs as NpcsApi;
               /**
                * Number of "actual" lines output, no longer entirely within tty's buffer.
                * Why do we need the +1?

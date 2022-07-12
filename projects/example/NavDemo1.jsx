@@ -8,7 +8,7 @@ import useUpdate from "../hooks/use-update";
 import useStateRef from "../hooks/use-state-ref";
 import useGeomorphs from "../geomorph/use-geomorphs";
 import CssPanZoom from "../panzoom/CssPanZoom";
-import NPCs from "../world/NPCs";
+import NPCs, { State as NpcsApi } from "../world/NPCs";
 import Doors, { State as DoorsApi } from "../world/Doors";
 import Geomorphs from "../world/Floor";
 import FOV, { State as FovApi } from "../world/FOV";
@@ -33,7 +33,7 @@ export default function NavDemo1(props) {
 
     doors: /** @type {DoorsApi} */  ({ ready: false }),
     fov: /** @type {FovApi} */  ({ ready: false }),
-    npcs: /** @type {NPC.NPCs} */  ({ ready: false }),
+    npcs: /** @type {NpcsApi} */  ({ ready: false }),
     panZoom: /** @type {PanZoom.CssApi} */ ({ ready: false }),
 
     lib: {
@@ -116,7 +116,7 @@ const worldKey = 'world-demo-1';
  * @typedef State @type {object}
  * @property {DoorsApi} doors
  * @property {PanZoom.CssApi} panZoom
- * @property {NPC.NPCs} npcs
+ * @property {NpcsApi} npcs
  * @property {FovApi} fov
  * @property {() => void} updateAll
  * @property {StateUtil} lib

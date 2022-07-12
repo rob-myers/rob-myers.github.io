@@ -196,57 +196,31 @@ declare namespace NPC {
     length: number;
   }
 
-  export interface NPCs {
-    decor: Record<string, Decor>;
-    events: import('rxjs').Subject<NPC.NPCsEvent>;
-    npc: Record<string, NPC.NPC>;
-    rootEl: HTMLElement;
-    ready: boolean;
-    playerKey: null | string;
-    session: { [sessionKey: string]: NPC.SessionCtxt };
+  export type OnTtyLink = (
+    /** The computations are specific to tty i.e. its parent session */
+    sessionKey: string,
+    /** The "global" 1-based index of "actual" lines ever output by tty */
+    outputLineNumber: number,
+    lineText: string,
+    linkText: string,
+    linkStartIndex: number,
+  ) => void;
 
-    /** Assume each `ctxts[i].lineNumber` is `lineNumber`  */
-    addTtyLineCtxts(sessionKey: string, lineNumber: number, ctxts: NPC.SessionTtyCtxt[]): void;
-    cleanSessionCtxts(): void;
-    detectCollision(npcA: NPC.NPC, npcB: NPC.NPC): null | {
-      /**
-       * Time when they'll collide,
-       * - `iA + (seconds * speed) . tangentA`
-       * - `iB + (seconds * speed) . tangentB`
-       * 
-       * where:
-       * - `i{A,B}` are current positions
-       * - `speed` in world-units per second
-       */
-      seconds: number;
-      /** Distance from iA at which they will collide */
-      distA: number;
-      /** Distance from iB at which they will collide */
-      distB: number;
-    };
-    getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
-    getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;
-    getNpcGlobalNav(e: { npcKey: string; point: Geom.VectJson; debug?: boolean }): GlobalNavPath;
-    getNpcInteractRadius(): number;
-    getNpc(npcKey: string): NPC.NPC;
-    getNpcsIntersecting(convexPoly: Geom.Poly): NPC.NPC[];
-    getPlayer(): null | NPC.NPC;
-    getPointTags(point: Geom.VectJson): string[];
-    isPointLegal(p: Geom.VectJson): boolean;
-    async npcAct(e: NpcAction): Promise<undefined | NPC.NPC>;
+  export interface NpcCollision {
     /**
-     * @param {string} sessionKey The computations are specific to tty i.e. its parent session.
-     * @param {number} outputLineNumber The "global" 1-based index of "actual" lines ever output by tty
+     * Time when they'll collide,
+     * - `iA + (seconds * speed) . tangentA`
+     * - `iB + (seconds * speed) . tangentB`
+     * 
+     * where:
+     * - `i{A,B}` are current positions
+     * - `speed` in world-units per second
      */
-    onTtyLink(sessionKey: string, outputLineNumber: number, lineText: string, linkText: string, linkStartIndex: number);
-    rootRef(el: null | HTMLDivElement): void;
-    setDecor(decorKey: string, decor: null | NPC.Decor): void;
-    setRoomByNpc(npcKey: string): void;
-    spawn(e: { npcKey: string; point: Geom.VectJson }): void;
-    trackNpc(e: { npcKey: string; process: import('../sh/session.store').ProcessMeta }): import('rxjs').Subscription;
-    /** Used by command `view` */
-    async panZoomTo(e: { zoom?: number; point?: Geom.VectJson; ms: number; easing?: string }): Promise<'cancelled' | 'completed'>;
-    async walkNpc(e: { npcKey: string } & GlobalNavPath): Promise<void>;
+    seconds: number;
+    /** Distance from iA at which they will collide */
+    distA: number;
+    /** Distance from iB at which they will collide */
+    distB: number;
   }
 
   export interface SessionCtxt {
