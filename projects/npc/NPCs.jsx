@@ -287,7 +287,7 @@ export default function NPCs(props) {
       return npc;
     },
     getNpcsIntersecting(convexPoly) {
-      const extraForWalk = 10;
+      const extraForWalk = 20;
       return Object.values(state.npc)
         .filter(x => geom.circleIntersectsConvexPolygon(
           x.getPosition(),

@@ -2,7 +2,7 @@ import React from "react";
 import { css } from "goober";
 import classNames from "classnames";
 import { Subject } from "rxjs";
-import { assertNonNull } from "../service/generic";
+import { assertNonNull, pause } from "../service/generic";
 import { fillPolygon } from "../service/dom";
 import { cssName, doorWidth, hullDoorWidth } from "../service/const";
 import { geom } from "../service/geom";
@@ -59,7 +59,7 @@ export default function Doors(props) {
     getVisible(gmId) {
       return Object.keys(state.vis[gmId]).map(Number);
     },
-    onToggleDoor(e) {
+    async onToggleDoor(e) {
       const gmIdAttr = /** @type {HTMLDivElement} */ (e.target).getAttribute('data-gm-id');
       const gmId = Number(gmIdAttr);
       const doorId = Number(/** @type {HTMLDivElement} */ (e.target).getAttribute('data-door-id'));
@@ -69,7 +69,7 @@ export default function Doors(props) {
       const sealed = gmDoorNode?.sealed || gms[gmId].doors[doorId].tags.includes('sealed');
 
       if (gmIdAttr === null || !state.vis[gmId][doorId] || sealed) {
-        return; // Not a door, not visible, or sealed permanently
+        return; // Not a door, or not visible, or sealed permanently
       }
 
       if (!state.playerNearDoor(gmId, doorId)) {
@@ -77,9 +77,16 @@ export default function Doors(props) {
       }
 
       if (state.open[gmId][doorId] && !state.safeToCloseDoor(gmId, doorId)) {
-        return; // Cannot close if npc nearby
+        return;
       }
 
+      if (state.open[gmId][doorId]) {// Animate close slightly early
+        const visDoorId = [...Array(doorId)].reduce((agg, _, preId) => state.vis[gmId][preId] ? agg + 1 : agg, 0);
+        state.rootEl.children[gmId].children[visDoorId].classList.remove('open');
+        await pause(hullDoorId === -1 ? 300/2 : 600/2);
+      }
+
+      // Toggle the door
       state.open[gmId][doorId] = !state.open[gmId][doorId];
       const key = state.open[gmId][doorId] ? 'opened-door' : 'closed-door';
       state.events.next({ key, gmId, doorId });
@@ -117,6 +124,7 @@ export default function Doors(props) {
     updateVisibleDoors() {
       const { fov } = props.api;
       const gm = gms[fov.gmId]
+
       /** Visible doors in current geomorph and possibly hull doors from other geomorphs */
       const nextVis = /** @type {number[][]} */ (gms.map(_ => []));
       nextVis[fov.gmId] = gm.roomGraph.getAdjacentDoors(fov.roomId).map(x => x.doorId);
