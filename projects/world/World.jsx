@@ -22,7 +22,7 @@ export default function World(props) {
 
   const { gms, gmGraph } = useGeomorphs(props.gms);
 
-  const state = useStateRef(() => /** @type {State} */ ({
+  const state = useStateRef(/** @type {() => State} */ () => ({
 
     doors: /** @type {DoorsApi} */  ({ ready: false }),
     fov: /** @type {FovApi} */  ({ ready: false }),

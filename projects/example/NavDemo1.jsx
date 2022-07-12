@@ -29,7 +29,7 @@ export default function NavDemo1(props) {
     { layoutKey: 'g-301--bridge', transform: [1, 0, 0, -1, 0, 600 + 1200 + 600], },
   ]);
 
-  const state = useStateRef(() => /** @type {State} */ ({
+  const state = useStateRef(/** @type {() => State} */ () => ({
 
     doors: /** @type {DoorsApi} */  ({ ready: false }),
     fov: /** @type {FovApi} */  ({ ready: false }),

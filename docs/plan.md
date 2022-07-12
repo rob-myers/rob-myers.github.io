@@ -26,6 +26,9 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
 
 ## TODO (low-level)
 
+- ✅ BUG when terminal open initially without World
+- ✅ Avoid casting useStateRef
+
 - 🚧 NavDemo1 reorg as World
   - ✅ floor goes into `<Floor/>`
   - ✅ lights go into `<FOV/>`
@@ -49,8 +52,6 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ World has props.worldKey and props.gms
   - ✅ Mount World as test
   - Start Gatsby migration
-
-- ✅ Cannot close door just before npc enters and npc goes thru door
 
 - 🚧 Gatsby MDX SSR issue
   - `Tabs` not updating with props change
@@ -134,6 +135,7 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - only happens when Tabs maximised
   - https://bugs.webkit.org/show_bug.cgi?id=160953
 
+- ✅ Cannot close door just before npc enters and npc goes thru door
 - ✅ Floor -> Geomorphs
 - ✅ Gatsby begin
   - ✅ Start migration to Gatsby

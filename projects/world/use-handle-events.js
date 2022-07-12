@@ -9,7 +9,7 @@ import useStateRef from "../hooks/use-state-ref";
  */
 export default function useHandleEvents(api, gmGraph) {
 
-  const state = useStateRef(() => /** @type {State} */ ({
+  const state = useStateRef(/** @type {() => State} */ () => ({
 
     handleCollisions(e) {
       switch (e.meta.key) {
