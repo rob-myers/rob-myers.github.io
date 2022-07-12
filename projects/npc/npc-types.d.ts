@@ -1,7 +1,6 @@
 
 declare namespace NPC {
 
-
   /** API for a single NPC */
   export interface NPC {
     /** User specified e.g. `andros` */
@@ -211,20 +210,19 @@ declare namespace NPC {
     cleanSessionCtxts(): void;
     detectCollision(npcA: NPC.NPC, npcB: NPC.NPC): null | {
       /**
-       * Time in seconds from now when we'll collide,
-       * - `initPosA + (collideAt * speed) . tangentA`
-       * - `initPosB + (collideAt * speed) . tangentB`
+       * Time when they'll collide,
+       * - `iA + (seconds * speed) . tangentA`
+       * - `iB + (seconds * speed) . tangentB`
        * 
        * where:
-       * - `initPos{A,B}` are current positions
+       * - `i{A,B}` are current positions
        * - `speed` in world-units per second
        */
       seconds: number;
-      /** Distance from initPosA at which we will collide */
+      /** Distance from iA at which they will collide */
       distA: number;
-      /** Distance from initPosB at which we will collide */
+      /** Distance from iB at which they will collide */
       distB: number;
-      // ...
     };
     getGlobalNavPath(src: Geom.VectJson, dst: Geom.VectJson): GlobalNavPath;
     getLocalNavPath(gmId: number, src: Geom.VectJson, dst: Geom.VectJson): LocalNavPath;

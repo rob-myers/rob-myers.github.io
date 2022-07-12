@@ -2,12 +2,11 @@ import React from "react";
 import classNames from "classnames";
 import { css } from "goober";
 import { merge, of, Subject } from "rxjs";
-import { filter, first, map, take } from "rxjs/operators";
+import { filter } from "rxjs/operators";
 
 import { Rect, Vect } from "../geom";
 import { stripAnsi } from "../sh/sh.util";
 import { testNever } from "../service/generic";
-import { otag } from "../service/rxjs";
 import { geom } from "../service/geom";
 import { verifyGlobalNavPath, verifyDecor } from "../service/npc";
 import { cssName } from "../service/const";
@@ -628,9 +627,4 @@ function DecorItem({ item }) {
  * @property {{ [sessionKey: string]: NPC.SessionCtxt }} session
  * 
  * // IN PROGRESS...
- */
-
-/**
- * @typedef DebugProps @type {object}
- * @property {Record<string, { path: Geom.Vect[]; aabb: Rect; }>} debugPath 
  */

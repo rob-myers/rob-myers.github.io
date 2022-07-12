@@ -43,8 +43,10 @@ Naturally, the Sangha has insisted he ordain as a Novice in the Upper Pyramid.
   - ✅ NavDemo1 state.initOpen -> props.init.open
   - ✅ NavDemo1 handleCollisions, handlePlayerWayEvent, useEffect into custom hook
   - ✅ replace NPCS_KEY by WORLD_KEY
+  - NPC.NPCS -> component State
+  - DecorItem -> NPCsDecor and own file
   - Copy NavDemo1 to World 
-  - World has props.npcsKey and props.gms
+  - World has props.worldKey and props.gms
 
 - ✅ Cannot close door just before npc enters and npc goes thru door
 
