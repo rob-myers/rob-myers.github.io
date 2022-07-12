@@ -127,12 +127,12 @@ const gameFunctionsRunDefs = [
     if (!Number.isFinite(numClicks)) {
       api.throwError("format: \`click [{numberOfClicks}]\`")
     }
-    const { npcs } = api.getCached(home.WORLD_KEY)
+    const { npcs, panZoom } = api.getCached(home.WORLD_KEY)
     const { filter, map, take, otag } = npcs.rxjs
     const process = api.getProcess()
     
     yield* otag(
-      npcs.getPanZoomApi().events.pipe(
+      panZoom.events.pipe(
         filter(
           /** @type function(*): x is Extract<PanZoom.CssInternalEvent, { key: "pointerup" }> */
           x => x.key === "pointerup" && x.distance < 5 && process.status === 1

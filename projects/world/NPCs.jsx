@@ -289,9 +289,6 @@ export default function NPCs(props) {
           convexPoly
         ));
     },
-    getPanZoomApi() {
-      return panZoom;
-    },
     getPlayer() {
       return state.playerKey ? state.getNpc(state.playerKey) : null;
     },
