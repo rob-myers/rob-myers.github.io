@@ -31,9 +31,9 @@ export default function NavDemo1(props) {
     initOpen: { 0: [24] },
 
     doors: /** @type {DoorsApi} */  ({ ready: false }),
-    panZoom: /** @type {PanZoom.CssApi} */ ({ ready: false }),
-    npcs: /** @type {NPC.NPCs} */  ({ ready: false }),
     fov: /** @type {FovApi} */  ({ ready: false }),
+    npcs: /** @type {NPC.NPCs} */  ({ ready: false }),
+    panZoom: /** @type {PanZoom.CssApi} */ ({ ready: false }),
 
     handleCollisions(e) {
       switch (e.meta.key) {
@@ -116,7 +116,7 @@ export default function NavDemo1(props) {
     if (gms.length && state.doors.ready && state.npcs.ready) {
       state.updateAll();
 
-      // Update Door graphics on change
+      // Update doors and lights on change
       const doorsSub = state.doors.events
         .pipe(filter(x => x.key === 'closed-door' || x.key === 'opened-door'))
         .subscribe(() => state.updateAll());
@@ -172,15 +172,13 @@ export default function NavDemo1(props) {
       />
 
       <DebugWorld
-        // outlines
-        // windows
         // localNav
+        // outlines
         // roomOutlines
         showIds
         showLabels
-
+        // windows
         api={state}
-        gms={gms}
         gmGraph={gmGraph}
       />
 

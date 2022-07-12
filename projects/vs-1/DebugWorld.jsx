@@ -15,7 +15,7 @@ export default function DebugWorld(props) {
     return null;
   }
 
-  const gm = props.gms[gmId];
+  const gm = props.gmGraph.gms[gmId];
   const visDoorIds = props.api.doors.getVisible(gmId);
   const roomNavPoly = gm.lazy.roomNavPoly[roomId];
   const roomNavAabb = roomNavPoly.rect;
@@ -71,7 +71,7 @@ export default function DebugWorld(props) {
       className={classNames("debug-parent", rootCss)}
       onClick={onClick}
     >
-      {props.outlines && props.gms.map((gm, gmId) =>
+      {props.outlines && props.gmGraph.gms.map((gm, gmId) =>
         <div
           key={gmId}
           style={{
@@ -211,7 +211,6 @@ export default function DebugWorld(props) {
 
 /**
  * @typedef Props @type {object}
- * @property {Geomorph.GeomorphDataInstance[]} gms
  * @property {Graph.GmGraph} gmGraph
  * @property {boolean} [localNav]
  * @property {boolean} [outlines]
